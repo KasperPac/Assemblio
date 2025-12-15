@@ -1,0 +1,49 @@
+{
+    "9c40819b-4a8f-468f-9ba5-4b9699f3361f": {
+        "id": "b0c63691-2764-41c5-9539-27f69a1327bf",
+        "name": "Charts",
+        "designId": "6b33d938-836b-44f0-ae5b-d9d196cd0a91",
+        "pluginId": "9c40819b-4a8f-468f-9ba5-4b9699f3361f",
+        "publicData": {}
+    },
+    "832d6f7a-42c3-43f1-a3ce-9a678272f811": {
+        "id": "0c579cf9-56a2-4552-80db-f90c9af62d3a",
+        "name": "Date",
+        "designId": "6b33d938-836b-44f0-ae5b-d9d196cd0a91",
+        "pluginId": "832d6f7a-42c3-43f1-a3ce-9a678272f811",
+        "publicData": {
+            "favoriteFormat": "DD-MM-YYYY"
+        }
+    },
+    "cd33cf33-e29f-4e8c-ac26-b997fe507ce7": {
+        "id": "b92d0668-32c3-4ae7-ad1f-b8b38125b85a",
+        "name": "Xano",
+        "designId": "6b33d938-836b-44f0-ae5b-d9d196cd0a91",
+        "pluginId": "cd33cf33-e29f-4e8c-ac26-b997fe507ce7",
+        "publicData": {
+            "domain": "xdu3-rie9-fmus.n7e.xano.io"
+        }
+    },
+    "2bd1c688-31c5-443e-ae25-59aa5b6431fb": {
+        "id": "7b35f42d-ccc7-4510-89a9-171bc3256919",
+        "name": "REST API",
+        "designId": "6b33d938-836b-44f0-ae5b-d9d196cd0a91",
+        "pluginId": "2bd1c688-31c5-443e-ae25-59aa5b6431fb",
+        "publicData": {}
+    },
+    "f5856798-485d-47be-b433-d43d771c64e1": {
+        "id": "56c3ad70-9e18-4f0a-8c7f-c654be73d451",
+        "name": "Xano Auth",
+        "designId": "6b33d938-836b-44f0-ae5b-d9d196cd0a91",
+        "pluginId": "f5856798-485d-47be-b433-d43d771c64e1",
+        "publicData": {
+            "domain": "xdu3-rie9-fmus.n7e.xano.io",
+            "getMeEndpoint": "https://xdu3-rie9-fmus.n7e.xano.io/api:9FrgmDMA/auth/me",
+            "loginEndpoint": "https://xdu3-rie9-fmus.n7e.xano.io/api:9FrgmDMA/auth/login",
+            "signupEndpoint": "https://xdu3-rie9-fmus.n7e.xano.io/api:9FrgmDMA/auth/signup",
+            "socialProviders": {},
+            "afterForbiddenPageId": "fb9fbf33-57b2-4f28-bd73-96a090426b27",
+            "afterNotSignInPageId": "02373be2-3c77-4cb2-9cf8-2f1aaacb539a"
+        }
+    }
+}
