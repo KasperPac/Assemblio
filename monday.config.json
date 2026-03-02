@@ -1,0 +1,45 @@
+{
+  "workspace_id": 5217812,
+  "board_prefix": "",
+  "board_id": 5092498027,
+  "columns": {
+    "status": "status_9a5db3bc",
+    "description": "text_mm115pqs",
+    "improvements": "text_mm11mt7h",
+    "comments": "text_mm118mpn"
+  },
+  "overview": {
+    "name": "All Repos Overview",
+    "board_id": 5092430653,
+    "columns": {
+      "repo": "text_mm0yqj21",
+      "status": "status_ff79e7aa",
+      "description": "text_mm0yxrjg",
+      "improvements": "text_mm0ywjky",
+      "comments": "text_mm0z6730",
+      "source_item_id": "text_mm0y56hf"
+    },
+    "status_labels": [
+      "Done",
+      "Awaiting Testing",
+      "Fixing",
+      "Working on it",
+      "Task Created",
+      "Planned"
+    ]
+  },
+  "dashboard": {
+    "name": "All Repos Dashboard",
+    "kind": "PRIVATE",
+    "id": 11191261,
+    "widget_id": null
+  },
+  "status_labels": [
+    "Done",
+    "Awaiting Testing",
+    "Fixing",
+    "Working on it",
+    "Task Created",
+    "Planned"
+  ]
+}

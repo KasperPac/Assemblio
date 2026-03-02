@@ -1,0 +1,163 @@
+.page {
+  display: grid;
+  gap: 16px;
+}
+
+.breadcrumb {
+  color: #718096;
+  font-size: 12px;
+}
+
+.breadcrumb a {
+  color: #2f5be8;
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #e7ecf4;
+  border-radius: 14px;
+  padding: 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.card h3 {
+  font-size: 18px;
+}
+
+.meta {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.noBomGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.primaryButton,
+.secondaryButton {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primaryButton {
+  background: #2f5be8;
+  color: #ffffff;
+}
+
+.secondaryButton {
+  background: #edf2ff;
+  color: #1f3ea7;
+}
+
+.card select {
+  border: 1px solid #d7dfeb;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.error {
+  color: #c92a2a;
+  font-size: 13px;
+}
+
+.success {
+  color: #1f8f5f;
+  font-size: 13px;
+}
+
+.bomList {
+  display: grid;
+  gap: 12px;
+}
+
+.bomHeader {
+  display: grid;
+  gap: 4px;
+}
+
+.badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badgeDraft {
+  background: #e9efff;
+  color: #2550de;
+}
+
+.badgeActive {
+  background: #d8f7e7;
+  color: #1f8f5f;
+}
+
+.badgeArchived {
+  background: #f0f2f5;
+  color: #5f6b7b;
+}
+
+.lineTable {
+  border: 1px solid #ebeff6;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.lineRow,
+.lineHeader {
+  display: grid;
+  grid-template-columns: 1fr 0.4fr;
+  gap: 12px;
+  padding: 10px 12px;
+}
+
+.lineHeader {
+  background: #f6f8fc;
+  color: #7b889b;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.lineRow {
+  border-top: 1px solid #eef2f8;
+}
+
+.empty {
+  color: #8b97a7;
+  font-size: 13px;
+}
+
+.notice {
+  color: #6b7585;
+  font-size: 13px;
+}
+
+@media (max-width: 960px) {
+  .noBomGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .lineRow,
+  .lineHeader {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,129 @@
+.page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at top, #f7f2ea 0%, #e7e3dc 55%, #d7d1c7 100%);
+  padding: 24px;
+}
+
+.card {
+  background: #111018;
+  color: #f7f2ea;
+  padding: 40px;
+  border-radius: 24px;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-size: 11px;
+  color: rgba(247, 242, 234, 0.7);
+}
+
+.card h1 {
+  font-size: 28px;
+  letter-spacing: -0.02em;
+}
+
+.card p {
+  color: rgba(247, 242, 234, 0.75);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(247, 242, 234, 0.7);
+}
+
+.form input {
+  border: 1px solid rgba(247, 242, 234, 0.2);
+  background: rgba(247, 242, 234, 0.08);
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: #f7f2ea;
+}
+
+.form input::placeholder {
+  color: rgba(247, 242, 234, 0.5);
+}
+
+.error {
+  color: #ff7b54;
+  font-size: 12px;
+}
+
+.message {
+  color: rgba(247, 242, 234, 0.8);
+  font-size: 12px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(247, 242, 234, 0.5);
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(247, 242, 234, 0.15);
+}
+
+.primary,
+.secondary {
+  border: none;
+  border-radius: 999px;
+  padding: 12px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primary {
+  background: #ff7b54;
+  color: #111018;
+}
+
+.secondary {
+  background: transparent;
+  color: #f7f2ea;
+  border: 1px solid rgba(247, 242, 234, 0.3);
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(247, 242, 234, 0.6);
+}

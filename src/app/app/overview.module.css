@@ -1,0 +1,80 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.card,
+.tableCard {
+  background: #fff;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(13, 13, 18, 0.08);
+  box-shadow: 0 16px 30px rgba(13, 13, 18, 0.08);
+}
+
+.card h3,
+.tableCard h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.kpi {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.caption {
+  color: rgba(13, 13, 18, 0.6);
+  font-size: 13px;
+}
+
+.tableCard {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tableHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tableHeader button {
+  border: 1px solid rgba(13, 13, 18, 0.2);
+  background: transparent;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 12px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1.4fr 0.4fr 1fr;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(13, 13, 18, 0.04);
+}
+
+@media (max-width: 900px) {
+  .tableCard {
+    grid-column: span 1;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
