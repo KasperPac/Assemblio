@@ -5,6 +5,7 @@ import styles from "./settings.module.css";
 
 type Props = {
   status?: string;
+  detail?: string;
 };
 
 const statusText: Record<string, string> = {
@@ -33,7 +34,7 @@ const statusText: Record<string, string> = {
     "Shopify config missing. Set SHOPIFY_API_KEY, SHOPIFY_API_SECRET, and NEXT_PUBLIC_APP_URL in .env.local.",
 };
 
-export default function ShopifyConnect({ status }: Props) {
+export default function ShopifyConnect({ status, detail }: Props) {
   const [shop, setShop] = useState("");
 
   return (
@@ -42,7 +43,12 @@ export default function ShopifyConnect({ status }: Props) {
         <h3>Shopify Connection</h3>
         <p>Connect a store to enable product and order sync.</p>
       </div>
-      {status ? <p className={styles.notice}>{statusText[status] ?? status}</p> : null}
+      {status ? (
+        <p className={styles.notice}>
+          {statusText[status] ?? status}
+          {status === "sync-failed" && detail ? ` (${detail})` : ""}
+        </p>
+      ) : null}
       <form className={styles.shopifyForm} action="/api/shopify/auth" method="get">
         <input
           name="shop"

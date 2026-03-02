@@ -11,6 +11,7 @@ type Props = {
     shopify?: string;
     products?: string;
     orders?: string;
+    sync_error?: string;
   }>;
 };
 
@@ -162,7 +163,7 @@ export default async function SettingsPage({ searchParams }: Props) {
           </a>
         </div>
       </div>
-      <ShopifyConnect status={params.shopify} />
+      <ShopifyConnect status={params.shopify} detail={params.sync_error} />
       <div className={styles.actions}>
         <form method="post" action="/api/shopify/sync">
           <button type="submit" className={styles.syncButton}>

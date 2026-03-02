@@ -95,18 +95,22 @@ export async function POST(request: NextRequest) {
         request.url
       )
     );
-  } catch {
+  } catch (error) {
+    const message =
+      error instanceof Error && error.message ? error.message : "Unknown sync error";
     await admin
       .from("shopify_store")
       .update({
         last_synced_at: new Date().toISOString(),
         last_sync_status: "failed",
+        last_sync_meta: { error: message },
       })
       .eq("tenant_id", profile.tenant_id)
       .eq("id", store.id);
 
-    return NextResponse.redirect(
-      new URL("/app/settings?shopify=sync-failed", request.url)
-    );
+    const failedUrl = new URL("/app/settings", request.url);
+    failedUrl.searchParams.set("shopify", "sync-failed");
+    failedUrl.searchParams.set("sync_error", message.slice(0, 180));
+    return NextResponse.redirect(failedUrl);
   }
 }
