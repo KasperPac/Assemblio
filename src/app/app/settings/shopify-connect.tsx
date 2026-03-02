@@ -28,6 +28,8 @@ const statusText: Record<string, string> = {
   "missing-tenant": "No tenant found for current user.",
   "no-store": "No active Shopify store is connected for this tenant.",
   "no-token": "No Shopify access token found. Reconnect the store.",
+  disconnected: "Shopify store disconnected. You can reconnect now.",
+  "disconnect-failed": "Could not disconnect Shopify store. Try again.",
   "sync-ok": "Shopify sync completed successfully.",
   "sync-failed": "Shopify sync failed. Check scopes and token validity.",
   "config-missing":

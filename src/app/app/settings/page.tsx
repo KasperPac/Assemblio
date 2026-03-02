@@ -204,6 +204,10 @@ export default async function SettingsPage({ searchParams }: Props) {
                 <input type="hidden" name="store_id" value={store.id} />
                 <button type="submit" className={styles.syncStoreButton}>Sync this store</button>
               </form>
+              <form method="post" action="/api/shopify/disconnect">
+                <input type="hidden" name="store_id" value={store.id} />
+                <button type="submit" className={styles.disconnectStoreButton}>Disconnect store</button>
+              </form>
             </div>
           ))
         )}

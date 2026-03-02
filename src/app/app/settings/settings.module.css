@@ -126,6 +126,16 @@
   cursor: pointer;
 }
 
+.disconnectStoreButton {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: #b83535;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .syncMeta {
   color: #5f6c7c;
   font-size: 13px;

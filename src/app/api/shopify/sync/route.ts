@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { syncShopifyStoreData } from "@/lib/shopify/sync";
+import { getMissingSyncScopes } from "@/lib/shopify/scopes";
 
 export async function POST(request: NextRequest) {
   const supabase = await createSupabaseServerClient();
@@ -55,7 +56,7 @@ export async function POST(request: NextRequest) {
 
   const { data: tokenRow } = await admin
     .from("shopify_install_tokens")
-    .select("access_token")
+    .select("access_token,scopes")
     .eq("tenant_id", profile.tenant_id)
     .eq("shopify_store_id", store.id)
     .single();
@@ -64,6 +65,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.redirect(
       new URL("/app/settings?shopify=no-token", request.url)
     );
+  }
+  const missingScopes = getMissingSyncScopes(tokenRow.scopes);
+  if (missingScopes.length > 0) {
+    const failedUrl = new URL("/app/settings", request.url);
+    failedUrl.searchParams.set("shopify", "sync-failed");
+    failedUrl.searchParams.set(
+      "sync_error",
+      `Missing required Shopify scopes: ${missingScopes.join(", ")}. Reconnect the store.`
+    );
+    return NextResponse.redirect(failedUrl);
   }
 
   try {
