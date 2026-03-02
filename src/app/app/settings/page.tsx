@@ -18,7 +18,7 @@ type StoreRow = {
   id: string;
   store_domain: string;
   status: string;
-  created_at: string;
+  created_at?: string | null;
   last_synced_at: string | null;
   last_sync_status: string | null;
   last_sync_meta: Record<string, unknown> | null;
@@ -58,18 +58,44 @@ export default async function SettingsPage({ searchParams }: Props) {
       .order("created_at", { ascending: false })
       .limit(10);
 
-    if (fallbackStoresResult.error) {
-      storesLoadError = fallbackStoresResult.error.message;
-    } else {
+    if (!fallbackStoresResult.error) {
       stores = (fallbackStoresResult.data ?? []).map((store) => ({
         ...(store as Omit<StoreRow, "last_synced_at" | "last_sync_status" | "last_sync_meta">),
         last_synced_at: null,
         last_sync_status: null,
         last_sync_meta: null,
       }));
+    } else {
+      const fallbackMinimalStoresResult = await supabase
+        .from("shopify_store")
+        .select("id,store_domain,status")
+        .limit(10);
+
+      if (fallbackMinimalStoresResult.error) {
+        storesLoadError = fallbackMinimalStoresResult.error.message;
+      } else {
+        stores = (fallbackMinimalStoresResult.data ?? []).map((store) => ({
+          ...(store as Omit<StoreRow, "created_at" | "last_synced_at" | "last_sync_status" | "last_sync_meta">),
+          created_at: null,
+          last_synced_at: null,
+          last_sync_status: null,
+          last_sync_meta: null,
+        }));
+      }
     }
   } else {
     stores = (detailedStoresResult.data ?? []) as StoreRow[];
+  }
+
+  if (stores.length > 1) {
+    stores = [...stores].sort((a, b) => {
+      const timeA = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const timeB = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return timeB - timeA;
+    });
+  }
+  if (stores.length > 10) {
+    stores = stores.slice(0, 10);
   }
   const tenant = Array.isArray(profile?.tenant)
     ? profile?.tenant[0] ?? null

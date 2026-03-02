@@ -7,7 +7,7 @@ type ProductRow = {
   id: string;
   title: string;
   description: string | null;
-  created_at: string;
+  created_at?: string | null;
   image_url: string | null;
 };
 
@@ -27,34 +27,59 @@ function formatDescription(description: string | null) {
 
 export default async function ProductsPage() {
   const supabase = await createSupabaseServerClient();
-  const [{ data: variants }, detailedProductsResult] = await Promise.all([
-    supabase
-      .from("shopify_variant")
-      .select("id,product_id,title,sku")
-      .order("created_at", { ascending: true }),
-    supabase
-      .from("shopify_product")
-      .select("id,title,description,created_at,image_url")
-      .order("created_at", { ascending: false }),
-  ]);
+  const detailedVariantsResult = await supabase
+    .from("shopify_variant")
+    .select("id,product_id,title,sku")
+    .order("created_at", { ascending: true });
+  const variantsFallbackResult = detailedVariantsResult.error
+    ? await supabase.from("shopify_variant").select("id,product_id,title,sku")
+    : null;
+  const variants =
+    (detailedVariantsResult.error
+      ? variantsFallbackResult?.data
+      : detailedVariantsResult.data) ?? [];
+
+  const detailedProductsResult = await supabase
+    .from("shopify_product")
+    .select("id,title,description,created_at,image_url")
+    .order("created_at", { ascending: false });
 
   let products: ProductRow[] = [];
   let productsError: string | null = null;
 
   if (detailedProductsResult.error) {
-    const fallbackProductsResult = await supabase
+    const fallbackWithDescription = await supabase
       .from("shopify_product")
-      .select("id,title,created_at")
-      .order("created_at", { ascending: false });
-
-    if (fallbackProductsResult.error) {
-      productsError = fallbackProductsResult.error.message;
-    } else {
-      products = (fallbackProductsResult.data ?? []).map((product) => ({
-        ...(product as Omit<ProductRow, "description" | "image_url">),
-        description: null,
-        image_url: null,
+      .select("id,title,description,image_url");
+    if (!fallbackWithDescription.error) {
+      products = (fallbackWithDescription.data ?? []).map((product) => ({
+        ...(product as Omit<ProductRow, "created_at">),
+        created_at: null,
       }));
+    } else {
+      const fallbackMinimalWithCreatedAt = await supabase
+        .from("shopify_product")
+        .select("id,title,created_at")
+        .order("created_at", { ascending: false });
+      if (!fallbackMinimalWithCreatedAt.error) {
+        products = (fallbackMinimalWithCreatedAt.data ?? []).map((product) => ({
+          ...(product as Omit<ProductRow, "description" | "image_url">),
+          description: null,
+          image_url: null,
+        }));
+      } else {
+        const fallbackMinimal = await supabase.from("shopify_product").select("id,title");
+        if (fallbackMinimal.error) {
+          productsError = fallbackMinimal.error.message;
+        } else {
+          products = (fallbackMinimal.data ?? []).map((product) => ({
+            ...(product as Omit<ProductRow, "description" | "image_url" | "created_at">),
+            description: null,
+            image_url: null,
+            created_at: null,
+          }));
+        }
+      }
     }
   } else {
     products = (detailedProductsResult.data ?? []) as ProductRow[];
@@ -131,7 +156,11 @@ export default async function ProductsPage() {
                   </div>
                 </div>
 
-                <span>{new Date(product.created_at).toLocaleDateString("en-GB")}</span>
+                <span>
+                  {product.created_at
+                    ? new Date(product.created_at).toLocaleDateString("en-GB")
+                    : "-"}
+                </span>
               </div>
             );
           })
