@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
+function buildFailedUrl(request: NextRequest, detail: string) {
+  const failedUrl = new URL("/app/settings", request.url);
+  failedUrl.searchParams.set("shopify", "disconnect-failed");
+  failedUrl.searchParams.set("sync_error", detail.slice(0, 180));
+  return failedUrl;
+}
+
 export async function POST(request: NextRequest) {
   const supabase = await createSupabaseServerClient();
   const {
@@ -25,7 +32,7 @@ export async function POST(request: NextRequest) {
   const storeId = form.get("store_id")?.toString();
   if (!storeId) {
     return NextResponse.redirect(
-      new URL("/app/settings?shopify=disconnect-failed", request.url)
+      buildFailedUrl(request, "Missing store id for disconnect.")
     );
   }
 
@@ -51,7 +58,7 @@ export async function POST(request: NextRequest) {
     .eq("shopify_store_id", store.id);
   if (tokenDeleteError) {
     return NextResponse.redirect(
-      new URL("/app/settings?shopify=disconnect-failed", request.url)
+      buildFailedUrl(request, tokenDeleteError.message)
     );
   }
 
@@ -64,9 +71,27 @@ export async function POST(request: NextRequest) {
     })
     .eq("tenant_id", profile.tenant_id)
     .eq("id", store.id);
+
+  // Backward-compatible fallback for deployments missing sync metadata columns.
+  if (storeUpdateError?.message?.toLowerCase().includes("last_sync_")) {
+    const { error: statusOnlyUpdateError } = await admin
+      .from("shopify_store")
+      .update({ status: "disconnected" })
+      .eq("tenant_id", profile.tenant_id)
+      .eq("id", store.id);
+    if (!statusOnlyUpdateError) {
+      return NextResponse.redirect(
+        new URL("/app/settings?shopify=disconnected", request.url)
+      );
+    }
+    return NextResponse.redirect(
+      buildFailedUrl(request, statusOnlyUpdateError.message)
+    );
+  }
+
   if (storeUpdateError) {
     return NextResponse.redirect(
-      new URL("/app/settings?shopify=disconnect-failed", request.url)
+      buildFailedUrl(request, storeUpdateError.message)
     );
   }
 

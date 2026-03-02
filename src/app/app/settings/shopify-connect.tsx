@@ -48,7 +48,9 @@ export default function ShopifyConnect({ status, detail }: Props) {
       {status ? (
         <p className={styles.notice}>
           {statusText[status] ?? status}
-          {status === "sync-failed" && detail ? ` (${detail})` : ""}
+          {(status === "sync-failed" || status === "disconnect-failed") && detail
+            ? ` (${detail})`
+            : ""}
         </p>
       ) : null}
       <form className={styles.shopifyForm} action="/api/shopify/auth" method="get">
