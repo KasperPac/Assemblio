@@ -1,0 +1,80 @@
+
+> assemblio-app@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.112:3000
+- Environments: .env.local, .env
+
+✓ Starting...
+✓ Ready in 1306ms
+ GET / 200 in 535ms (compile: 359ms, render: 177ms)
+✓ Finished writing to filesystem cache in 11.6s
+ GET / 200 in 143ms (compile: 7ms, render: 136ms)
+ GET / 200 in 96ms (compile: 14ms, render: 82ms)
+✓ Compiled in 280ms
+✓ Compiled in 140ms
+ GET / 200 in 332ms (compile: 214ms, render: 118ms)
+ GET / 200 in 51ms (compile: 4ms, render: 47ms)
+ GET / 200 in 275ms (compile: 7ms, render: 268ms)
+ GET / 200 in 149ms (compile: 5ms, render: 144ms)
+ GET / 200 in 83ms (compile: 4ms, render: 79ms)
+ GET /app 200 in 3.2s (compile: 639ms, render: 2.6s)
+ GET /app/products 200 in 947ms (compile: 330ms, render: 617ms)
+ GET /app/components 200 in 721ms (compile: 292ms, render: 430ms)
+ GET /app/goods-inwards 200 in 493ms (compile: 245ms, render: 248ms)
+ GET /app/orders 200 in 493ms (compile: 239ms, render: 254ms)
+ GET /app/stocktake 200 in 950ms (compile: 371ms, render: 579ms)
+ GET /app/reports 200 in 846ms (compile: 257ms, render: 590ms)
+ GET /app/suppliers 200 in 542ms (compile: 287ms, render: 255ms)
+ GET /app/activity-log 200 in 564ms (compile: 275ms, render: 289ms)
+ GET /app/settings 200 in 354ms (compile: 32ms, render: 322ms)
+ GET /app/trash 200 in 549ms (compile: 243ms, render: 306ms)
+ GET /app 200 in 1623ms (compile: 4ms, render: 1619ms)
+ GET /app/orders 200 in 263ms (compile: 3ms, render: 260ms)
+ GET /app 200 in 1736ms (compile: 4ms, render: 1732ms)
+ GET /app/help 200 in 962ms (compile: 597ms, render: 365ms)
+ GET /app 200 in 1788ms (compile: 4ms, render: 1784ms)
+✓ Compiled in 14ms
+✓ Compiled in 37ms
+ GET /app 200 in 807ms (compile: 4ms, render: 803ms)
+ GET /app 200 in 757ms (compile: 3ms, render: 754ms)
+✓ Compiled in 2ms
+ GET /app 200 in 485ms (compile: 3ms, render: 481ms)
+✓ Compiled in 32ms
+ GET /app 200 in 814ms (compile: 3ms, render: 811ms)
+ GET /app/settings 200 in 458ms (compile: 3ms, render: 455ms)
+ POST /api/shopify/sync 307 in 438ms (compile: 401ms, render: 37ms)
+ POST /login?redirect=/app/settings 200 in 805ms (compile: 607ms, render: 198ms)
+ GET /app/settings 200 in 375ms (compile: 4ms, render: 371ms)
+ GET /app 200 in 1660ms (compile: 5ms, render: 1655ms)
+ GET /app/help 200 in 259ms (compile: 4ms, render: 255ms)
+ GET /app/activity-log 200 in 280ms (compile: 3ms, render: 277ms)
+✓ Compiled in 14ms
+ GET /app/activity-log 200 in 578ms (compile: 9ms, render: 569ms)
+✓ Compiled in 15ms
+ GET /app/activity-log 200 in 256ms (compile: 2ms, render: 254ms)
+✓ Compiled in 15ms
+ GET /app/activity-log 200 in 266ms (compile: 4ms, render: 261ms)
+✓ Compiled in 107ms
+ GET /app/activity-log 200 in 542ms (compile: 3ms, render: 539ms)
+✓ Compiled in 6ms
+✓ Compiled in 7ms
+ GET /app/activity-log 200 in 293ms (compile: 11ms, render: 282ms)
+ GET /app/activity-log 200 in 254ms (compile: 4ms, render: 250ms)
+✓ Compiled in 6ms
+ GET /app/activity-log 200 in 282ms (compile: 7ms, render: 275ms)
+ GET /app 200 in 1994ms (compile: 3ms, render: 1991ms)
+ GET /app/products 200 in 471ms (compile: 4ms, render: 467ms)
+ GET /app/components 200 in 677ms (compile: 166ms, render: 511ms)
+ GET /app/goods-inwards 200 in 475ms (compile: 137ms, render: 338ms)
+ GET /app/orders 200 in 394ms (compile: 91ms, render: 303ms)
+ GET /app/settings 200 in 274ms (compile: 4ms, render: 270ms)
+ GET /app/trash 200 in 548ms (compile: 152ms, render: 397ms)
+ GET /app 200 in 1623ms (compile: 2ms, render: 1621ms)
+ GET /app 200 in 2.4s (compile: 4ms, render: 2.4s)
+ GET / 200 in 77ms (compile: 4ms, render: 73ms)
+✓ Compiled in 39ms
+✓ Compiled in 4ms
+^C

@@ -1,0 +1,17 @@
+
+> assemblio-app@0.1.0 dev:webpack
+> next dev --webpack
+
+Error: spawn EPERM
+    at ChildProcess.spawn (node:internal/child_process:420:11)
+    at spawn (node:child_process:762:9)
+    at fork (node:child_process:172:10)
+    at C:\dev\Assemblio\node_modules\next\dist\cli\next-dev.js:243:45
+    at new Promise (<anonymous>)
+    at startServer (C:\dev\Assemblio\node_modules\next\dist\cli\next-dev.js:212:16)
+    at runDevServer (C:\dev\Assemblio\node_modules\next\dist\cli\next-dev.js:334:23)
+    at Module.nextDev (C:\dev\Assemblio\node_modules\next\dist\cli\next-dev.js:342:11) {
+  errno: -4048,
+  code: 'EPERM',
+  syscall: 'spawn'
+}
