@@ -65,8 +65,12 @@ export async function GET(request: NextRequest) {
     );
   }
   if (parsed.shop !== shop) {
+    const mismatchUrl = new URL("/app/settings", request.url);
+    mismatchUrl.searchParams.set("shopify", "state-shop-mismatch");
+    mismatchUrl.searchParams.set("expected_shop", parsed.shop);
+    mismatchUrl.searchParams.set("returned_shop", shop);
     return NextResponse.redirect(
-      new URL("/app/settings?shopify=state-shop-mismatch", request.url)
+      mismatchUrl
     );
   }
 
