@@ -28,12 +28,8 @@ export default async function SettingsPage({ searchParams }: Props) {
   const supabase = await createSupabaseServerClient();
   const params = (await searchParams) ?? {};
 
-  const [
-    { data: profile },
-    { data: locations },
-    { count: userCount },
-    { data: stores },
-  ] = await Promise.all([
+  const [{ data: profile }, { data: locations }, { count: userCount }] =
+    await Promise.all([
     supabase
       .from("profiles")
       .select("role,tenant_id,tenant:tenant_id(name)")
@@ -44,12 +40,37 @@ export default async function SettingsPage({ searchParams }: Props) {
       .eq("is_default", true)
       .limit(1),
     supabase.from("profiles").select("*", { count: "exact", head: true }),
-    supabase
-      .from("shopify_store")
-      .select("id,store_domain,status,created_at,last_synced_at,last_sync_status,last_sync_meta")
-      .order("created_at", { ascending: false })
-      .limit(10),
   ]);
+
+  let stores: StoreRow[] = [];
+  let storesLoadError: string | null = null;
+
+  const detailedStoresResult = await supabase
+    .from("shopify_store")
+    .select("id,store_domain,status,created_at,last_synced_at,last_sync_status,last_sync_meta")
+    .order("created_at", { ascending: false })
+    .limit(10);
+
+  if (detailedStoresResult.error) {
+    const fallbackStoresResult = await supabase
+      .from("shopify_store")
+      .select("id,store_domain,status,created_at")
+      .order("created_at", { ascending: false })
+      .limit(10);
+
+    if (fallbackStoresResult.error) {
+      storesLoadError = fallbackStoresResult.error.message;
+    } else {
+      stores = (fallbackStoresResult.data ?? []).map((store) => ({
+        ...(store as Omit<StoreRow, "last_synced_at" | "last_sync_status" | "last_sync_meta">),
+        last_synced_at: null,
+        last_sync_status: null,
+        last_sync_meta: null,
+      }));
+    }
+  } else {
+    stores = (detailedStoresResult.data ?? []) as StoreRow[];
+  }
   const tenant = Array.isArray(profile?.tenant)
     ? profile?.tenant[0] ?? null
     : profile?.tenant;
@@ -130,10 +151,12 @@ export default async function SettingsPage({ searchParams }: Props) {
       </div>
       <div className={styles.storeList}>
         <h3>Connected Stores</h3>
-        {(stores ?? []).length === 0 ? (
+        {storesLoadError ? (
+          <p className={styles.empty}>Failed to load connected stores: {storesLoadError}</p>
+        ) : stores.length === 0 ? (
           <p className={styles.empty}>No Shopify stores connected.</p>
         ) : (
-          (stores as StoreRow[]).map((store) => (
+          stores.map((store) => (
             <div className={styles.storeRowWrap} key={store.id}>
               <div className={styles.storeRow}>
                 <span>{store.store_domain}</span>

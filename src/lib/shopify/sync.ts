@@ -39,6 +39,14 @@ type OrdersQueryResult = {
   };
 };
 
+function assertNoError(
+  error: { message?: string } | null,
+  context: string
+) {
+  if (!error) return;
+  throw new Error(`${context}: ${error.message ?? "Unknown Supabase error"}`);
+}
+
 function mapOrderStatus(order: ShopifyOrderNode) {
   if (order.cancelledAt) return "cancelled";
   if ((order.displayFulfillmentStatus ?? "").toLowerCase().includes("fulfilled")) {
@@ -138,7 +146,7 @@ export async function syncShopifyStoreData(
   ]);
 
   if (products.length > 0) {
-    await admin.from("shopify_product").upsert(
+    const { error } = await admin.from("shopify_product").upsert(
       products.map((product) => ({
         tenant_id: tenantId,
         shopify_id: product.id,
@@ -148,16 +156,18 @@ export async function syncShopifyStoreData(
       })),
       { onConflict: "tenant_id,shopify_id" }
     );
+    assertNoError(error, "Failed to upsert shopify_product");
   }
 
   const productIds = products.map((product) => product.id);
   let productMap = new Map<string, string>();
   if (productIds.length > 0) {
-    const { data: savedProducts } = await admin
+    const { data: savedProducts, error } = await admin
       .from("shopify_product")
       .select("id,shopify_id")
       .eq("tenant_id", tenantId)
       .in("shopify_id", productIds);
+    assertNoError(error, "Failed to fetch saved shopify_product rows");
     productMap = new Map((savedProducts ?? []).map((p) => [p.shopify_id, p.id]));
   }
 
@@ -174,19 +184,21 @@ export async function syncShopifyStoreData(
   );
 
   if (variantRows.length > 0) {
-    await admin.from("shopify_variant").upsert(variantRows, {
+    const { error } = await admin.from("shopify_variant").upsert(variantRows, {
       onConflict: "tenant_id,shopify_id",
     });
+    assertNoError(error, "Failed to upsert shopify_variant");
   }
 
   const variantShopifyIds = variantRows.map((variant) => variant.shopify_id);
   let variantMap = new Map<string, string>();
   if (variantShopifyIds.length > 0) {
-    const { data: savedVariants } = await admin
+    const { data: savedVariants, error } = await admin
       .from("shopify_variant")
       .select("id,shopify_id")
       .eq("tenant_id", tenantId)
       .in("shopify_id", variantShopifyIds);
+    assertNoError(error, "Failed to fetch saved shopify_variant rows");
     variantMap = new Map((savedVariants ?? []).map((v) => [v.shopify_id, v.id]));
   }
 
@@ -196,19 +208,21 @@ export async function syncShopifyStoreData(
     status: mapOrderStatus(order),
   }));
   if (orderRows.length > 0) {
-    await admin.from("orders").upsert(orderRows, {
+    const { error } = await admin.from("orders").upsert(orderRows, {
       onConflict: "tenant_id,shopify_order_id",
     });
+    assertNoError(error, "Failed to upsert orders");
   }
 
   const orderIds = orderRows.map((order) => order.shopify_order_id);
   let orderMap = new Map<string, string>();
   if (orderIds.length > 0) {
-    const { data: savedOrders } = await admin
+    const { data: savedOrders, error } = await admin
       .from("orders")
       .select("id,shopify_order_id")
       .eq("tenant_id", tenantId)
       .in("shopify_order_id", orderIds);
+    assertNoError(error, "Failed to fetch saved orders rows");
     orderMap = new Map((savedOrders ?? []).map((o) => [o.shopify_order_id, o.id]));
   }
 
@@ -236,9 +250,10 @@ export async function syncShopifyStoreData(
   });
 
   if (orderLineRows.length > 0) {
-    await admin.from("order_line").upsert(orderLineRows, {
+    const { error } = await admin.from("order_line").upsert(orderLineRows, {
       onConflict: "tenant_id,order_id,variant_id",
     });
+    assertNoError(error, "Failed to upsert order_line");
   }
 
   let allocationRuns = 0;
@@ -252,7 +267,7 @@ export async function syncShopifyStoreData(
     }
   }
 
-  await admin.from("activity_log").insert({
+  const { error: activityError } = await admin.from("activity_log").insert({
     tenant_id: tenantId,
     actor_id: null,
     event: "SHOPIFY_SYNC_COMPLETED",
@@ -265,6 +280,7 @@ export async function syncShopifyStoreData(
       allocation_runs: allocationRuns,
     },
   });
+  assertNoError(activityError, "Failed to insert activity_log");
 
   return {
     products: products.length,

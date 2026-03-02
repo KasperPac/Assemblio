@@ -27,16 +27,38 @@ function formatDescription(description: string | null) {
 
 export default async function ProductsPage() {
   const supabase = await createSupabaseServerClient();
-  const [{ data: products, error }, { data: variants }] = await Promise.all([
-    supabase
-      .from("shopify_product")
-      .select("id,title,description,created_at,image_url")
-      .order("created_at", { ascending: false }),
+  const [{ data: variants }, detailedProductsResult] = await Promise.all([
     supabase
       .from("shopify_variant")
       .select("id,product_id,title,sku")
       .order("created_at", { ascending: true }),
+    supabase
+      .from("shopify_product")
+      .select("id,title,description,created_at,image_url")
+      .order("created_at", { ascending: false }),
   ]);
+
+  let products: ProductRow[] = [];
+  let productsError: string | null = null;
+
+  if (detailedProductsResult.error) {
+    const fallbackProductsResult = await supabase
+      .from("shopify_product")
+      .select("id,title,created_at")
+      .order("created_at", { ascending: false });
+
+    if (fallbackProductsResult.error) {
+      productsError = fallbackProductsResult.error.message;
+    } else {
+      products = (fallbackProductsResult.data ?? []).map((product) => ({
+        ...(product as Omit<ProductRow, "description" | "image_url">),
+        description: null,
+        image_url: null,
+      }));
+    }
+  } else {
+    products = (detailedProductsResult.data ?? []) as ProductRow[];
+  }
 
   const variantsByProduct = (variants ?? []).reduce<Record<string, VariantRow[]>>(
     (acc, variant) => {
@@ -53,7 +75,7 @@ export default async function ProductsPage() {
       <div className={styles.header}>
         <div>
           <h1>Products</h1>
-          <p>{(products ?? []).length} imported from Shopify</p>
+          <p>{products.length} imported from Shopify</p>
         </div>
       </div>
 
@@ -63,12 +85,12 @@ export default async function ProductsPage() {
           <span>Variants</span>
           <span>Last Updated</span>
         </div>
-        {error ? (
-          <div className={styles.empty}>Failed to load products.</div>
-        ) : (products ?? []).length === 0 ? (
+        {productsError ? (
+          <div className={styles.empty}>Failed to load products: {productsError}</div>
+        ) : products.length === 0 ? (
           <div className={styles.empty}>No products yet.</div>
         ) : (
-          (products as ProductRow[]).map((product) => {
+          products.map((product) => {
             const productVariants = variantsByProduct[product.id] ?? [];
             return (
               <div key={product.id} className={styles.tableRow}>
