@@ -13,69 +13,66 @@
 }
 
 .header h1 {
-  font-size: 42px;
-  line-height: 1.05;
+  font-size: 30px;
+  letter-spacing: -0.03em;
+  color: #18273c;
 }
 
 .header p {
-  color: #7d8999;
-  font-size: 18px;
+  color: #677e9b;
+  font-size: 13px;
 }
 
 .importButton {
   border: none;
-  border-radius: 8px;
-  padding: 9px 16px;
-  background: #6480f0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: linear-gradient(120deg, #5f7fff, #80a3ff);
   color: #ffffff;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 12px 20px rgba(86, 118, 241, 0.26);
 }
 
 .filters {
   display: grid;
-  grid-template-columns: 1fr 140px;
-  gap: 12px;
+  grid-template-columns: 1fr 150px;
+  gap: 10px;
 }
 
 .filters input,
 .filters select {
-  border: 1px solid #d7deea;
-  border-radius: 8px;
-  padding: 10px 12px;
-  font-size: 14px;
-  color: #2f3a49;
-  background: #ffffff;
+  border-radius: 10px;
 }
 
 .table {
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 8px 16px rgba(27, 31, 42, 0.06);
-  border: 1px solid #e8edf5;
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.94), rgba(246, 251, 255, 0.86));
+  border-radius: 14px;
+  border: 1px solid rgba(132, 155, 186, 0.24);
+  box-shadow: 0 18px 30px rgba(44, 66, 96, 0.1);
   overflow: hidden;
 }
 
 .tableHeader,
 .tableRow {
   display: grid;
-  grid-template-columns: 1.6fr 0.5fr 0.7fr 0.7fr;
-  gap: 14px;
+  grid-template-columns: 1.6fr 0.45fr 0.55fr 0.7fr;
+  gap: 12px;
   align-items: center;
-  padding: 14px 18px;
+  padding: 12px 14px;
 }
 
 .tableHeader {
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #7d8999;
-  background: #f7f9fd;
-  font-size: 12px;
+  color: #6e85a1;
+  background: rgba(238, 245, 255, 0.9);
+  font-size: 11px;
   font-weight: 700;
 }
 
 .tableRow {
-  border-top: 1px solid #edf1f7;
+  border-top: 1px solid rgba(143, 165, 194, 0.2);
 }
 
 .productCell {
@@ -88,15 +85,16 @@
 }
 
 .thumb {
-  width: 42px;
-  height: 42px;
-  border-radius: 7px;
-  background: #f1f3f8;
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  background: #eef3fb;
+  border: 1px solid rgba(145, 166, 196, 0.28);
   display: grid;
   place-items: center;
   overflow: hidden;
   font-weight: 700;
-  color: #5b6c82;
+  color: #627793;
   flex-shrink: 0;
 }
 
@@ -110,66 +108,44 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
+  color: #18273c;
 }
 
 .variantCount {
-  font-size: 22px;
-  color: #4b596b;
+  font-size: 13px;
+  color: #3e5574;
+  font-weight: 600;
 }
 
 .statusBadge {
   justify-self: start;
-  border-radius: 4px;
-  padding: 2px 10px;
-  font-size: 12px;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px;
   font-weight: 700;
 }
 
 .statusActive {
-  background: #19b57a;
-  color: #ffffff;
+  background: #d8f8e8;
+  color: #188359;
 }
 
 .statusPending {
-  background: #ffe7c7;
+  background: #fff0d3;
   color: #956200;
 }
 
 .dateCell {
-  color: #6f7d90;
-  font-size: 20px;
+  color: #5f7695;
+  font-size: 13px;
 }
 
 .empty {
   padding: 18px;
   font-size: 13px;
-  color: #8b97a7;
-}
-
-@media (max-width: 1100px) {
-  .header h1 {
-    font-size: 34px;
-  }
-
-  .header p {
-    font-size: 15px;
-  }
-
-  .tableHeader,
-  .tableRow {
-    grid-template-columns: 1.4fr 0.6fr 0.8fr 0.8fr;
-  }
-
-  .productTitle {
-    font-size: 18px;
-  }
-
-  .variantCount,
-  .dateCell {
-    font-size: 16px;
-  }
+  color: #758aa5;
 }
 
 @media (max-width: 900px) {
@@ -184,10 +160,5 @@
   .tableRow {
     grid-template-columns: 1fr;
     gap: 8px;
-  }
-
-  .variantCount,
-  .dateCell {
-    font-size: 14px;
   }
 }

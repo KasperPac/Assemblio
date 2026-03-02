@@ -11,23 +11,23 @@
 }
 
 .backButton {
-  border: 1px solid #d7deea;
+  border: 1px solid rgba(138, 161, 193, 0.3);
   border-radius: 9px;
   padding: 8px 12px;
   text-decoration: none;
-  color: #4d5d73;
+  color: #4b6280;
   font-weight: 600;
   font-size: 13px;
-  background: #ffffff;
+  background: rgba(247, 251, 255, 0.88);
 }
 
 .breadcrumb {
-  color: #7d8a9d;
+  color: #6b819e;
   font-size: 13px;
 }
 
 .breadcrumb a {
-  color: #5068d8;
+  color: #4d6de5;
   text-decoration: none;
 }
 
@@ -38,9 +38,9 @@
 }
 
 .sideCard {
-  background: #ffffff;
-  border: 1px solid #e6ebf4;
-  border-radius: 10px;
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.94), rgba(245, 250, 255, 0.86));
+  border: 1px solid rgba(132, 155, 186, 0.24);
+  border-radius: 14px;
   padding: 16px;
   display: grid;
   gap: 10px;
@@ -49,13 +49,13 @@
 
 .sideImage {
   height: 150px;
-  border-radius: 9px;
+  border-radius: 11px;
   overflow: hidden;
-  background: #eef2f7;
+  background: #edf3fb;
   display: grid;
   place-items: center;
   font-size: 36px;
-  color: #72829a;
+  color: #627993;
   font-weight: 700;
 }
 
@@ -66,8 +66,9 @@
 }
 
 .sideTitle {
-  font-size: 34px;
+  font-size: 24px;
   line-height: 1.1;
+  color: #16263b;
 }
 
 .sideMeta {
@@ -78,12 +79,13 @@
 .sideMeta p {
   font-size: 12px;
   font-weight: 700;
-  color: #7a8799;
+  color: #68809f;
   text-transform: uppercase;
 }
 
 .sideMeta strong {
-  font-size: 20px;
+  font-size: 17px;
+  color: #283b54;
 }
 
 .statusBadge {
@@ -91,7 +93,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 4px;
-  background: #1fb67a;
+  background: #1da96f;
   color: #ffffff;
   font-size: 12px;
   font-weight: 700;
@@ -99,18 +101,18 @@
 }
 
 .variantSelect {
-  border: 1px solid #cfd7e3;
-  background: #ffffff;
+  border: 1px solid rgba(132, 155, 186, 0.3);
+  background: rgba(248, 252, 255, 0.9);
   border-radius: 8px;
   padding: 9px 10px;
-  color: #4d5d73;
+  color: #415976;
   font-size: 13px;
 }
 
 .mainCard {
-  background: #ffffff;
-  border: 1px solid #e6ebf4;
-  border-radius: 10px;
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.94), rgba(245, 250, 255, 0.86));
+  border: 1px solid rgba(132, 155, 186, 0.24);
+  border-radius: 14px;
   padding: 16px;
   display: grid;
   gap: 14px;
@@ -124,13 +126,14 @@
 }
 
 .mainHeader h2 {
-  font-size: 30px;
+  font-size: 24px;
   line-height: 1.2;
+  color: #18273d;
 }
 
 .versionMeta {
-  font-size: 20px;
-  color: #4d5d73;
+  font-size: 14px;
+  color: #59708f;
 }
 
 .headerActions {
@@ -154,11 +157,11 @@
 }
 
 .actionButton {
-  background: #6480f0;
+  background: linear-gradient(120deg, #5f7fff, #83a2ff);
 }
 
 .actionButtonSecondary {
-  background: #7c91dc;
+  background: #7f93d7;
 }
 
 .actionButtonDanger {
@@ -172,8 +175,8 @@
 }
 
 .lineTable {
-  border: 1px solid #e5eaf3;
-  border-radius: 8px;
+  border: 1px solid rgba(132, 155, 186, 0.24);
+  border-radius: 10px;
   overflow: hidden;
 }
 
@@ -187,21 +190,21 @@
 }
 
 .lineHeader {
-  background: #f8fafd;
-  color: #55667d;
+  background: rgba(238, 245, 255, 0.9);
+  color: #587090;
   font-weight: 700;
   font-size: 12px;
 }
 
 .lineRow {
-  border-top: 1px solid #edf1f7;
-  color: #273447;
+  border-top: 1px solid rgba(143, 165, 194, 0.2);
+  color: #2a3f5a;
   font-size: 13px;
 }
 
 .lineRowEmpty {
   padding: 14px 12px;
-  color: #79879a;
+  color: #6e84a1;
   font-size: 13px;
 }
 

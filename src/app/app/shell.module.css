@@ -1,111 +1,158 @@
 .shell {
+  --panel: rgba(255, 255, 255, 0.88);
+  --panel-border: rgba(128, 148, 180, 0.26);
+  --ink: #112031;
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 300px 1fr;
   min-height: 100vh;
-  background: #f5f7fb;
-  color: #1b1f2a;
+  background:
+    radial-gradient(1200px 800px at -10% -10%, #e3f1ff 0%, transparent 55%),
+    radial-gradient(900px 700px at 110% 10%, #f8dfff 0%, transparent 45%),
+    linear-gradient(180deg, #f3f7fc 0%, #e9f0f9 100%);
+  color: var(--ink);
 }
 
 .sidebar {
-  background: #1f2a39;
-  color: #e7edf7;
+  margin: 14px;
+  border-radius: 28px;
+  background:
+    linear-gradient(160deg, #111d37 0%, #1b2742 40%, #182d52 100%);
+  color: #d6e1fb;
   display: flex;
   flex-direction: column;
-  padding: 24px 18px;
-  gap: 24px;
+  padding: 20px 18px;
+  gap: 18px;
+  border: 1px solid rgba(169, 189, 224, 0.2);
+  box-shadow:
+    0 30px 60px rgba(12, 20, 36, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .brand {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 6px 6px 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px 8px 16px;
+  border-bottom: 1px solid rgba(197, 214, 245, 0.15);
 }
 
 .brandMark {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 12px;
-  background: radial-gradient(circle at 30% 30%, #7d5cff, #5a35d6 55%, #3a1fb6);
+  background:
+    radial-gradient(circle at 30% 22%, #97a7ff 0%, #6f84ff 38%, #364cdb 100%);
+  box-shadow:
+    0 10px 16px rgba(83, 109, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .brandTitle {
   font-weight: 700;
-  font-size: 18px;
+  font-size: 21px;
+  color: #f6f9ff;
 }
 
 .brandMeta {
   font-size: 12px;
-  color: rgba(231, 237, 247, 0.65);
+  color: rgba(222, 232, 252, 0.7);
 }
 
 .nav {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
 }
 
 .nav a {
-  padding: 10px 12px;
-  border-radius: 10px;
-  color: rgba(231, 237, 247, 0.75);
+  position: relative;
+  padding: 11px 14px 11px 40px;
+  border-radius: 12px;
+  color: rgba(214, 225, 251, 0.84);
   font-size: 13px;
-  font-weight: 500;
-  transition: background 0.2s ease, color 0.2s ease;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: transform 0.14s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.nav a::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(201, 216, 251, 0.35);
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .nav a:hover {
-  background: rgba(109, 126, 255, 0.15);
+  background: rgba(133, 162, 255, 0.17);
   color: #ffffff;
+  transform: translateX(2px);
 }
 
 .active {
-  background: #6d7efb;
+  background:
+    linear-gradient(120deg, rgba(94, 125, 255, 0.9), rgba(126, 152, 255, 0.9));
   color: #ffffff;
-  font-weight: 600;
+  box-shadow:
+    0 10px 18px rgba(74, 105, 245, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.active::before {
+  background: #dfe8ff;
 }
 
 .sidebarFooter {
   margin-top: auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
+}
+
+.tenantSwitchForm,
+.planCard,
+.userCard {
+  border-radius: 14px;
+  border: 1px solid rgba(201, 214, 244, 0.16);
+  background: rgba(207, 224, 255, 0.09);
+  backdrop-filter: blur(4px);
 }
 
 .tenantSwitchForm {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.08);
+  padding: 12px;
 }
 
 .tenantSwitchLabel {
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(231, 237, 247, 0.72);
+  letter-spacing: 0.12em;
+  color: rgba(227, 236, 255, 0.78);
 }
 
 .tenantSwitchSelect {
-  border: 1px solid rgba(231, 237, 247, 0.2);
-  border-radius: 8px;
-  background: #223247;
-  color: #e7edf7;
-  padding: 8px 10px;
+  border: 1px solid rgba(233, 240, 255, 0.24);
+  border-radius: 9px;
+  background: rgba(23, 41, 74, 0.85);
+  color: #ecf2ff;
+  padding: 9px 10px;
   font-size: 12px;
 }
 
 .tenantSwitchButton {
   border: none;
-  border-radius: 8px;
-  background: #6d7efb;
+  border-radius: 9px;
+  background: linear-gradient(120deg, #6f86ff, #8ca3ff);
   color: #ffffff;
-  padding: 8px 10px;
+  padding: 9px 10px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
 }
 
@@ -113,42 +160,39 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(255, 255, 255, 0.08);
-  padding: 10px 12px;
-  border-radius: 12px;
+  padding: 11px 12px;
 }
 
 .planIcon {
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: #2e4058;
+  background: linear-gradient(140deg, #324e89, #223a68);
 }
 
 .planName {
   font-size: 13px;
   font-weight: 600;
+  color: #eef3ff;
 }
 
 .planTier {
   font-size: 11px;
-  color: rgba(231, 237, 247, 0.6);
+  color: rgba(228, 236, 255, 0.62);
 }
 
 .userCard {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
+  padding: 11px 12px;
 }
 
 .userAvatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: #2e4058;
+  width: 35px;
+  height: 35px;
+  border-radius: 12px;
+  background: linear-gradient(140deg, #375597, #294270);
   display: grid;
   place-items: center;
   font-weight: 700;
@@ -157,57 +201,135 @@
 .userName {
   font-size: 13px;
   font-weight: 600;
+  color: #f2f6ff;
 }
 
 .userRole {
   font-size: 11px;
-  color: rgba(231, 237, 247, 0.6);
+  color: rgba(230, 238, 255, 0.65);
+}
+
+.helpLink,
+.logout {
+  color: rgba(227, 235, 255, 0.76);
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.helpLink:hover,
+.logout:hover {
+  background: rgba(196, 214, 255, 0.1);
+  color: #f8fbff;
 }
 
 .logout {
   border: none;
   background: transparent;
-  color: rgba(231, 237, 247, 0.7);
-  font-size: 12px;
+  width: 100%;
   text-align: left;
-  padding: 4px 8px;
   cursor: pointer;
 }
 
-.helpLink {
-  color: rgba(231, 237, 247, 0.7);
-  font-size: 12px;
-  padding: 4px 8px;
-}
-
 .main {
-  padding: 28px 32px;
+  padding: 18px 20px 22px 8px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
+}
+
+.topbar {
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  box-shadow:
+    0 12px 30px rgba(55, 86, 128, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  padding: 16px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.topbarEyebrow {
+  font-family: var(--font-plex-mono), monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 11px;
+  color: #5f7698;
+}
+
+.topbarTitle {
+  margin-top: 4px;
+  font-size: 26px;
+  letter-spacing: -0.03em;
+  color: #182539;
+}
+
+.topbarMeta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.metaChip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(145, 166, 196, 0.35);
+  background: rgba(244, 249, 255, 0.85);
+  font-size: 12px;
+  color: #3d5576;
 }
 
 .content {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 22px;
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  border-radius: 24px;
+  backdrop-filter: blur(8px);
+  box-shadow:
+    0 24px 54px rgba(40, 63, 96, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.76);
+  padding: 18px;
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1150px) {
   .shell {
     grid-template-columns: 1fr;
   }
 
   .sidebar {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    flex-direction: row;
-    flex-wrap: wrap;
+    margin: 12px 12px 0;
+    border-radius: 20px;
+    gap: 12px;
   }
 
   .nav {
     flex-direction: row;
     flex-wrap: wrap;
+  }
+
+  .main {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 840px) {
+  .content {
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .topbarTitle {
+    font-size: 22px;
+  }
+
+  .sidebar {
+    padding: 14px;
   }
 }

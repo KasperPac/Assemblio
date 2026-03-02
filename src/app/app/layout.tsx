@@ -103,6 +103,17 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         </div>
       </aside>
       <div className={styles.main}>
+        <header className={styles.topbar}>
+          <div>
+            <p className={styles.topbarEyebrow}>Operations</p>
+            <h1 className={styles.topbarTitle}>Assemblio Control Surface</h1>
+          </div>
+          <div className={styles.topbarMeta}>
+            <span className={styles.metaChip}>{tenant?.name ?? "Tenant"}</span>
+            <span className={styles.metaChip}>{profile?.role ?? "member"}</span>
+            <span className={styles.metaChip}>{user?.email ?? "User"}</span>
+          </div>
+        </header>
         <section className={styles.content}>{children}</section>
       </div>
     </div>

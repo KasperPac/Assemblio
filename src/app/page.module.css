@@ -1,7 +1,10 @@
 .page {
   min-height: 100vh;
-  background: radial-gradient(circle at top, #f7f2ea 0%, #e7e3dc 45%, #d7d1c7 100%);
-  color: #0b0b0e;
+  background:
+    radial-gradient(1000px 700px at -10% -10%, #cbe3ff 0%, transparent 58%),
+    radial-gradient(900px 700px at 110% 0%, #e6d5ff 0%, transparent 45%),
+    linear-gradient(180deg, #eef4fc 0%, #e6eef8 100%);
+  color: #132136;
   display: flex;
   flex-direction: column;
   padding: 48px clamp(20px, 4vw, 72px) 56px;
@@ -25,8 +28,8 @@
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: linear-gradient(140deg, #111 0%, #2f2f2f 55%, #ff7b54 100%);
-  box-shadow: 0 10px 30px rgba(15, 15, 20, 0.28);
+  background: linear-gradient(145deg, #4968ea 0%, #6f8eff 55%, #95abff 100%);
+  box-shadow: 0 10px 30px rgba(66, 95, 211, 0.28);
 }
 
 .brandTitle {
@@ -39,7 +42,7 @@
   font-size: 13px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(11, 11, 14, 0.6);
+  color: rgba(34, 53, 77, 0.6);
 }
 
 .nav {
@@ -48,7 +51,7 @@
   justify-content: center;
   font-weight: 500;
   letter-spacing: 0.02em;
-  color: rgba(11, 11, 14, 0.7);
+  color: rgba(34, 53, 77, 0.75);
 }
 
 .headerCtas {
@@ -71,13 +74,13 @@
 
 .ghost {
   background: transparent;
-  border: 1px solid rgba(11, 11, 14, 0.2);
+  border: 1px solid rgba(94, 122, 163, 0.32);
 }
 
 .primary {
-  background: #111;
+  background: linear-gradient(120deg, #5f7fff, #80a3ff);
   color: #fff;
-  box-shadow: 0 12px 28px rgba(20, 20, 30, 0.25);
+  box-shadow: 0 12px 28px rgba(87, 118, 236, 0.3);
 }
 
 .main {
@@ -117,10 +120,10 @@
 }
 
 .progressCard {
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.84);
   border-radius: 18px;
-  border: 1px solid rgba(11, 11, 14, 0.08);
-  box-shadow: 0 12px 28px rgba(15, 15, 20, 0.08);
+  border: 1px solid rgba(132, 155, 186, 0.22);
+  box-shadow: 0 12px 28px rgba(43, 68, 103, 0.1);
   padding: 18px;
 }
 
@@ -154,7 +157,7 @@
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, #ff7b54, #f3a35b);
+  background: linear-gradient(90deg, #5f7fff, #8aa8ff);
 }
 
 .progressItem p {
@@ -210,8 +213,8 @@
 }
 
 .timelineCard {
-  background: rgba(17, 16, 24, 0.95);
-  color: #f7f2ea;
+  background: linear-gradient(160deg, #152440 0%, #1c3159 100%);
+  color: #ebf2ff;
   border-radius: 14px;
   padding: 14px 16px;
   display: grid;
@@ -222,7 +225,7 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  color: rgba(247, 242, 234, 0.65);
+  color: rgba(224, 235, 255, 0.65);
 }
 
 .timelineCard h4 {
@@ -231,7 +234,7 @@
 
 .timelineCard p {
   font-size: 13px;
-  color: rgba(247, 242, 234, 0.78);
+  color: rgba(231, 241, 255, 0.78);
   line-height: 1.5;
 }
 
@@ -252,7 +255,7 @@
   font-size: 12px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(11, 11, 14, 0.55);
+  color: rgba(47, 65, 88, 0.62);
 }
 
 .hero h1 {
@@ -264,7 +267,7 @@
 .heroBody {
   font-size: 18px;
   line-height: 1.7;
-  color: rgba(11, 11, 14, 0.7);
+  color: rgba(35, 53, 77, 0.74);
 }
 
 .heroCtas {
@@ -274,15 +277,15 @@
 }
 
 .primaryLarge {
-  background: #0d0d12;
-  color: #f7f2ea;
+  background: linear-gradient(120deg, #5f7fff, #80a3ff);
+  color: #ffffff;
   padding: 14px 26px;
   font-size: 15px;
 }
 
 .secondaryLarge {
-  background: #f7f2ea;
-  border: 1px solid rgba(11, 11, 14, 0.2);
+  background: rgba(249, 252, 255, 0.9);
+  border: 1px solid rgba(112, 136, 170, 0.3);
   padding: 14px 26px;
   font-size: 15px;
 }
@@ -299,7 +302,7 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: rgba(11, 11, 14, 0.5);
+  color: rgba(56, 75, 100, 0.6);
 }
 
 .metaValue {
@@ -308,8 +311,8 @@
 }
 
 .heroPanel {
-  background: #111018;
-  color: #f7f2ea;
+  background: linear-gradient(165deg, #101b31 0%, #172744 42%, #1a2f55 100%);
+  color: #edf4ff;
   padding: 28px;
   border-radius: 24px;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
@@ -349,8 +352,8 @@
 
 .status {
   font-size: 12px;
-  background: #ff7b54;
-  color: #111018;
+  background: #7ca0ff;
+  color: #0f1a31;
   padding: 6px 12px;
   border-radius: 999px;
   font-weight: 700;
@@ -395,7 +398,7 @@
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: #ff7b54;
+  background: #7ca0ff;
 }
 
 .modules {
@@ -413,9 +416,9 @@
 .moduleGrid article {
   padding: 18px 20px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(11, 11, 14, 0.08);
-  box-shadow: 0 15px 30px rgba(15, 15, 20, 0.08);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(132, 155, 186, 0.24);
+  box-shadow: 0 15px 30px rgba(43, 68, 103, 0.1);
 }
 
 .moduleGrid h3 {
@@ -445,8 +448,8 @@
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: #111018;
-  color: #f7f2ea;
+  background: linear-gradient(130deg, #3153c0, #6285f3);
+  color: #eef4ff;
   display: grid;
   place-items: center;
   font-weight: 700;
@@ -487,11 +490,11 @@
 }
 
 .shotCard {
-  background: rgba(255, 255, 255, 0.74);
-  border: 1px solid rgba(11, 11, 14, 0.08);
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(132, 155, 186, 0.24);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 12px 26px rgba(15, 15, 20, 0.08);
+  box-shadow: 0 12px 26px rgba(43, 68, 103, 0.1);
 }
 
 .shotImage {
@@ -524,8 +527,8 @@
 .stackList li {
   padding: 14px 16px;
   border-radius: 14px;
-  border: 1px solid rgba(11, 11, 14, 0.12);
-  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(132, 155, 186, 0.24);
+  background: rgba(255, 255, 255, 0.84);
 }
 
 .stackList span {
@@ -547,8 +550,8 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: rgba(11, 11, 14, 0.55);
-  border-top: 1px solid rgba(11, 11, 14, 0.08);
+  color: rgba(50, 67, 90, 0.62);
+  border-top: 1px solid rgba(132, 155, 186, 0.24);
   padding-top: 20px;
   flex-wrap: wrap;
   gap: 12px;
@@ -564,7 +567,7 @@
 .secondaryLarge:hover,
 .ghost:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(15, 15, 20, 0.18);
+  box-shadow: 0 12px 24px rgba(56, 83, 123, 0.18);
 }
 
 @media (max-width: 960px) {
