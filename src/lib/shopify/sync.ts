@@ -47,6 +47,45 @@ function assertNoError(
   throw new Error(`${context}: ${error.message ?? "Unknown Supabase error"}`);
 }
 
+function isMissingShopifyProductColumn(error: { message?: string } | null) {
+  const message = (error?.message ?? "").toLowerCase();
+  return (
+    message.includes("shopify_product") &&
+    (message.includes("'description'") || message.includes("'image_url'"))
+  );
+}
+
+async function upsertShopifyProducts(
+  admin: ReturnType<typeof createSupabaseAdminClient>,
+  rows: Array<{
+    tenant_id: string;
+    shopify_id: string;
+    title: string;
+    description: string;
+    image_url: string | null;
+  }>
+) {
+  const { error } = await admin
+    .from("shopify_product")
+    .upsert(rows, { onConflict: "tenant_id,shopify_id" });
+
+  // Backward-compatible fallback for deployments missing newer columns.
+  if (isMissingShopifyProductColumn(error)) {
+    const minimalRows = rows.map((row) => ({
+      tenant_id: row.tenant_id,
+      shopify_id: row.shopify_id,
+      title: row.title,
+    }));
+    const { error: fallbackError } = await admin
+      .from("shopify_product")
+      .upsert(minimalRows, { onConflict: "tenant_id,shopify_id" });
+    assertNoError(fallbackError, "Failed to upsert shopify_product");
+    return;
+  }
+
+  assertNoError(error, "Failed to upsert shopify_product");
+}
+
 function mapOrderStatus(order: ShopifyOrderNode) {
   if (order.cancelledAt) return "cancelled";
   if ((order.displayFulfillmentStatus ?? "").toLowerCase().includes("fulfilled")) {
@@ -146,17 +185,16 @@ export async function syncShopifyStoreData(
   ]);
 
   if (products.length > 0) {
-    const { error } = await admin.from("shopify_product").upsert(
+    await upsertShopifyProducts(
+      admin,
       products.map((product) => ({
         tenant_id: tenantId,
         shopify_id: product.id,
         title: product.title,
         description: product.description,
         image_url: product.featuredImage?.url ?? null,
-      })),
-      { onConflict: "tenant_id,shopify_id" }
+      }))
     );
-    assertNoError(error, "Failed to upsert shopify_product");
   }
 
   const productIds = products.map((product) => product.id);
