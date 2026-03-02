@@ -18,15 +18,19 @@ type VariantRow = {
   sku: string | null;
 };
 
-function formatDescription(description: string | null) {
-  if (!description) return "No description available.";
-  const trimmed = description.trim();
-  if (!trimmed) return "No description available.";
-  return trimmed.length > 140 ? `${trimmed.slice(0, 140)}...` : trimmed;
-}
+type Props = {
+  searchParams?: Promise<{
+    q?: string;
+    filter?: string;
+  }>;
+};
 
-export default async function ProductsPage() {
+export default async function ProductsPage({ searchParams }: Props) {
+  const params = (await searchParams) ?? {};
+  const q = (params.q ?? "").trim().toLowerCase();
+  const filter = (params.filter ?? "all").toLowerCase();
   const supabase = await createSupabaseServerClient();
+
   const detailedVariantsResult = await supabase
     .from("shopify_variant")
     .select("id,product_id,title,sku")
@@ -95,28 +99,69 @@ export default async function ProductsPage() {
     {}
   );
 
+  const filteredProducts = products.filter((product) => {
+    const productVariants = variantsByProduct[product.id] ?? [];
+    const matchesQ =
+      q.length === 0 ||
+      product.title.toLowerCase().includes(q) ||
+      (product.description ?? "").toLowerCase().includes(q) ||
+      productVariants.some(
+        (variant) =>
+          (variant.title ?? "").toLowerCase().includes(q) ||
+          (variant.sku ?? "").toLowerCase().includes(q)
+      );
+
+    if (!matchesQ) return false;
+    if (filter === "with-variants") return productVariants.length > 0;
+    if (filter === "without-variants") return productVariants.length === 0;
+    return true;
+  });
+
   return (
     <div className={styles.page}>
       <div className={styles.header}>
         <div>
           <h1>Products</h1>
-          <p>{products.length} imported from Shopify</p>
+          <p>
+            {filteredProducts.length} of {products.length} Products
+          </p>
         </div>
+        <form method="post" action="/api/shopify/sync">
+          <button type="submit" className={styles.importButton}>
+            Import Products
+          </button>
+        </form>
       </div>
+
+      <form className={styles.filters} method="get">
+        <input
+          name="q"
+          defaultValue={params.q ?? ""}
+          placeholder="Search by name or SKU"
+          aria-label="Search by name or SKU"
+        />
+        <select name="filter" defaultValue={filter}>
+          <option value="all">All</option>
+          <option value="with-variants">With variants</option>
+          <option value="without-variants">Without variants</option>
+        </select>
+      </form>
 
       <div className={styles.table}>
         <div className={styles.tableHeader}>
-          <span>Product</span>
+          <span>Products</span>
           <span>Variants</span>
+          <span>Status</span>
           <span>Last Updated</span>
         </div>
         {productsError ? (
           <div className={styles.empty}>Failed to load products: {productsError}</div>
-        ) : products.length === 0 ? (
-          <div className={styles.empty}>No products yet.</div>
+        ) : filteredProducts.length === 0 ? (
+          <div className={styles.empty}>No products match your filters.</div>
         ) : (
-          products.map((product) => {
+          filteredProducts.map((product) => {
             const productVariants = variantsByProduct[product.id] ?? [];
+            const statusLabel = productVariants.length > 0 ? "ACTIVE" : "PENDING";
             return (
               <div key={product.id} className={styles.tableRow}>
                 <Link className={styles.productCell} href={`/app/products/${product.id}`}>
@@ -133,30 +178,20 @@ export default async function ProductsPage() {
                       <span>{product.title.slice(0, 1)}</span>
                     )}
                   </div>
-                  <div className={styles.productText}>
-                    <p className={styles.productTitle}>{product.title}</p>
-                    <p className={styles.productDescription}>
-                      {formatDescription(product.description)}
-                    </p>
-                  </div>
+                  <span className={styles.productTitle}>{product.title}</span>
                 </Link>
 
-                <div className={styles.variantCell}>
-                  <span className={styles.variantCount}>{productVariants.length}</span>
-                  <div className={styles.variantLinks}>
-                    {productVariants.slice(0, 2).map((variant) => (
-                      <Link key={variant.id} href={`/app/products/variants/${variant.id}`}>
-                        {variant.title ?? "Untitled"}
-                        {variant.sku ? ` (${variant.sku})` : ""}
-                      </Link>
-                    ))}
-                    {productVariants.length > 2 ? (
-                      <span>+{productVariants.length - 2} more</span>
-                    ) : null}
-                  </div>
-                </div>
+                <span className={styles.variantCount}>{productVariants.length}</span>
 
-                <span>
+                <span
+                  className={`${styles.statusBadge} ${
+                    productVariants.length > 0 ? styles.statusActive : styles.statusPending
+                  }`}
+                >
+                  {statusLabel}
+                </span>
+
+                <span className={styles.dateCell}>
                   {product.created_at
                     ? new Date(product.created_at).toLocaleDateString("en-GB")
                     : "-"}

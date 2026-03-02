@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import ProductVariantPicker from "../product-variant-picker";
 import styles from "../product-detail.module.css";
 
 type ProductRecord = {
@@ -10,24 +11,50 @@ type ProductRecord = {
   description: string | null;
   image_url: string | null;
   shopify_id: string;
-  created_at: string;
+  created_at: string | null;
 };
 
 type VariantRecord = {
   id: string;
   title: string | null;
   sku: string | null;
-  created_at: string;
+  created_at: string | null;
+};
+
+type BomRecord = {
+  id: string;
+  version: number;
+  is_active: boolean;
+};
+
+type BomLineRecord = {
+  quantity: number;
+  component:
+    | {
+        name: string | null;
+        sku: string | null;
+        unit: string | null;
+      }
+    | Array<{
+        name: string | null;
+        sku: string | null;
+        unit: string | null;
+      }>
+    | null;
 };
 
 type Props = {
   params: Promise<{
     productId: string;
   }>;
+  searchParams?: Promise<{
+    variant_id?: string;
+  }>;
 };
 
-export default async function ProductDetailPage({ params }: Props) {
+export default async function ProductDetailPage({ params, searchParams }: Props) {
   const { productId } = await params;
+  const query = (await searchParams) ?? {};
   const supabase = await createSupabaseServerClient();
 
   const [{ data: product }, { data: variants }] = await Promise.all([
@@ -48,55 +75,158 @@ export default async function ProductDetailPage({ params }: Props) {
   }
 
   const typedProduct = product as ProductRecord;
+  const typedVariants = (variants ?? []) as VariantRecord[];
+  const selectedVariant =
+    typedVariants.find((variant) => variant.id === query.variant_id) ??
+    typedVariants[0] ??
+    null;
+
+  const { data: boms } = selectedVariant
+    ? await supabase
+        .from("product_bom")
+        .select("id,version,is_active")
+        .eq("variant_id", selectedVariant.id)
+        .order("is_active", { ascending: false })
+        .order("version", { ascending: false })
+    : { data: [] };
+
+  const typedBoms = (boms ?? []) as BomRecord[];
+  const selectedBom = typedBoms.find((bom) => bom.is_active) ?? typedBoms[0] ?? null;
+
+  const { data: bomLines } = selectedBom
+    ? await supabase
+        .from("product_bom_component")
+        .select("quantity,component:component_id(name,sku,unit)")
+        .eq("product_bom_id", selectedBom.id)
+        .order("created_at", { ascending: true })
+    : { data: [] };
+
+  const typedBomLines = (bomLines ?? []) as BomLineRecord[];
+  const variantLabel = selectedVariant
+    ? `${selectedVariant.title ?? "Untitled variant"}${selectedVariant.sku ? ` (${selectedVariant.sku})` : ""}`
+    : "No variants";
 
   return (
     <div className={styles.page}>
-      <p className={styles.breadcrumb}>
-        <Link href="/app/products">Products</Link> / {typedProduct.title}
-      </p>
+      <div className={styles.topRow}>
+        <Link href="/app/products" className={styles.backButton}>
+          ← Back
+        </Link>
+        <p className={styles.breadcrumb}>
+          <Link href="/app/products">Products</Link> &gt; Product Detail
+        </p>
+      </div>
 
-      <section className={styles.hero}>
-        <div className={styles.heroImage}>
-          {typedProduct.image_url ? (
-            <Image
-              src={typedProduct.image_url}
-              alt={typedProduct.title}
-              width={120}
-              height={120}
-              unoptimized
+      <section className={styles.layout}>
+        <aside className={styles.sideCard}>
+          <div className={styles.sideImage}>
+            {typedProduct.image_url ? (
+              <Image
+                src={typedProduct.image_url}
+                alt={typedProduct.title}
+                width={360}
+                height={180}
+                unoptimized
+              />
+            ) : (
+              <span>{typedProduct.title.slice(0, 1)}</span>
+            )}
+          </div>
+          <h1 className={styles.sideTitle}>{typedProduct.title}</h1>
+          <div className={styles.sideMeta}>
+            <p>SHOPIFY PROD ID</p>
+            <strong>{typedProduct.shopify_id}</strong>
+          </div>
+          <div className={styles.sideMeta}>
+            <p>VARIANTS</p>
+            <strong>{typedVariants.length}</strong>
+          </div>
+          <div className={styles.sideMeta}>
+            <p>STATUS</p>
+            <span className={styles.statusBadge}>Active</span>
+          </div>
+          <div className={styles.sideMeta}>
+            <p>LAST UPDATED</p>
+            <strong>
+              {typedProduct.created_at
+                ? new Date(typedProduct.created_at).toLocaleDateString("en-GB")
+                : "N/A"}
+            </strong>
+          </div>
+          {selectedVariant ? (
+            <ProductVariantPicker
+              productId={typedProduct.id}
+              value={selectedVariant.id}
+              options={typedVariants.map((variant) => ({
+                id: variant.id,
+                label: `${variant.title ?? "Untitled"}${variant.sku ? ` - ${variant.sku}` : ""}`,
+              }))}
             />
-          ) : (
-            <span>{typedProduct.title.slice(0, 1)}</span>
-          )}
-        </div>
-        <div className={styles.heroText}>
-          <h1>{typedProduct.title}</h1>
-          <p className={styles.description}>
-            {typedProduct.description?.trim() || "No description available."}
-          </p>
-          <p className={styles.meta}>Shopify ID: {typedProduct.shopify_id}</p>
-        </div>
-      </section>
+          ) : null}
+        </aside>
 
-      <section className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h2>Variants ({(variants ?? []).length})</h2>
-        </div>
-        {(variants ?? []).length === 0 ? (
-          <p className={styles.empty}>No variants imported for this product.</p>
-        ) : (
-          (variants as VariantRecord[]).map((variant) => (
-            <div key={variant.id} className={styles.variantRow}>
-              <div>
-                <p className={styles.variantTitle}>{variant.title ?? "Untitled variant"}</p>
-                <p className={styles.variantMeta}>{variant.sku ? `SKU ${variant.sku}` : "No SKU"}</p>
-              </div>
-              <Link className={styles.variantLink} href={`/app/products/variants/${variant.id}`}>
-                Open variant
-              </Link>
+        <div className={styles.mainCard}>
+          <div className={styles.mainHeader}>
+            <div>
+              <h2>
+                {typedProduct.title} - {variantLabel} ({typedBomLines.length} Components)
+              </h2>
+              <p className={styles.versionMeta}>
+                {selectedBom ? `Version - ${selectedBom.version}` : "No BOM version"}
+              </p>
             </div>
-          ))
-        )}
+            <div className={styles.headerActions}>
+              {selectedVariant ? (
+                <Link
+                  href={`/app/products/variants/${selectedVariant.id}`}
+                  className={styles.actionButton}
+                >
+                  + Add Component
+                </Link>
+              ) : null}
+              <button type="button" className={styles.actionButtonSecondary} disabled>
+                Add Lead Time
+              </button>
+              <button type="button" className={styles.actionButtonDanger} disabled>
+                Delete BoM
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.lineTable}>
+            <div className={styles.lineHeader}>
+              <span>Component</span>
+              <span>Description</span>
+              <span>Qty</span>
+              <span>Unit</span>
+              <span>Edit</span>
+              <span>Remove</span>
+            </div>
+            {typedBomLines.length === 0 ? (
+              <div className={styles.lineRowEmpty}>No BOM components found for this variant.</div>
+            ) : (
+              typedBomLines.map((line, index) => {
+                const component = Array.isArray(line.component)
+                  ? line.component[0] ?? null
+                  : line.component;
+                return (
+                  <div className={styles.lineRow} key={`${selectedBom?.id ?? "none"}-${index}`}>
+                    <span>{component?.name ?? "Unknown component"}</span>
+                    <span>
+                      {component?.sku
+                        ? `SKU ${component.sku}`
+                        : "No description available."}
+                    </span>
+                    <span>{line.quantity}</span>
+                    <span>{component?.unit ?? "ea"}</span>
+                    <span>✎</span>
+                    <span>⊗</span>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
       </section>
     </div>
   );

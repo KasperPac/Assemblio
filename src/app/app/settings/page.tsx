@@ -1,6 +1,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import styles from "./settings.module.css";
 import ShopifyConnect from "./shopify-connect";
+import SyncSubmitForm from "./sync-submit-form";
 import {
   loadInventoryIntegrityAudit,
   type AuditClient,
@@ -165,11 +166,10 @@ export default async function SettingsPage({ searchParams }: Props) {
       </div>
       <ShopifyConnect status={params.shopify} detail={params.sync_error} />
       <div className={styles.actions}>
-        <form method="post" action="/api/shopify/sync">
-          <button type="submit" className={styles.syncButton}>
-            Sync Latest Connected Store
-          </button>
-        </form>
+        <SyncSubmitForm
+          buttonClassName={styles.syncButton}
+          buttonLabel="Sync Latest Connected Store"
+        />
         {params.shopify === "sync-ok" ? (
           <p className={styles.syncMeta}>
             Synced products: {params.products ?? "0"} | synced orders: {params.orders ?? "0"}
@@ -200,10 +200,11 @@ export default async function SettingsPage({ searchParams }: Props) {
                   Last counts: {JSON.stringify(store.last_sync_meta ?? {})}
                 </span>
               </div>
-              <form method="post" action="/api/shopify/sync">
-                <input type="hidden" name="store_id" value={store.id} />
-                <button type="submit" className={styles.syncStoreButton}>Sync this store</button>
-              </form>
+              <SyncSubmitForm
+                storeId={store.id}
+                buttonClassName={styles.syncStoreButton}
+                buttonLabel="Sync this store"
+              />
               <form method="post" action="/api/shopify/disconnect">
                 <input type="hidden" name="store_id" value={store.id} />
                 <button type="submit" className={styles.disconnectStoreButton}>Disconnect store</button>
