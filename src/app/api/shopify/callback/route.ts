@@ -54,9 +54,19 @@ export async function GET(request: NextRequest) {
       new URL("/app/settings?shopify=state-invalid", request.url)
     );
   }
-  if (parsed.nonce !== state || parsed.shop !== shop || parsed.exp < Date.now()) {
+  if (parsed.exp < Date.now()) {
     return NextResponse.redirect(
       new URL("/app/settings?shopify=state-expired", request.url)
+    );
+  }
+  if (parsed.nonce !== state) {
+    return NextResponse.redirect(
+      new URL("/app/settings?shopify=state-nonce-mismatch", request.url)
+    );
+  }
+  if (parsed.shop !== shop) {
+    return NextResponse.redirect(
+      new URL("/app/settings?shopify=state-shop-mismatch", request.url)
     );
   }
 

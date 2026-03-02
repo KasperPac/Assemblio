@@ -17,6 +17,10 @@ const statusText: Record<string, string> = {
   "state-missing": "OAuth state cookie missing. Start install again.",
   "state-invalid": "OAuth state could not be decoded.",
   "state-expired": "OAuth state expired. Start install again.",
+  "state-nonce-mismatch":
+    "OAuth state nonce mismatch. Start install from Assemblio Settings and complete in the same tab.",
+  "state-shop-mismatch":
+    "OAuth shop mismatch. Use the same shop domain in Settings that Shopify redirects back with.",
   "token-failed": "Could not exchange auth code for access token.",
   "store-save-failed": "Could not save Shopify store in database.",
   "token-save-failed": "Could not save Shopify access token.",
