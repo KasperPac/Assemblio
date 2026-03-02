@@ -57,7 +57,7 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
   const query = (await searchParams) ?? {};
   const supabase = await createSupabaseServerClient();
 
-  const [{ data: product }, { data: variants }] = await Promise.all([
+  const [productResult, variantsResult] = await Promise.all([
     supabase
       .from("shopify_product")
       .select("id,title,description,image_url,shopify_id,created_at")
@@ -70,12 +70,47 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
       .order("created_at", { ascending: true }),
   ]);
 
+  let product = productResult.data as ProductRecord | null;
+  let variants = (variantsResult.data ?? []) as VariantRecord[];
+
   if (!product) {
+    const fallbackProduct = await supabase
+      .from("shopify_product")
+      .select("id,title,shopify_id,created_at")
+      .eq("id", productId)
+      .maybeSingle();
+
+    if (fallbackProduct.data) {
+      product = {
+        id: fallbackProduct.data.id,
+        title: fallbackProduct.data.title,
+        shopify_id: fallbackProduct.data.shopify_id,
+        created_at: fallbackProduct.data.created_at,
+        description: null,
+        image_url: null,
+      };
+    }
+  }
+
+  if (variantsResult.error) {
+    const fallbackVariants = await supabase
+      .from("shopify_variant")
+      .select("id,title,sku")
+      .eq("product_id", productId);
+    variants = (fallbackVariants.data ?? []).map((variant) => ({
+      id: variant.id,
+      title: variant.title,
+      sku: variant.sku,
+      created_at: null,
+    }));
+  }
+
+  if (!product?.id) {
     notFound();
   }
 
   const typedProduct = product as ProductRecord;
-  const typedVariants = (variants ?? []) as VariantRecord[];
+  const typedVariants = variants as VariantRecord[];
   const selectedVariant =
     typedVariants.find((variant) => variant.id === query.variant_id) ??
     typedVariants[0] ??
