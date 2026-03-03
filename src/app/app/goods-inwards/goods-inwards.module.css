@@ -16,7 +16,7 @@
 }
 
 .header p {
-  color: #8b97a7;
+  color: var(--ink-muted);
   font-size: 12px;
 }
 
@@ -24,31 +24,31 @@
   border: none;
   border-radius: 10px;
   padding: 10px 16px;
-  background: #6d7efb;
-  color: #ffffff;
+  background: var(--brand-1);
+  color: #0b0f19;
   font-weight: 600;
   cursor: pointer;
 }
 
 .secondary {
-  border: 1px solid #ccd6ea;
+  border: 1px solid var(--stroke);
   border-radius: 10px;
   padding: 7px 12px;
-  background: #ffffff;
-  color: #23304a;
+  background: var(--bg-card);
+  color: var(--ink-strong);
   font-weight: 600;
   cursor: pointer;
 }
 
 .table {
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 16px;
-  box-shadow: 0 8px 16px rgba(27, 31, 42, 0.06);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   overflow: hidden;
 }
 
 .poBlock {
-  border-top: 1px solid #eef1f6;
+  border-top: 1px solid var(--stroke);
 }
 
 .tableHeader,
@@ -64,8 +64,8 @@
 .tableHeader {
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: #8b97a7;
-  background: #f4f6fb;
+  color: var(--ink-faint);
+  background: rgba(255, 255, 255, 0.04);
   font-weight: 600;
 }
 
@@ -79,8 +79,8 @@
 }
 
 .lineTable {
-  background: #f8faff;
-  border-top: 1px solid #eef1f6;
+  background: rgba(255, 255, 255, 0.02);
+  border-top: 1px solid var(--stroke);
   padding: 10px 18px 14px;
 }
 
@@ -96,14 +96,14 @@
 .lineHeader {
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #7f8ba1;
+  color: var(--ink-faint);
   font-weight: 600;
   padding: 6px 0 8px;
 }
 
 .lineRow {
   padding: 10px 0;
-  border-top: 1px solid #e7ecf5;
+  border-top: 1px solid var(--stroke);
 }
 
 .lineForm {
@@ -114,19 +114,21 @@
 
 .lineForm input {
   width: 96px;
-  border: 1px solid #d9e1f0;
+  border: 1px solid var(--stroke);
   border-radius: 8px;
   padding: 7px 8px;
   font-size: 12px;
+  background: var(--bg-input);
+  color: var(--ink-strong);
 }
 
 .lineForm input:disabled {
-  background: #f2f5fb;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .status {
-  background: #dbe7ff;
-  color: #3b6cff;
+  background: rgba(96, 165, 250, 0.15);
+  color: #60a5fa;
   padding: 4px 12px;
   border-radius: 999px;
   width: fit-content;
@@ -138,7 +140,7 @@
 .empty {
   padding: 18px;
   font-size: 13px;
-  color: #8b97a7;
+  color: var(--ink-muted);
 }
 
 .primary:disabled {

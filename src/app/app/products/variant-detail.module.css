@@ -4,12 +4,12 @@
 }
 
 .breadcrumb {
-  color: #718096;
+  color: var(--ink-muted);
   font-size: 12px;
 }
 
 .breadcrumb a {
-  color: #2f5be8;
+  color: var(--brand-1);
   text-decoration: none;
 }
 
@@ -18,8 +18,8 @@
 }
 
 .card {
-  background: #ffffff;
-  border: 1px solid #e7ecf4;
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
   border-radius: 14px;
   padding: 16px;
   display: grid;
@@ -31,7 +31,7 @@
 }
 
 .meta {
-  color: #64748b;
+  color: var(--ink-muted);
   font-size: 13px;
 }
 
@@ -51,28 +51,30 @@
 }
 
 .primaryButton {
-  background: #2f5be8;
-  color: #ffffff;
+  background: var(--brand-1);
+  color: #0b0f19;
 }
 
 .secondaryButton {
-  background: #edf2ff;
-  color: #1f3ea7;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ink-strong);
 }
 
 .card select {
-  border: 1px solid #d7dfeb;
+  border: 1px solid var(--stroke);
   border-radius: 10px;
   padding: 10px 12px;
+  background: var(--bg-input);
+  color: var(--ink-strong);
 }
 
 .error {
-  color: #c92a2a;
+  color: var(--danger);
   font-size: 13px;
 }
 
 .success {
-  color: #1f8f5f;
+  color: var(--brand-1);
   font-size: 13px;
 }
 
@@ -101,22 +103,22 @@
 }
 
 .badgeDraft {
-  background: #e9efff;
-  color: #2550de;
+  background: rgba(96, 165, 250, 0.15);
+  color: #60a5fa;
 }
 
 .badgeActive {
-  background: #d8f7e7;
-  color: #1f8f5f;
+  background: rgba(74, 222, 128, 0.15);
+  color: var(--brand-1);
 }
 
 .badgeArchived {
-  background: #f0f2f5;
-  color: #5f6b7b;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--ink-faint);
 }
 
 .lineTable {
-  border: 1px solid #ebeff6;
+  border: 1px solid var(--stroke);
   border-radius: 10px;
   overflow: hidden;
 }
@@ -130,24 +132,24 @@
 }
 
 .lineHeader {
-  background: #f6f8fc;
-  color: #7b889b;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink-faint);
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
 .lineRow {
-  border-top: 1px solid #eef2f8;
+  border-top: 1px solid var(--stroke);
 }
 
 .empty {
-  color: #8b97a7;
+  color: var(--ink-muted);
   font-size: 13px;
 }
 
 .notice {
-  color: #6b7585;
+  color: var(--ink-muted);
   font-size: 13px;
 }
 

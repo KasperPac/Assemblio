@@ -20,14 +20,14 @@ type TopProductsChartProps = {
   data: ProductPoint[];
 };
 
-const PIE_COLORS = ["#4e8dff", "#2ec5c5", "#ff6b92", "#ffd34f", "#9b7bff"];
+const PIE_COLORS = ["#4ade80", "#fbbf24", "#60a5fa", "#a78bfa", "#f472b6"];
 
 export function OrderTrendChart({ data }: OrderTrendChartProps) {
   const width = 760;
-  const height = 220;
-  const margin = 20;
-  const innerWidth = width - margin * 2;
-  const innerHeight = height - margin * 2;
+  const height = 240;
+  const margin = { top: 20, right: 20, bottom: 30, left: 20 };
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
   const maxValue = Math.max(
     1,
     ...data.map((row) => Math.max(row.placed, row.fulfilled, row.cancelled))
@@ -35,47 +35,119 @@ export function OrderTrendChart({ data }: OrderTrendChartProps) {
 
   function toPath(values: number[]) {
     if (values.length === 0) return "";
-    return values
-      .map((value, index) => {
-        const x =
-          margin +
-          (data.length === 1 ? innerWidth / 2 : (index / (data.length - 1)) * innerWidth);
-        const y = margin + innerHeight - (value / maxValue) * innerHeight;
-        return `${index === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
-      })
-      .join(" ");
+    const points = values.map((value, index) => {
+      const x =
+        margin.left +
+        (data.length === 1 ? innerWidth / 2 : (index / (data.length - 1)) * innerWidth);
+      const y = margin.top + innerHeight - (value / maxValue) * innerHeight;
+      return { x, y };
+    });
+
+    if (points.length < 2) return `M${points[0].x},${points[0].y}`;
+
+    let path = `M${points[0].x.toFixed(1)},${points[0].y.toFixed(1)}`;
+    for (let i = 1; i < points.length; i++) {
+      const prev = points[i - 1];
+      const curr = points[i];
+      const cpx = (prev.x + curr.x) / 2;
+      path += ` C${cpx.toFixed(1)},${prev.y.toFixed(1)} ${cpx.toFixed(1)},${curr.y.toFixed(1)} ${curr.x.toFixed(1)},${curr.y.toFixed(1)}`;
+    }
+    return path;
   }
 
-  const placedPath = toPath(data.map((row) => row.placed));
+  function toAreaPath(values: number[]) {
+    const linePath = toPath(values);
+    if (!linePath) return "";
+    const points = values.map((value, index) => {
+      const x =
+        margin.left +
+        (data.length === 1 ? innerWidth / 2 : (index / (data.length - 1)) * innerWidth);
+      return x;
+    });
+    const lastX = points[points.length - 1];
+    const firstX = points[0];
+    const bottom = margin.top + innerHeight;
+    return `${linePath} L${lastX.toFixed(1)},${bottom} L${firstX.toFixed(1)},${bottom} Z`;
+  }
+
   const fulfilledPath = toPath(data.map((row) => row.fulfilled));
-  const cancelledPath = toPath(data.map((row) => row.cancelled));
+  const fulfilledArea = toAreaPath(data.map((row) => row.fulfilled));
 
   return (
     <svg
       viewBox={`0 0 ${width} ${height}`}
       width="100%"
-      height="220"
+      height="240"
       role="img"
-      aria-label="Placed, fulfilled, and cancelled orders trend"
+      aria-label="Order fulfillment trend"
     >
+      <defs>
+        <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4ade80" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#4ade80" stopOpacity="0.02" />
+        </linearGradient>
+      </defs>
+
+      {/* Grid lines */}
       {[0.25, 0.5, 0.75].map((fraction) => {
-        const y = margin + innerHeight - innerHeight * fraction;
+        const y = margin.top + innerHeight - innerHeight * fraction;
         return (
           <line
             key={fraction}
-            x1={margin}
+            x1={margin.left}
             y1={y}
-            x2={width - margin}
+            x2={width - margin.right}
             y2={y}
-            stroke="#edf1f7"
+            stroke="rgba(255,255,255,0.06)"
             strokeWidth="1"
           />
         );
       })}
 
-      <path d={placedPath} fill="none" stroke="#4e8dff" strokeWidth="3" strokeLinecap="round" />
-      <path d={fulfilledPath} fill="none" stroke="#2ec5c5" strokeWidth="3" strokeLinecap="round" />
-      <path d={cancelledPath} fill="none" stroke="#ff6b92" strokeWidth="3" strokeLinecap="round" />
+      {/* Area fill */}
+      <path d={fulfilledArea} fill="url(#areaGrad)" />
+
+      {/* Line */}
+      <path d={fulfilledPath} fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" />
+
+      {/* Dots */}
+      {data.map((row, index) => {
+        const x =
+          margin.left +
+          (data.length === 1 ? innerWidth / 2 : (index / (data.length - 1)) * innerWidth);
+        const y = margin.top + innerHeight - (row.fulfilled / maxValue) * innerHeight;
+        return (
+          <circle
+            key={index}
+            cx={x}
+            cy={y}
+            r="3"
+            fill="#4ade80"
+            stroke="#141a2a"
+            strokeWidth="2"
+          />
+        );
+      })}
+
+      {/* X-axis labels */}
+      {data.map((row, index) => {
+        const x =
+          margin.left +
+          (data.length === 1 ? innerWidth / 2 : (index / (data.length - 1)) * innerWidth);
+        return (
+          <text
+            key={index}
+            x={x}
+            y={height - 4}
+            textAnchor="middle"
+            fill="#6b7a8d"
+            fontSize="10"
+            fontFamily="inherit"
+          >
+            {row.label}
+          </text>
+        );
+      })}
     </svg>
   );
 }
@@ -104,8 +176,12 @@ export function TopProductsChart({ data }: TopProductsChartProps) {
     return acc;
   }, []);
 
+  const topEntry = safeData[0];
+  const topCount = topEntry.count;
+
   return (
     <svg viewBox="0 0 220 220" width="100%" height="220" role="img" aria-label="Top products distribution">
+      {/* Donut segments */}
       {segments.map((segment) => (
         <circle
           key={segment.key}
@@ -114,15 +190,24 @@ export function TopProductsChart({ data }: TopProductsChartProps) {
           r="64"
           fill="none"
           stroke={segment.color}
-          strokeWidth="30"
-          strokeDasharray={`${Math.max((segment.end - segment.start) * 402 - 2, 0)} 402`}
+          strokeWidth="24"
+          strokeDasharray={`${Math.max((segment.end - segment.start) * 402 - 3, 0)} 402`}
           strokeDashoffset={-segment.start * 402}
           transform="rotate(-90 110 110)"
+          strokeLinecap="round"
         >
           <title>{segment.title}</title>
         </circle>
       ))}
-      <circle cx="110" cy="110" r="43" fill="#ffffff" />
+      {/* Center bg */}
+      <circle cx="110" cy="110" r="48" fill="#141a2a" />
+      {/* Center text */}
+      <text x="110" y="105" textAnchor="middle" fill="#f0f2f5" fontSize="22" fontWeight="800" fontFamily="inherit">
+        {topCount > 999 ? `${(topCount / 1000).toFixed(1)}k` : topCount}
+      </text>
+      <text x="110" y="124" textAnchor="middle" fill="#6b7a8d" fontSize="10" fontFamily="inherit">
+        Top Product
+      </text>
     </svg>
   );
 }

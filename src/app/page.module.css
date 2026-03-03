@@ -1,10 +1,7 @@
 .page {
   min-height: 100vh;
-  background:
-    radial-gradient(1000px 700px at -10% -10%, #cbe3ff 0%, transparent 58%),
-    radial-gradient(900px 700px at 110% 0%, #e6d5ff 0%, transparent 45%),
-    linear-gradient(180deg, #eef4fc 0%, #e6eef8 100%);
-  color: #132136;
+  background: var(--bg-page);
+  color: var(--ink-strong);
   display: flex;
   flex-direction: column;
   padding: 48px clamp(20px, 4vw, 72px) 56px;
@@ -28,8 +25,8 @@
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: linear-gradient(145deg, #4968ea 0%, #6f8eff 55%, #95abff 100%);
-  box-shadow: 0 10px 30px rgba(66, 95, 211, 0.28);
+  background: linear-gradient(145deg, var(--brand-2) 0%, var(--brand-1) 100%);
+  box-shadow: 0 10px 30px rgba(74, 222, 128, 0.2);
 }
 
 .brandTitle {
@@ -42,7 +39,7 @@
   font-size: 13px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(34, 53, 77, 0.6);
+  color: var(--ink-faint);
 }
 
 .nav {
@@ -51,7 +48,7 @@
   justify-content: center;
   font-weight: 500;
   letter-spacing: 0.02em;
-  color: rgba(34, 53, 77, 0.75);
+  color: var(--ink-muted);
 }
 
 .headerCtas {
@@ -74,13 +71,14 @@
 
 .ghost {
   background: transparent;
-  border: 1px solid rgba(94, 122, 163, 0.32);
+  border: 1px solid var(--stroke);
+  color: var(--ink-strong);
 }
 
 .primary {
-  background: linear-gradient(120deg, #5f7fff, #80a3ff);
-  color: #fff;
-  box-shadow: 0 12px 28px rgba(87, 118, 236, 0.3);
+  background: var(--brand-1);
+  color: #0b0f19;
+  box-shadow: 0 12px 28px rgba(74, 222, 128, 0.2);
 }
 
 .main {
@@ -102,7 +100,7 @@
 }
 
 .progressHeader p {
-  color: rgba(11, 11, 14, 0.65);
+  color: var(--ink-muted);
   margin-top: 6px;
 }
 
@@ -110,7 +108,7 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: rgba(11, 11, 14, 0.55);
+  color: var(--ink-faint);
 }
 
 .progressGrid {
@@ -120,10 +118,10 @@
 }
 
 .progressCard {
-  background: rgba(255, 255, 255, 0.84);
+  background: var(--bg-card);
   border-radius: 18px;
-  border: 1px solid rgba(132, 155, 186, 0.22);
-  box-shadow: 0 12px 28px rgba(43, 68, 103, 0.1);
+  border: 1px solid var(--stroke-card);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
   padding: 18px;
 }
 
@@ -151,23 +149,23 @@
 .progressTrack {
   height: 9px;
   border-radius: 999px;
-  background: rgba(11, 11, 14, 0.1);
+  background: rgba(255, 255, 255, 0.06);
   overflow: hidden;
 }
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, #5f7fff, #8aa8ff);
+  background: linear-gradient(90deg, var(--brand-2), var(--brand-1));
 }
 
 .progressItem p {
   font-size: 12px;
-  color: rgba(11, 11, 14, 0.6);
+  color: var(--ink-muted);
 }
 
 .chartLabel {
   font-size: 12px;
-  color: rgba(11, 11, 14, 0.6);
+  color: var(--ink-muted);
 }
 
 .velocityChart {
@@ -190,7 +188,7 @@
   width: 100%;
   max-width: 48px;
   border-radius: 10px 10px 6px 6px;
-  background: linear-gradient(180deg, #111018 0%, #4f566a 100%);
+  background: linear-gradient(180deg, var(--brand-1) 0%, var(--brand-2) 100%);
   min-height: 16px;
 }
 
@@ -198,7 +196,7 @@
   font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(11, 11, 14, 0.55);
+  color: var(--ink-faint);
 }
 
 .velocityCount {
@@ -213,8 +211,9 @@
 }
 
 .timelineCard {
-  background: linear-gradient(160deg, #152440 0%, #1c3159 100%);
-  color: #ebf2ff;
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  border: 1px solid var(--stroke-card);
   border-radius: 14px;
   padding: 14px 16px;
   display: grid;
@@ -225,7 +224,7 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  color: rgba(224, 235, 255, 0.65);
+  color: var(--ink-faint);
 }
 
 .timelineCard h4 {
@@ -234,7 +233,7 @@
 
 .timelineCard p {
   font-size: 13px;
-  color: rgba(231, 241, 255, 0.78);
+  color: var(--ink-muted);
   line-height: 1.5;
 }
 
@@ -255,7 +254,7 @@
   font-size: 12px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(47, 65, 88, 0.62);
+  color: var(--ink-faint);
 }
 
 .hero h1 {
@@ -267,7 +266,7 @@
 .heroBody {
   font-size: 18px;
   line-height: 1.7;
-  color: rgba(35, 53, 77, 0.74);
+  color: var(--ink-muted);
 }
 
 .heroCtas {
@@ -277,17 +276,18 @@
 }
 
 .primaryLarge {
-  background: linear-gradient(120deg, #5f7fff, #80a3ff);
-  color: #ffffff;
+  background: var(--brand-1);
+  color: #0b0f19;
   padding: 14px 26px;
   font-size: 15px;
 }
 
 .secondaryLarge {
-  background: rgba(249, 252, 255, 0.9);
-  border: 1px solid rgba(112, 136, 170, 0.3);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--stroke);
   padding: 14px 26px;
   font-size: 15px;
+  color: var(--ink-strong);
 }
 
 .heroMeta {
@@ -302,7 +302,7 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: rgba(56, 75, 100, 0.6);
+  color: var(--ink-faint);
 }
 
 .metaValue {
@@ -311,10 +311,11 @@
 }
 
 .heroPanel {
-  background: linear-gradient(165deg, #101b31 0%, #172744 42%, #1a2f55 100%);
-  color: #edf4ff;
+  background: var(--bg-card);
+  color: var(--ink-strong);
   padding: 28px;
   border-radius: 24px;
+  border: 1px solid var(--stroke-card);
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
@@ -325,7 +326,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 13px;
-  color: rgba(247, 242, 234, 0.7);
+  color: var(--ink-muted);
 }
 
 .panelBody {
@@ -347,13 +348,13 @@
 
 .panelSub {
   font-size: 12px;
-  color: rgba(247, 242, 234, 0.6);
+  color: var(--ink-faint);
 }
 
 .status {
   font-size: 12px;
-  background: #7ca0ff;
-  color: #0f1a31;
+  background: var(--brand-1);
+  color: #0b0f19;
   padding: 6px 12px;
   border-radius: 999px;
   font-weight: 700;
@@ -363,7 +364,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
-  background: rgba(247, 242, 234, 0.08);
+  background: rgba(255, 255, 255, 0.04);
   padding: 16px;
   border-radius: 16px;
 }
@@ -372,7 +373,7 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: rgba(247, 242, 234, 0.6);
+  color: var(--ink-faint);
 }
 
 .panelValue {
@@ -385,7 +386,7 @@
   flex-direction: column;
   gap: 12px;
   font-size: 13px;
-  color: rgba(247, 242, 234, 0.7);
+  color: var(--ink-muted);
 }
 
 .panelTimeline div {
@@ -398,7 +399,7 @@
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: #7ca0ff;
+  background: var(--brand-1);
 }
 
 .modules {
@@ -416,9 +417,9 @@
 .moduleGrid article {
   padding: 18px 20px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.82);
-  border: 1px solid rgba(132, 155, 186, 0.24);
-  box-shadow: 0 15px 30px rgba(43, 68, 103, 0.1);
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
 }
 
 .moduleGrid h3 {
@@ -427,7 +428,7 @@
 }
 
 .moduleGrid p {
-  color: rgba(11, 11, 14, 0.7);
+  color: var(--ink-muted);
   font-size: 14px;
   line-height: 1.6;
 }
@@ -448,8 +449,8 @@
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: linear-gradient(130deg, #3153c0, #6285f3);
-  color: #eef4ff;
+  background: linear-gradient(130deg, var(--brand-2), var(--brand-1));
+  color: #0b0f19;
   display: grid;
   place-items: center;
   font-weight: 700;
@@ -461,7 +462,7 @@
 }
 
 .flowGrid p {
-  color: rgba(11, 11, 14, 0.7);
+  color: var(--ink-muted);
   line-height: 1.6;
   font-size: 14px;
 }
@@ -480,7 +481,7 @@
 
 .galleryHeader p {
   margin-top: 6px;
-  color: rgba(11, 11, 14, 0.65);
+  color: var(--ink-muted);
 }
 
 .galleryGrid {
@@ -490,11 +491,11 @@
 }
 
 .shotCard {
-  background: rgba(255, 255, 255, 0.84);
-  border: 1px solid rgba(132, 155, 186, 0.24);
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 12px 26px rgba(43, 68, 103, 0.1);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.15);
 }
 
 .shotImage {
@@ -514,7 +515,7 @@
 .shotCard p {
   margin-top: 6px;
   font-size: 12px;
-  color: rgba(11, 11, 14, 0.65);
+  color: var(--ink-muted);
 }
 
 .stackList {
@@ -527,8 +528,8 @@
 .stackList li {
   padding: 14px 16px;
   border-radius: 14px;
-  border: 1px solid rgba(132, 155, 186, 0.24);
-  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid var(--stroke-card);
+  background: var(--bg-card);
 }
 
 .stackList span {
@@ -539,7 +540,7 @@
 
 .stackList p {
   font-size: 12px;
-  color: rgba(11, 11, 14, 0.65);
+  color: var(--ink-muted);
   line-height: 1.6;
 }
 
@@ -550,8 +551,8 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: rgba(50, 67, 90, 0.62);
-  border-top: 1px solid rgba(132, 155, 186, 0.24);
+  color: var(--ink-faint);
+  border-top: 1px solid var(--stroke);
   padding-top: 20px;
   flex-wrap: wrap;
   gap: 12px;
@@ -567,7 +568,7 @@
 .secondaryLarge:hover,
 .ghost:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(56, 83, 123, 0.18);
+  box-shadow: 0 12px 24px rgba(74, 222, 128, 0.15);
 }
 
 @media (max-width: 960px) {

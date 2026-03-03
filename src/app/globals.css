@@ -1,14 +1,22 @@
 :root {
-  --bg-page: #eef3ff;
-  --ink-strong: #1a2a46;
-  --ink-muted: #6780a0;
-  --stroke: rgba(133, 156, 189, 0.32);
-  --surface-0: #ffffff;
-  --surface-1: rgba(255, 255, 255, 0.82);
-  --brand-1: #5f7fff;
-  --brand-2: #80a3ff;
-  --ok: #1fb67b;
-  --danger: #dc4d4d;
+  --bg-page: #0b0f19;
+  --bg-sidebar: #0f1420;
+  --bg-card: #141a2a;
+  --bg-card-alt: #111827;
+  --bg-input: #1a2236;
+  --ink-strong: #f0f2f5;
+  --ink-muted: #6b7a8d;
+  --ink-faint: #4a5568;
+  --stroke: rgba(255, 255, 255, 0.08);
+  --stroke-card: rgba(255, 255, 255, 0.06);
+  --surface-0: #141a2a;
+  --surface-1: #1a2236;
+  --brand-1: #4ade80;
+  --brand-2: #22c55e;
+  --brand-dim: rgba(74, 222, 128, 0.12);
+  --ok: #4ade80;
+  --danger: #ef4444;
+  --warning: #f59e0b;
 }
 
 *,
@@ -27,10 +35,7 @@ body {
   min-height: 100vh;
   margin: 0;
   color: var(--ink-strong);
-  background:
-    radial-gradient(1000px 700px at -10% -10%, #d3e6ff 0%, transparent 60%),
-    radial-gradient(900px 700px at 110% 0%, #e8d9ff 0%, transparent 45%),
-    linear-gradient(180deg, #f4f7ff 0%, var(--bg-page) 100%);
+  background: var(--bg-page);
   font-family: var(--font-space-grotesk), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -64,7 +69,7 @@ button {
 }
 
 button:hover {
-  filter: brightness(1.02);
+  filter: brightness(1.1);
 }
 
 button:active {
@@ -76,7 +81,7 @@ select,
 textarea {
   border: 1px solid var(--stroke);
   border-radius: 9px;
-  background: var(--surface-0);
+  background: var(--bg-input);
   color: var(--ink-strong);
   padding: 9px 11px;
 }
@@ -84,7 +89,26 @@ textarea {
 input:focus,
 select:focus,
 textarea:focus {
-  outline: 2px solid rgba(95, 127, 255, 0.22);
+  outline: 2px solid rgba(74, 222, 128, 0.22);
   outline-offset: 1px;
-  border-color: rgba(95, 127, 255, 0.5);
+  border-color: rgba(74, 222, 128, 0.4);
+}
+
+/* Scrollbar styling for dark theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.18);
 }

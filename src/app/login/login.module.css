@@ -3,33 +3,27 @@
   display: grid;
   place-items: center;
   padding: 26px;
-  background:
-    radial-gradient(900px 600px at -10% -10%, #c3dbff 0%, transparent 55%),
-    radial-gradient(800px 640px at 110% 10%, #ead6ff 0%, transparent 45%),
-    linear-gradient(170deg, #eef4fc 0%, #e4edf8 100%);
+  background: var(--bg-page);
 }
 
 .card {
   width: min(460px, 100%);
-  background:
-    linear-gradient(165deg, #101a30 0%, #172544 45%, #172d55 100%);
-  color: #e7efff;
+  background: var(--bg-card);
+  color: var(--ink-strong);
   padding: 34px;
   border-radius: 22px;
-  border: 1px solid rgba(169, 189, 224, 0.28);
+  border: 1px solid var(--stroke);
   display: flex;
   flex-direction: column;
   gap: 16px;
-  box-shadow:
-    0 26px 56px rgba(11, 19, 36, 0.38),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  box-shadow: 0 26px 56px rgba(0, 0, 0, 0.4);
 }
 
 .eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.24em;
   font-size: 11px;
-  color: rgba(226, 236, 255, 0.74);
+  color: var(--ink-faint);
   font-family: var(--font-plex-mono), monospace;
 }
 
@@ -40,7 +34,7 @@
 }
 
 .card p {
-  color: rgba(225, 235, 255, 0.8);
+  color: var(--ink-muted);
   line-height: 1.55;
   font-size: 14px;
 }
@@ -58,20 +52,20 @@
   font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(226, 236, 255, 0.8);
+  color: var(--ink-muted);
   font-family: var(--font-plex-mono), monospace;
 }
 
 .form input {
-  border: 1px solid rgba(186, 204, 236, 0.28);
-  background: rgba(236, 244, 255, 0.08);
+  border: 1px solid var(--stroke);
+  background: var(--bg-input);
   border-radius: 10px;
   padding: 10px 12px;
-  color: #eef3ff;
+  color: var(--ink-strong);
 }
 
 .form input::placeholder {
-  color: rgba(232, 241, 255, 0.52);
+  color: var(--ink-faint);
 }
 
 .error {
@@ -80,7 +74,7 @@
 }
 
 .message {
-  color: #b8f0d3;
+  color: var(--brand-1);
   font-size: 12px;
 }
 
@@ -91,7 +85,7 @@
   font-size: 10px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(221, 233, 255, 0.56);
+  color: var(--ink-faint);
   font-family: var(--font-plex-mono), monospace;
 }
 
@@ -100,7 +94,7 @@
   content: "";
   flex: 1;
   height: 1px;
-  background: rgba(214, 229, 255, 0.2);
+  background: var(--stroke);
 }
 
 .primary,
@@ -110,17 +104,18 @@
   padding: 11px 14px;
   font-weight: 700;
   cursor: pointer;
-  color: #ffffff;
 }
 
 .primary {
-  background: linear-gradient(120deg, #5f7fff, #86a4ff);
-  box-shadow: 0 12px 24px rgba(87, 118, 236, 0.36);
+  background: var(--brand-1);
+  color: #0b0f19;
+  box-shadow: 0 12px 24px rgba(74, 222, 128, 0.2);
 }
 
 .secondary {
-  background: rgba(240, 246, 255, 0.12);
-  border: 1px solid rgba(211, 225, 251, 0.28);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--stroke);
+  color: var(--ink-strong);
 }
 
 .meta {
@@ -130,6 +125,6 @@
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(219, 231, 255, 0.62);
+  color: var(--ink-faint);
   font-family: var(--font-plex-mono), monospace;
 }

@@ -11,23 +11,23 @@
 }
 
 .backButton {
-  border: 1px solid rgba(138, 161, 193, 0.3);
+  border: 1px solid var(--stroke);
   border-radius: 9px;
   padding: 8px 12px;
   text-decoration: none;
-  color: #4b6280;
+  color: var(--ink-muted);
   font-weight: 600;
   font-size: 13px;
-  background: rgba(247, 251, 255, 0.88);
+  background: var(--bg-card);
 }
 
 .breadcrumb {
-  color: #6b819e;
+  color: var(--ink-muted);
   font-size: 13px;
 }
 
 .breadcrumb a {
-  color: #4d6de5;
+  color: var(--brand-1);
   text-decoration: none;
 }
 
@@ -38,8 +38,8 @@
 }
 
 .sideCard {
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.94), rgba(245, 250, 255, 0.86));
-  border: 1px solid rgba(132, 155, 186, 0.24);
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
   border-radius: 14px;
   padding: 16px;
   display: grid;
@@ -51,11 +51,11 @@
   height: 150px;
   border-radius: 11px;
   overflow: hidden;
-  background: #edf3fb;
+  background: var(--bg-card-alt);
   display: grid;
   place-items: center;
   font-size: 36px;
-  color: #627993;
+  color: var(--ink-muted);
   font-weight: 700;
 }
 
@@ -68,7 +68,7 @@
 .sideTitle {
   font-size: 24px;
   line-height: 1.1;
-  color: #16263b;
+  color: var(--ink-strong);
 }
 
 .sideMeta {
@@ -79,13 +79,13 @@
 .sideMeta p {
   font-size: 12px;
   font-weight: 700;
-  color: #68809f;
+  color: var(--ink-faint);
   text-transform: uppercase;
 }
 
 .sideMeta strong {
   font-size: 17px;
-  color: #283b54;
+  color: var(--ink-strong);
 }
 
 .statusBadge {
@@ -93,25 +93,25 @@
   align-items: center;
   justify-content: center;
   border-radius: 4px;
-  background: #1da96f;
-  color: #ffffff;
+  background: var(--brand-1);
+  color: #0b0f19;
   font-size: 12px;
   font-weight: 700;
   padding: 2px 8px;
 }
 
 .variantSelect {
-  border: 1px solid rgba(132, 155, 186, 0.3);
-  background: rgba(248, 252, 255, 0.9);
+  border: 1px solid var(--stroke);
+  background: var(--bg-input);
   border-radius: 8px;
   padding: 9px 10px;
-  color: #415976;
+  color: var(--ink-strong);
   font-size: 13px;
 }
 
 .mainCard {
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.94), rgba(245, 250, 255, 0.86));
-  border: 1px solid rgba(132, 155, 186, 0.24);
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
   border-radius: 14px;
   padding: 16px;
   display: grid;
@@ -128,12 +128,12 @@
 .mainHeader h2 {
   font-size: 24px;
   line-height: 1.2;
-  color: #18273d;
+  color: var(--ink-strong);
 }
 
 .versionMeta {
   font-size: 14px;
-  color: #59708f;
+  color: var(--ink-muted);
 }
 
 .headerActions {
@@ -157,15 +157,17 @@
 }
 
 .actionButton {
-  background: linear-gradient(120deg, #5f7fff, #83a2ff);
+  background: var(--brand-1);
+  color: #0b0f19;
 }
 
 .actionButtonSecondary {
-  background: #7f93d7;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--ink-strong);
 }
 
 .actionButtonDanger {
-  background: #ea4b4b;
+  background: var(--danger);
 }
 
 .actionButtonSecondary:disabled,
@@ -175,7 +177,7 @@
 }
 
 .lineTable {
-  border: 1px solid rgba(132, 155, 186, 0.24);
+  border: 1px solid var(--stroke);
   border-radius: 10px;
   overflow: hidden;
 }
@@ -190,21 +192,21 @@
 }
 
 .lineHeader {
-  background: rgba(238, 245, 255, 0.9);
-  color: #587090;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink-faint);
   font-weight: 700;
   font-size: 12px;
 }
 
 .lineRow {
-  border-top: 1px solid rgba(143, 165, 194, 0.2);
-  color: #2a3f5a;
+  border-top: 1px solid var(--stroke);
+  color: var(--ink-strong);
   font-size: 13px;
 }
 
 .lineRowEmpty {
   padding: 14px 12px;
-  color: #6e84a1;
+  color: var(--ink-muted);
   font-size: 13px;
 }
 

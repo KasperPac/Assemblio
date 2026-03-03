@@ -1,124 +1,187 @@
 .shell {
   display: grid;
-  grid-template-columns: 270px 1fr;
+  grid-template-columns: 260px 1fr;
   min-height: 100vh;
-  background: linear-gradient(180deg, #f5f7ff 0%, #eef3ff 100%);
-  color: #17223b;
+  background: var(--bg-page);
+  color: var(--ink-strong);
 }
 
+/* ── Sidebar ─────────────────────────── */
+
 .sidebar {
-  margin: 14px;
-  border-radius: 24px;
-  background: linear-gradient(170deg, #131e37 0%, #1a2a4d 55%, #203669 100%);
-  color: #e7efff;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--stroke);
   display: flex;
   flex-direction: column;
-  padding: 18px 14px;
-  gap: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 20px 48px rgba(13, 24, 48, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  padding: 20px 16px;
+  gap: 8px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
 }
 
 .brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 10px 14px;
-  border-bottom: 1px solid rgba(230, 238, 255, 0.14);
-}
-
-.brandMark {
-  width: 36px;
-  height: 36px;
-  border-radius: 11px;
-  background: linear-gradient(140deg, #5f7fff, #7ea0ff);
-  box-shadow: 0 10px 16px rgba(82, 113, 241, 0.35);
+  padding: 4px 8px 20px;
 }
 
 .brandTitle {
-  font-weight: 700;
+  font-weight: 800;
   font-size: 20px;
-  color: #f4f8ff;
+  color: var(--ink-strong);
+  letter-spacing: -0.02em;
 }
 
 .brandMeta {
-  font-size: 12px;
-  color: rgba(225, 235, 255, 0.75);
+  display: none;
+}
+
+.userGreeting {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 8px;
+}
+
+.userGreetingAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2d3748, #4a5568);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink-strong);
+  flex-shrink: 0;
+}
+
+.userGreetingText {
+  font-size: 14px;
+  color: var(--ink-muted);
+}
+
+.userGreetingText strong {
+  color: var(--ink-strong);
+}
+
+.sidebarSearch {
+  position: relative;
+  padding: 0 4px;
+  margin-bottom: 8px;
+}
+
+.sidebarSearchIcon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ink-faint);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.sidebarSearchInput {
+  width: 100%;
+  padding: 10px 12px 10px 36px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: var(--bg-input);
+  color: var(--ink-strong);
+  font-size: 13px;
+}
+
+.sidebarSearchInput::placeholder {
+  color: var(--ink-faint);
 }
 
 .nav {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 2px;
+  padding: 0 4px;
 }
 
-.nav a {
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   padding: 10px 12px;
-  border-radius: 11px;
-  color: rgba(228, 236, 255, 0.82);
-  font-size: 13px;
-  font-weight: 600;
-  transition: background 0.18s ease, color 0.18s ease, transform 0.14s ease;
+  border-radius: 10px;
+  color: var(--ink-muted);
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
-.nav a:hover {
-  background: rgba(140, 166, 255, 0.2);
-  color: #ffffff;
-  transform: translateX(2px);
+.navItem:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink-strong);
+}
+
+.navIcon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.navItem:hover .navIcon {
+  opacity: 0.9;
 }
 
 .active {
-  background: linear-gradient(120deg, rgba(95, 127, 255, 0.92), rgba(133, 162, 255, 0.92));
-  color: #ffffff;
-  box-shadow: 0 10px 18px rgba(85, 114, 236, 0.36);
+  background: var(--brand-dim);
+  color: var(--brand-1);
 }
+
+.active .navIcon {
+  opacity: 1;
+  color: var(--brand-1);
+}
+
+/* ── Sidebar Footer ──────────────────── */
 
 .sidebarFooter {
   margin-top: auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-.tenantSwitchForm,
-.planCard,
-.userCard {
-  border-radius: 12px;
-  border: 1px solid rgba(215, 227, 255, 0.18);
-  background: rgba(220, 232, 255, 0.1);
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--stroke);
 }
 
 .tenantSwitchForm {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 10px;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .tenantSwitchLabel {
   font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: rgba(224, 235, 255, 0.78);
+  letter-spacing: 0.12em;
+  color: var(--ink-faint);
 }
 
 .tenantSwitchSelect {
-  border: 1px solid rgba(224, 236, 255, 0.24);
-  border-radius: 9px;
-  background: rgba(20, 35, 66, 0.86);
-  color: #eef4ff;
-  padding: 8px 9px;
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  background: var(--bg-input);
+  color: var(--ink-strong);
+  padding: 7px 8px;
   font-size: 12px;
 }
 
 .tenantSwitchButton {
   border: none;
-  border-radius: 9px;
-  background: linear-gradient(120deg, #5f7fff, #88a8ff);
-  color: #ffffff;
-  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--brand-1);
+  color: #0b0f19;
+  padding: 7px 10px;
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
@@ -128,66 +191,71 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px;
+  padding: 10px 8px;
+  border-radius: 10px;
 }
 
 .planIcon {
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  background: linear-gradient(140deg, #2f4c8f, #243a6a);
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--stroke);
 }
 
 .planName {
   font-size: 12px;
-  font-weight: 700;
-  color: #f0f5ff;
+  font-weight: 600;
+  color: var(--ink-strong);
 }
 
 .planTier {
   font-size: 11px;
-  color: rgba(230, 239, 255, 0.68);
+  color: var(--ink-faint);
 }
 
 .userCard {
   display: flex;
   align-items: center;
   gap: 9px;
-  padding: 10px;
+  padding: 8px;
+  border-radius: 10px;
 }
 
 .userAvatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  background: linear-gradient(140deg, #37559a, #2a4377);
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #2d3748, #4a5568);
   display: grid;
   place-items: center;
+  font-size: 11px;
   font-weight: 700;
 }
 
 .userName {
   font-size: 12px;
-  font-weight: 700;
-  color: #f4f8ff;
+  font-weight: 600;
+  color: var(--ink-strong);
 }
 
 .userRole {
   font-size: 11px;
-  color: rgba(230, 239, 255, 0.65);
+  color: var(--ink-faint);
 }
 
 .helpLink,
 .logout {
-  color: rgba(230, 239, 255, 0.78);
+  color: var(--ink-muted);
   font-size: 12px;
-  padding: 5px 10px;
+  padding: 6px 8px;
   border-radius: 8px;
 }
 
 .helpLink:hover,
 .logout:hover {
-  background: rgba(203, 220, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink-strong);
 }
 
 .logout {
@@ -198,70 +266,97 @@
   cursor: pointer;
 }
 
+/* ── Main Area ───────────────────────── */
+
 .main {
-  padding: 16px 16px 18px 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  min-height: 100vh;
 }
 
 .topbar {
-  border: 1px solid rgba(145, 167, 200, 0.3);
-  background: rgba(255, 255, 255, 0.86);
-  border-radius: 18px;
-  box-shadow:
-    0 12px 24px rgba(50, 73, 109, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  padding: 14px 16px;
+  background: var(--bg-sidebar);
+  border-bottom: 1px solid var(--stroke);
+  padding: 16px 24px;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   flex-wrap: wrap;
 }
 
-.topbarEyebrow {
-  font-family: var(--font-plex-mono), monospace;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-size: 10px;
-  color: #637a98;
-}
-
-.topbarTitle {
-  margin-top: 4px;
-  font-size: 24px;
-  letter-spacing: -0.03em;
-  color: #1c2d49;
-}
-
-.topbarMeta {
+.breadcrumb {
   display: flex;
+  align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
+  font-size: 14px;
 }
 
+.breadcrumbMuted {
+  color: var(--ink-muted);
+}
+
+.breadcrumbSep {
+  color: var(--ink-faint);
+}
+
+.breadcrumbCurrent {
+  color: var(--ink-strong);
+  font-weight: 600;
+}
+
+.topbarActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topbarIconBtn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: var(--bg-card);
+  color: var(--ink-muted);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.topbarIconBtn:hover {
+  background: var(--surface-1);
+  color: var(--ink-strong);
+}
+
+.topbarAvatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2d3748, #4a5568);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 14px;
+  border: 2px solid var(--stroke);
+  cursor: pointer;
+}
+
+/* ── Topbar meta chips (hidden in new design) ── */
+.topbarEyebrow,
+.topbarTitle,
+.topbarMeta,
 .metaChip {
-  padding: 5px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(151, 173, 204, 0.3);
-  background: #f6faff;
-  font-size: 12px;
-  color: #4d6483;
+  display: none;
 }
 
 .content {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  border: 1px solid rgba(145, 167, 200, 0.3);
-  background: rgba(255, 255, 255, 0.86);
-  border-radius: 22px;
-  box-shadow:
-    0 22px 44px rgba(45, 68, 103, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.82);
-  padding: 16px;
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
 }
+
+/* ── Responsive ──────────────────────── */
 
 @media (max-width: 1120px) {
   .shell {
@@ -269,26 +364,25 @@
   }
 
   .sidebar {
-    margin: 10px 10px 0;
+    height: auto;
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid var(--stroke);
   }
 
   .nav {
     flex-direction: row;
     flex-wrap: wrap;
+    gap: 4px;
   }
 
-  .main {
-    padding: 10px;
+  .content {
+    padding: 16px;
   }
 }
 
 @media (max-width: 820px) {
   .content {
-    border-radius: 16px;
     padding: 12px;
-  }
-
-  .topbarTitle {
-    font-size: 20px;
   }
 }

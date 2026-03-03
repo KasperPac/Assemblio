@@ -38,29 +38,41 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     ? profile?.tenant[0] ?? null
     : profile?.tenant;
 
+  const userInitial = (user?.email ?? "U").slice(0, 1).toUpperCase();
+  const firstName = user?.email?.split("@")[0] ?? "User";
+
   return (
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
         <div className={styles.brand}>
-          <span className={styles.brandMark} />
-          <div>
-            <p className={styles.brandTitle}>Assemblio</p>
-            <p className={styles.brandMeta}>
-              By {tenant?.name ?? "Tenant"}
-            </p>
-          </div>
+          <p className={styles.brandTitle}>Assemblio</p>
         </div>
+
+        <div className={styles.userGreeting}>
+          <span className={styles.userGreetingAvatar}>{userInitial}</span>
+          <p className={styles.userGreetingText}>
+            Hello, <strong>{firstName}</strong>
+          </p>
+        </div>
+
+        <div className={styles.sidebarSearch}>
+          <span className={styles.sidebarSearchIcon}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
+          </span>
+          <input
+            type="text"
+            placeholder="Search..."
+            className={styles.sidebarSearchInput}
+            readOnly
+          />
+        </div>
+
         <SidebarNav />
+
         <div className={styles.sidebarFooter}>
-          <div className={styles.planCard}>
-            <div className={styles.planIcon} />
-            <div>
-              <p className={styles.planName}>{tenant?.name ?? "Tenant"}</p>
-              <p className={styles.planTier}>
-                {isSuperAdmin ? "Super Admin" : "Tenant Member"}
-              </p>
-            </div>
-          </div>
           {selectableTenants.length > 1 ? (
             <form action={switchActiveTenant} className={styles.tenantSwitchForm}>
               <label htmlFor="tenant-switch" className={styles.tenantSwitchLabel}>
@@ -83,13 +95,13 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
               </button>
             </form>
           ) : null}
-          <div className={styles.userCard}>
-            <span className={styles.userAvatar}>
-              {(user?.email ?? "U").slice(0, 1).toUpperCase()}
-            </span>
+          <div className={styles.planCard}>
+            <div className={styles.planIcon} />
             <div>
-              <p className={styles.userName}>{user?.email ?? "User"}</p>
-              <p className={styles.userRole}>{profile?.role ?? "member"}</p>
+              <p className={styles.planName}>{tenant?.name ?? "Tenant"}</p>
+              <p className={styles.planTier}>
+                {isSuperAdmin ? "Super Admin" : "Tenant Member"}
+              </p>
             </div>
           </div>
           <a className={styles.helpLink} href="/app/help">
@@ -102,16 +114,35 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           </form>
         </div>
       </aside>
+
       <div className={styles.main}>
         <header className={styles.topbar}>
-          <div>
-            <p className={styles.topbarEyebrow}>Operations</p>
-            <h1 className={styles.topbarTitle}>Assemblio Workspace</h1>
+          <div className={styles.breadcrumb}>
+            <span className={styles.breadcrumbMuted}>Dashboard</span>
+            <span className={styles.breadcrumbSep}>/</span>
+            <span className={styles.breadcrumbCurrent}>Overview</span>
           </div>
-          <div className={styles.topbarMeta}>
-            <span className={styles.metaChip}>{tenant?.name ?? "Tenant"}</span>
-            <span className={styles.metaChip}>{profile?.role ?? "member"}</span>
-            <span className={styles.metaChip}>{user?.email ?? "User"}</span>
+          <div className={styles.topbarActions}>
+            <button className={styles.topbarIconBtn} type="button" aria-label="Notifications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+              </svg>
+            </button>
+            <button className={styles.topbarIconBtn} type="button" aria-label="Theme">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+              </svg>
+            </button>
+            <button className={styles.topbarIconBtn} type="button" aria-label="Calendar">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                <line x1="16" x2="16" y1="2" y2="6" />
+                <line x1="8" x2="8" y1="2" y2="6" />
+                <line x1="3" x2="21" y1="10" y2="10" />
+              </svg>
+            </button>
+            <span className={styles.topbarAvatar}>{userInitial}</span>
           </div>
         </header>
         <section className={styles.content}>{children}</section>

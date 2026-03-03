@@ -1,9 +1,9 @@
 .section {
-  background: #fff;
+  background: var(--bg-card);
   padding: 24px;
   border-radius: 16px;
-  border: 1px solid rgba(13, 13, 18, 0.08);
-  box-shadow: 0 16px 30px rgba(13, 13, 18, 0.08);
+  border: 1px solid var(--stroke-card);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -17,19 +17,20 @@
 }
 
 .header p {
-  color: rgba(13, 13, 18, 0.65);
+  color: var(--ink-muted);
 }
 
 .export {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(13, 13, 18, 0.2);
+  border: 1px solid var(--stroke);
   background: transparent;
   padding: 8px 16px;
   border-radius: 999px;
   font-weight: 600;
   cursor: pointer;
+  color: var(--ink-strong);
 }
 
 .movementForm {
@@ -38,7 +39,7 @@
   gap: 16px;
   padding: 16px;
   border-radius: 16px;
-  background: rgba(13, 13, 18, 0.04);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .formRow {
@@ -54,17 +55,18 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: rgba(13, 13, 18, 0.6);
+  color: var(--ink-faint);
 }
 
 .formRow input,
 .formRow select {
-  border: 1px solid rgba(13, 13, 18, 0.2);
+  border: 1px solid var(--stroke);
   border-radius: 10px;
   padding: 8px 10px;
   font-size: 13px;
   font-family: inherit;
-  background: #fff;
+  background: var(--bg-input);
+  color: var(--ink-strong);
 }
 
 .formActions {
@@ -79,8 +81,8 @@
   border: none;
   border-radius: 999px;
   padding: 10px 18px;
-  background: #0d0d12;
-  color: #f7f2ea;
+  background: var(--brand-1);
+  color: #0b0f19;
   font-weight: 600;
   cursor: pointer;
 }
@@ -101,14 +103,14 @@
 }
 
 .tableHeader {
-  color: rgba(13, 13, 18, 0.55);
+  color: var(--ink-faint);
   text-transform: uppercase;
   letter-spacing: 0.2em;
   font-size: 11px;
 }
 
 .tableRow {
-  background: rgba(13, 13, 18, 0.04);
+  background: rgba(255, 255, 255, 0.03);
   padding: 12px 14px;
   border-radius: 12px;
 }
@@ -116,16 +118,16 @@
 .empty {
   padding: 18px;
   border-radius: 12px;
-  background: rgba(13, 13, 18, 0.04);
-  color: rgba(13, 13, 18, 0.7);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ink-muted);
 }
 
 .error {
-  color: #ff7b54;
+  color: var(--danger);
 }
 
 .success {
-  color: #1c7c54;
+  color: var(--brand-1);
   font-size: 12px;
 }
 
@@ -148,13 +150,13 @@
   align-items: center;
   padding: 12px 14px;
   border-radius: 12px;
-  background: rgba(13, 13, 18, 0.04);
+  background: rgba(255, 255, 255, 0.03);
   font-size: 12px;
   font-family: var(--font-plex-mono), monospace;
 }
 
 .movementRow span {
-  color: rgba(13, 13, 18, 0.55);
+  color: var(--ink-faint);
   font-size: 11px;
 }
 
@@ -167,7 +169,7 @@
   text-transform: uppercase;
   letter-spacing: 0.16em;
   font-size: 10px;
-  color: rgba(13, 13, 18, 0.6);
+  color: var(--ink-faint);
   text-align: right;
 }
 

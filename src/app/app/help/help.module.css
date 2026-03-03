@@ -9,7 +9,7 @@
 }
 
 .header p {
-  color: #8b97a7;
+  color: var(--ink-muted);
   font-size: 12px;
 }
 
@@ -20,10 +20,11 @@
 }
 
 .card {
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 18px;
-  box-shadow: 0 8px 16px rgba(27, 31, 42, 0.06);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--stroke-card);
 }
 
 .card h3 {
@@ -31,7 +32,7 @@
 }
 
 .card p {
-  color: #8b97a7;
+  color: var(--ink-muted);
   font-size: 13px;
   line-height: 1.6;
 }
@@ -44,11 +45,15 @@
 
 .linkRow {
   display: block;
-  border: 1px solid #edf1f5;
+  border: 1px solid var(--stroke);
   border-radius: 10px;
   padding: 10px 12px;
   text-decoration: none;
   color: inherit;
+}
+
+.linkRow:hover {
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .linkRow span {
@@ -62,7 +67,7 @@
 }
 
 .runbookItem {
-  border: 1px solid #edf1f5;
+  border: 1px solid var(--stroke);
   border-radius: 10px;
   padding: 10px 12px;
 }
@@ -73,10 +78,11 @@
 }
 
 .commands {
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 18px;
-  box-shadow: 0 8px 16px rgba(27, 31, 42, 0.06);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--stroke-card);
   display: grid;
   gap: 8px;
 }
@@ -89,9 +95,10 @@
   display: inline-block;
   padding: 6px 8px;
   border-radius: 8px;
-  background: #f5f7fb;
-  border: 1px solid #ebeff5;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--stroke);
   font-size: 12px;
+  color: var(--brand-1);
 }
 
 @media (max-width: 900px) {
