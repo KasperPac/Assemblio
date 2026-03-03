@@ -145,7 +145,7 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
     <div className={styles.page}>
       <div className={styles.topRow}>
         <Link href="/app/products" className={styles.backButton}>
-          ← Back
+          {"<- Back"}
         </Link>
         <p className={styles.breadcrumb}>
           <Link href="/app/products">Products</Link> &gt; Product Detail
@@ -254,8 +254,8 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
                     </span>
                     <span>{line.quantity}</span>
                     <span>{component?.unit ?? "ea"}</span>
-                    <span>✎</span>
-                    <span>⊗</span>
+                    <span>Edit</span>
+                    <span>Remove</span>
                   </div>
                 );
               })
@@ -266,3 +266,4 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
     </div>
   );
 }
+
