@@ -202,7 +202,7 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
 
         <div className={styles.mainCard}>
           <div className={styles.mainHeader}>
-            <div>
+            <div className={styles.mainHeaderInfo}>
               <h2>
                 {typedProduct.title} - {variantLabel} ({typedBomLines.length} Components)
               </h2>
