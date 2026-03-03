@@ -106,7 +106,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         <header className={styles.topbar}>
           <div>
             <p className={styles.topbarEyebrow}>Operations</p>
-            <h1 className={styles.topbarTitle}>Assemblio Control Surface</h1>
+            <h1 className={styles.topbarTitle}>Assemblio Workspace</h1>
           </div>
           <div className={styles.topbarMeta}>
             <span className={styles.metaChip}>{tenant?.name ?? "Tenant"}</span>
