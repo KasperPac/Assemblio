@@ -1,6 +1,7 @@
 .page {
-  display: grid;
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .breadcrumb {
@@ -17,23 +18,36 @@
   text-decoration: underline;
 }
 
+/* ── Variant info card ────────────────── */
+
 .card {
   background: var(--bg-card);
   border: 1px solid var(--stroke-card);
-  border-radius: 14px;
-  padding: 16px;
-  display: grid;
-  gap: 10px;
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .card h3 {
-  font-size: 18px;
+  font-size: 17px;
 }
 
 .meta {
   color: var(--ink-muted);
-  font-size: 13px;
+  font-size: 12px;
 }
+
+/* ── BOM section heading ──────────────── */
+
+.bomSectionTitle {
+  font-size: 17px;
+  color: var(--ink-strong);
+  margin-bottom: 2px;
+}
+
+/* ── Seed panel — 3 option cards ─────── */
 
 .noBomGrid {
   display: grid;
@@ -41,13 +55,78 @@
   gap: 12px;
 }
 
+.seedCard {
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
+  border-radius: 12px;
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.seedIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.seedIconScratch {
+  background: rgba(96, 165, 250, 0.12);
+  color: #60a5fa;
+}
+
+.seedIconTemplate {
+  background: var(--brand-dim);
+  color: var(--brand-1);
+}
+
+.seedIconCopy {
+  background: rgba(249, 115, 22, 0.12);
+  color: #f97316;
+}
+
+.seedIconCsv {
+  background: rgba(168, 85, 247, 0.12);
+  color: #a855f7;
+}
+
+.seedCard h3 {
+  font-size: 15px;
+  color: var(--ink-strong);
+}
+
+.seedCard p {
+  font-size: 12px;
+  color: var(--ink-muted);
+  line-height: 1.4;
+  flex: 1;
+}
+
+.seedCard select {
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  padding: 9px 10px;
+  background: var(--bg-input);
+  color: var(--ink-strong);
+  font-size: 12px;
+  width: 100%;
+}
+
 .primaryButton,
 .secondaryButton {
   border: none;
-  border-radius: 10px;
-  padding: 10px 12px;
-  font-weight: 600;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-weight: 700;
+  font-size: 12px;
   cursor: pointer;
+  text-align: center;
+  width: 100%;
 }
 
 .primaryButton {
@@ -60,23 +139,22 @@
   color: var(--ink-strong);
 }
 
-.card select {
-  border: 1px solid var(--stroke);
-  border-radius: 10px;
-  padding: 10px 12px;
-  background: var(--bg-input);
-  color: var(--ink-strong);
-}
-
 .error {
   color: var(--danger);
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .success {
   color: var(--brand-1);
-  font-size: 13px;
+  font-size: 11px;
 }
+
+.empty {
+  color: var(--ink-faint);
+  font-size: 12px;
+}
+
+/* ── BOM list (when BOM exists) ───────── */
 
 .bomList {
   display: grid;
@@ -90,16 +168,17 @@
 
 .badges {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
 .badge {
   border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 11px;
-  font-weight: 600;
+  padding: 3px 9px;
+  font-size: 10px;
+  font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .badgeDraft {
@@ -123,38 +202,260 @@
   overflow: hidden;
 }
 
+.routingSection {
+  border-top: 1px solid var(--stroke);
+  padding: 14px;
+  display: grid;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.routingHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.routingTable {
+  display: grid;
+  gap: 10px;
+}
+
+.routingTableHeader,
+.routingRow {
+  display: grid;
+  grid-template-columns: 1.2fr 0.7fr 0.7fr;
+  gap: 12px;
+  padding: 9px 12px;
+}
+
+.routingTableHeader {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink-faint);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: 8px;
+}
+
+.routingRow {
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+}
+
+.routingEditor,
+.routingCreateForm {
+  border: 1px solid var(--stroke);
+  border-radius: 10px;
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.routingCreateForm {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.routingFormGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.routingField {
+  display: grid;
+  gap: 5px;
+}
+
+.routingField label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.routingField input,
+.routingField select {
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  padding: 9px 10px;
+  background: var(--bg-input);
+  color: var(--ink-strong);
+  font-size: 12px;
+}
+
+.routingSpanTwo {
+  grid-column: span 2;
+}
+
+.routingActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
 .lineRow,
 .lineHeader {
   display: grid;
   grid-template-columns: 1fr 0.4fr;
   gap: 12px;
-  padding: 10px 12px;
+  padding: 9px 14px;
+  font-size: 12px;
 }
 
 .lineHeader {
   background: rgba(255, 255, 255, 0.04);
   color: var(--ink-faint);
-  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
+  font-size: 10px;
 }
 
 .lineRow {
   border-top: 1px solid var(--stroke);
-}
-
-.empty {
-  color: var(--ink-muted);
-  font-size: 13px;
+  color: var(--ink-strong);
 }
 
 .notice {
   color: var(--ink-muted);
-  font-size: 13px;
+  font-size: 12px;
 }
 
-@media (max-width: 960px) {
+/* ── Template wizard link ─────────────── */
+
+.wizardLink {
+  border: none;
+  background: none;
+  color: var(--brand-1);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── Template wizard dialog ───────────── */
+
+.wizardDialog {
+  border: none;
+  border-radius: 14px;
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+  padding: 0;
+  max-width: 460px;
+  width: 92vw;
+}
+
+.wizardDialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.wizardInner {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.wizardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wizardHeader h2 {
+  font-size: 18px;
+}
+
+.wizardClose {
+  border: none;
+  background: none;
+  color: var(--ink-muted);
+  font-size: 22px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.wizardSubtitle {
+  color: var(--ink-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.wizardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.wizardForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wizardField {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.wizardField span {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.wizardField input,
+.wizardField textarea {
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  padding: 9px 11px;
+  background: var(--bg-input);
+  color: var(--ink-strong);
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.wizardActions {
+  display: flex;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.wizardHint {
+  font-size: 11px;
+  color: var(--ink-faint);
+  line-height: 1.4;
+}
+
+/* ── Responsive ───────────────────────── */
+
+@media (max-width: 700px) {
   .noBomGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .routingFormGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .routingSpanTwo {
+    grid-column: auto;
+  }
+
+  .routingTableHeader,
+  .routingRow {
     grid-template-columns: 1fr;
   }
 

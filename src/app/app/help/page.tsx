@@ -1,3 +1,5 @@
+import PageHeader from "../_ui/page-header";
+import ListPanel, { ListRow } from "../_ui/list-panel";
 import styles from "./help.module.css";
 
 const quickLinks = [
@@ -63,31 +65,49 @@ const runbooks = [
   },
 ];
 
+const commands = [
+  "npm run dev",
+  "npm run lint",
+  "npm run build",
+  "npm run ops:integrity",
+  "GET /api/internal/integrity",
+  "python scripts/task_create.py --help",
+];
+
 export default function HelpPage() {
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <h1>Help & Docs</h1>
-        <p>Runbooks, quick links, and commands for operating Assemblio.</p>
-      </div>
+      <PageHeader
+        eyebrow="Help"
+        title="Operator runbooks"
+        description="Quick links, common procedures, and the core commands used to operate and troubleshoot Assemblio."
+      />
+
       <div className={styles.grid}>
-        <section className={styles.card}>
-          <h3>Quick Links</h3>
+        <ListPanel
+          eyebrow="Navigation"
+          title="Quick links"
+          description="Jump straight into the most-used operational surfaces."
+        >
           <div className={styles.linkList}>
             {quickLinks.map((link) => (
               <a key={link.href} href={link.href} className={styles.linkRow}>
-                <span>{link.title}</span>
+                <strong>{link.title}</strong>
                 <p>{link.description}</p>
               </a>
             ))}
           </div>
-        </section>
-        <section className={styles.card}>
-          <h3>Runbooks</h3>
+        </ListPanel>
+
+        <ListPanel
+          eyebrow="Runbooks"
+          title="Common operating procedures"
+          description="Use these sequences as the default path for routine admin and troubleshooting tasks."
+        >
           <div className={styles.runbookList}>
             {runbooks.map((runbook) => (
               <article key={runbook.title} className={styles.runbookItem}>
-                <h4>{runbook.title}</h4>
+                <h3>{runbook.title}</h3>
                 {runbook.steps.map((step, index) => (
                   <p key={`${runbook.title}-${index}`}>
                     {index + 1}. {step}
@@ -96,17 +116,20 @@ export default function HelpPage() {
               </article>
             ))}
           </div>
-        </section>
+        </ListPanel>
       </div>
-      <div className={styles.commands}>
-        <h3>Useful Commands</h3>
-        <code>npm run dev</code>
-        <code>npm run lint</code>
-        <code>npm run build</code>
-        <code>npm run ops:integrity</code>
-        <code>GET /api/internal/integrity</code>
-        <code>python scripts/task_create.py --help</code>
-      </div>
+
+      <ListPanel
+        eyebrow="Commands"
+        title="Useful local commands"
+        description="The fastest way to validate app health, build quality, and integrity status from the workspace."
+      >
+        {commands.map((command) => (
+          <ListRow key={command} columnsTemplate="1fr" className={styles.commandRow}>
+            <code>{command}</code>
+          </ListRow>
+        ))}
+      </ListPanel>
     </div>
   );
 }

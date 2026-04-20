@@ -1,84 +1,121 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
-.header h1 {
-  font-size: 24px;
-}
-
-.header p {
-  color: var(--ink-muted);
-  font-size: 12px;
-}
-
-.grid {
+.overviewGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
 }
 
-.card {
-  background: var(--bg-card);
-  border-radius: 16px;
-  padding: 18px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--stroke-card);
+.overviewCard,
+.shopifyCard,
+.integrityPanel,
+.syncPanel,
+.themeCard {
+  border: 1px solid color-mix(in srgb, var(--stroke-strong) 70%, transparent);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-raised) 92%, transparent), color-mix(in srgb, var(--surface) 94%, transparent));
+  box-shadow: 0 18px 38px rgba(5, 8, 15, 0.2);
 }
 
-.card h3 {
-  font-size: 13px;
-  color: var(--ink-faint);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  margin-bottom: 8px;
-}
-
-.card p {
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.cardMeta {
-  display: block;
-  margin-top: 8px;
-  color: var(--ink-muted);
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.cardLink {
-  display: inline-block;
-  margin-top: 10px;
-  color: var(--brand-1);
-  font-size: 12px;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.cardLink:hover {
-  text-decoration: underline;
-}
-
-.shopifyCard {
-  background: var(--bg-card);
-  border-radius: 16px;
-  padding: 18px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--stroke-card);
+.overviewCard {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+  padding: 18px;
 }
 
-.shopifyCard h3 {
-  font-size: 16px;
+.overviewCard span,
+.eyebrow,
+.integrityCard span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
 }
 
-.shopifyCard p {
+.overviewCard strong,
+.integrityCard strong {
+  font-size: clamp(1.2rem, 1vw + 1rem, 2rem);
+  line-height: 1;
+  color: var(--ink-strong);
+}
+
+.overviewCard p,
+.panelBody,
+.syncMeta,
+.meta,
+.notice,
+.shopifyCard p,
+.syncModal p {
+  margin: 0;
   color: var(--ink-muted);
-  font-size: 13px;
+  line-height: 1.6;
+}
+
+.themeLink,
+.reportLink,
+.themeLinkSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.themeLink {
+  border: 1px solid color-mix(in srgb, var(--stroke-strong) 72%, transparent);
+  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+  color: var(--ink-strong);
+}
+
+.themeLinkSecondary,
+.reportLink {
+  width: fit-content;
+  border: 1px solid color-mix(in srgb, var(--stroke-strong) 72%, transparent);
+  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+  color: var(--ink-strong);
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.9fr);
+  gap: 18px;
+}
+
+.primaryColumn,
+.secondaryColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.shopifyCard,
+.integrityPanel,
+.syncPanel,
+.themeCard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px;
+}
+
+.shopifyCard h3,
+.integrityPanel h2,
+.syncPanel h2,
+.themeCard h2,
+.syncModal h4 {
+  margin: 0;
+  color: var(--ink-strong);
 }
 
 .shopifyForm {
@@ -90,113 +127,81 @@
 .shopifyForm input {
   flex: 1;
   min-width: 240px;
-  border: 1px solid var(--stroke);
-  border-radius: 10px;
-  padding: 10px 12px;
-  background: var(--bg-input);
+  min-height: 44px;
+  border: 1px solid color-mix(in srgb, var(--stroke) 78%, transparent);
+  border-radius: 14px;
+  padding: 0 14px;
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
   color: var(--ink-strong);
 }
 
-.shopifyForm button {
+.shopifyForm button,
+.syncButton,
+.syncStoreButton {
   border: none;
-  border-radius: 10px;
-  padding: 10px 14px;
-  background: var(--brand-1);
-  color: #0b0f19;
-  font-weight: 600;
+  border-radius: 999px;
+  min-height: 42px;
+  padding: 0 18px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--brand-2) 72%, #142131), color-mix(in srgb, var(--brand-1) 88%, #0e1624));
+  color: #f8fbff;
+  font-size: 0.9rem;
+  font-weight: 700;
   cursor: pointer;
 }
 
 .notice {
-  color: var(--brand-1);
-  font-weight: 500;
+  color: var(--ok);
 }
 
-.actions {
+.integrityHeader {
   display: flex;
-  align-items: center;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 12px;
-  flex-wrap: wrap;
 }
 
-.syncButton,
-.syncStoreButton {
-  border: none;
-  border-radius: 10px;
-  padding: 10px 14px;
-  background: var(--brand-1);
-  color: #0b0f19;
-  font-weight: 600;
-  cursor: pointer;
+.integrityGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
-.disconnectStoreButton {
-  border: none;
-  border-radius: 10px;
-  padding: 10px 14px;
-  background: var(--danger);
-  color: #ffffff;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.syncMeta {
-  color: var(--ink-muted);
-  font-size: 13px;
-}
-
-.storeList {
-  background: var(--bg-card);
-  border-radius: 16px;
-  padding: 18px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--stroke-card);
+.integrityCard {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-.storeList h3 {
-  font-size: 16px;
-}
-
-.storeRowWrap {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 10px;
-  padding: 10px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  border: 1px solid color-mix(in srgb, var(--stroke) 66%, transparent);
 }
 
 .storeRow {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  font-size: 13px;
 }
 
-.storeMeta {
+.storeCell,
+.storeActions {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  font-size: 12px;
-  color: var(--ink-muted);
+  gap: 6px;
 }
 
-.status {
-  background: rgba(74, 222, 128, 0.15);
-  color: var(--brand-1);
-  padding: 4px 10px;
+.storeActions {
+  align-items: flex-start;
+}
+
+.disconnectStoreButton {
+  border: 1px solid color-mix(in srgb, var(--danger) 44%, transparent);
   border-radius: 999px;
-  text-transform: uppercase;
-  font-size: 10px;
+  min-height: 38px;
+  padding: 0 14px;
+  background: color-mix(in srgb, var(--danger) 14%, var(--surface));
+  color: #ffb4a0;
+  font-size: 0.84rem;
   font-weight: 700;
-}
-
-.empty {
-  color: var(--ink-muted);
-  font-size: 13px;
+  cursor: pointer;
 }
 
 .syncOverlay {
@@ -214,21 +219,12 @@
   width: min(440px, 100%);
   background: var(--bg-card);
   border: 1px solid var(--stroke);
-  border-radius: 14px;
-  padding: 18px;
+  border-radius: 18px;
+  padding: 20px;
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-.syncModal h4 {
-  font-size: 18px;
-}
-
-.syncModal p {
-  font-size: 13px;
-  color: var(--ink-muted);
+  gap: 12px;
 }
 
 .syncProgressTrack {
@@ -256,5 +252,24 @@
   }
   100% {
     left: 100%;
+  }
+}
+
+@media (max-width: 1120px) {
+  .overviewGrid,
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 860px) {
+  .integrityGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .shopifyForm,
+  .integrityHeader {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

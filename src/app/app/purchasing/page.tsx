@@ -8,6 +8,10 @@ import {
   updatePurchaseOrderLineQuantity,
   updatePurchaseOrderStatus,
 } from "./actions";
+import PageHeader from "../_ui/page-header";
+import StatusBadge from "../_ui/status-badge";
+import EmptyState from "../_ui/empty-state";
+import ListPanel, { ListRow } from "../_ui/list-panel";
 
 type PurchaseOrderRow = {
   id: string;
@@ -30,34 +34,42 @@ type PurchaseOrderLineRow = {
     | null;
 };
 
+function getStatusVariant(status: string) {
+  const normalized = status.toLowerCase();
+  if (normalized === "received") return "success";
+  if (normalized === "cancelled" || normalized === "archived") return "danger";
+  if (normalized === "in_transit") return "info";
+  return "warning";
+}
+
 export default async function PurchasingPage() {
   const supabase = await createSupabaseServerClient();
   const [{ data, error }, { data: suppliers }, { data: components }, { data: poLines }] =
     await Promise.all([
-    supabase
-      .from("purchase_order")
-      .select("id,status,created_at,supplier:supplier_id(name)")
-      .order("created_at", { ascending: false })
-      .limit(12),
-    supabase.from("suppliers").select("id,name").order("name"),
-    supabase.from("component").select("id,name,sku").order("name"),
-    supabase
-      .from("purchase_order_line")
-      .select(
-        "id,quantity,quantity_received,purchase_order:purchase_order_id(id),component:component_id(name,sku)"
-      )
-      .order("created_at", { ascending: false })
-      .limit(20),
-  ]);
+      supabase
+        .from("purchase_order")
+        .select("id,status,created_at,supplier:supplier_id(name)")
+        .order("created_at", { ascending: false })
+        .limit(12),
+      supabase.from("suppliers").select("id,name").order("name"),
+      supabase.from("component").select("id,name,sku").order("name"),
+      supabase
+        .from("purchase_order_line")
+        .select(
+          "id,quantity,quantity_received,purchase_order:purchase_order_id(id),component:component_id(name,sku)"
+        )
+        .order("created_at", { ascending: false })
+        .limit(20),
+    ]);
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <div>
-          <h1>Purchasing</h1>
-          <p>Track suppliers, create purchase orders, and receive inbound stock.</p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Purchasing"
+        title="Purchase flow"
+        description="Create inbound purchase orders, manage status changes, and keep received quantities aligned with component demand."
+      />
+
       <PurchaseOrderCreateForm
         suppliers={(suppliers ?? []) as Array<{ id: string; name: string | null }>}
         action={createPurchaseOrder}
@@ -67,35 +79,51 @@ export default async function PurchasingPage() {
           id: po.id,
           label: `PO-${po.id.slice(0, 6)} (${po.status})`,
         }))}
-        components={((components ?? []) as Array<{ id: string; name: string | null; sku: string | null }>).map((c) => ({
-          id: c.id,
-          label: `${c.name ?? "Unnamed"}${c.sku ? ` (${c.sku})` : ""}`,
-        }))}
+        components={
+          ((components ?? []) as Array<{ id: string; name: string | null; sku: string | null }>).map(
+            (c) => ({
+              id: c.id,
+              label: `${c.name ?? "Unnamed"}${c.sku ? ` (${c.sku})` : ""}`,
+            })
+          )
+        }
         action={createPurchaseOrderLine}
       />
-      <div className={styles.table}>
-        <div className={styles.tableHeader}>
-          <span>PO</span>
-          <span>Supplier</span>
-          <span>Status</span>
-          <span>Created</span>
-          <span>Actions</span>
-        </div>
+
+      <ListPanel
+        eyebrow="Orders"
+        title="Purchase orders"
+        description="Track PO status and keep supplier communication in sync with warehouse reality."
+        columns={["PO", "Supplier", "Status", "Created", "Actions"]}
+        columnsTemplate="0.8fr 1.1fr 0.8fr 0.8fr 1.2fr"
+      >
         {error ? (
-          <div className={styles.empty}>Failed to load purchase orders.</div>
+          <EmptyState
+            title="Failed to load purchase orders"
+            message="The purchase order list could not be retrieved from Supabase."
+          />
         ) : (data ?? []).length === 0 ? (
-          <div className={styles.empty}>No purchase orders yet.</div>
+          <EmptyState
+            title="No purchase orders yet"
+            message="Create a purchase order to begin tracking inbound supply."
+          />
         ) : (
           (data as PurchaseOrderRow[]).map((row) => {
             const supplier = Array.isArray(row.supplier)
               ? row.supplier[0] ?? null
               : row.supplier;
             return (
-              <div key={row.id} className={styles.tableRow}>
-                <span>PO-{row.id.slice(0, 6)}</span>
-                <span>{supplier?.name ?? "Unknown supplier"}</span>
-                <span className={styles.status}>{row.status}</span>
-                <span>{new Date(row.created_at).toLocaleDateString("en-GB")}</span>
+              <ListRow
+                key={row.id}
+                columnsTemplate="0.8fr 1.1fr 0.8fr 0.8fr 1.2fr"
+                className={styles.row}
+              >
+                <strong>PO-{row.id.slice(0, 6)}</strong>
+                <span className={styles.meta}>{supplier?.name ?? "Unknown supplier"}</span>
+                <StatusBadge variant={getStatusVariant(row.status)}>{row.status}</StatusBadge>
+                <span className={styles.meta}>
+                  {new Date(row.created_at).toLocaleDateString("en-GB")}
+                </span>
                 <form action={updatePurchaseOrderStatus} className={styles.inlineForm}>
                   <input type="hidden" name="purchase_order_id" value={row.id} />
                   <select name="status" defaultValue={row.status}>
@@ -107,20 +135,24 @@ export default async function PurchasingPage() {
                   </select>
                   <button type="submit">Update</button>
                 </form>
-              </div>
+              </ListRow>
             );
           })
         )}
-      </div>
-      <div className={styles.table}>
-        <div className={styles.tableHeaderLines}>
-          <span>PO</span>
-          <span>Component</span>
-          <span>Qty / Received</span>
-          <span>Actions</span>
-        </div>
+      </ListPanel>
+
+      <ListPanel
+        eyebrow="Lines"
+        title="Purchase order lines"
+        description="Review ordered quantities versus receipts and correct PO lines in place."
+        columns={["PO", "Component", "Qty / Received", "Actions"]}
+        columnsTemplate="0.85fr 1.5fr 0.8fr 1.2fr"
+      >
         {(poLines ?? []).length === 0 ? (
-          <div className={styles.empty}>No purchase order lines yet.</div>
+          <EmptyState
+            title="No purchase order lines yet"
+            message="Add a line to a purchase order to track quantities and receipts."
+          />
         ) : (
           (poLines as PurchaseOrderLineRow[]).map((line) => {
             const po = Array.isArray(line.purchase_order)
@@ -130,15 +162,24 @@ export default async function PurchasingPage() {
               ? line.component[0] ?? null
               : line.component;
             return (
-              <div key={line.id} className={styles.tableRowLines}>
-                <span>PO-{po?.id?.slice(0, 6) ?? "???"}</span>
-                <span>
-                  {component?.name ?? "Unknown"}
-                  {component?.sku ? ` (${component.sku})` : ""}
-                </span>
-                <span>
-                  {line.quantity} / {Number(line.quantity_received ?? 0)}
-                </span>
+              <ListRow
+                key={line.id}
+                columnsTemplate="0.85fr 1.5fr 0.8fr 1.2fr"
+                className={styles.row}
+              >
+                <strong>PO-{po?.id?.slice(0, 6) ?? "???"}</strong>
+                <div className={styles.cellStack}>
+                  <strong>{component?.name ?? "Unknown"}</strong>
+                  <span className={styles.meta}>
+                    {component?.sku ? component.sku : "No SKU"}
+                  </span>
+                </div>
+                <div className={styles.cellStack}>
+                  <strong>{line.quantity}</strong>
+                  <span className={styles.meta}>
+                    Received {Number(line.quantity_received ?? 0)}
+                  </span>
+                </div>
                 <form action={updatePurchaseOrderLineQuantity} className={styles.inlineForm}>
                   <input type="hidden" name="line_id" value={line.id} />
                   <input
@@ -150,11 +191,11 @@ export default async function PurchasingPage() {
                   />
                   <button type="submit">Save</button>
                 </form>
-              </div>
+              </ListRow>
             );
           })
         )}
-      </div>
+      </ListPanel>
     </div>
   );
 }

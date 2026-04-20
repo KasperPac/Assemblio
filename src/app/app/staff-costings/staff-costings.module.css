@@ -1,0 +1,329 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 860px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.header h1 {
+  font-size: 22px;
+}
+
+.subtitle {
+  color: var(--ink-muted);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.addButton {
+  border: none;
+  border-radius: 10px;
+  padding: 9px 16px;
+  background: var(--brand-1);
+  color: #0b0f19;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Summary row ──────────────────────── */
+
+.summaryRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.summaryCard {
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+
+.summaryLabel {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+}
+
+.summaryValue {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink-strong);
+}
+
+/* ── Table ────────────────────────────── */
+
+.table {
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.tableHeader,
+.tableRow {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 0.5fr 80px;
+  gap: 12px;
+  padding: 11px 18px;
+  align-items: center;
+  font-size: 12px;
+}
+
+.tableHeader {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink-faint);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 10px;
+}
+
+.tableRow {
+  border-top: 1px solid var(--stroke);
+  color: var(--ink-strong);
+}
+
+.tableRow:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.deptName {
+  font-weight: 600;
+}
+
+.sku {
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+
+.unit {
+  color: var(--ink-muted);
+}
+
+.emptyRow {
+  padding: 24px 18px;
+  color: var(--ink-muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+/* ── Rate editor ──────────────────────── */
+
+.rateDisplay {
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 4px 8px;
+  background: transparent;
+  color: var(--brand-1);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+
+.rateDisplay:hover {
+  border-color: var(--stroke);
+  background: var(--bg-input);
+}
+
+.rateForm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rateInput {
+  width: 80px;
+  border: 1px solid var(--stroke);
+  border-radius: 6px;
+  padding: 4px 8px;
+  background: var(--bg-input);
+  color: var(--ink-strong);
+  font-size: 13px;
+}
+
+.rateSave {
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  background: var(--brand-1);
+  color: #0b0f19;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rateCancel {
+  border: none;
+  background: none;
+  color: var(--ink-faint);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+/* ── Remove button ────────────────────── */
+
+.removeBtn {
+  border: none;
+  background: none;
+  color: var(--ink-faint);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: color 0.12s, background 0.12s;
+}
+
+.removeBtn:hover {
+  color: var(--danger);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+/* ── Hint ─────────────────────────────── */
+
+.hint {
+  font-size: 11px;
+  color: var(--ink-faint);
+  line-height: 1.4;
+}
+
+/* ── Dialog ───────────────────────────── */
+
+.dialog {
+  border: none;
+  border-radius: 14px;
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+  padding: 0;
+  max-width: 420px;
+  width: 92vw;
+}
+
+.dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.dialogInner {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.dialogHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dialogHeader h2 {
+  font-size: 18px;
+}
+
+.dialogClose {
+  border: none;
+  background: none;
+  color: var(--ink-muted);
+  font-size: 22px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.dialogForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.field span {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.field input {
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  padding: 9px 11px;
+  background: var(--bg-input);
+  color: var(--ink-strong);
+  font-size: 13px;
+}
+
+.dialogActions {
+  display: flex;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.btnCancel {
+  flex: 1;
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  padding: 9px 14px;
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.btnSubmit {
+  flex: 1;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 14px;
+  background: var(--brand-1);
+  color: #0b0f19;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.error {
+  color: var(--danger);
+  font-size: 11px;
+}
+
+/* ── Responsive ───────────────────────── */
+
+@media (max-width: 700px) {
+  .tableHeader {
+    display: none;
+  }
+
+  .tableRow {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}

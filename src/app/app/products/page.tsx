@@ -18,6 +18,18 @@ type VariantRow = {
   sku: string | null;
 };
 
+type VariantMarginRow = {
+  order_line:
+    | {
+        variant_id: string;
+      }
+    | Array<{
+        variant_id: string;
+      }>
+    | null;
+  planned_margin: number;
+};
+
 type Props = {
   searchParams?: Promise<{
     q?: string;
@@ -31,10 +43,15 @@ export default async function ProductsPage({ searchParams }: Props) {
   const filter = (params.filter ?? "all").toLowerCase();
   const supabase = await createSupabaseServerClient();
 
-  const detailedVariantsResult = await supabase
-    .from("shopify_variant")
-    .select("id,product_id,title,sku")
-    .order("created_at", { ascending: true });
+  const [detailedVariantsResult, marginResult] = await Promise.all([
+    supabase
+      .from("shopify_variant")
+      .select("id,product_id,title,sku")
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("job_cost_snapshot")
+      .select("planned_margin,order_line:order_line_id(variant_id)"),
+  ]);
   const variantsFallbackResult = detailedVariantsResult.error
     ? await supabase.from("shopify_variant").select("id,product_id,title,sku")
     : null;
@@ -99,6 +116,26 @@ export default async function ProductsPage({ searchParams }: Props) {
     {}
   );
 
+  const marginByVariant = ((marginResult.data ?? []) as VariantMarginRow[]).reduce<Record<string, number>>(
+    (acc, row) => {
+      const orderLine = Array.isArray(row.order_line)
+        ? row.order_line[0] ?? null
+        : row.order_line;
+      if (!orderLine?.variant_id) return acc;
+      acc[orderLine.variant_id] = (acc[orderLine.variant_id] ?? 0) + Number(row.planned_margin ?? 0);
+      return acc;
+    },
+    {}
+  );
+
+  function formatCurrency(value: number) {
+    return new Intl.NumberFormat("en-AU", {
+      style: "currency",
+      currency: "AUD",
+      maximumFractionDigits: 0,
+    }).format(value);
+  }
+
   const filteredProducts = products.filter((product) => {
     const productVariants = variantsByProduct[product.id] ?? [];
     const matchesQ =
@@ -152,6 +189,7 @@ export default async function ProductsPage({ searchParams }: Props) {
           <span>Products</span>
           <span>Variants</span>
           <span>Status</span>
+          <span>Planned Margin</span>
           <span>Last Updated</span>
         </div>
         {productsError ? (
@@ -162,6 +200,10 @@ export default async function ProductsPage({ searchParams }: Props) {
           filteredProducts.map((product) => {
             const productVariants = variantsByProduct[product.id] ?? [];
             const statusLabel = productVariants.length > 0 ? "ACTIVE" : "PENDING";
+            const productPlannedMargin = productVariants.reduce(
+              (sum, variant) => sum + Number(marginByVariant[variant.id] ?? 0),
+              0
+            );
             return (
               <div key={product.id} className={styles.tableRow}>
                 <Link className={styles.productCell} href={`/app/products/${product.id}`}>
@@ -172,7 +214,6 @@ export default async function ProductsPage({ searchParams }: Props) {
                         alt={product.title}
                         width={44}
                         height={44}
-                        unoptimized
                       />
                     ) : (
                       <span>{product.title.slice(0, 1)}</span>
@@ -189,6 +230,10 @@ export default async function ProductsPage({ searchParams }: Props) {
                   }`}
                 >
                   {statusLabel}
+                </span>
+
+                <span className={styles.marginCell}>
+                  {productPlannedMargin === 0 ? "No plans yet" : formatCurrency(productPlannedMargin)}
                 </span>
 
                 <span className={styles.dateCell}>

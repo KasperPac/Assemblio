@@ -1,6 +1,14 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import styles from "./trash.module.css";
-import { emptyTrash, restoreBom, restorePurchaseOrder, restoreStocktakeSession } from "./actions";
+import {
+  emptyTrash,
+  restoreBom,
+  restorePurchaseOrder,
+  restoreStocktakeSession,
+} from "./actions";
+import PageHeader from "../_ui/page-header";
+import EmptyState from "../_ui/empty-state";
+import ListPanel, { ListRow } from "../_ui/list-panel";
 
 type StoreRow = {
   id: string;
@@ -96,123 +104,172 @@ export default async function TrashPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
+      <PageHeader
+        eyebrow="Trash"
+        title="Recovery and purge"
+        description="Review archived and inactive records before restoring them or clearing them from the workspace."
+        actions={
+          <form action={emptyTrash}>
+            <button
+              className={styles.primary}
+              disabled={trashItemCount === 0}
+              type="submit"
+            >
+              {trashItemCount === 0
+                ? "Trash is empty"
+                : `Empty trash (${trashItemCount})`}
+            </button>
+          </form>
+        }
+      />
+
+      <section className={styles.warningPanel}>
         <div>
-          <h1>Trash</h1>
-          <p>Recoverable or inactive records requiring review.</p>
+          <p className={styles.eyebrow}>Destructive action</p>
+          <h2>Emptying trash is irreversible</h2>
+          <p className={styles.warningBody}>
+            Restore anything still needed before clearing archived records from this workspace.
+          </p>
         </div>
-        <form action={emptyTrash}>
-          <button className={styles.primary} disabled={trashItemCount === 0} type="submit">
-            {trashItemCount === 0 ? "Trash is Empty" : `Empty Trash (${trashItemCount})`}
-          </button>
-        </form>
-      </div>
+      </section>
+
       <div className={styles.grid}>
-        <section className={styles.card}>
-          <h3>Uninstalled Shopify Stores</h3>
+        <ListPanel
+          eyebrow="Stores"
+          title="Uninstalled Shopify stores"
+          description="Review disconnected stores that still have historical traceability."
+        >
           {(stores ?? []).length === 0 ? (
-            <p>No uninstalled stores.</p>
+            <EmptyState
+              title="No uninstalled stores"
+              message="There are no disconnected Shopify stores waiting in trash."
+            />
           ) : (
-            <div className={styles.list}>
-              {(stores as StoreRow[]).map((store) => (
-                <div key={store.id} className={styles.row}>
-                  <span>{store.store_domain}</span>
-                  <span>
-                    Last sync: {store.last_synced_at ? new Date(store.last_synced_at).toLocaleString() : "Never"}
-                  </span>
-                </div>
-              ))}
-            </div>
+            (stores as StoreRow[]).map((store) => (
+              <ListRow key={store.id} columnsTemplate="1fr" className={styles.row}>
+                <strong>{store.store_domain}</strong>
+                <span className={styles.meta}>
+                  Last sync:{" "}
+                  {store.last_synced_at
+                    ? new Date(store.last_synced_at).toLocaleString("en-AU")
+                    : "Never"}
+                </span>
+              </ListRow>
+            ))
           )}
-        </section>
+        </ListPanel>
 
-        <section className={styles.card}>
-          <h3>Delete Activity Events</h3>
+        <ListPanel
+          eyebrow="Audit"
+          title="Delete activity events"
+          description="Recent delete-like events for operator review."
+        >
           {deleteLike.length === 0 ? (
-            <p>No delete events logged.</p>
+            <EmptyState
+              title="No delete events logged"
+              message="Recent activity does not contain delete-like events."
+            />
           ) : (
-            <div className={styles.list}>
-              {deleteLike.map((row) => (
-                <div key={row.id} className={styles.row}>
-                  <span>{row.event}</span>
-                  <span>{new Date(row.created_at).toLocaleString()}</span>
-                </div>
-              ))}
-            </div>
+            deleteLike.map((row) => (
+              <ListRow key={row.id} columnsTemplate="1fr" className={styles.row}>
+                <strong>{row.event}</strong>
+                <span className={styles.meta}>
+                  {new Date(row.created_at).toLocaleString("en-AU")}
+                </span>
+              </ListRow>
+            ))
           )}
-        </section>
+        </ListPanel>
 
-        <section className={styles.card}>
-          <h3>Archived Purchase Orders</h3>
+        <ListPanel
+          eyebrow="Purchase orders"
+          title="Archived purchase orders"
+          description="Restore archived POs if inbound work should be returned to the active flow."
+        >
           {(archivedPos ?? []).length === 0 ? (
-            <p>No archived purchase orders.</p>
+            <EmptyState
+              title="No archived purchase orders"
+              message="There are no archived purchase orders waiting for review."
+            />
           ) : (
-            <div className={styles.list}>
-              {(archivedPos as ArchivedPoRow[]).map((row) => (
-                <div key={row.id} className={styles.row}>
-                  <span>
-                    PO-{row.id.slice(0, 6)} - {firstOf(row.supplier)?.name ?? "Unknown supplier"}
-                  </span>
-                  <span>{new Date(row.created_at).toLocaleString()}</span>
-                  <form action={restorePurchaseOrder}>
-                    <input type="hidden" name="id" value={row.id} />
-                    <button className={styles.restoreBtn} type="submit">
-                      Restore
-                    </button>
-                  </form>
-                </div>
-              ))}
-            </div>
+            (archivedPos as ArchivedPoRow[]).map((row) => (
+              <ListRow key={row.id} columnsTemplate="1fr" className={styles.row}>
+                <strong>
+                  PO-{row.id.slice(0, 6)} - {firstOf(row.supplier)?.name ?? "Unknown supplier"}
+                </strong>
+                <span className={styles.meta}>
+                  {new Date(row.created_at).toLocaleString("en-AU")}
+                </span>
+                <form action={restorePurchaseOrder}>
+                  <input type="hidden" name="id" value={row.id} />
+                  <button className={styles.restoreBtn} type="submit">
+                    Restore
+                  </button>
+                </form>
+              </ListRow>
+            ))
           )}
-        </section>
+        </ListPanel>
 
-        <section className={styles.card}>
-          <h3>Archived Stocktakes</h3>
+        <ListPanel
+          eyebrow="Stocktake"
+          title="Archived stocktakes"
+          description="Restore a stocktake session if its count history is still needed."
+        >
           {(archivedStocktakes ?? []).length === 0 ? (
-            <p>No archived stocktake sessions.</p>
+            <EmptyState
+              title="No archived stocktake sessions"
+              message="There are no archived stocktake sessions waiting for review."
+            />
           ) : (
-            <div className={styles.list}>
-              {(archivedStocktakes as ArchivedStocktakeRow[]).map((row) => (
-                <div key={row.id} className={styles.row}>
-                  <span>
-                    STK-{row.id.slice(0, 6)} - {firstOf(row.location)?.name ?? "Unknown location"}
-                  </span>
-                  <span>{new Date(row.created_at).toLocaleString()}</span>
-                  <form action={restoreStocktakeSession}>
-                    <input type="hidden" name="id" value={row.id} />
-                    <button className={styles.restoreBtn} type="submit">
-                      Restore
-                    </button>
-                  </form>
-                </div>
-              ))}
-            </div>
+            (archivedStocktakes as ArchivedStocktakeRow[]).map((row) => (
+              <ListRow key={row.id} columnsTemplate="1fr" className={styles.row}>
+                <strong>
+                  STK-{row.id.slice(0, 6)} - {firstOf(row.location)?.name ?? "Unknown location"}
+                </strong>
+                <span className={styles.meta}>
+                  {new Date(row.created_at).toLocaleString("en-AU")}
+                </span>
+                <form action={restoreStocktakeSession}>
+                  <input type="hidden" name="id" value={row.id} />
+                  <button className={styles.restoreBtn} type="submit">
+                    Restore
+                  </button>
+                </form>
+              </ListRow>
+            ))
           )}
-        </section>
+        </ListPanel>
 
-        <section className={styles.card}>
-          <h3>Archived BOMs</h3>
+        <ListPanel
+          eyebrow="BOM"
+          title="Archived BOMs"
+          description="Bring archived BOM versions back into the active workspace when needed."
+        >
           {(archivedBoms ?? []).length === 0 ? (
-            <p>No archived BOMs.</p>
+            <EmptyState
+              title="No archived BOMs"
+              message="There are no archived BOM versions waiting for review."
+            />
           ) : (
-            <div className={styles.list}>
-              {(archivedBoms as ArchivedBomRow[]).map((row) => (
-                <div key={row.id} className={styles.row}>
-                  <span>
-                    v{row.version} - {firstOf(row.variant)?.title ?? "Untitled variant"}
-                  </span>
-                  <span>{new Date(row.created_at).toLocaleString()}</span>
-                  <form action={restoreBom}>
-                    <input type="hidden" name="id" value={row.id} />
-                    <button className={styles.restoreBtn} type="submit">
-                      Restore
-                    </button>
-                  </form>
-                </div>
-              ))}
-            </div>
+            (archivedBoms as ArchivedBomRow[]).map((row) => (
+              <ListRow key={row.id} columnsTemplate="1fr" className={styles.row}>
+                <strong>
+                  v{row.version} - {firstOf(row.variant)?.title ?? "Untitled variant"}
+                </strong>
+                <span className={styles.meta}>
+                  {new Date(row.created_at).toLocaleString("en-AU")}
+                </span>
+                <form action={restoreBom}>
+                  <input type="hidden" name="id" value={row.id} />
+                  <button className={styles.restoreBtn} type="submit">
+                    Restore
+                  </button>
+                </form>
+              </ListRow>
+            ))
           )}
-        </section>
+        </ListPanel>
       </div>
     </div>
   );

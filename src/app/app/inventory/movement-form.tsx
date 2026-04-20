@@ -30,8 +30,12 @@ export default function MovementForm({ components, locations }: Props) {
   type MovementType = keyof typeof movementPresets;
   const [state, formAction] = useFormState(createMovement, initialState);
   const [movementType, setMovementType] = useState<MovementType>("receipt");
-  const [deltaOnHand, setDeltaOnHand] = useState<string>(movementPresets.receipt.onHand);
-  const [deltaInProd, setDeltaInProd] = useState<string>(movementPresets.receipt.inProd);
+  const [deltaOnHand, setDeltaOnHand] = useState<string>(
+    movementPresets.receipt.onHand
+  );
+  const [deltaInProd, setDeltaInProd] = useState<string>(
+    movementPresets.receipt.inProd
+  );
 
   return (
     <form className={styles.movementForm} action={formAction}>
@@ -55,7 +59,7 @@ export default function MovementForm({ components, locations }: Props) {
             {locations.map((location) => (
               <option key={location.id} value={location.id}>
                 {location.name ?? "Unnamed"}
-                {location.is_default ? " • default" : ""}
+                {location.is_default ? " - default" : ""}
               </option>
             ))}
           </select>
@@ -116,11 +120,9 @@ export default function MovementForm({ components, locations }: Props) {
       </div>
       <div className={styles.formActions}>
         {state.error ? <p className={styles.error}>{state.error}</p> : null}
-        {state.success ? (
-          <p className={styles.success}>{state.success}</p>
-        ) : null}
+        {state.success ? <p className={styles.success}>{state.success}</p> : null}
         <button className={styles.primary} type="submit">
-          Log movement
+          Save movement
         </button>
       </div>
     </form>

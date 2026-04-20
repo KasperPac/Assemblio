@@ -9,6 +9,10 @@ import {
   updateBomComponentQuantity,
   updateBomStatus,
 } from "./actions";
+import PageHeader from "../_ui/page-header";
+import StatusBadge from "../_ui/status-badge";
+import EmptyState from "../_ui/empty-state";
+import ListPanel, { ListRow } from "../_ui/list-panel";
 
 type BomRow = {
   id: string;
@@ -34,32 +38,41 @@ type BomComponentRow = {
     | null;
 };
 
+function getStatusVariant(status: string) {
+  const normalized = status.toLowerCase();
+  if (normalized === "active") return "success";
+  if (normalized === "archived") return "danger";
+  return "warning";
+}
+
 export default async function BomPage() {
   const supabase = await createSupabaseServerClient();
   const [{ data, error }, { data: variants }, { data: components }, { data: bomLines }] =
     await Promise.all([
-    supabase
-      .from("product_bom")
-      .select("id,version,status,is_active,variant:variant_id(title,sku)")
-      .order("created_at", { ascending: false })
-      .limit(12),
-    supabase.from("shopify_variant").select("id,title,sku").order("title"),
-    supabase.from("component").select("id,name,sku").order("name"),
-    supabase
-      .from("product_bom_component")
-      .select("id,quantity,product_bom:product_bom_id(id,version),component:component_id(name,sku)")
-      .order("created_at", { ascending: false })
-      .limit(30),
-  ]);
+      supabase
+        .from("product_bom")
+        .select("id,version,status,is_active,variant:variant_id(title,sku)")
+        .order("created_at", { ascending: false })
+        .limit(12),
+      supabase.from("shopify_variant").select("id,title,sku").order("title"),
+      supabase.from("component").select("id,name,sku").order("name"),
+      supabase
+        .from("product_bom_component")
+        .select(
+          "id,quantity,product_bom:product_bom_id(id,version),component:component_id(name,sku)"
+        )
+        .order("created_at", { ascending: false })
+        .limit(30),
+    ]);
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <div>
-          <h1>BOM Management</h1>
-          <p>Versioned bills of materials per Shopify variant.</p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="BOM"
+        title="BOM management"
+        description="Maintain versioned bills of materials per Shopify variant and keep component quantities editable in one place."
+      />
+
       <BomCreateForm
         variants={
           (variants ?? []) as Array<{ id: string; title: string | null; sku: string | null }>
@@ -77,39 +90,53 @@ export default async function BomPage() {
           };
         })}
         components={
-          ((components ?? []) as Array<{ id: string; name: string | null; sku: string | null }>).map((c) => ({
-            id: c.id,
-            label: `${c.name ?? "Unnamed"}${c.sku ? ` (${c.sku})` : ""}`,
-          }))
+          ((components ?? []) as Array<{ id: string; name: string | null; sku: string | null }>).map(
+            (c) => ({
+              id: c.id,
+              label: `${c.name ?? "Unnamed"}${c.sku ? ` (${c.sku})` : ""}`,
+            })
+          )
         }
         action={createBomComponentLine}
       />
-      <div className={styles.table}>
-        <div className={styles.tableHeader}>
-          <span>Variant</span>
-          <span>Version</span>
-          <span>Status</span>
-          <span>Active</span>
-          <span>Actions</span>
-        </div>
+
+      <ListPanel
+        eyebrow="Versions"
+        title="Variant BOMs"
+        description="Switch active BOMs and move versions through draft, active, and archived states."
+        columns={["Variant", "Version", "Status", "Active", "Actions"]}
+        columnsTemplate="1.5fr 0.6fr 0.8fr 0.6fr 1.4fr"
+      >
         {error ? (
-          <div className={styles.empty}>Failed to load BOMs.</div>
+          <EmptyState
+            title="Failed to load BOMs"
+            message="The BOM list could not be retrieved from Supabase."
+          />
         ) : (data ?? []).length === 0 ? (
-          <div className={styles.empty}>No BOMs yet.</div>
+          <EmptyState
+            title="No BOMs yet"
+            message="Create a BOM to begin mapping variant demand to components."
+          />
         ) : (
           (data as BomRow[]).map((row) => {
             const variant = Array.isArray(row.variant)
               ? row.variant[0] ?? null
               : row.variant;
             return (
-              <div key={row.id} className={styles.tableRow}>
-                <span>
-                  {variant?.title ?? "Untitled variant"}
-                  {variant?.sku ? ` (${variant.sku})` : ""}
-                </span>
-                <span>v{row.version}</span>
-                <span className={styles.status}>{row.status}</span>
-                <span>{row.is_active ? "Yes" : "No"}</span>
+              <ListRow
+                key={row.id}
+                columnsTemplate="1.5fr 0.6fr 0.8fr 0.6fr 1.4fr"
+                className={styles.row}
+              >
+                <div className={styles.cellStack}>
+                  <strong>{variant?.title ?? "Untitled variant"}</strong>
+                  <span className={styles.meta}>
+                    {variant?.sku ? variant.sku : "No SKU"}
+                  </span>
+                </div>
+                <strong>v{row.version}</strong>
+                <StatusBadge variant={getStatusVariant(row.status)}>{row.status}</StatusBadge>
+                <span className={styles.meta}>{row.is_active ? "Yes" : "No"}</span>
                 <div className={styles.actionCell}>
                   <form action={updateBomStatus} className={styles.inlineForm}>
                     <input type="hidden" name="bom_id" value={row.id} />
@@ -124,25 +151,29 @@ export default async function BomPage() {
                     <form action={setBomActive}>
                       <input type="hidden" name="bom_id" value={row.id} />
                       <button type="submit" className={styles.ghostBtn}>
-                        Set Active
+                        Set active
                       </button>
                     </form>
                   ) : null}
                 </div>
-              </div>
+              </ListRow>
             );
           })
         )}
-      </div>
-      <div className={styles.table}>
-        <div className={styles.tableHeaderLines}>
-          <span>BOM</span>
-          <span>Component</span>
-          <span>Qty / unit</span>
-          <span>Actions</span>
-        </div>
+      </ListPanel>
+
+      <ListPanel
+        eyebrow="Lines"
+        title="BOM component lines"
+        description="Adjust per-unit component quantities without leaving the BOM workspace."
+        columns={["BOM", "Component", "Qty / unit", "Actions"]}
+        columnsTemplate="0.8fr 1.4fr 0.7fr 1.2fr"
+      >
         {(bomLines ?? []).length === 0 ? (
-          <div className={styles.empty}>No BOM component lines yet.</div>
+          <EmptyState
+            title="No BOM component lines yet"
+            message="Add component lines to a BOM to define material requirements."
+          />
         ) : (
           (bomLines as BomComponentRow[]).map((line) => {
             const bom = Array.isArray(line.product_bom)
@@ -152,13 +183,19 @@ export default async function BomPage() {
               ? line.component[0] ?? null
               : line.component;
             return (
-              <div key={line.id} className={styles.tableRowLines}>
-                <span>v{bom?.version ?? "?"}</span>
-                <span>
-                  {component?.name ?? "Unknown"}
-                  {component?.sku ? ` (${component.sku})` : ""}
-                </span>
-                <span>{line.quantity}</span>
+              <ListRow
+                key={line.id}
+                columnsTemplate="0.8fr 1.4fr 0.7fr 1.2fr"
+                className={styles.row}
+              >
+                <strong>v{bom?.version ?? "?"}</strong>
+                <div className={styles.cellStack}>
+                  <strong>{component?.name ?? "Unknown"}</strong>
+                  <span className={styles.meta}>
+                    {component?.sku ? component.sku : "No SKU"}
+                  </span>
+                </div>
+                <strong>{line.quantity}</strong>
                 <form action={updateBomComponentQuantity} className={styles.inlineForm}>
                   <input type="hidden" name="line_id" value={line.id} />
                   <input
@@ -170,11 +207,11 @@ export default async function BomPage() {
                   />
                   <button type="submit">Save</button>
                 </form>
-              </div>
+              </ListRow>
             );
           })
         )}
-      </div>
+      </ListPanel>
     </div>
   );
 }

@@ -59,7 +59,7 @@
 .tableHeader,
 .tableRow {
   display: grid;
-  grid-template-columns: 1.6fr 0.45fr 0.55fr 0.7fr;
+  grid-template-columns: 1.6fr 0.45fr 0.55fr 0.8fr 0.7fr;
   gap: 12px;
   align-items: center;
   padding: 12px 14px;
@@ -141,6 +141,11 @@
 }
 
 .dateCell {
+  color: var(--ink-muted);
+  font-size: 13px;
+}
+
+.marginCell {
   color: var(--ink-muted);
   font-size: 13px;
 }

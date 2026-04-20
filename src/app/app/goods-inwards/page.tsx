@@ -1,6 +1,10 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import styles from "./goods-inwards.module.css";
 import { receivePurchaseOrder, receivePurchaseOrderLine } from "./actions";
+import PageHeader from "../_ui/page-header";
+import StatusBadge from "../_ui/status-badge";
+import EmptyState from "../_ui/empty-state";
+import ListPanel, { ListRow } from "../_ui/list-panel";
 
 type GoodsRow = {
   id: string;
@@ -20,6 +24,14 @@ type PoLineRow = {
     | null;
 };
 
+function getStatusVariant(status: string) {
+  const normalized = status.toLowerCase();
+  if (normalized === "received") return "success";
+  if (normalized === "cancelled" || normalized === "archived") return "danger";
+  if (normalized === "in_transit") return "info";
+  return "warning";
+}
+
 export default async function GoodsInwardsPage() {
   const supabase = await createSupabaseServerClient();
   const [{ data, error }, { data: lines }] = await Promise.all([
@@ -29,7 +41,9 @@ export default async function GoodsInwardsPage() {
       .order("created_at", { ascending: false }),
     supabase
       .from("purchase_order_line")
-      .select("id,purchase_order_id,quantity,quantity_received,component:component_id(name,sku)")
+      .select(
+        "id,purchase_order_id,quantity,quantity_received,component:component_id(name,sku)"
+      )
       .order("created_at", { ascending: false }),
   ]);
 
@@ -60,25 +74,27 @@ export default async function GoodsInwardsPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <div>
-          <h1>Goods Inwards</h1>
-          <p>Inbound receipts and supplier deliveries</p>
-        </div>
-      </div>
-      <div className={styles.table}>
-        <div className={styles.tableHeader}>
-          <span>PO</span>
-          <span>Supplier</span>
-          <span>Status</span>
-          <span>Lines / Ordered</span>
-          <span>Received / Remaining</span>
-          <span>Actions</span>
-        </div>
+      <PageHeader
+        eyebrow="Goods inwards"
+        title="Receiving workflow"
+        description="Receive inbound purchase order quantities in full or line by line while keeping remaining quantities visible."
+      />
+
+      <ListPanel
+        eyebrow="Inbound receipts"
+        title="Purchase orders awaiting receiving"
+        description="Receive the remainder of a PO at once, or record partial receipts against individual lines."
+      >
         {error ? (
-          <div className={styles.empty}>Failed to load receipts.</div>
+          <EmptyState
+            title="Failed to load goods inwards"
+            message="The receiving queue could not be loaded from Supabase."
+          />
         ) : (data ?? []).length === 0 ? (
-          <div className={styles.empty}>No goods inwards yet.</div>
+          <EmptyState
+            title="No goods inwards yet"
+            message="Purchase orders will appear here once inbound supply exists."
+          />
         ) : (
           (data as GoodsRow[]).map((row) => {
             const supplier = Array.isArray(row.supplier)
@@ -91,19 +107,41 @@ export default async function GoodsInwardsPage() {
               remaining: 0,
             };
             const poLines = linesByPo[row.id] ?? [];
+
             return (
-              <div key={row.id} className={styles.poBlock}>
-                <div className={styles.tableRow}>
-                  <span>PO-{row.id.slice(0, 6)}</span>
-                  <span>{supplier?.name ?? "Unknown supplier"}</span>
-                  <span className={styles.status}>{row.status}</span>
-                  <span>
-                    {totals.lineCount.toString()} / {totals.ordered.toFixed(2)}
-                  </span>
-                  <span>
-                    {totals.received.toFixed(2)} / {totals.remaining.toFixed(2)}
-                  </span>
-                  <form action={receivePurchaseOrder}>
+              <article key={row.id} className={styles.poCard}>
+                <div className={styles.poSummary}>
+                  <div className={styles.poIdentity}>
+                    <div className={styles.poTitleRow}>
+                      <h3>PO-{row.id.slice(0, 6)}</h3>
+                      <StatusBadge variant={getStatusVariant(row.status)}>
+                        {row.status}
+                      </StatusBadge>
+                    </div>
+                    <p className={styles.meta}>
+                      {supplier?.name ?? "Unknown supplier"} • Created{" "}
+                      {new Date(row.created_at).toLocaleDateString("en-GB")}
+                    </p>
+                  </div>
+                  <div className={styles.poMetrics}>
+                    <div className={styles.metric}>
+                      <span>Lines</span>
+                      <strong>{totals.lineCount}</strong>
+                    </div>
+                    <div className={styles.metric}>
+                      <span>Ordered</span>
+                      <strong>{totals.ordered.toFixed(2)}</strong>
+                    </div>
+                    <div className={styles.metric}>
+                      <span>Received</span>
+                      <strong>{totals.received.toFixed(2)}</strong>
+                    </div>
+                    <div className={styles.metric}>
+                      <span>Remaining</span>
+                      <strong>{totals.remaining.toFixed(2)}</strong>
+                    </div>
+                  </div>
+                  <form action={receivePurchaseOrder} className={styles.primaryActionWrap}>
                     <input type="hidden" name="purchase_order_id" value={row.id} />
                     <button
                       type="submit"
@@ -114,19 +152,13 @@ export default async function GoodsInwardsPage() {
                         totals.remaining <= 0
                       }
                     >
-                      Receive Remaining
+                      Receive remaining
                     </button>
                   </form>
                 </div>
+
                 {poLines.length > 0 ? (
-                  <div className={styles.lineTable}>
-                    <div className={styles.lineHeader}>
-                      <span>Component</span>
-                      <span>Ordered</span>
-                      <span>Received</span>
-                      <span>Remaining</span>
-                      <span>Receive Qty</span>
-                    </div>
+                  <div className={styles.lineList}>
                     {poLines.map((line) => {
                       const component = Array.isArray(line.component)
                         ? line.component[0] ?? null
@@ -136,11 +168,17 @@ export default async function GoodsInwardsPage() {
                         Number(line.quantity ?? 0) - Number(line.quantity_received ?? 0)
                       );
                       return (
-                        <div key={line.id} className={styles.lineRow}>
-                          <span>
-                            {component?.name ?? "Unknown"}
-                            {component?.sku ? ` (${component.sku})` : ""}
-                          </span>
+                        <ListRow
+                          key={line.id}
+                          columnsTemplate="1.5fr 0.7fr 0.7fr 0.7fr 1.3fr"
+                          className={styles.lineRow}
+                        >
+                          <div className={styles.cellStack}>
+                            <strong>{component?.name ?? "Unknown"}</strong>
+                            <span className={styles.meta}>
+                              {component?.sku ? component.sku : "No SKU"}
+                            </span>
+                          </div>
                           <span>{Number(line.quantity ?? 0).toFixed(2)}</span>
                           <span>{Number(line.quantity_received ?? 0).toFixed(2)}</span>
                           <span>{remaining.toFixed(2)}</span>
@@ -171,16 +209,16 @@ export default async function GoodsInwardsPage() {
                               Receive
                             </button>
                           </form>
-                        </div>
+                        </ListRow>
                       );
                     })}
                   </div>
                 ) : null}
-              </div>
+              </article>
             );
           })
         )}
-      </div>
+      </ListPanel>
     </div>
   );
 }

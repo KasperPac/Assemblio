@@ -1,78 +1,160 @@
-.section {
-  background: var(--bg-card);
-  padding: 24px;
-  border-radius: 16px;
-  border: 1px solid var(--stroke-card);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+.page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-}
-
-.header p {
-  color: var(--ink-muted);
+  gap: 24px;
 }
 
 .export {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--stroke);
-  background: transparent;
-  padding: 8px 16px;
+  min-height: 42px;
+  padding: 0 18px;
   border-radius: 999px;
-  font-weight: 600;
-  cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--stroke-strong) 72%, transparent);
+  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
   color: var(--ink-strong);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.metricCard,
+.panel,
+.movementForm,
+.deltaCard {
+  border: 1px solid color-mix(in srgb, var(--stroke-strong) 70%, transparent);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-raised) 92%, transparent), color-mix(in srgb, var(--surface) 94%, transparent));
+  box-shadow: 0 18px 38px rgba(5, 8, 15, 0.2);
+}
+
+.metricCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px;
+}
+
+.metricCard span,
+.eyebrow,
+.balanceHeader,
+.deltaCard span,
+.summaryItem p,
+.formRow label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--ink-faint);
+}
+
+.metricCard strong,
+.summaryItem strong {
+  font-size: clamp(1.25rem, 1.1vw + 1rem, 1.95rem);
+  line-height: 1;
+  color: var(--ink-strong);
+}
+
+.metricCard p,
+.panelIntro,
+.summaryItem p,
+.balanceCell span,
+.balanceCellMain span,
+.movementTop p,
+.success,
+.error {
+  margin: 0;
+  color: var(--ink-muted);
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.95fr);
+  gap: 18px;
+}
+
+.primaryColumn,
+.secondaryColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.panelHeader h2 {
+  margin: 6px 0 0;
+  font-size: clamp(1.2rem, 0.9vw + 1rem, 1.6rem);
+  color: var(--ink-strong);
+}
+
+.panelIntro {
+  font-size: 0.96rem;
+  line-height: 1.6;
+}
+
+.errorPanel {
+  padding: 24px;
+  border-radius: 22px;
+  border: 1px solid color-mix(in srgb, var(--danger) 42%, transparent);
+  background: color-mix(in srgb, var(--danger) 10%, var(--surface));
 }
 
 .movementForm {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 16px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.03);
+  padding: 20px;
 }
 
 .formRow {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
 
 .formRow label {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--ink-faint);
+  gap: 8px;
 }
 
 .formRow input,
 .formRow select {
-  border: 1px solid var(--stroke);
-  border-radius: 10px;
-  padding: 8px 10px;
-  font-size: 13px;
+  border: 1px solid color-mix(in srgb, var(--stroke) 78%, transparent);
+  border-radius: 14px;
+  min-height: 44px;
+  padding: 0 14px;
+  font-size: 0.95rem;
   font-family: inherit;
-  background: var(--bg-input);
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
   color: var(--ink-strong);
 }
 
 .formActions {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
 }
@@ -80,119 +162,153 @@
 .primary {
   border: none;
   border-radius: 999px;
-  padding: 10px 18px;
-  background: var(--brand-1);
-  color: #0b0f19;
-  font-weight: 600;
+  min-height: 42px;
+  padding: 0 18px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--brand-2) 70%, #142131), color-mix(in srgb, var(--brand-1) 86%, #0e1624));
+  color: #f8fbff;
+  font-size: 0.9rem;
+  font-weight: 700;
   cursor: pointer;
 }
 
-.table {
-  display: grid;
+.balanceTable,
+.movementList,
+.summaryList {
+  display: flex;
+  flex-direction: column;
   gap: 12px;
-  font-family: var(--font-plex-mono), monospace;
-  font-size: 12px;
 }
 
-.tableHeader,
-.tableRow {
+.balanceHeader,
+.balanceRow {
   display: grid;
-  grid-template-columns: 1.6fr 1fr 1.2fr 0.8fr 0.8fr 0.8fr;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) repeat(3, minmax(110px, 0.7fr));
   gap: 12px;
   align-items: center;
 }
 
-.tableHeader {
-  color: var(--ink-faint);
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  font-size: 11px;
+.balanceHeader {
+  padding: 0 6px;
 }
 
-.tableRow {
-  background: rgba(255, 255, 255, 0.03);
-  padding: 12px 14px;
-  border-radius: 12px;
+.balanceRow {
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--stroke) 68%, transparent);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
 }
 
-.empty {
-  padding: 18px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--ink-muted);
-}
-
-.error {
-  color: var(--danger);
-}
-
-.success {
-  color: var(--brand-1);
-  font-size: 12px;
-}
-
-.movements {
+.balanceCellMain,
+.balanceCell {
   display: flex;
   flex-direction: column;
+  gap: 6px;
+}
+
+.balanceCellMain strong,
+.movementTop strong {
+  color: var(--ink-strong);
+}
+
+.movementRow,
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--stroke) 68%, transparent);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+}
+
+.movementTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 12px;
 }
 
-.movementList {
-  display: flex;
-  flex-direction: column;
+.deltaGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 
-.movementRow {
-  display: grid;
-  grid-template-columns: 1.8fr 0.6fr 0.8fr;
-  gap: 12px;
-  align-items: center;
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
-  font-size: 12px;
-  font-family: var(--font-plex-mono), monospace;
+.deltaCard {
+  padding: 14px;
+  box-shadow: none;
 }
 
-.movementRow span {
-  color: var(--ink-faint);
-  font-size: 11px;
+.deltaCard strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 1.05rem;
 }
 
-.delta {
-  font-weight: 700;
-  line-height: 1.4;
+.deltaPositive {
+  color: #4ade80;
 }
 
-.reason {
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  font-size: 10px;
-  color: var(--ink-faint);
-  text-align: right;
+.deltaNegative {
+  color: #fb7185;
 }
 
-@media (max-width: 900px) {
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
+.deltaNeutral {
+  color: var(--ink-muted);
+}
+
+.summaryItem {
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.summaryDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #4ade80;
+  margin-top: 6px;
+}
+
+.summaryDotBlue {
+  background: #60a5fa;
+}
+
+.summaryDotAmber {
+  background: #fbbf24;
+}
+
+@media (max-width: 1120px) {
+  .contentGrid,
+  .metricGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 860px) {
+  .panel,
+  .movementForm {
+    padding: 20px;
+    border-radius: 20px;
   }
 
-  .tableHeader {
+  .formRow,
+  .deltaGrid,
+  .balanceHeader,
+  .balanceRow {
+    grid-template-columns: 1fr;
+  }
+
+  .balanceHeader {
     display: none;
   }
 
-  .tableRow {
-    grid-template-columns: 1fr;
-    gap: 6px;
-  }
-
-  .movementRow {
-    grid-template-columns: 1fr;
-  }
-
-  .reason {
-    text-align: left;
+  .panelHeader,
+  .movementTop,
+  .formActions,
+  .summaryItem {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

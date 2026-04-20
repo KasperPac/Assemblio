@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
+import Image from "next/image";
 import styles from "./shell.module.css";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { signOut, switchActiveTenant } from "./actions";
 import SidebarNav from "./sidebar-nav";
+import Topbar from "./topbar";
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const supabase = await createSupabaseServerClient();
@@ -45,29 +47,30 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
         <div className={styles.brand}>
-          <p className={styles.brandTitle}>Assemblio</p>
+          <Image
+            src="/assemblio-logo.png"
+            alt="Assemblio"
+            width={160}
+            height={40}
+            className={styles.brandLogo}
+            priority
+          />
         </div>
 
         <div className={styles.userGreeting}>
           <span className={styles.userGreetingAvatar}>{userInitial}</span>
-          <p className={styles.userGreetingText}>
-            Hello, <strong>{firstName}</strong>
-          </p>
+          <div className={styles.userGreetingText}>
+            <p className={styles.userGreetingLabel}>Signed in</p>
+            <p>
+              <strong>{firstName}</strong>
+            </p>
+          </div>
         </div>
 
-        <div className={styles.sidebarSearch}>
-          <span className={styles.sidebarSearchIcon}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.3-4.3" />
-            </svg>
-          </span>
-          <input
-            type="text"
-            placeholder="Search..."
-            className={styles.sidebarSearchInput}
-            readOnly
-          />
+        <div className={styles.sidebarCallout}>
+          <p className={styles.sidebarCalloutEyebrow}>Workspace</p>
+          <h2>Operations cockpit</h2>
+          <p>Inventory, BOMs, purchasing, and planning run from one tenant-scoped workspace.</p>
         </div>
 
         <SidebarNav />
@@ -116,35 +119,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       </aside>
 
       <div className={styles.main}>
-        <header className={styles.topbar}>
-          <div className={styles.breadcrumb}>
-            <span className={styles.breadcrumbMuted}>Dashboard</span>
-            <span className={styles.breadcrumbSep}>/</span>
-            <span className={styles.breadcrumbCurrent}>Overview</span>
-          </div>
-          <div className={styles.topbarActions}>
-            <button className={styles.topbarIconBtn} type="button" aria-label="Notifications">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-                <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-              </svg>
-            </button>
-            <button className={styles.topbarIconBtn} type="button" aria-label="Theme">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-              </svg>
-            </button>
-            <button className={styles.topbarIconBtn} type="button" aria-label="Calendar">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
-                <line x1="16" x2="16" y1="2" y2="6" />
-                <line x1="8" x2="8" y1="2" y2="6" />
-                <line x1="3" x2="21" y1="10" y2="10" />
-              </svg>
-            </button>
-            <span className={styles.topbarAvatar}>{userInitial}</span>
-          </div>
-        </header>
+        <Topbar tenantName={tenant?.name ?? "Tenant"} userInitial={userInitial} />
         <section className={styles.content}>{children}</section>
       </div>
     </div>

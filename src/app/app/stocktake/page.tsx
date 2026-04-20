@@ -14,6 +14,10 @@ import {
   updateStocktakeLineCounted,
   updateStocktakeStatus,
 } from "./actions";
+import PageHeader from "../_ui/page-header";
+import StatusBadge from "../_ui/status-badge";
+import EmptyState from "../_ui/empty-state";
+import ListPanel, { ListRow } from "../_ui/list-panel";
 
 type StocktakeRow = {
   id: string;
@@ -36,34 +40,41 @@ type StocktakeLineRow = {
     | null;
 };
 
+function getStatusVariant(status: StocktakeSessionStatus) {
+  if (status === "completed") return "success";
+  if (status === "approved") return "info";
+  if (status === "archived") return "danger";
+  return "warning";
+}
+
 export default async function StocktakePage() {
   const supabase = await createSupabaseServerClient();
   const [{ data, error }, { data: locations }, { data: components }, { data: lines }] =
     await Promise.all([
-    supabase
-      .from("stocktake_session")
-      .select("id,status,created_at,location:location_id(name)")
-      .order("created_at", { ascending: false })
-      .limit(12),
-    supabase.from("location").select("id,name,is_default").order("name"),
-    supabase.from("component").select("id,name,sku").order("name"),
-    supabase
-      .from("stocktake_line")
-      .select(
-        "id,expected_on_hand,counted,session:session_id(id,status),component:component_id(name,sku)"
-      )
-      .order("created_at", { ascending: false })
-      .limit(20),
-  ]);
+      supabase
+        .from("stocktake_session")
+        .select("id,status,created_at,location:location_id(name)")
+        .order("created_at", { ascending: false })
+        .limit(12),
+      supabase.from("location").select("id,name,is_default").order("name"),
+      supabase.from("component").select("id,name,sku").order("name"),
+      supabase
+        .from("stocktake_line")
+        .select(
+          "id,expected_on_hand,counted,session:session_id(id,status),component:component_id(name,sku)"
+        )
+        .order("created_at", { ascending: false })
+        .limit(20),
+    ]);
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <div>
-          <h1>Stocktake</h1>
-          <p>Run cycle counts and reconcile variances.</p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Stocktake"
+        title="Cycle count sessions"
+        description="Open count sessions, record counted stock, and apply approved variances back into the inventory ledger."
+      />
+
       <StocktakeCreateForm
         locations={
           (locations ?? []) as Array<{
@@ -82,36 +93,50 @@ export default async function StocktakePage() {
             label: `STK-${session.id.slice(0, 6)} (${session.status})`,
           }))}
         components={
-          ((components ?? []) as Array<{ id: string; name: string | null; sku: string | null }>).map((c) => ({
-            id: c.id,
-            label: `${c.name ?? "Unnamed"}${c.sku ? ` (${c.sku})` : ""}`,
-          }))
+          ((components ?? []) as Array<{ id: string; name: string | null; sku: string | null }>).map(
+            (c) => ({
+              id: c.id,
+              label: `${c.name ?? "Unnamed"}${c.sku ? ` (${c.sku})` : ""}`,
+            })
+          )
         }
         action={createStocktakeLine}
       />
-      <div className={styles.table}>
-        <div className={styles.tableHeader}>
-          <span>Session</span>
-          <span>Location</span>
-          <span>Status</span>
-          <span>Created</span>
-          <span>Actions</span>
-        </div>
+
+      <ListPanel
+        eyebrow="Sessions"
+        title="Stocktake sessions"
+        description="Control stocktake lifecycle by location before applying any variance to balances."
+        columns={["Session", "Location", "Status", "Created", "Actions"]}
+        columnsTemplate="0.8fr 1.1fr 0.8fr 0.8fr 1.3fr"
+      >
         {error ? (
-          <div className={styles.empty}>Failed to load stocktake sessions.</div>
+          <EmptyState
+            title="Failed to load stocktake sessions"
+            message="The stocktake session list could not be retrieved from Supabase."
+          />
         ) : (data ?? []).length === 0 ? (
-          <div className={styles.empty}>No stocktake sessions yet.</div>
+          <EmptyState
+            title="No stocktake sessions yet"
+            message="Create a stocktake session to begin cycle counting."
+          />
         ) : (
           (data as StocktakeRow[]).map((row) => {
             const location = Array.isArray(row.location)
               ? row.location[0] ?? null
               : row.location;
             return (
-              <div key={row.id} className={styles.tableRow}>
-                <span>STK-{row.id.slice(0, 6)}</span>
-                <span>{location?.name ?? "Unknown location"}</span>
-                <span className={styles.status}>{row.status}</span>
-                <span>{new Date(row.created_at).toLocaleDateString("en-GB")}</span>
+              <ListRow
+                key={row.id}
+                columnsTemplate="0.8fr 1.1fr 0.8fr 0.8fr 1.3fr"
+                className={styles.row}
+              >
+                <strong>STK-{row.id.slice(0, 6)}</strong>
+                <span className={styles.meta}>{location?.name ?? "Unknown location"}</span>
+                <StatusBadge variant={getStatusVariant(row.status)}>{row.status}</StatusBadge>
+                <span className={styles.meta}>
+                  {new Date(row.created_at).toLocaleDateString("en-GB")}
+                </span>
                 <div className={styles.actionStack}>
                   <form action={updateStocktakeStatus} className={styles.inlineForm}>
                     <input type="hidden" name="session_id" value={row.id} />
@@ -135,37 +160,57 @@ export default async function StocktakePage() {
                     </button>
                   </form>
                 </div>
-              </div>
+              </ListRow>
             );
           })
         )}
-      </div>
-      <div className={styles.table}>
-        <div className={styles.tableHeaderLines}>
-          <span>Session</span>
-          <span>Component</span>
-          <span>Expected / Counted / Variance</span>
-          <span>Actions</span>
-        </div>
+      </ListPanel>
+
+      <ListPanel
+        eyebrow="Lines"
+        title="Counted lines"
+        description="Compare expected versus counted stock before promoting a session through approval."
+        columns={["Session", "Component", "Expected / Counted / Variance", "Actions"]}
+        columnsTemplate="0.85fr 1.5fr 1fr 1.2fr"
+      >
         {(lines ?? []).length === 0 ? (
-          <div className={styles.empty}>No stocktake lines yet.</div>
+          <EmptyState
+            title="No stocktake lines yet"
+            message="Add counted lines to an open session to begin reconciliation."
+          />
         ) : (
           (lines as StocktakeLineRow[]).map((line) => {
             const session = Array.isArray(line.session) ? line.session[0] ?? null : line.session;
             const component = Array.isArray(line.component)
               ? line.component[0] ?? null
               : line.component;
+            const variance =
+              Number(line.counted ?? 0) - Number(line.expected_on_hand ?? 0);
             return (
-              <div key={line.id} className={styles.tableRowLines}>
-                <span>STK-{session?.id?.slice(0, 6) ?? "???"}</span>
-                <span>
-                  {component?.name ?? "Unknown"} ({session?.status ?? "unknown"})
-                  {component?.sku ? ` (${component.sku})` : ""}
-                </span>
-                <span>
-                  {Number(line.expected_on_hand ?? 0).toFixed(2)} / {Number(line.counted ?? 0).toFixed(2)} /{" "}
-                  {(Number(line.counted ?? 0) - Number(line.expected_on_hand ?? 0)).toFixed(2)}
-                </span>
+              <ListRow
+                key={line.id}
+                columnsTemplate="0.85fr 1.5fr 1fr 1.2fr"
+                className={styles.row}
+              >
+                <div className={styles.cellStack}>
+                  <strong>STK-{session?.id?.slice(0, 6) ?? "???"}</strong>
+                  <span className={styles.meta}>{session?.status ?? "unknown"}</span>
+                </div>
+                <div className={styles.cellStack}>
+                  <strong>{component?.name ?? "Unknown"}</strong>
+                  <span className={styles.meta}>
+                    {component?.sku ? component.sku : "No SKU"}
+                  </span>
+                </div>
+                <div className={styles.cellStack}>
+                  <strong>
+                    {Number(line.expected_on_hand ?? 0).toFixed(2)} /{" "}
+                    {Number(line.counted ?? 0).toFixed(2)}
+                  </strong>
+                  <span className={variance === 0 ? styles.meta : styles.varianceMeta}>
+                    Variance {variance.toFixed(2)}
+                  </span>
+                </div>
                 <form action={updateStocktakeLineCounted} className={styles.inlineForm}>
                   <input type="hidden" name="line_id" value={line.id} />
                   <input
@@ -178,18 +223,16 @@ export default async function StocktakePage() {
                   />
                   <button
                     type="submit"
-                    disabled={
-                      !session?.status || !canEditStocktakeLines(session.status)
-                    }
+                    disabled={!session?.status || !canEditStocktakeLines(session.status)}
                   >
                     Save
                   </button>
                 </form>
-              </div>
+              </ListRow>
             );
           })
         )}
-      </div>
+      </ListPanel>
     </div>
   );
 }

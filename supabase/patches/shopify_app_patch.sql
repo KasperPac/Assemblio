@@ -1,5 +1,8 @@
 alter table public.component add column if not exists cost_per_unit numeric not null default 0;
 alter table public.component add column if not exists reorder_point numeric not null default 0;
+alter table public.component add column if not exists low_stock_level numeric not null default 0;
+alter table public.component add column if not exists supplier_id uuid references public.suppliers(id);
+alter table public.component add column if not exists location_id uuid references public.location(id);
 
 alter table public.shopify_store add column if not exists last_synced_at timestamptz;
 alter table public.shopify_store add column if not exists last_sync_status text;

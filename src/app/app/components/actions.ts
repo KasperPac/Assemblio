@@ -14,6 +14,11 @@ function parseNumber(value: FormDataEntryValue | null) {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+function parseUuid(value: FormDataEntryValue | null) {
+  const str = value?.toString().trim() ?? "";
+  return str.length > 0 ? str : null;
+}
+
 export async function createComponent(
   _prevState: ComponentState,
   formData: FormData
@@ -22,7 +27,11 @@ export async function createComponent(
   const sku = formData.get("sku")?.toString().trim() ?? "";
   const unit = formData.get("unit")?.toString().trim() ?? "";
   const reorderPoint = parseNumber(formData.get("reorder_point")) ?? 0;
+  const lowStockLevel = parseNumber(formData.get("low_stock_level")) ?? 0;
   const costPerUnit = parseNumber(formData.get("cost_per_unit")) ?? 0;
+  const supplierId = parseUuid(formData.get("supplier_id"));
+  const locationId = parseUuid(formData.get("location_id"));
+  const groupId = parseUuid(formData.get("group_id"));
 
   if (!name) {
     return { error: "Component name is required." };
@@ -40,7 +49,11 @@ export async function createComponent(
     sku: sku || null,
     unit: unit || null,
     reorder_point: reorderPoint,
+    low_stock_level: lowStockLevel,
     cost_per_unit: costPerUnit,
+    supplier_id: supplierId,
+    location_id: locationId,
+    group_id: groupId,
   });
 
   if (error) return { error: error.message };

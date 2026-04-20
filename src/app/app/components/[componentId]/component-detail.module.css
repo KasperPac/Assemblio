@@ -1,0 +1,399 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.backButton {
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  padding: 7px 14px;
+  text-decoration: none;
+  color: var(--ink-muted);
+  font-weight: 600;
+  font-size: 13px;
+  background: var(--bg-card);
+}
+
+.alarmBanner {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--danger);
+}
+
+/* ── Two-column layout ────────────────── */
+
+.layout {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+/* ── Left info card ───────────────────── */
+
+.infoCard {
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
+  border-radius: 14px;
+  padding: 24px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.componentName {
+  font-size: 22px;
+  line-height: 1.2;
+  color: var(--ink-strong);
+}
+
+.skuBadge {
+  display: inline-block;
+  width: fit-content;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-plex-mono), monospace;
+  letter-spacing: 0.03em;
+  color: var(--ink-muted);
+  background: var(--surface-1);
+  border: 1px solid var(--stroke);
+  border-radius: 6px;
+  padding: 3px 10px;
+}
+
+.metaGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 24px;
+}
+
+.metaGrid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metaGrid dt {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-faint);
+}
+
+.metaGrid dd {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-strong);
+}
+
+.metaBold {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.cardActions {
+  display: flex;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.btnPrimary {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: var(--brand-1);
+  color: #0b0f19;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btnSecondary {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--stroke);
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.actionHint {
+  margin: -4px 0 0;
+  color: var(--ink-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ── Tabs ─────────────────────────────── */
+
+.tabsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tabBar {
+  display: flex;
+  gap: 4px;
+}
+
+.tab {
+  padding: 9px 20px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink-muted);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.tab:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink-strong);
+}
+
+.tabActive {
+  background: var(--brand-1);
+  color: #0b0f19;
+}
+
+.tabActive:hover {
+  background: var(--brand-2);
+  color: #0b0f19;
+}
+
+/* ── Overview stat cards ──────────────── */
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.statCard {
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
+  border-radius: 14px;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.statLabel {
+  font-size: 13px;
+  color: var(--ink-muted);
+  font-weight: 500;
+}
+
+.statValue {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--ink-strong);
+  line-height: 1.1;
+}
+
+.statGreen {
+  color: var(--ok);
+}
+
+.statRed {
+  color: var(--danger);
+}
+
+.statOrange {
+  color: var(--warning);
+}
+
+.statBlue {
+  color: #60a5fa;
+}
+
+.statCardAlarm {
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.alarmTag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--danger);
+  background: rgba(239, 68, 68, 0.15);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* ── Tab content area ─────────────────── */
+
+.tabContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Mini tables (Movements, BOM) ─────── */
+
+.miniTable {
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
+.miniHeader,
+.miniRow {
+  display: grid;
+  gap: 8px;
+  padding: 10px 14px;
+  align-items: center;
+  font-size: 12px;
+}
+
+.miniHeader {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink-faint);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 10px;
+}
+
+.miniRow {
+  border-top: 1px solid var(--stroke);
+  color: var(--ink-strong);
+}
+
+.movementCols {
+  grid-template-columns: 0.9fr 0.6fr 0.6fr 1.4fr 0.8fr;
+  min-width: 480px;
+}
+
+.bomCols {
+  grid-template-columns: 1.4fr 1fr 0.6fr 0.5fr 0.7fr;
+  min-width: 480px;
+}
+
+.miniRow span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Badges ───────────────────────────── */
+
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--brand-dim);
+  color: var(--brand-1);
+}
+
+.badgeMuted {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--ink-muted);
+}
+
+/* ── Movement delta colors ────────────── */
+
+.positive {
+  color: var(--ok);
+  font-weight: 600;
+}
+
+.negative {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.refCell {
+  font-size: 10px;
+  color: var(--ink-muted);
+}
+
+.empty {
+  color: var(--ink-muted);
+  font-size: 13px;
+  padding: 8px 0;
+}
+
+/* ── Responsive ───────────────────────── */
+
+@media (max-width: 1000px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .infoCard {
+    max-width: 100%;
+  }
+
+  .tabBar {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 600px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .metaGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .cardActions {
+    flex-direction: column;
+  }
+
+  .componentName {
+    font-size: 1.4rem;
+  }
+
+  .backButton {
+    width: fit-content;
+  }
+
+  .miniRow span {
+    white-space: normal;
+  }
+}

@@ -1,0 +1,296 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.breadcrumb {
+  margin: -6px 0 0;
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+}
+
+.breadcrumb a {
+  color: color-mix(in srgb, var(--brand-2) 72%, white);
+  text-decoration: none;
+}
+
+.addButton {
+  border: none;
+  border-radius: 999px;
+  min-height: 42px;
+  padding: 0 18px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--brand-2) 72%, #142131), color-mix(in srgb, var(--brand-1) 88%, #0e1624));
+  color: #f8fbff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.templateCard {
+  border: 1px solid color-mix(in srgb, var(--stroke-strong) 70%, transparent);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-raised) 92%, transparent), color-mix(in srgb, var(--surface) 94%, transparent));
+  box-shadow: 0 18px 38px rgba(5, 8, 15, 0.2);
+  overflow: hidden;
+}
+
+.templateTop {
+  padding: 18px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.templateInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.templateNameRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.templateNameRow h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--ink-strong);
+}
+
+.lineCountBadge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--ink-muted);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.templateDesc,
+.lineIdentity span,
+.lineMeta span,
+.emptyLines {
+  color: var(--ink-muted);
+  margin: 0;
+}
+
+.lineList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 20px 18px;
+}
+
+.lineRow {
+  display: grid;
+  grid-template-columns: 1.5fr 0.6fr 0.6fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 16px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  border: 1px solid color-mix(in srgb, var(--stroke) 66%, transparent);
+}
+
+.lineIdentity,
+.lineMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lineIdentity strong,
+.lineMeta strong {
+  color: var(--ink-strong);
+}
+
+.lineAction {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.emptyLines {
+  padding: 0 20px 18px;
+}
+
+.addLineWrap {
+  border-top: 1px solid color-mix(in srgb, var(--stroke) 66%, transparent);
+  padding: 16px 20px 20px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.addLineForm {
+  display: grid;
+  grid-template-columns: 1.4fr 0.6fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.addLineForm select,
+.addLineForm input {
+  border: 1px solid color-mix(in srgb, var(--stroke) 78%, transparent);
+  border-radius: 12px;
+  min-height: 42px;
+  padding: 0 12px;
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  color: var(--ink-strong);
+  font-size: 0.95rem;
+}
+
+.btnSmall {
+  border: none;
+  border-radius: 999px;
+  min-height: 42px;
+  padding: 0 16px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--brand-2) 72%, #142131), color-mix(in srgb, var(--brand-1) 88%, #0e1624));
+  color: #f8fbff;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.removeBtn,
+.deleteTplBtn {
+  border: 1px solid color-mix(in srgb, var(--stroke-strong) 72%, transparent);
+  border-radius: 999px;
+  min-height: 36px;
+  padding: 0 12px;
+  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+  color: var(--ink-strong);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.dialog {
+  border: none;
+  border-radius: 16px;
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+  padding: 0;
+  max-width: 440px;
+  width: 92vw;
+}
+
+.dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.dialogInner {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.dialogHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dialogHeader h2 {
+  font-size: 18px;
+}
+
+.dialogClose {
+  border: none;
+  background: none;
+  color: var(--ink-muted);
+  font-size: 22px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.dialogForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.field span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.field input,
+.field textarea {
+  border: 1px solid color-mix(in srgb, var(--stroke) 78%, transparent);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  color: var(--ink-strong);
+  font-size: 0.95rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.dialogActions {
+  display: flex;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.btnCancel,
+.btnSubmit {
+  flex: 1;
+  border-radius: 999px;
+  min-height: 42px;
+  padding: 0 14px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.btnCancel {
+  border: 1px solid color-mix(in srgb, var(--stroke-strong) 72%, transparent);
+  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+  color: var(--ink-strong);
+  font-weight: 700;
+}
+
+.btnSubmit {
+  border: none;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--brand-2) 72%, #142131), color-mix(in srgb, var(--brand-1) 88%, #0e1624));
+  color: #f8fbff;
+  font-weight: 700;
+}
+
+.error {
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 720px) {
+  .templateTop,
+  .templateNameRow,
+  .dialogActions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .lineRow,
+  .addLineForm {
+    grid-template-columns: 1fr;
+  }
+}

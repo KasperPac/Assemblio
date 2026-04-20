@@ -3,6 +3,11 @@ import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import styles from "../../variant-detail.module.css";
 import BomSeedPanel from "../../bom-seed-panel";
+import {
+  createBomLaborLine,
+  deleteBomLaborLine,
+  updateBomLaborLine,
+} from "../../actions";
 
 type VariantRecord = {
   id: string;
@@ -40,6 +45,36 @@ type BomLineRecord = {
     | Array<{
         name: string | null;
         sku: string | null;
+      }>
+    | null;
+};
+
+type DepartmentOption = {
+  id: string;
+  name: string;
+  code: string;
+};
+
+type LaborLineRecord = {
+  id: string;
+  product_bom_id: string;
+  department_id: string;
+  operation_name: string;
+  sequence: number;
+  setup_hours: number;
+  run_hours_per_unit: number;
+  admin_hours_per_unit: number;
+  electricity_kwh_per_unit: number;
+  gas_units_per_unit: number;
+  notes: string | null;
+  department:
+    | {
+        name: string | null;
+        code: string | null;
+      }
+    | Array<{
+        name: string | null;
+        code: string | null;
       }>
     | null;
 };
@@ -82,6 +117,10 @@ type Props = {
   params: Promise<{
     variantId: string;
   }>;
+  searchParams?: Promise<{
+    laborSuccess?: string;
+    laborError?: string;
+  }>;
 };
 
 function classForStatus(status: string) {
@@ -90,11 +129,12 @@ function classForStatus(status: string) {
   return `${styles.badge} ${styles.badgeDraft}`;
 }
 
-export default async function VariantDetailPage({ params }: Props) {
+export default async function VariantDetailPage({ params, searchParams }: Props) {
   const { variantId } = await params;
+  const query = (await searchParams) ?? {};
   const supabase = await createSupabaseServerClient();
 
-  const [{ data: variant }, { data: boms }, { data: sourceBoms }, { data: profile }] =
+  const [{ data: variant }, { data: boms }, { data: sourceBoms }, { data: profile }, { data: templates }, { data: allComponents }, { data: departments }] =
     await Promise.all([
       supabase
         .from("shopify_variant")
@@ -112,6 +152,15 @@ export default async function VariantDetailPage({ params }: Props) {
         .order("created_at", { ascending: false })
         .limit(250),
       supabase.from("profiles").select("role").single(),
+      supabase
+        .from("bom_template")
+        .select("id,name,description,bom_template_line(id)")
+        .order("name"),
+      supabase
+        .from("component")
+        .select("id,name,sku")
+        .order("name"),
+      supabase.from("department").select("id,name,code").eq("is_active", true).order("name"),
     ]);
 
   if (!variant) {
@@ -136,6 +185,17 @@ export default async function VariantDetailPage({ params }: Props) {
           .in("product_bom_id", bomIds)
           .order("created_at", { ascending: true });
 
+  const { data: laborLines } =
+    bomIds.length === 0
+      ? { data: [] }
+      : await supabase
+          .from("product_bom_labor")
+          .select(
+            "id,product_bom_id,department_id,operation_name,sequence,setup_hours,run_hours_per_unit,admin_hours_per_unit,electricity_kwh_per_unit,gas_units_per_unit,notes,department:department_id(name,code)"
+          )
+          .in("product_bom_id", bomIds)
+          .order("sequence", { ascending: true });
+
   const linesByBom = ((bomLines ?? []) as BomLineRecord[]).reduce<
     Record<string, BomLineRecord[]>
   >((acc, line) => {
@@ -144,6 +204,22 @@ export default async function VariantDetailPage({ params }: Props) {
     acc[line.product_bom_id] = bucket;
     return acc;
   }, {});
+
+  const laborLinesByBom = ((laborLines ?? []) as LaborLineRecord[]).reduce<
+    Record<string, LaborLineRecord[]>
+  >((acc, line) => {
+    const bucket = acc[line.product_bom_id] ?? [];
+    bucket.push(line);
+    acc[line.product_bom_id] = bucket;
+    return acc;
+  }, {});
+
+  const templateOptions = (templates ?? []).map((t: { id: string; name: string; description: string | null; bom_template_line: Array<{ id: string }> | null }) => ({
+    id: t.id,
+    name: t.name,
+    description: t.description,
+    lineCount: Array.isArray(t.bom_template_line) ? t.bom_template_line.length : 0,
+  }));
 
   const copyOptions = ((sourceBoms ?? []) as SourceBomRecord[]).map((source) => {
     const sourceVariant = Array.isArray(source.variant)
@@ -160,6 +236,8 @@ export default async function VariantDetailPage({ params }: Props) {
       } - v${source.version} [${source.status}]`,
     };
   });
+
+  const departmentOptions = (departments ?? []) as DepartmentOption[];
 
   return (
     <div className={styles.page}>
@@ -183,10 +261,17 @@ export default async function VariantDetailPage({ params }: Props) {
 
       <section className={styles.card}>
         <h3>BOM</h3>
+        {query.laborSuccess ? (
+          <p className={styles.success}>{query.laborSuccess}</p>
+        ) : null}
+        {query.laborError ? (
+          <p className={styles.error}>{query.laborError}</p>
+        ) : null}
         {hasBom ? (
           <div className={styles.bomList}>
             {typedBoms.map((bom) => {
               const lines = linesByBom[bom.id] ?? [];
+              const laborRows = laborLinesByBom[bom.id] ?? [];
               return (
                 <div key={bom.id} className={styles.lineTable}>
                   <div className={styles.bomHeader}>
@@ -225,12 +310,170 @@ export default async function VariantDetailPage({ params }: Props) {
                       );
                     })
                   )}
+                  <div className={styles.routingSection}>
+                    <div className={styles.routingHeader}>
+                      <strong>Labor routing</strong>
+                      <span className={styles.meta}>
+                        {laborRows.length} operation{laborRows.length === 1 ? "" : "s"}
+                      </span>
+                    </div>
+                    <div className={styles.routingTable}>
+                      <div className={styles.routingTableHeader}>
+                        <span>Operation</span>
+                        <span>Hours</span>
+                        <span>Utilities</span>
+                      </div>
+                      {laborRows.length === 0 ? (
+                        <div className={styles.routingRow}>
+                          <span className={styles.empty}>No labor operations yet.</span>
+                          <span />
+                          <span />
+                        </div>
+                      ) : (
+                        laborRows.map((line) => {
+                          const department = Array.isArray(line.department)
+                            ? line.department[0] ?? null
+                            : line.department;
+
+                          return (
+                            <form key={line.id} action={updateBomLaborLine} className={styles.routingEditor}>
+                              <input type="hidden" name="line_id" value={line.id} />
+                              <input type="hidden" name="variant_id" value={typedVariant.id} />
+                              <div className={styles.routingFormGrid}>
+                                <div className={styles.routingField}>
+                                  <label>Operation</label>
+                                  <input name="operation_name" defaultValue={line.operation_name} required />
+                                </div>
+                                <div className={styles.routingField}>
+                                  <label>Department</label>
+                                  <select name="department_id" defaultValue={line.department_id} required>
+                                    {departmentOptions.map((option) => (
+                                      <option key={option.id} value={option.id}>
+                                        {option.name} ({option.code})
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+                                <div className={styles.routingField}>
+                                  <label>Sequence</label>
+                                  <input name="sequence" type="number" min="1" step="1" defaultValue={line.sequence} />
+                                </div>
+                                <div className={styles.routingField}>
+                                  <label>Setup hrs</label>
+                                  <input name="setup_hours" type="number" min="0" step="0.25" defaultValue={line.setup_hours} />
+                                </div>
+                                <div className={styles.routingField}>
+                                  <label>Run hrs / unit</label>
+                                  <input name="run_hours_per_unit" type="number" min="0" step="0.25" defaultValue={line.run_hours_per_unit} />
+                                </div>
+                                <div className={styles.routingField}>
+                                  <label>Admin hrs / unit</label>
+                                  <input name="admin_hours_per_unit" type="number" min="0" step="0.25" defaultValue={line.admin_hours_per_unit} />
+                                </div>
+                                <div className={styles.routingField}>
+                                  <label>Electricity kWh / unit</label>
+                                  <input name="electricity_kwh_per_unit" type="number" min="0" step="0.01" defaultValue={line.electricity_kwh_per_unit} />
+                                </div>
+                                <div className={styles.routingField}>
+                                  <label>Gas units / unit</label>
+                                  <input name="gas_units_per_unit" type="number" min="0" step="0.01" defaultValue={line.gas_units_per_unit} />
+                                </div>
+                                <div className={`${styles.routingField} ${styles.routingSpanTwo}`}>
+                                  <label>Notes</label>
+                                  <input
+                                    name="notes"
+                                    defaultValue={line.notes ?? `${department?.name ?? "Department"} operation`}
+                                  />
+                                </div>
+                                <div className={`${styles.routingActions} ${styles.routingSpanTwo}`}>
+                                  <button className={styles.secondaryButton} type="submit">
+                                    Save Operation
+                                  </button>
+                                  <button
+                                    className={styles.secondaryButton}
+                                    type="submit"
+                                    formAction={deleteBomLaborLine}
+                                  >
+                                    Remove
+                                  </button>
+                                </div>
+                              </div>
+                            </form>
+                          );
+                        })
+                      )}
+                    </div>
+
+                    {canManageBom ? (
+                      <form action={createBomLaborLine} className={styles.routingCreateForm}>
+                        <input type="hidden" name="product_bom_id" value={bom.id} />
+                        <input type="hidden" name="variant_id" value={typedVariant.id} />
+                        <div className={styles.routingFormGrid}>
+                          <div className={styles.routingField}>
+                            <label>Operation</label>
+                            <input name="operation_name" placeholder="Assembly" required />
+                          </div>
+                          <div className={styles.routingField}>
+                            <label>Department</label>
+                            <select name="department_id" defaultValue="" required>
+                              <option value="" disabled>
+                                Select department
+                              </option>
+                              {departmentOptions.map((option) => (
+                                <option key={option.id} value={option.id}>
+                                  {option.name} ({option.code})
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className={styles.routingField}>
+                            <label>Sequence</label>
+                            <input name="sequence" type="number" min="1" step="1" defaultValue="1" />
+                          </div>
+                          <div className={styles.routingField}>
+                            <label>Setup hrs</label>
+                            <input name="setup_hours" type="number" min="0" step="0.25" defaultValue="0" />
+                          </div>
+                          <div className={styles.routingField}>
+                            <label>Run hrs / unit</label>
+                            <input name="run_hours_per_unit" type="number" min="0" step="0.25" defaultValue="0" />
+                          </div>
+                          <div className={styles.routingField}>
+                            <label>Admin hrs / unit</label>
+                            <input name="admin_hours_per_unit" type="number" min="0" step="0.25" defaultValue="0" />
+                          </div>
+                          <div className={styles.routingField}>
+                            <label>Electricity kWh / unit</label>
+                            <input name="electricity_kwh_per_unit" type="number" min="0" step="0.01" defaultValue="0" />
+                          </div>
+                          <div className={styles.routingField}>
+                            <label>Gas units / unit</label>
+                            <input name="gas_units_per_unit" type="number" min="0" step="0.01" defaultValue="0" />
+                          </div>
+                          <div className={`${styles.routingField} ${styles.routingSpanTwo}`}>
+                            <label>Notes</label>
+                            <input name="notes" placeholder="Optional routing note" />
+                          </div>
+                          <div className={`${styles.routingActions} ${styles.routingSpanTwo}`}>
+                            <button className={styles.primaryButton} type="submit">
+                              Add Labor Operation
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    ) : null}
+                  </div>
                 </div>
               );
             })}
           </div>
         ) : canManageBom ? (
-          <BomSeedPanel targetVariantId={typedVariant.id} sourceBoms={copyOptions} />
+          <BomSeedPanel
+            targetVariantId={typedVariant.id}
+            sourceBoms={copyOptions}
+            templates={templateOptions}
+            components={(allComponents ?? []) as Array<{ id: string; name: string; sku: string | null }>}
+          />
         ) : (
           <p className={styles.notice}>
             No BOM exists for this variant. Only admin and super_admin can create or copy BOMs.

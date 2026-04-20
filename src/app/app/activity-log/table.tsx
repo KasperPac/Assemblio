@@ -1,6 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import PageHeader from "../_ui/page-header";
+import StatusBadge from "../_ui/status-badge";
+import EmptyState from "../_ui/empty-state";
 import styles from "./activity-log.module.css";
 
 type LogRow = {
@@ -15,6 +18,14 @@ type Props = {
   rows: LogRow[];
   error?: string;
 };
+
+function getEventVariant(event: string) {
+  const normalized = event.toLowerCase();
+  if (normalized.includes("delete") || normalized.includes("disconnect")) return "danger";
+  if (normalized.includes("sync") || normalized.includes("update")) return "info";
+  if (normalized.includes("create") || normalized.includes("restore")) return "success";
+  return "default";
+}
 
 export default function ActivityLogClient({ rows, error }: Props) {
   const [selectedId, setSelectedId] = useState(rows[0]?.id ?? "");
@@ -66,24 +77,20 @@ export default function ActivityLogClient({ rows, error }: Props) {
   }, [rows, search, selectedUser, selectedEvent, dateFrom, dateTo]);
 
   const selected = useMemo(() => {
-    return (
-      filteredRows.find((row) => row.id === selectedId) ??
-      filteredRows[0] ??
-      undefined
-    );
+    return filteredRows.find((row) => row.id === selectedId) ?? filteredRows[0] ?? undefined;
   }, [filteredRows, selectedId]);
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <div>
-          <h1>Activity Log</h1>
-          <p>System activity history</p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Audit"
+        title="Activity log"
+        description="Search recent platform activity, inspect event details, and review the raw metadata recorded for each action."
+      />
+
       <div className={styles.filters}>
         <input
-          placeholder="Search messages..."
+          placeholder="Search messages, users, entities..."
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />
@@ -101,7 +108,7 @@ export default function ActivityLogClient({ rows, error }: Props) {
           value={selectedUser}
           onChange={(event) => setSelectedUser(event.target.value)}
         >
-          <option value="all">All Users</option>
+          <option value="all">All users</option>
           {users.map((user) => (
             <option key={user} value={user}>
               {user}
@@ -112,7 +119,7 @@ export default function ActivityLogClient({ rows, error }: Props) {
           value={selectedEvent}
           onChange={(event) => setSelectedEvent(event.target.value)}
         >
-          <option value="all">All Events</option>
+          <option value="all">All events</option>
           {events.map((eventName) => (
             <option key={eventName} value={eventName}>
               {eventName}
@@ -120,27 +127,28 @@ export default function ActivityLogClient({ rows, error }: Props) {
           ))}
         </select>
       </div>
+
       <div className={styles.content}>
-        <div className={styles.tableCard}>
+        <section className={styles.tableCard}>
           <div className={styles.tableHeader}>
             <span>Date</span>
             <span>User</span>
-            <span>Event Type</span>
+            <span>Event</span>
             <span>Entity</span>
             <span>Message</span>
           </div>
           {error ? (
-            <div className={styles.empty}>Failed to load activity.</div>
+            <EmptyState title="Failed to load activity" message={error} />
           ) : filteredRows.length === 0 ? (
-            <div className={styles.empty}>No activity yet.</div>
+            <EmptyState
+              title="No activity found"
+              message="Try widening the filters or search term to inspect more events."
+            />
           ) : (
             filteredRows.map((row) => {
-              const entity =
-                (row.metadata?.entity as string | undefined) ?? "component";
-              const message =
-                (row.metadata?.message as string | undefined) ?? row.event;
-              const user =
-                (row.metadata?.user as string | undefined) ?? "Shopify";
+              const entity = (row.metadata?.entity as string | undefined) ?? "component";
+              const message = (row.metadata?.message as string | undefined) ?? row.event;
+              const user = (row.metadata?.user as string | undefined) ?? "Shopify";
               const isActive = row.id === selected?.id;
               return (
                 <button
@@ -149,7 +157,7 @@ export default function ActivityLogClient({ rows, error }: Props) {
                   className={isActive ? styles.tableRowActive : styles.tableRow}
                   onClick={() => setSelectedId(row.id)}
                 >
-                  <span>
+                  <span className={styles.meta}>
                     {new Date(row.created_at).toLocaleDateString("en-GB")}{" "}
                     {new Date(row.created_at).toLocaleTimeString("en-GB", {
                       hour: "2-digit",
@@ -157,50 +165,54 @@ export default function ActivityLogClient({ rows, error }: Props) {
                     })}
                   </span>
                   <span>{user}</span>
-                  <span>{row.event}</span>
+                  <StatusBadge variant={getEventVariant(row.event)}>{row.event}</StatusBadge>
                   <span>{entity}</span>
                   <span>{message}</span>
                 </button>
               );
             })
           )}
-        </div>
+        </section>
+
         <aside className={styles.detailCard}>
           <div className={styles.detailHeader}>
-            <h3>Log Details</h3>
-            <button type="button" onClick={() => setSelectedId("")}>x</button>
+            <div>
+              <p className={styles.eyebrow}>Selected event</p>
+              <h2>{selected?.event ?? "Log entry"}</h2>
+            </div>
           </div>
+
           <div className={styles.detailSection}>
-            <p className={styles.detailTitle}>
-              {selected?.event ?? "Log Entry"}
-            </p>
-          </div>
-          <div className={styles.detailSection}>
-            <p className={styles.detailLabel}>User</p>
+            <p className={styles.detailLabel}>Operator</p>
             <div className={styles.detailUser}>
-              <span className={styles.avatar}>U</span>
+              <span className={styles.avatar}>
+                {((selected?.metadata?.user as string | undefined) ?? "S").slice(0, 1).toUpperCase()}
+              </span>
               <div>
-                <p>{(selected?.metadata?.user as string) ?? "User"}</p>
-                <span>U</span>
+                <p>{(selected?.metadata?.user as string) ?? "Shopify"}</p>
+                <span>{selected?.actor_id ?? "System actor"}</span>
               </div>
             </div>
           </div>
+
           <div className={styles.detailSection}>
             <p className={styles.detailLabel}>Entity</p>
             <div className={styles.detailBox}>
               {(selected?.metadata?.entity as string) ?? "component"}
             </div>
           </div>
+
           <div className={styles.detailSection}>
             <p className={styles.detailLabel}>Message</p>
             <p className={styles.detailMessage}>
               {(selected?.metadata?.message as string) ?? "Activity logged"}
             </p>
           </div>
+
           <div className={styles.detailSection}>
-            <p className={styles.detailLabel}>Raw Details</p>
+            <p className={styles.detailLabel}>Raw metadata</p>
             <pre className={styles.detailCode}>
-{JSON.stringify(selected?.metadata ?? {}, null, 2)}
+              {JSON.stringify(selected?.metadata ?? {}, null, 2)}
             </pre>
           </div>
         </aside>

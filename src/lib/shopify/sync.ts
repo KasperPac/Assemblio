@@ -20,6 +20,7 @@ type ShopifyProductNode = {
 
 type ShopifyOrderNode = {
   id: string;
+  name: string;
   cancelledAt: string | null;
   displayFulfillmentStatus: string | null;
   lineItems: { nodes: Array<{ quantity: number; variant: { id: string } | null }> };
@@ -143,6 +144,7 @@ async function fetchOrders(shopDomain: string, accessToken: string) {
         pageInfo { hasNextPage endCursor }
         nodes {
           id
+          name
           cancelledAt
           displayFulfillmentStatus
           lineItems(first: 100) {
@@ -243,6 +245,7 @@ export async function syncShopifyStoreData(
   const orderRows = orders.map((order) => ({
     tenant_id: tenantId,
     shopify_order_id: order.id,
+    order_number: order.name,
     status: mapOrderStatus(order),
   }));
   if (orderRows.length > 0) {

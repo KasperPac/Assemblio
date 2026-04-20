@@ -3,7 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import ProductVariantPicker from "../product-variant-picker";
+import BomLightbox from "../bom-lightbox";
 import styles from "../product-detail.module.css";
+import PageHeader from "@/app/app/_ui/page-header";
+import StatusBadge from "@/app/app/_ui/status-badge";
+import EmptyState from "@/app/app/_ui/empty-state";
 
 type ProductRecord = {
   id: string;
@@ -136,21 +140,96 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
         .order("created_at", { ascending: true })
     : { data: [] };
 
+  const [{ data: allSourceBoms }, { data: templates }, { data: allComponents }] =
+    await Promise.all([
+      supabase
+        .from("product_bom")
+        .select("id,version,status,variant:variant_id(id,title,sku,product:product_id(title))")
+        .order("created_at", { ascending: false })
+        .limit(250),
+      supabase
+        .from("bom_template")
+        .select("id,name,description,bom_template_line(id)")
+        .order("name"),
+      supabase
+        .from("component")
+        .select("id,name,sku,unit,group:group_id(name)")
+        .order("name"),
+    ]);
+
+  const templateOptions = (templates ?? []).map((t: Record<string, unknown>) => ({
+    id: t.id as string,
+    name: t.name as string,
+    lineCount: Array.isArray(t.bom_template_line) ? t.bom_template_line.length : 0,
+  }));
+
+  const sourceBomOptions = (allSourceBoms ?? []).map((s: Record<string, unknown>) => {
+    const v = Array.isArray(s.variant) ? s.variant[0] : s.variant;
+    const p = v ? (Array.isArray(v.product) ? v.product[0] : v.product) : null;
+    return {
+      id: s.id as string,
+      label: `${p?.title ?? "Product"} / ${v?.title ?? "Variant"}${v?.sku ? ` (${v.sku})` : ""} - v${s.version} [${s.status}]`,
+    };
+  });
+
+  const componentOptions = (allComponents ?? []).map((c: Record<string, unknown>) => {
+    const g = Array.isArray(c.group) ? c.group[0] : c.group;
+    return {
+      id: c.id as string,
+      name: c.name as string,
+      sku: (c.sku as string | null) ?? null,
+      unit: (c.unit as string | null) ?? null,
+      group: (g as { name: string } | null)?.name ?? null,
+    };
+  });
+
   const typedBomLines = (bomLines ?? []) as BomLineRecord[];
   const variantLabel = selectedVariant
     ? `${selectedVariant.title ?? "Untitled variant"}${selectedVariant.sku ? ` (${selectedVariant.sku})` : ""}`
     : "No variants";
+  const productStatus = selectedBom ? "BOM ready" : selectedVariant ? "Needs BOM" : "No variants";
+  const productStatusVariant = selectedBom ? "success" : selectedVariant ? "warning" : "default";
+  const productDescription =
+    typedProduct.description?.trim() ||
+    "This product is synced from Shopify. Use the selected variant to inspect BOM coverage and component requirements.";
+  const summaryItems = [
+    { label: "Shopify product", value: typedProduct.shopify_id },
+    { label: "Variants", value: String(typedVariants.length) },
+    { label: "BOM version", value: selectedBom ? `v${selectedBom.version}` : "Not created" },
+    { label: "Components", value: String(typedBomLines.length) },
+  ];
 
   return (
     <div className={styles.page}>
-      <div className={styles.topRow}>
-        <Link href="/app/products" className={styles.backButton}>
-          {"<- Back"}
-        </Link>
-        <p className={styles.breadcrumb}>
-          <Link href="/app/products">Products</Link> &gt; Product Detail
-        </p>
-      </div>
+      <PageHeader
+        breadcrumbs={[
+          { label: "Products", href: "/app/products" },
+          { label: typedProduct.title },
+        ]}
+        eyebrow="Product detail"
+        title={typedProduct.title}
+        description={productDescription}
+        actions={
+          selectedVariant ? (
+            <>
+              <Link
+                href={`/app/products/variants/${selectedVariant.id}`}
+                className={styles.actionButton}
+              >
+                Manage Variant BOM
+              </Link>
+              <BomLightbox
+                variantId={selectedVariant.id}
+                variantLabel={variantLabel}
+                templates={templateOptions}
+                sourceBoms={sourceBomOptions}
+                components={componentOptions}
+                buttonClassName={styles.actionButtonSecondary}
+              />
+            </>
+          ) : null
+        }
+      />
 
       <section className={styles.layout}>
         <aside className={styles.sideCard}>
@@ -161,25 +240,26 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
                 alt={typedProduct.title}
                 width={360}
                 height={180}
-                unoptimized
               />
             ) : (
               <span>{typedProduct.title.slice(0, 1)}</span>
             )}
           </div>
-          <h1 className={styles.sideTitle}>{typedProduct.title}</h1>
-          <div className={styles.sideMeta}>
-            <p>SHOPIFY PROD ID</p>
-            <strong>{typedProduct.shopify_id}</strong>
+          <div className={styles.sideTitleRow}>
+            <h2 className={styles.sideTitle}>{typedProduct.title}</h2>
+            <StatusBadge variant={productStatusVariant}>{productStatus}</StatusBadge>
           </div>
-          <div className={styles.sideMeta}>
-            <p>VARIANTS</p>
-            <strong>{typedVariants.length}</strong>
+          <p className={styles.sideDescription}>{productDescription}</p>
+
+          <div className={styles.summaryGrid}>
+            {summaryItems.map((item) => (
+              <div key={item.label} className={styles.summaryCard}>
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+              </div>
+            ))}
           </div>
-          <div className={styles.sideMeta}>
-            <p>STATUS</p>
-            <span className={styles.statusBadge}>Active</span>
-          </div>
+
           <div className={styles.sideMeta}>
             <p>LAST UPDATED</p>
             <strong>
@@ -189,81 +269,83 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
             </strong>
           </div>
           {selectedVariant ? (
-            <ProductVariantPicker
-              productId={typedProduct.id}
-              value={selectedVariant.id}
-              options={typedVariants.map((variant) => ({
-                id: variant.id,
-                label: `${variant.title ?? "Untitled"}${variant.sku ? ` - ${variant.sku}` : ""}`,
-              }))}
-            />
+            <div className={styles.variantPanel}>
+              <div className={styles.variantPanelHeader}>
+                <p className={styles.variantPanelLabel}>Selected variant</p>
+                <StatusBadge variant={selectedBom ? "success" : "warning"}>
+                  {selectedBom ? "Active BOM" : "No active BOM"}
+                </StatusBadge>
+              </div>
+              <ProductVariantPicker
+                productId={typedProduct.id}
+                value={selectedVariant.id}
+                options={typedVariants.map((variant) => ({
+                  id: variant.id,
+                  label: `${variant.title ?? "Untitled"}${variant.sku ? ` - ${variant.sku}` : ""}`,
+                }))}
+              />
+            </div>
           ) : null}
         </aside>
 
         <div className={styles.mainCard}>
           <div className={styles.mainHeader}>
             <div className={styles.mainHeaderInfo}>
-              <h2>
-                {typedProduct.title} - {variantLabel} ({typedBomLines.length} Components)
-              </h2>
+              <p className={styles.sectionEyebrow}>Variant configuration</p>
+              <h2>{variantLabel}</h2>
               <p className={styles.versionMeta}>
-                {selectedBom ? `Version - ${selectedBom.version}` : "No BOM version"}
+                {selectedBom
+                  ? `Active BOM version ${selectedBom.version} with ${typedBomLines.length} component line${typedBomLines.length === 1 ? "" : "s"}.`
+                  : "No BOM has been created for the selected variant yet."}
               </p>
             </div>
-            <div className={styles.headerActions}>
-              {selectedVariant ? (
-                <Link
-                  href={`/app/products/variants/${selectedVariant.id}`}
-                  className={styles.actionButton}
-                >
-                  + Add Component
-                </Link>
-              ) : null}
-              <button type="button" className={styles.actionButtonSecondary} disabled>
-                Add Lead Time
-              </button>
-              <button type="button" className={styles.actionButtonDanger} disabled>
-                Delete BoM
-              </button>
-            </div>
+            {selectedBom ? <StatusBadge variant="success">v{selectedBom.version}</StatusBadge> : null}
           </div>
 
-          <div className={styles.lineTable}>
-            <div className={styles.lineHeader}>
-              <span>Component</span>
-              <span>Description</span>
-              <span>Qty</span>
-              <span>Unit</span>
-              <span>Edit</span>
-              <span>Remove</span>
-            </div>
-            {typedBomLines.length === 0 ? (
-              <div className={styles.lineRowEmpty}>No BOM components found for this variant.</div>
-            ) : (
-              typedBomLines.map((line, index) => {
+          {typedBomLines.length === 0 ? (
+            <EmptyState
+              title="No BOM components for this variant"
+              message="Use the BOM builder to start from scratch, copy another BOM, or apply a template to this variant."
+              action={
+                selectedVariant ? (
+                  <BomLightbox
+                    variantId={selectedVariant.id}
+                    variantLabel={variantLabel}
+                    templates={templateOptions}
+                    sourceBoms={sourceBomOptions}
+                    components={componentOptions}
+                    buttonClassName={styles.actionButton}
+                  />
+                ) : null
+              }
+            />
+          ) : (
+            <div className={styles.lineTable}>
+              <div className={styles.lineHeader}>
+                <span>Component</span>
+                <span>Reference</span>
+                <span>Quantity</span>
+                <span>Unit</span>
+              </div>
+              {typedBomLines.map((line, index) => {
                 const component = Array.isArray(line.component)
                   ? line.component[0] ?? null
                   : line.component;
                 return (
                   <div className={styles.lineRow} key={`${selectedBom?.id ?? "none"}-${index}`}>
-                    <span>{component?.name ?? "Unknown component"}</span>
-                    <span>
-                      {component?.sku
-                        ? `SKU ${component.sku}`
-                        : "No description available."}
-                    </span>
+                    <div className={styles.linePrimary}>
+                      <strong>{component?.name ?? "Unknown component"}</strong>
+                    </div>
+                    <span>{component?.sku ? `SKU ${component.sku}` : "No SKU reference"}</span>
                     <span>{line.quantity}</span>
                     <span>{component?.unit ?? "ea"}</span>
-                    <span>Edit</span>
-                    <span>Remove</span>
                   </div>
                 );
-              })
-            )}
-          </div>
+              })}
+            </div>
+          )}
         </div>
       </section>
     </div>
   );
 }
-
