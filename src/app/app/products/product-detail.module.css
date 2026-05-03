@@ -48,13 +48,6 @@
   flex-wrap: wrap;
 }
 
-.sideTitle {
-  font-size: 1.35rem;
-  line-height: 1.08;
-  letter-spacing: -0.03em;
-  margin: 0;
-}
-
 .sideDescription {
   margin: 0;
   font-size: 13px;

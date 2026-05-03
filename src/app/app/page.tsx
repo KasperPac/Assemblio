@@ -1,6 +1,7 @@
 import styles from "./dashboard.module.css";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { findInventoryInvariantIssues } from "@/lib/inventory/invariants";
+import { countLowStockComponents } from "@/lib/inventory/low-stock";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import { OrderTrendChart, TopProductsChart } from "./dashboard-charts";
 import StatusBadge from "./_ui/status-badge";
 import EmptyState from "./_ui/empty-state";
@@ -27,40 +28,65 @@ function firstOf<T>(value: T | T[] | null | undefined): T | undefined {
 }
 
 export default async function DashboardPage() {
-  const supabase = await createSupabaseServerClient();
+  const context = await getServerTenantContext();
 
-  const [{ count: componentCount }, { count: variantsWithBomCount }] =
+  if (!context) {
+    return (
+      <div className={styles.dashboard}>
+        <section className={styles.section}>
+          <EmptyState
+            title="Workspace unavailable"
+            message="Could not resolve the active tenant for this dashboard."
+          />
+        </section>
+      </div>
+    );
+  }
+
+  const { supabase, tenantId } = context;
+
+  const [{ data: componentRows }, { count: variantsWithBomCount }] =
     await Promise.all([
-      supabase.from("component").select("*", { count: "exact", head: true }),
+      supabase.from("component").select("id,reorder_point").eq("tenant_id", tenantId),
       supabase
         .from("product_bom")
         .select("variant_id", { count: "exact", head: true })
+        .eq("tenant_id", tenantId)
         .eq("is_active", true),
-    ]).then((results) =>
-      results.map((result) => ({ count: result.count ?? 0 }))
-    );
+    ]);
+
+  const componentCount = componentRows?.length ?? 0;
+  const activeBomCount = variantsWithBomCount ?? 0;
 
   const { count: openOrdersCount } = await supabase
     .from("orders")
     .select("*", { count: "exact", head: true })
+    .eq("tenant_id", tenantId)
     .neq("status", "fulfilled");
 
   const { data: lowStockRows } = await supabase
     .from("inventory_balance")
-    .select("on_hand,component:component_id(reorder_point)");
+    .select("component_id,on_hand,reserved")
+    .eq("tenant_id", tenantId);
 
-  const lowStockCount =
-    lowStockRows?.filter(
-      (row) =>
-        Number(row.on_hand ?? 0) <
-        Number(firstOf(row.component)?.reorder_point ?? 0)
-    ).length ?? 0;
+  const lowStockCount = countLowStockComponents(
+    (componentRows ?? []).map((row) => ({
+      componentId: row.id,
+      reorderPoint: Number(row.reorder_point ?? 0),
+    })),
+    (lowStockRows ?? []).map((row) => ({
+      componentId: row.component_id,
+      onHand: Number(row.on_hand ?? 0),
+      reserved: Number(row.reserved ?? 0),
+    }))
+  );
 
   const { data: balances } = await supabase
     .from("inventory_balance")
     .select(
       "component_id,location_id,on_hand,in_prod,reserved,component:component_id(name,cost_per_unit),location:location_id(name)"
-    );
+    )
+    .eq("tenant_id", tenantId);
 
   const totalOnHand = (balances ?? []).reduce(
     (sum, row) =>
@@ -99,6 +125,7 @@ export default async function DashboardPage() {
   const { data: orders } = await supabase
     .from("orders")
     .select("id,shopify_order_id,order_number,status,created_at")
+    .eq("tenant_id", tenantId)
     .order("created_at", { ascending: false })
     .limit(5);
 
@@ -108,6 +135,7 @@ export default async function DashboardPage() {
   const { data: orderTimeline } = await supabase
     .from("orders")
     .select("status,created_at")
+    .eq("tenant_id", tenantId)
     .gte("created_at", start.toISOString());
 
   const timelineBuckets = Array.from({ length: 6 }).map((_, index) => {
@@ -137,6 +165,7 @@ export default async function DashboardPage() {
   const { data: orderLines } = await supabase
     .from("order_line")
     .select("created_at,variant:variant_id(product:product_id(title))")
+    .eq("tenant_id", tenantId)
     .gte(
       "created_at",
       new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString()
@@ -159,8 +188,12 @@ export default async function DashboardPage() {
     .map(([title, count]) => ({ title, count }));
 
   const [{ data: variantRows }, { data: activeBomRows }] = await Promise.all([
-    supabase.from("shopify_variant").select("id"),
-    supabase.from("product_bom").select("variant_id").eq("is_active", true),
+    supabase.from("shopify_variant").select("id").eq("tenant_id", tenantId),
+    supabase
+      .from("product_bom")
+      .select("variant_id")
+      .eq("tenant_id", tenantId)
+      .eq("is_active", true),
   ]);
 
   const activeVariantIds = new Set(
@@ -172,7 +205,7 @@ export default async function DashboardPage() {
   const totalVariantCount = (variantRows ?? []).length;
   const bomCoverage =
     totalVariantCount > 0
-      ? Math.round((variantsWithBomCount / totalVariantCount) * 100)
+      ? Math.round((activeBomCount / totalVariantCount) * 100)
       : 0;
 
   const ordersList = (orders ?? []) as OrderRow[];
@@ -242,17 +275,6 @@ export default async function DashboardPage() {
 
   return (
     <div className={styles.dashboard}>
-      <section className={styles.utilityBar} aria-label="Dashboard actions">
-        <div className={styles.utilityActions}>
-          <a href="/app/orders" className={styles.secondaryAction}>
-            Open orders
-          </a>
-          <a href="/app/inventory" className={styles.primaryAction}>
-            Review inventory
-          </a>
-        </div>
-      </section>
-
       <section className={styles.section}>
         <div className={styles.sectionHeader}>
           <p className={styles.sectionLabel}>Orders & Stock</p>
@@ -322,6 +344,50 @@ export default async function DashboardPage() {
 
         <div className={styles.contentGrid}>
           <div className={styles.leftColumn}>
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <div>
+                  <p className={styles.sectionEyebrow}>Live queue</p>
+                  <h3>Recent orders</h3>
+                </div>
+                <a href="/app/orders">View all</a>
+              </div>
+              {ordersList.length === 0 ? (
+                <EmptyState
+                  title="No recent orders"
+                  message="Sync Shopify orders to populate the live order queue and monitor allocation progress."
+                />
+              ) : (
+                <div className={styles.orderList}>
+                  {ordersList.map((order) => {
+                    const status = order.status?.toLowerCase();
+                    const pillVariant =
+                      status === "fulfilled"
+                        ? "success"
+                        : status === "cancelled"
+                        ? "danger"
+                        : "info";
+
+                    return (
+                      <a
+                        key={order.id}
+                        href={`/app/orders/${order.id}`}
+                        className={styles.orderRow}
+                      >
+                        <div>
+                          <strong>
+                            #{order.order_number ?? order.shopify_order_id ?? order.id.slice(0, 6)}
+                          </strong>
+                          <p>{new Date(order.created_at).toLocaleDateString("en-GB")}</p>
+                        </div>
+                        <StatusBadge variant={pillVariant}>{order.status}</StatusBadge>
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
             <div className={styles.chartsRow}>
               <div className={styles.card}>
                 <div className={styles.cardHeader}>
@@ -376,50 +442,6 @@ export default async function DashboardPage() {
                   <OrderTrendChart data={timelineBuckets} />
                 </div>
               </div>
-            </div>
-
-            <div className={styles.card}>
-              <div className={styles.cardHeader}>
-                <div>
-                  <p className={styles.sectionEyebrow}>Live queue</p>
-                  <h3>Recent orders</h3>
-                </div>
-                <a href="/app/orders">View all</a>
-              </div>
-              {ordersList.length === 0 ? (
-                <EmptyState
-                  title="No recent orders"
-                  message="Sync Shopify orders to populate the live order queue and monitor allocation progress."
-                />
-              ) : (
-                <div className={styles.orderList}>
-                  {ordersList.map((order) => {
-                    const status = order.status?.toLowerCase();
-                    const pillVariant =
-                      status === "fulfilled"
-                        ? "success"
-                        : status === "cancelled"
-                        ? "danger"
-                        : "info";
-
-                    return (
-                      <a
-                        key={order.id}
-                        href={`/app/orders/${order.id}`}
-                        className={styles.orderRow}
-                      >
-                        <div>
-                          <strong>
-                            #{order.order_number ?? order.shopify_order_id ?? order.id.slice(0, 6)}
-                          </strong>
-                          <p>{new Date(order.created_at).toLocaleDateString("en-GB")}</p>
-                        </div>
-                        <StatusBadge variant={pillVariant}>{order.status}</StatusBadge>
-                      </a>
-                    );
-                  })}
-                </div>
-              )}
             </div>
           </div>
 
@@ -520,14 +542,14 @@ export default async function DashboardPage() {
             <div className={styles.metricGrid}>
               <div className={styles.metricCard}>
                 <span>Active BOMs</span>
-                <strong>{variantsWithBomCount.toLocaleString()}</strong>
+                <strong>{activeBomCount.toLocaleString()}</strong>
                 <p>Variant BOMs currently available for planning</p>
               </div>
               <div className={styles.metricCard}>
                 <span>BOM coverage</span>
                 <strong>{bomCoverage}%</strong>
                 <p>
-                  {variantsWithBomCount.toLocaleString()} of {totalVariantCount.toLocaleString()} variants covered
+                  {activeBomCount.toLocaleString()} of {totalVariantCount.toLocaleString()} variants covered
                 </p>
               </div>
               <div className={styles.metricCard}>
@@ -559,7 +581,7 @@ export default async function DashboardPage() {
                 </div>
                 <div className={styles.notificationItem}>
                   <span className={`${styles.notifDot} ${styles.notifGreen}`} />
-                  <span>{variantsWithBomCount} active BOMs configured</span>
+                  <span>{activeBomCount} active BOMs configured</span>
                 </div>
               </div>
             </div>

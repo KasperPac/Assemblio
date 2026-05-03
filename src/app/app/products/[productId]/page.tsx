@@ -202,11 +202,6 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
   return (
     <div className={styles.page}>
       <PageHeader
-        breadcrumbs={[
-          { label: "Products", href: "/app/products" },
-          { label: typedProduct.title },
-        ]}
-        eyebrow="Product detail"
         title={typedProduct.title}
         description={productDescription}
         actions={
@@ -246,7 +241,6 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
             )}
           </div>
           <div className={styles.sideTitleRow}>
-            <h2 className={styles.sideTitle}>{typedProduct.title}</h2>
             <StatusBadge variant={productStatusVariant}>{productStatus}</StatusBadge>
           </div>
           <p className={styles.sideDescription}>{productDescription}</p>
