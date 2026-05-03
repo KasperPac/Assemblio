@@ -292,6 +292,8 @@ export default async function DashboardPage() {
                 <h3>
                   {openOrdersCount && openOrdersCount > 0
                     ? `${openOrdersCount} open order${openOrdersCount === 1 ? "" : "s"} in flight`
+                    : riskCount > 0
+                    ? `${riskCount} risk${riskCount === 1 ? "" : "s"} need attention`
                     : "Order queue is clear"}
                 </h3>
                 <StatusBadge variant={riskTone}>

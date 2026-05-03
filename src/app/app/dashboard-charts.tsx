@@ -28,10 +28,67 @@ export function OrderTrendChart({ data }: OrderTrendChartProps) {
   const margin = { top: 20, right: 20, bottom: 30, left: 20 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
-  const maxValue = Math.max(
-    1,
+  const observedMax = Math.max(
+    0,
     ...data.map((row) => Math.max(row.placed, row.fulfilled, row.cancelled))
   );
+  const hasData = observedMax > 0;
+  const maxValue = hasData ? observedMax : 1;
+
+  if (!hasData) {
+    return (
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        width="100%"
+        height="240"
+        role="img"
+        aria-label="No order trend data"
+      >
+        {[0.25, 0.5, 0.75].map((fraction) => {
+          const y = margin.top + innerHeight - innerHeight * fraction;
+          return (
+            <line
+              key={fraction}
+              x1={margin.left}
+              y1={y}
+              x2={width - margin.right}
+              y2={y}
+              stroke="rgba(255,255,255,0.06)"
+              strokeWidth="1"
+            />
+          );
+        })}
+        {data.map((row, index) => {
+          const x =
+            margin.left +
+            (data.length === 1 ? innerWidth / 2 : (index / (data.length - 1)) * innerWidth);
+          return (
+            <text
+              key={index}
+              x={x}
+              y={height - 4}
+              textAnchor="middle"
+              fill="#6b7a8d"
+              fontSize="10"
+              fontFamily="inherit"
+            >
+              {row.label}
+            </text>
+          );
+        })}
+        <text
+          x={width / 2}
+          y={margin.top + innerHeight / 2}
+          textAnchor="middle"
+          fill="#6b7a8d"
+          fontSize="12"
+          fontFamily="inherit"
+        >
+          No fulfilled orders in this window yet
+        </text>
+      </svg>
+    );
+  }
 
   function toPath(values: number[]) {
     if (values.length === 0) return "";
@@ -153,9 +210,39 @@ export function OrderTrendChart({ data }: OrderTrendChartProps) {
 }
 
 export function TopProductsChart({ data }: TopProductsChartProps) {
-  const safeData = data.length > 0 ? data : [{ title: "No Orders", count: 1 }];
-  const total = safeData.reduce((sum, row) => sum + row.count, 0) || 1;
-  const segments = safeData.reduce<
+  if (data.length === 0) {
+    return (
+      <svg
+        viewBox="0 0 220 220"
+        width="100%"
+        height="220"
+        role="img"
+        aria-label="No top product data"
+      >
+        <circle
+          cx="110"
+          cy="110"
+          r="64"
+          fill="none"
+          stroke="rgba(255,255,255,0.08)"
+          strokeWidth="24"
+        />
+        <text
+          x="110"
+          y="116"
+          textAnchor="middle"
+          fill="#6b7a8d"
+          fontSize="11"
+          fontFamily="inherit"
+        >
+          No data yet
+        </text>
+      </svg>
+    );
+  }
+
+  const total = data.reduce((sum, row) => sum + row.count, 0) || 1;
+  const segments = data.reduce<
     Array<{
       key: string;
       start: number;
@@ -176,7 +263,7 @@ export function TopProductsChart({ data }: TopProductsChartProps) {
     return acc;
   }, []);
 
-  const topEntry = safeData[0];
+  const topEntry = data[0];
   const topCount = topEntry.count;
 
   return (
