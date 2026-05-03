@@ -170,7 +170,7 @@ export default async function OrdersPage({ searchParams }: Props) {
         {error ? (
           <EmptyState
             title="Failed to load orders"
-            message="The order queue could not be loaded from Supabase."
+            message={`Supabase: ${error.message}. Check supabase/patches/ for any unapplied migrations.`}
           />
         ) : (data ?? []).length === 0 ? (
           <EmptyState
