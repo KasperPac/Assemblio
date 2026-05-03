@@ -322,6 +322,11 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
             <form action={allocateOrder}>
               <input type="hidden" name="order_id" value={typedOrder.id} />
               <input type="hidden" name="return_to" value={`/app/orders/${typedOrder.id}`} />
+              <input
+                type="hidden"
+                name="idempotency_key"
+                value={crypto.randomUUID()}
+              />
               <button className={styles.secondary} type="submit">
                 Run allocation
               </button>

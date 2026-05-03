@@ -213,6 +213,11 @@ export default async function OrdersPage({ searchParams }: Props) {
               <div className={styles.rowActions}>
                 <form action={allocateOrder}>
                   <input type="hidden" name="order_id" value={row.id} />
+                  <input
+                    type="hidden"
+                    name="idempotency_key"
+                    value={crypto.randomUUID()}
+                  />
                   <button className={styles.secondaryInline} type="submit">
                     Run allocation
                   </button>

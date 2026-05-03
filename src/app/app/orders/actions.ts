@@ -22,9 +22,39 @@ export async function allocateOrder(formData: FormData) {
   const orderId = formData.get("order_id")?.toString() ?? "";
   if (!orderId) return;
 
+  const idempotencyKey = formData.get("idempotency_key")?.toString().trim() || null;
+
   const context = await getServerTenantContext();
   if (!context) return;
   const { supabase, tenantId } = context;
+
+  const returnTo = sanitizeReturnPath(
+    formData.get("return_to")?.toString() ?? null
+  );
+
+  // Idempotency: if the same form was double-submitted (rapid double-click,
+  // network retry, etc.) the second invocation should not re-run allocation.
+  // The client renders a fresh idempotency_key per page load, so two clicks
+  // share the same key but a fresh page render gets a new key.
+  if (idempotencyKey) {
+    const { data: existingRuns } = await supabase
+      .from("activity_log")
+      .select("id")
+      .eq("tenant_id", tenantId)
+      .eq("event", "order_allocation_run")
+      .contains("metadata", {
+        order_id: orderId,
+        idempotency_key: idempotencyKey,
+      })
+      .limit(1);
+
+    if ((existingRuns ?? []).length > 0) {
+      if (returnTo) {
+        redirect(`${returnTo}?allocated=already`);
+      }
+      return;
+    }
+  }
 
   const result = await reconcileOrderAllocations(
     supabase,
@@ -40,6 +70,7 @@ export async function allocateOrder(formData: FormData) {
       changes_applied: result.applied,
       missing_bom_lines: result.skippedMissingBom,
       cleared_only: result.clearedOnly,
+      idempotency_key: idempotencyKey,
     },
   });
 
@@ -47,9 +78,6 @@ export async function allocateOrder(formData: FormData) {
   revalidatePath("/app/inventory");
   revalidatePath("/app/activity-log");
 
-  const returnTo = sanitizeReturnPath(
-    formData.get("return_to")?.toString() ?? null
-  );
   if (returnTo) {
     redirect(`${returnTo}?allocated=1`);
   }
