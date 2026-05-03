@@ -7,6 +7,10 @@ import {
 
 type DbClient = {
   from: (table: string) => unknown;
+  rpc: (
+    name: string,
+    args?: Record<string, unknown>
+  ) => Promise<{ data: unknown; error: unknown }>;
 };
 
 type DbQuery = {
@@ -65,11 +69,6 @@ type AllocationRow = {
   quantity: number;
 };
 
-type BalanceRow = {
-  id: string;
-  reserved: number;
-};
-
 export type ReconcileOrderResult = {
   applied: number;
   skippedMissingBom: number;
@@ -87,54 +86,17 @@ async function updateReservedWithMovement(
   const mutation = buildReservedMutation(deltaReserved);
   if (!mutation) return;
 
-  const { error: movementError } = await asQuery(client.from("inventory_movement")).insert({
-    tenant_id: tenantId,
-    component_id: componentId,
-    location_id: locationId,
-    delta_on_hand: mutation.deltaOnHand,
-    delta_in_prod: 0,
-    delta_reserved: mutation.deltaReserved,
-    reason: mutation.reason,
-    reference_type: "order",
-    reference_id: orderId,
+  // Atomic in Postgres: see supabase/patches/apply_reserved_movement_rpc.sql.
+  // Writes inventory_movement and the inventory_balance.reserved bump in a
+  // single transaction so a mid-flight failure cannot desync the ledger.
+  const { error } = await client.rpc("apply_reserved_movement", {
+    p_tenant_id: tenantId,
+    p_component_id: componentId,
+    p_location_id: locationId,
+    p_order_id: orderId,
+    p_delta_reserved: mutation.deltaReserved,
   });
-  if (movementError) throw movementError;
-
-  const { data: existingBalance, error: balanceReadError } = await asQuery(
-    client.from("inventory_balance")
-  )
-    .select("id,reserved")
-    .eq("tenant_id", tenantId)
-    .eq("component_id", componentId)
-    .eq("location_id", locationId)
-    .maybeSingle();
-  if (balanceReadError) throw balanceReadError;
-
-  const balance = existingBalance as BalanceRow | null;
-  if (!balance?.id) {
-    const { error: balanceInsertError } = await asQuery(
-      client.from("inventory_balance")
-    ).insert({
-      tenant_id: tenantId,
-      component_id: componentId,
-      location_id: locationId,
-      on_hand: 0,
-      in_prod: 0,
-      reserved: getNextReserved(0, mutation.deltaReserved),
-    });
-    if (balanceInsertError) throw balanceInsertError;
-    return;
-  }
-
-  const nextReserved = getNextReserved(
-    Number(balance.reserved ?? 0),
-    mutation.deltaReserved
-  );
-  const { error: balanceUpdateError } = await asQuery(client.from("inventory_balance"))
-    .update({ reserved: nextReserved })
-    .eq("tenant_id", tenantId)
-    .eq("id", balance.id);
-  if (balanceUpdateError) throw balanceUpdateError;
+  if (error) throw error;
 }
 
 async function clearLineAllocations(
