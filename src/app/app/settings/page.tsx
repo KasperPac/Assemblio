@@ -36,18 +36,27 @@ export default async function SettingsPage({ searchParams }: Props) {
   const supabase = await createSupabaseServerClient();
   const params = (await searchParams) ?? {};
 
-  const [{ data: profile }, { data: locations }, { count: userCount }] =
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const [{ data: profile }, { data: locations }, { count: userCount }, { data: accessRows }] =
     await Promise.all([
       supabase
         .from("profiles")
         .select("role,tenant_id,tenant:tenant_id(name)")
-        .single(),
+        .eq("id", user?.id ?? "")
+        .maybeSingle(),
       supabase
         .from("location")
         .select("name,is_default")
         .eq("is_default", true)
         .limit(1),
       supabase.from("profiles").select("*", { count: "exact", head: true }),
+      supabase
+        .from("profile_tenant_access")
+        .select("tenant_id,tenant:tenant_id(name)")
+        .eq("profile_id", user?.id ?? ""),
     ]);
 
   let stores: StoreRow[] = [];
@@ -113,9 +122,15 @@ export default async function SettingsPage({ searchParams }: Props) {
   if (stores.length > 10) {
     stores = stores.slice(0, 10);
   }
-  const tenant = Array.isArray(profile?.tenant)
+  const profileTenant = Array.isArray(profile?.tenant)
     ? profile?.tenant[0] ?? null
     : profile?.tenant;
+  const accessTenant = (accessRows ?? [])
+    .map((row) => (Array.isArray(row.tenant) ? row.tenant[0] : row.tenant))
+    .find((t) => t?.tenant_id === profile?.tenant_id || (t as { id?: string })?.id === profile?.tenant_id);
+  const tenant = profileTenant?.name
+    ? profileTenant
+    : accessTenant ?? profileTenant;
 
   const audit = profile?.tenant_id
     ? await loadInventoryIntegrityAudit(
@@ -143,8 +158,10 @@ export default async function SettingsPage({ searchParams }: Props) {
   const overviewCards = [
     {
       title: "Tenant",
-      value: tenant?.name ?? "Unknown",
-      detail: "Current workspace context",
+      value: tenant?.name ?? "No tenant access",
+      detail: tenant?.name
+        ? "Current workspace context"
+        : "Profile is missing a profile_tenant_access row for the active tenant.",
     },
     {
       title: "Role",

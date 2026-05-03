@@ -15,7 +15,8 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   const { data: profile } = await supabase
     .from("profiles")
     .select("tenant_id,role,tenant:tenant_id(id,name)")
-    .single();
+    .eq("id", user?.id ?? "")
+    .maybeSingle();
 
   const isSuperAdmin = profile?.role === "super_admin";
   const [{ data: accessRows }, { data: allTenants }] = await Promise.all([
@@ -36,9 +37,33 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         };
       });
 
-  const tenant = Array.isArray(profile?.tenant)
+  const profileTenant = Array.isArray(profile?.tenant)
     ? profile?.tenant[0] ?? null
     : profile?.tenant;
+
+  // The profiles -> tenant join can return null if the tenant row is hidden
+  // by RLS (e.g. the user lost their profile_tenant_access row but their
+  // profiles.tenant_id was never cleared). Try profile_tenant_access first
+  // (self-readable policy), then a direct lookup on the tenant table as a
+  // last resort.
+  const accessTenant = (accessRows ?? [])
+    .map((row) => (Array.isArray(row.tenant) ? row.tenant[0] : row.tenant))
+    .find((t) => t?.id === profile?.tenant_id);
+
+  let tenant = profileTenant?.name
+    ? profileTenant
+    : accessTenant ?? profileTenant;
+
+  if (!tenant?.name && profile?.tenant_id) {
+    const { data: directTenant } = await supabase
+      .from("tenant")
+      .select("id,name")
+      .eq("id", profile.tenant_id)
+      .maybeSingle();
+    if (directTenant?.name) {
+      tenant = directTenant;
+    }
+  }
 
   const userInitial = (user?.email ?? "U").slice(0, 1).toUpperCase();
   const firstName = user?.email?.split("@")[0] ?? "User";
@@ -119,7 +144,10 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       </aside>
 
       <div className={styles.main}>
-        <Topbar tenantName={tenant?.name ?? "Tenant"} userInitial={userInitial} />
+        <Topbar
+          tenantName={tenant?.name ?? "No tenant access"}
+          userInitial={userInitial}
+        />
         <section className={styles.content}>{children}</section>
       </div>
     </div>
