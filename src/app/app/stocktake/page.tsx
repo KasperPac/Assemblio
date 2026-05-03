@@ -47,7 +47,15 @@ function getStatusVariant(status: StocktakeSessionStatus) {
   return "warning";
 }
 
-export default async function StocktakePage() {
+type Props = {
+  searchParams?: Promise<{
+    apply_ok?: string;
+    apply_error?: string;
+  }>;
+};
+
+export default async function StocktakePage({ searchParams }: Props) {
+  const params = (await searchParams) ?? {};
   const supabase = await createSupabaseServerClient();
   const [{ data, error }, { data: locations }, { data: components }, { data: lines }] =
     await Promise.all([
@@ -74,6 +82,17 @@ export default async function StocktakePage() {
         title="Cycle count sessions"
         description="Open count sessions, record counted stock, and apply approved variances back into the inventory ledger."
       />
+
+      {params.apply_ok ? (
+        <div className={styles.notice} role="status">
+          Stocktake applied — {params.apply_ok} adjustments / lines.
+        </div>
+      ) : null}
+      {params.apply_error ? (
+        <div className={styles.errorNotice} role="alert">
+          Stocktake apply failed: {params.apply_error.replace(/_/g, " ")}
+        </div>
+      ) : null}
 
       <StocktakeCreateForm
         locations={

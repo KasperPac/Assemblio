@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import {
@@ -7,7 +8,6 @@ import {
   canTransitionStocktakeStatus,
   type StocktakeSessionStatus,
 } from "@/lib/stocktake/lifecycle";
-import { applyInventoryMovement } from "@/lib/inventory/movements";
 
 type StocktakeState = {
   error?: string;
@@ -20,16 +20,13 @@ type StocktakeSessionRecord = {
   location_id: string;
 };
 
-type StocktakeLineRecord = {
-  id: string;
-  component_id: string;
-  expected_on_hand: number;
-  counted: number;
-};
-
-type BalanceRecord = {
-  component_id: string;
-  on_hand: number;
+type ApplyStocktakeSummary = {
+  applied_lines: number;
+  adjustment_count: number;
+  expected_total: number;
+  counted_total: number;
+  variance_from_expected: number;
+  applied_delta_total: number;
 };
 
 function parseNumber(value: FormDataEntryValue | null) {
@@ -196,10 +193,14 @@ export async function updateStocktakeLineCounted(formData: FormData) {
 
 export async function applyStocktakeSession(formData: FormData) {
   const sessionId = formData.get("session_id")?.toString() ?? "";
-  if (!sessionId) return;
+  if (!sessionId) {
+    redirect("/app/stocktake?apply_error=missing_session");
+  }
 
   const context = await getTenantId();
-  if (!context) return;
+  if (!context) {
+    redirect("/app/stocktake?apply_error=missing_tenant");
+  }
   const { supabase, tenantId } = context;
 
   const { data: sessionData } = await supabase
@@ -210,85 +211,54 @@ export async function applyStocktakeSession(formData: FormData) {
     .maybeSingle();
 
   const session = sessionData as StocktakeSessionRecord | null;
-  if (!session?.id) return;
-  if (session.status !== "approved") return;
-
-  const { data: lineData } = await supabase
-    .from("stocktake_line")
-    .select("id,component_id,expected_on_hand,counted")
-    .eq("session_id", session.id)
-    .eq("tenant_id", tenantId);
-
-  const lines = (lineData ?? []) as StocktakeLineRecord[];
-  if (lines.length === 0) return;
-
-  const uniqueComponentIds = Array.from(new Set(lines.map((line) => line.component_id)));
-  const { data: balanceData } = await supabase
-    .from("inventory_balance")
-    .select("component_id,on_hand")
-    .eq("tenant_id", tenantId)
-    .eq("location_id", session.location_id)
-    .in("component_id", uniqueComponentIds);
-
-  const balanceMap = new Map(
-    ((balanceData ?? []) as BalanceRecord[]).map((balance) => [
-      balance.component_id,
-      Number(balance.on_hand ?? 0),
-    ])
-  );
-
-  let adjustmentCount = 0;
-  let expectedTotal = 0;
-  let countedTotal = 0;
-  let varianceFromExpected = 0;
-  let appliedDeltaTotal = 0;
-
-  for (const line of lines) {
-    const expected = Number(line.expected_on_hand ?? 0);
-    const counted = Number(line.counted ?? 0);
-    const currentOnHand = balanceMap.get(line.component_id) ?? 0;
-    const deltaOnHand = counted - currentOnHand;
-
-    expectedTotal += expected;
-    countedTotal += counted;
-    varianceFromExpected += counted - expected;
-    appliedDeltaTotal += deltaOnHand;
-
-    if (deltaOnHand === 0) continue;
-
-    try {
-      await applyInventoryMovement(supabase, {
-        componentId: line.component_id,
-        locationId: session.location_id,
-        deltaOnHand,
-        deltaInProd: 0,
-        reason: "stocktake_adjustment",
-        referenceType: "stocktake_session",
-        referenceId: session.id,
-      });
-    } catch {
-      return;
-    }
-    adjustmentCount += 1;
+  if (!session?.id) {
+    redirect("/app/stocktake?apply_error=session_not_found");
+  }
+  if (session.status !== "approved") {
+    redirect(
+      `/app/stocktake?apply_error=${encodeURIComponent(
+        `must_be_approved_was_${session.status}`
+      )}`
+    );
   }
 
-  await supabase
-    .from("stocktake_session")
-    .update({ status: "completed" })
-    .eq("id", session.id)
-    .eq("tenant_id", tenantId);
+  // Atomic in Postgres: see supabase/patches/apply_stocktake_session_rpc.sql.
+  // Any per-line failure rolls back every movement, balance change, and the
+  // status flip in the same call. No more partial-apply silent return.
+  const { data: rpcData, error: rpcError } = await supabase.rpc(
+    "apply_stocktake_session",
+    { p_session_id: session.id }
+  );
+
+  if (rpcError) {
+    redirect(
+      `/app/stocktake?apply_error=${encodeURIComponent(rpcError.message)}`
+    );
+  }
+
+  const summaryRow = (Array.isArray(rpcData) ? rpcData[0] : rpcData) as
+    | ApplyStocktakeSummary
+    | null;
+  const summary = summaryRow ?? {
+    applied_lines: 0,
+    adjustment_count: 0,
+    expected_total: 0,
+    counted_total: 0,
+    variance_from_expected: 0,
+    applied_delta_total: 0,
+  };
 
   await supabase.from("activity_log").insert({
     tenant_id: tenantId,
     event: "stocktake_applied",
     metadata: {
       session_id: session.id,
-      line_count: lines.length,
-      adjustments: adjustmentCount,
-      expected_total: expectedTotal,
-      counted_total: countedTotal,
-      variance_from_expected: varianceFromExpected,
-      applied_delta_total: appliedDeltaTotal,
+      line_count: summary.applied_lines,
+      adjustments: summary.adjustment_count,
+      expected_total: summary.expected_total,
+      counted_total: summary.counted_total,
+      variance_from_expected: summary.variance_from_expected,
+      applied_delta_total: summary.applied_delta_total,
       status_from: "approved",
       status_to: "completed",
     },
@@ -297,4 +267,8 @@ export async function applyStocktakeSession(formData: FormData) {
   revalidatePath("/app/stocktake");
   revalidatePath("/app/inventory");
   revalidatePath("/app/activity-log");
+
+  redirect(
+    `/app/stocktake?apply_ok=${summary.adjustment_count}/${summary.applied_lines}`
+  );
 }
