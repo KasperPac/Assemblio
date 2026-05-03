@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 import styles from "./login.module.css";
 import { signIn, signUp } from "./actions";
@@ -10,8 +10,8 @@ const initialState = { error: "", message: "" };
 
 function LoginPageContent() {
   const searchParams = useSearchParams();
-  const [signInState, signInAction] = useFormState(signIn, initialState);
-  const [signUpState, signUpAction] = useFormState(signUp, initialState);
+  const [signInState, signInAction] = useActionState(signIn, initialState);
+  const [signUpState, signUpAction] = useActionState(signUp, initialState);
   const redirectTo = searchParams.get("redirect") ?? "/app";
 
   return (

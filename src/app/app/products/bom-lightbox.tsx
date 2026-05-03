@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 import {
   createBomWithComponents,
   createBomFromTemplate,
@@ -41,9 +41,9 @@ export default function BomLightbox({
   const [view, setView] = useState<"options" | "picker" | "newTemplate">("options");
   const dialogRef = useRef<HTMLDialogElement>(null);
 
-  const [templateState, templateAction] = useFormState(createBomFromTemplate, initial);
-  const [copyState, copyAction] = useFormState(copyBomToDraft, initial);
-  const [newTplState, newTplAction] = useFormState(createTemplate, initial);
+  const [templateState, templateAction] = useActionState(createBomFromTemplate, initial);
+  const [copyState, copyAction] = useActionState(copyBomToDraft, initial);
+  const [newTplState, newTplAction] = useActionState(createTemplate, initial);
 
   useEffect(() => {
     const d = dialogRef.current;
@@ -195,7 +195,7 @@ function ComponentPicker({
   const [search, setSearch] = useState("");
   const [lines, setLines] = useState<LineState>({});
   const [notes, setNotes] = useState("");
-  const [state, formAction] = useFormState(createBomWithComponents, initial);
+  const [state, formAction] = useActionState(createBomWithComponents, initial);
 
   useEffect(() => {
     if (state.success) onDone();

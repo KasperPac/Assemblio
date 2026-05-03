@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 import {
   copyBomToDraft,
   createBomFromTemplate,
@@ -42,15 +42,15 @@ type Props = {
 const initialState: BomActionState = {};
 
 export default function BomSeedPanel({ targetVariantId, sourceBoms, templates, components }: Props) {
-  const [createState, createAction] = useFormState(
+  const [createState, createAction] = useActionState(
     createDraftBomFromScratch,
     initialState
   );
-  const [templateState, templateAction] = useFormState(
+  const [templateState, templateAction] = useActionState(
     createBomFromTemplate,
     initialState
   );
-  const [copyState, copyAction] = useFormState(copyBomToDraft, initialState);
+  const [copyState, copyAction] = useActionState(copyBomToDraft, initialState);
 
   return (
     <div className={styles.noBomGrid}>

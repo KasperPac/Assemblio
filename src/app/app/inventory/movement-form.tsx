@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useFormState } from "react-dom";
+import { useActionState, useState } from "react";
 import { createMovement } from "./actions";
 import styles from "./inventory.module.css";
 
@@ -28,7 +27,7 @@ const movementPresets = {
 
 export default function MovementForm({ components, locations }: Props) {
   type MovementType = keyof typeof movementPresets;
-  const [state, formAction] = useFormState(createMovement, initialState);
+  const [state, formAction] = useActionState(createMovement, initialState);
   const [movementType, setMovementType] = useState<MovementType>("receipt");
   const [deltaOnHand, setDeltaOnHand] = useState<string>(
     movementPresets.receipt.onHand

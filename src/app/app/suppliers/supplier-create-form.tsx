@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 import styles from "./suppliers.module.css";
 
 type FormState = {
@@ -15,7 +15,7 @@ type Props = {
 const initialState: FormState = {};
 
 export default function SupplierCreateForm({ action }: Props) {
-  const [state, formAction] = useFormState(action, initialState);
+  const [state, formAction] = useActionState(action, initialState);
 
   return (
     <form className={styles.formCard} action={formAction}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 import { useState, useEffect, useRef } from "react";
 import { addDepartment, updateRate, removeDepartment } from "./actions";
 import styles from "./staff-costings.module.css";
@@ -10,7 +10,7 @@ const initial: ActionState = {};
 
 export function AddDepartmentButton() {
   const [open, setOpen] = useState(false);
-  const [state, formAction] = useFormState(addDepartment, initial);
+  const [state, formAction] = useActionState(addDepartment, initial);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export function AddDepartmentButton() {
 
 export function RateEditor({ componentId, currentRate }: { componentId: string; currentRate: number }) {
   const [editing, setEditing] = useState(false);
-  const [state, formAction] = useFormState(updateRate, initial);
+  const [state, formAction] = useActionState(updateRate, initial);
 
   useEffect(() => {
     if (state.success) setEditing(false);
@@ -92,7 +92,7 @@ export function RateEditor({ componentId, currentRate }: { componentId: string; 
 }
 
 export function RemoveButton({ componentId }: { componentId: string }) {
-  const [state, formAction] = useFormState(removeDepartment, initial);
+  const [state, formAction] = useActionState(removeDepartment, initial);
   return (
     <>
       <form action={formAction} style={{ display: "inline" }}>

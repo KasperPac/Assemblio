@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 import { useState, useEffect, useRef } from "react";
 import {
   createTemplate,
@@ -17,7 +17,7 @@ const initialState: ActionState = {};
 
 export function CreateTemplateButton() {
   const [open, setOpen] = useState(false);
-  const [state, formAction] = useFormState(createTemplate, initialState);
+  const [state, formAction] = useActionState(createTemplate, initialState);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -72,7 +72,7 @@ export function AddLineForm({
   templateId: string;
   components: ComponentOption[];
 }) {
-  const [state, formAction] = useFormState(addTemplateLine, initialState);
+  const [state, formAction] = useActionState(addTemplateLine, initialState);
 
   return (
     <form action={formAction} className={styles.addLineForm}>
@@ -93,7 +93,7 @@ export function AddLineForm({
 }
 
 export function RemoveLineButton({ lineId }: { lineId: string }) {
-  const [, formAction] = useFormState(removeTemplateLine, initialState);
+  const [, formAction] = useActionState(removeTemplateLine, initialState);
   return (
     <form action={formAction} style={{ display: "inline" }}>
       <input type="hidden" name="line_id" value={lineId} />
@@ -103,7 +103,7 @@ export function RemoveLineButton({ lineId }: { lineId: string }) {
 }
 
 export function DeleteTemplateButton({ templateId }: { templateId: string }) {
-  const [, formAction] = useFormState(deleteTemplate, initialState);
+  const [, formAction] = useActionState(deleteTemplate, initialState);
   return (
     <form action={formAction} style={{ display: "inline" }}>
       <input type="hidden" name="template_id" value={templateId} />

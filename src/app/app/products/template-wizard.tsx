@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 import { useState, useEffect, useRef } from "react";
 import { createTemplate, addTemplateLine, removeTemplateLine } from "./template-actions";
 import styles from "./variant-detail.module.css";
@@ -69,7 +69,7 @@ export default function TemplateWizard({
 }
 
 function CreateForm({ onDone }: { onDone: () => void }) {
-  const [state, formAction] = useFormState(createTemplate, initialState);
+  const [state, formAction] = useActionState(createTemplate, initialState);
 
   return (
     <form action={formAction} className={styles.wizardForm}>
