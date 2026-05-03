@@ -11,6 +11,7 @@ import PageHeader from "../_ui/page-header";
 import StatusBadge from "../_ui/status-badge";
 import EmptyState from "../_ui/empty-state";
 import ListPanel, { ListRow } from "../_ui/list-panel";
+import SyncMetaChips from "./sync-meta-chips";
 
 type Props = {
   searchParams?: Promise<{
@@ -296,9 +297,7 @@ export default async function SettingsPage({ searchParams }: Props) {
               </span>
               <div className={styles.storeCell}>
                 <strong>{store.last_sync_status ?? "unknown"}</strong>
-                <span className={styles.meta}>
-                  {JSON.stringify(store.last_sync_meta ?? {})}
-                </span>
+                <SyncMetaChips meta={store.last_sync_meta} />
               </div>
               <div className={styles.storeActions}>
                 <SyncSubmitForm
