@@ -32,7 +32,15 @@ function getStatusVariant(status: string) {
   return "warning";
 }
 
-export default async function GoodsInwardsPage() {
+type Props = {
+  searchParams?: Promise<{
+    receive_ok?: string;
+    receive_error?: string;
+  }>;
+};
+
+export default async function GoodsInwardsPage({ searchParams }: Props) {
+  const params = (await searchParams) ?? {};
   const supabase = await createSupabaseServerClient();
   const [{ data, error }, { data: lines }] = await Promise.all([
     supabase
@@ -74,6 +82,16 @@ export default async function GoodsInwardsPage() {
 
   return (
     <div className={styles.page}>
+      {params.receive_ok ? (
+        <div className={styles.notice} role="status">
+          Receive OK — {params.receive_ok} lines / units recorded.
+        </div>
+      ) : null}
+      {params.receive_error ? (
+        <div className={styles.errorNotice} role="alert">
+          Receive failed: {params.receive_error.replace(/_/g, " ")}
+        </div>
+      ) : null}
       <PageHeader
         eyebrow="Goods inwards"
         title="Receiving workflow"

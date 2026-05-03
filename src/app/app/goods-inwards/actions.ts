@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -38,66 +39,53 @@ async function getTenantContext() {
   };
 }
 
+type ReceiveSummary = {
+  lines_received: number;
+  quantity_received: number;
+};
+
 export async function receivePurchaseOrder(formData: FormData) {
   const purchaseOrderId = formData.get("purchase_order_id")?.toString() ?? "";
-  if (!purchaseOrderId) return;
+  if (!purchaseOrderId) {
+    redirect("/app/goods-inwards?receive_error=missing_purchase_order");
+  }
 
   const context = await getTenantContext();
-  if (!context) return;
+  if (!context) {
+    redirect("/app/goods-inwards?receive_error=missing_tenant");
+  }
   const { supabase, tenantId, defaultLocationId } = context;
 
-  const { data: purchaseOrder } = await supabase
-    .from("purchase_order")
-    .select("id,status")
-    .eq("id", purchaseOrderId)
-    .eq("tenant_id", tenantId)
-    .maybeSingle();
-
-  const typedPo = purchaseOrder as PurchaseOrderRecord | null;
-  if (!typedPo?.id) return;
-  if (typedPo.status === "received" || typedPo.status === "cancelled") return;
-
-  const { data: lines } = await supabase
-    .from("purchase_order_line")
-    .select("id,component_id,quantity,quantity_received")
-    .eq("purchase_order_id", purchaseOrderId)
-    .eq("tenant_id", tenantId);
-
-  const poLines = (lines ?? []) as PurchaseOrderLine[];
-  if (poLines.length === 0) return;
-
-  let receivedLines = 0;
-  let receivedQty = 0;
-  for (const line of poLines) {
-    const remaining = Number(line.quantity) - Number(line.quantity_received ?? 0);
-    if (remaining <= 0) continue;
-
-    const { data: appliedQty, error } = await supabase.rpc(
-      "receive_purchase_order_line",
-      {
-        p_purchase_order_line_id: line.id,
-        p_receive_qty: remaining,
-        p_location_id: defaultLocationId,
-      }
-    );
-    if (error) {
-      return;
+  // Atomic in Postgres: see supabase/patches/receive_purchase_order_rpc.sql.
+  // The whole PO is received inside a single transaction; a failure on any
+  // line rolls back every previously applied line and balance update.
+  const { data: rpcData, error: rpcError } = await supabase.rpc(
+    "receive_purchase_order",
+    {
+      p_purchase_order_id: purchaseOrderId,
+      p_location_id: defaultLocationId,
     }
-    const applied = Number(appliedQty ?? 0);
-    if (applied <= 0) continue;
+  );
 
-    receivedLines += 1;
-    receivedQty += applied;
+  if (rpcError) {
+    redirect(
+      `/app/goods-inwards?receive_error=${encodeURIComponent(rpcError.message)}`
+    );
   }
+
+  const summaryRow = (Array.isArray(rpcData) ? rpcData[0] : rpcData) as
+    | ReceiveSummary
+    | null;
+  const linesReceived = Number(summaryRow?.lines_received ?? 0);
+  const quantityReceived = Number(summaryRow?.quantity_received ?? 0);
 
   await supabase.from("activity_log").insert({
     tenant_id: tenantId,
     event: "purchase_order_received",
     metadata: {
       purchase_order_id: purchaseOrderId,
-      line_count: poLines.length,
-      lines_received: receivedLines,
-      quantity_received: receivedQty,
+      lines_received: linesReceived,
+      quantity_received: quantityReceived,
       mode: "all_remaining",
     },
   });
@@ -106,6 +94,10 @@ export async function receivePurchaseOrder(formData: FormData) {
   revalidatePath("/app/purchasing");
   revalidatePath("/app/inventory");
   revalidatePath("/app/activity-log");
+
+  redirect(
+    `/app/goods-inwards?receive_ok=${linesReceived}/${quantityReceived}`
+  );
 }
 
 export async function receivePurchaseOrderLine(formData: FormData) {
@@ -151,10 +143,14 @@ export async function receivePurchaseOrderLine(formData: FormData) {
     }
   );
   if (error) {
-    return;
+    redirect(
+      `/app/goods-inwards?receive_error=${encodeURIComponent(error.message)}`
+    );
   }
   const applied = Number(appliedQty ?? 0);
-  if (applied <= 0) return;
+  if (applied <= 0) {
+    redirect("/app/goods-inwards?receive_error=nothing_to_receive");
+  }
 
   await supabase.from("activity_log").insert({
     tenant_id: tenantId,
@@ -170,4 +166,6 @@ export async function receivePurchaseOrderLine(formData: FormData) {
   revalidatePath("/app/purchasing");
   revalidatePath("/app/inventory");
   revalidatePath("/app/activity-log");
+
+  redirect(`/app/goods-inwards?receive_ok=1/${applied}`);
 }
