@@ -69,7 +69,7 @@ export function buildReservedMutation(
   if (deltaReserved === 0) return null;
   return {
     deltaReserved,
-    deltaOnHand: deltaReserved > 0 ? -deltaReserved : Math.abs(deltaReserved),
+    deltaOnHand: 0,
     reason: deltaReserved > 0 ? "order_reserve" : "order_release",
   };
 }

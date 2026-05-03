@@ -93,6 +93,7 @@ async function updateReservedWithMovement(
     location_id: locationId,
     delta_on_hand: mutation.deltaOnHand,
     delta_in_prod: 0,
+    delta_reserved: mutation.deltaReserved,
     reason: mutation.reason,
     reference_type: "order",
     reference_id: orderId,
