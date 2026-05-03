@@ -20,10 +20,10 @@ type Props = {
 const initialState = { error: "", success: "" };
 
 const movementPresets = {
-  receipt: { onHand: "100", inProd: "0" },
-  allocation: { onHand: "-10", inProd: "10" },
+  receipt: { onHand: "0", inProd: "0" },
+  allocation: { onHand: "0", inProd: "0" },
   adjustment: { onHand: "0", inProd: "0" },
-  production: { onHand: "0", inProd: "-10" },
+  production: { onHand: "0", inProd: "0" },
 } as const;
 
 export default function MovementForm({ components, locations }: Props) {
