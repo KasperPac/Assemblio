@@ -207,7 +207,47 @@ Each gap is classified into **exactly one** of four lenses, picked for the highe
 
 ### 2.5 Orders from Shopify
 
-_(populated by Task 5)_
+**Today:** Bidirectional sync (webhook + manual), BOM-driven component allocation with idempotency tokens, atomic reservation movements, and automatic financial-plan + labor-plan generation per line. Mature flow — but the order entity itself is stripped of customer info, prices, and any concept of "order this came in by phone."
+
+**Table stakes — gaps that block a credible Katana/Cin7 alternative:**
+- **Customer info persisted** — name, email, address dropped on sync. Cannot run customer reports, send updates, or honour repeat-customer pricing.
+- **Manual order entry** — phone, email, B2B orders are entered nowhere. The product silently assumes 100% Shopify revenue.
+- **Wholesale order workflow** — per-customer pricing, payment terms, hold-on-credit are absent.
+- **Refunds / partial refunds** — cancellation acts as a refund proxy; partial refund of one line in an otherwise-shipped order has no model.
+- **Order priority / due date** — production scheduling can't honour what doesn't exist in the data model.
+- **Manual freight / discount line items** — can't be added.
+
+**JTBD friction — workflow breakdowns for our personas:**
+- **Solo** — `unit_sell_price = 0` means margin-per-order is wrong. The single most-asked metric is broken at the data layer.
+- **Mid** — wholesale customers want NET-30 invoicing flow; today they have to live in Shopify Plus or out-of-band.
+- **Job-shop** — every job starts as a quote, then becomes an order on acceptance. There's no quote artefact.
+
+**AU/NZ market hooks — cheap leverage US-built tools won't ship fast:**
+- **GST breakdown on order** — required for BAS reporting and any AU-compliant tax invoice.
+- **AusPost / StarTrack / Sendle label printing** — print and pay for shipping inside Assemblio rather than bouncing back to Shopify Shipping.
+
+**Differentiators — gaps in Katana/Cin7 we could exploit:**
+- **Live capacity check at allocate time** — does pushing this order through put `department_utilization_week` over capacity? Show traffic light at order detail. Capacity table already exists.
+- **Make-to-order vs make-to-stock segmentation** — per-variant flag drives different replenishment behaviour. Neither competitor handles this cleanly.
+- **Auto-quote engine for job shops** — paste customer requirements, get a draft BOM + price + ETA. Big differentiator for the job-shop persona.
+
+**Scoring summary:**
+
+| Item | Lens | Persona | CV | MI | Effort | Score |
+|---|---|---|---|---|---|---|
+| Customer info persisted | Table stakes | All | 4 | 3 | S | 12.0 |
+| Manual order entry | Table stakes | All | 5 | 4 | M | 10.0 |
+| Wholesale workflow | Table stakes | Mid | 5 | 4 | L | 5.0 |
+| Partial refund model | Table stakes | All | 3 | 2 | M | 3.0 |
+| Order priority / due date | Table stakes | Mid | 4 | 3 | S | 12.0 |
+| Manual freight/discount lines | Table stakes | All | 3 | 2 | S | 6.0 |
+| Capture line sell price | JTBD | All | 5 | 4 | S | 20.0 |
+| Quote → order flow | JTBD | Job-shop | 5 | 5 | L | 6.25 |
+| GST breakdown | AU hook | All | 4 | 4 | M | 8.0 |
+| AusPost label printing | AU hook | All | 3 | 4 | L | 3.0 |
+| Live capacity check on allocate | Differentiator | Mid | 4 | 5 | M | 10.0 |
+| Make-to-order/stock flag | Differentiator | Mid | 3 | 4 | M | 6.0 |
+| Auto-quote engine | Differentiator | Job-shop | 4 | 5 | XL | 2.5 |
 
 ### 2.6 Stocktake
 
