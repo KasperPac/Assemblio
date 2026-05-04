@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { linkReceiptToPo } from "./actions";
 import { computeVariance } from "./helpers";
+import type { ReceiptStatus } from "./helpers";
 import styles from "./goods-inwards.module.css";
 
 type ReceiptLine = {
@@ -22,7 +23,7 @@ type Receipt = {
   supplier_name_override: string | null;
   supplier_reference: string;
   purchase_order_id: string | null;
-  status: "unmatched" | "po_linked" | "discrepancy";
+  status: ReceiptStatus;
   received_at: string;
   notes: string | null;
   stock_in_reason: string | null;
@@ -35,7 +36,7 @@ type Receipt = {
 type OpenPO = {
   id: string;
   supplier_id: string;
-  suppliers: { name: string } | Array<{ name: string }> | null;
+  supplier: { name: string } | Array<{ name: string }> | null;
 };
 
 const STATUS_LABELS: Record<Receipt["status"], string> = {
@@ -187,10 +188,10 @@ export default function ReceiptDetail({
                 >
                   <option value="">Select open PO&hellip;</option>
                   {openPOs.map((po) => {
-                    const sup = po.suppliers
-                      ? Array.isArray(po.suppliers)
-                        ? po.suppliers[0]
-                        : po.suppliers
+                    const sup = po.supplier
+                      ? Array.isArray(po.supplier)
+                        ? po.supplier[0]
+                        : po.supplier
                       : null;
                     return (
                       <option key={po.id} value={po.id}>
@@ -216,6 +217,9 @@ export default function ReceiptDetail({
       {/* Lines card */}
       <div className={styles.formCard}>
         <h2 style={{ margin: 0, fontSize: "1rem", fontWeight: 700 }}>Lines</h2>
+        {receipt.delivery_receipt_line.length === 0 ? (
+          <p className={styles.empty}>No lines recorded.</p>
+        ) : (
         <table className={styles.linesTable}>
           <thead>
             <tr>
@@ -248,9 +252,7 @@ export default function ReceiptDetail({
                             : ""
                         }`}
                       >
-                        {variance > 0
-                          ? `+${variance.toFixed(2)}`
-                          : variance.toFixed(2)}
+                        {variance > 0 ? `+${variance}` : String(variance)}
                       </span>
                     ) : (
                       "—"
@@ -262,6 +264,7 @@ export default function ReceiptDetail({
             })}
           </tbody>
         </table>
+        )}
       </div>
     </div>
   );

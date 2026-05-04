@@ -36,7 +36,7 @@ export default async function ReceiptDetailPage({ params }: Props) {
       ? (
           await supabase
             .from("purchase_order")
-            .select("id, supplier_id, suppliers:supplier_id(name)")
+            .select("id, supplier_id, supplier:supplier_id(name)")
             .eq("tenant_id", tenantId)
             .eq("status", "open")
             .order("created_at", { ascending: false })
