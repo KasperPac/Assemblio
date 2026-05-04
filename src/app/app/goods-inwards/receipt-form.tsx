@@ -75,7 +75,9 @@ export default function ReceiptForm({
   const [isPending, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
 
-  const filteredPOs = supplierId
+  const filteredPOs = showSupplierOverride
+    ? []
+    : supplierId
     ? openPOs.filter((po) => po.supplier_id === supplierId)
     : openPOs;
 
@@ -112,7 +114,7 @@ export default function ReceiptForm({
   }
 
   function removeLine(key: string) {
-    setLines((prev) => prev.filter((l) => l.key !== key));
+    setLines((prev) => (prev.length > 1 ? prev.filter((l) => l.key !== key) : prev));
   }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -375,6 +377,7 @@ export default function ReceiptForm({
                       onClick={() => removeLine(line.key)}
                       className={styles.secondary}
                       style={{ padding: "4px 10px" }}
+                      disabled={lines.length === 1}
                     >
                       ✕
                     </button>
