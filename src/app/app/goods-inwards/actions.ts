@@ -8,7 +8,6 @@ import { computeReceiptStatus } from "./helpers";
 // ─── Pure helpers (re-exported from helpers.ts for testing) ──────────────────
 
 export type { ReceiptStatus } from "./helpers";
-export { computeReceiptStatus, computeVariance } from "./helpers";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
