@@ -4,6 +4,7 @@ create or replace function public.receive_delivery_receipt(
 returns void
 language plpgsql
 security definer
+set search_path = public
 as $$
 declare
   v_tenant_id  uuid;
@@ -26,6 +27,12 @@ begin
 
   if not found then
     raise exception 'Delivery receipt not found: %', p_delivery_receipt_id;
+  end if;
+
+  -- guard against double-processing
+  if v_receipt.status <> 'unmatched' then
+    raise exception 'Receipt % has already been processed (status: %)',
+      p_delivery_receipt_id, v_receipt.status;
   end if;
 
   for v_line in
@@ -56,7 +63,8 @@ begin
       if v_applied > 0 then
         update public.purchase_order_line
         set quantity_received = quantity_received + v_applied
-        where id = v_line.purchase_order_line_id;
+        where id = v_line.purchase_order_line_id
+          and tenant_id = v_tenant_id;
       end if;
 
       if v_line.quantity_expected is not null
@@ -66,17 +74,15 @@ begin
     end if;
   end loop;
 
-  -- compute receipt status
-  if v_receipt.purchase_order_id is null then
-    update public.delivery_receipt set status = 'unmatched'
-    where id = p_delivery_receipt_id;
-  elsif v_discrepant then
-    update public.delivery_receipt set status = 'discrepancy'
-    where id = p_delivery_receipt_id;
-  else
-    update public.delivery_receipt set status = 'po_linked'
-    where id = p_delivery_receipt_id;
-  end if;
+  -- compute and write receipt status
+  update public.delivery_receipt
+  set status = case
+    when v_receipt.purchase_order_id is null then 'unmatched'
+    when v_discrepant then 'discrepancy'
+    else 'po_linked'
+  end
+  where id = p_delivery_receipt_id
+    and tenant_id = v_tenant_id;
 
   -- auto-close PO if fully received
   if v_receipt.purchase_order_id is not null then
