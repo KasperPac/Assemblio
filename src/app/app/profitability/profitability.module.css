@@ -1,0 +1,188 @@
+/* Tab bar */
+.tabBar {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  border: 1px solid color-mix(in srgb, var(--stroke) 66%, transparent);
+  border-radius: 18px;
+  width: fit-content;
+  margin-bottom: 16px;
+}
+
+.tab {
+  padding: 8px 20px;
+  border-radius: 14px;
+  border: none;
+  background: transparent;
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.tabActive {
+  background: color-mix(in srgb, var(--surface-raised) 96%, transparent);
+  color: var(--ink-strong);
+  box-shadow: 0 1px 4px rgba(5, 8, 15, 0.18);
+}
+
+/* Status badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.badgeActual {
+  background: rgba(52, 211, 153, 0.15);
+  color: #10b981;
+}
+
+.badgePlanned {
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  color: var(--ink-muted);
+  border: 1px solid color-mix(in srgb, var(--stroke) 66%, transparent);
+}
+
+/* Profitability table wrapper */
+.profitTable {
+  border: 1px solid color-mix(in srgb, var(--stroke-strong) 70%, transparent);
+  border-radius: 22px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface-raised) 92%, transparent),
+    color-mix(in srgb, var(--surface) 94%, transparent)
+  );
+  box-shadow: 0 18px 38px rgba(5, 8, 15, 0.2);
+  overflow: hidden;
+}
+
+/* Job table: 8 columns */
+.jobHeader,
+.jobRow {
+  display: grid;
+  grid-template-columns: minmax(60px, 0.7fr) minmax(0, 1.6fr) 0.8fr 0.6fr 0.8fr 0.8fr 0.8fr 100px;
+  gap: 10px;
+  padding: 12px 20px;
+  align-items: center;
+}
+
+.jobHeader {
+  color: var(--ink-faint);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  border-bottom: 1px solid color-mix(in srgb, var(--stroke) 50%, transparent);
+}
+
+.jobRow {
+  cursor: pointer;
+  border-bottom: 1px solid color-mix(in srgb, var(--stroke) 40%, transparent);
+  transition: background 0.1s;
+}
+
+.jobRow:last-child {
+  border-bottom: none;
+}
+
+.jobRow:hover {
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+}
+
+/* Expandable cost breakdown */
+.breakdown {
+  grid-column: 1 / -1;
+  padding: 16px 20px 20px;
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--stroke) 40%, transparent);
+  font-size: 0.88rem;
+}
+
+.breakdownGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) repeat(2, 110px);
+  gap: 6px 12px;
+  max-width: 400px;
+}
+
+.breakdownLabel {
+  color: var(--ink-faint);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+}
+
+.breakdownDivider {
+  grid-column: 1 / -1;
+  height: 1px;
+  background: color-mix(in srgb, var(--stroke) 50%, transparent);
+  margin: 4px 0;
+}
+
+.asteriskNote {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+}
+
+/* Product table: 5 columns */
+.productHeader,
+.productRow {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) 0.6fr 1fr 1fr 1fr;
+  gap: 10px;
+  padding: 12px 20px;
+  align-items: center;
+}
+
+.productHeader {
+  color: var(--ink-faint);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  border-bottom: 1px solid color-mix(in srgb, var(--stroke) 50%, transparent);
+}
+
+.productRow {
+  cursor: pointer;
+  border-bottom: 1px solid color-mix(in srgb, var(--stroke) 40%, transparent);
+  transition: background 0.1s;
+}
+
+.productRow:last-child {
+  border-bottom: none;
+}
+
+.productRow:hover {
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+}
+
+.emptyState {
+  padding: 32px 20px;
+  color: var(--ink-muted);
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 900px) {
+  .jobHeader,
+  .jobRow,
+  .productHeader,
+  .productRow {
+    grid-template-columns: 1fr;
+  }
+
+  .jobHeader,
+  .productHeader {
+    display: none;
+  }
+}
