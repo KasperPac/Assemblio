@@ -127,7 +127,7 @@ export default async function SettingsPage({ searchParams }: Props) {
     : profile?.tenant;
   const accessTenant = (accessRows ?? [])
     .map((row) => (Array.isArray(row.tenant) ? row.tenant[0] : row.tenant))
-    .find((t) => t?.tenant_id === profile?.tenant_id || (t as { id?: string })?.id === profile?.tenant_id);
+    .find((t) => (t as { tenant_id?: string })?.tenant_id === profile?.tenant_id || (t as { id?: string })?.id === profile?.tenant_id);
   const tenant = profileTenant?.name
     ? profileTenant
     : accessTenant ?? profileTenant;

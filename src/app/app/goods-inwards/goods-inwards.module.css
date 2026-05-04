@@ -4,158 +4,240 @@
   gap: 18px;
 }
 
-.poCard {
+.toolbar {
   display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 18px;
-  border-radius: 20px;
-  background: color-mix(in srgb, var(--surface) 82%, transparent);
-  border: 1px solid color-mix(in srgb, var(--stroke) 66%, transparent);
-}
-
-.poSummary {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.poIdentity,
-.cellStack {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.poTitleRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.poTitleRow h3 {
-  margin: 0;
-  color: var(--ink-strong);
-}
-
-.poMetrics {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.metric {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 14px;
-  border-radius: 16px;
-  background: color-mix(in srgb, var(--surface-raised) 78%, transparent);
-  border: 1px solid color-mix(in srgb, var(--stroke) 66%, transparent);
-}
-
-.metric span,
-.meta {
-  margin: 0;
-  color: var(--ink-muted);
-  font-size: 0.9rem;
-}
-
-.metric strong {
-  color: var(--ink-strong);
-}
-
-.primary,
-.secondary {
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  min-height: 42px;
-  padding: 0 18px;
-  border-radius: 999px;
-  font-size: 0.9rem;
-  font-weight: 700;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--surface-raised);
+  border: 1px solid var(--stroke);
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.tab,
+.tabActive {
+  padding: 6px 14px;
+  border-radius: 7px;
+  border: none;
+  font-size: 0.85rem;
   cursor: pointer;
+  background: transparent;
+  color: var(--ink-muted);
+}
+
+.tabActive {
+  background: var(--surface);
+  color: var(--ink-strong);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
 .primary {
+  padding: 8px 18px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
   border: none;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--brand-2) 72%, #142131), color-mix(in srgb, var(--brand-1) 88%, #0e1624));
-  color: #f8fbff;
+  cursor: pointer;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.table th {
+  text-align: left;
+  padding: 8px 12px;
+  color: var(--ink-muted);
+  font-weight: 600;
+  border-bottom: 1px solid var(--stroke);
+}
+
+.table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--stroke);
+  color: var(--ink-strong);
+  vertical-align: middle;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.link {
+  color: var(--brand-1);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.badge_unmatched {
+  background: color-mix(in srgb, var(--ink-muted) 12%, transparent);
+  color: var(--ink-muted);
+}
+
+.badge_po_linked {
+  background: color-mix(in srgb, var(--ok) 15%, transparent);
+  color: var(--ok);
+}
+
+.badge_discrepancy {
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: var(--danger);
+}
+
+.empty {
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+  padding: 24px 0;
+}
+
+/* ── Form shared styles (used by receipt-form and receipt-detail) ── */
+
+.formCard {
+  background: var(--surface-raised);
+  border: 1px solid var(--stroke);
+  border-radius: 16px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.field label {
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.field input,
+.field select,
+.field textarea {
+  padding: 8px 12px;
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: var(--surface);
+  color: var(--ink-strong);
+  outline: none;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--focus-border);
+}
+
+.fieldFull {
+  composes: field;
+  grid-column: 1 / -1;
+}
+
+.linesTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.linesTable th {
+  padding: 6px 10px;
+  text-align: left;
+  color: var(--ink-muted);
+  font-weight: 600;
+  border-bottom: 1px solid var(--stroke);
+}
+
+.linesTable td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--stroke);
+  vertical-align: middle;
+}
+
+.linesTable tr:last-child td {
+  border-bottom: none;
+}
+
+.variance {
+  font-weight: 600;
+}
+
+.varianceShort {
+  color: var(--danger);
+}
+
+.varianceOver {
+  color: #d97706;
 }
 
 .secondary {
-  border: 1px solid color-mix(in srgb, var(--stroke-strong) 72%, transparent);
-  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+  padding: 7px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--stroke);
+  background: var(--surface);
   color: var(--ink-strong);
-  min-height: 38px;
-  padding: 0 14px;
+  font-size: 0.88rem;
+  cursor: pointer;
 }
 
-.primary:disabled,
-.secondary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.primaryActionWrap {
+.actions {
   display: flex;
-  justify-content: flex-start;
-}
-
-.lineList {
-  display: flex;
-  flex-direction: column;
   gap: 10px;
-}
-
-.lineRow {
-  align-items: center;
-}
-
-.lineForm {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 8px;
-}
-
-.lineForm input {
-  border: 1px solid color-mix(in srgb, var(--stroke) 78%, transparent);
-  border-radius: 12px;
-  min-height: 38px;
-  padding: 0 12px;
-  background: color-mix(in srgb, var(--surface) 84%, transparent);
-  color: var(--ink-strong);
-}
-
-@media (max-width: 860px) {
-  .poMetrics,
-  .lineForm {
-    grid-template-columns: 1fr;
-  }
-
-  .poTitleRow {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-.notice {
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: var(--brand-dim);
-  color: var(--ink-strong);
-  border: 1px solid var(--focus-border);
-  font-size: 13px;
+  justify-content: flex-end;
 }
 
 .errorNotice {
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: rgba(239, 68, 68, 0.12);
-  color: var(--ink-strong);
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  font-size: 13px;
+  padding: 12px 16px;
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--danger) 30%, transparent);
+  border-radius: 10px;
+  color: var(--danger);
+  font-size: 0.88rem;
+}
+
+@media (max-width: 860px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

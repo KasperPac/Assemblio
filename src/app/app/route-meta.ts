@@ -93,7 +93,7 @@ const ROUTES: RouteDefinition[] = [
   {
     prefix: "/app/goods-inwards",
     title: "Goods Inwards",
-    subtitle: "Receive purchase orders and monitor inbound stock flow.",
+    subtitle: "Record deliveries and receipt stock into inventory.",
     crumbs: ["Goods Inwards"],
   },
   {
