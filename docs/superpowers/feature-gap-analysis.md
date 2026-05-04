@@ -166,7 +166,44 @@ Each gap is classified into **exactly one** of four lenses, picked for the highe
 
 ### 2.4 Goods Inwards
 
-_(populated by Task 4)_
+**Today:** Atomic receive RPC with full and per-line variants, partial-receipt support, automatic PO completion when all lines received. Inventory writes go through the standard movement ledger with `purchase_order_receipt` reason.
+
+**Table stakes — gaps that block a credible Katana/Cin7 alternative:**
+- **Batch / lot tracking** — non-negotiable for food, cosmetics, supplements, electronics-with-firmware. Entire verticals are unsellable to without it.
+- **Expiry date capture** — same verticals need it for FEFO.
+- **Multi-location receive** — currently hard-wired to the tenant default location. Mid/job-shop with two warehouses can't use this feature at all.
+- **GRN (printable receiving note)** — operators expect to print and sign one.
+- **Discrepancy / short-shipment workflow** — receive less than expected → flag for follow-up rather than quietly leaving the line open.
+- **3-way match (PO ↔ receipt ↔ supplier invoice)** — accounting baseline.
+
+**JTBD friction — workflow breakdowns for our personas:**
+- **Solo** — typing the receive form on a phone in the warehouse is awkward; touch targets weren't designed for it.
+- **Mid** — receiving team needs a screen they can read across the warehouse; current UI is dense.
+- **Job-shop** — non-PO receipts (R&D samples, free supplier samples, returns from customers) have no flow.
+
+**AU/NZ market hooks — cheap leverage US-built tools won't ship fast:**
+- **AusPost / Sendle / StarTrack tracking ingestion** — paste tracking number on PO, auto-update PO status to in_transit / arrived. Cuts the "did our delivery arrive?" Slack threads.
+
+**Differentiators — gaps in Katana/Cin7 we could exploit:**
+- **Photo-based receive** — take a photo of the delivery slip, OCR matches lines to the PO, operator confirms. Removes ~80% of typing.
+- **Auto-create variance order** — short-receive automatically opens a "chase the supplier" task with email draft.
+
+**Scoring summary:**
+
+| Item | Lens | Persona | CV | MI | Effort | Score |
+|---|---|---|---|---|---|---|
+| Batch / lot tracking | Table stakes | All | 5 | 5 | M | 12.5 |
+| Expiry date capture | Table stakes | All | 4 | 4 | S | 16.0 |
+| Multi-location receive | Table stakes | Mid | 5 | 3 | M | 7.5 |
+| GRN print | Table stakes | All | 3 | 2 | S | 6.0 |
+| Discrepancy workflow | Table stakes | All | 4 | 3 | M | 6.0 |
+| 3-way match | Table stakes | Mid | 4 | 3 | L | 3.0 |
+| Mobile receive UI | JTBD | Solo | 4 | 4 | M | 8.0 |
+| Receive screen for warehouse | JTBD | Mid | 3 | 3 | S | 9.0 |
+| Non-PO receipts | JTBD | Job-shop | 3 | 2 | S | 6.0 |
+| AusPost / Sendle tracking | AU hook | All | 3 | 4 | M | 6.0 |
+| Photo-OCR receive | Differentiator | All | 4 | 5 | L | 5.0 |
+| Auto-chase short receipt | Differentiator | Mid | 3 | 3 | S | 9.0 |
 
 ### 2.5 Orders from Shopify
 
