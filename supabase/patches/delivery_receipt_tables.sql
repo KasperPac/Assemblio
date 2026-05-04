@@ -22,13 +22,26 @@ create table if not exists public.delivery_receipt (
 alter table public.delivery_receipt enable row level security;
 
 create policy "tenant_isolation_select" on public.delivery_receipt
-  for select using (tenant_id = public.current_tenant_id());
+  for select using (
+    (tenant_id = public.current_tenant_id())
+    or public.is_super_admin()
+  );
 
 create policy "tenant_isolation_insert" on public.delivery_receipt
-  for insert with check (tenant_id = public.current_tenant_id());
+  for insert with check (
+    (tenant_id = public.current_tenant_id())
+    or public.is_super_admin()
+  );
 
 create policy "tenant_isolation_update" on public.delivery_receipt
-  for update using (tenant_id = public.current_tenant_id());
+  for update using (
+    (tenant_id = public.current_tenant_id())
+    or public.is_super_admin()
+  )
+  with check (
+    (tenant_id = public.current_tenant_id())
+    or public.is_super_admin()
+  );
 
 -- delivery_receipt_line
 create table if not exists public.delivery_receipt_line (
@@ -46,10 +59,23 @@ create table if not exists public.delivery_receipt_line (
 alter table public.delivery_receipt_line enable row level security;
 
 create policy "tenant_isolation_select" on public.delivery_receipt_line
-  for select using (tenant_id = public.current_tenant_id());
+  for select using (
+    (tenant_id = public.current_tenant_id())
+    or public.is_super_admin()
+  );
 
 create policy "tenant_isolation_insert" on public.delivery_receipt_line
-  for insert with check (tenant_id = public.current_tenant_id());
+  for insert with check (
+    (tenant_id = public.current_tenant_id())
+    or public.is_super_admin()
+  );
 
 create policy "tenant_isolation_update" on public.delivery_receipt_line
-  for update using (tenant_id = public.current_tenant_id());
+  for update using (
+    (tenant_id = public.current_tenant_id())
+    or public.is_super_admin()
+  )
+  with check (
+    (tenant_id = public.current_tenant_id())
+    or public.is_super_admin()
+  );
