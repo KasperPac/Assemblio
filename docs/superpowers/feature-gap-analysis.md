@@ -409,7 +409,19 @@ Ties at Score = 20.0 are broken by **breadth of impact** (affects all personas >
 
 ## 4. Strategic clusters
 
-_(populated by Task 10)_
+The top-10 group naturally into three themes. Each is a positioning angle that can carry a landing-page section, a sales-deck slide, and a build sprint.
+
+### 4.1 "Margin you can actually see" — items #1, #3, #4, #5, #7, #9
+
+Six of the top-10 are about closing the loop between operations and money. Today the data flows in (orders, costs, capacity) but the margin/profit story is fragmented across screens, silently wrong on prices, and impossible to filter by a useful date range. Fixing this cluster gives Assemblio a one-line pitch: "the only Shopify MRP where every screen shows real margin." It's also unusually cheap — five of the six are S-effort. Lead with this in marketing.
+
+### 4.2 "Procurement that doesn't live in Gmail" — items #2, #8, #10
+
+Suppliers is the weakest existing feature; #2 (Lead times) and #8 (Contact info) anchor a make-procurement-real cluster paired with #10 (Replenishment recommendations) — the consumer of lead-time data. Together they turn supplier records from a name into a working procurement surface AND give the operator a daily "what to order" view. Add ABN + GST (honourable mention) for compliant PO documents and the cluster becomes a complete procurement story. Position this as "your supplier database and replenishment engine, not just a name field."
+
+### 4.3 "AU-native operations" — item #6 (plus the honourable-mention ABN/GST and several non-top-10 hooks)
+
+Item #6 (expiry tracking) is the lone top-10 anchor for AU-native, but the cluster runs deep in the honourable mentions and individual scorecards: ABN + GST (§2.7), GST/BAS report (§2.8), AusPost / Sendle tracking (§2.4 / §2.5), EOFY stocktake (§2.6 / §2.8), and AUD-cost-pull-from-Xero (§2.2). None individually dominates the top-10, but together they form a moat US-built tools cannot match in a quarter. Treat this as the marketing wedge for AU/NZ launch — a "Built for AU/NZ manufacturing" landing-page section, with the cluster items as bullet proof points.
 
 ---
 
