@@ -1,92 +1,116 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { getServerTenantContext } from "@/lib/tenant/context";
 
-type PurchaseOrderLine = {
-  id: string;
+// ─── Pure helpers (re-exported from helpers.ts for testing) ──────────────────
+
+export type { ReceiptStatus } from "./helpers";
+export { computeReceiptStatus, computeVariance } from "./helpers";
+
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+export type DeliveryReceiptLineInput = {
   component_id: string;
-  quantity: number;
-  quantity_received: number;
+  purchase_order_line_id: string | null;
+  quantity_delivered: number;
+  quantity_expected: number | null;
+  notes: string | null;
 };
 
-type PurchaseOrderRecord = {
-  id: string;
-  status: string;
-};
+// ─── Actions ─────────────────────────────────────────────────────────────────
 
-async function getTenantContext() {
-  const supabase = await createSupabaseServerClient();
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("tenant_id")
-    .single();
-  if (!profile?.tenant_id) return null;
+export async function createDeliveryReceipt(formData: FormData) {
+  const ctx = await getServerTenantContext();
+  if (!ctx) redirect("/auth/login");
+  const { supabase, tenantId } = ctx;
 
-  const { data: defaultLocation } = await supabase
-    .from("location")
-    .select("id")
-    .eq("tenant_id", profile.tenant_id)
-    .eq("is_default", true)
-    .maybeSingle();
-  if (!defaultLocation?.id) return null;
+  const { data: authData } = await supabase.auth.getUser();
+  if (!authData.user) redirect("/auth/login");
 
-  return {
-    supabase,
-    tenantId: profile.tenant_id,
-    defaultLocationId: defaultLocation.id,
-  };
-}
-
-type ReceiveSummary = {
-  lines_received: number;
-  quantity_received: number;
-};
-
-export async function receivePurchaseOrder(formData: FormData) {
-  const purchaseOrderId = formData.get("purchase_order_id")?.toString() ?? "";
-  if (!purchaseOrderId) {
-    redirect("/app/goods-inwards?receive_error=missing_purchase_order");
+  const linesJson = formData.get("lines") as string;
+  let lines: DeliveryReceiptLineInput[];
+  try {
+    lines = JSON.parse(linesJson);
+  } catch {
+    return { error: "Invalid line data" };
   }
+  if (lines.length === 0) return { error: "At least one line is required" };
 
-  const context = await getTenantContext();
-  if (!context) {
-    redirect("/app/goods-inwards?receive_error=missing_tenant");
-  }
-  const { supabase, tenantId, defaultLocationId } = context;
+  const purchaseOrderId =
+    (formData.get("purchase_order_id") as string) || null;
+  const supplierId = (formData.get("supplier_id") as string) || null;
+  const supplierNameOverride =
+    (formData.get("supplier_name_override") as string) || null;
 
-  // Atomic in Postgres: see supabase/patches/receive_purchase_order_rpc.sql.
-  // The whole PO is received inside a single transaction; a failure on any
-  // line rolls back every previously applied line and balance update.
-  const { data: rpcData, error: rpcError } = await supabase.rpc(
-    "receive_purchase_order",
-    {
-      p_purchase_order_id: purchaseOrderId,
-      p_location_id: defaultLocationId,
-    }
-  );
+  if (!supplierId && !supplierNameOverride)
+    return { error: "Supplier is required" };
 
-  if (rpcError) {
-    redirect(
-      `/app/goods-inwards?receive_error=${encodeURIComponent(rpcError.message)}`
-    );
-  }
+  const supplierReference = (formData.get("supplier_reference") as string) ?? "";
+  if (!supplierReference) return { error: "Supplier reference is required" };
 
-  const summaryRow = (Array.isArray(rpcData) ? rpcData[0] : rpcData) as
-    | ReceiveSummary
-    | null;
-  const linesReceived = Number(summaryRow?.lines_received ?? 0);
-  const quantityReceived = Number(summaryRow?.quantity_received ?? 0);
+  const stockInReason = purchaseOrderId
+    ? "supplier_delivery"
+    : ((formData.get("stock_in_reason") as string) || null);
+  if (!purchaseOrderId && !stockInReason)
+    return { error: "Reason is required for non-PO receipts" };
 
-  await supabase.from("activity_log").insert({
-    tenant_id: tenantId,
-    event: "purchase_order_received",
-    metadata: {
+  const { data: receipt, error: receiptError } = await supabase
+    .from("delivery_receipt")
+    .insert({
+      tenant_id: tenantId,
+      supplier_id: supplierId,
+      supplier_name_override: supplierNameOverride,
+      supplier_reference: supplierReference,
       purchase_order_id: purchaseOrderId,
-      lines_received: linesReceived,
-      quantity_received: quantityReceived,
-      mode: "all_remaining",
+      location_id: formData.get("location_id") as string,
+      received_at:
+        (formData.get("received_at") as string) || new Date().toISOString(),
+      notes: (formData.get("notes") as string) || null,
+      stock_in_reason: stockInReason,
+      status: "unmatched",
+      created_by: authData.user.id,
+    })
+    .select("id")
+    .single();
+
+  if (receiptError || !receipt)
+    return { error: receiptError?.message ?? "Failed to create receipt" };
+
+  const { error: linesError } = await supabase
+    .from("delivery_receipt_line")
+    .insert(
+      lines.map((l) => ({
+        tenant_id: tenantId,
+        delivery_receipt_id: receipt.id,
+        component_id: l.component_id,
+        purchase_order_line_id: l.purchase_order_line_id,
+        quantity_delivered: l.quantity_delivered,
+        quantity_expected: l.quantity_expected,
+        notes: l.notes,
+      }))
+    );
+
+  if (linesError) {
+    await supabase.from("delivery_receipt").delete().eq("id", receipt.id);
+    return { error: linesError.message };
+  }
+
+  const { error: rpcError } = await supabase.rpc("receive_delivery_receipt", {
+    p_delivery_receipt_id: receipt.id,
+  });
+
+  if (rpcError) return { error: rpcError.message };
+
+  await supabase.from("activity_log").insert({
+    tenant_id: tenantId,
+    event: "delivery_receipt_created",
+    metadata: {
+      delivery_receipt_id: receipt.id,
+      supplier_reference: supplierReference,
+      lines_count: lines.length,
+      purchase_order_id: purchaseOrderId,
     },
   });
 
@@ -95,77 +119,110 @@ export async function receivePurchaseOrder(formData: FormData) {
   revalidatePath("/app/inventory");
   revalidatePath("/app/activity-log");
 
-  redirect(
-    `/app/goods-inwards?receive_ok=${linesReceived}/${quantityReceived}`
-  );
+  redirect(`/app/goods-inwards/${receipt.id}`);
 }
 
-export async function receivePurchaseOrderLine(formData: FormData) {
-  const lineId = formData.get("line_id")?.toString() ?? "";
-  const receiveQtyRaw = Number(formData.get("receive_qty")?.toString() ?? "");
-  if (!lineId || !Number.isFinite(receiveQtyRaw) || receiveQtyRaw <= 0) return;
+export async function linkReceiptToPo(formData: FormData) {
+  const ctx = await getServerTenantContext();
+  if (!ctx) redirect("/auth/login");
+  const { supabase, tenantId } = ctx;
 
-  const context = await getTenantContext();
-  if (!context) return;
-  const { supabase, tenantId, defaultLocationId } = context;
+  const receiptId = formData.get("receipt_id") as string;
+  const purchaseOrderId = formData.get("purchase_order_id") as string;
 
-  const { data: lineData } = await supabase
+  const { data: receipt } = await supabase
+    .from("delivery_receipt")
+    .select("*, delivery_receipt_line(*)")
+    .eq("id", receiptId)
+    .eq("tenant_id", tenantId)
+    .single();
+
+  if (!receipt) return { error: "Receipt not found" };
+  if (receipt.status !== "unmatched")
+    return { error: "Receipt is already linked to a PO" };
+
+  const { data: poLines } = await supabase
     .from("purchase_order_line")
-    .select("id,purchase_order_id,component_id,quantity,quantity_received")
-    .eq("tenant_id", tenantId)
-    .eq("id", lineId)
-    .maybeSingle();
-  const line = lineData as
-    | (PurchaseOrderLine & { purchase_order_id: string })
-    | null;
-  if (!line?.id || !line.purchase_order_id) return;
+    .select("id, component_id, quantity, quantity_received")
+    .eq("purchase_order_id", purchaseOrderId)
+    .eq("tenant_id", tenantId);
 
-  const { data: purchaseOrder } = await supabase
-    .from("purchase_order")
-    .select("id,status")
-    .eq("tenant_id", tenantId)
-    .eq("id", line.purchase_order_id)
-    .maybeSingle();
-  const typedPo = purchaseOrder as PurchaseOrderRecord | null;
-  if (!typedPo?.id) return;
-  if (typedPo.status === "received" || typedPo.status === "cancelled") return;
+  if (!poLines) return { error: "Purchase order not found" };
 
-  const remaining = Number(line.quantity) - Number(line.quantity_received ?? 0);
-  const receiveQty = Math.min(receiveQtyRaw, remaining);
-  if (receiveQty <= 0) return;
+  const poLineByComponent = new Map(poLines.map((l) => [l.component_id, l]));
+  const updatedLines: Array<{
+    quantity_delivered: number;
+    quantity_expected: number | null;
+  }> = [];
 
-  const { data: appliedQty, error } = await supabase.rpc(
-    "receive_purchase_order_line",
-    {
-      p_purchase_order_line_id: line.id,
-      p_receive_qty: receiveQty,
-      p_location_id: defaultLocationId,
+  for (const line of receipt.delivery_receipt_line) {
+    const poLine = poLineByComponent.get(line.component_id);
+    const qtyExpected = poLine
+      ? poLine.quantity - poLine.quantity_received
+      : null;
+
+    await supabase
+      .from("delivery_receipt_line")
+      .update({
+        purchase_order_line_id: poLine?.id ?? null,
+        quantity_expected: qtyExpected,
+      })
+      .eq("id", line.id)
+      .eq("tenant_id", tenantId);
+
+    if (poLine) {
+      const applied = Math.min(
+        line.quantity_delivered,
+        Math.max(poLine.quantity - poLine.quantity_received, 0)
+      );
+      if (applied > 0) {
+        await supabase
+          .from("purchase_order_line")
+          .update({ quantity_received: poLine.quantity_received + applied })
+          .eq("id", poLine.id)
+          .eq("tenant_id", tenantId);
+      }
     }
-  );
-  if (error) {
-    redirect(
-      `/app/goods-inwards?receive_error=${encodeURIComponent(error.message)}`
-    );
+
+    updatedLines.push({
+      quantity_delivered: line.quantity_delivered,
+      quantity_expected: qtyExpected,
+    });
   }
-  const applied = Number(appliedQty ?? 0);
-  if (applied <= 0) {
-    redirect("/app/goods-inwards?receive_error=nothing_to_receive");
+
+  const newStatus = computeReceiptStatus(purchaseOrderId, updatedLines);
+
+  await supabase
+    .from("delivery_receipt")
+    .update({ purchase_order_id: purchaseOrderId, status: newStatus })
+    .eq("id", receiptId)
+    .eq("tenant_id", tenantId);
+
+  const { data: remaining } = await supabase
+    .from("purchase_order_line")
+    .select("quantity, quantity_received")
+    .eq("purchase_order_id", purchaseOrderId)
+    .eq("tenant_id", tenantId);
+
+  if (remaining?.every((l) => l.quantity_received >= l.quantity)) {
+    await supabase
+      .from("purchase_order")
+      .update({ status: "received" })
+      .eq("id", purchaseOrderId)
+      .eq("tenant_id", tenantId);
   }
 
   await supabase.from("activity_log").insert({
     tenant_id: tenantId,
-    event: "purchase_order_line_received",
+    event: "delivery_receipt_linked",
     metadata: {
-      purchase_order_id: line.purchase_order_id,
-      purchase_order_line_id: line.id,
-      quantity_received: applied,
+      delivery_receipt_id: receiptId,
+      purchase_order_id: purchaseOrderId,
     },
   });
 
   revalidatePath("/app/goods-inwards");
   revalidatePath("/app/purchasing");
-  revalidatePath("/app/inventory");
-  revalidatePath("/app/activity-log");
 
-  redirect(`/app/goods-inwards?receive_ok=1/${applied}`);
+  redirect(`/app/goods-inwards/${receiptId}`);
 }
