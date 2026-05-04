@@ -394,4 +394,12 @@ _(populated by Task 10)_
 
 ## 5. Out of scope
 
-_(populated by Task 11)_
+Ideas considered while writing this analysis but deliberately excluded from the priority list. Documented here to prevent re-litigation in three months.
+
+- **Multi-currency throughout** — XL effort, blocks too much for too little before there are paying overseas-supplier customers. Revisit only when a customer signs who has overseas suppliers AND wants Assemblio as the source of truth.
+- **Mobile-native iOS / Android apps** — the win is a good mobile web (PWA) for warehouse staff (covered indirectly via item #6 / receive UI). Native apps are a multi-quarter commitment with no clear payoff over PWA.
+- **Real-time collaborative editing of BOMs** — sounds nice, but no evidence of demand and would consume an entire sprint that's better spent on the top-10.
+- **Built-in CRM** — overlaps with Shopify; users already have HubSpot / Pipedrive. Stay in our lane.
+- **Forecasting beyond moving average** — fancier ML demand forecasting before there's enough data is theatre. Naive 90-day moving average covers 80% of value (and is included in §2.8 table stakes).
+- **Public REST/GraphQL API** — defer until we have ≥10 customers asking for it. Expensive to support, low marketing impact pre-launch.
+- **White-label / multi-tenant for resellers** — premature. Multi-tenant works because the codebase is already tenant-isolated, but reseller-facing features (branding, billing splits) are a separate product.
