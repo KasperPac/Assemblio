@@ -87,7 +87,43 @@ Each gap is classified into **exactly one** of four lenses, picked for the highe
 
 ### 2.2 Component Inventory & Item Details
 
-_(populated by Task 2)_
+**Today:** Inventory hub with KPI cards, manual movement form, and a balance table; component catalogue with detail tabs (overview, last 50 movements, BOM usage). Reservation tracking lives in `inventory_movement.delta_reserved` after a recent refactor — the ledger is now clean.
+
+**Table stakes — gaps that block a credible Katana/Cin7 alternative:**
+- **Replenishment recommendations** — `reorder_point` is captured but there's no "what to order this week" view. This is the headline reason MRPs exist.
+- **Multi-location stock view** — schema supports per-location balances but UI surfaces them as a flat list, not a matrix or per-location drill-down.
+- **Barcode field + scanner support** — no `barcode` column on `component`. Required for any warehouse staff workflow.
+- **Component images** — currently text only. Photos materially reduce mis-pick rates.
+- **Bin / zone within a location** — granularity below "location" is missing.
+
+**JTBD friction — workflow breakdowns for our personas:**
+- **Solo** — "what should I reorder this week?" requires manually scanning the components table. The information is there but not surfaced.
+- **Mid** — `inventory_movement` has no `actor_id`; you can see a movement happened but not who entered it. Audit fails.
+- **Job-shop** — one-off components consumed for a single bespoke order have no clean tracking flow.
+
+**AU/NZ market hooks — cheap leverage US-built tools won't ship fast:**
+- **AUD cost auto-pull from Xero supplier invoices** — closes the inventory ↔ accounting loop without manual cost-per-unit updates. Foundational for the AU finance story.
+
+**Differentiators — gaps in Katana/Cin7 we could exploit:**
+- **Mobile barcode count + receive flow** — Katana's mobile is widely complained about. A clean PWA-grade mobile experience for warehouse staff is a crisp positioning angle.
+- **Inventory cost layers (FIFO / weighted average)** — Cin7 has it, Katana does not. Adding it positions Assemblio as "Katana with grown-up costing."
+- **"Ghost stock" alerts** — proactive surface when on_hand projected to go negative inside the next N days based on open orders. Neither competitor does this prediction natively.
+
+**Scoring summary:**
+
+| Item | Lens | Persona | CV | MI | Effort | Score |
+|---|---|---|---|---|---|---|
+| Replenishment recommendations | Table stakes | All | 5 | 5 | M | 12.5 |
+| Multi-location matrix UI | Table stakes | Mid | 4 | 3 | S | 12.0 |
+| Barcode + scanner | Table stakes | Mid | 4 | 4 | M | 8.0 |
+| Component images | Table stakes | All | 3 | 3 | S | 9.0 |
+| Bin / zone | Table stakes | Mid | 3 | 2 | M | 3.0 |
+| Reorder action button | JTBD | Solo | 4 | 3 | S | 12.0 |
+| Movement actor audit | JTBD | Mid | 4 | 2 | S | 8.0 |
+| AUD cost pull from Xero | AU hook | Mid | 4 | 5 | L | 5.0 |
+| Mobile barcode PWA | Differentiator | Mid | 4 | 5 | L | 5.0 |
+| Cost layers (FIFO/avg) | Differentiator | Mid | 4 | 4 | L | 4.0 |
+| Ghost-stock projection | Differentiator | All | 4 | 5 | M | 10.0 |
 
 ### 2.3 Bills of Material (with versioning)
 
