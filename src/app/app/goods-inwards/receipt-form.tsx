@@ -129,7 +129,8 @@ export default function ReceiptForm({
       return;
     }
 
-    const fd = new FormData(formRef.current!);
+    if (!formRef.current) return;
+    const fd = new FormData(formRef.current);
     // Override supplier_id: "__other__" sentinel must not reach the server
     if (showSupplierOverride) {
       fd.set("supplier_id", "");
@@ -354,7 +355,7 @@ export default function ReceiptForm({
                             : ""
                         }`}
                       >
-                        {variance > 0 ? `+${variance}` : variance}
+                        {variance > 0 ? `+${variance.toFixed(2)}` : variance.toFixed(2)}
                       </span>
                     ) : (
                       "—"

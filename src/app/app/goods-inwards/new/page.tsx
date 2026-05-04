@@ -36,11 +36,20 @@ export default async function NewReceiptPage() {
         .order("created_at", { ascending: false }),
     ]);
 
+  if (suppliersResult.error || componentsResult.error || locationsResult.error) {
+    throw new Error("Failed to load form data");
+  }
+
+  const locations = locationsResult.data ?? [];
+  if (locations.length === 0) {
+    throw new Error("No locations configured — add a location before receiving stock");
+  }
+
   return (
     <ReceiptForm
       suppliers={suppliersResult.data ?? []}
       components={componentsResult.data ?? []}
-      locations={locationsResult.data ?? []}
+      locations={locations}
       openPOs={openPOsResult.data ?? []}
     />
   );
