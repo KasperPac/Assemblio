@@ -291,7 +291,45 @@ Each gap is classified into **exactly one** of four lenses, picked for the highe
 
 ### 2.7 Suppliers
 
-_(populated by Task 7)_
+**Today:** A name and a foreign key. That's it. Supplier directory exists as a list with rename capability. Linked from `purchase_order` and `component`. Suppliers is barely a feature.
+
+**Table stakes — gaps that block a credible Katana/Cin7 alternative:**
+- **Contact info** — email, phone, address, primary contact name. The minimum a supplier record must hold.
+- **Lead time per supplier (and per supplier-component)** — required for any replenishment recommendation to be honest.
+- **Multi-supplier per component** — primary + alternates with priority. Single-supplier-per-component is unworkable for any business with > 50 SKUs.
+- **Supplier-specific pricing** — `component.cost_per_unit` is one number; reality is per-supplier (and often quantity-tiered).
+- **Currency per supplier** — overseas suppliers price in USD/CNY/EUR; current model has no concept.
+- **MOQ, pack size, payment terms** — drive PO suggestions and accounting.
+- **Document attachments** — quotes, invoices, certifications need a place.
+
+**JTBD friction — workflow breakdowns for our personas:**
+- **Solo** — "the email I always use to order from supplier X" lives in Gmail because Assemblio has nowhere to store it.
+- **Mid** — no way to evaluate supplier performance (on-time, defect rate). Procurement decisions stay gut-feel.
+- **Job-shop** — alternate suppliers for the same component is critical for resilience; unsupported.
+
+**AU/NZ market hooks — cheap leverage US-built tools won't ship fast:**
+- **ABN field + GST registration flag** — standard procurement compliance in AU. Without ABN field, supplier records can't generate compliant PO documents.
+
+**Differentiators — gaps in Katana/Cin7 we could exploit:**
+- **Auto-generated PO emails** — branded PDF + attached line items + reply-to-track. Cin7 has it as a paid add-on; Katana's is basic.
+- **Supplier scorecards** — on-time delivery, quality issues, cost variance, lead-time variance per supplier per quarter. Procurement managers crave this; competitors barely touch it.
+
+**Scoring summary:**
+
+| Item | Lens | Persona | CV | MI | Effort | Score |
+|---|---|---|---|---|---|---|
+| Contact info | Table stakes | All | 5 | 3 | S | 15.0 |
+| Lead times | Table stakes | All | 5 | 4 | S | 20.0 |
+| Multi-supplier per component | Table stakes | Mid | 5 | 4 | M | 10.0 |
+| Supplier-specific pricing | Table stakes | Mid | 4 | 3 | M | 6.0 |
+| Currency per supplier | Table stakes | Mid | 3 | 3 | L | 2.25 |
+| MOQ / pack size / terms | Table stakes | All | 3 | 2 | S | 6.0 |
+| Document attachments | Table stakes | All | 3 | 2 | S | 6.0 |
+| Supplier email capture | JTBD | Solo | 4 | 2 | S | 8.0 |
+| Performance evaluation | JTBD | Mid | 3 | 4 | M | 6.0 |
+| ABN + GST flag | AU hook | All | 4 | 3 | S | 12.0 |
+| Auto-generated PO emails | Differentiator | All | 4 | 5 | M | 10.0 |
+| Supplier scorecards | Differentiator | Mid | 3 | 5 | M | 7.5 |
 
 ### 2.8 Reports
 
