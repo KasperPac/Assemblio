@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { computeReceiptStatus } from "./helpers";
 
 // ─── Pure helpers (re-exported from helpers.ts for testing) ──────────────────
 
@@ -36,7 +37,9 @@ export async function createDeliveryReceipt(formData: FormData) {
   } catch {
     return { error: "Invalid line data" };
   }
-  if (lines.length === 0) return { error: "At least one line is required" };
+  if (!Array.isArray(lines) || lines.length === 0) {
+    return { error: "At least one line is required" };
+  }
 
   const purchaseOrderId =
     (formData.get("purchase_order_id") as string) || null;
@@ -141,13 +144,14 @@ export async function linkReceiptToPo(formData: FormData) {
   if (receipt.status !== "unmatched")
     return { error: "Receipt is already linked to a PO" };
 
-  const { data: poLines } = await supabase
+  const { data: poLines, error: poError } = await supabase
     .from("purchase_order_line")
     .select("id, component_id, quantity, quantity_received")
     .eq("purchase_order_id", purchaseOrderId)
     .eq("tenant_id", tenantId);
 
-  if (!poLines) return { error: "Purchase order not found" };
+  if (poError || !poLines) return { error: "Purchase order not found" };
+  if (poLines.length === 0) return { error: "Purchase order has no lines" };
 
   const poLineByComponent = new Map(poLines.map((l) => [l.component_id, l]));
   const updatedLines: Array<{
@@ -181,6 +185,7 @@ export async function linkReceiptToPo(formData: FormData) {
           .update({ quantity_received: poLine.quantity_received + applied })
           .eq("id", poLine.id)
           .eq("tenant_id", tenantId);
+        poLine.quantity_received += applied; // keep map in sync
       }
     }
 
@@ -223,6 +228,8 @@ export async function linkReceiptToPo(formData: FormData) {
 
   revalidatePath("/app/goods-inwards");
   revalidatePath("/app/purchasing");
+  revalidatePath("/app/inventory");
+  revalidatePath("/app/activity-log");
 
   redirect(`/app/goods-inwards/${receiptId}`);
 }
