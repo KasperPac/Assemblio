@@ -49,7 +49,41 @@ Each gap is classified into **exactly one** of four lenses, picked for the highe
 
 ### 2.1 Shopify Product Import
 
-_(populated by Task 1)_
+**Today:** OAuth-based connect, paginated GraphQL pulls of products/variants/orders, idempotent upserts, and 7 registered webhooks for real-time refresh. Solid foundation, but it discards line prices and assumes one Shopify store per tenant.
+
+**Table stakes — gaps that block a credible Katana/Cin7 alternative:**
+- **Multi-location mapping** — map Shopify Locations to Assemblio Locations during connect. Without it, any merchant with >1 warehouse cannot sync stock back to Shopify correctly.
+- **Price/cost capture** — `unit_sell_price` is dropped on every order line. Margin reporting is therefore wrong by construction.
+- **Tags / collections / metafields** — most merchants categorise products via Shopify metadata. Ignoring it forces re-entry.
+- **Manual re-sync of one product** — operator should be able to force-refresh a single SKU without a full store sync.
+
+**JTBD friction — workflow breakdowns for our personas:**
+- **Solo** — no preview before first sync. Anything imported is committed; mistakes need DB cleanup.
+- **Mid** — multi-store brands (e.g. AU + NZ Shopify stores) cannot consolidate inventory in one Assemblio tenant.
+- **Job-shop** — Shopify "custom product options" (line-item properties) aren't captured, so per-order specs are invisible to production.
+
+**AU/NZ market hooks — cheap leverage US-built tools won't ship fast:**
+- **Multi-store consolidation for AU + NZ split brands** — common pattern locally where one operator runs `brand.com.au` and `brand.co.nz` as separate Shopify stores. Single Assemblio tenant should consolidate.
+
+**Differentiators — gaps in Katana/Cin7 we could exploit:**
+- **Auto-suggest BOM template per imported variant** — match variant title/SKU patterns to existing templates, prompt to apply on import. Katana imports variants but leaves BOM seeding entirely manual.
+- **"Variants without BOMs" surface** — a permanent dashboard counter that can never be zero by accident. The most common "I forgot" failure mode in MRP.
+- **Push-back enrichment** — write component cost / lead-time back to Shopify metafields so theme can show "ships in 5 days." Neither Katana nor Cin7 close that loop.
+
+**Scoring summary:**
+
+| Item | Lens | Persona | CV | MI | Effort | Score |
+|---|---|---|---|---|---|---|
+| Multi-location mapping | Table stakes | Mid | 5 | 3 | M | 7.5 |
+| Price/cost capture | Table stakes | All | 5 | 4 | S | 20.0 |
+| Tags / metafields | Table stakes | All | 3 | 2 | S | 6.0 |
+| Manual single-SKU resync | Table stakes | All | 2 | 1 | S | 2.0 |
+| Sync preview before commit | JTBD | Solo | 3 | 2 | S | 6.0 |
+| Multi-store consolidation | JTBD + AU hook | Mid | 4 | 4 | M | 8.0 |
+| Capture line-item properties | JTBD | Job-shop | 4 | 3 | S | 12.0 |
+| Auto-suggest BOM template | Differentiator | All | 4 | 5 | M | 10.0 |
+| Variants-without-BOMs surface | Differentiator | All | 4 | 4 | S | 16.0 |
+| Push-back enrichment to Shopify | Differentiator | Mid | 2 | 4 | M | 4.0 |
 
 ### 2.2 Component Inventory & Item Details
 
