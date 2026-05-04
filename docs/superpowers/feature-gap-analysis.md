@@ -382,7 +382,28 @@ Each gap is classified into **exactly one** of four lenses, picked for the highe
 
 ## 3. Cross-feature top-10
 
-_(populated by Task 9)_
+These are the highest-scoring items across all 8 scorecards. Notice the pattern: nearly every entry is **S-effort** — small build, big customer/marketing leverage. That's not a coincidence; it reflects how thin some of the existing surfaces (Suppliers, Reports) really are.
+
+Ties at Score = 20.0 are broken by **breadth of impact** (affects all personas > Mid only). Ties at Score = 16.0 / 15.0 are broken by **unblocks-other-priority** (e.g., supplier contact info unblocks PO email automation; date-range filters unblock saved reports).
+
+| Rank | Item | Source | Persona | CV | MI | Effort | Score | Why it's in the top-10 |
+|---|---|---|---|---|---|---|---|---|
+| 1 | Capture line sell price on order sync | §2.5 Orders | All | 5 | 4 | S | 20.0 | Margin metrics are silently wrong without it. Highest-leverage one-day fix. |
+| 2 | Lead times per supplier | §2.7 Suppliers | All | 5 | 4 | S | 20.0 | Unblocks honest replenishment. Without it, every "what to order" answer is fiction. |
+| 3 | Price/cost capture from Shopify | §2.1 Shopify | All | 5 | 4 | S | 20.0 | Tied with #1 — both broken at sync layer. Fix together. |
+| 4 | Plain-English margin view | §2.8 Reports | Solo | 4 | 4 | S | 16.0 | Solo persona's #1 question, currently buried in auditor-flavoured KPIs. |
+| 5 | Per-job profitability by customer | §2.8 Reports | Job-shop | 4 | 4 | S | 16.0 | Highest-leverage Reports addition for the job-shop persona. |
+| 6 | Expiry date capture on receive | §2.4 Goods Inwards | All | 4 | 4 | S | 16.0 | Unlocks food/cosmetics/supplements verticals (sizeable AU market). |
+| 7 | Date-range filters across Reports | §2.8 Reports | All | 5 | 3 | S | 15.0 | Every report hard-codes "last 20." Unblocks saved/scheduled reports later. |
+| 8 | Supplier contact info | §2.7 Suppliers | All | 5 | 3 | S | 15.0 | Foundational; unblocks supplier emails, scorecards, comms downstream. |
+| 9 | Capacity heat map on Reports | §2.8 Reports | Mid | 3 | 5 | S | 15.0 | Data already in DB; visually striking; wins Mid-segment demos. |
+| 10 | Replenishment recommendations | §2.2 Inventory | All | 5 | 5 | M | 12.5 | Pairs directly with #2 (lead times) — without both, neither delivers value. The only M-effort item that earns its keep here. |
+
+**Honourable mentions** (high-scoring but dropped from top-10 with reasons):
+- **Variants-without-BOMs surface** (§2.1, score 16.0) — value depends on a mature BOM library; later-stage tool. Revisit once customers have substantial catalogues.
+- **Per-order BOM override** (§2.3, score 12.5) — Job-shop persona only; deferred until Replenishment proves out.
+- **Batch / lot tracking** (§2.4, score 12.5) — same expiry-tracking vertical play as #6 but M-effort instead of S; sequence after Expiry ships.
+- **ABN + GST registration flag** (§2.7, score 12.0) — captured as part of the AU-native cluster (§4.3) even though just outside the top-10.
 
 ---
 
