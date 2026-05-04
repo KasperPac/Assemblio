@@ -355,7 +355,7 @@ export default function ReceiptForm({
                             : ""
                         }`}
                       >
-                        {variance > 0 ? `+${variance.toFixed(2)}` : variance.toFixed(2)}
+                        {variance > 0 ? `+${variance}` : String(variance)}
                       </span>
                     ) : (
                       "—"

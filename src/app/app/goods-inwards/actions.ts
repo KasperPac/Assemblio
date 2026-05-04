@@ -103,10 +103,14 @@ export async function createDeliveryReceipt(formData: FormData) {
     p_delivery_receipt_id: receipt.id,
   });
 
-  if (rpcError) return { error: rpcError.message };
+  if (rpcError) {
+    await supabase.from("delivery_receipt").delete().eq("id", receipt.id);
+    return { error: rpcError.message };
+  }
 
   await supabase.from("activity_log").insert({
     tenant_id: tenantId,
+    actor_id: authData.user.id,
     event: "delivery_receipt_created",
     metadata: {
       delivery_receipt_id: receipt.id,
@@ -216,8 +220,10 @@ export async function linkReceiptToPo(formData: FormData) {
       .eq("tenant_id", tenantId);
   }
 
+  const { data: linkAuthData } = await supabase.auth.getUser();
   await supabase.from("activity_log").insert({
     tenant_id: tenantId,
+    actor_id: linkAuthData.user?.id ?? null,
     event: "delivery_receipt_linked",
     metadata: {
       delivery_receipt_id: receiptId,
