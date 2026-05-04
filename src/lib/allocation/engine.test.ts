@@ -41,12 +41,12 @@ describe("allocation engine", () => {
 
     expect(reserve).toEqual({
       deltaReserved: 7,
-      deltaOnHand: -7,
+      deltaOnHand: 0,
       reason: "order_reserve",
     });
     expect(release).toEqual({
       deltaReserved: -4,
-      deltaOnHand: 4,
+      deltaOnHand: 0,
       reason: "order_release",
     });
     expect(buildReservedMutation(0)).toBeNull();

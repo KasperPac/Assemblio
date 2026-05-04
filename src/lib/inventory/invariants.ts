@@ -25,8 +25,6 @@ export function findInventoryInvariantIssues(
     const onHand = Number(row.onHand ?? 0);
     const inProd = Number(row.inProd ?? 0);
     const reserved = Number(row.reserved ?? 0);
-    const available = onHand - reserved;
-
     if (onHand < 0) {
       issues.push({
         type: "negative_on_hand",
@@ -51,12 +49,12 @@ export function findInventoryInvariantIssues(
         detail: `reserved is negative (${reserved}).`,
       });
     }
-    if (available < 0) {
+    if (Math.abs(reserved) > Math.abs(onHand)) {
       issues.push({
         type: "over_reserved",
         componentName: row.componentName,
         locationName: row.locationName,
-        detail: `available is negative (${available}) from on_hand ${onHand} - reserved ${reserved}.`,
+        detail: `reserved magnitude (${reserved}) exceeds on_hand magnitude (${onHand}).`,
       });
     }
   }
