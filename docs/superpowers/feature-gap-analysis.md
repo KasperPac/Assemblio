@@ -251,7 +251,43 @@ Each gap is classified into **exactly one** of four lenses, picked for the highe
 
 ### 2.6 Stocktake
 
-_(populated by Task 6)_
+**Today:** Session-based with full lifecycle states and an atomic apply RPC that handles row-locking and rollback correctly. Solid foundations, weak ergonomics — the form-driven UI assumes a small inventory and a single counter.
+
+**Table stakes — gaps that block a credible Katana/Cin7 alternative:**
+- **Bulk CSV import of counts** — typing each line is the deal-breaker.
+- **Mobile / barcode-driven counting** — prerequisite for any warehouse over ~200 SKUs.
+- **`in_prod` variance handling** — currently always passed as 0; WIP counted differently is silently dropped.
+- **Dedup constraint on `(session, component)`** — same component can be entered twice with conflicting counts; second one overwrites.
+- **Pagination** — UI caps at 12 sessions and 20 lines on the page.
+- **Per-line variance approval** — current model is all-or-nothing; reviewer can't accept some lines and reject others.
+
+**JTBD friction — workflow breakdowns for our personas:**
+- **Solo** — for a 50-SKU brand the session form is OK once a quarter, but typing on a phone in the warehouse is rough.
+- **Mid** — multiple counters working different aisles simultaneously have no concurrency story.
+- **Job-shop** — WIP counts (jobs partially built on the floor) aren't first-class.
+
+**AU/NZ market hooks — cheap leverage US-built tools won't ship fast:**
+- **EOFY stocktake report** — June 30 valuation snapshot pre-formatted for Xero / accountant. Annual ritual every AU/NZ business does.
+
+**Differentiators — gaps in Katana/Cin7 we could exploit:**
+- **Blind-count mode** — hide the expected number from the counter to enforce real counting. Katana shows expected by default; serious users want this.
+- **ABC-driven cycle count cadence** — auto-schedule weekly counts of A items, monthly B, quarterly C. Katana has cycle counts but no auto-cadence.
+
+**Scoring summary:**
+
+| Item | Lens | Persona | CV | MI | Effort | Score |
+|---|---|---|---|---|---|---|
+| Bulk CSV import | Table stakes | All | 4 | 3 | S | 12.0 |
+| Mobile / barcode counting | Table stakes | Mid | 5 | 5 | L | 6.25 |
+| `in_prod` variance handling | Table stakes | Mid | 3 | 1 | S | 3.0 |
+| Dedup constraint | Table stakes | All | 4 | 1 | S | 4.0 |
+| Pagination | Table stakes | Mid | 3 | 1 | S | 3.0 |
+| Per-line variance approval | Table stakes | Mid | 3 | 2 | M | 3.0 |
+| Concurrent counters | JTBD | Mid | 3 | 2 | M | 3.0 |
+| WIP counts | JTBD | Job-shop | 3 | 2 | M | 3.0 |
+| EOFY report → Xero | AU hook | All | 4 | 5 | M | 10.0 |
+| Blind-count mode | Differentiator | Mid | 3 | 4 | S | 12.0 |
+| ABC cycle-count cadence | Differentiator | Mid | 3 | 4 | M | 6.0 |
 
 ### 2.7 Suppliers
 
