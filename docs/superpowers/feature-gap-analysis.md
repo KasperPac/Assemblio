@@ -127,7 +127,42 @@ Each gap is classified into **exactly one** of four lenses, picked for the highe
 
 ### 2.3 Bills of Material (with versioning)
 
-_(populated by Task 3)_
+**Today:** Per-variant BOM with auto-incrementing version, status lifecycle (draft → active → archived), unique-active-per-variant enforced by partial index, and labor lines with hours plus utilities. Active BOM is snapshotted into `job_cost_snapshot` at order plan time. Templates exist but are component-only.
+
+**Table stakes — gaps that block a credible Katana/Cin7 alternative:**
+- **Sub-BOM nesting** — current BOMs are flat. Any assembled product made of sub-assemblies (very common in mid-size manufacturing) cannot be modelled.
+- **Yield / scrap rate per component** — every BOM in the real world over-consumes. Without this field, planned cost is consistently optimistic.
+- **Effective-from dates on versions** — needed when a new revision should activate on a future date (cost change, supplier swap).
+- **BOM cost rollup view** — total cost (materials + labor + overhead) at a glance per BOM. Currently lives in costing flow, not BOM detail.
+- **Drawings / images on BOM** — assembly instructions live in PDFs today; should attach to BOM directly.
+
+**JTBD friction — workflow breakdowns for our personas:**
+- **Solo** — draft / active flip is non-obvious. Editing a draft doesn't activate it; user must explicitly set active. Confusion drives "why isn't my order using my changes?" tickets.
+- **Mid** — no diff view between versions. Operator can't answer "what changed in v3?" without manual comparison.
+- **Job-shop** — every order's BOM may diverge from the variant's stock BOM. Per-order overrides aren't supported; user has to clone the BOM for each job.
+
+**AU/NZ market hooks — cheap leverage US-built tools won't ship fast:**
+- **Modern Award labor cost benchmarks** — pre-loaded AU labor rates by department/role for accurate quoting. Useful for AU job shops; meaningless to US-built tools.
+
+**Differentiators — gaps in Katana/Cin7 we could exploit:**
+- **BOM diff / changelog UI** — visual comparison of v2 vs v1 with added / removed / changed lines highlighted. Katana's is bare-bones; Cin7 SMB tier has none.
+- **Per-order BOM overrides for job shops** — order line carries an override snapshot with deltas from variant active BOM. Unique angle for the job-shop persona.
+- **Where-used heat map** — given a component, show all BOMs and projected demand in next 30 days. Better than Cin7's static where-used list.
+
+**Scoring summary:**
+
+| Item | Lens | Persona | CV | MI | Effort | Score |
+|---|---|---|---|---|---|---|
+| Sub-BOM nesting | Table stakes | Mid | 5 | 4 | L | 5.0 |
+| Yield / scrap rate | Table stakes | All | 4 | 3 | S | 12.0 |
+| Effective-from dates | Table stakes | Mid | 3 | 2 | S | 6.0 |
+| BOM cost rollup | Table stakes | All | 4 | 3 | S | 12.0 |
+| Drawings on BOM | Table stakes | Mid | 3 | 3 | S | 9.0 |
+| Active-flip UX rework | JTBD | Solo | 4 | 3 | S | 12.0 |
+| BOM diff UI | JTBD + Diff | Mid | 4 | 5 | M | 10.0 |
+| Per-order BOM override | JTBD + Diff | Job-shop | 5 | 5 | M | 12.5 |
+| AU labor rate library | AU hook | Job-shop | 3 | 4 | S | 12.0 |
+| Where-used heat map | Differentiator | All | 3 | 4 | M | 6.0 |
 
 ### 2.4 Goods Inwards
 
