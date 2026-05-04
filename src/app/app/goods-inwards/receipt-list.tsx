@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import type { ReceiptStatus } from "./helpers";
 import styles from "./goods-inwards.module.css";
 
 type Receipt = {
@@ -9,7 +10,7 @@ type Receipt = {
   supplier_name_override: string | null;
   supplier_reference: string;
   purchase_order_id: string | null;
-  status: "unmatched" | "po_linked" | "discrepancy";
+  status: ReceiptStatus;
   received_at: string;
   supplier: { name: string } | Array<{ name: string }> | null;
   location: { name: string } | Array<{ name: string }> | null;

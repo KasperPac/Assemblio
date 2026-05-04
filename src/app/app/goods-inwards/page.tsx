@@ -11,7 +11,7 @@ export default async function GoodsInwardsPage() {
     .from("delivery_receipt")
     .select(
       `id, supplier_name_override, supplier_reference, purchase_order_id,
-       status, received_at, stock_in_reason,
+       status, received_at,
        supplier:supplier_id(name),
        location:location_id(name),
        delivery_receipt_line(id)`
