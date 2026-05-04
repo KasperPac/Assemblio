@@ -70,6 +70,10 @@ create table public.delivery_receipt (
   location_id           uuid not null references public.location(id),
   received_at           timestamptz not null default now(),
   notes                 text,
+  stock_in_reason       text check (stock_in_reason in (
+                          'supplier_delivery', 'customer_return', 'opening_stock',
+                          'sample', 'adjustment', 'other'
+                        )),                              -- required when no PO linked; hidden (supplier_delivery) when PO linked
   status                text not null default 'unmatched'
                           check (status in ('unmatched', 'po_linked', 'discrepancy')),
   created_by            uuid not null references auth.users(id),
@@ -77,7 +81,7 @@ create table public.delivery_receipt (
 );
 ```
 
-Constraint: `supplier_id` or `supplier_name_override` must be non-null (enforced at app layer — a receipt must reference a known or named supplier).
+Constraint: `supplier_id` or `supplier_name_override` must be non-null (enforced at app layer). `stock_in_reason` must be non-null when `purchase_order_id` is null (also enforced at app layer — DB allows null to keep the DDL simple).
 
 **`delivery_receipt_line`**
 
@@ -94,14 +98,6 @@ create table public.delivery_receipt_line (
   created_at               timestamptz not null default now()
 );
 ```
-
-**`stock_in_reason`** — enum-style lookup (no separate table; enforced as a check constraint on `delivery_receipt`):
-
-Values: `supplier_delivery`, `customer_return`, `opening_stock`, `sample`, `adjustment`, `other`
-
-For PO-linked receipts, `stock_in_reason` is always `supplier_delivery` and the field is hidden in the UI. For non-PO receipts, it is required.
-
-Add `stock_in_reason text` column to `delivery_receipt`.
 
 ### 4.2 Inventory write path
 
