@@ -29,7 +29,9 @@ begin
     raise exception 'Delivery receipt not found: %', p_delivery_receipt_id;
   end if;
 
-  -- guard against double-processing
+  -- Idempotency guard: this RPC is called once at receipt creation.
+  -- A receipt that is no longer 'unmatched' has already had inventory
+  -- movements applied and must not be reprocessed.
   if v_receipt.status <> 'unmatched' then
     raise exception 'Receipt % has already been processed (status: %)',
       p_delivery_receipt_id, v_receipt.status;
@@ -57,6 +59,11 @@ begin
       where pol.id = v_line.purchase_order_line_id
         and pol.tenant_id = v_tenant_id
       for update;
+
+      if not found then
+        raise exception 'Purchase order line % not found for tenant',
+          v_line.purchase_order_line_id;
+      end if;
 
       v_applied := least(v_line.quantity_delivered, greatest(v_remaining, 0));
 
