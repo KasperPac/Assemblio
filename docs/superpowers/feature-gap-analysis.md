@@ -333,7 +333,50 @@ Each gap is classified into **exactly one** of four lenses, picked for the highe
 
 ### 2.8 Reports
 
-_(populated by Task 8)_
+**Today:** Four KPI views (planned margin, actual margin, capacity, integrity audit) plus CSV export. No filters, no charts on the Reports page itself, no PDF, no scheduling. The data is there — it's the reporting surface that's thin.
+
+**Table stakes — gaps that block a credible Katana/Cin7 alternative:**
+- **Date-range filters** — every report hard-codes "last 20." Unusable for monthly or quarterly review.
+- **Saved / scheduled reports** — leadership wants a Monday-morning P&L email automatically.
+- **PDF export** — accountants and customers want PDFs, not CSV.
+- **Charts on Reports page** — chart components exist only on dashboard. Same data, two paint jobs.
+- **Inventory aging report** — what stock has been sitting idle > 90 days?
+- **Sales by SKU / product / customer** — basic merch reports, missing.
+- **Open PO commitment report** — total $ on open POs (cash-flow planning).
+- **Demand forecast** — even a naive 90-day moving average beats nothing.
+
+**JTBD friction — workflow breakdowns for our personas:**
+- **Solo** — current Reports page is auditor-flavoured; needs a "where am I making money this month" view in plain English.
+- **Mid** — leadership wants weekly auto-emailed P&L; manual export-to-Excel ritual every Monday.
+- **Job-shop** — per-job profitability roll-up by customer is the single most-requested view.
+
+**AU/NZ market hooks — cheap leverage US-built tools won't ship fast:**
+- **GST report / BAS-ready format** — pre-formatted quarterly BAS export to Xero. Local accountants will demand it.
+- **EOFY stock valuation report** — already mentioned in Stocktake; Reports page is where it shows up.
+
+**Differentiators — gaps in Katana/Cin7 we could exploit:**
+- **Margin variance attribution** — "we missed margin by 4% this month: 2.5% material cost rise, 1% labor over-run, 0.5% overhead." Neither competitor explains the why.
+- **Capacity heat map** — `department_utilization_week` already exists in DB. Surfacing it as a coloured calendar grid is cheap and visually striking.
+- **"What if" margin simulator** — slider for material cost / labor rate / sell price, see margin live. Wins demos.
+
+**Scoring summary:**
+
+| Item | Lens | Persona | CV | MI | Effort | Score |
+|---|---|---|---|---|---|---|
+| Date-range filters | Table stakes | All | 5 | 3 | S | 15.0 |
+| Saved / scheduled reports | Table stakes | Mid | 4 | 4 | M | 8.0 |
+| PDF export | Table stakes | All | 3 | 3 | S | 9.0 |
+| Charts on Reports page | Table stakes | All | 3 | 4 | S | 12.0 |
+| Inventory aging | Table stakes | All | 4 | 3 | S | 12.0 |
+| Sales by SKU / product / customer | Table stakes | All | 4 | 3 | S | 12.0 |
+| Open PO commitment | Table stakes | Mid | 3 | 2 | S | 6.0 |
+| Demand forecast | Table stakes | All | 4 | 4 | M | 8.0 |
+| Plain-English margin view | JTBD | Solo | 4 | 4 | S | 16.0 |
+| Per-job profitability by customer | JTBD | Job-shop | 4 | 4 | S | 16.0 |
+| GST / BAS report → Xero | AU hook | All | 5 | 5 | L | 6.25 |
+| Margin variance attribution | Differentiator | Mid | 4 | 5 | M | 10.0 |
+| Capacity heat map | Differentiator | Mid | 3 | 5 | S | 15.0 |
+| What-if margin simulator | Differentiator | All | 3 | 5 | M | 7.5 |
 
 ---
 
