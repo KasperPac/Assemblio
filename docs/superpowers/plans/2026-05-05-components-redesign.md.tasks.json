@@ -4,7 +4,7 @@
     {
       "id": 16,
       "subject": "Task 0: Stock status helper",
-      "status": "pending",
+      "status": "completed",
       "description": "**Goal:** Extract and test the pure `getStockStatus` function.\n\n**Files:**\n- Create: `src/app/app/components/helpers.ts`\n- Create: `src/app/app/components/helpers.test.ts`\n\n**Acceptance Criteria:**\n- [ ] returns critical when available <= 0\n- [ ] returns low when 0 < available < reorderPoint\n- [ ] returns ok when available >= reorderPoint or reorderPoint is 0\n\n```json:metadata\n{\"files\":[\"src/app/app/components/helpers.ts\",\"src/app/app/components/helpers.test.ts\"],\"verifyCommand\":\"npx vitest run src/app/app/components/helpers.test.ts --pool threads --maxWorkers 1\",\"acceptanceCriteria\":[\"getStockStatus returns critical when available <= 0\",\"getStockStatus returns low when 0 < available < reorderPoint\",\"getStockStatus returns ok when available >= reorderPoint or reorderPoint is 0\"]}\n```"
     },
     {
@@ -36,5 +36,5 @@
       "description": "**Goal:** Add Receive stock button, remove purchasing buttons, add stock value to metadata.\n\n**Files:**\n- Modify: `src/app/app/components/[componentId]/page.tsx`\n\n```json:metadata\n{\"files\":[\"src/app/app/components/[componentId]/page.tsx\"],\"verifyCommand\":\"npm run dev\",\"acceptanceCriteria\":[\"Receive stock button links to /app/goods-inwards/new\",\"Review Purchasing and hint paragraph removed\",\"Stock value shown in metadata grid\"]}\n```"
     }
   ],
-  "lastUpdated": "2026-05-05T00:00:00.000Z"
+  "lastUpdated": "2026-05-05T01:00:00.000Z"
 }

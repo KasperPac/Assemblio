@@ -18,7 +18,6 @@ type ComponentRow = {
 type BalanceRow = {
   component_id: string;
   on_hand: number;
-  in_prod: number;
   reserved: number;
 };
 
@@ -42,7 +41,7 @@ export default async function ComponentsPage({ searchParams }: Props) {
     { data: groups },
   ] = await Promise.all([
     supabase.from("component").select("id,name,sku,reorder_point").order("name"),
-    supabase.from("inventory_balance").select("component_id,on_hand,in_prod,reserved"),
+    supabase.from("inventory_balance").select("component_id,on_hand,reserved"),
     supabase.from("suppliers").select("id,name").order("name"),
     supabase.from("location").select("id,name").order("name"),
     supabase.from("component_group").select("id,name").order("name"),

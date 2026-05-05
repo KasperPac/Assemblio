@@ -18,22 +18,6 @@
   white-space: nowrap;
 }
 
-.filters {
-  display: flex;
-  gap: 10px;
-}
-
-.filters input {
-  flex: 1;
-  border: 1px solid color-mix(in srgb, var(--stroke) 78%, transparent);
-  border-radius: 14px;
-  min-height: 44px;
-  padding: 0 14px;
-  background: color-mix(in srgb, var(--surface) 84%, transparent);
-  color: var(--ink-strong);
-  font-size: 0.95rem;
-}
-
 .rowLink {
   text-decoration: none;
   color: inherit;
