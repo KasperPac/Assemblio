@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { updateDeliveryReceipt, updateComponentCosts } from "./actions";
 import { computeVariance } from "./helpers";
 import type { ReceiptStatus } from "./helpers";
@@ -97,18 +97,21 @@ export default function ReceiptDetail({
   const [isPending, startTransition] = useTransition();
 
   const linesWithCost = receipt.delivery_receipt_line.filter(
-    (l) => l.cost_per_unit !== null
+    (l): l is ReceiptLine & { cost_per_unit: number } => l.cost_per_unit !== null
   );
   const dismissKey = `dismissed_cost_modal_${receipt.id}`;
-  const [showCostModal, setShowCostModal] = useState(() => {
-    if (linesWithCost.length === 0) return false;
-    if (typeof window === "undefined") return false;
-    return !localStorage.getItem(dismissKey);
-  });
+  const [showCostModal, setShowCostModal] = useState(false);
   const [costChecked, setCostChecked] = useState<Record<string, boolean>>(
     () => Object.fromEntries(linesWithCost.map((l) => [l.id, true]))
   );
   const [costUpdatePending, startCostTransition] = useTransition();
+
+  useEffect(() => {
+    if (linesWithCost.length === 0) return;
+    if (!localStorage.getItem(dismissKey)) {
+      setShowCostModal(true);
+    }
+  }, []);
 
   function dismissCostModal() {
     localStorage.setItem(dismissKey, "1");
@@ -117,8 +120,8 @@ export default function ReceiptDetail({
 
   function handleCostUpdate() {
     const selected = linesWithCost
-      .filter((l) => costChecked[l.id] && l.cost_per_unit !== null)
-      .map((l) => ({ component_id: l.component_id, cost_per_unit: l.cost_per_unit! }));
+      .filter((l) => costChecked[l.id])
+      .map((l) => ({ component_id: l.component_id, cost_per_unit: l.cost_per_unit }));
     startCostTransition(async () => {
       if (selected.length > 0) await updateComponentCosts(selected);
       dismissCostModal();
@@ -426,7 +429,7 @@ export default function ReceiptDetail({
                       />
                     </td>
                     <td>{resolveComponentName(l)}</td>
-                    <td>${l.cost_per_unit!.toFixed(2)}</td>
+                    <td>${l.cost_per_unit.toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -438,7 +441,7 @@ export default function ReceiptDetail({
               <button
                 type="button"
                 className={styles.primary}
-                disabled={costUpdatePending}
+                disabled={costUpdatePending || !linesWithCost.some((l) => costChecked[l.id])}
                 onClick={handleCostUpdate}
               >
                 {costUpdatePending ? "Updating…" : "Update selected"}
