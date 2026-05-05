@@ -55,6 +55,7 @@ type ReceiptLineRaw = {
 };
 
 type BomUsageRecord = {
+  product_bom_id: string;
   quantity: number;
   product_bom: {
     version: number;
@@ -116,7 +117,7 @@ export default async function ComponentDetailPage({ params }: Props) {
       .limit(50),
     supabase
       .from("product_bom_component")
-      .select("quantity,product_bom:product_bom_id(version,is_active,variant:variant_id(title,product:product_id(title)))")
+      .select("quantity,product_bom_id,product_bom:product_bom_id(version,is_active,variant:variant_id(title,product:product_id(title)))")
       .eq("component_id", componentId),
     supabase
       .from("delivery_receipt_line")
@@ -207,6 +208,7 @@ export default async function ComponentDetailPage({ params }: Props) {
     const variant = bom ? unwrap(bom.variant) : null;
     const product = variant ? unwrap(variant.product) : null;
     return {
+      bomId: row.product_bom_id as string,
       product: product?.title ?? "--",
       variant: variant?.title ?? "--",
       version: bom?.version ?? 0,

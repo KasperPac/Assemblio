@@ -10,7 +10,7 @@
     {
       "id": 17,
       "subject": "Task 1: List page — available column, stock status, Low Stock tab",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [16],
       "description": "**Goal:** Replace the `in_prod` column with `available`, add stock status dots, and Low Stock filter tab.\n\n**Files:**\n- Modify: `src/app/app/components/page.tsx`\n- Modify: `src/app/app/components/components.module.css`\n\n```json:metadata\n{\"files\":[\"src/app/app/components/page.tsx\",\"src/app/app/components/components.module.css\"],\"verifyCommand\":\"npm run dev\",\"acceptanceCriteria\":[\"Available column replaces In-prod\",\"Stock status dots present on each row\",\"Low Stock filter tab works via URL param\"]}\n```"
     },

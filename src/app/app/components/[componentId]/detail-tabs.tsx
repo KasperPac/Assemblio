@@ -22,6 +22,7 @@ type MovementRow = {
 };
 
 type BomRow = {
+  bomId: string;
   product: string;
   variant: string;
   version: number;
