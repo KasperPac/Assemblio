@@ -305,3 +305,25 @@ export async function updateDeliveryReceipt(formData: FormData) {
   revalidatePath("/app/goods-inwards");
   redirect(`/app/goods-inwards/${receiptId}`);
 }
+
+export async function updateComponentCosts(
+  updates: { component_id: string; cost_per_unit: number }[]
+): Promise<{ updated: number } | { error: string }> {
+  const ctx = await getServerTenantContext();
+  if (!ctx) return { error: "Not authenticated" };
+  const { supabase, tenantId } = ctx;
+
+  let updated = 0;
+  for (const u of updates) {
+    const { error } = await supabase
+      .from("component")
+      .update({ cost_per_unit: u.cost_per_unit })
+      .eq("id", u.component_id)
+      .eq("tenant_id", tenantId);
+    if (!error) updated++;
+  }
+
+  revalidatePath("/app/components");
+  revalidatePath("/app/inventory");
+  return { updated };
+}

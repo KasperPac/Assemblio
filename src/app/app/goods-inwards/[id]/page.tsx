@@ -23,7 +23,7 @@ export default async function ReceiptDetailPage({ params }: Props) {
            supplier:supplier_id(name),
            location:location_id(id, name),
            delivery_receipt_line(
-             id, component_id, quantity_delivered, quantity_expected, notes,
+             id, component_id, quantity_delivered, quantity_expected, notes, cost_per_unit,
              component:component_id(name, sku)
            )`
         )

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import { updateDeliveryReceipt } from "./actions";
+import { updateDeliveryReceipt, updateComponentCosts } from "./actions";
 import { computeVariance } from "./helpers";
 import type { ReceiptStatus } from "./helpers";
 import styles from "./goods-inwards.module.css";
@@ -11,6 +11,7 @@ type ReceiptLine = {
   component_id: string;
   quantity_delivered: number;
   quantity_expected: number | null;
+  cost_per_unit: number | null;
   notes: string | null;
   component:
     | { name: string; sku: string | null }
@@ -94,6 +95,35 @@ export default function ReceiptDetail({
   );
   const editFormRef = useRef<HTMLFormElement>(null);
   const [isPending, startTransition] = useTransition();
+
+  const linesWithCost = receipt.delivery_receipt_line.filter(
+    (l) => l.cost_per_unit !== null
+  );
+  const dismissKey = `dismissed_cost_modal_${receipt.id}`;
+  const [showCostModal, setShowCostModal] = useState(() => {
+    if (linesWithCost.length === 0) return false;
+    if (typeof window === "undefined") return false;
+    return !localStorage.getItem(dismissKey);
+  });
+  const [costChecked, setCostChecked] = useState<Record<string, boolean>>(
+    () => Object.fromEntries(linesWithCost.map((l) => [l.id, true]))
+  );
+  const [costUpdatePending, startCostTransition] = useTransition();
+
+  function dismissCostModal() {
+    localStorage.setItem(dismissKey, "1");
+    setShowCostModal(false);
+  }
+
+  function handleCostUpdate() {
+    const selected = linesWithCost
+      .filter((l) => costChecked[l.id] && l.cost_per_unit !== null)
+      .map((l) => ({ component_id: l.component_id, cost_per_unit: l.cost_per_unit! }));
+    startCostTransition(async () => {
+      if (selected.length > 0) await updateComponentCosts(selected);
+      dismissCostModal();
+    });
+  }
 
   function handleEdit(e: React.FormEvent) {
     e.preventDefault();
@@ -307,6 +337,7 @@ export default function ReceiptDetail({
               <th>Expected</th>
               <th>Delivered</th>
               <th>Variance</th>
+              <th>Cost / unit</th>
               <th>Note</th>
             </tr>
           </thead>
@@ -338,6 +369,7 @@ export default function ReceiptDetail({
                       "—"
                     )}
                   </td>
+                  <td>{line.cost_per_unit != null ? `$${line.cost_per_unit.toFixed(2)}` : "—"}</td>
                   <td>
                     {isEditing ? (
                       <input
@@ -363,6 +395,58 @@ export default function ReceiptDetail({
         </table>
         )}
       </div>
+
+      {showCostModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 700 }}>
+              Update component prices?
+            </h3>
+            <p style={{ margin: "6px 0 0", color: "var(--ink-muted)", fontSize: "0.85rem" }}>
+              These costs were recorded on this receipt. Select the components whose price you'd like to update.
+            </p>
+            <table className={styles.linesTable} style={{ marginTop: 12 }}>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Component</th>
+                  <th>Receipt cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                {linesWithCost.map((l) => (
+                  <tr key={l.id}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={costChecked[l.id] ?? true}
+                        onChange={(e) =>
+                          setCostChecked((prev) => ({ ...prev, [l.id]: e.target.checked }))
+                        }
+                      />
+                    </td>
+                    <td>{resolveComponentName(l)}</td>
+                    <td>${l.cost_per_unit!.toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className={styles.actions} style={{ marginTop: 16 }}>
+              <button type="button" className={styles.secondary} onClick={dismissCostModal}>
+                Skip
+              </button>
+              <button
+                type="button"
+                className={styles.primary}
+                disabled={costUpdatePending}
+                onClick={handleCostUpdate}
+              >
+                {costUpdatePending ? "Updating…" : "Update selected"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
