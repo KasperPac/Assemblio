@@ -9,14 +9,14 @@ describe("getWeekStart", () => {
   it("returned date is always a Monday (getDay() === 1)", () => {
     const result = getWeekStart();
     const [y, m, d] = result.split("-").map(Number);
-    const date = new Date(Date.UTC(y, m - 1, d));
+    const date = new Date(y, m - 1, d);
     expect(date.getDay()).toBe(1);
   });
 
   it("returned date is never more than 6 days before today", () => {
     const result = getWeekStart();
     const [y, m, d] = result.split("-").map(Number);
-    const monday = new Date(Date.UTC(y, m - 1, d));
+    const monday = new Date(y, m - 1, d);
     const now = new Date();
     const diffMs = now.getTime() - monday.getTime();
     const diffDays = diffMs / (1000 * 60 * 60 * 24);
