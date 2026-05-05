@@ -1,0 +1,40 @@
+{
+  "planPath": "docs/superpowers/plans/2026-05-05-components-redesign.md",
+  "tasks": [
+    {
+      "id": 16,
+      "subject": "Task 0: Stock status helper",
+      "status": "pending",
+      "description": "**Goal:** Extract and test the pure `getStockStatus` function.\n\n**Files:**\n- Create: `src/app/app/components/helpers.ts`\n- Create: `src/app/app/components/helpers.test.ts`\n\n**Acceptance Criteria:**\n- [ ] returns critical when available <= 0\n- [ ] returns low when 0 < available < reorderPoint\n- [ ] returns ok when available >= reorderPoint or reorderPoint is 0\n\n```json:metadata\n{\"files\":[\"src/app/app/components/helpers.ts\",\"src/app/app/components/helpers.test.ts\"],\"verifyCommand\":\"npx vitest run src/app/app/components/helpers.test.ts --pool threads --maxWorkers 1\",\"acceptanceCriteria\":[\"getStockStatus returns critical when available <= 0\",\"getStockStatus returns low when 0 < available < reorderPoint\",\"getStockStatus returns ok when available >= reorderPoint or reorderPoint is 0\"]}\n```"
+    },
+    {
+      "id": 17,
+      "subject": "Task 1: List page — available column, stock status, Low Stock tab",
+      "status": "pending",
+      "blockedBy": [16],
+      "description": "**Goal:** Replace the `in_prod` column with `available`, add stock status dots, and Low Stock filter tab.\n\n**Files:**\n- Modify: `src/app/app/components/page.tsx`\n- Modify: `src/app/app/components/components.module.css`\n\n```json:metadata\n{\"files\":[\"src/app/app/components/page.tsx\",\"src/app/app/components/components.module.css\"],\"verifyCommand\":\"npm run dev\",\"acceptanceCriteria\":[\"Available column replaces In-prod\",\"Stock status dots present on each row\",\"Low Stock filter tab works via URL param\"]}\n```"
+    },
+    {
+      "id": 18,
+      "subject": "Task 2: Detail page — tighten Overview to 4 stat cards and add recent receipts",
+      "status": "pending",
+      "blockedBy": [16],
+      "description": "**Goal:** Reduce Overview from 8 cards to 4, add recent receipts mini-table, update sidebar banner.\n\n**Files:**\n- Modify: `src/app/app/components/[componentId]/page.tsx`\n- Modify: `src/app/app/components/[componentId]/detail-tabs.tsx`\n- Modify: `src/app/app/components/[componentId]/component-detail.module.css`\n\n```json:metadata\n{\"files\":[\"src/app/app/components/[componentId]/page.tsx\",\"src/app/app/components/[componentId]/detail-tabs.tsx\",\"src/app/app/components/[componentId]/component-detail.module.css\"],\"verifyCommand\":\"npm run dev\",\"acceptanceCriteria\":[\"4 stat cards in Overview\",\"Recent receipts table visible\",\"Status banner shows correct message\"]}\n```"
+    },
+    {
+      "id": 19,
+      "subject": "Task 3: BOM Usage — proper table with links",
+      "status": "pending",
+      "blockedBy": [18],
+      "description": "**Goal:** Replace grid-row BOM Usage with a proper table with intro line and clickable BOM names.\n\n**Files:**\n- Modify: `src/app/app/components/[componentId]/detail-tabs.tsx`\n- Modify: `src/app/app/components/[componentId]/component-detail.module.css`\n\n```json:metadata\n{\"files\":[\"src/app/app/components/[componentId]/detail-tabs.tsx\",\"src/app/app/components/[componentId]/component-detail.module.css\"],\"verifyCommand\":\"npm run dev\",\"acceptanceCriteria\":[\"Intro line shows BOM count\",\"BOM names are links to /app/bom\",\"Active/Draft badges present\"]}\n```"
+    },
+    {
+      "id": 20,
+      "subject": "Task 4: Sidebar — swap action buttons and add stock value",
+      "status": "pending",
+      "blockedBy": [18],
+      "description": "**Goal:** Add Receive stock button, remove purchasing buttons, add stock value to metadata.\n\n**Files:**\n- Modify: `src/app/app/components/[componentId]/page.tsx`\n\n```json:metadata\n{\"files\":[\"src/app/app/components/[componentId]/page.tsx\"],\"verifyCommand\":\"npm run dev\",\"acceptanceCriteria\":[\"Receive stock button links to /app/goods-inwards/new\",\"Review Purchasing and hint paragraph removed\",\"Stock value shown in metadata grid\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-05-05T00:00:00.000Z"
+}
