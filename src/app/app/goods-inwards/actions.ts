@@ -16,6 +16,7 @@ export type DeliveryReceiptLineInput = {
   purchase_order_line_id: string | null;
   quantity_delivered: number;
   quantity_expected: number | null;
+  cost_per_unit: number | null;
   notes: string | null;
 };
 

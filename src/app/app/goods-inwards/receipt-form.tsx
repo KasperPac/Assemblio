@@ -263,6 +263,7 @@ export default function ReceiptForm({
                     onClick={() => removeLine(line.key)}
                     className={styles.secondary}
                     style={{ padding: "4px 10px" }}
+                    disabled={lines.length === 1}
                   >
                     ✕
                   </button>
