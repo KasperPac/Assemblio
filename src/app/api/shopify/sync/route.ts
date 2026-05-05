@@ -95,6 +95,8 @@ export async function POST(request: NextRequest) {
           orders: result.orders,
           orderLines: result.orderLines,
           allocations: result.allocations,
+          plan_runs: result.planRuns,
+          plan_errors: result.planErrors,
         },
       })
       .eq("tenant_id", profile.tenant_id)

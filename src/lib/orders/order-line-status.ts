@@ -94,16 +94,28 @@ export async function getOrderLineStatus(
     ),
   ];
 
+  const { data: defaultLocationRow } = await supabase
+    .from("location")
+    .select("id")
+    .eq("tenant_id", tenantId)
+    .eq("is_default", true)
+    .maybeSingle();
+  const defaultLocationId = (defaultLocationRow as { id: string } | null)?.id ?? null;
+
   const [{ data: componentRows }, { data: balanceRows }, { data: allocationRows }] =
     await Promise.all([
       componentIds.length > 0
         ? supabase.from("component").select("id,name").in("id", componentIds)
         : Promise.resolve({ data: [] as Array<{ id: string; name: string }> }),
       componentIds.length > 0
-        ? supabase
-            .from("inventory_balance")
-            .select("component_id,on_hand,reserved")
-            .in("component_id", componentIds)
+        ? (() => {
+            let q = supabase
+              .from("inventory_balance")
+              .select("component_id,on_hand,reserved")
+              .in("component_id", componentIds);
+            if (defaultLocationId) q = q.eq("location_id", defaultLocationId);
+            return q;
+          })()
         : Promise.resolve({
             data: [] as Array<{
               component_id: string;

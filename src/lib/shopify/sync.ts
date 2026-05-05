@@ -10,6 +10,7 @@ type SyncResult = {
   orderLines: number;
   allocations: number;
   planRuns: number;
+  planErrors: number;
 };
 
 type ShopifyProductNode = {
@@ -368,5 +369,6 @@ export async function syncShopifyStoreData(
     orderLines: orderLineRows.length,
     allocations: allocationRuns,
     planRuns,
+    planErrors,
   };
 }
