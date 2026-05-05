@@ -1,13 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import {
-  allocateAndPlanOrder,
-  allocateOrder,
-  planOrder,
-  updateJobLaborPlanWeek,
-} from "../actions";
+import { allocateOrder, updateJobLaborPlanWeek } from "../actions";
 import { getWeekStart } from "@/lib/dates";
+import { getOrderLineStatus } from "@/lib/orders/order-line-status";
 import PageHeader from "../../_ui/page-header";
 import StatusBadge from "../../_ui/status-badge";
 import EmptyState from "../../_ui/empty-state";
@@ -26,6 +22,7 @@ type OrderLineRecord = {
   quantity: number;
   unit_sell_price: number;
   line_sell_price: number;
+  variant_id: string;
   variant:
     | {
         title: string | null;
@@ -69,11 +66,6 @@ type ActualRollup = {
   actual_hours_total: number;
 };
 
-type AllocationRow = {
-  order_line_id: string;
-  quantity: number;
-};
-
 type LaborPlanRow = {
   id: string;
   order_line_id: string;
@@ -103,12 +95,9 @@ type UtilizationRow = {
 };
 
 type Props = {
-  params: Promise<{
-    orderId: string;
-  }>;
+  params: Promise<{ orderId: string }>;
   searchParams?: Promise<{
     allocated?: string;
-    planned?: string;
     planError?: string;
     week?: string;
   }>;
@@ -135,11 +124,22 @@ function getStatusVariant(status: string) {
   return "warning";
 }
 
+async function getTenantId(
+  supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>
+): Promise<string> {
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("tenant_id")
+    .single();
+  return profile?.tenant_id ?? "";
+}
+
 export default async function OrderDetailPage({ params, searchParams }: Props) {
   const { orderId } = await params;
   const query = (await searchParams) ?? {};
   const supabase = await createSupabaseServerClient();
-  const selectedWeek = query.week ?? getWeekStart();
+  // getWeekStart is imported for potential future use; suppress unused warning
+  void getWeekStart;
 
   const [{ data: order }, { data: orderLines }] = await Promise.all([
     supabase
@@ -150,38 +150,37 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
     supabase
       .from("order_line")
       .select(
-        "id,quantity,unit_sell_price,line_sell_price,variant:variant_id(title,sku,product:product_id(title))"
+        "id,quantity,unit_sell_price,line_sell_price,variant_id,variant:variant_id(title,sku,product:product_id(title))"
       )
       .eq("order_id", orderId),
   ]);
 
-  const orderLineIds = ((orderLines ?? []) as Array<{ id: string }>).map(
-    (line) => line.id
-  );
+  if (!order) notFound();
+
+  const typedOrder = order as OrderRecord;
+  const typedLines = (orderLines ?? []) as OrderLineRecord[];
+  const lineRefs = typedLines.map((l) => ({
+    id: l.id,
+    variant_id: (l as unknown as { variant_id: string }).variant_id,
+    quantity: l.quantity,
+  }));
 
   const [
+    lineStatusMap,
     { data: plannedSnapshots },
     { data: actualRollups },
-    { data: allocations },
     { data: laborPlans },
     { data: utilizationRows },
   ] = await Promise.all([
+    getOrderLineStatus(supabase, await getTenantId(supabase), lineRefs),
     supabase
       .from("job_cost_snapshot")
       .select("order_line_id,planned_total_cost,planned_margin,planned_margin_pct")
       .eq("order_id", orderId),
     supabase
       .from("job_cost_actual_rollup")
-      .select(
-        "order_line_id,actual_total_cost,actual_margin,actual_margin_pct,actual_hours_total"
-      )
+      .select("order_line_id,actual_total_cost,actual_margin,actual_margin_pct,actual_hours_total")
       .eq("order_id", orderId),
-    orderLineIds.length === 0
-      ? Promise.resolve({ data: [] })
-      : supabase
-          .from("order_component_allocation")
-          .select("order_line_id,quantity")
-          .in("order_line_id", orderLineIds),
     supabase
       .from("job_labor_plan")
       .select(
@@ -193,12 +192,6 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
       .select("department_id,week_start,overload_hours,idle_hours,utilization_pct"),
   ]);
 
-  if (!order) {
-    notFound();
-  }
-
-  const typedOrder = order as OrderRecord;
-  const typedLines = (orderLines ?? []) as OrderLineRecord[];
   const plannedByLine = new Map(
     ((plannedSnapshots ?? []) as PlannedSnapshot[]).map((row) => [
       row.order_line_id ?? "",
@@ -208,12 +201,6 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
   const actualByLine = new Map(
     ((actualRollups ?? []) as ActualRollup[]).map((row) => [row.order_line_id, row])
   );
-  const allocationByLine = ((allocations ?? []) as AllocationRow[]).reduce<
-    Record<string, number>
-  >((acc, row) => {
-    acc[row.order_line_id] = (acc[row.order_line_id] ?? 0) + Number(row.quantity ?? 0);
-    return acc;
-  }, {});
   const laborByLine = ((laborPlans ?? []) as LaborPlanRow[]).reduce<
     Record<string, number>
   >((acc, row) => {
@@ -234,6 +221,7 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
       row,
     ])
   );
+
   const overloadWarnings = ((laborPlans ?? []) as LaborPlanRow[])
     .map((plan) => {
       const department = firstRelation(plan.department);
@@ -242,7 +230,6 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
       if (overloadHours <= 0) {
         return null;
       }
-
       return {
         key: `${plan.department_id}:${plan.week_start}`,
         departmentName: department?.name ?? "Department",
@@ -268,43 +255,42 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
     a.weekStart.localeCompare(b.weekStart)
   );
 
+  const allocatedLineCount = typedLines.filter(
+    (line) => lineStatusMap.get(line.id)?.allocationState === "allocated"
+  ).length;
+
+  const plannedLineCount = typedLines.filter(
+    (line) => plannedByLine.has(line.id)
+  ).length;
+
   const totals = typedLines.reduce(
     (acc, line) => {
       const planned = plannedByLine.get(line.id);
       const actual = actualByLine.get(line.id);
-      acc.sell += Number(line.line_sell_price ?? 0);
-      acc.planned += Number(planned?.planned_total_cost ?? 0);
-      acc.plannedMargin += Number(planned?.planned_margin ?? 0);
-      acc.actual += Number(actual?.actual_total_cost ?? 0);
-      acc.actualMargin += Number(actual?.actual_margin ?? 0);
-      acc.hours += Number(actual?.actual_hours_total ?? 0);
-      return acc;
+      return {
+        sell: acc.sell + Number(line.line_sell_price ?? 0),
+        plannedMargin: acc.plannedMargin + Number(planned?.planned_margin ?? 0),
+        actualMargin: acc.actualMargin + Number(actual?.actual_margin ?? 0),
+        hours: acc.hours + (laborByLine[line.id] ?? 0),
+      };
     },
-    { sell: 0, planned: 0, plannedMargin: 0, actual: 0, actualMargin: 0, hours: 0 }
+    { sell: 0, plannedMargin: 0, actualMargin: 0, hours: 0 }
   );
 
-  const allocatedLineCount = typedLines.filter((line) => (allocationByLine[line.id] ?? 0) > 0).length;
-  const plannedLineCount = typedLines.filter((line) => plannedByLine.has(line.id)).length;
   const statusVariant = getStatusVariant(typedOrder.status);
 
   return (
     <div className={styles.page}>
       <div className={styles.topRow}>
         <Link href="/app/orders" className={styles.backButton}>
-          {"<- Back to orders"}
+          {"← Back to orders"}
         </Link>
-        <p className={styles.breadcrumb}>
-          <Link href="/app/orders">Orders</Link> &gt;{" "}
-          <span>
-            #{typedOrder.order_number ?? typedOrder.shopify_order_id ?? typedOrder.id.slice(0, 6)}
-          </span>
-        </p>
       </div>
 
       <PageHeader
-        eyebrow="Order workflow"
+        eyebrow="Order detail"
         title={`Order #${typedOrder.order_number ?? typedOrder.shopify_order_id ?? typedOrder.id.slice(0, 6)}`}
-        description={`Shopify ${typedOrder.shopify_order_id ?? "--"} • Created ${new Date(
+        description={`Shopify ${typedOrder.shopify_order_id ?? "--"} · Created ${new Date(
           typedOrder.created_at
         ).toLocaleDateString("en-GB")}`}
         actions={
@@ -313,13 +299,9 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
             <form action={allocateOrder}>
               <input type="hidden" name="order_id" value={typedOrder.id} />
               <input type="hidden" name="return_to" value={`/app/orders/${typedOrder.id}`} />
-              <input
-                type="hidden"
-                name="idempotency_key"
-                value={crypto.randomUUID()}
-              />
+              <input type="hidden" name="idempotency_key" value={crypto.randomUUID()} />
               <button className={styles.secondary} type="submit">
-                Run allocation
+                Re-run allocation
               </button>
             </form>
           </div>
@@ -329,73 +311,36 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
       {query.allocated ? (
         <p className={styles.successMeta}>Allocation updated for this order.</p>
       ) : null}
-      {query.planned ? (
-        <p className={styles.successMeta}>
-          {query.planned === "updated"
-            ? "Updated labor plan week assignment."
-            : `Generated plans for ${query.planned} order lines from ${selectedWeek}.`}
-        </p>
-      ) : null}
       {query.planError ? (
-        <p className={styles.errorMeta}>Plan generation failed: {query.planError}</p>
+        <p className={styles.errorMeta}>Error: {query.planError}</p>
       ) : null}
 
-      <section className={styles.hero}>
-        <div className={styles.heroMain}>
-          <div className={styles.summaryGrid}>
-            <div className={styles.summaryCard}>
-              <span>Order value</span>
-              <strong>{formatCurrency(totals.sell)}</strong>
-              <p>{typedLines.length} line{typedLines.length === 1 ? "" : "s"} in this order</p>
-            </div>
-            <div className={styles.summaryCard}>
-              <span>Allocated lines</span>
-              <strong>{allocatedLineCount}</strong>
-              <p>
-                {typedLines.length === 0
-                  ? "No lines available"
-                  : `${typedLines.length - allocatedLineCount} still need allocation review`}
-              </p>
-            </div>
-            <div className={styles.summaryCard}>
-              <span>Planned margin</span>
-              <strong>{formatCurrency(totals.plannedMargin)}</strong>
-              <p>{plannedLineCount} line{plannedLineCount === 1 ? "" : "s"} have a cost snapshot</p>
-            </div>
-            <div className={styles.summaryCard}>
-              <span>Actual hours</span>
-              <strong>{totals.hours.toFixed(1)}</strong>
-              <p>{formatCurrency(totals.actualMargin)} actual margin recorded</p>
-            </div>
-          </div>
+      <div className={styles.summaryCards}>
+        <div className={styles.summaryCard}>
+          <span>Order value</span>
+          <strong>{formatCurrency(totals.sell)}</strong>
+          <p>{typedLines.length} line{typedLines.length === 1 ? "" : "s"} in this order</p>
         </div>
-
-        <aside className={styles.planningPanel}>
-          <div className={styles.planningIntro}>
-            <p className={styles.eyebrow}>Planning controls</p>
-            <h2>Allocate first, then place labor into a viable week</h2>
-            <p className={styles.meta}>
-              Keep component reservations and labor capacity aligned before work hits the floor.
-            </p>
-          </div>
-          <form className={styles.planningForm}>
-            <input type="hidden" name="order_id" value={typedOrder.id} />
-            <input type="hidden" name="return_to" value={`/app/orders/${typedOrder.id}`} />
-            <label className={styles.weekPicker}>
-              <span>Plan from week</span>
-              <input name="week_start" type="date" defaultValue={selectedWeek} />
-            </label>
-            <div className={styles.actionButtons}>
-              <button className={styles.secondary} formAction={planOrder} type="submit">
-                Generate plans
-              </button>
-              <button className={styles.primary} formAction={allocateAndPlanOrder} type="submit">
-                Allocate and plan
-              </button>
-            </div>
-          </form>
-        </aside>
-      </section>
+        <div className={styles.summaryCard}>
+          <span>Planned margin</span>
+          <strong>{formatCurrency(totals.plannedMargin)}</strong>
+          <p>{plannedLineCount} line{plannedLineCount === 1 ? "" : "s"} have a cost snapshot</p>
+        </div>
+        <div className={styles.summaryCard}>
+          <span>Lines allocated</span>
+          <strong>{allocatedLineCount} / {typedLines.length}</strong>
+          {typedLines.length - allocatedLineCount > 0 ? (
+            <p>{typedLines.length - allocatedLineCount} need{typedLines.length - allocatedLineCount === 1 ? "s" : ""} a BOM</p>
+          ) : (
+            <p>All lines allocated</p>
+          )}
+        </div>
+        <div className={styles.summaryCard}>
+          <span>Labor scheduled</span>
+          <strong>{totals.hours.toFixed(1)} hrs</strong>
+          <p>{formatCurrency(totals.actualMargin)} actual margin recorded</p>
+        </div>
+      </div>
 
       {overloadSummary.length > 0 ? (
         <section className={styles.warningPanel}>
@@ -404,7 +349,9 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
               <p className={styles.eyebrow}>Capacity risks</p>
               <h2>Department weeks already over capacity</h2>
             </div>
-            <StatusBadge variant="danger">{overloadSummary.length} conflict{overloadSummary.length === 1 ? "" : "s"}</StatusBadge>
+            <StatusBadge variant="danger">
+              {overloadSummary.length} conflict{overloadSummary.length === 1 ? "" : "s"}
+            </StatusBadge>
           </div>
           <div className={styles.warningList}>
             {overloadSummary.map((warning) => (
@@ -424,15 +371,15 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
       <section className={styles.linesSection}>
         <div className={styles.sectionHeader}>
           <div>
-            <p className={styles.eyebrow}>Line planning</p>
-            <h2>Allocate material and place each operation</h2>
+            <p className={styles.eyebrow}>Order lines</p>
+            <h2>Components reserved · BOM · Labor</h2>
           </div>
         </div>
 
         {typedLines.length === 0 ? (
           <EmptyState
             title="No order lines found"
-            message="This order has no synced line items yet, so there is nothing to allocate or schedule."
+            message="This order has no synced line items. Trigger a Shopify sync to populate them."
           />
         ) : (
           <div className={styles.lineList}>
@@ -440,109 +387,92 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
               const variant = firstRelation(line.variant);
               const product = firstRelation(variant?.product);
               const planned = plannedByLine.get(line.id);
-              const actual = actualByLine.get(line.id);
-              const allocatedQty = allocationByLine[line.id] ?? 0;
               const plannedHours = laborByLine[line.id] ?? 0;
               const lineLaborPlans = laborPlansByLine[line.id] ?? [];
-              const lineStatus =
-                allocatedQty > 0 && planned
-                  ? "Ready"
-                  : allocatedQty > 0
-                  ? "Allocated"
-                  : "Needs work";
+              const lineStatus = lineStatusMap.get(line.id);
+              const allocationState = lineStatus?.allocationState ?? "no-bom";
 
               return (
-                <article key={line.id} className={styles.lineCard}>
-                  <div className={styles.lineSummary}>
+                <article
+                  key={line.id}
+                  className={`${styles.lineCard} ${allocationState !== "allocated" ? styles.lineCardWarning : ""}`}
+                >
+                  <div className={styles.lineHeader}>
                     <div className={styles.lineIdentity}>
                       <div className={styles.lineHeading}>
                         <h3>{product?.title ?? variant?.title ?? "Variant"}</h3>
-                        <StatusBadge
-                          variant={
-                            lineStatus === "Ready"
-                              ? "success"
-                              : lineStatus === "Allocated"
-                              ? "info"
-                              : "warning"
-                          }
-                        >
-                          {lineStatus}
+                        <StatusBadge variant={allocationState === "allocated" ? "success" : "warning"}>
+                          {allocationState === "allocated" ? "✓ Allocated" : "⚠ No active BOM"}
                         </StatusBadge>
                       </div>
                       <p className={styles.meta}>
-                        {variant?.sku ?? "No SKU"} • Qty {line.quantity} • Unit {formatCurrency(line.unit_sell_price)}
+                        {variant?.sku ?? "No SKU"} · Qty {line.quantity} · {formatCurrency(line.unit_sell_price)} each
+                        {lineStatus?.bom ? (
+                          <>
+                            {" · "}
+                            <Link href={`/app/bom`} className={styles.bomLink}>
+                              BOM v{lineStatus.bom.version} →
+                            </Link>
+                          </>
+                        ) : null}
                       </p>
                     </div>
-
-                    <div className={styles.lineMetrics}>
-                      <div className={styles.lineMetric}>
-                        <span>Sell</span>
-                        <strong>{formatCurrency(line.line_sell_price)}</strong>
-                      </div>
-                      <div className={styles.lineMetric}>
-                        <span>Allocated</span>
-                        <strong>{allocatedQty.toFixed(2)}</strong>
-                      </div>
-                      <div className={styles.lineMetric}>
-                        <span>Planned cost</span>
-                        <strong>
-                          {planned ? formatCurrency(planned.planned_total_cost) : "--"}
-                        </strong>
-                      </div>
-                      <div className={styles.lineMetric}>
-                        <span>Planned hours</span>
-                        <strong>{plannedHours.toFixed(1)}</strong>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={styles.lineFinanceStrip}>
-                    <div className={styles.financeBlock}>
+                    <div className={styles.lineMargin}>
                       <span>Planned margin</span>
                       <strong>
-                        {planned ? formatCurrency(planned.planned_margin) : "Awaiting snapshot"}
-                      </strong>
-                      <p>
                         {planned
-                          ? `${planned.planned_margin_pct.toFixed(1)}% margin`
-                          : "Generate a financial plan to lock planned cost and margin."}
-                      </p>
-                    </div>
-                    <div className={styles.financeBlock}>
-                      <span>Actual position</span>
-                      <strong>
-                        {actual ? formatCurrency(actual.actual_total_cost) : "No actuals"}
+                          ? `${formatCurrency(planned.planned_margin)} (${planned.planned_margin_pct.toFixed(1)}%)`
+                          : "—"}
                       </strong>
-                      <p>
-                        {actual
-                          ? `${formatCurrency(actual.actual_margin)} margin • ${actual.actual_hours_total.toFixed(1)} hrs`
-                          : "Awaiting time or cost postings."}
-                      </p>
                     </div>
                   </div>
 
-                  <div className={styles.planSection}>
-                    <div className={styles.planHeader}>
-                      <div>
-                        <h4>Labor schedule</h4>
-                        <p className={styles.meta}>
-                          {lineLaborPlans.length} operation{lineLaborPlans.length === 1 ? "" : "s"} linked to this order line
-                        </p>
+                  {allocationState === "allocated" && lineStatus && lineStatus.components.length > 0 ? (
+                    <div className={styles.componentSection}>
+                      <p className={styles.componentLabel}>
+                        Reserved components — BOM v{lineStatus.bom?.version} × {line.quantity}
+                      </p>
+                      <div className={styles.componentTable}>
+                        {lineStatus.components.map((comp) => (
+                          <div key={comp.componentId} className={styles.componentRow}>
+                            <span className={styles.componentName}>{comp.name}</span>
+                            <span className={styles.componentQty}>{comp.requiredQty.toFixed(2)} units</span>
+                            <span className={comp.isShort ? styles.shortBadge : styles.okBadge}>
+                              {comp.isShort ? `⚠ ${comp.availableQty.toFixed(2)} avail` : `${comp.availableQty.toFixed(2)} avail`}
+                            </span>
+                          </div>
+                        ))}
                       </div>
                     </div>
+                  ) : null}
 
+                  {allocationState !== "allocated" ? (
+                    <div className={styles.noBomCard}>
+                      <p>
+                        {allocationState === "empty-bom"
+                          ? "Allocation skipped — the active BOM has no components. Add components to the BOM and re-run allocation."
+                          : "Allocation skipped — create an active BOM for this variant to reserve components and generate a cost plan."}
+                      </p>
+                      <Link href="/app/bom" className={styles.bomLink}>
+                        Go to BOM →
+                      </Link>
+                    </div>
+                  ) : null}
+
+                  <details className={styles.laborSection}>
+                    <summary className={styles.laborToggle}>
+                      Labor: {lineLaborPlans.length} operation{lineLaborPlans.length === 1 ? "" : "s"} · {plannedHours.toFixed(1)} hrs
+                    </summary>
                     {lineLaborPlans.length === 0 ? (
                       <EmptyState
-                        title="No labor operations planned yet"
+                        title="No labor operations planned"
                         message="Run planning for this order to place labor by department and week."
                       />
                     ) : (
                       <div className={styles.planList}>
                         {lineLaborPlans.map((plan) => {
                           const department = firstRelation(plan.department);
-                          const utilization = utilizationMap.get(
-                            `${plan.department_id}:${plan.week_start}`
-                          );
+                          const utilization = utilizationMap.get(`${plan.department_id}:${plan.week_start}`);
                           const overload = Number(utilization?.overload_hours ?? 0);
 
                           return (
@@ -553,7 +483,7 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
                               <div className={styles.planIdentity}>
                                 <strong>{plan.operation_name}</strong>
                                 <p className={styles.meta}>
-                                  {department?.name ?? "Department"} • Seq {plan.sequence}
+                                  {department?.name ?? "Department"} · Seq {plan.sequence}
                                 </p>
                               </div>
                               <div className={styles.planMeta}>
@@ -584,7 +514,7 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
                         })}
                       </div>
                     )}
-                  </div>
+                  </details>
                 </article>
               );
             })}

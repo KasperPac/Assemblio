@@ -8,18 +8,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
 }
 
-.backButton,
-.breadcrumb a {
+.backButton {
   color: color-mix(in srgb, var(--brand-2) 72%, white);
   text-decoration: none;
   font-size: 0.84rem;
   font-weight: 700;
 }
 
-.breadcrumb,
 .meta,
 .successMeta,
 .errorMeta {
@@ -28,13 +25,8 @@
   font-size: 0.9rem;
 }
 
-.successMeta {
-  color: var(--ok);
-}
-
-.errorMeta {
-  color: var(--danger);
-}
+.successMeta { color: var(--ok); }
+.errorMeta   { color: var(--danger); }
 
 .headerActions {
   display: flex;
@@ -43,38 +35,14 @@
   flex-wrap: wrap;
 }
 
-.hero {
+/* Summary cards */
+.summaryCards {
   display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.95fr);
-  gap: 18px;
-}
-
-.heroMain,
-.planningPanel,
-.warningPanel,
-.linesSection,
-.lineCard,
-.planRow,
-.financeBlock {
-  border: 1px solid color-mix(in srgb, var(--stroke-strong) 70%, transparent);
-  border-radius: 24px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--surface-raised) 92%, transparent), color-mix(in srgb, var(--surface) 94%, transparent));
-  box-shadow: 0 18px 38px rgba(5, 8, 15, 0.2);
-}
-
-.heroMain {
-  padding: 24px;
-}
-
-.summaryGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
 }
 
-.summaryCard,
-.lineMetric {
+.summaryCard {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -84,12 +52,7 @@
   border: 1px solid color-mix(in srgb, var(--stroke) 66%, transparent);
 }
 
-.summaryCard span,
-.eyebrow,
-.lineMetric span,
-.financeBlock span,
-.planMetaItem span,
-.weekField span {
+.summaryCard span {
   font-size: 0.74rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -97,115 +60,49 @@
   color: var(--ink-faint);
 }
 
-.summaryCard strong,
-.lineMetric strong,
-.financeBlock strong {
+.summaryCard strong {
   font-size: clamp(1.15rem, 0.8vw + 1rem, 1.9rem);
   line-height: 1;
   color: var(--ink-strong);
 }
 
-.summaryCard p,
-.financeBlock p {
+.summaryCard p {
   margin: 0;
   color: var(--ink-muted);
-  line-height: 1.55;
 }
 
-.planningPanel {
+/* Capacity warnings */
+.warningPanel {
   display: flex;
   flex-direction: column;
   gap: 18px;
   padding: 24px;
+  border: 1px solid color-mix(in srgb, var(--stroke-strong) 70%, transparent);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--danger) 12%, transparent), transparent 48%),
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-raised) 92%, transparent), color-mix(in srgb, var(--surface) 94%, transparent));
+  box-shadow: 0 18px 38px rgba(5, 8, 15, 0.2);
 }
 
-.planningIntro h2,
-.warningHeader h2,
-.sectionHeader h2,
-.lineHeading h3,
-.planHeader h4 {
-  margin: 6px 0 0;
-  color: var(--ink-strong);
-}
-
-.planningForm {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.weekPicker,
-.weekField label {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.weekPicker input,
-.weekField input {
-  border: 1px solid color-mix(in srgb, var(--stroke) 78%, transparent);
-  border-radius: 14px;
-  min-height: 44px;
-  padding: 0 14px;
-  background: color-mix(in srgb, var(--surface) 84%, transparent);
-  color: var(--ink-strong);
-  font: inherit;
-}
-
-.actionButtons,
-.warningHeader,
-.sectionHeader,
-.planHeader,
-.lineHeading {
+.warningHeader {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
 }
 
-.primary,
-.secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 42px;
-  padding: 0 18px;
-  border-radius: 999px;
-  font-size: 0.9rem;
+.warningHeader h2 { margin: 6px 0 0; color: var(--ink-strong); }
+
+.eyebrow {
+  font-size: 0.74rem;
   font-weight: 700;
-  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--ink-faint);
 }
 
-.primary {
-  border: none;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--brand-2) 72%, #142131), color-mix(in srgb, var(--brand-1) 88%, #0e1624));
-  color: #f8fbff;
-}
-
-.secondary {
-  border: 1px solid color-mix(in srgb, var(--stroke-strong) 72%, transparent);
-  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
-  color: var(--ink-strong);
-}
-
-.warningPanel,
-.linesSection {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  padding: 24px;
-}
-
-.warningPanel {
-  background:
-    radial-gradient(circle at top left, color-mix(in srgb, var(--danger) 12%, transparent), transparent 48%),
-    linear-gradient(180deg, color-mix(in srgb, var(--surface-raised) 92%, transparent), color-mix(in srgb, var(--surface) 94%, transparent));
-}
-
-.warningList,
-.lineList,
-.planList {
+.warningList {
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -221,73 +118,172 @@
   border: 1px solid color-mix(in srgb, var(--danger) 28%, transparent);
 }
 
-.warningCard p,
-.warningCard span {
-  margin: 0;
-  color: var(--ink-muted);
-}
+.warningCard p, .warningCard span { margin: 0; color: var(--ink-muted); }
+.warningLink { color: #ff9472; text-decoration: none; font-weight: 700; }
 
-.warningLink {
-  color: #ff9472;
-  text-decoration: none;
-  font-weight: 700;
-}
-
-.lineCard {
+/* Lines section */
+.linesSection {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: 22px;
+  padding: 24px;
+  border: 1px solid color-mix(in srgb, var(--stroke-strong) 70%, transparent);
+  border-radius: 24px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--surface-raised) 92%, transparent), color-mix(in srgb, var(--surface) 94%, transparent));
+  box-shadow: 0 18px 38px rgba(5, 8, 15, 0.2);
 }
 
-.lineSummary,
-.lineFinanceStrip {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+.sectionHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.sectionHeader h2 { margin: 6px 0 0; color: var(--ink-strong); }
 
-.lineIdentity {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.lineMetrics {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.lineFinanceStrip {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.financeBlock {
-  padding: 18px;
-}
-
-.planSection {
+.lineList {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
+
+/* Line cards */
+.lineCard {
+  border: 1px solid color-mix(in srgb, var(--stroke-strong) 70%, transparent);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  overflow: hidden;
+}
+
+.lineCardWarning {
+  border-color: color-mix(in srgb, var(--warn, #f59e0b) 40%, transparent);
+}
+
+.lineHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 20px 14px;
+}
+
+.lineIdentity { display: flex; flex-direction: column; gap: 8px; }
+
+.lineHeading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lineHeading h3 { margin: 0; color: var(--ink-strong); }
+
+.lineMargin {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.lineMargin span {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+}
+
+.lineMargin strong { color: var(--ink-strong); }
+
+.bomLink {
+  color: color-mix(in srgb, var(--brand-2) 72%, white);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.84rem;
+}
+
+/* Component table */
+.componentSection {
+  padding: 10px 20px 14px;
+  border-top: 1px solid color-mix(in srgb, var(--stroke) 50%, transparent);
+  background: color-mix(in srgb, var(--surface) 40%, transparent);
+}
+
+.componentLabel {
+  margin: 0 0 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+}
+
+.componentTable { display: flex; flex-direction: column; gap: 6px; }
+
+.componentRow {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 16px;
+  align-items: center;
+  font-size: 0.88rem;
+}
+
+.componentName { color: var(--ink-muted); }
+.componentQty  { color: var(--ink-strong); font-weight: 600; text-align: right; }
+
+.okBadge, .shortBadge {
+  padding: 1px 8px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.okBadge    { background: color-mix(in srgb, var(--ok) 15%, transparent); color: var(--ok); }
+.shortBadge { background: color-mix(in srgb, var(--danger) 15%, transparent); color: var(--danger); }
+
+/* No-BOM warning card */
+.noBomCard {
+  margin: 0 20px 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: color-mix(in srgb, #f59e0b 8%, transparent);
+  border: 1px solid color-mix(in srgb, #f59e0b 30%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.noBomCard p { margin: 0; color: var(--ink-muted); font-size: 0.88rem; }
+
+/* Labor disclosure */
+.laborSection {
+  border-top: 1px solid color-mix(in srgb, var(--stroke) 50%, transparent);
+}
+
+.laborToggle {
+  padding: 12px 20px;
+  font-size: 0.88rem;
+  color: var(--ink-muted);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.laborToggle::-webkit-details-marker { display: none; }
+
+.laborSection[open] .laborToggle { border-bottom: 1px solid color-mix(in srgb, var(--stroke) 50%, transparent); }
+
+.planList { display: flex; flex-direction: column; gap: 14px; padding: 14px 20px; }
 
 .planRow {
   display: grid;
   grid-template-columns: minmax(0, 1.3fr) minmax(220px, 0.9fr) minmax(220px, 0.9fr);
   gap: 14px;
-  padding: 18px;
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--stroke-strong) 70%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+  box-shadow: 0 18px 38px rgba(5, 8, 15, 0.2);
 }
 
-.planIdentity,
-.planMeta {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+.planIdentity, .planMeta { display: flex; flex-direction: column; gap: 8px; }
 
 .planMeta {
   display: grid;
@@ -300,22 +296,23 @@
   flex-direction: column;
   gap: 6px;
   padding: 14px;
-  border-radius: 16px;
+  border-radius: 12px;
   background: color-mix(in srgb, var(--surface) 84%, transparent);
   border: 1px solid color-mix(in srgb, var(--stroke) 66%, transparent);
 }
 
-.planMetaItem strong {
-  color: var(--ink-strong);
+.planMetaItem span {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--ink-faint);
 }
 
-.capacityDanger {
-  color: #ff9472;
-}
+.planMetaItem strong { color: var(--ink-strong); }
 
-.capacitySafe {
-  color: var(--ok);
-}
+.capacityDanger { color: #ff9472; }
+.capacitySafe   { color: var(--ok); }
 
 .weekField {
   display: flex;
@@ -324,37 +321,62 @@
   gap: 12px;
 }
 
+.weekField label { display: flex; flex-direction: column; gap: 8px; }
+
+.weekField span {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--ink-faint);
+}
+
+.weekField input {
+  border: 1px solid color-mix(in srgb, var(--stroke) 78%, transparent);
+  border-radius: 14px;
+  min-height: 44px;
+  padding: 0 14px;
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  color: var(--ink-strong);
+  font: inherit;
+}
+
+/* Buttons */
+.primary, .secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primary {
+  border: none;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--brand-2) 72%, #142131), color-mix(in srgb, var(--brand-1) 88%, #0e1624));
+  color: #f8fbff;
+}
+
+.secondary {
+  border: 1px solid color-mix(in srgb, var(--stroke-strong) 72%, transparent);
+  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+  color: var(--ink-strong);
+}
+
+/* Responsive */
 @media (max-width: 1180px) {
-  .hero,
-  .lineFinanceStrip,
-  .lineMetrics,
-  .planRow {
-    grid-template-columns: 1fr;
-  }
+  .summaryCards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .planRow      { grid-template-columns: 1fr; }
+  .componentRow { grid-template-columns: 1fr auto auto; }
 }
 
 @media (max-width: 840px) {
-  .topRow,
-  .headerActions,
-  .actionButtons,
-  .warningHeader,
-  .sectionHeader,
-  .lineHeading {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .summaryGrid,
-  .planMeta {
-    grid-template-columns: 1fr;
-  }
-
-  .heroMain,
-  .planningPanel,
-  .warningPanel,
-  .linesSection,
-  .lineCard,
-  .planRow {
-    border-radius: 20px;
-  }
+  .summaryCards { grid-template-columns: 1fr; }
+  .lineHeader   { flex-direction: column; }
+  .lineMargin   { text-align: left; }
+  .headerActions, .warningHeader, .sectionHeader { flex-direction: column; align-items: flex-start; }
+  .planMeta     { grid-template-columns: 1fr; }
 }
