@@ -1,6 +1,7 @@
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { shopifyGraphqlRequest } from "./client";
 import { reconcileOrderAllocations } from "@/lib/allocation/reconcile-order";
+import { getWeekStart } from "@/lib/dates";
 
 type SyncResult = {
   products: number;
@@ -8,6 +9,7 @@ type SyncResult = {
   orders: number;
   orderLines: number;
   allocations: number;
+  planRuns: number;
 };
 
 type ShopifyProductNode = {
@@ -308,6 +310,28 @@ export async function syncShopifyStoreData(
     }
   }
 
+  let planRuns = 0;
+  const weekStart = getWeekStart();
+  for (const localOrderId of orderLocalIds) {
+    const { data: planLines } = await admin
+      .from("order_line")
+      .select("id")
+      .eq("tenant_id", tenantId)
+      .eq("order_id", localOrderId);
+
+    for (const line of planLines ?? []) {
+      try {
+        await admin.rpc("generate_job_financial_plan", {
+          p_order_line_id: line.id,
+          p_start_week: weekStart,
+        });
+        planRuns += 1;
+      } catch {
+        continue;
+      }
+    }
+  }
+
   const { error: activityError } = await admin.from("activity_log").insert({
     tenant_id: tenantId,
     actor_id: null,
@@ -319,6 +343,7 @@ export async function syncShopifyStoreData(
       orders: orderRows.length,
       order_lines: orderLineRows.length,
       allocation_runs: allocationRuns,
+      plan_runs: planRuns,
     },
   });
   assertNoError(activityError, "Failed to insert activity_log");
@@ -329,5 +354,6 @@ export async function syncShopifyStoreData(
     orders: orderRows.length,
     orderLines: orderLineRows.length,
     allocations: allocationRuns,
+    planRuns,
   };
 }
