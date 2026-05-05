@@ -41,6 +41,18 @@ export async function createDeliveryReceipt(formData: FormData) {
   if (!Array.isArray(lines) || lines.length === 0) {
     return { error: "At least one line is required" };
   }
+  for (const l of lines) {
+    if (!l.component_id || typeof l.component_id !== "string") {
+      return { error: "Invalid component on a line" };
+    }
+    if (!Number.isFinite(l.quantity_delivered) || l.quantity_delivered <= 0) {
+      return { error: "Quantity delivered must be a positive number" };
+    }
+    if (l.cost_per_unit !== null && l.cost_per_unit !== undefined &&
+        (!Number.isFinite(l.cost_per_unit) || l.cost_per_unit < 0)) {
+      return { error: "Cost per unit must be a non-negative number" };
+    }
+  }
 
   const purchaseOrderId =
     (formData.get("purchase_order_id") as string) || null;
@@ -313,6 +325,12 @@ export async function updateComponentCosts(
   const ctx = await getServerTenantContext();
   if (!ctx) return { error: "Not authenticated" };
   const { supabase, tenantId } = ctx;
+
+  for (const u of updates) {
+    if (!Number.isFinite(u.cost_per_unit) || u.cost_per_unit < 0) {
+      return { error: "Cost per unit must be a non-negative number" };
+    }
+  }
 
   let updated = 0;
   for (const u of updates) {
