@@ -91,6 +91,7 @@ export default function ReceiptForm({
     }
     setPdfParsing(true);
     setPdfError(null);
+    setParsedBadge(false);
     const fd = new FormData();
     fd.set("pdf", file);
     const result = await parseReceiptPdf(fd);
@@ -375,7 +376,7 @@ export default function ReceiptForm({
 
       <div className={styles.actions}>
         <a href="/app/goods-inwards" className={styles.secondary}>Cancel</a>
-        <button type="submit" className={styles.primary} disabled={isPending}>
+        <button type="submit" className={styles.primary} disabled={isPending || pdfParsing}>
           {isPending ? "Saving…" : "Save Receipt"}
         </button>
       </div>

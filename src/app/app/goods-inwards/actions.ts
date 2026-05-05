@@ -343,11 +343,20 @@ export type ParsedReceipt = {
 export async function parseReceiptPdf(
   formData: FormData
 ): Promise<ParsedReceipt | { error: string }> {
+  const ctx = await getServerTenantContext();
+  if (!ctx) return { error: "Not authenticated" };
+
   const file = formData.get("pdf") as File | null;
   if (!file) return { error: "No file provided" };
 
+  if (!file.type.includes("pdf")) return { error: "Only PDF files are supported" };
+
   const buffer = await file.arrayBuffer();
   const base64 = Buffer.from(buffer).toString("base64");
+
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return { error: "PDF parsing is not configured. Contact your administrator." };
+  }
 
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -355,7 +364,7 @@ export async function parseReceiptPdf(
   try {
     const response = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
-      max_tokens: 1024,
+      max_tokens: 2048,
       system:
         "You are extracting structured data from a delivery docket or packing slip. " +
         "Return ONLY valid JSON with no explanation, no markdown, no code fences.",
