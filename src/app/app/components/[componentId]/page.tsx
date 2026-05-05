@@ -16,7 +16,6 @@ type ComponentRecord = {
   unit: string | null;
   cost_per_unit: number;
   reorder_point: number;
-  low_stock_level: number;
   created_at: string | null;
   supplier: { name: string } | Array<{ name: string }> | null;
   location: { name: string } | Array<{ name: string }> | null;
@@ -91,7 +90,7 @@ export default async function ComponentDetailPage({ params }: Props) {
 
   const { data: component } = await supabase
     .from("component")
-    .select("id,name,sku,unit,cost_per_unit,reorder_point,low_stock_level,created_at,supplier:supplier_id(name),location:location_id(name),group:group_id(name)")
+    .select("id,name,sku,unit,cost_per_unit,reorder_point,created_at,supplier:supplier_id(name),location:location_id(name),group:group_id(name)")
     .eq("id", componentId)
     .maybeSingle();
 
@@ -155,7 +154,7 @@ export default async function ComponentDetailPage({ params }: Props) {
       label: "Available",
       value: String(available),
       color: available <= 0 ? "red" as const : belowReorder ? "orange" as const : "green" as const,
-      highlight: status !== "ok",
+      highlight: status === "critical" ? "danger" : status === "low" ? "warning" : undefined,
       subText: totalReserved > 0 ? `${totalReserved} committed to production` : undefined,
     },
     {
@@ -256,10 +255,6 @@ export default async function ComponentDetailPage({ params }: Props) {
             <div>
               <dt>Reorder Point</dt>
               <dd>{c.reorder_point}</dd>
-            </div>
-            <div>
-              <dt>Low Stock Level</dt>
-              <dd>{c.low_stock_level}</dd>
             </div>
             <div>
               <dt>Unit Cost</dt>

@@ -108,22 +108,6 @@
   padding-top: 4px;
 }
 
-.btnPrimary {
-  flex: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 14px;
-  background: var(--brand-1);
-  color: #0b0f19;
-  font-weight: 700;
-  font-size: 13px;
-  cursor: pointer;
-  text-decoration: none;
-}
-
 .btnSecondary {
   flex: 1;
   display: inline-flex;
@@ -138,13 +122,6 @@
   font-size: 13px;
   cursor: pointer;
   text-decoration: none;
-}
-
-.actionHint {
-  margin: -4px 0 0;
-  color: var(--ink-muted);
-  font-size: 12px;
-  line-height: 1.5;
 }
 
 /* ── Tabs ─────────────────────────────── */
@@ -247,6 +224,11 @@
 .statCardHighlight {
   border-color: var(--danger);
   background: rgba(239, 68, 68, 0.06);
+}
+
+.statCardHighlightWarning {
+  border-color: var(--warning);
+  background: rgba(245, 158, 11, 0.06);
 }
 
 .statSub {

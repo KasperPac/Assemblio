@@ -7,7 +7,7 @@ type StatCard = {
   label: string;
   value: string;
   color?: "default" | "green" | "red" | "orange" | "blue";
-  highlight?: boolean;
+  highlight?: "warning" | "danger";
   subText?: string;
   subTextDanger?: boolean;
 };
@@ -71,7 +71,13 @@ export default function DetailTabs({ stats, movements, bomUsage, recentReceipts 
             {stats.map((s) => (
               <div
                 key={s.label}
-                className={`${styles.statCard} ${s.highlight ? styles.statCardHighlight : ""}`}
+                className={`${styles.statCard} ${
+                    s.highlight === "danger"
+                      ? styles.statCardHighlight
+                      : s.highlight === "warning"
+                      ? styles.statCardHighlightWarning
+                      : ""
+                  }`}
               >
                 <span className={styles.statLabel}>{s.label}</span>
                 <span
@@ -174,8 +180,8 @@ export default function DetailTabs({ stats, movements, bomUsage, recentReceipts 
                   <span>Qty per unit</span>
                   <span>Status</span>
                 </div>
-                {bomUsage.map((row, i) => (
-                  <div key={i} className={`${styles.miniRow} ${styles.bomTableCols}`}>
+                {bomUsage.map((row) => (
+                  <div key={row.bomId} className={`${styles.miniRow} ${styles.bomTableCols}`}>
                     <span>
                       <a href="/app/bom" className={styles.bomLink}>
                         {row.product}
