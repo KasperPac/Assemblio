@@ -175,6 +175,111 @@
   font-size: 0.9rem;
 }
 
+/* ── Toolbar with tabs + search ─── */
+
+.toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.tab,
+.tabActive {
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tab {
+  color: var(--ink-muted);
+  background: transparent;
+}
+
+.tab:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink-strong);
+}
+
+.tabActive {
+  background: var(--brand-dim);
+  color: var(--brand-1);
+}
+
+.tabCount {
+  color: var(--ink-faint);
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.tabBadge {
+  background: rgba(239, 68, 68, 0.18);
+  color: var(--danger);
+  border-radius: 10px;
+  padding: 1px 7px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.search {
+  flex: 1;
+}
+
+.search input {
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--stroke) 78%, transparent);
+  border-radius: 14px;
+  min-height: 44px;
+  padding: 0 14px;
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  color: var(--ink-strong);
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+/* ── Stock status indicators ─── */
+
+.nameCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dotOk { background: var(--ok); }
+.dotLow { background: var(--warning); }
+.dotCritical { background: var(--danger); }
+
+.rowLow {
+  background: rgba(245, 158, 11, 0.06);
+}
+
+.rowCritical {
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.availableLow {
+  color: var(--danger);
+  font-weight: 600;
+}
+
 @media (max-width: 900px) {
   .fieldRow,
   .dialogActions {
