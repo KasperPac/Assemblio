@@ -111,7 +111,7 @@ export default function ReceiptDetail({
     if (!localStorage.getItem(dismissKey)) {
       setShowCostModal(true);
     }
-  }, []);
+  }, [dismissKey, linesWithCost.length]);
 
   function dismissCostModal() {
     localStorage.setItem(dismissKey, "1");
