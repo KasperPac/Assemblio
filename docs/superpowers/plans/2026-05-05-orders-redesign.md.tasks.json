@@ -4,35 +4,35 @@
     {
       "id": 0,
       "subject": "Task 0: Extract getWeekStart to shared module",
-      "status": "pending",
+      "status": "completed",
       "description": "**Goal:** Consolidate the three copies of the \"get Monday of current week\" helper into one importable function.\n\n**Files:**\n- Create: `src/lib/dates.ts`\n- Create: `src/lib/dates.test.ts`\n- Modify: `src/app/app/orders/actions.ts` (remove local `getWeekStart`, add import)\n- Modify: `src/app/app/orders/[orderId]/page.tsx` (remove `getDefaultWeekStart`, add import)\n\n**Acceptance Criteria:**\n- [ ] `src/lib/dates.ts` exports `getWeekStart(): string`\n- [ ] All three tests pass\n- [ ] `actions.ts` and `page.tsx` import from `@/lib/dates` — no local copy remains\n\n**Verify:** `npm test -- src/lib/dates.test.ts` → 3 tests pass\n\n```json:metadata\n{\"files\": [\"src/lib/dates.ts\", \"src/lib/dates.test.ts\", \"src/app/app/orders/actions.ts\", \"src/app/app/orders/[orderId]/page.tsx\"], \"verifyCommand\": \"npm test -- src/lib/dates.test.ts\", \"acceptanceCriteria\": [\"src/lib/dates.ts exports getWeekStart(): string\", \"All three tests pass\", \"actions.ts and page.tsx import from @/lib/dates — no local copy remains\"]}\n```"
     },
     {
       "id": 1,
       "subject": "Task 1: Add financial planning loop to Shopify sync",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [0],
       "description": "**Goal:** After each Shopify sync, automatically call `generate_job_financial_plan` for every order line that has an active BOM, so the detail page can show planned margin without manual action.\n\n**Files:**\n- Modify: `src/lib/shopify/sync.ts` (add planning loop; add `planRuns` to `SyncResult`)\n\n**Acceptance Criteria:**\n- [ ] `SyncResult` type includes `planRuns: number`\n- [ ] After each sync, `job_cost_snapshot` rows are created for lines with active BOMs\n- [ ] Errors in financial planning do not throw — each line continues silently\n- [ ] `getWeekStart` imported from `@/lib/dates`\n\n**Verify:** `npm run build` → no type errors\n\n```json:metadata\n{\"files\": [\"src/lib/shopify/sync.ts\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"SyncResult type includes planRuns: number\", \"After each sync, job_cost_snapshot rows are created for lines with active BOMs\", \"Errors in financial planning do not throw\", \"getWeekStart imported from @/lib/dates\"]}\n```"
     },
     {
       "id": 2,
       "subject": "Task 2: Build getOrderLineStatus helper",
-      "status": "pending",
+      "status": "completed",
       "description": "**Goal:** Create a tested shared helper that fetches BOM + component + stock data per order line in batched queries, returning an `OrderLineStatus` map the detail page can use directly.\n\n**Files:**\n- Create: `src/lib/orders/order-line-status.ts`\n- Create: `src/lib/orders/order-line-status.test.ts`\n\n**Acceptance Criteria:**\n- [ ] `deriveAllocationState` returns `no-bom` when bom is null\n- [ ] `deriveAllocationState` returns `empty-bom` when bom exists but componentCount is 0\n- [ ] `deriveAllocationState` returns `allocated` when bom exists and componentCount > 0\n- [ ] `getOrderLineStatus` returns a Map keyed by lineId\n- [ ] All 4 tests pass\n\n**Verify:** `npm test -- src/lib/orders/order-line-status.test.ts` → 4 tests pass\n\n```json:metadata\n{\"files\": [\"src/lib/orders/order-line-status.ts\", \"src/lib/orders/order-line-status.test.ts\"], \"verifyCommand\": \"npm test -- src/lib/orders/order-line-status.test.ts\", \"acceptanceCriteria\": [\"deriveAllocationState returns no-bom when bom is null\", \"deriveAllocationState returns empty-bom when bom exists but componentCount is 0\", \"deriveAllocationState returns allocated when bom exists and componentCount > 0\", \"getOrderLineStatus returns a Map keyed by lineId\", \"All 4 tests pass\"]}\n```"
     },
     {
       "id": 3,
       "subject": "Task 3: Rewrite orders list page",
-      "status": "pending",
+      "status": "completed",
       "description": "**Goal:** Replace the current allocation metric column and per-row action buttons with a badge-based allocation status, making the list a triage surface rather than an action surface.\n\n**Files:**\n- Modify: `src/app/app/orders/page.tsx`\n- Modify: `src/app/app/orders/orders.module.css`\n\n**Acceptance Criteria:**\n- [ ] \"Run allocation\" button removed from each row\n- [ ] \"Generate plans\" header button removed\n- [ ] Allocation column shows status badge (✓ Allocated / ⚠ N lines need BOM / ⚠ No BOMs set up / —)\n- [ ] \"View →\" link in last column navigating to `/app/orders/[id]`\n- [ ] `npm run build` passes with no type errors\n\n**Verify:** `npm run build` → no errors; manually verify list renders badges\n\n```json:metadata\n{\"files\": [\"src/app/app/orders/page.tsx\", \"src/app/app/orders/orders.module.css\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"Run allocation button removed from each row\", \"Generate plans header button removed\", \"Allocation column shows status badge\", \"View link in last column\", \"npm run build passes\"]}\n```"
     },
     {
       "id": 4,
       "subject": "Task 4: Redesign order detail page",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [2],
       "description": "**Goal:** Replace the current sidebar-heavy layout with a BOM-per-line design: summary stat cards at top, one card per order line showing BOM version + component table + collapsed labor, planning sidebar removed entirely.\n\n**Files:**\n- Modify: `src/app/app/orders/[orderId]/page.tsx`\n- Modify: `src/app/app/orders/[orderId]/page.module.css`\n\n**Acceptance Criteria:**\n- [ ] Planning controls sidebar removed\n- [ ] 4 summary stat cards rendered (order value, planned margin, lines allocated, labor scheduled)\n- [ ] Each line card shows: product title, status badge, SKU/qty/price/BOM link\n- [ ] Component table visible (BOM name + reserved qty + available badge) when BOM exists\n- [ ] Amber warning card shown for no-bom / empty-bom lines\n- [ ] Labor section collapsed by default using `<details>/<summary>`\n- [ ] \"Re-run allocation\" button in header triggers `allocateOrder` action\n- [ ] `npm run build` passes\n\n**Verify:** `npm run build` → no errors; manually verify detail page renders correctly\n\n```json:metadata\n{\"files\": [\"src/app/app/orders/[orderId]/page.tsx\", \"src/app/app/orders/[orderId]/page.module.css\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"Planning controls sidebar removed\", \"4 summary stat cards rendered\", \"Each line card shows product title, status badge, SKU/qty/price/BOM link\", \"Component table visible when BOM exists\", \"Amber warning card shown for no-bom / empty-bom lines\", \"Labor section collapsed by default\", \"Re-run allocation button triggers allocateOrder action\", \"npm run build passes\"]}\n```"
     }
   ],
-  "lastUpdated": "2026-05-05T00:00:00.000Z"
+  "lastUpdated": "2026-05-05T14:00:00.000Z"
 }
