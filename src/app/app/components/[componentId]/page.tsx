@@ -143,6 +143,7 @@ export default async function ComponentDetailPage({ params }: Props) {
     ?? (typedBalances.length > 0 ? (unwrap(typedBalances[0].location)?.name ?? "N/A") : "N/A");
 
   const status = getStockStatus(available, c.reorder_point);
+  const totalValue = totalOnHand * c.cost_per_unit;
 
   const stats = [
     {
@@ -263,9 +264,19 @@ export default async function ComponentDetailPage({ params }: Props) {
             <div>
               <dt>Unit Cost</dt>
               <dd>
-                {c.cost_per_unit.toLocaleString("en-US", {
+                {c.cost_per_unit.toLocaleString("en-AU", {
                   style: "currency",
-                  currency: "USD",
+                  currency: "AUD",
+                })}
+              </dd>
+            </div>
+            <div>
+              <dt>Stock Value</dt>
+              <dd>
+                {totalValue.toLocaleString("en-AU", {
+                  style: "currency",
+                  currency: "AUD",
+                  maximumFractionDigits: 0,
                 })}
               </dd>
             </div>
@@ -280,17 +291,10 @@ export default async function ComponentDetailPage({ params }: Props) {
           </div>
 
           <div className={styles.cardActions}>
-            <Link href="/app/inventory" className={styles.btnPrimary}>
-              Open Inventory
-            </Link>
-            <Link href="/app/purchasing" className={styles.btnSecondary}>
-              Review Purchasing
+            <Link href="/app/goods-inwards/new" className={styles.btnSecondary}>
+              Receive stock
             </Link>
           </div>
-          <p className={styles.actionHint}>
-            Component edits and stock changes are currently handled through the
-            inventory and purchasing workflows.
-          </p>
         </aside>
 
         {/* ── Right: Tabbed content ─────── */}
