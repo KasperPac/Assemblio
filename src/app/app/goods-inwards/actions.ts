@@ -91,6 +91,7 @@ export async function createDeliveryReceipt(formData: FormData) {
         purchase_order_line_id: l.purchase_order_line_id,
         quantity_delivered: l.quantity_delivered,
         quantity_expected: l.quantity_expected,
+        cost_per_unit: l.cost_per_unit ?? null,
         notes: l.notes,
       }))
     );
