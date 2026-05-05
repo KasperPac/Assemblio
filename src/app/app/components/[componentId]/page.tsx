@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import DetailTabs from "./detail-tabs";
 import styles from "./component-detail.module.css";
+import { getStockStatus } from "../helpers";
 
 type Props = {
   params: Promise<{ componentId: string }>;
@@ -36,6 +37,21 @@ type MovementRecord = {
   reason: string | null;
   reference_type: string | null;
   created_at: string;
+};
+
+type ReceiptLineRaw = {
+  quantity_delivered: number;
+  delivery_receipt: {
+    received_at: string;
+    supplier_reference: string;
+    supplier_name_override: string | null;
+    supplier: { name: string } | Array<{ name: string }> | null;
+  } | Array<{
+    received_at: string;
+    supplier_reference: string;
+    supplier_name_override: string | null;
+    supplier: { name: string } | Array<{ name: string }> | null;
+  }> | null;
 };
 
 type BomUsageRecord = {
@@ -86,6 +102,7 @@ export default async function ComponentDetailPage({ params }: Props) {
     { data: balances },
     { data: movements },
     { data: bomUsage },
+    { data: recentReceiptLines },
   ] = await Promise.all([
     supabase
       .from("inventory_balance")
@@ -101,6 +118,12 @@ export default async function ComponentDetailPage({ params }: Props) {
       .from("product_bom_component")
       .select("quantity,product_bom:product_bom_id(version,is_active,variant:variant_id(title,product:product_id(title)))")
       .eq("component_id", componentId),
+    supabase
+      .from("delivery_receipt_line")
+      .select("quantity_delivered,delivery_receipt:delivery_receipt_id(received_at,supplier_reference,supplier_name_override,supplier:supplier_id(name))")
+      .eq("component_id", componentId)
+      .order("id", { ascending: false })
+      .limit(5),
   ]);
 
   const typedBalances = (balances ?? []) as BalanceRecord[];
@@ -110,43 +133,65 @@ export default async function ComponentDetailPage({ params }: Props) {
   const totalOnHand = typedBalances.reduce((s, b) => s + (b.on_hand ?? 0), 0);
   const totalInProd = typedBalances.reduce((s, b) => s + (b.in_prod ?? 0), 0);
   const totalReserved = typedBalances.reduce((s, b) => s + (b.reserved ?? 0), 0);
-  const totalValue = totalOnHand * c.cost_per_unit;
   const available = totalOnHand - totalReserved;
   const belowReorder = c.reorder_point > 0 && available < c.reorder_point;
-  const belowLowStock = c.low_stock_level > 0 && available <= c.low_stock_level;
   const supplierName = unwrap(c.supplier)?.name ?? null;
   const groupName = unwrap(c.group)?.name ?? null;
   const componentLocation = unwrap(c.location)?.name ?? null;
   const locationName = componentLocation
     ?? (typedBalances.length > 0 ? (unwrap(typedBalances[0].location)?.name ?? "N/A") : "N/A");
 
+  const status = getStockStatus(available, c.reorder_point);
+
   const stats = [
-    { label: "On Hand", value: String(totalOnHand), color: "default" as const },
-    { label: "Allocated", value: String(totalReserved), color: "blue" as const },
+    {
+      label: "On Hand",
+      value: String(totalOnHand),
+      color: "default" as const,
+    },
     {
       label: "Available",
       value: String(available),
-      color: belowLowStock ? "red" as const : "green" as const,
+      color: available <= 0 ? "red" as const : belowReorder ? "orange" as const : "green" as const,
+      highlight: status !== "ok",
+      subText: totalReserved > 0 ? `${totalReserved} committed to production` : undefined,
     },
-    { label: "In Production", value: String(totalInProd), color: "default" as const },
     {
-      label: "Low Stock Level",
-      value: String(c.low_stock_level),
-      color: belowLowStock ? "red" as const : "default" as const,
-      alarm: belowLowStock,
+      label: "In Production",
+      value: String(totalInProd),
+      color: "default" as const,
+      subText: "Committed to open orders",
     },
     {
       label: "Reorder Point",
       value: String(c.reorder_point),
-      color: belowReorder ? "red" as const : "default" as const,
+      color: "default" as const,
+      subText: belowReorder ? `Below threshold by ${c.reorder_point - available}` : undefined,
+      subTextDanger: belowReorder,
     },
-    {
-      label: "Value On Hand",
-      value: totalValue.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }),
-      color: "orange" as const,
-    },
-    { label: "Ideal Stock", value: String(c.reorder_point * 2 || 0), color: "default" as const },
   ];
+
+  const recentReceipts = ((recentReceiptLines ?? []) as ReceiptLineRaw[]).map((line) => {
+    const dr = Array.isArray(line.delivery_receipt)
+      ? line.delivery_receipt[0]
+      : line.delivery_receipt;
+    const supplierRaw = dr?.supplier;
+    const supplierName = supplierRaw
+      ? Array.isArray(supplierRaw) ? supplierRaw[0]?.name : supplierRaw.name
+      : null;
+    return {
+      date: dr?.received_at
+        ? new Date(dr.received_at).toLocaleDateString("en-AU", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          })
+        : "--",
+      supplierName: supplierName ?? dr?.supplier_name_override ?? "--",
+      reference: dr?.supplier_reference ?? "--",
+      qty: line.quantity_delivered,
+    };
+  });
 
   const movementRows = typedMovements.map((m) => ({
     id: m.id,
@@ -184,8 +229,12 @@ export default async function ComponentDetailPage({ params }: Props) {
           <h1 className={styles.componentName}>{c.name}</h1>
           {c.sku && <span className={styles.skuBadge}>{c.sku}</span>}
 
-          {belowLowStock && (
-            <div className={styles.alarmBanner}>Low stock alarm — available stock is at or below {c.low_stock_level}</div>
+          {status !== "ok" && (
+            <div className={styles.alarmBanner}>
+              {status === "critical"
+                ? `Critical — no available stock${totalReserved > 0 ? ` (${totalReserved} committed to production)` : ""}`
+                : `Low stock — ${available} available, reorder point is ${c.reorder_point}`}
+            </div>
           )}
 
           <div className={styles.metaGrid}>
@@ -243,7 +292,7 @@ export default async function ComponentDetailPage({ params }: Props) {
         </aside>
 
         {/* ── Right: Tabbed content ─────── */}
-        <DetailTabs stats={stats} movements={movementRows} bomUsage={bomRows} />
+        <DetailTabs stats={stats} movements={movementRows} bomUsage={bomRows} recentReceipts={recentReceipts} />
       </div>
     </div>
   );

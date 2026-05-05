@@ -241,6 +241,50 @@
   background: rgba(239, 68, 68, 0.06);
 }
 
+/* ── Overview layout ──────────────── */
+
+.overviewContent {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.statCardHighlight {
+  border-color: var(--danger);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.statSub {
+  font-size: 11px;
+  color: var(--ink-faint);
+  text-align: center;
+  line-height: 1.4;
+}
+
+.statSubDanger {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+/* ── Recent receipts ──────────────── */
+
+.recentReceipts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recentTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-strong);
+}
+
+.receiptCols {
+  grid-template-columns: 1.1fr 1.4fr 1fr 0.8fr;
+  min-width: 400px;
+}
+
 .alarmTag {
   font-size: 10px;
   font-weight: 700;

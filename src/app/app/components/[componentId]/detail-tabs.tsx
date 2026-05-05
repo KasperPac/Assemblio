@@ -7,7 +7,9 @@ type StatCard = {
   label: string;
   value: string;
   color?: "default" | "green" | "red" | "orange" | "blue";
-  alarm?: boolean;
+  highlight?: boolean;
+  subText?: string;
+  subTextDanger?: boolean;
 };
 
 type MovementRow = {
@@ -27,16 +29,24 @@ type BomRow = {
   active: boolean;
 };
 
+type ReceiptRow = {
+  date: string;
+  supplierName: string;
+  reference: string;
+  qty: number;
+};
+
 type Props = {
   stats: StatCard[];
   movements: MovementRow[];
   bomUsage: BomRow[];
+  recentReceipts: ReceiptRow[];
 };
 
 const tabs = ["Overview", "Movements", "BOM Usage"] as const;
 type Tab = (typeof tabs)[number];
 
-export default function DetailTabs({ stats, movements, bomUsage }: Props) {
+export default function DetailTabs({ stats, movements, bomUsage, recentReceipts }: Props) {
   const [active, setActive] = useState<Tab>("Overview");
 
   return (
@@ -55,28 +65,61 @@ export default function DetailTabs({ stats, movements, bomUsage }: Props) {
       </div>
 
       {active === "Overview" && (
-        <div className={styles.statsGrid}>
-          {stats.map((s) => (
-            <div key={s.label} className={`${styles.statCard} ${s.alarm ? styles.statCardAlarm : ""}`}>
-              <span className={styles.statLabel}>{s.label}</span>
-              <span
-                className={`${styles.statValue} ${
-                  s.color === "green"
-                    ? styles.statGreen
-                    : s.color === "red"
+        <div className={styles.overviewContent}>
+          <div className={styles.statsGrid}>
+            {stats.map((s) => (
+              <div
+                key={s.label}
+                className={`${styles.statCard} ${s.highlight ? styles.statCardHighlight : ""}`}
+              >
+                <span className={styles.statLabel}>{s.label}</span>
+                <span
+                  className={`${styles.statValue} ${
+                    s.color === "green"
+                      ? styles.statGreen
+                      : s.color === "red"
                       ? styles.statRed
                       : s.color === "orange"
-                        ? styles.statOrange
-                        : s.color === "blue"
-                          ? styles.statBlue
-                          : ""
-                }`}
-              >
-                {s.value}
-              </span>
-              {s.alarm && <span className={styles.alarmTag}>LOW STOCK</span>}
+                      ? styles.statOrange
+                      : s.color === "blue"
+                      ? styles.statBlue
+                      : ""
+                  }`}
+                >
+                  {s.value}
+                </span>
+                {s.subText && (
+                  <span
+                    className={`${styles.statSub} ${s.subTextDanger ? styles.statSubDanger : ""}`}
+                  >
+                    {s.subText}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {recentReceipts.length > 0 && (
+            <div className={styles.recentReceipts}>
+              <div className={styles.recentTitle}>Recent receipts</div>
+              <div className={styles.miniTable}>
+                <div className={`${styles.miniHeader} ${styles.receiptCols}`}>
+                  <span>Date</span>
+                  <span>Supplier</span>
+                  <span>Docket</span>
+                  <span>Qty received</span>
+                </div>
+                {recentReceipts.map((r, i) => (
+                  <div key={i} className={`${styles.miniRow} ${styles.receiptCols}`}>
+                    <span>{r.date}</span>
+                    <span>{r.supplierName}</span>
+                    <span className={styles.refCell}>{r.reference}</span>
+                    <span className={styles.positive}>+{r.qty}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+          )}
         </div>
       )}
 
