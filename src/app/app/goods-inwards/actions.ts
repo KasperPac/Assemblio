@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { computeReceiptStatus } from "./helpers";
+import Anthropic from "@anthropic-ai/sdk";
 
 // ─── Pure helpers (re-exported from helpers.ts for testing) ──────────────────
 
@@ -326,4 +327,77 @@ export async function updateComponentCosts(
   revalidatePath("/app/components");
   revalidatePath("/app/inventory");
   return { updated };
+}
+
+export type ParsedReceiptLine = {
+  extracted_name: string;
+  quantity: number;
+};
+
+export type ParsedReceipt = {
+  supplier_reference?: string;
+  received_at?: string;
+  lines: ParsedReceiptLine[];
+};
+
+export async function parseReceiptPdf(
+  formData: FormData
+): Promise<ParsedReceipt | { error: string }> {
+  const file = formData.get("pdf") as File | null;
+  if (!file) return { error: "No file provided" };
+
+  const buffer = await file.arrayBuffer();
+  const base64 = Buffer.from(buffer).toString("base64");
+
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+  let text: string;
+  try {
+    const response = await client.messages.create({
+      model: "claude-haiku-4-5-20251001",
+      max_tokens: 1024,
+      system:
+        "You are extracting structured data from a delivery docket or packing slip. " +
+        "Return ONLY valid JSON with no explanation, no markdown, no code fences.",
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "document" as const,
+              source: {
+                type: "base64",
+                media_type: "application/pdf",
+                data: base64,
+              },
+            },
+            {
+              type: "text",
+              text: 'Extract delivery details. Return JSON exactly matching this schema:\n{"supplier_reference":string|null,"received_at":string|null,"lines":[{"extracted_name":string,"quantity":number}]}\nreceived_at must be YYYY-MM-DD format or null. lines must have at least one entry if any products are listed.',
+            },
+          ] as Parameters<typeof client.messages.create>[0]["messages"][0]["content"],
+        },
+      ],
+    });
+
+    text =
+      response.content[0].type === "text" ? response.content[0].text : "";
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "API error";
+    return { error: `Parsing failed: ${msg}` };
+  }
+
+  try {
+    const parsed = JSON.parse(text) as ParsedReceipt;
+    if (!Array.isArray(parsed.lines)) return { error: "Unexpected response format" };
+    return {
+      supplier_reference: parsed.supplier_reference ?? undefined,
+      received_at: parsed.received_at ?? undefined,
+      lines: parsed.lines.filter(
+        (l) => typeof l.extracted_name === "string" && typeof l.quantity === "number"
+      ),
+    };
+  } catch {
+    return { error: "Could not parse response from AI" };
+  }
 }

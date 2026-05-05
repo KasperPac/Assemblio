@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import { createDeliveryReceipt } from "./actions";
+import { createDeliveryReceipt, parseReceiptPdf } from "./actions";
+import type { ParsedReceiptLine } from "./actions";
 import styles from "./goods-inwards.module.css";
 
 type Supplier = { id: string; name: string };
@@ -14,6 +15,7 @@ type LineState = {
   quantity_delivered: string;
   cost_per_unit: string;
   notes: string;
+  extractedName?: string;
 };
 
 const REASONS = [
@@ -58,6 +60,13 @@ export default function ReceiptForm({
   const [isPending, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
 
+  const [pdfParsing, setPdfParsing] = useState(false);
+  const [pdfError, setPdfError] = useState<string | null>(null);
+  const [parsedBadge, setParsedBadge] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const supplierRefInputRef = useRef<HTMLInputElement>(null);
+  const receivedAtInputRef = useRef<HTMLInputElement>(null);
+
   function handleSupplierChange(value: string) {
     setSupplierId(value === "__other__" ? "" : value);
     setShowSupplierOverride(value === "__other__");
@@ -71,6 +80,47 @@ export default function ReceiptForm({
 
   function removeLine(key: string) {
     setLines((prev) => (prev.length > 1 ? prev.filter((l) => l.key !== key) : prev));
+  }
+
+  async function handlePdfParse() {
+    const file = fileInputRef.current?.files?.[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) {
+      setPdfError("File must be under 10 MB");
+      return;
+    }
+    setPdfParsing(true);
+    setPdfError(null);
+    const fd = new FormData();
+    fd.set("pdf", file);
+    const result = await parseReceiptPdf(fd);
+    setPdfParsing(false);
+
+    if ("error" in result) {
+      setPdfError(result.error);
+      return;
+    }
+
+    if (supplierRefInputRef.current && result.supplier_reference) {
+      supplierRefInputRef.current.value = result.supplier_reference;
+    }
+    if (receivedAtInputRef.current && result.received_at) {
+      receivedAtInputRef.current.value = result.received_at;
+    }
+
+    if (result.lines.length > 0) {
+      setLines(
+        result.lines.map((l: ParsedReceiptLine) => ({
+          key: crypto.randomUUID(),
+          component_id: "",
+          quantity_delivered: String(l.quantity),
+          cost_per_unit: "",
+          notes: "",
+          extractedName: l.extracted_name,
+        }))
+      );
+    }
+    setParsedBadge(true);
   }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -110,6 +160,40 @@ export default function ReceiptForm({
     <form ref={formRef} onSubmit={handleSubmit} className={styles.page}>
       {error && <div className={styles.errorNotice}>{error}</div>}
 
+      {/* PDF parse section */}
+      <div className={styles.formCard}>
+        <h2 style={{ margin: 0, fontSize: "1rem", fontWeight: 700 }}>
+          Parse delivery docket (optional)
+        </h2>
+        <p style={{ margin: 0, color: "var(--ink-muted)", fontSize: "0.85rem" }}>
+          Upload a PDF packing slip to pre-fill this form.
+        </p>
+        <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".pdf"
+            style={{ flex: 1 }}
+          />
+          <button
+            type="button"
+            className={styles.secondary}
+            onClick={handlePdfParse}
+            disabled={pdfParsing}
+          >
+            {pdfParsing ? "Parsing…" : "Parse PDF"}
+          </button>
+        </div>
+        {pdfError && (
+          <div className={styles.errorNotice}>{pdfError}</div>
+        )}
+        {parsedBadge && !pdfError && (
+          <p style={{ margin: 0, color: "var(--ok)", fontSize: "0.85rem" }}>
+            ✓ Pre-filled from PDF — review and adjust below.
+          </p>
+        )}
+      </div>
+
       <div className={styles.formCard}>
         <h2 style={{ margin: 0, fontSize: "1rem", fontWeight: 700 }}>
           Delivery details
@@ -148,6 +232,7 @@ export default function ReceiptForm({
           <div className={styles.field}>
             <label htmlFor="supplier_reference">Docket / reference number</label>
             <input
+              ref={supplierRefInputRef}
               id="supplier_reference"
               name="supplier_reference"
               type="text"
@@ -159,6 +244,7 @@ export default function ReceiptForm({
           <div className={styles.field}>
             <label htmlFor="received_at">Date received</label>
             <input
+              ref={receivedAtInputRef}
               id="received_at"
               name="received_at"
               type="date"
@@ -217,6 +303,11 @@ export default function ReceiptForm({
             {lines.map((line) => (
               <tr key={line.key}>
                 <td>
+                  {line.extractedName && (
+                    <div style={{ fontSize: "0.75rem", color: "var(--ink-muted)", marginBottom: 4 }}>
+                      From PDF: {line.extractedName}
+                    </div>
+                  )}
                   <select
                     value={line.component_id}
                     onChange={(e) => updateLine(line.key, { component_id: e.target.value })}

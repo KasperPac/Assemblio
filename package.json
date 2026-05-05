@@ -13,6 +13,7 @@
     "ops:integrity": "node scripts/integrity_audit.mjs --tenant Pac-Technologies"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.93.0",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.1",
     "next": "16.1.6",
