@@ -7,34 +7,11 @@ export default async function NewReceiptPage() {
   if (!ctx) redirect("/auth/login");
   const { supabase, tenantId } = ctx;
 
-  const [suppliersResult, componentsResult, locationsResult, openPOsResult] =
-    await Promise.all([
-      supabase
-        .from("suppliers")
-        .select("id, name")
-        .eq("tenant_id", tenantId)
-        .order("name"),
-      supabase
-        .from("component")
-        .select("id, name, sku")
-        .eq("tenant_id", tenantId)
-        .order("name"),
-      supabase
-        .from("location")
-        .select("id, name, is_default")
-        .eq("tenant_id", tenantId)
-        .order("name"),
-      supabase
-        .from("purchase_order")
-        .select(
-          `id, supplier_id,
-           purchase_order_line(id, component_id, quantity, quantity_received,
-             component:component_id(name, sku))`
-        )
-        .eq("tenant_id", tenantId)
-        .eq("status", "open")
-        .order("created_at", { ascending: false }),
-    ]);
+  const [suppliersResult, componentsResult, locationsResult] = await Promise.all([
+    supabase.from("suppliers").select("id, name").eq("tenant_id", tenantId).order("name"),
+    supabase.from("component").select("id, name, sku").eq("tenant_id", tenantId).order("name"),
+    supabase.from("location").select("id, name, is_default").eq("tenant_id", tenantId).order("name"),
+  ]);
 
   if (suppliersResult.error || componentsResult.error || locationsResult.error) {
     throw new Error("Failed to load form data");
@@ -50,7 +27,6 @@ export default async function NewReceiptPage() {
       suppliers={suppliersResult.data ?? []}
       components={componentsResult.data ?? []}
       locations={locations}
-      openPOs={openPOsResult.data ?? []}
     />
   );
 }

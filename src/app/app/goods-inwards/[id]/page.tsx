@@ -44,22 +44,9 @@ export default async function ReceiptDetailPage({ params }: Props) {
 
   if (!receipt) notFound();
 
-  const openPOs =
-    receipt.status === "unmatched"
-      ? (
-          await supabase
-            .from("purchase_order")
-            .select("id, supplier_id, supplier:supplier_id(name)")
-            .eq("tenant_id", tenantId)
-            .eq("status", "open")
-            .order("created_at", { ascending: false })
-        ).data ?? []
-      : [];
-
   return (
     <ReceiptDetail
       receipt={receipt}
-      openPOs={openPOs}
       suppliers={suppliers ?? []}
       locations={locations ?? []}
     />

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import { linkReceiptToPo, updateDeliveryReceipt } from "./actions";
+import { updateDeliveryReceipt } from "./actions";
 import { computeVariance } from "./helpers";
 import type { ReceiptStatus } from "./helpers";
 import styles from "./goods-inwards.module.css";
@@ -32,12 +32,6 @@ type Receipt = {
   supplier: { name: string } | Array<{ name: string }> | null;
   location: { id: string; name: string } | Array<{ id: string; name: string }> | null;
   delivery_receipt_line: ReceiptLine[];
-};
-
-type OpenPO = {
-  id: string;
-  supplier_id: string;
-  supplier: { name: string } | Array<{ name: string }> | null;
 };
 
 type SupplierOption = { id: string; name: string };
@@ -81,18 +75,13 @@ function resolveComponentName(line: ReceiptLine): string {
 
 export default function ReceiptDetail({
   receipt,
-  openPOs,
   suppliers,
   locations,
 }: {
   receipt: Receipt;
-  openPOs: OpenPO[];
   suppliers: SupplierOption[];
   locations: LocationOption[];
 }) {
-  const [showLinkModal, setShowLinkModal] = useState(false);
-  const [selectedPoId, setSelectedPoId] = useState("");
-  const [linkError, setLinkError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
   const [showSupplierOverride, setShowSupplierOverride] = useState(
@@ -115,19 +104,6 @@ export default function ReceiptDetail({
     startTransition(async () => {
       const result = await updateDeliveryReceipt(fd);
       if (result?.error) setEditError(result.error);
-    });
-  }
-
-  function handleLink(e: React.FormEvent) {
-    e.preventDefault();
-    if (!selectedPoId) return;
-    setLinkError(null);
-    const fd = new FormData();
-    fd.set("receipt_id", receipt.id);
-    fd.set("purchase_order_id", selectedPoId);
-    startTransition(async () => {
-      const result = await linkReceiptToPo(fd);
-      if (result?.error) setLinkError(result.error);
     });
   }
 
@@ -315,69 +291,6 @@ export default function ReceiptDetail({
             )}
           </div>
 
-          {receipt.status === "unmatched" && (
-            <div>
-              <button
-                type="button"
-                className={styles.secondary}
-                onClick={() => setShowLinkModal((v) => !v)}
-              >
-                {showLinkModal ? "Cancel" : "Link to PO"}
-              </button>
-
-              {showLinkModal && (
-                <form
-                  onSubmit={handleLink}
-                  style={{
-                    marginTop: 12,
-                    display: "flex",
-                    gap: 10,
-                    alignItems: "center",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  {linkError && (
-                    <span
-                      style={{
-                        color: "var(--danger)",
-                        fontSize: "0.85rem",
-                        width: "100%",
-                      }}
-                    >
-                      {linkError}
-                    </span>
-                  )}
-                  <select
-                    value={selectedPoId}
-                    onChange={(e) => setSelectedPoId(e.target.value)}
-                    required
-                  >
-                    <option value="">Select open PO&hellip;</option>
-                    {openPOs.map((po) => {
-                      const sup = po.supplier
-                        ? Array.isArray(po.supplier)
-                          ? po.supplier[0]
-                          : po.supplier
-                        : null;
-                      return (
-                        <option key={po.id} value={po.id}>
-                          PO {po.id.slice(0, 8).toUpperCase()}
-                          {sup ? ` — ${sup.name}` : ""}
-                        </option>
-                      );
-                    })}
-                  </select>
-                  <button
-                    type="submit"
-                    className={styles.primary}
-                    disabled={isPending || !selectedPoId}
-                  >
-                    {isPending ? "Linking…" : "Confirm"}
-                  </button>
-                </form>
-              )}
-            </div>
-          )}
         </div>
       )}
 
