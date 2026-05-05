@@ -330,6 +330,50 @@
   min-width: 480px;
 }
 
+/* ── BOM Usage table ──────────────── */
+
+.bomTableCols {
+  grid-template-columns: 2fr 0.8fr 0.7fr;
+  min-width: 360px;
+}
+
+.bomIntro {
+  font-size: 13px;
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+
+.bomIntro strong {
+  color: var(--ink-strong);
+}
+
+.bomLink {
+  color: var(--brand-1);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.bomLink:hover {
+  text-decoration: underline;
+}
+
+.bomVersion {
+  margin-left: 4px;
+  font-size: 11px;
+  color: var(--ink-faint);
+}
+
+.bomQty {
+  display: inline-block;
+  background: var(--brand-dim);
+  color: var(--brand-1);
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .miniRow span {
   overflow: hidden;
   text-overflow: ellipsis;

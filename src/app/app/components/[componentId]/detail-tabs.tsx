@@ -160,28 +160,41 @@ export default function DetailTabs({ stats, movements, bomUsage, recentReceipts 
           {bomUsage.length === 0 ? (
             <p className={styles.empty}>Not used in any BOMs.</p>
           ) : (
-            <div className={styles.miniTable}>
-              <div className={`${styles.miniHeader} ${styles.bomCols}`}>
-                <span>Product</span>
-                <span>Variant</span>
-                <span>Version</span>
-                <span>Qty</span>
-                <span>Status</span>
-              </div>
-              {bomUsage.map((row, i) => (
-                <div key={i} className={`${styles.miniRow} ${styles.bomCols}`}>
-                  <span>{row.product}</span>
-                  <span>{row.variant}</span>
-                  <span>v{row.version}</span>
-                  <span>{row.quantity}</span>
-                  <span>
-                    <span className={row.active ? styles.badge : styles.badgeMuted}>
-                      {row.active ? "Active" : "Draft"}
-                    </span>
-                  </span>
+            <>
+              <p className={styles.bomIntro}>
+                This component is specified in{" "}
+                <strong>
+                  {bomUsage.length} bill{bomUsage.length !== 1 ? "s" : ""} of material
+                </strong>
+                . Any product using these BOMs requires it to manufacture.
+              </p>
+              <div className={styles.miniTable}>
+                <div className={`${styles.miniHeader} ${styles.bomTableCols}`}>
+                  <span>BOM / Product</span>
+                  <span>Qty per unit</span>
+                  <span>Status</span>
                 </div>
-              ))}
-            </div>
+                {bomUsage.map((row, i) => (
+                  <div key={i} className={`${styles.miniRow} ${styles.bomTableCols}`}>
+                    <span>
+                      <a href="/app/bom" className={styles.bomLink}>
+                        {row.product}
+                        {row.variant && row.variant !== "--" ? ` — ${row.variant}` : ""}
+                      </a>
+                      {row.version > 0 && (
+                        <span className={styles.bomVersion}> v{row.version}</span>
+                      )}
+                    </span>
+                    <span className={styles.bomQty}>{row.quantity}</span>
+                    <span>
+                      <span className={row.active ? styles.badge : styles.badgeMuted}>
+                        {row.active ? "Active" : "Draft"}
+                      </span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
         </div>
       )}
