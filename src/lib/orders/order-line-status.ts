@@ -16,6 +16,10 @@ export type OrderLineStatus = {
   allocationState: "allocated" | "no-bom" | "empty-bom";
 };
 
+/**
+ * Derives allocation state from BOM structure, not from whether allocation rows exist.
+ * _allocatedQty is accepted in the signature for caller convenience but is not used.
+ */
 export function deriveAllocationState(
   bom: { id: string } | null,
   componentCount: number,
@@ -57,6 +61,7 @@ export async function getOrderLineStatus(
       ? await supabase
           .from("product_bom_component")
           .select("product_bom_id,component_id,quantity")
+          .eq("tenant_id", tenantId)
           .in("product_bom_id", bomIds)
       : {
           data: [] as Array<{
