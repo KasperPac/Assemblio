@@ -1,0 +1,40 @@
+{
+  "planPath": "docs/superpowers/plans/2026-05-05-goods-inwards-enhancements.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 0: Fix CSS variables",
+      "status": "pending",
+      "description": "**Goal:** Replace the five undefined CSS variable references that make cards transparent/same-colour as the page.\n\n**Files:**\n- Modify: `src/app/app/goods-inwards/goods-inwards.module.css`\n\n**Acceptance Criteria:**\n- [ ] No reference to `var(--surface-raised)` or `var(--surface)` remains in the file\n- [ ] Cards visually contrast with the page background in all themes\n\n**Verify:** `grep \"var(--surface\" src/app/app/goods-inwards/goods-inwards.module.css` → no output\n\n```json:metadata\n{\"files\": [\"src/app/app/goods-inwards/goods-inwards.module.css\"], \"verifyCommand\": \"grep \\\"var(--surface\\\" src/app/app/goods-inwards/goods-inwards.module.css\", \"acceptanceCriteria\": [\"No reference to var(--surface-raised) or var(--surface) remains\", \"Cards visually contrast with the page background\"]}\n```"
+    },
+    {
+      "id": 1,
+      "subject": "Task 1: Remove Link-to-PO UI",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Strip all Link-to-PO UI from the form and detail view while keeping backend actions intact.\n\n**Files:**\n- Modify: `src/app/app/goods-inwards/receipt-form.tsx`\n- Modify: `src/app/app/goods-inwards/receipt-detail.tsx`\n- Modify: `src/app/app/goods-inwards/new/page.tsx`\n- Modify: `src/app/app/goods-inwards/[id]/page.tsx`\n\n**Acceptance Criteria:**\n- [ ] No Link to PO dropdown, button, or modal renders anywhere in goods-inwards\n- [ ] No `openPOs` prop or query exists in the form or detail page\n- [ ] `npm run build` passes with no type errors\n\n**Verify:** `grep -r \"openPOs\\|Link to PO\\|linkReceiptToPo\" src/app/app/goods-inwards --include=\"*.tsx\" --include=\"*.ts\" | grep -v actions.ts` → no output\n\n```json:metadata\n{\"files\": [\"src/app/app/goods-inwards/receipt-form.tsx\", \"src/app/app/goods-inwards/receipt-detail.tsx\", \"src/app/app/goods-inwards/new/page.tsx\", \"src/app/app/goods-inwards/[id]/page.tsx\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"No Link to PO UI renders\", \"No openPOs prop or query exists\", \"npm run build passes\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: DB patch + wire cost_per_unit through create action",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Add `cost_per_unit` to `delivery_receipt_line` in the DB and persist it from the create action.\n\n**Files:**\n- Create: `supabase/patches/delivery_receipt_line_cost.sql`\n- Modify: `src/app/app/goods-inwards/actions.ts`\n\n**Acceptance Criteria:**\n- [ ] `delivery_receipt_line` has a nullable `cost_per_unit numeric` column\n- [ ] `DeliveryReceiptLineInput` type includes `cost_per_unit: number | null`\n- [ ] `createDeliveryReceipt` inserts `cost_per_unit` on each line\n\n**Verify:** Run a receipt create and confirm `cost_per_unit` is persisted in the DB row\n\n```json:metadata\n{\"files\": [\"supabase/patches/delivery_receipt_line_cost.sql\", \"src/app/app/goods-inwards/actions.ts\"], \"verifyCommand\": \"\", \"acceptanceCriteria\": [\"delivery_receipt_line has nullable cost_per_unit numeric column\", \"DeliveryReceiptLineInput type includes cost_per_unit\", \"createDeliveryReceipt inserts cost_per_unit\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: Cost update modal on receipt detail",
+      "status": "pending",
+      "blockedBy": [2],
+      "description": "**Goal:** After saving a receipt, show a modal on the detail page when lines have costs, letting the user selectively update component prices.\n\n**Files:**\n- Modify: `src/app/app/goods-inwards/actions.ts`\n- Modify: `src/app/app/goods-inwards/receipt-detail.tsx`\n- Modify: `src/app/app/goods-inwards/[id]/page.tsx`\n- Modify: `src/app/app/goods-inwards/goods-inwards.module.css`\n\n**Acceptance Criteria:**\n- [ ] `updateComponentCosts` action updates `component.cost_per_unit` for given IDs\n- [ ] Modal appears on detail page mount when any line has `cost_per_unit` and hasn't been dismissed\n- [ ] Modal lists per-line checkboxes with component name and receipt cost\n- [ ] Confirming updates only checked components; skipping does nothing\n- [ ] Modal does not reappear after dismissal (localStorage key `dismissed_cost_modal_<receipt_id>`)\n\n**Verify:** Create a receipt with cost fields, navigate to detail, modal should appear. Click skip — modal gone. Refresh — modal stays gone.\n\n```json:metadata\n{\"files\": [\"src/app/app/goods-inwards/actions.ts\", \"src/app/app/goods-inwards/receipt-detail.tsx\", \"src/app/app/goods-inwards/[id]/page.tsx\", \"src/app/app/goods-inwards/goods-inwards.module.css\"], \"verifyCommand\": \"\", \"acceptanceCriteria\": [\"updateComponentCosts action works\", \"Modal appears on mount when lines have costs\", \"Modal dismissed permanently via localStorage\", \"Update selected updates only checked components\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: PDF upload + parse action",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Add a 'Parse delivery docket' section to the receipt form that uses the Anthropic API to pre-fill supplier reference, date, and line quantities.\n\n**Files:**\n- Modify: `package.json`\n- Modify: `src/app/app/goods-inwards/actions.ts`\n- Modify: `src/app/app/goods-inwards/receipt-form.tsx`\n- Modify: `.env.local` (user must add ANTHROPIC_API_KEY manually)\n\n**Acceptance Criteria:**\n- [ ] `@anthropic-ai/sdk` is installed\n- [ ] `parseReceiptPdf` returns parsed data on valid PDF\n- [ ] `parseReceiptPdf` returns `{ error: string }` on failure\n- [ ] Form shows PDF file input + Parse button above header fields\n- [ ] On success: `supplier_reference` and `received_at` are pre-filled with [parsed] badge\n- [ ] Lines from PDF have `quantity_delivered` set and read-only extracted name; component dropdown blank\n- [ ] Errors display inline without clearing form\n- [ ] Files over 10 MB rejected client-side\n\n**Verify:** Upload a real delivery docket PDF and confirm supplier reference, date and lines are pre-filled.\n\n```json:metadata\n{\"files\": [\"package.json\", \"src/app/app/goods-inwards/actions.ts\", \"src/app/app/goods-inwards/receipt-form.tsx\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"@anthropic-ai/sdk installed\", \"parseReceiptPdf works\", \"PDF section renders above header fields\", \"Pre-fill works on success\", \"Errors shown inline\", \"10MB limit enforced\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-05-05T00:00:00.000Z"
+}

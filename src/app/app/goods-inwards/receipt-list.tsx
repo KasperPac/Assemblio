@@ -92,6 +92,7 @@ export default function ReceiptList({ receipts }: { receipts: Receipt[] }) {
               <th>Lines</th>
               <th>Received</th>
               <th>Location</th>
+              <th>PO</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -113,6 +114,11 @@ export default function ReceiptList({ receipts }: { receipts: Receipt[] }) {
                   })}
                 </td>
                 <td>{resolveLocation(r)}</td>
+                <td>
+                  {r.purchase_order_id
+                    ? `PO ${r.purchase_order_id.slice(0, 8).toUpperCase()}`
+                    : "—"}
+                </td>
                 <td>
                   <span className={`${styles.badge} ${styles[`badge_${r.status}`]}`}>
                     {STATUS_LABELS[r.status]}

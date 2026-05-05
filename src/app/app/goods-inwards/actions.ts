@@ -238,3 +238,68 @@ export async function linkReceiptToPo(formData: FormData) {
 
   redirect(`/app/goods-inwards/${receiptId}`);
 }
+
+export async function updateDeliveryReceipt(formData: FormData) {
+  const ctx = await getServerTenantContext();
+  if (!ctx) redirect("/auth/login");
+  const { supabase, tenantId } = ctx;
+
+  const receiptId = formData.get("receipt_id") as string;
+
+  const { data: receipt } = await supabase
+    .from("delivery_receipt")
+    .select("id, purchase_order_id, delivery_receipt_line(id)")
+    .eq("id", receiptId)
+    .eq("tenant_id", tenantId)
+    .single();
+
+  if (!receipt) return { error: "Receipt not found" };
+
+  const rawSupplierId = (formData.get("supplier_id") as string) || null;
+  const supplierId =
+    rawSupplierId && rawSupplierId !== "__other__" ? rawSupplierId : null;
+  const supplierNameOverride =
+    (formData.get("supplier_name_override") as string) || null;
+
+  if (!supplierId && !supplierNameOverride)
+    return { error: "Supplier is required" };
+
+  const supplierReference = (formData.get("supplier_reference") as string) ?? "";
+  if (!supplierReference) return { error: "Supplier reference is required" };
+
+  const stockInReason = receipt.purchase_order_id
+    ? undefined
+    : (formData.get("stock_in_reason") as string) || null;
+
+  const { error: headerError } = await supabase
+    .from("delivery_receipt")
+    .update({
+      supplier_id: supplierId,
+      supplier_name_override: supplierNameOverride,
+      supplier_reference: supplierReference,
+      location_id: formData.get("location_id") as string,
+      received_at: formData.get("received_at") as string,
+      notes: (formData.get("notes") as string) || null,
+      ...(stockInReason !== undefined ? { stock_in_reason: stockInReason } : {}),
+    })
+    .eq("id", receiptId)
+    .eq("tenant_id", tenantId);
+
+  if (headerError) return { error: headerError.message };
+
+  const lineNotesRaw = formData.get("line_notes") as string;
+  if (lineNotesRaw) {
+    const lineNotes: Record<string, string> = JSON.parse(lineNotesRaw);
+    for (const [lineId, notes] of Object.entries(lineNotes)) {
+      await supabase
+        .from("delivery_receipt_line")
+        .update({ notes: notes || null })
+        .eq("id", lineId)
+        .eq("tenant_id", tenantId);
+    }
+  }
+
+  revalidatePath(`/app/goods-inwards/${receiptId}`);
+  revalidatePath("/app/goods-inwards");
+  redirect(`/app/goods-inwards/${receiptId}`);
+}

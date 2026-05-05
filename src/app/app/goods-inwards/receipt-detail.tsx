@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { linkReceiptToPo } from "./actions";
+import { useRef, useState, useTransition } from "react";
+import { linkReceiptToPo, updateDeliveryReceipt } from "./actions";
 import { computeVariance } from "./helpers";
 import type { ReceiptStatus } from "./helpers";
 import styles from "./goods-inwards.module.css";
@@ -20,6 +20,7 @@ type ReceiptLine = {
 
 type Receipt = {
   id: string;
+  supplier_id: string | null;
   supplier_name_override: string | null;
   supplier_reference: string;
   purchase_order_id: string | null;
@@ -29,7 +30,7 @@ type Receipt = {
   stock_in_reason: string | null;
   created_at: string;
   supplier: { name: string } | Array<{ name: string }> | null;
-  location: { name: string } | Array<{ name: string }> | null;
+  location: { id: string; name: string } | Array<{ id: string; name: string }> | null;
   delivery_receipt_line: ReceiptLine[];
 };
 
@@ -38,6 +39,18 @@ type OpenPO = {
   supplier_id: string;
   supplier: { name: string } | Array<{ name: string }> | null;
 };
+
+type SupplierOption = { id: string; name: string };
+type LocationOption = { id: string; name: string; is_default: boolean };
+
+const REASONS = [
+  { value: "supplier_delivery", label: "Supplier delivery" },
+  { value: "customer_return", label: "Customer return" },
+  { value: "opening_stock", label: "Opening stock" },
+  { value: "sample", label: "Sample" },
+  { value: "adjustment", label: "Adjustment" },
+  { value: "other", label: "Other" },
+];
 
 const STATUS_LABELS: Record<Receipt["status"], string> = {
   unmatched: "Unmatched",
@@ -69,14 +82,41 @@ function resolveComponentName(line: ReceiptLine): string {
 export default function ReceiptDetail({
   receipt,
   openPOs,
+  suppliers,
+  locations,
 }: {
   receipt: Receipt;
   openPOs: OpenPO[];
+  suppliers: SupplierOption[];
+  locations: LocationOption[];
 }) {
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [selectedPoId, setSelectedPoId] = useState("");
   const [linkError, setLinkError] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
+  const [showSupplierOverride, setShowSupplierOverride] = useState(
+    !receipt.supplier_id && !!receipt.supplier_name_override
+  );
+  const [lineNotes, setLineNotes] = useState<Record<string, string>>(
+    Object.fromEntries(
+      receipt.delivery_receipt_line.map((l) => [l.id, l.notes ?? ""])
+    )
+  );
+  const editFormRef = useRef<HTMLFormElement>(null);
   const [isPending, startTransition] = useTransition();
+
+  function handleEdit(e: React.FormEvent) {
+    e.preventDefault();
+    setEditError(null);
+    const fd = new FormData(editFormRef.current!);
+    fd.set("receipt_id", receipt.id);
+    fd.set("line_notes", JSON.stringify(lineNotes));
+    startTransition(async () => {
+      const result = await updateDeliveryReceipt(fd);
+      if (result?.error) setEditError(result.error);
+    });
+  }
 
   function handleLink(e: React.FormEvent) {
     e.preventDefault();
@@ -91,128 +131,255 @@ export default function ReceiptDetail({
     });
   }
 
+  const currentLocationId = receipt.location
+    ? Array.isArray(receipt.location)
+      ? receipt.location[0]?.id
+      : receipt.location.id
+    : "";
+
   return (
     <div className={styles.page}>
       {/* Header card */}
-      <div className={styles.formCard}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-          }}
-        >
-          <div>
-            <h2 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 700 }}>
-              {receipt.supplier_reference}
-            </h2>
-            <p
-              style={{
-                margin: "4px 0 0",
-                color: "var(--ink-muted)",
-                fontSize: "0.85rem",
-              }}
-            >
-              {resolveSupplier(receipt)} &middot;{" "}
-              {new Date(receipt.received_at).toLocaleDateString("en-AU", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
-            </p>
-          </div>
-          <span
-            className={`${styles.badge} ${styles[`badge_${receipt.status}`]}`}
-          >
-            {STATUS_LABELS[receipt.status]}
-          </span>
-        </div>
+      {isEditing ? (
+        <form ref={editFormRef} onSubmit={handleEdit} className={styles.formCard}>
+          {editError && <div className={styles.errorNotice}>{editError}</div>}
 
-        <div className={styles.formGrid}>
-          <div className={styles.field}>
-            <label>Location</label>
-            <span>{resolveLocation(receipt)}</span>
-          </div>
-          {receipt.stock_in_reason && (
+          <div className={styles.formGrid}>
             <div className={styles.field}>
-              <label>Reason</label>
-              <span style={{ textTransform: "capitalize" }}>
-                {receipt.stock_in_reason.replace(/_/g, " ")}
-              </span>
+              <label htmlFor="edit_supplier_id">Supplier</label>
+              <select
+                id="edit_supplier_id"
+                name="supplier_id"
+                defaultValue={receipt.supplier_id ?? (receipt.supplier_name_override ? "__other__" : "")}
+                onChange={(e) => setShowSupplierOverride(e.target.value === "__other__")}
+              >
+                <option value="">Select supplier…</option>
+                {suppliers.map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}</option>
+                ))}
+                <option value="__other__">Other / not in system</option>
+              </select>
             </div>
-          )}
-          {receipt.notes && (
-            <div className={styles.fieldFull}>
-              <label>Notes</label>
-              <span>{receipt.notes}</span>
-            </div>
-          )}
-        </div>
 
-        {receipt.status === "unmatched" && (
-          <div>
+            {showSupplierOverride && (
+              <div className={styles.field}>
+                <label htmlFor="edit_supplier_name_override">Supplier name</label>
+                <input
+                  id="edit_supplier_name_override"
+                  name="supplier_name_override"
+                  type="text"
+                  defaultValue={receipt.supplier_name_override ?? ""}
+                  required
+                />
+              </div>
+            )}
+
+            <div className={styles.field}>
+              <label htmlFor="edit_supplier_reference">Docket / reference</label>
+              <input
+                id="edit_supplier_reference"
+                name="supplier_reference"
+                type="text"
+                defaultValue={receipt.supplier_reference}
+                required
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label htmlFor="edit_received_at">Date received</label>
+              <input
+                id="edit_received_at"
+                name="received_at"
+                type="date"
+                defaultValue={receipt.received_at.slice(0, 10)}
+                required
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label htmlFor="edit_location_id">Location</label>
+              <select
+                id="edit_location_id"
+                name="location_id"
+                defaultValue={currentLocationId}
+                required
+              >
+                {locations.map((l) => (
+                  <option key={l.id} value={l.id}>{l.name}</option>
+                ))}
+              </select>
+            </div>
+
+            {!receipt.purchase_order_id && (
+              <div className={styles.field}>
+                <label htmlFor="edit_stock_in_reason">Reason</label>
+                <select
+                  id="edit_stock_in_reason"
+                  name="stock_in_reason"
+                  defaultValue={receipt.stock_in_reason ?? ""}
+                >
+                  <option value="">Select reason…</option>
+                  {REASONS.map((r) => (
+                    <option key={r.value} value={r.value}>{r.label}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            <div className={styles.fieldFull}>
+              <label htmlFor="edit_notes">Notes</label>
+              <textarea
+                id="edit_notes"
+                name="notes"
+                rows={2}
+                defaultValue={receipt.notes ?? ""}
+              />
+            </div>
+          </div>
+
+          <div className={styles.actions}>
             <button
               type="button"
               className={styles.secondary}
-              onClick={() => setShowLinkModal((v) => !v)}
+              onClick={() => { setIsEditing(false); setEditError(null); }}
             >
-              {showLinkModal ? "Cancel" : "Link to PO"}
+              Cancel
             </button>
-
-            {showLinkModal && (
-              <form
-                onSubmit={handleLink}
+            <button type="submit" className={styles.primary} disabled={isPending}>
+              {isPending ? "Saving…" : "Save changes"}
+            </button>
+          </div>
+        </form>
+      ) : (
+        <div className={styles.formCard}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+            }}
+          >
+            <div>
+              <h2 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 700 }}>
+                {receipt.supplier_reference}
+              </h2>
+              <p
                 style={{
-                  marginTop: 12,
-                  display: "flex",
-                  gap: 10,
-                  alignItems: "center",
-                  flexWrap: "wrap",
+                  margin: "4px 0 0",
+                  color: "var(--ink-muted)",
+                  fontSize: "0.85rem",
                 }}
               >
-                {linkError && (
-                  <span
-                    style={{
-                      color: "var(--danger)",
-                      fontSize: "0.85rem",
-                      width: "100%",
-                    }}
-                  >
-                    {linkError}
-                  </span>
-                )}
-                <select
-                  value={selectedPoId}
-                  onChange={(e) => setSelectedPoId(e.target.value)}
-                  required
-                >
-                  <option value="">Select open PO&hellip;</option>
-                  {openPOs.map((po) => {
-                    const sup = po.supplier
-                      ? Array.isArray(po.supplier)
-                        ? po.supplier[0]
-                        : po.supplier
-                      : null;
-                    return (
-                      <option key={po.id} value={po.id}>
-                        PO {po.id.slice(0, 8).toUpperCase()}
-                        {sup ? ` — ${sup.name}` : ""}
-                      </option>
-                    );
-                  })}
-                </select>
-                <button
-                  type="submit"
-                  className={styles.primary}
-                  disabled={isPending || !selectedPoId}
-                >
-                  {isPending ? "Linking…" : "Confirm"}
-                </button>
-              </form>
+                {resolveSupplier(receipt)} &middot;{" "}
+                {new Date(receipt.received_at).toLocaleDateString("en-AU", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </p>
+            </div>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <span
+                className={`${styles.badge} ${styles[`badge_${receipt.status}`]}`}
+              >
+                {STATUS_LABELS[receipt.status]}
+              </span>
+              <button
+                type="button"
+                className={styles.secondary}
+                onClick={() => setIsEditing(true)}
+              >
+                Edit
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.formGrid}>
+            <div className={styles.field}>
+              <label>Location</label>
+              <span>{resolveLocation(receipt)}</span>
+            </div>
+            {receipt.stock_in_reason && (
+              <div className={styles.field}>
+                <label>Reason</label>
+                <span style={{ textTransform: "capitalize" }}>
+                  {receipt.stock_in_reason.replace(/_/g, " ")}
+                </span>
+              </div>
+            )}
+            {receipt.notes && (
+              <div className={styles.fieldFull}>
+                <label>Notes</label>
+                <span>{receipt.notes}</span>
+              </div>
             )}
           </div>
-        )}
-      </div>
+
+          {receipt.status === "unmatched" && (
+            <div>
+              <button
+                type="button"
+                className={styles.secondary}
+                onClick={() => setShowLinkModal((v) => !v)}
+              >
+                {showLinkModal ? "Cancel" : "Link to PO"}
+              </button>
+
+              {showLinkModal && (
+                <form
+                  onSubmit={handleLink}
+                  style={{
+                    marginTop: 12,
+                    display: "flex",
+                    gap: 10,
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  {linkError && (
+                    <span
+                      style={{
+                        color: "var(--danger)",
+                        fontSize: "0.85rem",
+                        width: "100%",
+                      }}
+                    >
+                      {linkError}
+                    </span>
+                  )}
+                  <select
+                    value={selectedPoId}
+                    onChange={(e) => setSelectedPoId(e.target.value)}
+                    required
+                  >
+                    <option value="">Select open PO&hellip;</option>
+                    {openPOs.map((po) => {
+                      const sup = po.supplier
+                        ? Array.isArray(po.supplier)
+                          ? po.supplier[0]
+                          : po.supplier
+                        : null;
+                      return (
+                        <option key={po.id} value={po.id}>
+                          PO {po.id.slice(0, 8).toUpperCase()}
+                          {sup ? ` — ${sup.name}` : ""}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <button
+                    type="submit"
+                    className={styles.primary}
+                    disabled={isPending || !selectedPoId}
+                  >
+                    {isPending ? "Linking…" : "Confirm"}
+                  </button>
+                </form>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Lines card */}
       <div className={styles.formCard}>
@@ -258,7 +425,24 @@ export default function ReceiptDetail({
                       "—"
                     )}
                   </td>
-                  <td>{line.notes ?? "—"}</td>
+                  <td>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={lineNotes[line.id] ?? ""}
+                        onChange={(e) =>
+                          setLineNotes((prev) => ({
+                            ...prev,
+                            [line.id]: e.target.value,
+                          }))
+                        }
+                        placeholder="Note…"
+                        style={{ width: 160 }}
+                      />
+                    ) : (
+                      line.notes ?? "—"
+                    )}
+                  </td>
                 </tr>
               );
             })}
