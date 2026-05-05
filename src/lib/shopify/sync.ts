@@ -310,23 +310,35 @@ export async function syncShopifyStoreData(
     }
   }
 
+  // Batch-fetch all order line IDs for this sync in one query
+  const { data: allPlanLines } = await admin
+    .from("order_line")
+    .select("id, order_id")
+    .eq("tenant_id", tenantId)
+    .in("order_id", orderLocalIds);
+
+  // Group by order_id in memory
+  const linesByOrderId = new Map<string, string[]>();
+  for (const row of allPlanLines ?? []) {
+    const list = linesByOrderId.get(row.order_id) ?? [];
+    list.push(row.id);
+    linesByOrderId.set(row.order_id, list);
+  }
+
+  // Run financial planning with zero extra DB reads
   let planRuns = 0;
+  let planErrors = 0;
   const weekStart = getWeekStart();
   for (const localOrderId of orderLocalIds) {
-    const { data: planLines } = await admin
-      .from("order_line")
-      .select("id")
-      .eq("tenant_id", tenantId)
-      .eq("order_id", localOrderId);
-
-    for (const line of planLines ?? []) {
+    for (const lineId of linesByOrderId.get(localOrderId) ?? []) {
       try {
         await admin.rpc("generate_job_financial_plan", {
-          p_order_line_id: line.id,
+          p_order_line_id: lineId,
           p_start_week: weekStart,
         });
         planRuns += 1;
       } catch {
+        planErrors += 1;
         continue;
       }
     }
@@ -344,6 +356,7 @@ export async function syncShopifyStoreData(
       order_lines: orderLineRows.length,
       allocation_runs: allocationRuns,
       plan_runs: planRuns,
+      plan_errors: planErrors,
     },
   });
   assertNoError(activityError, "Failed to insert activity_log");
