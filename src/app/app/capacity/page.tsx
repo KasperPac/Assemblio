@@ -1,6 +1,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import styles from "../planning.module.css";
 import { refreshCapacityWeek } from "./actions";
+import { getWeekStart } from "@/lib/dates";
 
 type DepartmentRelation = { name: string | null } | { name: string | null }[] | null;
 
@@ -29,16 +30,6 @@ type UtilizationRow = {
 function firstRelation<T>(value: T | T[] | null | undefined): T | null {
   if (Array.isArray(value)) return value[0] ?? null;
   return value ?? null;
-}
-
-function getWeekStart() {
-  const now = new Date();
-  const day = now.getDay();
-  const mondayOffset = day === 0 ? -6 : 1 - day;
-  const monday = new Date(now);
-  monday.setDate(now.getDate() + mondayOffset);
-  monday.setHours(0, 0, 0, 0);
-  return monday.toISOString().slice(0, 10);
 }
 
 function resolveWeekStart(raw: string | undefined) {
