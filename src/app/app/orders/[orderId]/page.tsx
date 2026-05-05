@@ -2,7 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { allocateOrder, updateJobLaborPlanWeek } from "../actions";
-import { getWeekStart } from "@/lib/dates";
 import { getOrderLineStatus } from "@/lib/orders/order-line-status";
 import PageHeader from "../../_ui/page-header";
 import StatusBadge from "../../_ui/status-badge";
@@ -99,7 +98,6 @@ type Props = {
   searchParams?: Promise<{
     allocated?: string;
     planError?: string;
-    week?: string;
   }>;
 };
 
@@ -138,8 +136,6 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
   const { orderId } = await params;
   const query = (await searchParams) ?? {};
   const supabase = await createSupabaseServerClient();
-  // getWeekStart is imported for potential future use; suppress unused warning
-  void getWeekStart;
 
   const [{ data: order }, { data: orderLines }] = await Promise.all([
     supabase
@@ -161,9 +157,11 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
   const typedLines = (orderLines ?? []) as OrderLineRecord[];
   const lineRefs = typedLines.map((l) => ({
     id: l.id,
-    variant_id: (l as unknown as { variant_id: string }).variant_id,
+    variant_id: l.variant_id,
     quantity: l.quantity,
   }));
+
+  const tenantId = await getTenantId(supabase);
 
   const [
     lineStatusMap,
@@ -172,7 +170,7 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
     { data: laborPlans },
     { data: utilizationRows },
   ] = await Promise.all([
-    getOrderLineStatus(supabase, await getTenantId(supabase), lineRefs),
+    getOrderLineStatus(supabase, tenantId, lineRefs),
     supabase
       .from("job_cost_snapshot")
       .select("order_line_id,planned_total_cost,planned_margin,planned_margin_pct")
@@ -402,7 +400,11 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
                       <div className={styles.lineHeading}>
                         <h3>{product?.title ?? variant?.title ?? "Variant"}</h3>
                         <StatusBadge variant={allocationState === "allocated" ? "success" : "warning"}>
-                          {allocationState === "allocated" ? "✓ Allocated" : "⚠ No active BOM"}
+                          {allocationState === "allocated"
+                            ? "✓ Allocated"
+                            : allocationState === "empty-bom"
+                            ? "⚠ Empty BOM"
+                            : "⚠ No active BOM"}
                         </StatusBadge>
                       </div>
                       <p className={styles.meta}>
