@@ -7,6 +7,7 @@ import {
   planOrder,
   updateJobLaborPlanWeek,
 } from "../actions";
+import { getWeekStart } from "@/lib/dates";
 import PageHeader from "../../_ui/page-header";
 import StatusBadge from "../../_ui/status-badge";
 import EmptyState from "../../_ui/empty-state";
@@ -126,16 +127,6 @@ function formatCurrency(value: number) {
   }).format(value);
 }
 
-function getDefaultWeekStart() {
-  const now = new Date();
-  const day = now.getDay();
-  const mondayOffset = day === 0 ? -6 : 1 - day;
-  const monday = new Date(now);
-  monday.setDate(now.getDate() + mondayOffset);
-  monday.setHours(0, 0, 0, 0);
-  return monday.toISOString().slice(0, 10);
-}
-
 function getStatusVariant(status: string) {
   const normalized = status.toLowerCase();
   if (normalized === "fulfilled") return "success";
@@ -148,7 +139,7 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
   const { orderId } = await params;
   const query = (await searchParams) ?? {};
   const supabase = await createSupabaseServerClient();
-  const selectedWeek = query.week ?? getDefaultWeekStart();
+  const selectedWeek = query.week ?? getWeekStart();
 
   const [{ data: order }, { data: orderLines }] = await Promise.all([
     supabase

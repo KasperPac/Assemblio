@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { reconcileOrderAllocations } from "@/lib/allocation/reconcile-order";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getWeekStart } from "@/lib/dates";
 
 function sanitizeReturnPath(value: string | null | undefined) {
   if (!value || !value.startsWith("/app/orders")) {
@@ -81,16 +82,6 @@ export async function allocateOrder(formData: FormData) {
   if (returnTo) {
     redirect(`${returnTo}?allocated=1`);
   }
-}
-
-function getWeekStart() {
-  const now = new Date();
-  const day = now.getDay();
-  const mondayOffset = day === 0 ? -6 : 1 - day;
-  const monday = new Date(now);
-  monday.setDate(now.getDate() + mondayOffset);
-  monday.setHours(0, 0, 0, 0);
-  return monday.toISOString().slice(0, 10);
 }
 
 export async function planOpenOrders() {
