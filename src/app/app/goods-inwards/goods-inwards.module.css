@@ -14,7 +14,7 @@
 .tabs {
   display: flex;
   gap: 4px;
-  background: var(--surface-raised);
+  background: var(--bg-card-alt);
   border: 1px solid var(--stroke);
   border-radius: 10px;
   padding: 4px;
@@ -32,7 +32,7 @@
 }
 
 .tabActive {
-  background: var(--surface);
+  background: var(--bg-card);
   color: var(--ink-strong);
   font-weight: 600;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
@@ -118,7 +118,7 @@
 /* ── Form shared styles (used by receipt-form and receipt-detail) ── */
 
 .formCard {
-  background: var(--surface-raised);
+  background: var(--bg-card);
   border: 1px solid var(--stroke);
   border-radius: 16px;
   padding: 20px 24px;
@@ -154,7 +154,7 @@
   border: 1px solid var(--stroke);
   border-radius: 8px;
   font-size: 0.9rem;
-  background: var(--surface);
+  background: var(--bg-input);
   color: var(--ink-strong);
   outline: none;
 }
@@ -210,7 +210,7 @@
   padding: 7px 16px;
   border-radius: 8px;
   border: 1px solid var(--stroke);
-  background: var(--surface);
+  background: var(--bg-card-alt);
   color: var(--ink-strong);
   font-size: 0.88rem;
   cursor: pointer;
