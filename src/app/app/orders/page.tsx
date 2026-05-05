@@ -45,9 +45,9 @@ export default async function OrdersPage({ searchParams }: Props) {
     orderIds.length > 0
       ? supabase
           .from("order_line")
-          .select("id,order_id,variant_id")
+          .select("order_id,variant_id")
           .in("order_id", orderIds)
-      : Promise.resolve({ data: [] as Array<{ id: string; order_id: string; variant_id: string }> })
+      : Promise.resolve({ data: [] as Array<{ order_id: string; variant_id: string }> })
   );
 
   const variantIds = [
