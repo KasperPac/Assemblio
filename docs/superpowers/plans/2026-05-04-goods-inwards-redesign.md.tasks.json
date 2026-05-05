@@ -4,44 +4,44 @@
     {
       "id": 0,
       "subject": "Task 0: Database tables — delivery_receipt + delivery_receipt_line",
-      "status": "pending",
+      "status": "completed",
       "description": "**Goal:** Create delivery_receipt and delivery_receipt_line tables with RLS.\n\n**Files:**\n- Create: `supabase/patches/delivery_receipt_tables.sql`\n\n**Acceptance Criteria:**\n- [ ] Both tables exist with correct columns and constraints\n- [ ] RLS enabled; tenant isolation policy on both tables\n- [ ] status check constraint enforces ('unmatched','po_linked','discrepancy')\n- [ ] stock_in_reason check constraint enforces six allowed values\n- [ ] quantity_delivered > 0 enforced on receipt line\n\n**Verify:** `supabase db reset` completes without error\n\n```json:metadata\n{\"files\": [\"supabase/patches/delivery_receipt_tables.sql\"], \"verifyCommand\": \"supabase db reset\", \"acceptanceCriteria\": [\"Both tables with constraints\", \"RLS with tenant isolation\", \"status check constraint\", \"stock_in_reason check constraint\", \"quantity_delivered > 0\"]}\n```"
     },
     {
       "id": 1,
       "subject": "Task 1: receive_delivery_receipt RPC + retire old RPCs",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [0],
       "description": "**Goal:** Atomic RPC that writes inventory movements, updates PO line quantities, auto-closes POs, sets receipt status. Drops old receive RPCs.\n\n**Files:**\n- Create: `supabase/patches/receive_delivery_receipt_rpc.sql`\n\n**Acceptance Criteria:**\n- [ ] receive_delivery_receipt(uuid) callable by authenticated role\n- [ ] Each receipt line produces an inventory_movement row\n- [ ] Linked PO lines have quantity_received incremented\n- [ ] Receipt status computed correctly\n- [ ] PO auto-closes when all lines fully received\n- [ ] Old RPCs dropped\n\n**Verify:** `supabase db reset` then `\\df receive_delivery_receipt` shows function\n\n```json:metadata\n{\"files\": [\"supabase/patches/receive_delivery_receipt_rpc.sql\"], \"verifyCommand\": \"supabase db reset\", \"acceptanceCriteria\": [\"RPC callable\", \"inventory_movement rows created\", \"PO line quantity_received updated\", \"receipt status set\", \"PO auto-closes\", \"old RPCs dropped\"]}\n```"
     },
     {
       "id": 2,
       "subject": "Task 2: Server actions + helpers",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [1],
       "description": "**Goal:** Replace actions.ts with createDeliveryReceipt, linkReceiptToPo, and tested pure helpers.\n\n**Files:**\n- Create: `src/app/app/goods-inwards/actions.ts`\n- Create: `src/app/app/goods-inwards/actions.test.ts`\n\n**Acceptance Criteria:**\n- [ ] createDeliveryReceipt inserts header + lines, calls RPC, redirects\n- [ ] linkReceiptToPo updates receipt + PO lines, recomputes status\n- [ ] computeReceiptStatus correct for all cases\n- [ ] computeVariance correct\n- [ ] 9 unit tests pass\n\n**Verify:** `npm test -- src/app/app/goods-inwards/actions.test.ts` → 9 tests pass\n\n```json:metadata\n{\"files\": [\"src/app/app/goods-inwards/actions.ts\", \"src/app/app/goods-inwards/actions.test.ts\"], \"verifyCommand\": \"npm test -- src/app/app/goods-inwards/actions.test.ts\", \"acceptanceCriteria\": [\"createDeliveryReceipt works\", \"linkReceiptToPo works\", \"computeReceiptStatus correct\", \"computeVariance correct\", \"9 tests pass\"]}\n```"
     },
     {
       "id": 3,
       "subject": "Task 3: Receipt list page",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [2],
       "description": "**Goal:** Replace main goods-inwards page with receipt list showing filter tabs.\n\n**Files:**\n- Create: `src/app/app/goods-inwards/page.tsx`\n- Create: `src/app/app/goods-inwards/receipt-list.tsx`\n- Create: `src/app/app/goods-inwards/goods-inwards.module.css`\n- Modify: `src/app/app/route-meta.ts`\n\n**Acceptance Criteria:**\n- [ ] Receipt list renders at /app/goods-inwards\n- [ ] Filter tabs work client-side\n- [ ] Rows link to detail\n- [ ] New Receipt button links to /new\n- [ ] Status badges styled correctly\n\n**Verify:** `npm run build` passes\n\n```json:metadata\n{\"files\": [\"src/app/app/goods-inwards/page.tsx\", \"src/app/app/goods-inwards/receipt-list.tsx\", \"src/app/app/goods-inwards/goods-inwards.module.css\", \"src/app/app/route-meta.ts\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"List renders\", \"Filter tabs work\", \"Row links to detail\", \"New Receipt button\", \"Badges styled\"]}\n```"
     },
     {
       "id": 4,
       "subject": "Task 4: New receipt form",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [2],
       "description": "**Goal:** /app/goods-inwards/new — form for creating delivery receipts with dynamic lines.\n\n**Files:**\n- Create: `src/app/app/goods-inwards/new/page.tsx`\n- Create: `src/app/app/goods-inwards/receipt-form.tsx`\n\n**Acceptance Criteria:**\n- [ ] Supplier dropdown with Other fallback\n- [ ] Location defaults to is_default\n- [ ] PO selection pre-fills expected quantities\n- [ ] Reason required for non-PO receipts\n- [ ] Dynamic line add/remove\n- [ ] Variance highlights correctly\n- [ ] Redirects to detail on success\n\n**Verify:** Submit receipt with PO link → correct status in list + inventory moved\n\n```json:metadata\n{\"files\": [\"src/app/app/goods-inwards/new/page.tsx\", \"src/app/app/goods-inwards/receipt-form.tsx\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"Supplier with Other fallback\", \"Default location\", \"PO pre-fills lines\", \"Reason required for non-PO\", \"Dynamic lines\", \"Variance highlights\", \"Redirect on success\"]}\n```"
     },
     {
       "id": 5,
       "subject": "Task 5: Receipt detail + post-save PO linking",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [3, 4],
       "description": "**Goal:** /app/goods-inwards/[id] shows GRN record; Link to PO for unmatched receipts.\n\n**Files:**\n- Create: `src/app/app/goods-inwards/[id]/page.tsx`\n- Create: `src/app/app/goods-inwards/receipt-detail.tsx`\n- Modify: `src/app/app/goods-inwards/goods-inwards.module.css`\n\n**Acceptance Criteria:**\n- [ ] Detail renders all header fields + lines table\n- [ ] Variance highlighted red (short) / orange (over)\n- [ ] Link to PO only for unmatched receipts\n- [ ] Inline PO selector + linkReceiptToPo updates status\n- [ ] 404 for unknown IDs\n\n**Verify:** Short-delivery receipt shows discrepancy badge + red variance. Unmatched receipt has working Link to PO.\n\n```json:metadata\n{\"files\": [\"src/app/app/goods-inwards/[id]/page.tsx\", \"src/app/app/goods-inwards/receipt-detail.tsx\", \"src/app/app/goods-inwards/goods-inwards.module.css\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"Detail renders\", \"Variance highlighted\", \"Link to PO for unmatched only\", \"linkReceiptToPo updates status\", \"404 for unknown IDs\"]}\n```"
     }
   ],
-  "lastUpdated": "2026-05-04T00:00:00Z"
+  "lastUpdated": "2026-05-04T09:30:00Z"
 }

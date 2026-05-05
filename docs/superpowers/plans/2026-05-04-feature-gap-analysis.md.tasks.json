@@ -4,94 +4,94 @@
     {
       "id": 0,
       "subject": "Task 0: Bootstrap doc with skeleton + Section 1",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [],
       "description": "**Goal:** Create docs/superpowers/feature-gap-analysis.md with all section headers and §1 (Context & assumptions) populated.\n\n**Files:**\n- Create: docs/superpowers/feature-gap-analysis.md\n\n**Acceptance Criteria:**\n- File exists with H1 + H2 headers for §1–§5\n- §1 Context & assumptions fully written\n- §2 has 8 H3 placeholders\n- 60–80 lines total\n\n**Verify:** PowerShell line count + Select-String for H2 headers (see plan §Task 0)\n\n```json:metadata\n{\"files\": [\"docs/superpowers/feature-gap-analysis.md\"], \"verifyCommand\": \"(Get-Content docs/superpowers/feature-gap-analysis.md | Measure-Object -Line).Lines\", \"acceptanceCriteria\": [\"File exists\", \"§1 fully written\", \"§2 has 8 placeholders\", \"60-80 lines\"]}\n```"
     },
     {
       "id": 1,
       "subject": "Task 1: Scorecard — Shopify Product Import",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [0],
       "description": "**Goal:** Replace §2.1 placeholder with full scorecard (4 lenses + scoring table). See plan Task 1 for complete content.\n\n```json:metadata\n{\"files\": [\"docs/superpowers/feature-gap-analysis.md\"], \"verifyCommand\": \"Select-String -Path docs/superpowers/feature-gap-analysis.md -Pattern 'populated by Task 1'\", \"acceptanceCriteria\": [\"Placeholder gone\", \"All 4 lenses populated\", \"Scoring table complete\"]}\n```"
     },
     {
       "id": 2,
       "subject": "Task 2: Scorecard — Component Inventory & Item Details",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [0],
       "description": "**Goal:** Replace §2.2 placeholder with full Inventory scorecard. See plan Task 2.\n\n```json:metadata\n{\"files\": [\"docs/superpowers/feature-gap-analysis.md\"], \"verifyCommand\": \"Select-String -Path docs/superpowers/feature-gap-analysis.md -Pattern 'populated by Task 2'\", \"acceptanceCriteria\": [\"Placeholder gone\", \"All 4 lenses populated\", \"Scoring table complete\"]}\n```"
     },
     {
       "id": 3,
       "subject": "Task 3: Scorecard — Bills of Material",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [0],
       "description": "**Goal:** Replace §2.3 placeholder with full BOM scorecard. See plan Task 3.\n\n```json:metadata\n{\"files\": [\"docs/superpowers/feature-gap-analysis.md\"], \"verifyCommand\": \"Select-String -Path docs/superpowers/feature-gap-analysis.md -Pattern 'populated by Task 3'\", \"acceptanceCriteria\": [\"Placeholder gone\", \"All 4 lenses populated\", \"Scoring table complete\"]}\n```"
     },
     {
       "id": 4,
       "subject": "Task 4: Scorecard — Goods Inwards",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [0],
       "description": "**Goal:** Replace §2.4 placeholder with full Goods Inwards scorecard. See plan Task 4.\n\n```json:metadata\n{\"files\": [\"docs/superpowers/feature-gap-analysis.md\"], \"verifyCommand\": \"Select-String -Path docs/superpowers/feature-gap-analysis.md -Pattern 'populated by Task 4'\", \"acceptanceCriteria\": [\"Placeholder gone\", \"All 4 lenses populated\", \"Scoring table complete\"]}\n```"
     },
     {
       "id": 5,
       "subject": "Task 5: Scorecard — Orders from Shopify",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [0],
       "description": "**Goal:** Replace §2.5 placeholder with full Orders scorecard. See plan Task 5.\n\n```json:metadata\n{\"files\": [\"docs/superpowers/feature-gap-analysis.md\"], \"verifyCommand\": \"Select-String -Path docs/superpowers/feature-gap-analysis.md -Pattern 'populated by Task 5'\", \"acceptanceCriteria\": [\"Placeholder gone\", \"All 4 lenses populated\", \"Scoring table complete\"]}\n```"
     },
     {
       "id": 6,
       "subject": "Task 6: Scorecard — Stocktake",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [0],
       "description": "**Goal:** Replace §2.6 placeholder with full Stocktake scorecard. See plan Task 6.\n\n```json:metadata\n{\"files\": [\"docs/superpowers/feature-gap-analysis.md\"], \"verifyCommand\": \"Select-String -Path docs/superpowers/feature-gap-analysis.md -Pattern 'populated by Task 6'\", \"acceptanceCriteria\": [\"Placeholder gone\", \"All 4 lenses populated\", \"Scoring table complete\"]}\n```"
     },
     {
       "id": 7,
       "subject": "Task 7: Scorecard — Suppliers",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [0],
       "description": "**Goal:** Replace §2.7 placeholder with full Suppliers scorecard. See plan Task 7.\n\n```json:metadata\n{\"files\": [\"docs/superpowers/feature-gap-analysis.md\"], \"verifyCommand\": \"Select-String -Path docs/superpowers/feature-gap-analysis.md -Pattern 'populated by Task 7'\", \"acceptanceCriteria\": [\"Placeholder gone\", \"All 4 lenses populated\", \"Scoring table complete\"]}\n```"
     },
     {
       "id": 8,
       "subject": "Task 8: Scorecard — Reports",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [0],
       "description": "**Goal:** Replace §2.8 placeholder with full Reports scorecard. See plan Task 8.\n\n```json:metadata\n{\"files\": [\"docs/superpowers/feature-gap-analysis.md\"], \"verifyCommand\": \"Select-String -Path docs/superpowers/feature-gap-analysis.md -Pattern 'populated by Task 8'\", \"acceptanceCriteria\": [\"Placeholder gone\", \"All 4 lenses populated\", \"Scoring table complete\"]}\n```"
     },
     {
       "id": 9,
       "subject": "Task 9: Cross-feature top-10",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [1, 2, 3, 4, 5, 6, 7, 8],
       "description": "**Goal:** Replace §3 placeholder with ranked top-10 table aggregated from all 8 scorecards. See plan Task 9 (already corrected for scoring).\n\n```json:metadata\n{\"files\": [\"docs/superpowers/feature-gap-analysis.md\"], \"verifyCommand\": \"(Select-String -Path docs/superpowers/feature-gap-analysis.md -Pattern '^\\\\| \\\\d+ \\\\|' | Measure-Object).Count\", \"acceptanceCriteria\": [\"Exactly 10 rows\", \"Sorted by score desc\", \"Honourable mentions list present\"]}\n```"
     },
     {
       "id": 10,
       "subject": "Task 10: Strategic clusters",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [9],
       "description": "**Goal:** Replace §4 placeholder with 2–4 named clusters and a paragraph each. See plan Task 10 (already updated to reference corrected top-10).\n\n```json:metadata\n{\"files\": [\"docs/superpowers/feature-gap-analysis.md\"], \"verifyCommand\": \"Select-String -Path docs/superpowers/feature-gap-analysis.md -Pattern 'populated by Task 10'\", \"acceptanceCriteria\": [\"2-4 clusters named\", \"Each references top-10 items\", \"Marketing angle paragraph per cluster\"]}\n```"
     },
     {
       "id": 11,
       "subject": "Task 11: Out-of-scope section",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [0],
       "description": "**Goal:** Replace §5 placeholder with ≥5 ideas considered and rejected. See plan Task 11.\n\n```json:metadata\n{\"files\": [\"docs/superpowers/feature-gap-analysis.md\"], \"verifyCommand\": \"Select-String -Path docs/superpowers/feature-gap-analysis.md -Pattern 'populated by Task 11'\", \"acceptanceCriteria\": [\"≥5 entries\", \"Each has concrete one-line reason\"]}\n```"
     },
     {
       "id": 12,
       "subject": "Task 12: Final QA pass",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [9, 10, 11],
       "description": "**Goal:** Verify completed document against all spec acceptance criteria, fix issues inline, summarize result.\n\n```json:metadata\n{\"files\": [\"docs/superpowers/feature-gap-analysis.md\"], \"verifyCommand\": \"Select-String -Path docs/superpowers/feature-gap-analysis.md -Pattern '(populated by Task|TBD|TODO|FIXME|fill in)' -CaseSensitive:$false\", \"acceptanceCriteria\": [\"No placeholders\", \"8 scorecards\", \"10 top-10 rows\", \"600-1200 lines\", \"Arithmetic correct\"]}\n```"
     }
   ],
-  "lastUpdated": "2026-05-04T00:00:00Z"
+  "lastUpdated": "2026-05-04T11:00:00Z"
 }
