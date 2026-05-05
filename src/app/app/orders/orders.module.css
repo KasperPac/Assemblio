@@ -66,8 +66,7 @@
   align-items: center;
 }
 
-.orderIdentity,
-.metricCell {
+.orderIdentity {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -79,14 +78,17 @@
   font-weight: 700;
 }
 
-.metricCell strong {
-  color: var(--ink-strong);
-}
-
 @media (max-width: 860px) {
   .headerActions,
   .rowActions {
     flex-direction: column;
     align-items: flex-start;
   }
+}
+
+.viewLink {
+  color: color-mix(in srgb, var(--brand-2) 72%, white);
+  text-decoration: none;
+  font-size: 0.84rem;
+  font-weight: 700;
 }

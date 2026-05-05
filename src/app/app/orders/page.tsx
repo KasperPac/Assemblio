@@ -1,7 +1,6 @@
 import Link from "next/link";
 import styles from "./orders.module.css";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { allocateOrder, planOpenOrders } from "./actions";
 import PageHeader from "../_ui/page-header";
 import StatusBadge from "../_ui/status-badge";
 import EmptyState from "../_ui/empty-state";
@@ -15,46 +14,12 @@ type OrderRow = {
   created_at: string;
 };
 
-type MarginSnapshotRow = {
-  order_line:
-    | { order_id: string }
-    | Array<{ order_id: string }>
-    | null;
-  planned_margin: number;
-};
-
-type LaborPlanRow = {
-  order_line:
-    | { order_id: string }
-    | Array<{ order_id: string }>
-    | null;
-  planned_total_hours: number;
-};
-
-type AllocationSummaryRow = {
-  order_line:
-    | { order_id: string }
-    | Array<{ order_id: string }>
-    | null;
-  quantity: number;
-};
-
 type Props = {
   searchParams?: Promise<{
     shopify?: string;
     orders?: string;
-    planned?: string;
-    planError?: string;
   }>;
 };
-
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat("en-AU", {
-    style: "currency",
-    currency: "AUD",
-    maximumFractionDigits: 0,
-  }).format(value);
-}
 
 function getStatusVariant(status: string) {
   const normalized = status.toLowerCase();
@@ -67,105 +32,90 @@ function getStatusVariant(status: string) {
 export default async function OrdersPage({ searchParams }: Props) {
   const supabase = await createSupabaseServerClient();
   const params = (await searchParams) ?? {};
-  const [{ data, error }, { data: allocationRows }, { data: marginRows }, { data: laborPlans }] =
-    await Promise.all([
-      supabase
-        .from("orders")
-        .select("id,shopify_order_id,order_number,status,created_at")
-        .order("created_at", { ascending: false })
-        .limit(12),
-      supabase
-        .from("order_component_allocation")
-        .select("quantity,order_line:order_line_id(order_id)"),
-      supabase
-        .from("job_cost_snapshot")
-        .select("planned_margin,order_line:order_line_id(order_id)"),
-      supabase
-        .from("job_labor_plan")
-        .select("planned_total_hours,order_line:order_line_id(order_id)"),
-    ]);
 
-  const allocationByOrder = (allocationRows ?? []).reduce<Record<string, { lines: number; qty: number }>>(
-    (acc, row) => {
-      const typed = row as AllocationSummaryRow;
-      const orderLine = Array.isArray(typed.order_line)
-        ? typed.order_line[0] ?? null
-        : typed.order_line;
-      if (!orderLine?.order_id) return acc;
-      const current = acc[orderLine.order_id] ?? { lines: 0, qty: 0 };
-      acc[orderLine.order_id] = {
-        lines: current.lines + 1,
-        qty: current.qty + Number(typed.quantity ?? 0),
-      };
-      return acc;
-    },
-    {}
+  const { data, error } = await supabase
+    .from("orders")
+    .select("id,shopify_order_id,order_number,status,created_at")
+    .order("created_at", { ascending: false })
+    .limit(12);
+
+  const orderIds = ((data ?? []) as OrderRow[]).map((o) => o.id);
+
+  const { data: orderLineData } = await (
+    orderIds.length > 0
+      ? supabase
+          .from("order_line")
+          .select("id,order_id,variant_id")
+          .in("order_id", orderIds)
+      : Promise.resolve({ data: [] as Array<{ id: string; order_id: string; variant_id: string }> })
   );
 
-  const marginByOrder = ((marginRows ?? []) as MarginSnapshotRow[]).reduce<Record<string, number>>(
-    (acc, row) => {
-      const orderLine = Array.isArray(row.order_line)
-        ? row.order_line[0] ?? null
-        : row.order_line;
-      if (!orderLine?.order_id) return acc;
-      acc[orderLine.order_id] = (acc[orderLine.order_id] ?? 0) + Number(row.planned_margin ?? 0);
-      return acc;
-    },
-    {}
+  const variantIds = [
+    ...new Set((orderLineData ?? []).map((l) => (l as { variant_id: string }).variant_id)),
+  ];
+
+  const { data: activeBomData } = await (
+    variantIds.length > 0
+      ? supabase
+          .from("product_bom")
+          .select("id,variant_id")
+          .eq("is_active", true)
+          .in("variant_id", variantIds)
+      : Promise.resolve({ data: [] as Array<{ id: string; variant_id: string }> })
   );
 
-  const laborByOrder = ((laborPlans ?? []) as LaborPlanRow[]).reduce<Record<string, number>>(
-    (acc, row) => {
-      const orderLine = Array.isArray(row.order_line)
-        ? row.order_line[0] ?? null
-        : row.order_line;
-      if (!orderLine?.order_id) return acc;
-      acc[orderLine.order_id] = (acc[orderLine.order_id] ?? 0) + Number(row.planned_total_hours ?? 0);
-      return acc;
-    },
-    {}
+  type OrderLineRef = { order_id: string; variant_id: string };
+
+  const activeBomVariants = new Set(
+    (activeBomData ?? []).map((b) => (b as { variant_id: string }).variant_id)
   );
+
+  const linesByOrder = ((orderLineData ?? []) as OrderLineRef[]).reduce<
+    Record<string, OrderLineRef[]>
+  >((acc, line) => {
+    const bucket = acc[line.order_id] ?? [];
+    bucket.push(line);
+    acc[line.order_id] = bucket;
+    return acc;
+  }, {});
+
+  type BadgeState = "allocated" | "partial" | "no-boms" | "no-lines" | "done";
+
+  function getOrderBadgeState(order: OrderRow, lines: OrderLineRef[]): BadgeState {
+    const status = order.status.toLowerCase();
+    if (status === "fulfilled" || status === "cancelled") return "done";
+    if (lines.length === 0) return "no-lines";
+    const withBom = lines.filter((l) => activeBomVariants.has(l.variant_id));
+    if (withBom.length === lines.length) return "allocated";
+    if (withBom.length === 0) return "no-boms";
+    return "partial";
+  }
 
   return (
     <div className={styles.page}>
       <PageHeader
         eyebrow="Orders"
         title="Order queue"
-        description="Monitor Shopify demand, trigger allocation, and see which orders already have financial and labor plans."
+        description="Orders sync and allocate automatically. Re-run allocation from the order detail if BOMs change."
         actions={
-          <div className={styles.headerActions}>
-            <form action={planOpenOrders}>
-              <button className={styles.secondary} type="submit">
-                Generate plans
-              </button>
-            </form>
-            <form method="post" action="/api/shopify/sync">
-              <button className={styles.primary} type="submit">
-                Sync orders
-              </button>
-            </form>
-          </div>
+          <form method="post" action="/api/shopify/sync">
+            <button className={styles.primary} type="submit">
+              Sync orders
+            </button>
+          </form>
         }
       />
 
       {params.shopify === "sync-ok" ? (
         <p className={styles.syncMeta}>Last sync imported {params.orders ?? "0"} orders.</p>
       ) : null}
-      {params.planned ? (
-        <p className={styles.syncMeta}>
-          Generated finance plans for {params.planned} open order lines.
-        </p>
-      ) : null}
-      {params.planError ? (
-        <p className={styles.errorMeta}>Plan generation failed: {params.planError}</p>
-      ) : null}
 
       <ListPanel
         eyebrow="Live queue"
         title="Orders ready for action"
-        description="Allocate component demand, then push labor planning into the schedule with full order-level visibility."
-        columns={["Order", "Date", "Status", "Allocated", "Plan", "Actions"]}
-        columnsTemplate="0.9fr 0.9fr 0.8fr 0.9fr 1fr 0.9fr"
+        description="Allocation status updates automatically on every sync. Open an order to re-run or inspect components."
+        columns={["Order", "Date", "Status", "Allocation", ""]}
+        columnsTemplate="1.1fr 0.8fr 0.7fr 1fr 0.5fr"
       >
         {error ? (
           <EmptyState
@@ -178,53 +128,49 @@ export default async function OrdersPage({ searchParams }: Props) {
             message="Sync Shopify orders to populate the order queue."
           />
         ) : (
-          (data as OrderRow[]).map((row) => (
-            <ListRow
-              key={row.id}
-              columnsTemplate="0.9fr 0.9fr 0.8fr 0.9fr 1fr 0.9fr"
-              className={styles.orderRow}
-            >
-              <div className={styles.orderIdentity}>
-                <Link href={`/app/orders/${row.id}`} className={styles.orderLink}>
-                  #{row.order_number ?? row.shopify_order_id ?? row.id.slice(0, 6)}
-                </Link>
-                <span className={styles.meta}>Shopify {row.shopify_order_id ?? "--"}</span>
-              </div>
-              <span className={styles.meta}>
-                {new Date(row.created_at).toLocaleDateString("en-GB")}
-              </span>
-              <StatusBadge variant={getStatusVariant(row.status)}>{row.status}</StatusBadge>
-              <div className={styles.metricCell}>
-                <strong>{allocationByOrder[row.id]?.lines ?? 0}</strong>
-                <span>{(allocationByOrder[row.id]?.qty ?? 0).toFixed(2)} units</span>
-              </div>
-              <div className={styles.metricCell}>
-                <strong>
-                  {laborByOrder[row.id]
-                    ? `${laborByOrder[row.id].toFixed(1)} hrs`
-                    : "Not planned"}
-                </strong>
-                <span>
-                  {laborByOrder[row.id]
-                    ? formatCurrency(marginByOrder[row.id] ?? 0)
-                    : "No margin snapshot"}
+          ((data ?? []) as OrderRow[]).map((row) => {
+            const lines = linesByOrder[row.id] ?? [];
+            const badge = getOrderBadgeState(row, lines);
+            const missingCount = lines.filter((l) => !activeBomVariants.has(l.variant_id)).length;
+
+            return (
+              <ListRow
+                key={row.id}
+                columnsTemplate="1.1fr 0.8fr 0.7fr 1fr 0.5fr"
+                className={styles.orderRow}
+              >
+                <div className={styles.orderIdentity}>
+                  <Link href={`/app/orders/${row.id}`} className={styles.orderLink}>
+                    #{row.order_number ?? row.shopify_order_id ?? row.id.slice(0, 6)}
+                  </Link>
+                  <span className={styles.meta}>Shopify {row.shopify_order_id ?? "--"}</span>
+                </div>
+                <span className={styles.meta}>
+                  {new Date(row.created_at).toLocaleDateString("en-GB")}
                 </span>
-              </div>
-              <div className={styles.rowActions}>
-                <form action={allocateOrder}>
-                  <input type="hidden" name="order_id" value={row.id} />
-                  <input
-                    type="hidden"
-                    name="idempotency_key"
-                    value={crypto.randomUUID()}
-                  />
-                  <button className={styles.secondaryInline} type="submit">
-                    Run allocation
-                  </button>
-                </form>
-              </div>
-            </ListRow>
-          ))
+                <StatusBadge variant={getStatusVariant(row.status)}>{row.status}</StatusBadge>
+                <div>
+                  {badge === "allocated" && (
+                    <StatusBadge variant="success">✓ Allocated</StatusBadge>
+                  )}
+                  {badge === "partial" && (
+                    <StatusBadge variant="warning">
+                      ⚠ {missingCount} line{missingCount === 1 ? "" : "s"} need BOM
+                    </StatusBadge>
+                  )}
+                  {badge === "no-boms" && (
+                    <StatusBadge variant="danger">⚠ No BOMs set up</StatusBadge>
+                  )}
+                  {(badge === "done" || badge === "no-lines") && (
+                    <span className={styles.meta}>—</span>
+                  )}
+                </div>
+                <Link href={`/app/orders/${row.id}`} className={styles.viewLink}>
+                  View →
+                </Link>
+              </ListRow>
+            );
+          })
         )}
       </ListPanel>
     </div>
