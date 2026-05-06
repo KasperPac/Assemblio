@@ -5,8 +5,6 @@ import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { canTransitionStocktakeStatus, type StocktakeSessionStatus } from "@/lib/stocktake/lifecycle";
 
-type StocktakeState = { error?: string; success?: string };
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function seedVarianceReasonsIfNeeded(supabase: any, tenantId: string) {
   const { count } = await supabase
@@ -29,6 +27,9 @@ async function seedVarianceReasonsIfNeeded(supabase: any, tenantId: string) {
   );
 }
 
+// NOTE: Race condition — concurrent creates may collide on the same reference number.
+// Mitigation: sessionError throw in createStocktakeSession surfaces DB unique violations.
+// Full fix requires a UNIQUE(tenant_id, reference_number) constraint in the schema.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function generateReferenceNumber(supabase: any, tenantId: string): Promise<string> {
   const year = new Date().getFullYear();
@@ -42,19 +43,16 @@ async function generateReferenceNumber(supabase: any, tenantId: string): Promise
   return `${prefix}${String(next).padStart(3, "0")}`;
 }
 
-export async function createStocktakeSession(
-  _prev: StocktakeState,
-  formData: FormData
-): Promise<StocktakeState> {
+export async function createStocktakeSession(formData: FormData): Promise<void> {
   const locationId = formData.get("location_id")?.toString() ?? "";
   const notes = formData.get("notes")?.toString().trim() || null;
   const blindCount = formData.get("blind_count") === "on";
   const sessionType = (formData.get("session_type")?.toString() ?? "full") as "full" | "initial";
 
-  if (!locationId) return { error: "Location is required." };
+  if (!locationId) throw new Error("Location is required.");
 
   const context = await getServerTenantContext();
-  if (!context) return { error: "Missing tenant context." };
+  if (!context) throw new Error("Missing tenant context.");
   const { supabase, tenantId } = context;
 
   await seedVarianceReasonsIfNeeded(supabase, tenantId);
@@ -75,7 +73,7 @@ export async function createStocktakeSession(
     .select("id,location_id")
     .single();
 
-  if (sessionError) return { error: sessionError.message };
+  if (sessionError) throw new Error(sessionError.message);
 
   // Pre-load all components as lines
   const { data: components } = await supabase

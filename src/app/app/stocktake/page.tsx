@@ -32,7 +32,8 @@ export default async function StocktakePage() {
   if (!context) return null;
   const { supabase, tenantId } = context;
 
-  const [{ data: sessions, error }, { data: locations }, { data: lineCounts }, { data: balances }] =
+  // Stage 1: sessions, locations, balances in parallel
+  const [{ data: sessions, error }, { data: locations }, { data: balances }] =
     await Promise.all([
       supabase
         .from("stocktake_session")
@@ -42,14 +43,16 @@ export default async function StocktakePage() {
         .limit(50),
       supabase.from("location").select("id,name").eq("tenant_id", tenantId).order("name"),
       supabase
-        .from("stocktake_line")
-        .select("session_id")
-        .eq("tenant_id", tenantId),
-      supabase
         .from("inventory_balance")
         .select("on_hand")
         .eq("tenant_id", tenantId),
     ]);
+
+  // Stage 2: line counts scoped to the current page's sessions
+  const sessionIds = ((sessions ?? []) as SessionRow[]).map((s) => s.id);
+  const { data: lineCounts } = sessionIds.length > 0
+    ? await supabase.from("stocktake_line").select("session_id").eq("tenant_id", tenantId).in("session_id", sessionIds)
+    : { data: [] };
 
   const lineCountBySession = ((lineCounts ?? []) as { session_id: string }[]).reduce<Record<string, number>>(
     (acc, l) => { acc[l.session_id] = (acc[l.session_id] ?? 0) + 1; return acc; },
@@ -102,7 +105,6 @@ export default async function StocktakePage() {
 
       {/* New stocktake modal */}
       <dialog id="new-stocktake-dialog" className={styles.dialog} popover="auto">
-        {/* @ts-expect-error — server action with prevState signature used as form action */}
         <form action={createStocktakeSession}>
           <div className={styles.dialogHeader}>
             <span className={styles.dialogEyebrow}>New stocktake</span>
