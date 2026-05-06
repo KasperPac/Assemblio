@@ -22,6 +22,15 @@ import type {
 } from "@/lib/suppliers/types";
 import { getAvgActualLeadTimes } from "@/lib/suppliers/catalog";
 
+type PoRow = {
+  id: string;
+  status: string;
+  created_at: string;
+  expected_date: string | null;
+  purchase_order_line: Array<{ quantity: number; unit_cost: number | null }>;
+  delivery_receipt: Array<{ received_at: string }>;
+};
+
 type Props = { params: Promise<{ supplierId: string }> };
 
 export default async function SupplierDetailPage({ params }: Props) {
@@ -33,6 +42,7 @@ export default async function SupplierDetailPage({ params }: Props) {
     { data: contacts },
     { data: catalogRows },
     { data: allComponents },
+    { data: posData },
   ] = await Promise.all([
     supabase
       .from("suppliers")
@@ -54,6 +64,16 @@ export default async function SupplierDetailPage({ params }: Props) {
       .select("id,name,sku")
       .eq("is_active", true)
       .order("name"),
+    supabase
+      .from("purchase_order")
+      .select(`
+        id, status, created_at, expected_date,
+        purchase_order_line(quantity, unit_cost),
+        delivery_receipt(received_at)
+      `)
+      .eq("supplier_id", supplierId)
+      .order("created_at", { ascending: false })
+      .limit(100),
   ]);
 
   if (!supplier) notFound();
@@ -69,6 +89,7 @@ export default async function SupplierDetailPage({ params }: Props) {
       component: { id: string; name: string; unit: string | null } | null;
     }
   >;
+  const typedPos = (posData ?? []) as PoRow[];
 
   return (
     <div className={styles.detailPage}>
@@ -106,6 +127,7 @@ export default async function SupplierDetailPage({ params }: Props) {
         catalog={typedCatalog}
         avgLeadTimes={avgLeadTimesMap}
         allComponents={(allComponents ?? []) as Array<{ id: string; name: string; sku: string | null }>}
+        pos={typedPos}
         actions={{
           updateSupplier,
           addContact,

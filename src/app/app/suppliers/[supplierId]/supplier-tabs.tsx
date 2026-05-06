@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useState } from "react";
 import type {
   Supplier,
@@ -9,6 +10,15 @@ import type {
   AvgLeadTime,
 } from "@/lib/suppliers/types";
 import styles from "./supplier-tabs.module.css";
+
+type PoRow = {
+  id: string;
+  status: string;
+  created_at: string;
+  expected_date: string | null;
+  purchase_order_line: Array<{ quantity: number; unit_cost: number | null }>;
+  delivery_receipt: Array<{ received_at: string }>;
+};
 
 type CatalogRow = SupplierComponent & {
   supplier_component_price_breaks: SupplierComponentPriceBreak[];
@@ -32,6 +42,7 @@ type Props = {
   catalog: CatalogRow[];
   avgLeadTimes: Map<string, AvgLeadTime>;
   allComponents: Array<{ id: string; name: string; sku: string | null }>;
+  pos: PoRow[];
   actions: Actions;
 };
 
@@ -44,11 +55,14 @@ export default function SupplierTabs({
   catalog,
   avgLeadTimes,
   allComponents,
+  pos,
   actions,
 }: Props) {
   const [active, setActive] = useState<Tab>("Overview");
   const [editMode, setEditMode] = useState(false);
   const [linkComponentOpen, setLinkComponentOpen] = useState(false);
+  const [poFilter, setPoFilter] = useState<"all" | "open" | "received">("all");
+  const filteredPos = pos.filter((p) => poFilter === "all" || p.status === poFilter);
 
   return (
     <div className={styles.tabsContainer}>
@@ -300,7 +314,105 @@ export default function SupplierTabs({
 
       {active === "Purchase Orders" && (
         <div className={styles.tabContent}>
-          <p className={styles.empty}>Purchase Orders tab — built in Task 6.</p>
+          <div className={styles.tabToolbar}>
+            <div className={styles.filterTabs}>
+              {(["all", "open", "received"] as const).map((f) => (
+                <button
+                  key={f}
+                  type="button"
+                  className={`${styles.filterChip} ${poFilter === f ? styles.filterChipActive : ""}`}
+                  onClick={() => setPoFilter(f)}
+                >
+                  {f.charAt(0).toUpperCase() + f.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.poTable}>
+            <div className={styles.poHeader}>
+              <span>PO Ref</span>
+              <span>Created</span>
+              <span>Status</span>
+              <span>Expected</span>
+              <span>Received</span>
+              <span>Value</span>
+            </div>
+            {filteredPos.length === 0 ? (
+              <p className={styles.empty}>No purchase orders.</p>
+            ) : (
+              filteredPos.map((po) => {
+                const latestReceipt = po.delivery_receipt
+                  .slice()
+                  .sort((a, b) => b.received_at.localeCompare(a.received_at))[0];
+                const value = po.purchase_order_line.reduce(
+                  (sum, l) => sum + l.quantity * (l.unit_cost ?? 0),
+                  0
+                );
+                let onTimePill: React.ReactNode = null;
+                if (latestReceipt && po.expected_date) {
+                  const late =
+                    new Date(latestReceipt.received_at) > new Date(po.expected_date);
+                  if (late) {
+                    const diffDays = Math.round(
+                      (new Date(latestReceipt.received_at).getTime() -
+                        new Date(po.expected_date).getTime()) /
+                        (1000 * 60 * 60 * 24)
+                    );
+                    onTimePill = (
+                      <span className={styles.lateTag}>+{diffDays}d late</span>
+                    );
+                  } else {
+                    onTimePill = <span className={styles.onTimeTag}>✓ on time</span>;
+                  }
+                }
+                return (
+                  <div key={po.id} className={styles.poRow}>
+                    <span className={styles.poRef}>{po.id.slice(0, 8).toUpperCase()}</span>
+                    <span>
+                      {new Date(po.created_at).toLocaleDateString("en-AU", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </span>
+                    <span>
+                      <span className={po.status === "received" ? styles.badgeReceived : styles.badgeOpen}>
+                        {po.status.charAt(0).toUpperCase() + po.status.slice(1)}
+                      </span>
+                    </span>
+                    <span>
+                      {po.expected_date
+                        ? new Date(po.expected_date).toLocaleDateString("en-AU", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })
+                        : "—"}
+                    </span>
+                    <span>
+                      {latestReceipt
+                        ? new Date(latestReceipt.received_at).toLocaleDateString("en-AU", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })
+                        : "—"}
+                      {onTimePill}
+                    </span>
+                    <span>
+                      {value > 0
+                        ? `$${value.toLocaleString("en-AU", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}`
+                        : "—"}
+                    </span>
+                  </div>
+                );
+              })
+            )}
+          </div>
         </div>
       )}
     </div>
