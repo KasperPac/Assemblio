@@ -1,0 +1,47 @@
+{
+  "planPath": "docs/superpowers/plans/2026-05-06-locations-manager.md",
+  "tasks": [
+    {
+      "id": 9,
+      "subject": "Task 1: Schema migration",
+      "status": "pending",
+      "description": "**Goal:** Create bin_sub_location, bin_aisle, bin_bay tables and migrate component to FK columns.\n\n**Files:**\n- Create: `supabase/patches/locations_manager_schema.sql`\n\n**Acceptance Criteria:**\n- [ ] Three new tables with RLS and tenant isolation\n- [ ] component has bin_sub_location_id, bin_aisle_id, bin_bay_id FK columns\n- [ ] Old text columns dropped\n- [ ] Unique constraints in place\n\n**Verify:** Apply migration, confirm in Supabase dashboard.\n\n```json:metadata\n{\"files\": [\"supabase/patches/locations_manager_schema.sql\"], \"verifyCommand\": \"supabase db push\", \"acceptanceCriteria\": [\"Three new tables with RLS\", \"component FK columns added\", \"old text columns dropped\"]}\n```"
+    },
+    {
+      "id": 10,
+      "subject": "Task 2: Nav + Locations Manager page scaffold",
+      "status": "pending",
+      "blockedBy": [9],
+      "description": "**Goal:** Add Warehouse nav section and render location tree at /app/warehouse/locations.\n\n**Files:**\n- Modify: `src/app/app/sidebar-nav.tsx`\n- Modify: `src/app/app/route-meta.ts`\n- Create: `src/app/app/warehouse/locations/page.tsx`\n- Create: `src/app/app/warehouse/locations/page.module.css`\n\n**Acceptance Criteria:**\n- [ ] Warehouse nav section with Locations link\n- [ ] Page renders warehouse tree\n- [ ] TypeScript clean\n\n**Verify:** npm run dev, open /app/warehouse/locations.\n\n```json:metadata\n{\"files\": [\"src/app/app/sidebar-nav.tsx\", \"src/app/app/route-meta.ts\", \"src/app/app/warehouse/locations/page.tsx\", \"src/app/app/warehouse/locations/page.module.css\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Warehouse nav section\", \"page renders tree\"]}\n```"
+    },
+    {
+      "id": 11,
+      "subject": "Task 3: CRUD for all entity types",
+      "status": "pending",
+      "blockedBy": [10],
+      "description": "**Goal:** Add/edit/delete for warehouses, sub-locations, aisles, bays with inline forms and delete guards.\n\n**Files:**\n- Create: `src/app/app/warehouse/locations/actions.ts`\n- Create: `src/app/app/warehouse/locations/locations-tree.tsx`\n- Modify: `src/app/app/warehouse/locations/page.tsx`\n- Modify: `src/app/app/warehouse/locations/page.module.css`\n\n**Acceptance Criteria:**\n- [ ] Full CRUD for all entity types\n- [ ] Delete blocked if components assigned\n- [ ] Aisle delete warns about bay cascade\n- [ ] TypeScript clean\n\n**Verify:** Full CRUD round-trip in browser.\n\n```json:metadata\n{\"files\": [\"src/app/app/warehouse/locations/actions.ts\", \"src/app/app/warehouse/locations/locations-tree.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"CRUD for all entity types\", \"delete guards\", \"aisle cascade warning\"]}\n```"
+    },
+    {
+      "id": 12,
+      "subject": "Task 4: Barcode modal",
+      "status": "pending",
+      "blockedBy": [11],
+      "description": "**Goal:** Code 128 barcode modal per entity row with print label.\n\n**Files:**\n- Create: `src/app/app/warehouse/locations/barcode-modal.tsx`\n- Modify: `src/app/app/warehouse/locations/locations-tree.tsx`\n- Modify: `src/app/app/warehouse/locations/page.module.css`\n\n**Acceptance Criteria:**\n- [ ] jsbarcode installed\n- [ ] Modal with barcode and 6-char short code\n- [ ] Print label works\n- [ ] TypeScript clean\n\n**Verify:** Click barcode button, confirm Code 128 renders, print works.\n\n```json:metadata\n{\"files\": [\"src/app/app/warehouse/locations/barcode-modal.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"jsbarcode installed\", \"modal renders barcode\", \"print label works\"]}\n```"
+    },
+    {
+      "id": 13,
+      "subject": "Task 5: Component bin location cascading dropdowns",
+      "status": "pending",
+      "blockedBy": [9],
+      "description": "**Goal:** Replace free-text bin inputs with cascading dropdowns on component detail page.\n\n**Files:**\n- Create: `src/app/app/components/[componentId]/bin-location-select.tsx`\n- Modify: `src/app/app/components/[componentId]/page.tsx`\n- Modify: `src/app/app/components/actions.ts`\n\n**Acceptance Criteria:**\n- [ ] Single warehouse auto-selects\n- [ ] Aisle filters bays; clearing aisle clears bay\n- [ ] Saves FK IDs\n- [ ] Summary shows full path + short code\n- [ ] TypeScript clean\n\n**Verify:** Select warehouse+aisle+bay, save, reload — values persist.\n\n```json:metadata\n{\"files\": [\"src/app/app/components/[componentId]/bin-location-select.tsx\", \"src/app/app/components/[componentId]/page.tsx\", \"src/app/app/components/actions.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"cascading dropdowns\", \"saves FK IDs\", \"summary shows path + code\"]}\n```"
+    },
+    {
+      "id": 14,
+      "subject": "Task 6: Stocktake and CSV export FK updates",
+      "status": "pending",
+      "blockedBy": [9],
+      "description": "**Goal:** Update stocktake session page, counting sheet, and CSV export to resolve bin location names via FK joins.\n\n**Files:**\n- Modify: `src/app/app/stocktake/[sessionId]/page.tsx`\n- Modify: `src/app/app/stocktake/[sessionId]/counting-sheet.tsx`\n- Modify: `src/app/api/stocktake/[sessionId]/export/route.ts`\n\n**Acceptance Criteria:**\n- [ ] Stocktake groups by resolved names\n- [ ] CSV has names not IDs\n- [ ] No-location group still appears\n- [ ] TypeScript clean\n\n**Verify:** Open stocktake session, check groups. Download CSV, check name columns.\n\n```json:metadata\n{\"files\": [\"src/app/app/stocktake/[sessionId]/page.tsx\", \"src/app/app/stocktake/[sessionId]/counting-sheet.tsx\", \"src/app/api/stocktake/[sessionId]/export/route.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"stocktake groups by resolved names\", \"CSV has names not IDs\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-05-06T00:00:00Z"
+}
