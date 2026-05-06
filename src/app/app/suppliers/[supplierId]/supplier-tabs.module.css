@@ -1,0 +1,59 @@
+.detailPage { padding: 2rem; max-width: 1000px; }
+.backRow { margin-bottom: 1rem; }
+.backLink { font-size: 0.85rem; opacity: 0.55; text-decoration: none; color: inherit; }
+.backLink:hover { opacity: 0.9; }
+
+.pageHeader { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; }
+.supplierName { font-size: 1.4rem; font-weight: 600; margin: 0; }
+.supplierMeta { font-size: 0.82rem; opacity: 0.5; display: block; margin-top: 4px; }
+.headerActions { display: flex; gap: 0.5rem; }
+
+.tabsContainer { }
+.tabBar { display: flex; gap: 4px; margin-bottom: 0; }
+.tab {
+  padding: 0.5rem 1.25rem; font-size: 0.85rem; cursor: pointer;
+  border-radius: 6px 6px 0 0; border: 1px solid rgba(255,255,255,0.1); border-bottom: none;
+  background: rgba(255,255,255,0.05); opacity: 0.55; color: inherit;
+}
+.tab:hover { opacity: 0.8; }
+.tabActive { opacity: 1; background: rgba(255,255,255,0.1); }
+.tabContent {
+  border: 1px solid rgba(255,255,255,0.12); border-radius: 0 6px 6px 6px;
+  padding: 1.5rem; background: rgba(255,255,255,0.03);
+}
+
+.infoGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+.infoField { display: flex; flex-direction: column; gap: 3px; }
+.infoLabel { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.4; }
+.infoValue { font-size: 0.88rem; }
+
+.notesSection { margin: 1rem 0; }
+.notesText { font-size: 0.85rem; opacity: 0.7; line-height: 1.6; padding: 0.75rem; background: rgba(255,255,255,0.04); border-radius: 6px; }
+.sectionHeading { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.4; padding-top: 1rem; margin: 1rem 0 0.5rem; border-top: 1px solid rgba(255,255,255,0.08); }
+
+.editGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+.editField { display: flex; flex-direction: column; gap: 4px; font-size: 0.82rem; }
+.editFieldFull { grid-column: 1 / -1; }
+.editInput { padding: 0.4rem 0.6rem; border-radius: 4px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.07); color: inherit; font-size: 0.85rem; }
+.editTextarea { padding: 0.4rem 0.6rem; border-radius: 4px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.07); color: inherit; font-size: 0.85rem; resize: vertical; }
+.editActions { display: flex; gap: 0.5rem; }
+
+.contactsList { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+.contactRow { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; background: rgba(255,255,255,0.04); border-radius: 6px; font-size: 0.85rem; flex-wrap: wrap; }
+.contactName { font-weight: 500; }
+.contactRole, .contactEmail, .contactPhone { opacity: 0.5; font-size: 0.8rem; }
+.contactRemove { margin-left: auto; }
+.addContactForm { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; margin-top: 0.5rem; }
+
+.btnPrimary { padding: 0.4rem 1rem; border-radius: 5px; border: none; background: #4f8ef7; color: white; cursor: pointer; font-size: 0.82rem; }
+.btnSecondary { padding: 0.4rem 1rem; border-radius: 5px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); color: inherit; cursor: pointer; font-size: 0.82rem; }
+.btnDanger { padding: 0.4rem 0.75rem; border-radius: 5px; border: none; background: rgba(255,80,80,0.15); color: #ff6b6b; cursor: pointer; font-size: 0.78rem; }
+.btnDanger:hover { background: rgba(255,80,80,0.25); }
+
+.empty { opacity: 0.4; font-size: 0.85rem; }
+
+/* Catalog and PO table placeholders — filled in Tasks 5 & 6 */
+.tabToolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.tabCount { font-size: 0.82rem; opacity: 0.5; }
+.catalogTable { margin-top: 1rem; }
+.poTable { margin-top: 1rem; }
