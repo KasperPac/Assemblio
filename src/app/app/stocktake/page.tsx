@@ -109,6 +109,23 @@ export default async function StocktakePage() {
             <h2 className={styles.dialogTitle}>Create session</h2>
           </div>
           <div className={styles.dialogFields}>
+            <fieldset className={styles.sessionTypeGroup}>
+              <legend className={styles.fieldLabel}>Count type</legend>
+              <label className={styles.radioOption}>
+                <input type="radio" name="session_type" value="full" defaultChecked />
+                <div>
+                  <span className={styles.radioLabel}>Full count</span>
+                  <span className={styles.radioDesc}>Count all components and reconcile variances</span>
+                </div>
+              </label>
+              <label className={styles.radioOption}>
+                <input type="radio" name="session_type" value="initial" />
+                <div>
+                  <span className={styles.radioLabel}>Initial count</span>
+                  <span className={styles.radioDesc}>Set opening stock quantities for a new inventory</span>
+                </div>
+              </label>
+            </fieldset>
             <label className={styles.dialogField}>
               <span className={styles.fieldLabel}>Location</span>
               <select name="location_id" className={styles.select} required>
@@ -129,7 +146,6 @@ export default async function StocktakePage() {
                 <span className={styles.checkboxDesc}>Expected qty hidden from counters until reconciliation</span>
               </div>
             </label>
-            <input type="hidden" name="session_type" value="full" />
           </div>
           <div className={styles.dialogActions}>
             {/* @ts-expect-error — popover API attributes not in React types yet */}

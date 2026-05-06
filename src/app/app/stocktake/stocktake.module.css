@@ -94,6 +94,42 @@
 .meta { color: var(--ink-muted); font-size: 0.88rem; }
 .viewLink { color: color-mix(in srgb, var(--brand-2) 72%, white); text-decoration: none; font-weight: 700; font-size: 0.84rem; }
 
+/* Radio group */
+.sessionTypeGroup {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.radioOption {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--stroke-card);
+  border-radius: 8px;
+  cursor: pointer;
+  background: var(--bg-card-alt);
+}
+.radioOption:has(input:checked) {
+  border-color: var(--brand-2);
+  background: color-mix(in srgb, var(--brand-2) 8%, transparent);
+}
+.radioLabel {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-strong);
+}
+.radioDesc {
+  display: block;
+  font-size: 12px;
+  color: var(--ink-muted);
+  margin-top: 2px;
+}
+
 /* Buttons */
 .primary, .secondary {
   display: inline-flex;
