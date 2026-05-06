@@ -95,3 +95,35 @@
 }
 .formError { font-size: 12px; color: #ef4444; }
 .deleteError { font-size: 12px; color: #ef4444; margin-left: 6px; }
+
+/* ── Barcode modal ─────────────────────────────────────────── */
+.modalOverlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  display: flex; align-items: center; justify-content: center; z-index: 100;
+}
+.modal {
+  background: var(--surface, #fff); border-radius: 10px;
+  padding: 28px 32px; min-width: 320px; max-width: 420px;
+  position: relative; box-shadow: 0 8px 32px rgba(0,0,0,.18);
+}
+.modalClose {
+  position: absolute; top: 12px; right: 14px;
+  background: none; border: none; font-size: 16px; cursor: pointer; color: var(--muted);
+}
+.modalType { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 4px; }
+.modalName { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.modalPath { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+.barcodeBox { text-align: center; background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin-bottom: 16px; }
+.shortCode2 { font-size: 24px; font-weight: 700; font-family: monospace; letter-spacing: .2em; margin-top: 8px; }
+.shortCodeLabel { font-size: 11px; color: var(--muted); }
+.modalActions { display: flex; gap: 10px; justify-content: center; }
+
+/* Print label — hidden on screen, shown only on print */
+.printLabel { display: none; }
+@media print {
+  body > * { display: none !important; }
+  .printLabel { display: block !important; font-family: sans-serif; padding: 12px; width: 60mm; }
+  .printPath { font-size: 9px; color: #6b7280; margin-bottom: 4px; }
+  .printName { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .printCode { font-size: 13px; font-weight: 700; font-family: monospace; letter-spacing: .2em; margin-top: 4px; }
+}

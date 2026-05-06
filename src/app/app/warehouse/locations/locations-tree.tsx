@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
+import { BarcodeModal } from "./barcode-modal";
 import {
   addWarehouse, editWarehouse,
   addSubLocation, editSubLocation, deleteSubLocation,
@@ -111,9 +112,21 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
   const [editingAisle, setEditingAisle] = useState<string | null>(null);
   const [addingBay, setAddingBay] = useState<string | null>(null);
   const [editingBay, setEditingBay] = useState<string | null>(null);
+  const [barcode, setBarcode] = useState<{
+    id: string; type: string; name: string; path: string;
+  } | null>(null);
 
   return (
     <div>
+      {barcode && (
+        <BarcodeModal
+          entityId={barcode.id}
+          entityType={barcode.type}
+          entityName={barcode.name}
+          path={barcode.path}
+          onClose={() => setBarcode(null)}
+        />
+      )}
       {warehouses.map((wh) => {
         const subLocMap = new Map(wh.sub_locations.map((s) => [s.id, s.name]));
         const aisles = [...wh.aisles].sort((a, b) => a.name.localeCompare(b.name));
@@ -138,6 +151,7 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                 <span className={styles.shortCode}>{shortCode(wh.id)}</span>
                 <button className={styles.btnIcon} onClick={() => setAddingSl(wh.id)}>⊕ Sub-loc</button>
                 <button className={styles.btnIcon} onClick={() => setAddingAisle(wh.id)}>⊕ Aisle</button>
+                <button className={styles.btnIcon} onClick={() => setBarcode({ id: wh.id, type: "Warehouse", name: wh.name, path: wh.name })}>▦ Barcode</button>
                 <button className={styles.btnIcon} onClick={() => setEditingWh(wh.id)}>✎ Edit</button>
               </div>
             )}
@@ -166,6 +180,7 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                     <span className={styles.typeTag}>Sub-loc</span>
                     <span className={styles.entityName}>{sl.name}</span>
                     <span className={styles.shortCode}>{shortCode(sl.id)}</span>
+                    <button className={styles.btnIcon} onClick={() => setBarcode({ id: sl.id, type: "Sub-location", name: sl.name, path: `${wh.name} · ${sl.name}` })}>▦ Barcode</button>
                     <button className={styles.btnIcon} onClick={() => setEditingSl(sl.id)}>✎ Edit</button>
                     <SimpleDeleteButton id={sl.id} action={deleteSubLocation} />
                   </>
@@ -214,6 +229,7 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                         <span className={styles.bayCount}> · {bays.length} bays</span>
                       </span>
                       <span className={styles.shortCode}>{shortCode(aisle.id)}</span>
+                      <button className={styles.btnIcon} onClick={() => setBarcode({ id: aisle.id, type: "Aisle", name: aisle.name, path: `${wh.name} · ${aisle.name}` })}>▦ Barcode</button>
                       <button className={styles.btnIcon} onClick={() => setAddingBay(aisle.id)}>⊕ Bay</button>
                       <button className={styles.btnIcon} onClick={() => setEditingAisle(aisle.id)}>✎ Edit</button>
                       <AisleDeleteButton aisleId={aisle.id} />
@@ -245,6 +261,7 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                           <span className={styles.entityName}>{bay.name}</span>
                           <span className={styles.pathHint}>{aisle.name} · {bay.name}</span>
                           <span className={styles.shortCode}>{shortCode(bay.id)}</span>
+                          <button className={styles.btnIcon} onClick={() => setBarcode({ id: bay.id, type: "Bay", name: bay.name, path: `${wh.name} · ${aisle.name} · ${bay.name}` })}>▦ Barcode</button>
                           <button className={styles.btnIcon} onClick={() => setEditingBay(bay.id)}>✎ Edit</button>
                           <SimpleDeleteButton id={bay.id} action={deleteBay} />
                         </>
