@@ -452,3 +452,31 @@
     white-space: normal;
   }
 }
+
+/* ── Suppliers tab ────────────────────── */
+
+.tabToolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+.tabCount { font-size: 0.82rem; opacity: 0.5; }
+.btnSmall { padding: 0.3rem 0.75rem; font-size: 0.78rem; border-radius: 5px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); color: inherit; cursor: pointer; }
+.linkForm { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; padding: 0.75rem; background: rgba(255,255,255,0.04); border-radius: 6px; margin-bottom: 0.75rem; }
+.miniInput { padding: 0.3rem 0.5rem; border-radius: 4px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.07); color: inherit; font-size: 0.8rem; }
+
+.suppliersTable { margin-top: 0.5rem; }
+.suppliersHeader,
+.suppliersRow {
+  display: grid;
+  grid-template-columns: 2fr 1.1fr 1fr 0.8fr 0.9fr 0.9fr 60px;
+  gap: 0;
+  padding: 0.6rem 0.5rem;
+  font-size: 0.83rem;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.suppliersHeader { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.4; border-bottom: 1px solid rgba(255,255,255,0.14); }
+.supplierLink { font-weight: 500; }
+.catalogPartNum { font-family: monospace; font-size: 0.8rem; opacity: 0.6; }
+.tagGreen { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 8px; font-size: 0.7rem; background: rgba(72,199,116,0.15); color: #48c774; }
+.tagBlue { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 8px; font-size: 0.7rem; background: rgba(79,142,247,0.15); color: #4f8ef7; }
+.ltGreen { color: #48c774; }
+.ltRed { color: #ff6b6b; }
+.starBtn { background: none; border: none; cursor: pointer; font-size: 1.1rem; color: #f5c542; }
