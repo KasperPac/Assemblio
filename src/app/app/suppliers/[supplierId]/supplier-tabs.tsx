@@ -361,24 +361,52 @@ function CatalogRowItem({
           <button type="submit" className={styles.btnDanger}>Remove</button>
         </form>
       </div>
-      {breaksOpen &&
-        row.supplier_component_price_breaks
-          .slice()
-          .sort((a, b) => a.min_quantity - b.min_quantity)
-          .map((pb) => (
-            <div key={pb.id} className={styles.priceBreakRow}>
-              <span className={styles.breakQty}>↳ {pb.min_quantity}+</span>
-              <span />
-              <span>${pb.unit_cost.toFixed(2)}</span>
-              <span /><span /><span /><span />
-              <form action={actions.removePriceBreak}>
-                <input type="hidden" name="price_break_id" value={pb.id} />
-                <input type="hidden" name="supplier_component_id" value={row.id} />
-                <input type="hidden" name="supplier_id" value={supplierId} />
-                <button type="submit" className={styles.btnDanger}>×</button>
-              </form>
-            </div>
-          ))}
+      {breaksOpen && (
+        <>
+          {row.supplier_component_price_breaks
+            .slice()
+            .sort((a, b) => a.min_quantity - b.min_quantity)
+            .map((pb) => (
+              <div key={pb.id} className={styles.priceBreakRow}>
+                <span className={styles.breakQty}>↳ {pb.min_quantity}+</span>
+                <span />
+                <span>${pb.unit_cost.toFixed(2)}</span>
+                <span /><span /><span /><span />
+                <form action={actions.removePriceBreak}>
+                  <input type="hidden" name="price_break_id" value={pb.id} />
+                  <input type="hidden" name="supplier_component_id" value={row.id} />
+                  <input type="hidden" name="supplier_id" value={supplierId} />
+                  <button type="submit" className={styles.btnDanger}>×</button>
+                </form>
+              </div>
+            ))}
+          <form action={actions.addPriceBreak} className={styles.addPriceBreakForm}>
+            <input type="hidden" name="supplier_component_id" value={row.id} />
+            <input type="hidden" name="supplier_id" value={supplierId} />
+            <input
+              name="min_quantity"
+              type="number"
+              step="0.01"
+              placeholder="Min qty"
+              required
+              className={styles.editInput}
+              style={{ width: "80px" }}
+            />
+            <input
+              name="unit_cost"
+              type="number"
+              step="0.01"
+              placeholder="Unit cost"
+              required
+              className={styles.editInput}
+              style={{ width: "90px" }}
+            />
+            <button type="submit" className={styles.btnPrimary} style={{ fontSize: "0.78rem", padding: "0.25rem 0.6rem" }}>
+              + Add break
+            </button>
+          </form>
+        </>
+      )}
     </>
   );
 }
