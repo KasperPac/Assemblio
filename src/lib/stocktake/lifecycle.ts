@@ -31,7 +31,7 @@ export function canTransitionStocktakeStatus(
 }
 
 export function canEditStocktakeLines(status: StocktakeSessionStatus) {
-  return status === "counting";
+  return status === "counting" || status === "open";
 }
 
 export function canSubmitForReview(status: StocktakeSessionStatus) {

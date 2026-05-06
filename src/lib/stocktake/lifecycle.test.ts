@@ -10,9 +10,9 @@ import {
 } from "./lifecycle";
 
 describe("stocktake lifecycle rules", () => {
-  it("allows line editing only when counting", () => {
+  it("allows line editing when counting or open (legacy)", () => {
     expect(canEditStocktakeLines("counting")).toBe(true);
-    expect(canEditStocktakeLines("open")).toBe(false); // legacy compat
+    expect(canEditStocktakeLines("open")).toBe(true); // legacy sessions remain editable
     expect(canEditStocktakeLines("reconciliation")).toBe(false);
     expect(canEditStocktakeLines("approved")).toBe(false);
   });
@@ -29,6 +29,9 @@ describe("stocktake lifecycle rules", () => {
     expect(canTransitionStocktakeStatus("open", "locked")).toBe(true);
     expect(canTransitionStocktakeStatus("locked", "approved")).toBe(true);
     expect(canTransitionStocktakeStatus("approved", "locked")).toBe(true);
+    expect(canTransitionStocktakeStatus("draft", "counting")).toBe(true);
+    expect(canTransitionStocktakeStatus("open", "counting")).toBe(true); // migration path
+    expect(canTransitionStocktakeStatus("counting", "counting")).toBe(false); // same-status guard
   });
 
   it("canSubmitForReview: only from counting", () => {
@@ -46,6 +49,8 @@ describe("stocktake lifecycle rules", () => {
   it("canSendBackForRecount: only from reconciliation", () => {
     expect(canSendBackForRecount("reconciliation")).toBe(true);
     expect(canSendBackForRecount("counting")).toBe(false);
+    expect(canSendBackForRecount("open")).toBe(false);
+    expect(canSendBackForRecount("approved")).toBe(false);
   });
 
   it("allows apply only when approved", () => {
