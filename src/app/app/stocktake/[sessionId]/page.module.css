@@ -167,6 +167,12 @@
 }
 .summaryItem span { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-faint); }
 .summaryItem strong { font-size: 1.2rem; color: var(--ink-strong); }
+.summaryActions { display: flex; align-items: center; }
+
+/* Save indicator */
+.saveIndicator { font-size: 0.75rem; font-weight: 700; text-align: center; }
+.savedOk { color: var(--ok); }
+.savedErr { color: var(--danger); }
 
 /* Buttons */
 .primary, .secondary, .danger {

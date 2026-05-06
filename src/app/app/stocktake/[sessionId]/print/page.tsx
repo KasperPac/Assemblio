@@ -3,7 +3,7 @@ import { getServerTenantContext } from "@/lib/tenant/context";
 
 type Props = {
   params: Promise<{ sessionId: string }>;
-  searchParams?: Promise<{ sublocation?: string; row?: string; bay?: string }>;
+  searchParams?: Promise<{ sublocation?: string; aisle?: string; bay?: string }>;
 };
 
 type LineRow = {
@@ -73,12 +73,12 @@ export default async function PrintPage({ params, searchParams }: Props) {
       return c?.bin_sub_location === sp.sublocation;
     });
     sectionLabel = sp.sublocation;
-    if (sp.row) {
+    if (sp.aisle) {
       lines = lines.filter((l) => {
         const c = Array.isArray(l.component) ? l.component[0] : l.component;
-        return c?.bin_row === sp.row;
+        return c?.bin_row === sp.aisle;
       });
-      sectionLabel += ` → Row ${sp.row}`;
+      sectionLabel += ` → ${sp.aisle}`;
       if (sp.bay) {
         lines = lines.filter((l) => {
           const c = Array.isArray(l.component) ? l.component[0] : l.component;

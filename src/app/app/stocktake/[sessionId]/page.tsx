@@ -4,60 +4,22 @@ import { getServerTenantContext } from "@/lib/tenant/context";
 import StatusBadge from "../../_ui/status-badge";
 import styles from "./page.module.css";
 import {
-  submitForReview,
   saveVarianceReason,
   approveAndApply,
   sendBackForRecount,
-  applyOpeningStock,
 } from "./actions";
 import { ImportCsvButton } from "./import-csv-button";
-import { CountingSheet } from "./counting-sheet";
+import { CountingSheet, type BinGroup, type SheetLine, binName } from "./counting-sheet";
 
 type Props = {
   params: Promise<{ sessionId: string }>;
   searchParams?: Promise<{ error?: string; apply_error?: string }>;
 };
 
-type BinRef = { name: string } | Array<{ name: string }> | null;
-
-type LineRow = {
-  id: string;
-  expected_on_hand: number;
-  counted: number | null;
+type LineRow = SheetLine & {
   notes: string | null;
   variance_reason_id: string | null;
-  component: {
-    id: string;
-    name: string | null;
-    sku: string | null;
-    cost_per_unit: number;
-    bin_sub_location: BinRef;
-    bin_aisle: BinRef;
-    bin_bay: BinRef;
-  } | Array<{
-    id: string;
-    name: string | null;
-    sku: string | null;
-    cost_per_unit: number;
-    bin_sub_location: BinRef;
-    bin_aisle: BinRef;
-    bin_bay: BinRef;
-  }> | null;
 };
-
-type BinGroup = {
-  key: string;
-  subLocation: string | null;
-  row: string | null;
-  bay: string | null;
-  lines: LineRow[];
-};
-
-function binName(ref: BinRef): string | null {
-  if (!ref) return null;
-  const obj = Array.isArray(ref) ? ref[0] : ref;
-  return obj?.name ?? null;
-}
 
 function binKey(l: LineRow): string {
   const c = Array.isArray(l.component) ? l.component[0] : l.component;
@@ -78,7 +40,7 @@ function groupByBin(lines: LineRow[]): BinGroup[] {
       map.set(key, {
         key,
         subLocation: c ? binName(c.bin_sub_location) : null,
-        row: c ? binName(c.bin_aisle) : null,
+        aisle: c ? binName(c.bin_aisle) : null,
         bay: c ? binName(c.bin_bay) : null,
         lines: [],
       });
@@ -90,7 +52,7 @@ function groupByBin(lines: LineRow[]): BinGroup[] {
     if (a.subLocation !== null && b.subLocation === null) return -1;
     const sl = (a.subLocation ?? "").localeCompare(b.subLocation ?? "");
     if (sl !== 0) return sl;
-    const r = (a.row ?? "").localeCompare(b.row ?? "");
+    const r = (a.aisle ?? "").localeCompare(b.aisle ?? "");
     if (r !== 0) return r;
     return (a.bay ?? "").localeCompare(b.bay ?? "");
   });
@@ -213,22 +175,6 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
           )}
           {isCounting && (
             <ImportCsvButton sessionId={sessionId} />
-          )}
-          {isCounting && !isInitial && (
-            <form action={submitForReview}>
-              <input type="hidden" name="session_id" value={sessionId} />
-              <button type="submit" className={styles.primary} disabled={countedLines.length < lines.length}>
-                Submit for review →
-              </button>
-            </form>
-          )}
-          {isCounting && isInitial && (
-            <form action={applyOpeningStock}>
-              <input type="hidden" name="session_id" value={sessionId} />
-              <button type="submit" className={styles.primary} disabled={countedLines.length < lines.length}>
-                Apply opening stock →
-              </button>
-            </form>
           )}
           {isReconciliation && isAdmin && (
             <>

@@ -6,7 +6,7 @@ import { useState, useMemo, useCallback } from "react";
 import { saveLineCountClient, submitForReview, applyOpeningStock } from "./actions";
 import styles from "./page.module.css";
 
-type BinRef = { name: string } | Array<{ name: string }> | null;
+export type BinRef = { name: string } | Array<{ name: string }> | null;
 
 type CompData = {
   id: string;
@@ -18,7 +18,7 @@ type CompData = {
   bin_bay: BinRef;
 };
 
-function binName(ref: BinRef): string | null {
+export function binName(ref: BinRef): string | null {
   if (!ref) return null;
   const obj = Array.isArray(ref) ? ref[0] : ref;
   return obj?.name ?? null;
@@ -34,7 +34,7 @@ export type SheetLine = {
 export type BinGroup = {
   key: string;
   subLocation: string | null;
-  row: string | null;
+  aisle: string | null;
   bay: string | null;
   lines: SheetLine[];
 };
@@ -76,6 +76,21 @@ export function CountingSheet({ binGroups, sessionId, isInitial, showBlind, isAd
     [counts, expectedMap]
   );
 
+  const netVariance = useMemo(() => {
+    if (isInitial || showBlind || !isAdmin) return null;
+    let total = 0;
+    for (const g of binGroups) {
+      for (const l of g.lines) {
+        const counted = counts.get(l.id) ?? null;
+        if (counted === null) continue;
+        const comp = Array.isArray(l.component) ? l.component[0] : l.component;
+        const costPerUnit = Number(comp?.cost_per_unit ?? 0);
+        total += (counted - Number(l.expected_on_hand)) * costPerUnit;
+      }
+    }
+    return total;
+  }, [binGroups, counts, isInitial, showBlind, isAdmin]);
+
   const numDataCols = 1
     + (showBlind ? 0 : 1)
     + 1
@@ -107,7 +122,7 @@ export function CountingSheet({ binGroups, sessionId, isInitial, showBlind, isAd
         {binGroups.map((group) => {
           const groupLabel = group.subLocation === null
             ? "No location set"
-            : [group.subLocation, group.row ? `Row ${group.row}` : null, group.bay ? `Bay ${group.bay}` : null]
+            : [group.subLocation, group.aisle ?? null, group.bay ? `Bay ${group.bay}` : null]
                 .filter(Boolean).join(" · ");
 
           return (
@@ -117,7 +132,7 @@ export function CountingSheet({ binGroups, sessionId, isInitial, showBlind, isAd
                 <Link
                   href={`/app/stocktake/${sessionId}/print${
                     group.subLocation
-                      ? `?sublocation=${encodeURIComponent(group.subLocation)}${group.row ? `&row=${encodeURIComponent(group.row)}` : ""}${group.bay ? `&bay=${encodeURIComponent(group.bay)}` : ""}`
+                      ? `?sublocation=${encodeURIComponent(group.subLocation)}${group.aisle ? `&aisle=${encodeURIComponent(group.aisle)}` : ""}${group.bay ? `&bay=${encodeURIComponent(group.bay)}` : ""}`
                       : ""
                   }`}
                   target="_blank"
@@ -214,6 +229,14 @@ export function CountingSheet({ binGroups, sessionId, isInitial, showBlind, isAd
             <div className={styles.summaryItem}>
               <span>Variances</span>
               <strong className={styles.warnVal}>{varianceCount} lines</strong>
+            </div>
+          )}
+          {netVariance !== null && (
+            <div className={styles.summaryItem}>
+              <span>Net variance</span>
+              <strong className={netVariance >= 0 ? styles.positiveVal : styles.negativeVal}>
+                {formatCurrency(netVariance)}
+              </strong>
             </div>
           )}
           <div className={styles.summaryActions}>

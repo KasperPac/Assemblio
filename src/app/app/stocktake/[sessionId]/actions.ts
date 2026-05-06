@@ -62,43 +62,9 @@ export async function saveLineCountClient({
 
   if (error) return { ok: false };
 
-  revalidatePath(`/app/stocktake/${sessionId}`);
   return { ok: true };
 }
 
-export async function saveLineCount(formData: FormData) {
-  const lineId = formData.get("line_id")?.toString() ?? "";
-  const sessionId = formData.get("session_id")?.toString() ?? "";
-  const countedRaw = formData.get("counted")?.toString() ?? "";
-  const notes = formData.get("notes")?.toString().trim() || null;
-
-  if (!lineId || !sessionId || countedRaw === "") return;
-  const counted = Number(countedRaw);
-  if (!Number.isFinite(counted) || counted < 0) return;
-
-  const context = await getServerTenantContext();
-  if (!context) return;
-  const { supabase, tenantId } = context;
-
-  const { data: { user } } = await supabase.auth.getUser();
-
-  const session = await fetchSession(supabase, tenantId, sessionId);
-  if (!session || !canEditStocktakeLines(session.status as StocktakeSessionStatus)) return;
-
-  await supabase
-    .from("stocktake_line")
-    .update({
-      counted,
-      notes,
-      counted_by: user?.id ?? null,
-      counted_at: new Date().toISOString(),
-    })
-    .eq("id", lineId)
-    .eq("session_id", sessionId)
-    .eq("tenant_id", tenantId);
-
-  revalidatePath(`/app/stocktake/${sessionId}`);
-}
 
 export async function submitForReview(formData: FormData) {
   const sessionId = formData.get("session_id")?.toString() ?? "";
