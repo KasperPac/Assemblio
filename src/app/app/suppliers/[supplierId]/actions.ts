@@ -132,20 +132,36 @@ export async function togglePreferred(formData: FormData) {
   if (!context || !supplierComponentId || !componentId) return;
   const { supabase, tenantId } = context;
 
-  // Clear preferred on all other rows for this component first
-  await supabase
+  const { data: current } = await supabase
     .from("supplier_components")
-    .update({ is_preferred: false })
+    .select("is_preferred")
     .eq("tenant_id", tenantId)
-    .eq("component_id", componentId)
-    .neq("id", supplierComponentId);
+    .eq("id", supplierComponentId)
+    .maybeSingle();
 
-  // Set this one as preferred
-  await supabase
-    .from("supplier_components")
-    .update({ is_preferred: true })
-    .eq("tenant_id", tenantId)
-    .eq("id", supplierComponentId);
+  if (!current) return;
+
+  if (current.is_preferred) {
+    await supabase
+      .from("supplier_components")
+      .update({ is_preferred: false })
+      .eq("tenant_id", tenantId)
+      .eq("id", supplierComponentId);
+  } else {
+    // Clear others for this component first, then set this one
+    await supabase
+      .from("supplier_components")
+      .update({ is_preferred: false })
+      .eq("tenant_id", tenantId)
+      .eq("component_id", componentId)
+      .neq("id", supplierComponentId);
+
+    await supabase
+      .from("supplier_components")
+      .update({ is_preferred: true })
+      .eq("tenant_id", tenantId)
+      .eq("id", supplierComponentId);
+  }
 
   revalidatePath(`/app/suppliers/${supplierId}`);
   revalidatePath(`/app/components/${componentId}`);
