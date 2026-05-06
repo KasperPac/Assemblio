@@ -481,7 +481,7 @@
 
 .binFieldRow {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
   gap: 10px;
 }
 
@@ -525,6 +525,17 @@
   cursor: pointer;
   margin-top: 4px;
 }
+
+/* Bin location summary and clear button */
+.binSummary {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 6px;
+  padding: 10px 14px; margin-top: 10px;
+}
+.binSummaryLabel { font-size: 11px; color: #0369a1; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 2px; }
+.binSummaryPath { font-size: 14px; font-weight: 600; color: #0c4a6e; }
+.binSummaryCode { font-size: 20px; font-weight: 700; font-family: monospace; color: #0369a1; letter-spacing: .15em; }
+.binClearBtn { font-size: 13px; padding: 6px 14px; border: 1px solid #fca5a5; border-radius: 6px; background: var(--surface); color: #ef4444; cursor: pointer; }
 
 /* ── Suppliers tab ────────────────────── */
 

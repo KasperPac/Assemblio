@@ -4,7 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import DetailTabs from "./detail-tabs";
 import styles from "./component-detail.module.css";
 import { getStockStatus } from "../helpers";
-import { updateBinLocation } from "../actions";
+import { BinLocationSelect } from "./bin-location-select";
 import { getAvgActualLeadTimesForComponent } from "@/lib/suppliers/catalog";
 
 type Props = {
@@ -19,9 +19,9 @@ type ComponentRecord = {
   cost_per_unit: number;
   reorder_point: number;
   created_at: string | null;
-  bin_sub_location: string | null;
-  bin_row: string | null;
-  bin_bay: string | null;
+  bin_sub_location_id: string | null;
+  bin_aisle_id: string | null;
+  bin_bay_id: string | null;
   tenant_id: string;
   supplier: { name: string } | Array<{ name: string }> | null;
   location: { name: string } | Array<{ name: string }> | null;
@@ -108,13 +108,24 @@ export default async function ComponentDetailPage({ params }: Props) {
 
   const { data: component } = await supabase
     .from("component")
-    .select("id,name,sku,unit,cost_per_unit,reorder_point,created_at,tenant_id,bin_sub_location,bin_row,bin_bay,supplier:supplier_id(name),location:location_id(name),group:group_id(name)")
+    .select("id,name,sku,unit,cost_per_unit,reorder_point,created_at,tenant_id,bin_sub_location_id,bin_aisle_id,bin_bay_id,supplier:supplier_id(name),location:location_id(name),group:group_id(name)")
     .eq("id", componentId)
     .maybeSingle();
 
   if (!component) notFound();
 
   const c = component as ComponentRecord;
+
+  const [whRes, slRes, aisleRes, bayRes] = await Promise.all([
+    supabase.from("location").select("id, name").eq("tenant_id", c.tenant_id).order("name"),
+    supabase.from("bin_sub_location").select("id, name, warehouse_id").eq("tenant_id", c.tenant_id).order("name"),
+    supabase.from("bin_aisle").select("id, name, warehouse_id, sub_location_id").eq("tenant_id", c.tenant_id).order("name"),
+    supabase.from("bin_bay").select("id, name, aisle_id").eq("tenant_id", c.tenant_id).order("name"),
+  ]);
+
+  const currentAisleForWh = (aisleRes.data ?? []).find((a) => a.id === c.bin_aisle_id);
+  const currentSlForWh = (slRes.data ?? []).find((s) => s.id === c.bin_sub_location_id);
+  const currentWarehouseId = currentAisleForWh?.warehouse_id ?? currentSlForWh?.warehouse_id ?? null;
 
   const [
     { data: balances },
@@ -350,39 +361,17 @@ export default async function ComponentDetailPage({ params }: Props) {
             <p className={styles.binSectionDesc}>
               Where this component lives in the warehouse. Used to group items in stocktake sheets.
             </p>
-            <form action={updateBinLocation}>
-              <input type="hidden" name="component_id" value={c.id} />
-              <div className={styles.binFieldRow}>
-                <label className={styles.binField}>
-                  <span className={styles.binLabel}>Sub-location</span>
-                  <input
-                    className={styles.binInput}
-                    name="bin_sub_location"
-                    defaultValue={c.bin_sub_location ?? ""}
-                    placeholder="e.g. Main Floor"
-                  />
-                </label>
-                <label className={styles.binField}>
-                  <span className={styles.binLabel}>Row</span>
-                  <input
-                    className={styles.binInput}
-                    name="bin_row"
-                    defaultValue={c.bin_row ?? ""}
-                    placeholder="e.g. R1"
-                  />
-                </label>
-                <label className={styles.binField}>
-                  <span className={styles.binLabel}>Bay</span>
-                  <input
-                    className={styles.binInput}
-                    name="bin_bay"
-                    defaultValue={c.bin_bay ?? ""}
-                    placeholder="e.g. B3"
-                  />
-                </label>
-              </div>
-              <button type="submit" className={styles.binSaveBtn}>Save bin location</button>
-            </form>
+            <BinLocationSelect
+              componentId={c.id}
+              warehouses={whRes.data ?? []}
+              subLocations={slRes.data ?? []}
+              aisles={aisleRes.data ?? []}
+              bays={bayRes.data ?? []}
+              currentWarehouseId={currentWarehouseId}
+              currentSubLocationId={c.bin_sub_location_id}
+              currentAisleId={c.bin_aisle_id}
+              currentBayId={c.bin_bay_id}
+            />
           </section>
         </aside>
 
