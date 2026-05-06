@@ -29,6 +29,43 @@ async function fetchSession(supabase: any, tenantId: string, sessionId: string) 
   return data as SessionRecord | null;
 }
 
+export async function saveLineCountClient({
+  lineId,
+  sessionId,
+  counted,
+}: {
+  lineId: string;
+  sessionId: string;
+  counted: number | null;
+}): Promise<{ ok: boolean }> {
+  if (!lineId || !sessionId) return { ok: false };
+
+  const context = await getServerTenantContext();
+  if (!context) return { ok: false };
+  const { supabase, tenantId } = context;
+
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const session = await fetchSession(supabase, tenantId, sessionId);
+  if (!session || !canEditStocktakeLines(session.status as StocktakeSessionStatus)) return { ok: false };
+
+  const { error } = await supabase
+    .from("stocktake_line")
+    .update({
+      counted,
+      counted_by: user?.id ?? null,
+      counted_at: new Date().toISOString(),
+    })
+    .eq("id", lineId)
+    .eq("session_id", sessionId)
+    .eq("tenant_id", tenantId);
+
+  if (error) return { ok: false };
+
+  revalidatePath(`/app/stocktake/${sessionId}`);
+  return { ok: true };
+}
+
 export async function saveLineCount(formData: FormData) {
   const lineId = formData.get("line_id")?.toString() ?? "";
   const sessionId = formData.get("session_id")?.toString() ?? "";

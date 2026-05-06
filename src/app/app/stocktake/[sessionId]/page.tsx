@@ -19,6 +19,8 @@ type Props = {
   searchParams?: Promise<{ error?: string; apply_error?: string }>;
 };
 
+type BinRef = { name: string } | Array<{ name: string }> | null;
+
 type LineRow = {
   id: string;
   expected_on_hand: number;
@@ -30,17 +32,17 @@ type LineRow = {
     name: string | null;
     sku: string | null;
     cost_per_unit: number;
-    bin_sub_location: string | null;
-    bin_row: string | null;
-    bin_bay: string | null;
+    bin_sub_location: BinRef;
+    bin_aisle: BinRef;
+    bin_bay: BinRef;
   } | Array<{
     id: string;
     name: string | null;
     sku: string | null;
     cost_per_unit: number;
-    bin_sub_location: string | null;
-    bin_row: string | null;
-    bin_bay: string | null;
+    bin_sub_location: BinRef;
+    bin_aisle: BinRef;
+    bin_bay: BinRef;
   }> | null;
 };
 
@@ -52,10 +54,20 @@ type BinGroup = {
   lines: LineRow[];
 };
 
+function binName(ref: BinRef): string | null {
+  if (!ref) return null;
+  const obj = Array.isArray(ref) ? ref[0] : ref;
+  return obj?.name ?? null;
+}
+
 function binKey(l: LineRow): string {
   const c = Array.isArray(l.component) ? l.component[0] : l.component;
   if (!c) return "__none";
-  return [c.bin_sub_location ?? "", c.bin_row ?? "", c.bin_bay ?? ""].join("|");
+  return [
+    binName(c.bin_sub_location) ?? "",
+    binName(c.bin_aisle) ?? "",
+    binName(c.bin_bay) ?? "",
+  ].join("|");
 }
 
 function groupByBin(lines: LineRow[]): BinGroup[] {
@@ -66,13 +78,13 @@ function groupByBin(lines: LineRow[]): BinGroup[] {
     if (!map.has(key)) {
       map.set(key, {
         key,
-        subLocation: c?.bin_sub_location ?? null,
-        row: c?.bin_row ?? null,
-        bay: c?.bin_bay ?? null,
+        subLocation: c ? binName(c.bin_sub_location) : null,
+        row: c ? binName(c.bin_aisle) : null,
+        bay: c ? binName(c.bin_bay) : null,
         lines: [],
       });
     }
-    map.get(key)!.lines.push(l);
+    (map.get(key)!.lines as LineRow[]).push(l);
   }
   return [...map.values()].sort((a, b) => {
     if (a.subLocation === null && b.subLocation !== null) return 1;
@@ -113,7 +125,12 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
       .maybeSingle(),
     supabase
       .from("stocktake_line")
-      .select("id,expected_on_hand,counted,notes,variance_reason_id,component:component_id(id,name,sku,cost_per_unit,bin_sub_location,bin_row,bin_bay)")
+      .select(`id,expected_on_hand,counted,notes,variance_reason_id,component:component_id(
+  id,name,sku,cost_per_unit,
+  bin_sub_location:bin_sub_location_id(name),
+  bin_aisle:bin_aisle_id(name),
+  bin_bay:bin_bay_id(name)
+)`)
       .eq("tenant_id", tenantId)
       .eq("session_id", sessionId),
     supabase
