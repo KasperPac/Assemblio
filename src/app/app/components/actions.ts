@@ -88,7 +88,10 @@ export async function updateBinLocation(formData: FormData): Promise<void> {
     .eq("id", componentId)
     .eq("tenant_id", tenantId);
 
-  if (error) return;
+  if (error) {
+    console.error("[updateBinLocation]", error.message);
+    return;
+  }
 
   revalidatePath(`/app/components/${componentId}`);
 }
