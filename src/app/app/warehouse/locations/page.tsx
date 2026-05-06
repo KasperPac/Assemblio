@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "./page.module.css";
 
@@ -23,7 +24,7 @@ function shortCode(id: string) {
 
 export default async function LocationsPage() {
   const context = await getServerTenantContext();
-  if (!context) return null;
+  if (!context) redirect("/auth/login");
   const { supabase, tenantId } = context;
 
   const { data: warehouses, error } = await supabase

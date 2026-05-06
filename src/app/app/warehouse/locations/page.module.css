@@ -49,3 +49,8 @@
   display: flex; align-items: center; gap: 12px;
 }
 .addHint { font-size: 12px; color: var(--muted); }
+
+.warehouseRow:last-child,
+.subLocRow:last-child,
+.aisleRow:last-child,
+.bayRow:last-child { border-bottom: none; }
