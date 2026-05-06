@@ -1,0 +1,51 @@
+.page { padding: 24px; max-width: 860px; }
+.header { margin-bottom: 24px; }
+.title { font-size: 22px; font-weight: 700; margin: 0 0 4px; }
+.subtitle { font-size: 14px; color: var(--muted); margin: 0; }
+.error { color: var(--danger, #ef4444); }
+.empty { color: var(--muted); font-size: 14px; }
+
+.warehouseBlock { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; overflow: hidden; }
+
+.warehouseRow {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px; background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+.subLocRow, .aisleRow {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px 10px 28px;
+  border-bottom: 1px solid var(--border);
+}
+.bayRow {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 16px 8px 48px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.typeTag {
+  font-size: 11px; text-transform: uppercase; letter-spacing: .05em;
+  color: var(--muted); width: 68px; flex-shrink: 0;
+}
+.warehouseName { font-size: 15px; font-weight: 600; flex: 1; }
+.entityName { font-size: 14px; font-weight: 500; flex: 1; }
+.slTag { font-weight: 400; color: var(--muted); }
+.bayCount { font-weight: 400; color: var(--muted); font-size: 12px; }
+.pathHint { font-size: 11px; color: var(--muted); }
+.countTag {
+  font-size: 11px; background: #dbeafe; color: #1d4ed8;
+  padding: 2px 8px; border-radius: 4px;
+}
+.shortCode {
+  font-family: monospace; font-size: 13px; font-weight: 600;
+  color: var(--muted); letter-spacing: .1em; margin-left: auto;
+}
+.indent { color: var(--muted); font-size: 13px; width: 12px; flex-shrink: 0; }
+.indent2 { color: var(--muted); font-size: 13px; width: 12px; flex-shrink: 0; }
+.addWarehouseRow {
+  padding: 12px 16px;
+  border-top: 2px dashed var(--border);
+  display: flex; align-items: center; gap: 12px;
+}
+.addHint { font-size: 12px; color: var(--muted); }

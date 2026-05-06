@@ -169,6 +169,18 @@ const ROUTES: RouteDefinition[] = [
     crumbs: ["Trash"],
   },
   {
+    prefix: "/app/warehouse/locations",
+    title: "Locations",
+    subtitle: "Manage warehouse locations, aisles, and bays.",
+    crumbs: ["Warehouse", "Locations"],
+  },
+  {
+    prefix: "/app/warehouse",
+    title: "Warehouse",
+    subtitle: "Manage physical warehouse structure and bin locations.",
+    crumbs: ["Warehouse"],
+  },
+  {
     prefix: "/app",
     title: "Overview",
     subtitle: "Inventory, demand, and workflow risk across the workspace.",
