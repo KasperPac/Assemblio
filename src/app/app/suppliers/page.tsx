@@ -121,7 +121,7 @@ export default async function SuppliersPage({
                 {row.component_count > 0 ? `${row.component_count}` : "—"}
               </span>
               <span>
-                {row.default_lead_time_days ? `${row.default_lead_time_days} days` : "—"}
+                {row.default_lead_time_days != null ? `${row.default_lead_time_days} days` : "—"}
               </span>
               <span>
                 {row.last_po_date
