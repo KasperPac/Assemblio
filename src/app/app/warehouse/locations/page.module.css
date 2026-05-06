@@ -54,3 +54,44 @@
 .subLocRow:last-child,
 .aisleRow:last-child,
 .bayRow:last-child { border-bottom: none; }
+
+.btnIcon {
+  font-size: 12px; padding: 3px 10px;
+  border: 1px solid var(--border); border-radius: 4px;
+  background: var(--surface); cursor: pointer; white-space: nowrap;
+}
+.btnIcon:hover { background: var(--surface-2); }
+.btnDelete {
+  font-size: 12px; padding: 3px 10px;
+  border: 1px solid #fca5a5; border-radius: 4px;
+  background: var(--surface); color: #ef4444; cursor: pointer;
+}
+.btnDelete:hover { background: #fee2e2; }
+.btnSave {
+  font-size: 12px; padding: 4px 12px;
+  border: 1px solid var(--primary, #3b82f6); border-radius: 4px;
+  background: var(--primary, #3b82f6); color: white; cursor: pointer;
+}
+.btnCancel {
+  font-size: 12px; padding: 4px 10px;
+  border: 1px solid var(--border); border-radius: 4px;
+  background: var(--surface); cursor: pointer;
+}
+.btnAddWarehouse {
+  font-size: 13px; padding: 6px 16px;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--surface); cursor: pointer;
+}
+.inlineForm { display: flex; align-items: center; gap: 8px; flex: 1; }
+.inlineInput {
+  font-size: 13px; padding: 4px 8px;
+  border: 1px solid var(--border); border-radius: 4px;
+  background: var(--surface); flex: 1; min-width: 0;
+}
+.inlineSelect {
+  font-size: 13px; padding: 4px 8px;
+  border: 1px solid var(--border); border-radius: 4px;
+  background: var(--surface);
+}
+.formError { font-size: 12px; color: #ef4444; }
+.deleteError { font-size: 12px; color: #ef4444; margin-left: 6px; }
