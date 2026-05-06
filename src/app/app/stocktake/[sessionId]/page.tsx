@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
@@ -161,6 +162,15 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
   const binGroups = groupByBin(lines);
   const showBlind = isCounting && session.blind_count && !isReconciliation;
 
+  const numDataCols = 1  // component name always
+    + (showBlind ? 0 : 1)  // Expected
+    + 1  // Counted
+    + (isInitial || showBlind ? 0 : 1)  // Variance
+    + (isInitial || showBlind || !isAdmin ? 0 : 1);  // Value
+  const saveColFr = isCounting ? " 0.5fr" : "";
+  const gridCols = `2fr${" 0.7fr".repeat(numDataCols - 1)}${saveColFr}`;
+  const gridStyle: CSSProperties = { gridTemplateColumns: gridCols };
+
   return (
     <div className={styles.page}>
       <div className={styles.topRow}>
@@ -256,7 +266,7 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
                   </Link>
                 </div>
                 <div className={styles.bayTable}>
-                  <div className={styles.bayTableHeader}>
+                  <div className={styles.bayTableHeader} style={gridStyle}>
                     <span>Component</span>
                     {!showBlind && <span className={styles.numCol}>Expected</span>}
                     <span className={styles.numCol}>{isInitial ? "On-hand count" : "Counted"}</span>
@@ -270,7 +280,7 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
                     const varValue = variance !== null ? variance * costPerUnit : null;
                     const hasCounted = line.counted !== null;
                     return (
-                      <form key={line.id} action={saveLineCount} className={styles.lineRow}>
+                      <form key={line.id} action={saveLineCount} className={styles.lineRow} style={gridStyle}>
                         <input type="hidden" name="line_id" value={line.id} />
                         <input type="hidden" name="session_id" value={sessionId} />
                         <div className={styles.compCell}>
@@ -371,6 +381,7 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
               {isAdmin && <span className={styles.numCol}>Value</span>}
             </div>
             {varianceLines
+              .slice()
               .sort((a, b) => {
                 const ca = Array.isArray(a.component) ? a.component[0] : a.component;
                 const cb = Array.isArray(b.component) ? b.component[0] : b.component;

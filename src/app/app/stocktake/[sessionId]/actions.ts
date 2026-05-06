@@ -57,6 +57,7 @@ export async function saveLineCount(formData: FormData) {
       counted_at: new Date().toISOString(),
     })
     .eq("id", lineId)
+    .eq("session_id", sessionId)
     .eq("tenant_id", tenantId);
 
   revalidatePath(`/app/stocktake/${sessionId}`);
@@ -107,10 +108,15 @@ export async function saveVarianceReason(formData: FormData) {
   if (!context) return;
   const { supabase, tenantId } = context;
 
+  // Guard: only allow updates when session is in reconciliation
+  const session = await fetchSession(supabase, tenantId, sessionId);
+  if (!session || session.status !== "reconciliation") return;
+
   await supabase
     .from("stocktake_line")
     .update({ variance_reason_id: reasonId, notes })
     .eq("id", lineId)
+    .eq("session_id", sessionId)
     .eq("tenant_id", tenantId);
 
   revalidatePath(`/app/stocktake/${sessionId}`);
@@ -146,6 +152,7 @@ export async function approveAndApply(formData: FormData) {
   }
 
   const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect(`/app/stocktake/${sessionId}?apply_error=not_authenticated`);
 
   await supabase
     .from("stocktake_session")
@@ -158,6 +165,12 @@ export async function approveAndApply(formData: FormData) {
   });
 
   if (rpcError) {
+    // Roll back the status so the session isn't permanently stuck in approved
+    await supabase
+      .from("stocktake_session")
+      .update({ status: "reconciliation", approved_by: null, approved_at: null })
+      .eq("id", sessionId)
+      .eq("tenant_id", tenantId);
     redirect(`/app/stocktake/${sessionId}?apply_error=${encodeURIComponent(rpcError.message)}`);
   }
 
@@ -212,6 +225,9 @@ export async function applyOpeningStock(formData: FormData) {
   if (!session || session.session_type !== "initial") {
     redirect(`/app/stocktake/${sessionId}?error=not_initial_session`);
   }
+  if (session.status !== "counting" && session.status !== "open") {
+    redirect(`/app/stocktake/${sessionId}?error=wrong_status`);
+  }
 
   const { count: uncountedCount } = await supabase
     .from("stocktake_line")
@@ -225,6 +241,7 @@ export async function applyOpeningStock(formData: FormData) {
   }
 
   const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect(`/app/stocktake/${sessionId}?apply_error=not_authenticated`);
 
   await supabase
     .from("stocktake_session")

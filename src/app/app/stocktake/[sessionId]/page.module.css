@@ -32,7 +32,6 @@
 .bayTable { background: var(--bg-card); }
 .bayTableHeader {
   display: grid;
-  grid-template-columns: 2fr repeat(4, 0.7fr) 0.5fr;
   gap: 8px;
   padding: 8px 14px;
   font-size: 0.7rem;
@@ -45,7 +44,6 @@
 }
 .lineRow {
   display: grid;
-  grid-template-columns: 2fr repeat(4, 0.7fr) 0.5fr;
   gap: 8px;
   padding: 9px 14px;
   border-bottom: 1px solid color-mix(in srgb, var(--stroke) 30%, transparent);
