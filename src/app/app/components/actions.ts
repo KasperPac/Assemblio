@@ -70,16 +70,16 @@ export async function createComponent(
   return { success: "Component created." };
 }
 
-export async function updateBinLocation(formData: FormData): Promise<void> {
+export async function updateBinLocation(_prevState: { error?: string }, formData: FormData): Promise<{ error?: string }> {
   const componentId = formData.get("component_id")?.toString().trim() ?? "";
   const binSubLocationId = formData.get("bin_sub_location_id")?.toString().trim() || null;
   const binAisleId = formData.get("bin_aisle_id")?.toString().trim() || null;
   const binBayId = formData.get("bin_bay_id")?.toString().trim() || null;
 
-  if (!componentId) return;
+  if (!componentId) return {};
 
   const context = await getServerTenantContext();
-  if (!context) return;
+  if (!context) return {};
   const { supabase, tenantId } = context;
 
   const { error } = await supabase
@@ -92,10 +92,8 @@ export async function updateBinLocation(formData: FormData): Promise<void> {
     .eq("id", componentId)
     .eq("tenant_id", tenantId);
 
-  if (error) {
-    console.error("[updateBinLocation]", error.message);
-    return;
-  }
+  if (error) return { error: error.message };
 
   revalidatePath(`/app/components/${componentId}`);
+  return {};
 }

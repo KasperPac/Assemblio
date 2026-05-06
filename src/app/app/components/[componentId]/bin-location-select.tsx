@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useActionState } from "react";
+import { useRouter } from "next/navigation";
 import { updateBinLocation } from "../actions";
 import styles from "./component-detail.module.css";
 
@@ -34,6 +35,17 @@ export function BinLocationSelect({
   const [slId, setSlId] = useState(currentSubLocationId ?? "");
   const [aisleId, setAisleId] = useState(currentAisleId ?? "");
   const [bayId, setBayId] = useState(currentBayId ?? "");
+  const [state, formAction] = useActionState(updateBinLocation, {});
+  const router = useRouter();
+
+  async function handleClear() {
+    setWhId(""); setSlId(""); setAisleId(""); setBayId("");
+    const fd = new FormData();
+    fd.append("component_id", componentId);
+    // Leave bin_*_id fields absent = null on server
+    await updateBinLocation({}, fd);
+    router.refresh();
+  }
 
   const filteredSl = subLocations.filter((s) => s.warehouse_id === whId);
   const filteredAisles = aisles.filter((a) => {
@@ -51,7 +63,7 @@ export function BinLocationSelect({
   const assignedCode = shortCode(bayId || aisleId || slId || whId || null);
 
   return (
-    <form action={updateBinLocation}>
+    <form action={formAction}>
       <input type="hidden" name="component_id" value={componentId} />
       <input type="hidden" name="bin_sub_location_id" value={slId} />
       <input type="hidden" name="bin_aisle_id" value={aisleId} />
@@ -126,12 +138,13 @@ export function BinLocationSelect({
           <button
             type="button"
             className={styles.binClearBtn}
-            onClick={() => { setWhId(""); setSlId(""); setAisleId(""); setBayId(""); }}
+            onClick={handleClear}
           >
             Clear
           </button>
         )}
       </div>
+      {state?.error && <p style={{ color: "#ef4444", fontSize: 13, marginTop: 6 }}>{state.error}</p>}
     </form>
   );
 }
