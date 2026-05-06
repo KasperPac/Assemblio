@@ -1,257 +1,183 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import Link from "next/link";
 import styles from "./stocktake.module.css";
-import StocktakeCreateForm from "./stocktake-create-form";
-import StocktakeLineForm from "./stocktake-line-form";
-import {
-  canApplyStocktakeSession,
-  canEditStocktakeLines,
-  type StocktakeSessionStatus,
-} from "@/lib/stocktake/lifecycle";
-import {
-  applyStocktakeSession,
-  createStocktakeLine,
-  createStocktakeSession,
-  updateStocktakeLineCounted,
-  updateStocktakeStatus,
-} from "./actions";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import PageHeader from "../_ui/page-header";
 import StatusBadge from "../_ui/status-badge";
 import EmptyState from "../_ui/empty-state";
-import ListPanel, { ListRow } from "../_ui/list-panel";
+import { createStocktakeSession } from "./actions";
 
-type StocktakeRow = {
+type SessionRow = {
   id: string;
-  status: StocktakeSessionStatus;
+  reference_number: string | null;
+  session_type: string;
+  status: string;
   created_at: string;
+  blind_count: boolean;
   location: { name: string | null } | Array<{ name: string | null }> | null;
 };
 
-type StocktakeLineRow = {
-  id: string;
-  expected_on_hand: number;
-  counted: number;
-  session:
-    | { id: string; status: StocktakeSessionStatus }
-    | Array<{ id: string; status: StocktakeSessionStatus }>
-    | null;
-  component:
-    | { name: string | null; sku: string | null }
-    | Array<{ name: string | null; sku: string | null }>
-    | null;
-};
-
-function getStatusVariant(status: StocktakeSessionStatus) {
-  if (status === "completed") return "success";
-  if (status === "approved") return "info";
-  if (status === "archived") return "danger";
-  return "warning";
+function statusVariant(s: string) {
+  if (s === "completed") return "success" as const;
+  if (s === "approved" || s === "reconciliation") return "warning" as const;
+  if (s === "counting") return "warning" as const;
+  return "info" as const;
 }
 
-type Props = {
-  searchParams?: Promise<{
-    apply_ok?: string;
-    apply_error?: string;
-  }>;
-};
+function isDone(s: string) {
+  return s === "completed" || s === "archived";
+}
 
-export default async function StocktakePage({ searchParams }: Props) {
-  const params = (await searchParams) ?? {};
-  const supabase = await createSupabaseServerClient();
-  const [{ data, error }, { data: locations }, { data: components }, { data: lines }] =
+export default async function StocktakePage() {
+  const context = await getServerTenantContext();
+  if (!context) return null;
+  const { supabase, tenantId } = context;
+
+  const [{ data: sessions, error }, { data: locations }, { data: lineCounts }, { data: balances }] =
     await Promise.all([
       supabase
         .from("stocktake_session")
-        .select("id,status,created_at,location:location_id(name)")
+        .select("id,reference_number,session_type,status,created_at,blind_count,location:location_id(name)")
+        .eq("tenant_id", tenantId)
         .order("created_at", { ascending: false })
-        .limit(12),
-      supabase.from("location").select("id,name,is_default").order("name"),
-      supabase.from("component").select("id,name,sku").order("name"),
+        .limit(50),
+      supabase.from("location").select("id,name").eq("tenant_id", tenantId).order("name"),
       supabase
         .from("stocktake_line")
-        .select(
-          "id,expected_on_hand,counted,session:session_id(id,status),component:component_id(name,sku)"
-        )
-        .order("created_at", { ascending: false })
-        .limit(20),
+        .select("session_id")
+        .eq("tenant_id", tenantId),
+      supabase
+        .from("inventory_balance")
+        .select("on_hand")
+        .eq("tenant_id", tenantId),
     ]);
+
+  const lineCountBySession = ((lineCounts ?? []) as { session_id: string }[]).reduce<Record<string, number>>(
+    (acc, l) => { acc[l.session_id] = (acc[l.session_id] ?? 0) + 1; return acc; },
+    {}
+  );
+
+  const hasAnyStock = ((balances ?? []) as { on_hand: number }[]).some((b) => Number(b.on_hand) > 0);
+  const hasCompletedSession = ((sessions ?? []) as SessionRow[]).some((s) => s.status === "completed");
+  const showBanner = !hasAnyStock && !hasCompletedSession;
+
+  function formatDate(iso: string) {
+    const d = new Date(iso);
+    const now = new Date();
+    const isToday = d.toDateString() === now.toDateString();
+    if (isToday) return d.toLocaleTimeString("en-AU", { hour: "numeric", minute: "2-digit" });
+    return d.toLocaleDateString("en-AU", { day: "numeric", month: "short", year: d.getFullYear() !== now.getFullYear() ? "numeric" : undefined });
+  }
 
   return (
     <div className={styles.page}>
       <PageHeader
         eyebrow="Stocktake"
-        title="Cycle count sessions"
-        description="Open count sessions, record counted stock, and apply approved variances back into the inventory ledger."
-      />
-
-      {params.apply_ok ? (
-        <div className={styles.notice} role="status">
-          Stocktake applied — {params.apply_ok} adjustments / lines.
-        </div>
-      ) : null}
-      {params.apply_error ? (
-        <div className={styles.errorNotice} role="alert">
-          Stocktake apply failed: {params.apply_error.replace(/_/g, " ")}
-        </div>
-      ) : null}
-
-      <StocktakeCreateForm
-        locations={
-          (locations ?? []) as Array<{
-            id: string;
-            name: string | null;
-            is_default?: boolean | null;
-          }>
+        title="Inventory counts"
+        description="Manage physical counts and reconcile inventory discrepancies."
+        actions={
+          // @ts-expect-error — popover API attributes not in React types yet
+          <button className={styles.primary} popovertarget="new-stocktake-dialog">
+            + New stocktake
+          </button>
         }
-        action={createStocktakeSession}
-      />
-      <StocktakeLineForm
-        sessions={(data ?? [])
-          .filter((session) => canEditStocktakeLines(session.status))
-          .map((session) => ({
-            id: session.id,
-            label: `STK-${session.id.slice(0, 6)} (${session.status})`,
-          }))}
-        components={
-          ((components ?? []) as Array<{ id: string; name: string | null; sku: string | null }>).map(
-            (c) => ({
-              id: c.id,
-              label: `${c.name ?? "Unnamed"}${c.sku ? ` (${c.sku})` : ""}`,
-            })
-          )
-        }
-        action={createStocktakeLine}
       />
 
-      <ListPanel
-        eyebrow="Sessions"
-        title="Stocktake sessions"
-        description="Control stocktake lifecycle by location before applying any variance to balances."
-        columns={["Session", "Location", "Status", "Created", "Actions"]}
-        columnsTemplate="0.8fr 1.1fr 0.8fr 0.8fr 1.3fr"
-      >
+      {showBanner && (
+        <div className={styles.banner}>
+          <div className={styles.bannerInner}>
+            <span className={styles.bannerIcon}>📦</span>
+            <div>
+              <strong className={styles.bannerTitle}>Set up your opening stock</strong>
+              <p className={styles.bannerDesc}>
+                Your inventory is empty. Run an initial stock count to enter your current on-hand quantities before using Assemblio for production.
+              </p>
+            </div>
+          </div>
+          {/* @ts-expect-error — popover API attributes not in React types yet */}
+          <button className={styles.bannerCta} popovertarget="new-stocktake-dialog">
+            Start initial count →
+          </button>
+        </div>
+      )}
+
+      {/* New stocktake modal */}
+      <dialog id="new-stocktake-dialog" className={styles.dialog} popover="auto">
+        {/* @ts-expect-error — server action with prevState signature used as form action */}
+        <form action={createStocktakeSession}>
+          <div className={styles.dialogHeader}>
+            <span className={styles.dialogEyebrow}>New stocktake</span>
+            <h2 className={styles.dialogTitle}>Create session</h2>
+          </div>
+          <div className={styles.dialogFields}>
+            <label className={styles.dialogField}>
+              <span className={styles.fieldLabel}>Location</span>
+              <select name="location_id" className={styles.select} required>
+                <option value="">Select location…</option>
+                {((locations ?? []) as { id: string; name: string | null }[]).map((l) => (
+                  <option key={l.id} value={l.id}>{l.name ?? "Unnamed"}</option>
+                ))}
+              </select>
+            </label>
+            <label className={styles.dialogField}>
+              <span className={styles.fieldLabel}>Notes <span className={styles.optional}>(optional)</span></span>
+              <input name="notes" className={styles.input} placeholder="e.g. End-of-month count" />
+            </label>
+            <label className={styles.checkboxRow}>
+              <input type="checkbox" name="blind_count" />
+              <div>
+                <span className={styles.checkboxLabel}>Blind count mode</span>
+                <span className={styles.checkboxDesc}>Expected qty hidden from counters until reconciliation</span>
+              </div>
+            </label>
+            <input type="hidden" name="session_type" value="full" />
+          </div>
+          <div className={styles.dialogActions}>
+            {/* @ts-expect-error — popover API attributes not in React types yet */}
+            <button type="button" className={styles.secondary} popovertarget="new-stocktake-dialog">Cancel</button>
+            <button type="submit" className={styles.primary}>Start counting →</button>
+          </div>
+        </form>
+      </dialog>
+
+      {/* Sessions list */}
+      <div className={styles.panel}>
+        <div className={styles.panelHeader}>
+          <span className={styles.eyebrow}>Sessions</span>
+          <h2 className={styles.panelTitle}>All stocktake sessions</h2>
+        </div>
+        <div className={styles.tableHeader}>
+          <span>Reference</span>
+          <span>Type</span>
+          <span>Location</span>
+          <span>Date</span>
+          <span>Lines</span>
+          <span>Status</span>
+          <span></span>
+        </div>
         {error ? (
-          <EmptyState
-            title="Failed to load stocktake sessions"
-            message="The stocktake session list could not be retrieved from Supabase."
-          />
-        ) : (data ?? []).length === 0 ? (
-          <EmptyState
-            title="No stocktake sessions yet"
-            message="Create a stocktake session to begin cycle counting."
-          />
+          <EmptyState title="Failed to load sessions" message={error.message} />
+        ) : (sessions ?? []).length === 0 ? (
+          <EmptyState title="No stocktake sessions yet" message="Create a session to begin counting." />
         ) : (
-          (data as StocktakeRow[]).map((row) => {
-            const location = Array.isArray(row.location)
-              ? row.location[0] ?? null
-              : row.location;
+          ((sessions ?? []) as SessionRow[]).map((row) => {
+            const location = Array.isArray(row.location) ? row.location[0] : row.location;
+            const done = isDone(row.status);
             return (
-              <ListRow
-                key={row.id}
-                columnsTemplate="0.8fr 1.1fr 0.8fr 0.8fr 1.3fr"
-                className={styles.row}
-              >
-                <strong>STK-{row.id.slice(0, 6)}</strong>
-                <span className={styles.meta}>{location?.name ?? "Unknown location"}</span>
-                <StatusBadge variant={getStatusVariant(row.status)}>{row.status}</StatusBadge>
-                <span className={styles.meta}>
-                  {new Date(row.created_at).toLocaleDateString("en-GB")}
-                </span>
-                <div className={styles.actionStack}>
-                  <form action={updateStocktakeStatus} className={styles.inlineForm}>
-                    <input type="hidden" name="session_id" value={row.id} />
-                    <select name="status" defaultValue={row.status}>
-                      <option value="open">Open</option>
-                      <option value="locked">Locked</option>
-                      <option value="approved">Approved</option>
-                      <option value="completed">Completed</option>
-                      <option value="archived">Archived</option>
-                    </select>
-                    <button type="submit">Update</button>
-                  </form>
-                  <form action={applyStocktakeSession}>
-                    <input type="hidden" name="session_id" value={row.id} />
-                    <button
-                      type="submit"
-                      className={styles.applyBtn}
-                      disabled={!canApplyStocktakeSession(row.status)}
-                    >
-                      Apply
-                    </button>
-                  </form>
-                </div>
-              </ListRow>
+              <div key={row.id} className={`${styles.tableRow} ${done ? styles.dimmed : ""}`}>
+                <strong className={styles.reference}>{row.reference_number ?? row.id.slice(0, 8)}</strong>
+                <span className={styles.meta}>{row.session_type === "initial" ? "Initial count" : "Full count"}</span>
+                <span className={styles.meta}>{location?.name ?? "—"}</span>
+                <span className={styles.meta}>{formatDate(row.created_at)}</span>
+                <span className={styles.meta}>{lineCountBySession[row.id] ?? 0} lines</span>
+                <StatusBadge variant={statusVariant(row.status)}>{row.status}</StatusBadge>
+                <Link href={`/app/stocktake/${row.id}`} className={styles.viewLink}>
+                  {done ? "View →" : "Open →"}
+                </Link>
+              </div>
             );
           })
         )}
-      </ListPanel>
-
-      <ListPanel
-        eyebrow="Lines"
-        title="Counted lines"
-        description="Compare expected versus counted stock before promoting a session through approval."
-        columns={["Session", "Component", "Expected / Counted / Variance", "Actions"]}
-        columnsTemplate="0.85fr 1.5fr 1fr 1.2fr"
-      >
-        {(lines ?? []).length === 0 ? (
-          <EmptyState
-            title="No stocktake lines yet"
-            message="Add counted lines to an open session to begin reconciliation."
-          />
-        ) : (
-          (lines as StocktakeLineRow[]).map((line) => {
-            const session = Array.isArray(line.session) ? line.session[0] ?? null : line.session;
-            const component = Array.isArray(line.component)
-              ? line.component[0] ?? null
-              : line.component;
-            const variance =
-              Number(line.counted ?? 0) - Number(line.expected_on_hand ?? 0);
-            return (
-              <ListRow
-                key={line.id}
-                columnsTemplate="0.85fr 1.5fr 1fr 1.2fr"
-                className={styles.row}
-              >
-                <div className={styles.cellStack}>
-                  <strong>STK-{session?.id?.slice(0, 6) ?? "???"}</strong>
-                  <span className={styles.meta}>{session?.status ?? "unknown"}</span>
-                </div>
-                <div className={styles.cellStack}>
-                  <strong>{component?.name ?? "Unknown"}</strong>
-                  <span className={styles.meta}>
-                    {component?.sku ? component.sku : "No SKU"}
-                  </span>
-                </div>
-                <div className={styles.cellStack}>
-                  <strong>
-                    {Number(line.expected_on_hand ?? 0).toFixed(2)} /{" "}
-                    {Number(line.counted ?? 0).toFixed(2)}
-                  </strong>
-                  <span className={variance === 0 ? styles.meta : styles.varianceMeta}>
-                    Variance {variance.toFixed(2)}
-                  </span>
-                </div>
-                <form action={updateStocktakeLineCounted} className={styles.inlineForm}>
-                  <input type="hidden" name="line_id" value={line.id} />
-                  <input
-                    name="counted"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    defaultValue={line.counted}
-                    disabled={!session?.status || !canEditStocktakeLines(session.status)}
-                  />
-                  <button
-                    type="submit"
-                    disabled={!session?.status || !canEditStocktakeLines(session.status)}
-                  >
-                    Save
-                  </button>
-                </form>
-              </ListRow>
-            );
-          })
-        )}
-      </ListPanel>
+      </div>
     </div>
   );
 }
