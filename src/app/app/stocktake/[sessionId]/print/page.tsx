@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { type BinRef, binName } from "../counting-sheet";
 
 type Props = {
   params: Promise<{ sessionId: string }>;
@@ -12,15 +13,15 @@ type LineRow = {
   component: {
     name: string | null;
     sku: string | null;
-    bin_sub_location: string | null;
-    bin_row: string | null;
-    bin_bay: string | null;
+    bin_sub_location: BinRef;
+    bin_aisle: BinRef;
+    bin_bay: BinRef;
   } | Array<{
     name: string | null;
     sku: string | null;
-    bin_sub_location: string | null;
-    bin_row: string | null;
-    bin_bay: string | null;
+    bin_sub_location: BinRef;
+    bin_aisle: BinRef;
+    bin_bay: BinRef;
   }> | null;
 };
 
@@ -41,7 +42,7 @@ export default async function PrintPage({ params, searchParams }: Props) {
       .maybeSingle(),
     supabase
       .from("stocktake_line")
-      .select("id,expected_on_hand,component:component_id(name,sku,bin_sub_location,bin_row,bin_bay)")
+      .select("id,expected_on_hand,component:component_id(name,sku,bin_sub_location:bin_sub_location_id(name),bin_aisle:bin_aisle_id(name),bin_bay:bin_bay_id(name))")
       .eq("tenant_id", tenantId)
       .eq("session_id", sessionId),
   ]);
@@ -70,21 +71,21 @@ export default async function PrintPage({ params, searchParams }: Props) {
   if (sp.sublocation) {
     lines = lines.filter((l) => {
       const c = Array.isArray(l.component) ? l.component[0] : l.component;
-      return c?.bin_sub_location === sp.sublocation;
+      return binName(c?.bin_sub_location ?? null) === sp.sublocation;
     });
     sectionLabel = sp.sublocation;
     if (sp.aisle) {
       lines = lines.filter((l) => {
         const c = Array.isArray(l.component) ? l.component[0] : l.component;
-        return c?.bin_row === sp.aisle;
+        return binName(c?.bin_aisle ?? null) === sp.aisle;
       });
       sectionLabel += ` → ${sp.aisle}`;
       if (sp.bay) {
         lines = lines.filter((l) => {
           const c = Array.isArray(l.component) ? l.component[0] : l.component;
-          return c?.bin_bay === sp.bay;
+          return binName(c?.bin_bay ?? null) === sp.bay;
         });
-        sectionLabel += ` → Bay ${sp.bay}`;
+        sectionLabel += ` → ${sp.bay}`;
       }
     }
   }
