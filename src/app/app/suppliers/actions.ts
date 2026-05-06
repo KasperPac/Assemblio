@@ -54,3 +54,26 @@ export async function updateSupplierName(formData: FormData) {
   revalidatePath("/app/suppliers");
   revalidatePath("/app/purchasing");
 }
+
+export async function archiveSupplier(
+  _prevState: SupplierState,
+  formData: FormData
+): Promise<SupplierState> {
+  const supplierId = formData.get("supplier_id")?.toString() ?? "";
+  if (!supplierId) return { error: "Missing supplier id." };
+
+  const context = await getServerTenantContext();
+  if (!context) return { error: "Missing tenant context." };
+  const { supabase, tenantId } = context;
+
+  const { error } = await supabase
+    .from("suppliers")
+    .update({ is_active: false })
+    .eq("tenant_id", tenantId)
+    .eq("id", supplierId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/app/suppliers");
+  return { success: "Supplier archived." };
+}

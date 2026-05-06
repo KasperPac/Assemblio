@@ -5,6 +5,7 @@ import DetailTabs from "./detail-tabs";
 import styles from "./component-detail.module.css";
 import { getStockStatus } from "../helpers";
 import { updateBinLocation } from "../actions";
+import { getAvgActualLeadTimesForComponent } from "@/lib/suppliers/catalog";
 
 type Props = {
   params: Promise<{ componentId: string }>;
@@ -21,9 +22,22 @@ type ComponentRecord = {
   bin_sub_location: string | null;
   bin_row: string | null;
   bin_bay: string | null;
+  tenant_id: string;
   supplier: { name: string } | Array<{ name: string }> | null;
   location: { name: string } | Array<{ name: string }> | null;
   group: { name: string } | Array<{ name: string }> | null;
+};
+
+type SupplierCatalogRow = {
+  id: string;
+  supplier_id: string;
+  unit_cost: number | null;
+  currency: string | null;
+  lead_time_days: number | null;
+  moq: number | null;
+  supplier_part_number: string | null;
+  is_preferred: boolean;
+  supplier: { id: string; name: string } | Array<{ id: string; name: string }> | null;
 };
 
 type BalanceRecord = {
@@ -94,7 +108,7 @@ export default async function ComponentDetailPage({ params }: Props) {
 
   const { data: component } = await supabase
     .from("component")
-    .select("id,name,sku,unit,cost_per_unit,reorder_point,created_at,bin_sub_location,bin_row,bin_bay,supplier:supplier_id(name),location:location_id(name),group:group_id(name)")
+    .select("id,name,sku,unit,cost_per_unit,reorder_point,created_at,tenant_id,bin_sub_location,bin_row,bin_bay,supplier:supplier_id(name),location:location_id(name),group:group_id(name)")
     .eq("id", componentId)
     .maybeSingle();
 
@@ -107,6 +121,8 @@ export default async function ComponentDetailPage({ params }: Props) {
     { data: movements },
     { data: bomUsage },
     { data: recentReceiptLines },
+    { data: supplierCatalogRaw },
+    { data: allSuppliersRaw },
   ] = await Promise.all([
     supabase
       .from("inventory_balance")
@@ -128,7 +144,41 @@ export default async function ComponentDetailPage({ params }: Props) {
       .eq("component_id", componentId)
       .order("id", { ascending: false })
       .limit(5),
+    supabase
+      .from("supplier_components")
+      .select(`
+        id, supplier_id, unit_cost, currency, lead_time_days, moq,
+        supplier_part_number, is_preferred,
+        supplier:supplier_id(id, name)
+      `)
+      .eq("tenant_id", c.tenant_id)
+      .eq("component_id", componentId)
+      .order("is_preferred", { ascending: false }),
+    supabase
+      .from("suppliers")
+      .select("id, name")
+      .eq("tenant_id", c.tenant_id)
+      .eq("is_active", true)
+      .order("name"),
   ]);
+
+  const avgLtMap = await getAvgActualLeadTimesForComponent(supabase, c.tenant_id, componentId);
+
+  const supplierCatalog = ((supplierCatalogRaw ?? []) as SupplierCatalogRow[]).map((row) => {
+    const supplier = Array.isArray(row.supplier) ? row.supplier[0] : row.supplier;
+    const lt = avgLtMap.get(row.supplier_id);
+    return {
+      id: row.id,
+      supplierId: row.supplier_id,
+      supplierName: supplier?.name ?? "—",
+      partNumber: row.supplier_part_number,
+      unitCost: row.unit_cost,
+      moq: row.moq,
+      leadTimeDays: row.lead_time_days,
+      isPreferred: row.is_preferred,
+      avgActualDays: lt ? lt.avgDays : null,
+    };
+  });
 
   const typedBalances = (balances ?? []) as BalanceRecord[];
   const typedMovements = (movements ?? []) as MovementRecord[];
@@ -337,7 +387,15 @@ export default async function ComponentDetailPage({ params }: Props) {
         </aside>
 
         {/* ── Right: Tabbed content ─────── */}
-        <DetailTabs stats={stats} movements={movementRows} bomUsage={bomRows} recentReceipts={recentReceipts} />
+        <DetailTabs
+          stats={stats}
+          movements={movementRows}
+          bomUsage={bomRows}
+          recentReceipts={recentReceipts}
+          supplierCatalog={supplierCatalog}
+          allSuppliers={(allSuppliersRaw ?? []) as Array<{ id: string; name: string }>}
+          componentId={componentId}
+        />
       </div>
     </div>
   );
