@@ -1,11 +1,9 @@
-import type { CSSProperties } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import StatusBadge from "../../_ui/status-badge";
 import styles from "./page.module.css";
 import {
-  saveLineCount,
   submitForReview,
   saveVarianceReason,
   approveAndApply,
@@ -13,6 +11,7 @@ import {
   applyOpeningStock,
 } from "./actions";
 import { ImportCsvButton } from "./import-csv-button";
+import { CountingSheet } from "./counting-sheet";
 
 type Props = {
   params: Promise<{ sessionId: string }>;
@@ -180,15 +179,6 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
   const binGroups = groupByBin(lines);
   const showBlind = isCounting && session.blind_count && !isReconciliation;
 
-  const numDataCols = 1  // component name always
-    + (showBlind ? 0 : 1)  // Expected
-    + 1  // Counted
-    + (isInitial || showBlind ? 0 : 1)  // Variance
-    + (isInitial || showBlind || !isAdmin ? 0 : 1);  // Value
-  const saveColFr = isCounting ? " 0.5fr" : "";
-  const gridCols = `2fr${" 0.7fr".repeat(numDataCols - 1)}${saveColFr}`;
-  const gridStyle: CSSProperties = { gridTemplateColumns: gridCols };
-
   return (
     <div className={styles.page}>
       <div className={styles.topRow}>
@@ -267,93 +257,14 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
 
       {/* COUNTING VIEW */}
       {(isCounting || isCompleted) && (
-        <div className={styles.countingSection}>
-          {binGroups.map((group) => {
-            const groupLabel = group.subLocation === null
-              ? "No location set"
-              : [group.subLocation, group.row ? `Row ${group.row}` : null, group.bay ? `Bay ${group.bay}` : null]
-                  .filter(Boolean)
-                  .join(" · ");
-
-            return (
-              <div key={group.key} className={styles.bayGroup}>
-                <div className={styles.bayHeader}>
-                  <span>{groupLabel} <span className={styles.bayCount}>· {group.lines.length} items</span></span>
-                  <Link
-                    href={`/app/stocktake/${sessionId}/print${
-                      group.subLocation
-                        ? `?sublocation=${encodeURIComponent(group.subLocation)}${group.row ? `&row=${encodeURIComponent(group.row)}` : ""}${group.bay ? `&bay=${encodeURIComponent(group.bay)}` : ""}`
-                        : ""
-                    }`}
-                    target="_blank"
-                    className={styles.printLink}
-                  >
-                    Print
-                  </Link>
-                </div>
-                <div className={styles.bayTable}>
-                  <div className={styles.bayTableHeader} style={gridStyle}>
-                    <span>Component</span>
-                    {!showBlind && <span className={styles.numCol}>Expected</span>}
-                    <span className={styles.numCol}>{isInitial ? "On-hand count" : "Counted"}</span>
-                    {!isInitial && !showBlind && <span className={styles.numCol}>Variance</span>}
-                    {!isInitial && !showBlind && isAdmin && <span className={styles.numCol}>Value</span>}
-                  </div>
-                  {group.lines.map((line) => {
-                    const comp = Array.isArray(line.component) ? line.component[0] : line.component;
-                    const variance = line.counted !== null ? Number(line.counted) - Number(line.expected_on_hand) : null;
-                    const costPerUnit = Number(comp?.cost_per_unit ?? 0);
-                    const varValue = variance !== null ? variance * costPerUnit : null;
-                    const hasCounted = line.counted !== null;
-                    return (
-                      <form key={line.id} action={saveLineCount} className={styles.lineRow} style={gridStyle}>
-                        <input type="hidden" name="line_id" value={line.id} />
-                        <input type="hidden" name="session_id" value={sessionId} />
-                        <div className={styles.compCell}>
-                          <span className={styles.compName}>{comp?.name ?? "Unknown"}</span>
-                          <span className={styles.compSku}>{comp?.sku ?? ""}</span>
-                        </div>
-                        {!showBlind && (
-                          <span className={`${styles.numCol} ${styles.muted}`}>
-                            {isInitial ? "—" : Number(line.expected_on_hand).toFixed(0)}
-                          </span>
-                        )}
-                        <span className={styles.numCol}>
-                          {isCounting ? (
-                            <input
-                              className={styles.countInput}
-                              type="number"
-                              name="counted"
-                              min="0"
-                              step="1"
-                              defaultValue={line.counted ?? ""}
-                              placeholder="0"
-                            />
-                          ) : (
-                            <span className={hasCounted ? styles.countedVal : styles.muted}>
-                              {hasCounted ? Number(line.counted).toFixed(0) : "—"}
-                            </span>
-                          )}
-                        </span>
-                        {!isInitial && !showBlind && (
-                          <span className={`${styles.numCol} ${variance === null ? styles.muted : variance > 0 ? styles.positive : variance < 0 ? styles.negative : styles.muted}`}>
-                            {variance === null ? "—" : variance > 0 ? `+${variance}` : variance === 0 ? "—" : String(variance)}
-                          </span>
-                        )}
-                        {!isInitial && !showBlind && isAdmin && (
-                          <span className={`${styles.numCol} ${varValue === null ? styles.muted : varValue > 0 ? styles.positive : varValue < 0 ? styles.negative : styles.muted}`}>
-                            {varValue === null ? "—" : varValue === 0 ? "—" : formatCurrency(varValue)}
-                          </span>
-                        )}
-                        {isCounting && <button type="submit" className={styles.saveLineBtn}>Save</button>}
-                      </form>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <CountingSheet
+          binGroups={binGroups}
+          sessionId={sessionId}
+          isInitial={isInitial}
+          showBlind={showBlind}
+          isAdmin={isAdmin}
+          isCounting={isCounting}
+        />
       )}
 
       {/* RECONCILIATION VIEW */}
@@ -480,31 +391,6 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
         </div>
       )}
 
-      {/* Summary bar — counting view only */}
-      {isCounting && (
-        <div className={styles.summaryBar}>
-          <div className={styles.summaryItem}>
-            <span>Counted</span>
-            <strong>{countedLines.length} / {lines.length}</strong>
-          </div>
-          {!isInitial && (
-            <>
-              <div className={styles.summaryItem}>
-                <span>Variances</span>
-                <strong className={styles.warnVal}>{varianceLines.length} lines</strong>
-              </div>
-              {isAdmin && (
-                <div className={styles.summaryItem}>
-                  <span>Net variance</span>
-                  <strong className={netVariance >= 0 ? styles.positiveVal : styles.negativeVal}>
-                    {formatCurrency(netVariance)}
-                  </strong>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      )}
     </div>
   );
 }
