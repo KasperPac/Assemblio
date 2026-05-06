@@ -1,68 +1,148 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import styles from "./suppliers.module.css";
-import { createSupplier, updateSupplierName } from "./actions";
+import { createSupplier } from "./actions";
 import SupplierCreateForm from "./supplier-create-form";
 import PageHeader from "../_ui/page-header";
-import StatusBadge from "../_ui/status-badge";
-import EmptyState from "../_ui/empty-state";
-import ListPanel, { ListRow } from "../_ui/list-panel";
+import Link from "next/link";
 
 type SupplierRow = {
   id: string;
   name: string;
+  website: string | null;
+  default_lead_time_days: number | null;
+  is_active: boolean;
+  component_count: number;
+  last_po_date: string | null;
+  open_po_count: number;
 };
 
-export default async function SuppliersPage() {
+export default async function SuppliersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ filter?: string }>;
+}) {
+  const { filter = "active" } = await searchParams;
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase
+
+  const query = supabase
     .from("suppliers")
-    .select("id,name")
+    .select(
+      `id, name, website, default_lead_time_days, is_active,
+       supplier_components(id),
+       purchase_order(id, status, created_at)`
+    )
     .order("name");
+
+  if (filter === "active") query.eq("is_active", true);
+  if (filter === "archived") query.eq("is_active", false);
+
+  const { data, error } = await query;
+
+  const rows: SupplierRow[] = (data ?? []).map((s: any) => {
+    const pos = (s.purchase_order ?? []) as Array<{
+      id: string;
+      status: string;
+      created_at: string;
+    }>;
+    const openPos = pos.filter((p) => p.status === "open");
+    const lastPo = pos
+      .slice()
+      .sort((a, b) => b.created_at.localeCompare(a.created_at))[0];
+    return {
+      id: s.id,
+      name: s.name,
+      website: s.website ?? null,
+      default_lead_time_days: s.default_lead_time_days ?? null,
+      is_active: s.is_active,
+      component_count: Array.isArray(s.supplier_components)
+        ? s.supplier_components.length
+        : 0,
+      last_po_date: lastPo?.created_at ?? null,
+      open_po_count: openPos.length,
+    };
+  });
+
+  const tabs = [
+    { key: "active", label: "Active" },
+    { key: "archived", label: "Archived" },
+    { key: "all", label: "All" },
+  ];
 
   return (
     <div className={styles.page}>
       <PageHeader
         eyebrow="Suppliers"
         title="Supplier directory"
-        description="Maintain the supplier list used throughout purchasing and inbound stock workflows."
+        description="Manage suppliers used throughout purchasing and inbound stock workflows."
       />
-      <SupplierCreateForm action={createSupplier} />
 
-      <ListPanel
-        eyebrow="Directory"
-        title="Active suppliers"
-        description="Keep supplier naming clean so purchasing and receiving stay consistent."
-        columns={["Supplier", "Status", "Actions"]}
-        columnsTemplate="1.4fr 0.6fr 1fr"
-      >
-        {error ? (
-          <EmptyState
-            title="Failed to load suppliers"
-            message="The supplier directory could not be loaded from Supabase."
-          />
-        ) : (data ?? []).length === 0 ? (
-          <EmptyState
-            title="No suppliers yet"
-            message="Add a supplier to begin managing purchasing relationships."
-          />
-        ) : (
-          (data as SupplierRow[]).map((row) => (
-            <ListRow
-              key={row.id}
-              columnsTemplate="1.4fr 0.6fr 1fr"
-              className={styles.row}
+      <div className={styles.toolbar}>
+        <div className={styles.filterTabs}>
+          {tabs.map((t) => (
+            <Link
+              key={t.key}
+              href={`/app/suppliers?filter=${t.key}`}
+              className={`${styles.filterTab} ${filter === t.key ? styles.filterTabActive : ""}`}
             >
-              <strong>{row.name}</strong>
-              <StatusBadge variant="success">Active</StatusBadge>
-              <form action={updateSupplierName} className={styles.renameForm}>
-                <input type="hidden" name="supplier_id" value={row.id} />
-                <input name="name" defaultValue={row.name} />
-                <button type="submit">Save</button>
-              </form>
-            </ListRow>
-          ))
-        )}
-      </ListPanel>
+              {t.label}
+            </Link>
+          ))}
+        </div>
+        <SupplierCreateForm action={createSupplier} />
+      </div>
+
+      {error ? (
+        <p className={styles.errorMsg}>Failed to load suppliers.</p>
+      ) : rows.length === 0 ? (
+        <p className={styles.emptyMsg}>No suppliers.</p>
+      ) : (
+        <div className={styles.table}>
+          <div className={styles.tableHeader}>
+            <span>Supplier</span>
+            <span>Components</span>
+            <span>Lead time</span>
+            <span>Last PO</span>
+            <span>Open POs</span>
+          </div>
+          {rows.map((row) => (
+            <div
+              key={row.id}
+              className={`${styles.tableRow} ${!row.is_active ? styles.tableRowArchived : ""}`}
+            >
+              <div>
+                <Link href={`/app/suppliers/${row.id}`} className={styles.supplierName}>
+                  {row.name}
+                </Link>
+                {row.website && (
+                  <div className={styles.supplierWebsite}>{row.website}</div>
+                )}
+              </div>
+              <span>
+                {row.component_count > 0 ? `${row.component_count}` : "—"}
+              </span>
+              <span>
+                {row.default_lead_time_days ? `${row.default_lead_time_days} days` : "—"}
+              </span>
+              <span>
+                {row.last_po_date
+                  ? new Date(row.last_po_date).toLocaleDateString("en-AU", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })
+                  : "—"}
+              </span>
+              <span>
+                {row.open_po_count > 0 ? (
+                  <span className={styles.openPoBadge}>{row.open_po_count} open</span>
+                ) : (
+                  "—"
+                )}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
