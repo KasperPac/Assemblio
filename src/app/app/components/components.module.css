@@ -18,17 +18,56 @@
   white-space: nowrap;
 }
 
-.rowLink {
-  text-decoration: none;
-  color: inherit;
-}
-
-.row strong {
-  color: var(--ink-strong);
-}
-
 .meta {
   color: var(--ink-muted);
+}
+
+/* ── Table ─── */
+
+.tableCard {
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.table th {
+  text-align: left;
+  padding: 10px 16px;
+  color: var(--ink-muted);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--stroke);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.table td {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--stroke);
+  color: var(--ink-strong);
+  vertical-align: middle;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.empty {
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+  padding: 8px 0;
 }
 
 .dialog {
@@ -234,9 +273,16 @@
 /* ── Stock status indicators ─── */
 
 .nameCell {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
+  color: var(--ink-strong);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.nameCell:hover {
+  color: var(--brand-1);
 }
 
 .dot {

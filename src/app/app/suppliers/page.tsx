@@ -77,73 +77,78 @@ export default async function SuppliersPage({
         eyebrow="Suppliers"
         title="Supplier directory"
         description="Manage suppliers used throughout purchasing and inbound stock workflows."
+        actions={<SupplierCreateForm action={createSupplier} />}
       />
 
       <div className={styles.toolbar}>
-        <div className={styles.filterTabs}>
+        <div className={styles.tabs}>
           {tabs.map((t) => (
             <Link
               key={t.key}
               href={`/app/suppliers?filter=${t.key}`}
-              className={`${styles.filterTab} ${filter === t.key ? styles.filterTabActive : ""}`}
+              className={filter === t.key ? styles.tabActive : styles.tab}
             >
               {t.label}
             </Link>
           ))}
         </div>
-        <SupplierCreateForm action={createSupplier} />
       </div>
 
       {error ? (
         <p className={styles.errorMsg}>Failed to load suppliers.</p>
       ) : rows.length === 0 ? (
-        <p className={styles.emptyMsg}>No suppliers.</p>
+        <p className={styles.empty}>No suppliers found.</p>
       ) : (
-        <div className={styles.table}>
-          <div className={styles.tableHeader}>
-            <span>Supplier</span>
-            <span>Components</span>
-            <span>Lead time</span>
-            <span>Last PO</span>
-            <span>Open POs</span>
-          </div>
-          {rows.map((row) => (
-            <div
-              key={row.id}
-              className={`${styles.tableRow} ${!row.is_active ? styles.tableRowArchived : ""}`}
-            >
-              <div>
-                <Link href={`/app/suppliers/${row.id}`} className={styles.supplierName}>
-                  {row.name}
-                </Link>
-                {row.website && (
-                  <div className={styles.supplierWebsite}>{row.website}</div>
-                )}
-              </div>
-              <span>
-                {row.component_count > 0 ? `${row.component_count}` : "—"}
-              </span>
-              <span>
-                {row.default_lead_time_days != null ? `${row.default_lead_time_days} days` : "—"}
-              </span>
-              <span>
-                {row.last_po_date
-                  ? new Date(row.last_po_date).toLocaleDateString("en-AU", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })
-                  : "—"}
-              </span>
-              <span>
-                {row.open_po_count > 0 ? (
-                  <span className={styles.openPoBadge}>{row.open_po_count} open</span>
-                ) : (
-                  "—"
-                )}
-              </span>
-            </div>
-          ))}
+        <div className={styles.tableCard}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Supplier</th>
+                <th>Components</th>
+                <th>Lead time</th>
+                <th>Last PO</th>
+                <th>Open POs</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.id} className={!row.is_active ? styles.archivedRow : ""}>
+                  <td>
+                    <Link href={`/app/suppliers/${row.id}`} className={styles.nameCell}>
+                      {row.name}
+                    </Link>
+                    {row.website && (
+                      <div className={styles.website}>{row.website}</div>
+                    )}
+                  </td>
+                  <td className={styles.meta}>
+                    {row.component_count > 0 ? row.component_count : "—"}
+                  </td>
+                  <td className={styles.meta}>
+                    {row.default_lead_time_days != null
+                      ? `${row.default_lead_time_days} days`
+                      : "—"}
+                  </td>
+                  <td className={styles.meta}>
+                    {row.last_po_date
+                      ? new Date(row.last_po_date).toLocaleDateString("en-AU", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })
+                      : "—"}
+                  </td>
+                  <td>
+                    {row.open_po_count > 0 ? (
+                      <span className={styles.openPoBadge}>{row.open_po_count} open</span>
+                    ) : (
+                      <span className={styles.meta}>—</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

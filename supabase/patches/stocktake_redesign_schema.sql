@@ -52,6 +52,7 @@ create policy "tenant isolation" on public.stocktake_variance_reason
 
 -- 4. New columns on stocktake_line
 alter table public.stocktake_line
+  add column if not exists expected_on_hand    numeric not null default 0,
   add column if not exists notes               text,
   add column if not exists counted_by          uuid references public.profiles(id),
   add column if not exists counted_at          timestamptz,

@@ -4,8 +4,6 @@ import styles from "./components.module.css";
 import ComponentCreateForm from "./component-create-form";
 import { createComponent } from "./actions";
 import PageHeader from "../_ui/page-header";
-import EmptyState from "../_ui/empty-state";
-import ListPanel, { ListRow } from "../_ui/list-panel";
 import { getStockStatus } from "./helpers";
 
 type ComponentRow = {
@@ -119,75 +117,69 @@ export default async function ComponentsPage({ searchParams }: Props) {
         </form>
       </div>
 
-      <ListPanel
-        eyebrow="Catalog"
-        title="Stocked components"
-        description="Open a component to inspect balances, movement history, and BOM usage."
-        columns={["Component", "SKU", "On hand", "Available", "Reorder"]}
-        columnsTemplate="1.6fr 1fr 0.8fr 0.8fr 0.8fr"
-      >
-        {error ? (
-          <EmptyState
-            title="Failed to load components"
-            message="The component catalog could not be loaded from Supabase."
-          />
-        ) : filtered.length === 0 ? (
-          <EmptyState
-            title={
-              filterLowStock
-                ? "No low stock components"
-                : q.length > 0
-                ? "No matching components"
-                : "No components yet"
-            }
-            message={
-              filterLowStock
-                ? "All components have sufficient available stock."
-                : q.length > 0
-                ? "Try a broader search term or clear the filter."
-                : "Create a component to start tracking stocked parts."
-            }
-          />
-        ) : (
-          filtered.map((component) => (
-            <Link
-              key={component.id}
-              href={`/app/components/${component.id}`}
-              className={`${styles.rowLink} ${
-                component.status === "critical"
-                  ? styles.rowCritical
-                  : component.status === "low"
-                  ? styles.rowLow
-                  : ""
-              }`}
-            >
-              <ListRow
-                columnsTemplate="1.6fr 1fr 0.8fr 0.8fr 0.8fr"
-                className={styles.row}
-              >
-                <strong className={styles.nameCell}>
-                  <span
-                    className={`${styles.dot} ${
-                      component.status === "critical"
-                        ? styles.dotCritical
-                        : component.status === "low"
-                        ? styles.dotLow
-                        : styles.dotOk
-                    }`}
-                  />
-                  {component.name}
-                </strong>
-                <span className={styles.meta}>{component.sku ?? "--"}</span>
-                <span>{component.onHand}</span>
-                <span className={component.status !== "ok" ? styles.availableLow : ""}>
-                  {component.available}
-                </span>
-                <span className={styles.meta}>{component.reorder_point ?? 0}</span>
-              </ListRow>
-            </Link>
-          ))
-        )}
-      </ListPanel>
+      {error ? (
+        <p className={styles.empty}>Failed to load components.</p>
+      ) : filtered.length === 0 ? (
+        <p className={styles.empty}>
+          {filterLowStock
+            ? "All components have sufficient available stock."
+            : q.length > 0
+            ? "No components match that search."
+            : "No components yet. Add one above."}
+        </p>
+      ) : (
+        <div className={styles.tableCard}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Component</th>
+                <th>SKU</th>
+                <th>On hand</th>
+                <th>Available</th>
+                <th>Reorder point</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((component) => (
+                <tr
+                  key={component.id}
+                  className={
+                    component.status === "critical"
+                      ? styles.rowCritical
+                      : component.status === "low"
+                      ? styles.rowLow
+                      : ""
+                  }
+                >
+                  <td>
+                    <Link
+                      href={`/app/components/${component.id}`}
+                      className={styles.nameCell}
+                    >
+                      <span
+                        className={`${styles.dot} ${
+                          component.status === "critical"
+                            ? styles.dotCritical
+                            : component.status === "low"
+                            ? styles.dotLow
+                            : styles.dotOk
+                        }`}
+                      />
+                      {component.name}
+                    </Link>
+                  </td>
+                  <td className={styles.meta}>{component.sku ?? "—"}</td>
+                  <td>{component.onHand}</td>
+                  <td className={component.status !== "ok" ? styles.availableLow : ""}>
+                    {component.available}
+                  </td>
+                  <td className={styles.meta}>{component.reorder_point ?? 0}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

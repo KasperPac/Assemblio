@@ -31,6 +31,7 @@
 }
 
 .syncMeta,
+.syncError,
 .errorMeta,
 .meta {
   margin: 0;
@@ -38,13 +39,9 @@
   font-size: 0.9rem;
 }
 
-.syncMeta {
-  color: var(--ok);
-}
-
-.errorMeta {
-  color: var(--danger);
-}
+.syncMeta  { color: var(--ok); }
+.syncError { color: var(--danger); }
+.errorMeta { color: var(--danger); }
 
 .orderRow {
   align-items: center;

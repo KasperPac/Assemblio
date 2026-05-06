@@ -78,8 +78,7 @@ export default async function StocktakePage() {
         title="Inventory counts"
         description="Manage physical counts and reconcile inventory discrepancies."
         actions={
-          // @ts-expect-error — popover API attributes not in React types yet
-          <button className={styles.primary} popovertarget="new-stocktake-dialog">
+          <button className={styles.primary} popoverTarget="new-stocktake-dialog">
             + New stocktake
           </button>
         }
@@ -96,8 +95,7 @@ export default async function StocktakePage() {
               </p>
             </div>
           </div>
-          {/* @ts-expect-error — popover API attributes not in React types yet */}
-          <button className={styles.bannerCta} popovertarget="new-stocktake-dialog">
+          <button className={styles.bannerCta} popoverTarget="new-stocktake-dialog">
             Start initial count →
           </button>
         </div>
@@ -150,8 +148,7 @@ export default async function StocktakePage() {
             </label>
           </div>
           <div className={styles.dialogActions}>
-            {/* @ts-expect-error — popover API attributes not in React types yet */}
-            <button type="button" className={styles.secondary} popovertarget="new-stocktake-dialog">Cancel</button>
+            <button type="button" className={styles.secondary} popoverTarget="new-stocktake-dialog">Cancel</button>
             <button type="submit" className={styles.primary}>Start counting →</button>
           </div>
         </form>

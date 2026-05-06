@@ -4,51 +4,51 @@
     {
       "id": 10,
       "subject": "Task 1: Schema patch and TypeScript types",
-      "status": "pending",
+      "status": "completed",
       "description": "**Goal:** Apply database schema changes for the suppliers module and define TypeScript types.\n\n**Files:**\n- Create: `supabase/patches/suppliers_module.sql`\n- Create: `src/lib/suppliers/types.ts`\n\n**Acceptance Criteria:**\n- [ ] suppliers table extended with 10 new columns\n- [ ] supplier_contacts, supplier_components, supplier_component_price_breaks tables created with RLS\n- [ ] purchase_order.expected_date added\n- [ ] purchase_order_line.unit_cost added\n- [ ] TypeScript types compile\n\n**Verify:** `npx tsc --noEmit` → no errors\n\n```json:metadata\n{\"files\": [\"supabase/patches/suppliers_module.sql\", \"src/lib/suppliers/types.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"suppliers table extended\", \"3 new tables with RLS\", \"purchase_order.expected_date added\", \"purchase_order_line.unit_cost added\", \"TypeScript types compile\"]}\n```"
     },
     {
       "id": 11,
       "subject": "Task 2: Catalog logic and tests",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [10],
       "description": "**Goal:** Implement pure logic functions and Supabase data-fetching for avg actual lead times and price break resolution.\n\n**Files:**\n- Create: `src/lib/suppliers/catalog.ts`\n- Create: `src/lib/suppliers/catalog.test.ts`\n\n**Acceptance Criteria:**\n- [ ] deriveLeadTimeStatus correct\n- [ ] resolvePriceForQuantity correct\n- [ ] getAvgActualLeadTimes returns Map keyed by componentId\n- [ ] getAvgActualLeadTimesForComponent returns Map keyed by supplierId\n- [ ] All tests pass\n\n**Verify:** `npx vitest run src/lib/suppliers/catalog.test.ts` → all tests pass\n\n```json:metadata\n{\"files\": [\"src/lib/suppliers/catalog.ts\", \"src/lib/suppliers/catalog.test.ts\"], \"verifyCommand\": \"npx vitest run src/lib/suppliers/catalog.test.ts\", \"acceptanceCriteria\": [\"deriveLeadTimeStatus correct\", \"resolvePriceForQuantity correct\", \"getAvgActualLeadTimes works\", \"getAvgActualLeadTimesForComponent works\", \"all tests pass\"]}\n```"
     },
     {
       "id": 12,
       "subject": "Task 3: Supplier list page redesign",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [10],
       "description": "**Goal:** Replace name-only list with enriched view.\n\n**Files:**\n- Modify: `src/app/app/suppliers/page.tsx`\n- Modify: `src/app/app/suppliers/actions.ts`\n- Modify: `src/app/app/suppliers/suppliers.module.css`\n\n**Verify:** `npm run dev` → /app/suppliers\n\n```json:metadata\n{\"files\": [\"src/app/app/suppliers/page.tsx\", \"src/app/app/suppliers/actions.ts\", \"src/app/app/suppliers/suppliers.module.css\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"5-column table renders\", \"filter tabs work\", \"archive action works\"]}\n```"
     },
     {
       "id": 13,
       "subject": "Task 4: Supplier detail page — scaffold and Overview tab",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [10, 11],
       "description": "**Goal:** Create supplier detail route with three-tab layout and Overview tab.\n\n**Files:**\n- Create: `src/app/app/suppliers/[supplierId]/page.tsx`\n- Create: `src/app/app/suppliers/[supplierId]/supplier-tabs.tsx`\n- Create: `src/app/app/suppliers/[supplierId]/supplier-tabs.module.css`\n- Create: `src/app/app/suppliers/[supplierId]/actions.ts`\n\n**Verify:** `npm run dev` → navigate to a supplier\n\n```json:metadata\n{\"files\": [\"src/app/app/suppliers/[supplierId]/page.tsx\", \"src/app/app/suppliers/[supplierId]/supplier-tabs.tsx\", \"src/app/app/suppliers/[supplierId]/supplier-tabs.module.css\", \"src/app/app/suppliers/[supplierId]/actions.ts\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"detail page renders\", \"Overview tab works\", \"contacts CRUD works\", \"archive redirects\"]}\n```"
     },
     {
       "id": 14,
       "subject": "Task 5: Supplier detail page — Components tab",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [13],
       "description": "**Goal:** Build Components tab with catalog table, avg lead times, price breaks, preferred toggle.\n\n**Files:**\n- Modify: `src/app/app/suppliers/[supplierId]/supplier-tabs.tsx`\n- Modify: `src/app/app/suppliers/[supplierId]/supplier-tabs.module.css`\n\n**Verify:** `npm run dev` → Components tab\n\n```json:metadata\n{\"files\": [\"src/app/app/suppliers/[supplierId]/supplier-tabs.tsx\", \"src/app/app/suppliers/[supplierId]/supplier-tabs.module.css\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"catalog table renders\", \"avg actual colours correct\", \"price breaks expand\", \"preferred star toggles\", \"link/unlink works\"]}\n```"
     },
     {
       "id": 15,
       "subject": "Task 6: Supplier detail page — Purchase Orders tab",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [13],
       "description": "**Goal:** Build Purchase Orders tab with on-time/late indicators.\n\n**Files:**\n- Modify: `src/app/app/suppliers/[supplierId]/page.tsx`\n- Modify: `src/app/app/suppliers/[supplierId]/supplier-tabs.tsx`\n- Modify: `src/app/app/suppliers/[supplierId]/supplier-tabs.module.css`\n\n**Verify:** `npm run dev` → PO tab\n\n```json:metadata\n{\"files\": [\"src/app/app/suppliers/[supplierId]/page.tsx\", \"src/app/app/suppliers/[supplierId]/supplier-tabs.tsx\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"PO rows render\", \"filter chips work\", \"on-time/late tag shows correctly\"]}\n```"
     },
     {
       "id": 16,
       "subject": "Task 7: Component page — Suppliers tab",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [11, 13],
       "description": "**Goal:** Add Suppliers tab to component detail page with comparison, auto-tags, preferred toggle.\n\n**Files:**\n- Modify: `src/app/app/components/[componentId]/page.tsx`\n- Modify: `src/app/app/components/[componentId]/detail-tabs.tsx`\n- Modify: `src/app/app/components/[componentId]/component-detail.module.css`\n\n**Verify:** `npm run dev` → component with 2+ suppliers\n\n```json:metadata\n{\"files\": [\"src/app/app/components/[componentId]/page.tsx\", \"src/app/app/components/[componentId]/detail-tabs.tsx\", \"src/app/app/components/[componentId]/component-detail.module.css\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"Suppliers tab renders\", \"best-price/fastest tags correct\", \"preferred toggle works\"]}\n```"
     }
   ],
-  "lastUpdated": "2026-05-06T00:00:00Z"
+  "lastUpdated": "2026-05-06T12:00:00Z"
 }

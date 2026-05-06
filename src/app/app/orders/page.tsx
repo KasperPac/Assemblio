@@ -8,16 +8,18 @@ import ListPanel, { ListRow } from "../_ui/list-panel";
 
 type OrderRow = {
   id: string;
-  shopify_order_id: string | null;
   order_number: string | null;
   status: string;
   created_at: string;
 };
 
+type OrderLineRef = { order_id: string; variant_id: string; line_sell_price: number };
+
 type Props = {
   searchParams?: Promise<{
     shopify?: string;
     orders?: string;
+    sync_error?: string;
   }>;
 };
 
@@ -35,9 +37,9 @@ export default async function OrdersPage({ searchParams }: Props) {
 
   const { data, error } = await supabase
     .from("orders")
-    .select("id,shopify_order_id,order_number,status,created_at")
+    .select("id,order_number,status,created_at")
     .order("created_at", { ascending: false })
-    .limit(12);
+    .limit(50);
 
   const orderIds = ((data ?? []) as OrderRow[]).map((o) => o.id);
 
@@ -45,9 +47,9 @@ export default async function OrdersPage({ searchParams }: Props) {
     orderIds.length > 0
       ? supabase
           .from("order_line")
-          .select("order_id,variant_id")
+          .select("order_id,variant_id,line_sell_price")
           .in("order_id", orderIds)
-      : Promise.resolve({ data: [] as Array<{ order_id: string; variant_id: string }> })
+      : Promise.resolve({ data: [] as OrderLineRef[] })
   );
 
   const variantIds = [
@@ -64,8 +66,6 @@ export default async function OrdersPage({ searchParams }: Props) {
       : Promise.resolve({ data: [] as Array<{ id: string; variant_id: string }> })
   );
 
-  type OrderLineRef = { order_id: string; variant_id: string };
-
   const activeBomVariants = new Set(
     (activeBomData ?? []).map((b) => (b as { variant_id: string }).variant_id)
   );
@@ -78,6 +78,26 @@ export default async function OrdersPage({ searchParams }: Props) {
     acc[line.order_id] = bucket;
     return acc;
   }, {});
+
+  const totalByOrder = ((orderLineData ?? []) as OrderLineRef[]).reduce<Record<string, number>>(
+    (acc, line) => {
+      acc[line.order_id] = (acc[line.order_id] ?? 0) + Number(line.line_sell_price ?? 0);
+      return acc;
+    },
+    {}
+  );
+
+  function formatOrderDate(iso: string) {
+    const d = new Date(iso);
+    const now = new Date();
+    const isToday = d.toDateString() === now.toDateString();
+    if (isToday) return d.toLocaleTimeString("en-AU", { hour: "numeric", minute: "2-digit" });
+    return d.toLocaleDateString("en-AU", { day: "numeric", month: "short", year: d.getFullYear() !== now.getFullYear() ? "numeric" : undefined });
+  }
+
+  function formatCurrency(value: number) {
+    return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(value);
+  }
 
   type BadgeState = "allocated" | "partial" | "no-boms" | "no-lines" | "done";
 
@@ -98,7 +118,7 @@ export default async function OrdersPage({ searchParams }: Props) {
         title="Order queue"
         description="Orders sync and allocate automatically. Re-run allocation from the order detail if BOMs change."
         actions={
-          <form method="post" action="/api/shopify/sync">
+          <form method="post" action="/api/shopify/sync?return_to=/app/orders">
             <button className={styles.primary} type="submit">
               Sync orders
             </button>
@@ -107,15 +127,17 @@ export default async function OrdersPage({ searchParams }: Props) {
       />
 
       {params.shopify === "sync-ok" ? (
-        <p className={styles.syncMeta}>Last sync imported {params.orders ?? "0"} orders.</p>
+        <p className={styles.syncMeta}>Sync complete — {params.orders ?? "0"} orders imported.</p>
+      ) : params.shopify === "sync-failed" ? (
+        <p className={styles.syncError}>{params.sync_error ?? "Sync failed."}</p>
       ) : null}
 
       <ListPanel
         eyebrow="Live queue"
         title="Orders ready for action"
         description="Allocation status updates automatically on every sync. Open an order to re-run or inspect components."
-        columns={["Order", "Date", "Status", "Allocation", ""]}
-        columnsTemplate="1.1fr 0.8fr 0.7fr 1fr 0.5fr"
+        columns={["Order", "Date", "Total", "Items", "Status", "Allocation", ""]}
+        columnsTemplate="1fr 0.8fr 0.8fr 0.5fr 0.7fr 1fr 0.4fr"
       >
         {error ? (
           <EmptyState
@@ -133,20 +155,23 @@ export default async function OrdersPage({ searchParams }: Props) {
             const badge = getOrderBadgeState(row, lines);
             const missingCount = lines.filter((l) => !activeBomVariants.has(l.variant_id)).length;
 
+            const orderTotal = totalByOrder[row.id] ?? 0;
+
             return (
               <ListRow
                 key={row.id}
-                columnsTemplate="1.1fr 0.8fr 0.7fr 1fr 0.5fr"
+                columnsTemplate="1fr 0.8fr 0.8fr 0.5fr 0.7fr 1fr 0.4fr"
                 className={styles.orderRow}
               >
-                <div className={styles.orderIdentity}>
-                  <Link href={`/app/orders/${row.id}`} className={styles.orderLink}>
-                    #{row.order_number ?? row.shopify_order_id ?? row.id.slice(0, 6)}
-                  </Link>
-                  <span className={styles.meta}>Shopify {row.shopify_order_id ?? "--"}</span>
-                </div>
+                <Link href={`/app/orders/${row.id}`} className={styles.orderLink}>
+                  {row.order_number ?? row.id.slice(0, 8)}
+                </Link>
+                <span className={styles.meta}>{formatOrderDate(row.created_at)}</span>
                 <span className={styles.meta}>
-                  {new Date(row.created_at).toLocaleDateString("en-GB")}
+                  {orderTotal > 0 ? formatCurrency(orderTotal) : "—"}
+                </span>
+                <span className={styles.meta}>
+                  {lines.length} {lines.length === 1 ? "item" : "items"}
                 </span>
                 <StatusBadge variant={getStatusVariant(row.status)}>{row.status}</StatusBadge>
                 <div>

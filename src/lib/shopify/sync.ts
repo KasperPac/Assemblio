@@ -26,7 +26,13 @@ type ShopifyOrderNode = {
   name: string;
   cancelledAt: string | null;
   displayFulfillmentStatus: string | null;
-  lineItems: { nodes: Array<{ quantity: number; variant: { id: string } | null }> };
+  lineItems: {
+    nodes: Array<{
+      quantity: number;
+      variant: { id: string } | null;
+      originalUnitPriceSet: { shopMoney: { amount: string } } | null;
+    }>;
+  };
 };
 
 type ProductsQueryResult = {
@@ -153,6 +159,7 @@ async function fetchOrders(shopDomain: string, accessToken: string) {
           lineItems(first: 100) {
             nodes {
               quantity
+              originalUnitPriceSet { shopMoney { amount } }
               variant { id }
             }
           }
@@ -274,22 +281,26 @@ export async function syncShopifyStoreData(
     const orderId = orderMap.get(order.id);
     if (!orderId) return [];
 
-    const quantityByVariant = new Map<string, number>();
+    const lineDataByVariant = new Map<string, { quantity: number; revenue: number }>();
     for (const lineItem of order.lineItems.nodes) {
       const variantId = lineItem.variant?.id;
       const localVariantId = variantId ? variantMap.get(variantId) : undefined;
       if (!localVariantId) continue;
-      quantityByVariant.set(
-        localVariantId,
-        (quantityByVariant.get(localVariantId) ?? 0) + lineItem.quantity
-      );
+      const unitPrice = parseFloat(lineItem.originalUnitPriceSet?.shopMoney?.amount ?? "0");
+      const existing = lineDataByVariant.get(localVariantId) ?? { quantity: 0, revenue: 0 };
+      lineDataByVariant.set(localVariantId, {
+        quantity: existing.quantity + lineItem.quantity,
+        revenue: existing.revenue + unitPrice * lineItem.quantity,
+      });
     }
 
-    return Array.from(quantityByVariant.entries()).map(([variantId, quantity]) => ({
+    return Array.from(lineDataByVariant.entries()).map(([variantId, data]) => ({
       tenant_id: tenantId,
       order_id: orderId,
       variant_id: variantId,
-      quantity,
+      quantity: data.quantity,
+      unit_sell_price: data.quantity > 0 ? data.revenue / data.quantity : 0,
+      line_sell_price: data.revenue,
     }));
   });
 

@@ -5,6 +5,9 @@ import { syncShopifyStoreData } from "@/lib/shopify/sync";
 import { getMissingSyncScopes } from "@/lib/shopify/scopes";
 
 export async function POST(request: NextRequest) {
+  const raw = request.nextUrl.searchParams.get("return_to") ?? "";
+  const returnTo = raw.startsWith("/app/") ? raw : null;
+
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -16,11 +19,13 @@ export async function POST(request: NextRequest) {
   const { data: profile } = await supabase
     .from("profiles")
     .select("tenant_id")
+    .eq("id", user.id)
     .single();
   if (!profile?.tenant_id) {
-    return NextResponse.redirect(
-      new URL("/app/settings?shopify=missing-tenant", request.url)
-    );
+    const dest = new URL(returnTo ?? "/app/settings", request.url);
+    dest.searchParams.set("shopify", "sync-failed");
+    dest.searchParams.set("sync_error", "Could not resolve tenant. Try refreshing and signing in again.");
+    return NextResponse.redirect(dest);
   }
 
   const form = await request.formData();
@@ -49,9 +54,10 @@ export async function POST(request: NextRequest) {
   const store = storeRows?.[0];
 
   if (!store) {
-    return NextResponse.redirect(
-      new URL("/app/settings?shopify=no-store", request.url)
-    );
+    const dest = new URL(returnTo ?? "/app/settings", request.url);
+    dest.searchParams.set("shopify", "sync-failed");
+    dest.searchParams.set("sync_error", "No active Shopify store found. Connect one in Settings.");
+    return NextResponse.redirect(dest);
   }
 
   const { data: tokenRow } = await admin
@@ -62,19 +68,18 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (!tokenRow?.access_token) {
-    return NextResponse.redirect(
-      new URL("/app/settings?shopify=no-token", request.url)
-    );
+    const dest = new URL(returnTo ?? "/app/settings", request.url);
+    dest.searchParams.set("shopify", "sync-failed");
+    dest.searchParams.set("sync_error", "No access token found. Reconnect the Shopify store in Settings.");
+    return NextResponse.redirect(dest);
   }
+
   const missingScopes = getMissingSyncScopes(tokenRow.scopes);
   if (missingScopes.length > 0) {
-    const failedUrl = new URL("/app/settings", request.url);
-    failedUrl.searchParams.set("shopify", "sync-failed");
-    failedUrl.searchParams.set(
-      "sync_error",
-      `Missing required Shopify scopes: ${missingScopes.join(", ")}. Reconnect the store.`
-    );
-    return NextResponse.redirect(failedUrl);
+    const dest = new URL(returnTo ?? "/app/settings", request.url);
+    dest.searchParams.set("shopify", "sync-failed");
+    dest.searchParams.set("sync_error", `Missing Shopify scopes: ${missingScopes.join(", ")}. Reconnect the store in Settings.`);
+    return NextResponse.redirect(dest);
   }
 
   try {
@@ -102,12 +107,10 @@ export async function POST(request: NextRequest) {
       .eq("tenant_id", profile.tenant_id)
       .eq("id", store.id);
 
-    return NextResponse.redirect(
-      new URL(
-        `/app/settings?shopify=sync-ok&products=${result.products}&orders=${result.orders}`,
-        request.url
-      )
-    );
+    const successPath = returnTo
+      ? `${returnTo}?shopify=sync-ok&products=${result.products}&orders=${result.orders}`
+      : `/app/settings?shopify=sync-ok&products=${result.products}&orders=${result.orders}`;
+    return NextResponse.redirect(new URL(successPath, request.url));
   } catch (error) {
     const message =
       error instanceof Error && error.message ? error.message : "Unknown sync error";
@@ -121,7 +124,8 @@ export async function POST(request: NextRequest) {
       .eq("tenant_id", profile.tenant_id)
       .eq("id", store.id);
 
-    const failedUrl = new URL("/app/settings", request.url);
+    const failedBase = returnTo ?? "/app/settings";
+    const failedUrl = new URL(failedBase, request.url);
     failedUrl.searchParams.set("shopify", "sync-failed");
     failedUrl.searchParams.set("sync_error", message.slice(0, 180));
     return NextResponse.redirect(failedUrl);

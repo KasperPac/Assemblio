@@ -4,51 +4,51 @@
     {
       "id": 15,
       "subject": "Task 0: Schema migration",
-      "status": "pending",
+      "status": "completed",
       "description": "**Goal:** Apply database schema changes for stocktake redesign — new columns on existing tables, new variance reason table, seeded defaults.\n\n**Files:**\n- Create: `supabase/patches/stocktake_redesign_schema.sql`\n\n**Acceptance Criteria:**\n- [ ] Migration SQL runs without error on a fresh schema\n- [ ] `stocktake_session` has `reference_number`, `session_type`, `notes`, `blind_count`, `approved_by`, `approved_at`\n- [ ] `stocktake_line` has `notes`, `counted_by`, `counted_at`, `variance_reason_id`\n- [ ] `stocktake_variance_reason` table created with tenant_id, name, sort_order\n- [ ] 6 default reasons seeded for all existing tenants\n- [ ] `component` has `bin_sub_location`, `bin_row`, `bin_bay`\n- [ ] Status check constraint extended with new statuses\n\n**Verify:** Apply SQL to local Supabase; confirm columns appear in table inspector\n\n```json:metadata\n{\"files\": [\"supabase/patches/stocktake_redesign_schema.sql\"], \"verifyCommand\": \"supabase db reset\", \"acceptanceCriteria\": [\"Migration runs without error\", \"All new columns present\", \"stocktake_variance_reason table created\", \"6 default reasons seeded for existing tenants\", \"component has bin location columns\"]}\n```"
     },
     {
       "id": 16,
       "subject": "Task 1: Lifecycle update",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [15],
       "description": "**Goal:** Update `lifecycle.ts` with new statuses and transition helpers; update tests.\n\n**Files:**\n- Modify: `src/lib/stocktake/lifecycle.ts`\n- Modify: `src/lib/stocktake/lifecycle.test.ts`\n\n**Acceptance Criteria:**\n- [ ] `StocktakeStatus` type includes `'counting' | 'reconciliation'`\n- [ ] `canSubmitForReview(status)` returns true only for `'counting'`\n- [ ] `canApprove(status)` returns true only for `'reconciliation'`\n- [ ] `canSendBackForRecount(status)` returns true only for `'reconciliation'`\n- [ ] `isCountingStatus(status)` returns true for `'counting'` and `'open'`\n- [ ] `canEditStocktakeLines` returns true for `'counting'` and `'open'`\n- [ ] `canApplyStocktakeSession` still requires `'approved'`\n- [ ] All tests pass: `npm test -- lifecycle`\n\n**Verify:** `npm test -- lifecycle` → all green\n\n```json:metadata\n{\"files\": [\"src/lib/stocktake/lifecycle.ts\", \"src/lib/stocktake/lifecycle.test.ts\"], \"verifyCommand\": \"npm test -- lifecycle\", \"acceptanceCriteria\": [\"StocktakeStatus includes counting and reconciliation\", \"canSubmitForReview returns true for counting only\", \"canApprove returns true for reconciliation only\", \"canSendBackForRecount returns true for reconciliation only\", \"isCountingStatus returns true for counting and open\", \"canEditStocktakeLines returns true for counting and open\", \"All tests pass\"]}\n```"
     },
     {
       "id": 17,
       "subject": "Task 2: Bin location on component",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [16],
       "description": "**Goal:** Add bin location fields to component type and UI.\n\n**Files:**\n- Modify: `src/app/app/components/actions.ts`\n- Modify: `src/app/app/components/[componentId]/page.tsx`\n- Modify: `src/app/app/components/components.module.css`\n\n**Acceptance Criteria:**\n- [ ] `ComponentRecord` type has `bin_sub_location`, `bin_row`, `bin_bay` (all `string | null`)\n- [ ] `updateBinLocation(formData)` server action saves all three fields\n- [ ] Component detail page shows \"Bin location\" section with 3 text inputs\n- [ ] Fields are optional — empty values save as null\n- [ ] Saving shows success feedback\n\n**Verify:** Set bin location on a component, save, reload — values persist.\n\n```json:metadata\n{\"files\": [\"src/app/app/components/actions.ts\", \"src/app/app/components/[componentId]/page.tsx\", \"src/app/app/components/components.module.css\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"ComponentRecord has bin location fields\", \"updateBinLocation server action saves fields\", \"Component detail has bin location section with 3 inputs\", \"Empty values saved as null\"]}\n```"
     },
     {
       "id": 18,
       "subject": "Task 3: Stocktake list page",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [17],
       "description": "**Goal:** Rewrite the stocktake list page with session list, onboarding banner, and new session dialog.\n\n**Files:**\n- Modify: `src/app/app/stocktake/page.tsx`\n- Modify: `src/app/app/stocktake/actions.ts`\n- Modify: `src/app/app/stocktake/stocktake.module.css`\n- Delete: `src/app/app/stocktake/stocktake-create-form.tsx`\n- Delete: `src/app/app/stocktake/stocktake-line-form.tsx`\n\n**Acceptance Criteria:**\n- [ ] Session list shows columns: Reference, Type, Location, Date, Lines, Status\n- [ ] Onboarding banner shown when all on_hand = 0 and no completed session\n- [ ] Setup modal for initial and full session types\n- [ ] createStocktakeSession pre-loads ALL component lines with on_hand snapshot\n- [ ] ST-YYYY-NNN reference number generation\n- [ ] Redirect to [sessionId] after creation\n- [ ] Completed sessions dimmed with \"View\" button\n\n**Verify:** Create a new session — appears in list with pre-loaded lines and reference number.\n\n```json:metadata\n{\"files\": [\"src/app/app/stocktake/page.tsx\", \"src/app/app/stocktake/actions.ts\", \"src/app/app/stocktake/stocktake.module.css\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"Session list with correct columns\", \"Onboarding banner logic\", \"Setup modal for initial and full types\", \"createStocktakeSession pre-loads all component lines\", \"ST-YYYY-NNN reference number\", \"Redirect after creation\"]}\n```"
     },
     {
       "id": 19,
       "subject": "Task 4: Session detail page",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [18],
       "description": "**Goal:** Build the session detail page with counting view, reconciliation view, and initial count view.\n\n**Files:**\n- Create: `src/app/app/stocktake/[sessionId]/page.tsx`\n- Create: `src/app/app/stocktake/[sessionId]/page.module.css`\n- Create: `src/app/app/stocktake/[sessionId]/actions.ts`\n\n**Acceptance Criteria:**\n- [ ] Header with reference, status badges, action buttons\n- [ ] Counting view: bin-grouped lines, collapsible bays, inline qty input\n- [ ] Blind count hides Expected column during counting\n- [ ] Reconciliation: variance lines sorted by $ impact, reason dropdown + comment\n- [ ] Approve blocked until all reasons set; comment required for Other\n- [ ] Initial count view: no Expected column, Apply opening stock button\n- [ ] All server actions: saveLineCount, submitForReview, saveVarianceReason, approveAndApply, sendBackForRecount, applyOpeningStock\n\n**Verify:** Full flow: count → submit → set reasons → approve → completed.\n\n```json:metadata\n{\"files\": [\"src/app/app/stocktake/[sessionId]/page.tsx\", \"src/app/app/stocktake/[sessionId]/page.module.css\", \"src/app/app/stocktake/[sessionId]/actions.ts\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"Bin-grouped counting view\", \"Blind count hides Expected\", \"Reconciliation with reason codes and comments\", \"Approve blocked until all reasons set\", \"Initial count view with Apply button\", \"All server actions implemented\"]}\n```"
     },
     {
       "id": 20,
       "subject": "Task 5: Print view",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [19],
       "description": "**Goal:** Create print-friendly page for stocktake sheets, scoped by query params.\n\n**Files:**\n- Create: `src/app/app/stocktake/[sessionId]/print/page.tsx`\n- Create: `src/app/app/stocktake/[sessionId]/print/print.module.css`\n\n**Acceptance Criteria:**\n- [ ] Print route scoped by sublocation/row/bay query params\n- [ ] No sidebar, no nav — white background\n- [ ] Blind count hides Expected column\n- [ ] Print sheet links from bay headers in session detail\n\n**Verify:** Open print page with query params — correct lines shown; print layout clean.\n\n```json:metadata\n{\"files\": [\"src/app/app/stocktake/[sessionId]/print/page.tsx\", \"src/app/app/stocktake/[sessionId]/print/print.module.css\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"Print route renders without sidebar/nav\", \"Query params filter lines correctly\", \"Blind count hides Expected column\", \"Print sheet links from bay headers\"]}\n```"
     },
     {
       "id": 21,
       "subject": "Task 6: CSV export/import",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [19],
       "description": "**Goal:** Add CSV export and import for stocktake lines.\n\n**Files:**\n- Create: `src/app/api/stocktake/[sessionId]/export/route.ts`\n- Create: `src/app/api/stocktake/[sessionId]/import/route.ts`\n- Create: `src/app/app/stocktake/[sessionId]/import-csv-button.tsx`\n\n**Acceptance Criteria:**\n- [ ] Export returns CSV with component_id, name, sku, sub_location, row, bay, expected, counted, notes\n- [ ] Import matches by component_id, updates counted + notes\n- [ ] Client button auto-submits on file change, calls router.refresh()\n\n**Verify:** Export → edit → import → counts updated.\n\n```json:metadata\n{\"files\": [\"src/app/api/stocktake/[sessionId]/export/route.ts\", \"src/app/api/stocktake/[sessionId]/import/route.ts\", \"src/app/app/stocktake/[sessionId]/import-csv-button.tsx\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"Export returns valid CSV\", \"Import matches by component_id\", \"Import updates counted and notes\", \"Client button auto-submits on file change\"]}\n```"
     }
   ],
-  "lastUpdated": "2026-05-06T00:00:00.000Z"
+  "lastUpdated": "2026-05-06T09:00:00.000Z"
 }

@@ -100,33 +100,25 @@ export default async function SupplierDetailPage({ params }: Props) {
   const typedPos = (posData ?? []) as PoRow[];
 
   return (
-    <div className={styles.detailPage}>
-      <div className={styles.backRow}>
-        <Link href="/app/suppliers" className={styles.backLink}>&larr; Suppliers</Link>
+    <div className={styles.page}>
+      <div className={styles.topRow}>
+        <Link href="/app/suppliers" className={styles.backButton}>&larr; Suppliers</Link>
       </div>
 
-      <div className={styles.pageHeader}>
+      <div className={styles.supplierHeader}>
         <div>
           <h1 className={styles.supplierName}>{s.name}</h1>
-          {s.website && (
-            <span className={styles.supplierMeta}>
-              {s.website} · {s.is_active ? "Active" : "Archived"}
-            </span>
-          )}
-          {!s.website && (
-            <span className={styles.supplierMeta}>
-              {s.is_active ? "Active" : "Archived"}
-            </span>
-          )}
+          <span className={styles.supplierMeta}>
+            {s.website ? `${s.website} · ` : ""}
+            {s.is_active ? "Active" : "Archived"}
+          </span>
         </div>
-        <div className={styles.headerActions}>
-          <form action={archiveSupplier}>
-            <input type="hidden" name="supplier_id" value={s.id} />
-            <button type="submit" className={styles.btnDanger}>
-              Archive
-            </button>
-          </form>
-        </div>
+        <form action={archiveSupplier}>
+          <input type="hidden" name="supplier_id" value={s.id} />
+          <button type="submit" className={styles.btnDanger}>
+            Archive
+          </button>
+        </form>
       </div>
 
       <SupplierTabs

@@ -77,6 +77,8 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
   if (!context) return null;
   const { supabase, tenantId } = context;
 
+  const { data: { user } } = await supabase.auth.getUser();
+
   const [{ data: sessionData }, { data: linesData }, { data: reasons }, { data: profileData }] = await Promise.all([
     supabase
       .from("stocktake_session")
@@ -99,7 +101,7 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
       .select("id,name")
       .eq("tenant_id", tenantId)
       .order("sort_order"),
-    supabase.from("profiles").select("role").single(),
+    supabase.from("profiles").select("role").eq("id", user?.id ?? "").maybeSingle(),
   ]);
 
   if (!sessionData) notFound();
@@ -125,7 +127,6 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
   const isCompleted = session.status === "completed";
   const isAdmin = role === "admin" || role === "super_admin";
 
-  const countedLines = lines.filter((l) => l.counted !== null);
   const varianceLines = lines.filter((l) => {
     if (l.counted === null) return false;
     return Number(l.counted) !== Number(l.expected_on_hand);
@@ -138,7 +139,7 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
     return acc + variance * costPerUnit;
   }, 0);
 
-  const binGroups = groupByBin(lines);
+  const binGroups: BinGroup[] = groupByBin(lines) as BinGroup[];
   const showBlind = isCounting && session.blind_count && !isReconciliation;
 
   return (
@@ -157,7 +158,6 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
           </div>
           <p className={styles.headerMeta}>
             {locationName} · {new Date(session.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
-            {isCounting && ` · ${countedLines.length} / ${lines.length} counted`}
           </p>
           {session.notes && <p className={styles.headerNotes}>{session.notes}</p>}
         </div>
@@ -279,7 +279,6 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
                   ? ((variance / Number(line.expected_on_hand)) * 100).toFixed(1)
                   : "—";
                 const value = variance * Number(comp?.cost_per_unit ?? 0);
-                const missingReason = !line.variance_reason_id;
                 return (
                   <div key={line.id} className={`${styles.varianceLine} ${variance < 0 ? styles.lossLine : styles.gainLine}`}>
                     <div className={styles.varianceLineData}>
@@ -306,7 +305,7 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
                       <input type="hidden" name="session_id" value={sessionId} />
                       <select
                         name="variance_reason_id"
-                        className={`${styles.reasonSelect} ${missingReason ? styles.reasonRequired : ""}`}
+                        className={styles.reasonSelect}
                         defaultValue={line.variance_reason_id ?? ""}
                       >
                         <option value="">Select reason…</option>
@@ -334,9 +333,9 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
               {lines.length - varianceLines.length} lines matched exactly — no action needed.
             </div>
           </div>
-        </div>
-      )}
 
+      </div>
+      )}
     </div>
   );
 }

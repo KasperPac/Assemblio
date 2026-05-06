@@ -287,7 +287,7 @@ export default function SupplierTabs({
             </form>
           )}
 
-          <div className={styles.catalogTable}>
+          <div className={styles.tableCard}>
             <div className={styles.catalogHeader}>
               <span>Component</span>
               <span>Part #</span>
@@ -339,7 +339,7 @@ export default function SupplierTabs({
             </div>
           </div>
 
-          <div className={styles.poTable}>
+          <div className={styles.tableCard}>
             <div className={styles.poHeader}>
               <span>PO Ref</span>
               <span>Created</span>

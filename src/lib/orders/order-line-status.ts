@@ -6,6 +6,7 @@ export type ComponentStatus = {
   requiredQty: number;
   availableQty: number;
   isShort: boolean;
+  costPerUnit: number;
 };
 
 export type OrderLineStatus = {
@@ -105,8 +106,8 @@ export async function getOrderLineStatus(
   const [{ data: componentRows }, { data: balanceRows }, { data: allocationRows }] =
     await Promise.all([
       componentIds.length > 0
-        ? supabase.from("component").select("id,name").in("id", componentIds)
-        : Promise.resolve({ data: [] as Array<{ id: string; name: string }> }),
+        ? supabase.from("component").select("id,name,cost_per_unit").in("id", componentIds)
+        : Promise.resolve({ data: [] as Array<{ id: string; name: string; cost_per_unit: number }> }),
       componentIds.length > 0
         ? (() => {
             let q = supabase
@@ -133,10 +134,10 @@ export async function getOrderLineStatus(
     ]);
 
   const nameById = new Map(
-    (componentRows ?? []).map((c) => [
-      (c as { id: string; name: string }).id,
-      (c as { id: string; name: string }).name,
-    ])
+    (componentRows ?? []).map((c) => {
+      const r = c as { id: string; name: string; cost_per_unit: number };
+      return [r.id, { name: r.name, costPerUnit: Number(r.cost_per_unit ?? 0) }];
+    })
   );
 
   const balanceByComponent = new Map(
@@ -176,12 +177,14 @@ export async function getOrderLineStatus(
       const requiredQty = Number(bc.quantity) * Number(line.quantity);
       const bal = balanceByComponent.get(bc.component_id);
       const availableQty = (bal?.onHand ?? 0) - (bal?.reserved ?? 0);
+      const comp = nameById.get(bc.component_id);
       return {
         componentId: bc.component_id,
-        name: nameById.get(bc.component_id) ?? bc.component_id,
+        name: comp?.name ?? bc.component_id,
         requiredQty,
         availableQty,
         isShort: availableQty < requiredQty,
+        costPerUnit: comp?.costPerUnit ?? 0,
       };
     });
 

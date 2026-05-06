@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import { allocateOrder, updateJobLaborPlanWeek } from "../actions";
 import { getOrderLineStatus } from "@/lib/orders/order-line-status";
 import PageHeader from "../../_ui/page-header";
@@ -16,38 +17,26 @@ type OrderRecord = {
   created_at: string;
 };
 
+type ProductData = {
+  title: string | null;
+  image_url: string | null;
+  shopify_id: string | null;
+};
+
+type VariantData = {
+  title: string | null;
+  sku: string | null;
+  shopify_id: string | null;
+  product: ProductData | ProductData[] | null;
+};
+
 type OrderLineRecord = {
   id: string;
   quantity: number;
   unit_sell_price: number;
   line_sell_price: number;
   variant_id: string;
-  variant:
-    | {
-        title: string | null;
-        sku: string | null;
-        product:
-          | {
-              title: string | null;
-            }
-          | {
-              title: string | null;
-            }[]
-          | null;
-      }
-    | {
-        title: string | null;
-        sku: string | null;
-        product:
-          | {
-              title: string | null;
-            }
-          | {
-              title: string | null;
-            }[]
-          | null;
-      }[]
-    | null;
+  variant: VariantData | VariantData[] | null;
 };
 
 type PlannedSnapshot = {
@@ -122,20 +111,12 @@ function getStatusVariant(status: string) {
   return "warning";
 }
 
-async function getTenantId(
-  supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>
-): Promise<string> {
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("tenant_id")
-    .single();
-  return profile?.tenant_id ?? "";
-}
-
 export default async function OrderDetailPage({ params, searchParams }: Props) {
   const { orderId } = await params;
   const query = (await searchParams) ?? {};
   const supabase = await createSupabaseServerClient();
+  const context = await getServerTenantContext();
+  if (!context) notFound();
 
   const [{ data: order }, { data: orderLines }] = await Promise.all([
     supabase
@@ -146,7 +127,7 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
     supabase
       .from("order_line")
       .select(
-        "id,quantity,unit_sell_price,line_sell_price,variant_id,variant:variant_id(title,sku,product:product_id(title))"
+        "id,quantity,unit_sell_price,line_sell_price,variant_id,variant:variant_id(title,sku,shopify_id,product:product_id(title,image_url,shopify_id))"
       )
       .eq("order_id", orderId),
   ]);
@@ -161,7 +142,8 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
     quantity: l.quantity,
   }));
 
-  const tenantId = await getTenantId(supabase);
+  const { tenantId, role } = context;
+  const showCosts = role === "admin" || role === "super_admin";
 
   const [
     lineStatusMap,
@@ -169,6 +151,7 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
     { data: actualRollups },
     { data: laborPlans },
     { data: utilizationRows },
+    { data: storeRow },
   ] = await Promise.all([
     getOrderLineStatus(supabase, tenantId, lineRefs),
     supabase
@@ -188,6 +171,14 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
     supabase
       .from("department_utilization_week")
       .select("department_id,week_start,overload_hours,idle_hours,utilization_pct"),
+    supabase
+      .from("shopify_store")
+      .select("store_domain")
+      .eq("tenant_id", tenantId)
+      .eq("status", "active")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ]);
 
   const plannedByLine = new Map(
@@ -275,6 +266,15 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
     { sell: 0, plannedMargin: 0, actualMargin: 0, hours: 0 }
   );
 
+  const shopDomain = (storeRow as { store_domain: string } | null)?.store_domain ?? null;
+
+  function shopifyAdminUrl(type: "orders" | "products", gid: string | null): string | null {
+    if (!shopDomain || !gid) return null;
+    const numericId = gid.match(/\/(\d+)$/)?.[1];
+    if (!numericId) return null;
+    return `https://${shopDomain}/admin/${type}/${numericId}`;
+  }
+
   const statusVariant = getStatusVariant(typedOrder.status);
 
   return (
@@ -287,13 +287,21 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
 
       <PageHeader
         eyebrow="Order detail"
-        title={`Order #${typedOrder.order_number ?? typedOrder.shopify_order_id ?? typedOrder.id.slice(0, 6)}`}
-        description={`Shopify ${typedOrder.shopify_order_id ?? "--"} · Created ${new Date(
-          typedOrder.created_at
-        ).toLocaleDateString("en-GB")}`}
+        title={typedOrder.order_number ?? typedOrder.shopify_order_id ?? typedOrder.id.slice(0, 8)}
+        description={`Created ${new Date(typedOrder.created_at).toLocaleDateString("en-GB")}`}
         actions={
           <div className={styles.headerActions}>
             <StatusBadge variant={statusVariant}>{typedOrder.status}</StatusBadge>
+            {shopifyAdminUrl("orders", typedOrder.shopify_order_id) ? (
+              <a
+                href={shopifyAdminUrl("orders", typedOrder.shopify_order_id)!}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.shopifyLink}
+              >
+                View in Shopify ↗
+              </a>
+            ) : null}
             <form action={allocateOrder}>
               <input type="hidden" name="order_id" value={typedOrder.id} />
               <input type="hidden" name="return_to" value={`/app/orders/${typedOrder.id}`} />
@@ -396,6 +404,16 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
                   className={`${styles.lineCard} ${allocationState !== "allocated" ? styles.lineCardWarning : ""}`}
                 >
                   <div className={styles.lineHeader}>
+                    {product?.image_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={product.image_url}
+                        alt={product.title ?? ""}
+                        className={styles.productThumb}
+                      />
+                    ) : (
+                      <div className={styles.productThumbEmpty} />
+                    )}
                     <div className={styles.lineIdentity}>
                       <div className={styles.lineHeading}>
                         <h3>{product?.title ?? variant?.title ?? "Variant"}</h3>
@@ -417,6 +435,19 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
                             </Link>
                           </>
                         ) : null}
+                        {shopifyAdminUrl("products", product?.shopify_id ?? null) ? (
+                          <>
+                            {" · "}
+                            <a
+                              href={shopifyAdminUrl("products", product?.shopify_id ?? null)!}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={styles.shopifyLink}
+                            >
+                              Shopify ↗
+                            </a>
+                          </>
+                        ) : null}
                       </p>
                     </div>
                     <div className={styles.lineMargin}>
@@ -430,22 +461,45 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
                   </div>
 
                   {allocationState === "allocated" && lineStatus && lineStatus.components.length > 0 ? (
-                    <div className={styles.componentSection}>
-                      <p className={styles.componentLabel}>
-                        Reserved components — BOM v{lineStatus.bom?.version} × {line.quantity}
-                      </p>
-                      <div className={styles.componentTable}>
-                        {lineStatus.components.map((comp) => (
-                          <div key={comp.componentId} className={styles.componentRow}>
-                            <span className={styles.componentName}>{comp.name}</span>
-                            <span className={styles.componentQty}>{comp.requiredQty.toFixed(2)} units</span>
-                            <span className={comp.isShort ? styles.shortBadge : styles.okBadge}>
-                              {comp.isShort ? `⚠ ${comp.availableQty.toFixed(2)} avail` : `${comp.availableQty.toFixed(2)} avail`}
-                            </span>
-                          </div>
-                        ))}
+                    <details className={styles.bomSection}>
+                      <summary className={styles.bomToggle}>
+                        BOM v{lineStatus.bom?.version} · {lineStatus.components.length} component{lineStatus.components.length === 1 ? "" : "s"} · ×{line.quantity} ordered
+                      </summary>
+                      <div className={styles.componentSection}>
+                        <table className={styles.componentTable}>
+                          <thead>
+                            <tr>
+                              <th>Component</th>
+                              <th>Required</th>
+                              {showCosts ? <th>Unit cost</th> : null}
+                              {showCosts ? <th>Material cost</th> : null}
+                              <th>Available</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {lineStatus.components.map((comp) => (
+                              <tr key={comp.componentId}>
+                                <td>
+                                  <Link href={`/app/components/${comp.componentId}`} className={styles.componentLink}>
+                                    {comp.name}
+                                  </Link>
+                                </td>
+                                <td className={styles.numCell}>{comp.requiredQty.toFixed(2)}</td>
+                                {showCosts ? <td className={styles.costCell}>{formatCurrency(comp.costPerUnit)}</td> : null}
+                                {showCosts ? <td className={styles.costCell}>{formatCurrency(comp.costPerUnit * comp.requiredQty)}</td> : null}
+                                <td className={styles.availCell}>
+                                  <span className={comp.isShort ? styles.shortBadge : styles.okBadge}>
+                                    {comp.isShort
+                                      ? `⚠ ${comp.availableQty.toFixed(2)} avail`
+                                      : `✓ ${comp.availableQty.toFixed(2)} avail`}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
-                    </div>
+                    </details>
                   ) : null}
 
                   {allocationState !== "allocated" ? (

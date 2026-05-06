@@ -54,7 +54,7 @@ export async function saveLineCountClient({
     .update({
       counted,
       counted_by: user?.id ?? null,
-      counted_at: new Date().toISOString(),
+      counted_at: counted !== null ? new Date().toISOString() : null,
     })
     .eq("id", lineId)
     .eq("session_id", sessionId)
@@ -64,7 +64,6 @@ export async function saveLineCountClient({
 
   return { ok: true };
 }
-
 
 export async function submitForReview(formData: FormData) {
   const sessionId = formData.get("session_id")?.toString() ?? "";
@@ -136,22 +135,6 @@ export async function approveAndApply(formData: FormData) {
   const session = await fetchSession(supabase, tenantId, sessionId);
   if (!session || !canApprove(session.status as StocktakeSessionStatus)) {
     redirect(`/app/stocktake/${sessionId}?error=cannot_approve`);
-  }
-
-  // Check all variance lines have a reason set
-  const { data: varianceLines } = await supabase
-    .from("stocktake_line")
-    .select("id,expected_on_hand,counted,variance_reason_id")
-    .eq("tenant_id", tenantId)
-    .eq("session_id", sessionId);
-
-  const missingReason = (varianceLines ?? []).some((l: { counted: number; expected_on_hand: number; variance_reason_id: string | null }) => {
-    const variance = Number(l.counted ?? 0) - Number(l.expected_on_hand ?? 0);
-    return variance !== 0 && !l.variance_reason_id;
-  });
-
-  if (missingReason) {
-    redirect(`/app/stocktake/${sessionId}?error=missing_reasons`);
   }
 
   const { data: { user } } = await supabase.auth.getUser();
