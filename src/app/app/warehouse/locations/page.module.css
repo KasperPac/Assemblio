@@ -121,8 +121,9 @@
 /* Print label — hidden on screen, shown only on print */
 .printLabel { display: none; }
 @media print {
-  body > * { display: none !important; }
-  .printLabel { display: block !important; font-family: sans-serif; padding: 12px; width: 60mm; }
+  body * { visibility: hidden !important; }
+  .printLabel { display: block !important; visibility: visible !important; position: fixed; top: 0; left: 0; font-family: sans-serif; padding: 12px; width: 60mm; }
+  .printLabel * { visibility: visible !important; }
   .printPath { font-size: 9px; color: #6b7280; margin-bottom: 4px; }
   .printName { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
   .printCode { font-size: 13px; font-weight: 700; font-family: monospace; letter-spacing: .2em; margin-top: 4px; }
