@@ -44,9 +44,10 @@ export function BinLocationSelect({
   const filteredBays = bays.filter((b) => b.aisle_id === aisleId);
 
   const currentWh = warehouses.find((w) => w.id === whId);
+  const currentSl = subLocations.find((s) => s.id === slId);
   const currentAisle = aisles.find((a) => a.id === aisleId);
   const currentBay = bays.find((b) => b.id === bayId);
-  const assignedPath = [currentWh?.name, currentAisle?.name, currentBay?.name].filter(Boolean).join(" · ") || null;
+  const assignedPath = [currentWh?.name, currentSl?.name, currentAisle?.name, currentBay?.name].filter(Boolean).join(" · ") || null;
   const assignedCode = shortCode(bayId || aisleId || slId || whId || null);
 
   return (
