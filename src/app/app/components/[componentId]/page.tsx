@@ -34,7 +34,6 @@ type SupplierCatalogRow = {
   supplier_part_number: string | null;
   is_preferred: boolean;
   supplier: { id: string; name: string } | Array<{ id: string; name: string }> | null;
-  supplier_component_price_breaks: Array<{ id: string; min_quantity: number; unit_cost: number }>;
 };
 
 type BalanceRecord = {
@@ -146,14 +145,15 @@ export default async function ComponentDetailPage({ params }: Props) {
       .select(`
         id, supplier_id, unit_cost, currency, lead_time_days, moq,
         supplier_part_number, is_preferred,
-        supplier:supplier_id(id, name),
-        supplier_component_price_breaks(id, min_quantity, unit_cost)
+        supplier:supplier_id(id, name)
       `)
+      .eq("tenant_id", c.tenant_id)
       .eq("component_id", componentId)
       .order("is_preferred", { ascending: false }),
     supabase
       .from("suppliers")
       .select("id, name")
+      .eq("tenant_id", c.tenant_id)
       .eq("is_active", true)
       .order("name"),
   ]);
@@ -173,11 +173,6 @@ export default async function ComponentDetailPage({ params }: Props) {
       leadTimeDays: row.lead_time_days,
       isPreferred: row.is_preferred,
       avgActualDays: lt ? lt.avgDays : null,
-      priceBreaks: row.supplier_component_price_breaks.map((pb) => ({
-        id: pb.id,
-        minQuantity: pb.min_quantity,
-        unitCost: pb.unit_cost,
-      })),
     };
   });
 

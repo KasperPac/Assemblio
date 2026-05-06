@@ -48,7 +48,6 @@ type SupplierCatalogItem = {
   leadTimeDays: number | null;
   isPreferred: boolean;
   avgActualDays: number | null;
-  priceBreaks: Array<{ id: string; minQuantity: number; unitCost: number }>;
 };
 
 type Props = {
@@ -261,7 +260,7 @@ function ComponentSuppliersTab({
       </div>
 
       {linkOpen && (
-        <form action={linkComponent} onSubmit={() => setLinkOpen(false)} className={styles.linkForm}>
+        <form action={linkComponent} className={styles.linkForm}>
           <input type="hidden" name="component_id" value={componentId} />
           <select name="supplier_id" required className={styles.miniInput}>
             <option value="">Select supplier…</option>
