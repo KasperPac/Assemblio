@@ -12,6 +12,7 @@ import {
   sendBackForRecount,
   applyOpeningStock,
 } from "./actions";
+import { ImportCsvButton } from "./import-csv-button";
 
 type Props = {
   params: Promise<{ sessionId: string }>;
@@ -197,6 +198,14 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
             <Link href={`/app/stocktake/${sessionId}/print`} className={styles.secondary} target="_blank">
               Print sheet
             </Link>
+          )}
+          {(isCounting || isReconciliation) && (
+            <a href={`/api/stocktake/${sessionId}/export`} className={styles.secondary}>
+              Export CSV
+            </a>
+          )}
+          {isCounting && (
+            <ImportCsvButton sessionId={sessionId} />
           )}
           {isCounting && !isInitial && (
             <form action={submitForReview}>
