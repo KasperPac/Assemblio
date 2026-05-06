@@ -42,10 +42,13 @@ export default function SupplierTabs({
   supplier,
   contacts,
   catalog,
+  avgLeadTimes,
+  allComponents,
   actions,
 }: Props) {
   const [active, setActive] = useState<Tab>("Overview");
   const [editMode, setEditMode] = useState(false);
+  const [linkComponentOpen, setLinkComponentOpen] = useState(false);
 
   return (
     <div className={styles.tabsContainer}>
@@ -224,7 +227,74 @@ export default function SupplierTabs({
 
       {active === "Components" && (
         <div className={styles.tabContent}>
-          <p className={styles.empty}>Components tab — built in Task 5.</p>
+          <div className={styles.tabToolbar}>
+            <span className={styles.tabCount}>{catalog.length} components</span>
+            <button
+              type="button"
+              className={styles.btnPrimary}
+              onClick={() => setLinkComponentOpen(true)}
+            >
+              + Link Component
+            </button>
+          </div>
+
+          {linkComponentOpen && (
+            <form
+              action={actions.linkComponent}
+              onSubmit={() => setLinkComponentOpen(false)}
+              className={styles.linkForm}
+            >
+              <input type="hidden" name="supplier_id" value={supplier.id} />
+              <select name="component_id" required className={styles.editInput}>
+                <option value="">Select component…</option>
+                {allComponents.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name} {c.sku ? `(${c.sku})` : ""}
+                  </option>
+                ))}
+              </select>
+              <input name="supplier_part_number" placeholder="Supplier part #" className={styles.editInput} />
+              <input name="unit_cost" type="number" step="0.01" placeholder="Unit cost" className={styles.editInput} />
+              <input name="currency" placeholder="Currency (e.g. AUD)" className={styles.editInput} />
+              <input name="lead_time_days" type="number" placeholder="Lead time (days)" className={styles.editInput} />
+              <input name="moq" type="number" step="0.01" placeholder="MOQ" className={styles.editInput} />
+              <button type="submit" className={styles.btnPrimary}>Link</button>
+              <button type="button" onClick={() => setLinkComponentOpen(false)} className={styles.btnSecondary}>Cancel</button>
+            </form>
+          )}
+
+          <div className={styles.catalogTable}>
+            <div className={styles.catalogHeader}>
+              <span>Component</span>
+              <span>Part #</span>
+              <span>Unit Cost</span>
+              <span>MOQ</span>
+              <span>Lead Time</span>
+              <span>Avg Actual</span>
+              <span style={{ textAlign: "center" }}>Pref</span>
+              <span />
+            </div>
+            {catalog.map((row) => {
+              const lt = avgLeadTimes.get(row.component_id);
+              const avgDaysDisplay = lt ? `${lt.avgDays.toFixed(1)}d` : "—";
+              const ltColor =
+                lt && row.lead_time_days != null
+                  ? lt.avgDays <= row.lead_time_days
+                    ? styles.ltGreen
+                    : styles.ltRed
+                  : "";
+              return (
+                <CatalogRowItem
+                  key={row.id}
+                  row={row}
+                  avgDaysDisplay={avgDaysDisplay}
+                  ltColor={ltColor}
+                  supplierId={supplier.id}
+                  actions={actions}
+                />
+              );
+            })}
+          </div>
         </div>
       )}
 
@@ -234,5 +304,81 @@ export default function SupplierTabs({
         </div>
       )}
     </div>
+  );
+}
+
+function CatalogRowItem({
+  row,
+  avgDaysDisplay,
+  ltColor,
+  supplierId,
+  actions,
+}: {
+  row: CatalogRow;
+  avgDaysDisplay: string;
+  ltColor: string;
+  supplierId: string;
+  actions: Actions;
+}) {
+  const [breaksOpen, setBreaksOpen] = useState(false);
+
+  return (
+    <>
+      <div className={styles.catalogRow}>
+        <div>
+          <span>{row.component?.name ?? row.component_id}</span>
+          {row.component?.unit && (
+            <span className={styles.catalogUnit}> / {row.component.unit}</span>
+          )}
+        </div>
+        <span className={styles.catalogPartNum}>{row.supplier_part_number ?? "—"}</span>
+        <div>
+          <span>{row.unit_cost != null ? `$${row.unit_cost.toFixed(2)}` : "—"}</span>
+          {row.supplier_component_price_breaks.length > 0 && (
+            <button
+              type="button"
+              className={styles.breaksToggle}
+              onClick={() => setBreaksOpen((v) => !v)}
+            >
+              {breaksOpen ? "▴" : "▾"} {row.supplier_component_price_breaks.length} breaks
+            </button>
+          )}
+        </div>
+        <span>{row.moq != null ? String(row.moq) : "—"}</span>
+        <span>{row.lead_time_days != null ? `${row.lead_time_days}d` : "—"}</span>
+        <span className={ltColor}>{avgDaysDisplay}</span>
+        <form action={actions.togglePreferred} style={{ textAlign: "center" }}>
+          <input type="hidden" name="supplier_component_id" value={row.id} />
+          <input type="hidden" name="component_id" value={row.component_id} />
+          <input type="hidden" name="supplier_id" value={supplierId} />
+          <button type="submit" className={styles.starBtn}>
+            {row.is_preferred ? "★" : "☆"}
+          </button>
+        </form>
+        <form action={actions.unlinkComponent}>
+          <input type="hidden" name="supplier_component_id" value={row.id} />
+          <input type="hidden" name="supplier_id" value={supplierId} />
+          <button type="submit" className={styles.btnDanger}>Remove</button>
+        </form>
+      </div>
+      {breaksOpen &&
+        row.supplier_component_price_breaks
+          .slice()
+          .sort((a, b) => a.min_quantity - b.min_quantity)
+          .map((pb) => (
+            <div key={pb.id} className={styles.priceBreakRow}>
+              <span className={styles.breakQty}>↳ {pb.min_quantity}+</span>
+              <span />
+              <span>${pb.unit_cost.toFixed(2)}</span>
+              <span /><span /><span /><span />
+              <form action={actions.removePriceBreak}>
+                <input type="hidden" name="price_break_id" value={pb.id} />
+                <input type="hidden" name="supplier_component_id" value={row.id} />
+                <input type="hidden" name="supplier_id" value={supplierId} />
+                <button type="submit" className={styles.btnDanger}>×</button>
+              </form>
+            </div>
+          ))}
+    </>
   );
 }

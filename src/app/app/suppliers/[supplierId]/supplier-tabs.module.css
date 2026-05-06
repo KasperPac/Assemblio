@@ -57,3 +57,30 @@
 .tabCount { font-size: 0.82rem; opacity: 0.5; }
 .catalogTable { margin-top: 1rem; }
 .poTable { margin-top: 1rem; }
+
+.linkForm { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; padding: 1rem; background: rgba(255,255,255,0.04); border-radius: 6px; margin-bottom: 1rem; }
+
+.catalogHeader,
+.catalogRow {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 1.1fr 0.8fr 0.9fr 0.9fr 60px 80px;
+  gap: 0; padding: 0.6rem 0.75rem; font-size: 0.83rem; align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.catalogHeader { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.4; border-bottom: 1px solid rgba(255,255,255,0.14); }
+.catalogPartNum { font-family: monospace; font-size: 0.8rem; opacity: 0.6; }
+.catalogUnit { opacity: 0.5; font-size: 0.78rem; }
+.breaksToggle { background: none; border: none; cursor: pointer; font-size: 0.75rem; opacity: 0.55; color: inherit; padding: 0 0.25rem; display: block; margin-top: 2px; }
+
+.priceBreakRow {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 1.1fr 0.8fr 0.9fr 0.9fr 60px 80px;
+  gap: 0; padding: 0.4rem 0.75rem 0.4rem 2rem; font-size: 0.78rem;
+  background: rgba(255,255,255,0.025); border-bottom: 1px solid rgba(255,255,255,0.04);
+  opacity: 0.75; align-items: center;
+}
+.breakQty { opacity: 0.6; }
+
+.starBtn { background: none; border: none; cursor: pointer; font-size: 1.1rem; color: #f5c542; }
+.ltGreen { color: #48c774; }
+.ltRed { color: #ff6b6b; }
