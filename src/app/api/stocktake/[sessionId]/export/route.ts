@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerTenantContext } from "@/lib/tenant/context";
 
+type BinRef = { name: string } | Array<{ name: string }> | null;
+
 type LineRow = {
   id: string;
   expected_on_hand: number;
@@ -10,18 +12,24 @@ type LineRow = {
     id: string;
     name: string | null;
     sku: string | null;
-    bin_sub_location: string | null;
-    bin_row: string | null;
-    bin_bay: string | null;
+    bin_sub_location: BinRef;
+    bin_aisle: BinRef;
+    bin_bay: BinRef;
   } | Array<{
     id: string;
     name: string | null;
     sku: string | null;
-    bin_sub_location: string | null;
-    bin_row: string | null;
-    bin_bay: string | null;
+    bin_sub_location: BinRef;
+    bin_aisle: BinRef;
+    bin_bay: BinRef;
   }> | null;
 };
+
+function binName(ref: BinRef): string | null {
+  if (!ref) return null;
+  const obj = Array.isArray(ref) ? ref[0] : ref;
+  return obj?.name ?? null;
+}
 
 function csvEscape(val: string | null | undefined): string {
   const s = val ?? "";
@@ -40,7 +48,12 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ ses
 
   const { data: lines, error: linesError } = await supabase
     .from("stocktake_line")
-    .select("id,expected_on_hand,counted,notes,component:component_id(id,name,sku,bin_sub_location,bin_row,bin_bay)")
+    .select(`id,expected_on_hand,counted,notes,component:component_id(
+  id,name,sku,
+  bin_sub_location:bin_sub_location_id(name),
+  bin_aisle:bin_aisle_id(name),
+  bin_bay:bin_bay_id(name)
+)`)
     .eq("tenant_id", tenantId)
     .eq("session_id", sessionId);
 
@@ -60,16 +73,16 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ ses
     return (ca?.name ?? "").localeCompare(cb?.name ?? "");
   });
 
-  const header = "component_id,component_name,sku,sub_location,row,bay,expected,counted,notes\r\n";
+  const header = "component_id,component_name,sku,sub_location,aisle,bay,expected,counted,notes\r\n";
   const body = rows.map((l) => {
     const c = Array.isArray(l.component) ? l.component[0] : l.component;
     return [
       csvEscape(c?.id),
       csvEscape(c?.name),
       csvEscape(c?.sku),
-      csvEscape(c?.bin_sub_location),
-      csvEscape(c?.bin_row),
-      csvEscape(c?.bin_bay),
+      csvEscape(binName(c?.bin_sub_location ?? null)),
+      csvEscape(binName(c?.bin_aisle ?? null)),
+      csvEscape(binName(c?.bin_bay ?? null)),
       String(Number(l.expected_on_hand).toFixed(0)),
       l.counted !== null ? String(Number(l.counted).toFixed(0)) : "",
       csvEscape(l.notes),

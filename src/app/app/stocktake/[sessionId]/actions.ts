@@ -29,30 +29,30 @@ async function fetchSession(supabase: any, tenantId: string, sessionId: string) 
   return data as SessionRecord | null;
 }
 
-export async function saveLineCount(formData: FormData) {
-  const lineId = formData.get("line_id")?.toString() ?? "";
-  const sessionId = formData.get("session_id")?.toString() ?? "";
-  const countedRaw = formData.get("counted")?.toString() ?? "";
-  const notes = formData.get("notes")?.toString().trim() || null;
-
-  if (!lineId || !sessionId || countedRaw === "") return;
-  const counted = Number(countedRaw);
-  if (!Number.isFinite(counted) || counted < 0) return;
+export async function saveLineCountClient({
+  lineId,
+  sessionId,
+  counted,
+}: {
+  lineId: string;
+  sessionId: string;
+  counted: number | null;
+}): Promise<{ ok: boolean }> {
+  if (!lineId || !sessionId) return { ok: false };
 
   const context = await getServerTenantContext();
-  if (!context) return;
+  if (!context) return { ok: false };
   const { supabase, tenantId } = context;
 
   const { data: { user } } = await supabase.auth.getUser();
 
   const session = await fetchSession(supabase, tenantId, sessionId);
-  if (!session || !canEditStocktakeLines(session.status as StocktakeSessionStatus)) return;
+  if (!session || !canEditStocktakeLines(session.status as StocktakeSessionStatus)) return { ok: false };
 
-  await supabase
+  const { error } = await supabase
     .from("stocktake_line")
     .update({
       counted,
-      notes,
       counted_by: user?.id ?? null,
       counted_at: new Date().toISOString(),
     })
@@ -60,8 +60,11 @@ export async function saveLineCount(formData: FormData) {
     .eq("session_id", sessionId)
     .eq("tenant_id", tenantId);
 
-  revalidatePath(`/app/stocktake/${sessionId}`);
+  if (error) return { ok: false };
+
+  return { ok: true };
 }
+
 
 export async function submitForReview(formData: FormData) {
   const sessionId = formData.get("session_id")?.toString() ?? "";

@@ -1,0 +1,130 @@
+.page { padding: 24px; max-width: 860px; }
+.header { margin-bottom: 24px; }
+.title { font-size: 22px; font-weight: 700; margin: 0 0 4px; }
+.subtitle { font-size: 14px; color: var(--muted); margin: 0; }
+.error { color: var(--danger, #ef4444); }
+.empty { color: var(--muted); font-size: 14px; }
+
+.warehouseBlock { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; overflow: hidden; }
+
+.warehouseRow {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px; background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+.subLocRow, .aisleRow {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px 10px 28px;
+  border-bottom: 1px solid var(--border);
+}
+.bayRow {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 16px 8px 48px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.typeTag {
+  font-size: 11px; text-transform: uppercase; letter-spacing: .05em;
+  color: var(--muted); width: 68px; flex-shrink: 0;
+}
+.warehouseName { font-size: 15px; font-weight: 600; flex: 1; }
+.entityName { font-size: 14px; font-weight: 500; flex: 1; }
+.slTag { font-weight: 400; color: var(--muted); }
+.bayCount { font-weight: 400; color: var(--muted); font-size: 12px; }
+.pathHint { font-size: 11px; color: var(--muted); }
+.countTag {
+  font-size: 11px; background: #dbeafe; color: #1d4ed8;
+  padding: 2px 8px; border-radius: 4px;
+}
+.shortCode {
+  font-family: monospace; font-size: 13px; font-weight: 600;
+  color: var(--muted); letter-spacing: .1em; margin-left: auto;
+}
+.indent { color: var(--muted); font-size: 13px; width: 12px; flex-shrink: 0; }
+.indent2 { color: var(--muted); font-size: 13px; width: 12px; flex-shrink: 0; }
+.addWarehouseRow {
+  padding: 12px 16px;
+  border-top: 2px dashed var(--border);
+  display: flex; align-items: center; gap: 12px;
+}
+.addHint { font-size: 12px; color: var(--muted); }
+
+.warehouseRow:last-child,
+.subLocRow:last-child,
+.aisleRow:last-child,
+.bayRow:last-child { border-bottom: none; }
+
+.btnIcon {
+  font-size: 12px; padding: 3px 10px;
+  border: 1px solid var(--border); border-radius: 4px;
+  background: var(--surface); cursor: pointer; white-space: nowrap;
+}
+.btnIcon:hover { background: var(--surface-2); }
+.btnDelete {
+  font-size: 12px; padding: 3px 10px;
+  border: 1px solid #fca5a5; border-radius: 4px;
+  background: var(--surface); color: #ef4444; cursor: pointer;
+}
+.btnDelete:hover { background: #fee2e2; }
+.btnSave {
+  font-size: 12px; padding: 4px 12px;
+  border: 1px solid var(--primary, #3b82f6); border-radius: 4px;
+  background: var(--primary, #3b82f6); color: white; cursor: pointer;
+}
+.btnCancel {
+  font-size: 12px; padding: 4px 10px;
+  border: 1px solid var(--border); border-radius: 4px;
+  background: var(--surface); cursor: pointer;
+}
+.btnAddWarehouse {
+  font-size: 13px; padding: 6px 16px;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--surface); cursor: pointer;
+}
+.inlineForm { display: flex; align-items: center; gap: 8px; flex: 1; }
+.inlineInput {
+  font-size: 13px; padding: 4px 8px;
+  border: 1px solid var(--border); border-radius: 4px;
+  background: var(--surface); flex: 1; min-width: 0;
+}
+.inlineSelect {
+  font-size: 13px; padding: 4px 8px;
+  border: 1px solid var(--border); border-radius: 4px;
+  background: var(--surface);
+}
+.formError { font-size: 12px; color: #ef4444; }
+.deleteError { font-size: 12px; color: #ef4444; margin-left: 6px; }
+
+/* ── Barcode modal ─────────────────────────────────────────── */
+.modalOverlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  display: flex; align-items: center; justify-content: center; z-index: 100;
+}
+.modal {
+  background: var(--surface, #fff); border-radius: 10px;
+  padding: 28px 32px; min-width: 320px; max-width: 420px;
+  position: relative; box-shadow: 0 8px 32px rgba(0,0,0,.18);
+}
+.modalClose {
+  position: absolute; top: 12px; right: 14px;
+  background: none; border: none; font-size: 16px; cursor: pointer; color: var(--muted);
+}
+.modalType { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 4px; }
+.modalName { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.modalPath { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+.barcodeBox { text-align: center; background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin-bottom: 16px; }
+.shortCode2 { font-size: 24px; font-weight: 700; font-family: monospace; letter-spacing: .2em; margin-top: 8px; }
+.shortCodeLabel { font-size: 11px; color: var(--muted); }
+.modalActions { display: flex; gap: 10px; justify-content: center; }
+
+/* Print label — hidden on screen, shown only on print */
+.printLabel { display: none; }
+@media print {
+  body * { visibility: hidden !important; }
+  .printLabel { display: block !important; visibility: visible !important; position: fixed; top: 0; left: 0; font-family: sans-serif; padding: 12px; width: 60mm; }
+  .printLabel * { visibility: visible !important; }
+  .printPath { font-size: 9px; color: #6b7280; margin-bottom: 4px; }
+  .printName { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .printCode { font-size: 13px; font-weight: 700; font-family: monospace; letter-spacing: .2em; margin-top: 4px; }
+}
