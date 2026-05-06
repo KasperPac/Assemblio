@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 
 type Props = {
@@ -29,10 +29,10 @@ export default async function PrintPage({ params, searchParams }: Props) {
   const sp = (await searchParams) ?? {};
 
   const context = await getServerTenantContext();
-  if (!context) return null;
+  if (!context) redirect("/sign-in");
   const { supabase, tenantId } = context;
 
-  const [{ data: sessionData }, { data: linesData }] = await Promise.all([
+  const [{ data: sessionData, error: sessionError }, { data: linesData, error: linesError }] = await Promise.all([
     supabase
       .from("stocktake_session")
       .select("id,reference_number,session_type,blind_count,created_at,location:location_id(name)")
@@ -45,6 +45,9 @@ export default async function PrintPage({ params, searchParams }: Props) {
       .eq("tenant_id", tenantId)
       .eq("session_id", sessionId),
   ]);
+
+  if (sessionError) throw new Error(`Failed to load session: ${sessionError.message}`);
+  if (linesError) throw new Error(`Failed to load lines: ${linesError.message}`);
 
   if (!sessionData) notFound();
 
