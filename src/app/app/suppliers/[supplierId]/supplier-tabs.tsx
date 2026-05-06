@@ -49,6 +49,16 @@ type Props = {
 const TABS = ["Overview", "Components", "Purchase Orders"] as const;
 type Tab = (typeof TABS)[number];
 
+function getPoStatusClass(
+  status: string,
+  s: { readonly [key: string]: string }
+): string {
+  if (status === "received") return s.badgeReceived;
+  if (status === "in_transit") return s.badgeInTransit;
+  if (status === "cancelled" || status === "archived") return s.badgeCancelled;
+  return s.badgeOpen;
+}
+
 export default function SupplierTabs({
   supplier,
   contacts,
@@ -344,7 +354,7 @@ export default function SupplierTabs({
               filteredPos.map((po) => {
                 const latestReceipt = po.delivery_receipt
                   .slice()
-                  .sort((a, b) => b.received_at.localeCompare(a.received_at))[0];
+                  .sort((a, b) => new Date(b.received_at).getTime() - new Date(a.received_at).getTime())[0];
                 const value = po.purchase_order_line.reduce(
                   (sum, l) => sum + l.quantity * (l.unit_cost ?? 0),
                   0
@@ -377,7 +387,7 @@ export default function SupplierTabs({
                       })}
                     </span>
                     <span>
-                      <span className={po.status === "received" ? styles.badgeReceived : styles.badgeOpen}>
+                      <span className={getPoStatusClass(po.status, styles)}>
                         {po.status.charAt(0).toUpperCase() + po.status.slice(1)}
                       </span>
                     </span>
