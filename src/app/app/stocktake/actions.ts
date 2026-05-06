@@ -3,67 +3,113 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
-import {
-  canEditStocktakeLines,
-  canTransitionStocktakeStatus,
-  type StocktakeSessionStatus,
-} from "@/lib/stocktake/lifecycle";
+import { canTransitionStocktakeStatus, type StocktakeSessionStatus } from "@/lib/stocktake/lifecycle";
 
-type StocktakeState = {
-  error?: string;
-  success?: string;
-};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function seedVarianceReasonsIfNeeded(supabase: any, tenantId: string) {
+  const { count } = await supabase
+    .from("stocktake_variance_reason")
+    .select("id", { count: "exact", head: true })
+    .eq("tenant_id", tenantId);
 
-type StocktakeSessionRecord = {
-  id: string;
-  status: StocktakeSessionStatus;
-  location_id: string;
-};
+  if ((count ?? 0) > 0) return;
 
-type ApplyStocktakeSummary = {
-  applied_lines: number;
-  adjustment_count: number;
-  expected_total: number;
-  counted_total: number;
-  variance_from_expected: number;
-  applied_delta_total: number;
-};
-
-function parseNumber(value: FormDataEntryValue | null) {
-  if (!value) return null;
-  const parsed = Number(value.toString());
-  return Number.isFinite(parsed) ? parsed : null;
+  const defaults = [
+    { name: "Damage",            sort_order: 1 },
+    { name: "Theft",             sort_order: 2 },
+    { name: "Data Entry Error",  sort_order: 3 },
+    { name: "Found Stock",       sort_order: 4 },
+    { name: "Supplier Shortage", sort_order: 5 },
+    { name: "Other",             sort_order: 6 },
+  ];
+  await supabase.from("stocktake_variance_reason").insert(
+    defaults.map((d) => ({ ...d, tenant_id: tenantId }))
+  );
 }
 
-async function getTenantId() {
-  return getServerTenantContext();
+// NOTE: Race condition — concurrent creates may collide on the same reference number.
+// Mitigation: sessionError throw in createStocktakeSession surfaces DB unique violations.
+// Full fix requires a UNIQUE(tenant_id, reference_number) constraint in the schema.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function generateReferenceNumber(supabase: any, tenantId: string): Promise<string> {
+  const year = new Date().getFullYear();
+  const prefix = `ST-${year}-`;
+  const { count } = await supabase
+    .from("stocktake_session")
+    .select("id", { count: "exact", head: true })
+    .eq("tenant_id", tenantId)
+    .like("reference_number", `${prefix}%`);
+  const next = (count ?? 0) + 1;
+  return `${prefix}${String(next).padStart(3, "0")}`;
 }
 
-export async function createStocktakeSession(
-  _prevState: StocktakeState,
-  formData: FormData
-): Promise<StocktakeState> {
+export async function createStocktakeSession(formData: FormData): Promise<void> {
   const locationId = formData.get("location_id")?.toString() ?? "";
-  if (!locationId) {
-    return { error: "Location is required." };
-  }
+  const notes = formData.get("notes")?.toString().trim() || null;
+  const blindCount = formData.get("blind_count") === "on";
+  const sessionType = (formData.get("session_type")?.toString() ?? "full") as "full" | "initial";
 
-  const context = await getTenantId();
-  if (!context) return { error: "Missing tenant context." };
+  if (!locationId) throw new Error("Location is required.");
+
+  const context = await getServerTenantContext();
+  if (!context) throw new Error("Missing tenant context.");
   const { supabase, tenantId } = context;
 
-  const { error } = await supabase.from("stocktake_session").insert({
-    tenant_id: tenantId,
-    location_id: locationId,
-    status: "open",
-  });
+  await seedVarianceReasonsIfNeeded(supabase, tenantId);
 
-  if (error) {
-    return { error: error.message };
+  const referenceNumber = await generateReferenceNumber(supabase, tenantId);
+
+  const { data: session, error: sessionError } = await supabase
+    .from("stocktake_session")
+    .insert({
+      tenant_id: tenantId,
+      location_id: locationId,
+      status: "counting",
+      session_type: sessionType,
+      notes,
+      blind_count: blindCount,
+      reference_number: referenceNumber,
+    })
+    .select("id,location_id")
+    .single();
+
+  if (sessionError) throw new Error(sessionError.message);
+
+  // Pre-load all components as lines
+  const { data: components } = await supabase
+    .from("component")
+    .select("id")
+    .eq("tenant_id", tenantId);
+
+  if (components && components.length > 0) {
+    const { data: balances } = await supabase
+      .from("inventory_balance")
+      .select("component_id,on_hand")
+      .eq("tenant_id", tenantId)
+      .eq("location_id", locationId);
+
+    const balanceMap = new Map(
+      (balances ?? []).map((b: { component_id: string; on_hand: number }) => [
+        b.component_id,
+        Number(b.on_hand ?? 0),
+      ])
+    );
+
+    const lines = (components as { id: string }[]).map((c) => ({
+      tenant_id: tenantId,
+      session_id: session.id,
+      component_id: c.id,
+      expected_on_hand: balanceMap.get(c.id) ?? 0,
+      counted: null,
+    }));
+
+    for (let i = 0; i < lines.length; i += 200) {
+      await supabase.from("stocktake_line").insert(lines.slice(i, i + 200));
+    }
   }
 
   revalidatePath("/app/stocktake");
-  return { success: "Stocktake session created." };
+  redirect(`/app/stocktake/${session.id}`);
 }
 
 export async function updateStocktakeStatus(formData: FormData) {
@@ -71,7 +117,7 @@ export async function updateStocktakeStatus(formData: FormData) {
   const status = (formData.get("status")?.toString() ?? "") as StocktakeSessionStatus;
   if (!sessionId || !status) return;
 
-  const context = await getTenantId();
+  const context = await getServerTenantContext();
   if (!context) return;
   const { supabase, tenantId } = context;
 
@@ -82,12 +128,8 @@ export async function updateStocktakeStatus(formData: FormData) {
     .eq("id", sessionId)
     .maybeSingle();
 
-  const session = sessionData as { id: string; status: StocktakeSessionStatus } | null;
-  if (!session?.id) return;
-
-  const currentStatus = session.status;
-  if (currentStatus === status) return;
-  if (!canTransitionStocktakeStatus(currentStatus, status)) return;
+  const current = sessionData as { id: string; status: StocktakeSessionStatus } | null;
+  if (!current?.id || !canTransitionStocktakeStatus(current.status, status)) return;
 
   await supabase
     .from("stocktake_session")
@@ -95,180 +137,6 @@ export async function updateStocktakeStatus(formData: FormData) {
     .eq("tenant_id", tenantId)
     .eq("id", sessionId);
 
-  await supabase.from("activity_log").insert({
-    tenant_id: tenantId,
-    event: "stocktake_status_changed",
-    metadata: {
-      session_id: sessionId,
-      from_status: currentStatus,
-      to_status: status,
-    },
-  });
-
   revalidatePath("/app/stocktake");
-  revalidatePath("/app/trash");
-  revalidatePath("/app/activity-log");
-}
-
-export async function createStocktakeLine(
-  _prevState: StocktakeState,
-  formData: FormData
-): Promise<StocktakeState> {
-  const sessionId = formData.get("session_id")?.toString() ?? "";
-  const componentId = formData.get("component_id")?.toString() ?? "";
-  const counted = parseNumber(formData.get("counted"));
-  if (!sessionId || !componentId || counted === null) {
-    return { error: "Session, component, and counted quantity are required." };
-  }
-
-  const context = await getTenantId();
-  if (!context) return { error: "Missing tenant context." };
-  const { supabase, tenantId } = context;
-
-  const { data: sessionData } = await supabase
-    .from("stocktake_session")
-    .select("id,status,location_id")
-    .eq("tenant_id", tenantId)
-    .eq("id", sessionId)
-    .maybeSingle();
-
-  const session = sessionData as StocktakeSessionRecord | null;
-  if (!session?.id) return { error: "Stocktake session not found." };
-  if (!canEditStocktakeLines(session.status)) {
-    return { error: "Only open sessions can accept new lines." };
-  }
-
-  const { data: existingBalance } = await supabase
-    .from("inventory_balance")
-    .select("on_hand")
-    .eq("tenant_id", tenantId)
-    .eq("location_id", session.location_id)
-    .eq("component_id", componentId)
-    .maybeSingle();
-
-  const expectedOnHand = Number(existingBalance?.on_hand ?? 0);
-  const { error } = await supabase.from("stocktake_line").insert({
-    tenant_id: tenantId,
-    session_id: sessionId,
-    component_id: componentId,
-    expected_on_hand: expectedOnHand,
-    counted,
-  });
-  if (error) return { error: error.message };
-
-  revalidatePath("/app/stocktake");
-  return { success: "Stocktake line added." };
-}
-
-export async function updateStocktakeLineCounted(formData: FormData) {
-  const lineId = formData.get("line_id")?.toString() ?? "";
-  const counted = parseNumber(formData.get("counted"));
-  if (!lineId || counted === null) return;
-
-  const context = await getTenantId();
-  if (!context) return;
-  const { supabase, tenantId } = context;
-
-  const { data: lineData } = await supabase
-    .from("stocktake_line")
-    .select("id,session:session_id(id,status)")
-    .eq("tenant_id", tenantId)
-    .eq("id", lineId)
-    .maybeSingle();
-
-  const sessionRaw = Array.isArray(lineData?.session)
-    ? lineData.session[0] ?? null
-    : lineData?.session ?? null;
-  const session = sessionRaw as { id: string; status: StocktakeSessionStatus } | null;
-  if (!lineData?.id || !session?.id) return;
-  if (!canEditStocktakeLines(session.status)) return;
-
-  await supabase
-    .from("stocktake_line")
-    .update({ counted })
-    .eq("tenant_id", tenantId)
-    .eq("id", lineId);
-  revalidatePath("/app/stocktake");
-}
-
-export async function applyStocktakeSession(formData: FormData) {
-  const sessionId = formData.get("session_id")?.toString() ?? "";
-  if (!sessionId) {
-    redirect("/app/stocktake?apply_error=missing_session");
-  }
-
-  const context = await getTenantId();
-  if (!context) {
-    redirect("/app/stocktake?apply_error=missing_tenant");
-  }
-  const { supabase, tenantId } = context;
-
-  const { data: sessionData } = await supabase
-    .from("stocktake_session")
-    .select("id,status,location_id")
-    .eq("id", sessionId)
-    .eq("tenant_id", tenantId)
-    .maybeSingle();
-
-  const session = sessionData as StocktakeSessionRecord | null;
-  if (!session?.id) {
-    redirect("/app/stocktake?apply_error=session_not_found");
-  }
-  if (session.status !== "approved") {
-    redirect(
-      `/app/stocktake?apply_error=${encodeURIComponent(
-        `must_be_approved_was_${session.status}`
-      )}`
-    );
-  }
-
-  // Atomic in Postgres: see supabase/patches/apply_stocktake_session_rpc.sql.
-  // Any per-line failure rolls back every movement, balance change, and the
-  // status flip in the same call. No more partial-apply silent return.
-  const { data: rpcData, error: rpcError } = await supabase.rpc(
-    "apply_stocktake_session",
-    { p_session_id: session.id }
-  );
-
-  if (rpcError) {
-    redirect(
-      `/app/stocktake?apply_error=${encodeURIComponent(rpcError.message)}`
-    );
-  }
-
-  const summaryRow = (Array.isArray(rpcData) ? rpcData[0] : rpcData) as
-    | ApplyStocktakeSummary
-    | null;
-  const summary = summaryRow ?? {
-    applied_lines: 0,
-    adjustment_count: 0,
-    expected_total: 0,
-    counted_total: 0,
-    variance_from_expected: 0,
-    applied_delta_total: 0,
-  };
-
-  await supabase.from("activity_log").insert({
-    tenant_id: tenantId,
-    event: "stocktake_applied",
-    metadata: {
-      session_id: session.id,
-      line_count: summary.applied_lines,
-      adjustments: summary.adjustment_count,
-      expected_total: summary.expected_total,
-      counted_total: summary.counted_total,
-      variance_from_expected: summary.variance_from_expected,
-      applied_delta_total: summary.applied_delta_total,
-      status_from: "approved",
-      status_to: "completed",
-    },
-  });
-
-  revalidatePath("/app/stocktake");
-  revalidatePath("/app/inventory");
-  revalidatePath("/app/activity-log");
-
-  redirect(
-    `/app/stocktake?apply_ok=${summary.adjustment_count}/${summary.applied_lines}`
-  );
+  revalidatePath(`/app/stocktake/${sessionId}`);
 }
