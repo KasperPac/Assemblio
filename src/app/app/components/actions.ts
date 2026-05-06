@@ -69,3 +69,26 @@ export async function createComponent(
   revalidatePath("/app/activity-log");
   return { success: "Component created." };
 }
+
+export async function updateBinLocation(formData: FormData): Promise<void> {
+  const componentId = formData.get("component_id")?.toString().trim() ?? "";
+  const binSubLocation = formData.get("bin_sub_location")?.toString().trim() || null;
+  const binRow = formData.get("bin_row")?.toString().trim() || null;
+  const binBay = formData.get("bin_bay")?.toString().trim() || null;
+
+  if (!componentId) return;
+
+  const context = await getServerTenantContext();
+  if (!context) return;
+  const { supabase, tenantId } = context;
+
+  const { error } = await supabase
+    .from("component")
+    .update({ bin_sub_location: binSubLocation, bin_row: binRow, bin_bay: binBay })
+    .eq("id", componentId)
+    .eq("tenant_id", tenantId);
+
+  if (error) return;
+
+  revalidatePath(`/app/components/${componentId}`);
+}

@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import DetailTabs from "./detail-tabs";
 import styles from "./component-detail.module.css";
 import { getStockStatus } from "../helpers";
+import { updateBinLocation } from "../actions";
 
 type Props = {
   params: Promise<{ componentId: string }>;
@@ -17,6 +18,9 @@ type ComponentRecord = {
   cost_per_unit: number;
   reorder_point: number;
   created_at: string | null;
+  bin_sub_location: string | null;
+  bin_row: string | null;
+  bin_bay: string | null;
   supplier: { name: string } | Array<{ name: string }> | null;
   location: { name: string } | Array<{ name: string }> | null;
   group: { name: string } | Array<{ name: string }> | null;
@@ -90,7 +94,7 @@ export default async function ComponentDetailPage({ params }: Props) {
 
   const { data: component } = await supabase
     .from("component")
-    .select("id,name,sku,unit,cost_per_unit,reorder_point,created_at,supplier:supplier_id(name),location:location_id(name),group:group_id(name)")
+    .select("id,name,sku,unit,cost_per_unit,reorder_point,created_at,bin_sub_location,bin_row,bin_bay,supplier:supplier_id(name),location:location_id(name),group:group_id(name)")
     .eq("id", componentId)
     .maybeSingle();
 
@@ -154,7 +158,7 @@ export default async function ComponentDetailPage({ params }: Props) {
       label: "Available",
       value: String(available),
       color: available <= 0 ? "red" as const : belowReorder ? "orange" as const : "green" as const,
-      highlight: status === "critical" ? "danger" : status === "low" ? "warning" : undefined,
+      highlight: (status === "critical" ? "danger" : status === "low" ? "warning" : undefined) as "danger" | "warning" | undefined,
       subText: totalReserved > 0 ? `${totalReserved} committed to production` : undefined,
     },
     {
@@ -290,6 +294,46 @@ export default async function ComponentDetailPage({ params }: Props) {
               Receive stock
             </Link>
           </div>
+
+          <section className={styles.binSection}>
+            <h3 className={styles.binSectionTitle}>Bin location</h3>
+            <p className={styles.binSectionDesc}>
+              Where this component lives in the warehouse. Used to group items in stocktake sheets.
+            </p>
+            <form action={updateBinLocation}>
+              <input type="hidden" name="component_id" value={c.id} />
+              <div className={styles.binFieldRow}>
+                <label className={styles.binField}>
+                  <span className={styles.binLabel}>Sub-location</span>
+                  <input
+                    className={styles.binInput}
+                    name="bin_sub_location"
+                    defaultValue={c.bin_sub_location ?? ""}
+                    placeholder="e.g. Main Floor"
+                  />
+                </label>
+                <label className={styles.binField}>
+                  <span className={styles.binLabel}>Row</span>
+                  <input
+                    className={styles.binInput}
+                    name="bin_row"
+                    defaultValue={c.bin_row ?? ""}
+                    placeholder="e.g. R1"
+                  />
+                </label>
+                <label className={styles.binField}>
+                  <span className={styles.binLabel}>Bay</span>
+                  <input
+                    className={styles.binInput}
+                    name="bin_bay"
+                    defaultValue={c.bin_bay ?? ""}
+                    placeholder="e.g. B3"
+                  />
+                </label>
+              </div>
+              <button type="submit" className={styles.binSaveBtn}>Save bin location</button>
+            </form>
+          </section>
         </aside>
 
         {/* ── Right: Tabbed content ─────── */}
