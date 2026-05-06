@@ -24,7 +24,7 @@ export default async function SuppliersPage({
   const { filter = "active" } = await searchParams;
   const supabase = await createSupabaseServerClient();
 
-  const query = supabase
+  let query = supabase
     .from("suppliers")
     .select(
       `id, name, website, default_lead_time_days, is_active,
@@ -33,8 +33,8 @@ export default async function SuppliersPage({
     )
     .order("name");
 
-  if (filter === "active") query.eq("is_active", true);
-  if (filter === "archived") query.eq("is_active", false);
+  if (filter === "active") query = query.eq("is_active", true);
+  if (filter === "archived") query = query.eq("is_active", false);
 
   const { data, error } = await query;
 
