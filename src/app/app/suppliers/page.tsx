@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "./suppliers.module.css";
 import { createSupplier } from "./actions";
 import SupplierCreateForm from "./supplier-create-form";
@@ -22,7 +22,9 @@ export default async function SuppliersPage({
   searchParams: Promise<{ filter?: string }>;
 }) {
   const { filter = "active" } = await searchParams;
-  const supabase = await createSupabaseServerClient();
+  const context = await getServerTenantContext();
+  if (!context) return <p className={styles.errorMsg}>Missing tenant context.</p>;
+  const { supabase, tenantId } = context;
 
   let query = supabase
     .from("suppliers")
@@ -31,6 +33,7 @@ export default async function SuppliersPage({
        supplier_components(id),
        purchase_order(id, status, created_at)`
     )
+    .eq("tenant_id", tenantId)
     .order("name");
 
   if (filter === "active") query = query.eq("is_active", true);

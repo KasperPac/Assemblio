@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import SupplierTabs from "./supplier-tabs";
 import styles from "./supplier-tabs.module.css";
 import {
@@ -36,6 +37,9 @@ type Props = { params: Promise<{ supplierId: string }> };
 export default async function SupplierDetailPage({ params }: Props) {
   const { supplierId } = await params;
   const supabase = await createSupabaseServerClient();
+  const context = await getServerTenantContext();
+  if (!context) notFound();
+  const { tenantId } = context;
 
   const [
     { data: supplier },
@@ -47,21 +51,25 @@ export default async function SupplierDetailPage({ params }: Props) {
     supabase
       .from("suppliers")
       .select("*")
+      .eq("tenant_id", tenantId)
       .eq("id", supplierId)
       .maybeSingle(),
     supabase
       .from("supplier_contacts")
       .select("*")
+      .eq("tenant_id", tenantId)
       .eq("supplier_id", supplierId)
       .order("is_primary", { ascending: false }),
     supabase
       .from("supplier_components")
       .select("*, supplier_component_price_breaks(*), component:component_id(id,name,unit)")
+      .eq("tenant_id", tenantId)
       .eq("supplier_id", supplierId)
       .order("created_at"),
     supabase
       .from("component")
       .select("id,name,sku")
+      .eq("tenant_id", tenantId)
       .eq("is_active", true)
       .order("name"),
     supabase
@@ -71,6 +79,7 @@ export default async function SupplierDetailPage({ params }: Props) {
         purchase_order_line(quantity, unit_cost),
         delivery_receipt(received_at)
       `)
+      .eq("tenant_id", tenantId)
       .eq("supplier_id", supplierId)
       .order("created_at", { ascending: false })
       .limit(100),
@@ -79,7 +88,6 @@ export default async function SupplierDetailPage({ params }: Props) {
   if (!supplier) notFound();
 
   const s = supplier as Supplier;
-  const tenantId = s.tenant_id;
   const avgLeadTimesMap = await getAvgActualLeadTimes(supabase, tenantId, supplierId);
 
   const typedContacts = (contacts ?? []) as SupplierContact[];

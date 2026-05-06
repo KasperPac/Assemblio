@@ -480,6 +480,7 @@ function CatalogRowItem({
         <form action={actions.unlinkComponent}>
           <input type="hidden" name="supplier_component_id" value={row.id} />
           <input type="hidden" name="supplier_id" value={supplierId} />
+          <input type="hidden" name="component_id" value={row.component_id} />
           <button type="submit" className={styles.btnDanger}>Remove</button>
         </form>
       </div>

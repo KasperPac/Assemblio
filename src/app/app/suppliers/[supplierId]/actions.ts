@@ -111,6 +111,7 @@ export async function linkComponent(formData: FormData) {
 export async function unlinkComponent(formData: FormData) {
   const supplierComponentId = formData.get("supplier_component_id")?.toString() ?? "";
   const supplierId = formData.get("supplier_id")?.toString() ?? "";
+  const componentId = formData.get("component_id")?.toString() ?? "";
   const context = await getServerTenantContext();
   if (!context || !supplierComponentId) return;
   const { supabase, tenantId } = context;
@@ -122,6 +123,7 @@ export async function unlinkComponent(formData: FormData) {
     .eq("id", supplierComponentId);
 
   revalidatePath(`/app/suppliers/${supplierId}`);
+  if (componentId) revalidatePath(`/app/components/${componentId}`);
 }
 
 export async function togglePreferred(formData: FormData) {
