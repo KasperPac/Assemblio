@@ -78,9 +78,7 @@ export async function getAvgActualLeadTimes(
   for (const [componentId, { totalDays, count }] of accum) {
     if (count < 3) continue;
     const avgDays = totalDays / count;
-    // status is set to insufficient-data as a placeholder; callers derive actual status
-    // using deriveLeadTimeStatus(avgDays, supplierComponent.lead_time_days)
-    result.set(componentId, { componentId, avgDays, sampleCount: count, status: "insufficient-data" });
+    result.set(componentId, { componentId, avgDays, sampleCount: count });
   }
   return result;
 }
@@ -123,7 +121,7 @@ export async function getAvgActualLeadTimesForComponent(
   for (const [supplierId, { totalDays, count }] of accum) {
     if (count < 3) continue;
     const avgDays = totalDays / count;
-    result.set(supplierId, { componentId, avgDays, sampleCount: count, status: "insufficient-data" });
+    result.set(supplierId, { componentId, avgDays, sampleCount: count });
   }
   return result;
 }

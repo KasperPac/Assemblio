@@ -59,5 +59,4 @@ export type AvgLeadTime = {
   componentId: string;
   avgDays: number;
   sampleCount: number;
-  status: LeadTimeStatus;
 };
