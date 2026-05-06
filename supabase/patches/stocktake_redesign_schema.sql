@@ -28,16 +28,27 @@ create unique index if not exists stocktake_session_reference_number_tenant_uniq
 -- 3. variance_reason lookup table
 create table if not exists public.stocktake_variance_reason (
   id         uuid primary key default gen_random_uuid(),
-  tenant_id  uuid not null references public.tenants(id) on delete cascade,
+  tenant_id  uuid not null references public.tenant(id) on delete cascade,
   name       text not null,
   sort_order int  not null default 0,
   created_at timestamptz not null default now()
 );
 
+create index if not exists stocktake_variance_reason_tenant_id_idx
+  on public.stocktake_variance_reason (tenant_id);
+
 alter table public.stocktake_variance_reason enable row level security;
 
+drop policy if exists "tenant isolation" on public.stocktake_variance_reason;
 create policy "tenant isolation" on public.stocktake_variance_reason
-  using (tenant_id = (select tenant_id from public.profiles where id = auth.uid()));
+  using (
+    (tenant_id = public.current_tenant_id())
+    or public.is_super_admin()
+  )
+  with check (
+    (tenant_id = public.current_tenant_id())
+    or public.is_super_admin()
+  );
 
 -- 4. New columns on stocktake_line
 alter table public.stocktake_line
@@ -55,7 +66,7 @@ alter table public.component
 -- 6. Seed default variance reasons for all existing tenants
 insert into public.stocktake_variance_reason (tenant_id, name, sort_order)
 select t.id, r.name, r.sort_order
-from public.tenants t
+from public.tenant t
 cross join (
   values
     ('Damage',           1),
