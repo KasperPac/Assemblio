@@ -94,7 +94,7 @@ export default async function SupplierDetailPage({ params }: Props) {
           <form action={archiveSupplier}>
             <input type="hidden" name="supplier_id" value={s.id} />
             <button type="submit" className={styles.btnDanger}>
-              {s.is_active ? "Archive" : "Unarchive"}
+              Archive
             </button>
           </form>
         </div>
