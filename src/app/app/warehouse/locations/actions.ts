@@ -117,7 +117,8 @@ export async function deleteAisle(formData: FormData): Promise<{ error?: string;
   const { count: bayCount } = await supabase
     .from("bin_bay")
     .select("id", { count: "exact", head: true })
-    .eq("aisle_id", id);
+    .eq("aisle_id", id)
+    .eq("tenant_id", tenantId);
   const confirmed = formData.get("confirmed")?.toString() === "true";
   if ((bayCount ?? 0) > 0 && !confirmed) return { bayCount: bayCount ?? 0 };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import {
   addWarehouse, editWarehouse,
@@ -27,12 +28,14 @@ function InlineForm({ action, fields, onDone }: {
   fields: React.ReactNode;
   onDone: () => void;
 }) {
+  const router = useRouter();
   const [err, setErr] = useState<string | null>(null);
   async function submit(fd: FormData) {
     setErr(null);
     try {
       const result = (await action(fd)) as { error?: string } | undefined;
       if (result?.error) { setErr(result.error); return; }
+      router.refresh();
       onDone();
     } catch (e: unknown) {
       setErr(e instanceof Error ? e.message : "Error");
@@ -49,6 +52,7 @@ function InlineForm({ action, fields, onDone }: {
 }
 
 function AisleDeleteButton({ aisleId }: { aisleId: string }) {
+  const router = useRouter();
   const [err, setErr] = useState<string | null>(null);
   async function submit(fd: FormData) {
     setErr(null);
@@ -60,8 +64,9 @@ function AisleDeleteButton({ aisleId }: { aisleId: string }) {
       fd2.append("id", aisleId);
       fd2.append("confirmed", "true");
       const r2 = await deleteAisle(fd2) as { error?: string };
-      if (r2?.error) setErr(r2.error);
+      if (r2?.error) { setErr(r2.error); return; }
     }
+    router.refresh();
   }
   return (
     <span>
@@ -78,11 +83,13 @@ function SimpleDeleteButton({ id, action }: {
   id: string;
   action: (fd: FormData) => Promise<{ error?: string }>;
 }) {
+  const router = useRouter();
   const [err, setErr] = useState<string | null>(null);
   async function submit(fd: FormData) {
     setErr(null);
     const result = await action(fd);
-    if (result?.error) setErr(result.error);
+    if (result?.error) { setErr(result.error); return; }
+    router.refresh();
   }
   return (
     <span>
