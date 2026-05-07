@@ -389,72 +389,69 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
         <p className={styles.meta}>Shopify ID: {typedVariant.shopify_id}</p>
       </section>
 
-      <VariantTabs defaultTab={defaultTab}>
-        {(activeTab) => (
-          <>
-            {activeTab === "overview" ? (
+      <VariantTabs
+        defaultTab={defaultTab}
+        overview={
+          <div>
+            <dl style={{ display: "grid", gap: "8px" }}>
               <div>
-                <dl style={{ display: "grid", gap: "8px" }}>
-                  <div>
-                    <dt className={styles.overviewLabel}>Variant title</dt>
-                    <dd className={styles.overviewValue}>{typedVariant.title ?? "—"}</dd>
-                  </div>
-                  <div>
-                    <dt className={styles.overviewLabel}>SKU</dt>
-                    <dd className={styles.overviewValue}>{typedVariant.sku ?? "—"}</dd>
-                  </div>
-                  <div>
-                    <dt className={styles.overviewLabel}>Shopify ID</dt>
-                    <dd className={styles.overviewValue}>{typedVariant.shopify_id}</dd>
-                  </div>
-                  <div>
-                    <dt className={styles.overviewLabel}>Price</dt>
-                    <dd className={styles.overviewValue}>
-                      {sellPrice !== null ? `$${sellPrice.toFixed(2)}` : "—"}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className={styles.overviewLabel}>Created</dt>
-                    <dd className={styles.overviewValue}>
-                      {new Date(typedVariant.created_at).toLocaleDateString("en-AU")}
-                    </dd>
-                  </div>
-                </dl>
+                <dt className={styles.overviewLabel}>Variant title</dt>
+                <dd className={styles.overviewValue}>{typedVariant.title ?? "—"}</dd>
               </div>
-            ) : null}
-
-            {activeTab === "bom" ? (
-              <>
-                {query.laborSuccess ? <p className={styles.success}>{query.laborSuccess}</p> : null}
-                {query.laborError ? <p className={styles.error}>{query.laborError}</p> : null}
-                {hasBom && editorBomWithLines ? (
-                  <BomEditor
-                    bom={editorBomWithLines}
-                    variantId={variantId}
-                    variantLabel={variantTitle}
-                    sellPrice={sellPrice}
-                    labourCost={labourCost}
-                    allComponents={typedAllComponents}
-                    templates={templateOptions}
-                    sourceBoms={copyOptions}
-                  />
-                ) : canManageBom ? (
-                  <BomSeedPanel
-                    targetVariantId={typedVariant.id}
-                    variantLabel={variantTitle}
-                    sourceBoms={copyOptions}
-                    templates={templateOptions}
-                    components={typedAllComponents}
-                  />
-                ) : (
-                  <p className={styles.notice}>
-                    No BOM exists for this variant. Only admin and super_admin can create or copy BOMs.
-                  </p>
-                )}
-              </>
-            ) : null}
-
-            {activeTab === "routing" ? (
+              <div>
+                <dt className={styles.overviewLabel}>SKU</dt>
+                <dd className={styles.overviewValue}>{typedVariant.sku ?? "—"}</dd>
+              </div>
+              <div>
+                <dt className={styles.overviewLabel}>Shopify ID</dt>
+                <dd className={styles.overviewValue}>{typedVariant.shopify_id}</dd>
+              </div>
+              <div>
+                <dt className={styles.overviewLabel}>Price</dt>
+                <dd className={styles.overviewValue}>
+                  {sellPrice !== null ? `$${sellPrice.toFixed(2)}` : "—"}
+                </dd>
+              </div>
+              <div>
+                <dt className={styles.overviewLabel}>Created</dt>
+                <dd className={styles.overviewValue}>
+                  {new Date(typedVariant.created_at).toLocaleDateString("en-AU")}
+                </dd>
+              </div>
+            </dl>
+          </div>
+        }
+        bom={
+          <>
+            {query.laborSuccess ? <p className={styles.success}>{query.laborSuccess}</p> : null}
+            {query.laborError ? <p className={styles.error}>{query.laborError}</p> : null}
+            {hasBom && editorBomWithLines ? (
+              <BomEditor
+                bom={editorBomWithLines}
+                variantId={variantId}
+                variantLabel={variantTitle}
+                sellPrice={sellPrice}
+                labourCost={labourCost}
+                allComponents={typedAllComponents}
+                templates={templateOptions}
+                sourceBoms={copyOptions}
+              />
+            ) : canManageBom ? (
+              <BomSeedPanel
+                targetVariantId={typedVariant.id}
+                variantLabel={variantTitle}
+                sourceBoms={copyOptions}
+                templates={templateOptions}
+                components={typedAllComponents}
+              />
+            ) : (
+              <p className={styles.notice}>
+                No BOM exists for this variant. Only admin and super_admin can create or copy BOMs.
+              </p>
+            )}
+          </>
+        }
+        routing={
               <div className={styles.bomList}>
                 {typedBoms.length === 0 ? (
                   <p className={styles.notice} style={{ fontStyle: "italic" }}>
@@ -635,18 +632,15 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                   })
                 )}
               </div>
-            ) : null}
-
-            {activeTab === "versions" ? (
-              <BomVersionsTab
-                boms={allBomsWithLines}
-                variantId={variant.id}
-                sellPrice={sellPrice}
-              />
-            ) : null}
-          </>
-        )}
-      </VariantTabs>
+        }
+        versions={
+          <BomVersionsTab
+            boms={allBomsWithLines}
+            variantId={variant.id}
+            sellPrice={sellPrice}
+          />
+        }
+      />
     </div>
   );
 }

@@ -15,10 +15,19 @@ const TAB_LABELS: Record<Tab, string> = {
 
 type Props = {
   defaultTab?: Tab;
-  children: (activeTab: Tab) => React.ReactNode;
+  overview: React.ReactNode;
+  bom: React.ReactNode;
+  routing: React.ReactNode;
+  versions: React.ReactNode;
 };
 
-export default function VariantTabs({ defaultTab = "bom", children }: Props) {
+export default function VariantTabs({
+  defaultTab = "bom",
+  overview,
+  bom,
+  routing,
+  versions,
+}: Props) {
   const [active, setActive] = useState<Tab>(defaultTab);
   const router = useRouter();
   const pathname = usePathname();
@@ -30,6 +39,8 @@ export default function VariantTabs({ defaultTab = "bom", children }: Props) {
     nextParams.set("tab", tab);
     router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
   }
+
+  const content: Record<Tab, React.ReactNode> = { overview, bom, routing, versions };
 
   return (
     <div>
@@ -45,7 +56,7 @@ export default function VariantTabs({ defaultTab = "bom", children }: Props) {
           </button>
         ))}
       </div>
-      <div className={styles.tabContent}>{children(active)}</div>
+      <div className={styles.tabContent}>{content[active]}</div>
     </div>
   );
 }
