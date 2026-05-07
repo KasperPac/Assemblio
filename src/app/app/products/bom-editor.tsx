@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useCallback, useState, useTransition } from "react";
+import { useActionState, useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   removeBomComponentLine,
@@ -56,7 +56,6 @@ type Props = {
   allComponents: ComponentOption[];
   templates: TemplateOption[];
   sourceBoms: SourceBomOption[];
-  onSwitchToRouting?: () => void;
 };
 
 function lineCost(qty: number, yieldPct: number, costPerUnit: number | null): number | null {
@@ -77,17 +76,28 @@ export default function BomEditor({
   allComponents,
   templates,
   sourceBoms,
-  onSwitchToRouting,
 }: Props) {
   const [localState, setLocalState] = useState(
     () => new Map(bom.lines.map((line) => [line.id, { quantity: line.quantity, yieldPct: line.yield_pct }]))
   );
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const [duplicateState, duplicateAction, isDuplicating] = useActionState(duplicateBomAsDraft, {});
   const [, startTransition] = useTransition();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    function handleClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [menuOpen]);
 
   const updateLocal = useCallback((lineId: string, patch: { quantity?: number; yieldPct?: number }) => {
     setLocalState((prev) => {
@@ -129,15 +139,10 @@ export default function BomEditor({
   const statusCls = bom.is_active ? styles.badgeActive : styles.badgeDraft;
 
   const handleSwitchToRouting = useCallback(() => {
-    if (onSwitchToRouting) {
-      onSwitchToRouting();
-      return;
-    }
-
     const nextParams = new URLSearchParams(searchParams.toString());
     nextParams.set("tab", "routing");
     router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
-  }, [onSwitchToRouting, pathname, router, searchParams]);
+  }, [pathname, router, searchParams]);
 
   return (
     <div className={styles.editor}>
@@ -159,7 +164,7 @@ export default function BomEditor({
             buttonLabel="+ Add component"
             buttonClassName={styles.btnSecondary}
           />
-          <div className={styles.menuWrap}>
+          <div className={styles.menuWrap} ref={menuRef}>
             <button
               type="button"
               className={styles.menuButton}
@@ -270,7 +275,7 @@ export default function BomEditor({
                         min={1}
                         value={local.quantity}
                         className={styles.stepperInput}
-                        onChange={(event) => updateLocal(line.id, { quantity: Number(event.target.value) })}
+                        onChange={(event) => updateLocal(line.id, { quantity: Math.max(1, Number(event.target.value)) })}
                         onBlur={(event) => submitQty(Number(event.target.value))}
                       />
                       <button
