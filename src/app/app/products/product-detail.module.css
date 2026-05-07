@@ -1,177 +1,269 @@
 .page {
-  display: grid;
-  gap: 20px;
-}
-
-.layout {
-  display: grid;
-  grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 18px;
-  align-items: start;
 }
 
-.sideCard,
-.mainCard {
+/* ── Coverage bar ──────────────────────────── */
+
+.coverageCard {
   background: var(--bg-card);
   border: 1px solid var(--stroke-card);
-  border-radius: 18px;
-  padding: 18px;
-  display: grid;
-  gap: 16px;
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.sideImage {
-  min-height: 188px;
+.coverageTop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.coverageText {
+  font-size: 13px;
+  color: var(--ink-muted);
+  font-weight: 500;
+}
+
+.amberBadge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.progressBar {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--brand-1, #4ade80);
+  transition: width 0.3s ease;
+}
+
+/* ── Table card ─────────────────────────────── */
+
+.tableCard {
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
   border-radius: 16px;
   overflow: hidden;
-  background:
-    radial-gradient(circle at top right, rgba(74, 222, 128, 0.12), transparent 42%),
-    var(--bg-card-alt);
-  display: grid;
-  place-items: center;
-  font-size: 44px;
-  color: var(--ink-muted);
-  font-weight: 700;
 }
 
-.sideImage img {
+.table {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  border-collapse: collapse;
+  font-size: 0.9rem;
 }
 
-.sideTitleRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.sideDescription {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.6;
+.table th {
+  text-align: left;
+  padding: 10px 16px;
   color: var(--ink-muted);
-}
-
-.summaryGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.summaryCard {
-  display: grid;
-  gap: 6px;
-  padding: 12px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.summaryCard span {
-  font-size: 10px;
+  font-weight: 600;
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--ink-faint);
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--stroke);
+  background: rgba(255, 255, 255, 0.02);
+  white-space: nowrap;
 }
 
-.summaryCard strong {
-  font-size: 14px;
+.table td {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--stroke);
   color: var(--ink-strong);
-  line-height: 1.4;
+  vertical-align: middle;
 }
 
-.sideMeta {
-  display: grid;
-  gap: 3px;
+.table tbody tr:last-child td {
+  border-bottom: none;
 }
 
-.sideMeta p {
-  margin: 0;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--ink-faint);
+/* ── Row variants ──────────────────────────── */
+
+.row,
+.rowNoBom {
+  cursor: pointer;
 }
 
-.sideMeta strong {
-  font-size: 13px;
+.row:hover td {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+/* No-BOM row: amber left border + subtle amber tint */
+.rowNoBom td:first-child {
+  border-left: 3px solid #f59e0b;
+  padding-left: 13px; /* compensate for 3px border */
+}
+
+.rowNoBom td {
+  background: rgba(245, 158, 11, 0.03);
+}
+
+.rowNoBom:hover td {
+  background: rgba(245, 158, 11, 0.055);
+}
+
+/* ── Cell content ───────────────────────────── */
+
+.variantName {
+  font-weight: 600;
+  text-decoration: none;
   color: var(--ink-strong);
+  display: block;
 }
 
-.variantPanel {
-  display: grid;
-  gap: 10px;
-  padding: 14px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.variantPanelHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.variantPanelLabel {
-  margin: 0;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--ink-faint);
-}
-
-.variantSelect {
-  border: 1px solid var(--stroke);
-  background: var(--bg-input);
-  border-radius: 10px;
-  padding: 10px 12px;
-  color: var(--ink-strong);
-  font-size: 13px;
-  width: 100%;
-  min-width: 0;
-}
-
-.mainHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.mainHeaderInfo {
-  display: grid;
-  gap: 6px;
-}
-
-.sectionEyebrow {
-  margin: 0;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
+.variantName:hover {
   color: var(--brand-1);
-  font-weight: 700;
 }
 
-.mainHeader h2 {
-  margin: 0;
-  font-size: 1.5rem;
-  line-height: 1.06;
-  letter-spacing: -0.03em;
+.variantSub {
+  font-size: 11px;
+  color: var(--ink-faint);
+  margin-top: 2px;
 }
 
-.versionMeta {
-  margin: 0;
-  font-size: 13px;
+.meta {
   color: var(--ink-muted);
-  line-height: 1.6;
+  font-size: 0.88rem;
 }
+
+.costValue {
+  color: var(--ink-strong);
+  font-size: 0.9rem;
+}
+
+/* ── Badges ─────────────────────────────────── */
+
+.badgeGreen,
+.badgeAmber,
+.badgeGrey {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.badgeGreen {
+  background: rgba(76, 175, 80, 0.13);
+  color: #4caf50;
+  border: 1px solid rgba(76, 175, 80, 0.27);
+}
+
+.badgeAmber {
+  background: rgba(245, 158, 11, 0.13);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.27);
+}
+
+.badgeGrey {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ink-faint);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── Margin column ──────────────────────────── */
+
+.marginOk {
+  color: var(--ink-strong);
+  font-size: 0.9rem;
+}
+
+.marginLow {
+  color: #e53e3e;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.marginWarn {
+  font-weight: 700;
+  font-size: 10px;
+  opacity: 0.9;
+}
+
+/* ── Action buttons ─────────────────────────── */
+
+.btnPrimary,
+.btnSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.btnPrimary {
+  background: var(--brand-1, #4ade80);
+  color: #0b0f19;
+  border: none;
+}
+
+.btnPrimary:hover {
+  opacity: 0.88;
+}
+
+.btnSecondary {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--ink-strong);
+  border: 1px solid var(--stroke);
+}
+
+.btnSecondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Table footer ───────────────────────────── */
+
+.tableFooter {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  padding: 12px 16px;
+  border-top: 1px solid var(--stroke);
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.footerStat {
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+.footerStat strong {
+  color: var(--ink-strong);
+  font-weight: 600;
+}
+
+/* ── Empty row ──────────────────────────────── */
+
+.emptyRow {
+  text-align: center;
+  color: var(--ink-faint);
+  padding: 32px 16px;
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* ── Legacy styles retained for any co-located components ── */
 
 .actionButton,
 .actionButtonSecondary {
@@ -197,64 +289,4 @@
   background: rgba(255, 255, 255, 0.06);
   color: var(--ink-strong);
   border: 1px solid var(--stroke);
-}
-
-.lineTable {
-  border: 1px solid var(--stroke);
-  border-radius: 16px;
-  overflow: hidden;
-}
-
-.lineHeader,
-.lineRow {
-  display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.2fr) 0.5fr 0.45fr;
-  gap: 12px;
-  align-items: center;
-  padding: 14px 16px;
-}
-
-.lineHeader {
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--ink-faint);
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.lineRow {
-  border-top: 1px solid var(--stroke);
-  font-size: 13px;
-}
-
-.linePrimary strong {
-  display: block;
-  color: var(--ink-strong);
-}
-
-.lineRow span {
-  color: var(--ink-muted);
-  overflow-wrap: anywhere;
-}
-
-@media (max-width: 1020px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 720px) {
-  .summaryGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .lineHeader {
-    display: none;
-  }
-
-  .lineRow {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
 }
