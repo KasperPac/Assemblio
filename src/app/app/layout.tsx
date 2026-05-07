@@ -72,16 +72,14 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
         <div className={styles.brand}>
-          <div className={styles.brandLogoContainer}>
-            <Image
-              src="/manuva-logo.jpg"
-              alt="Manuva"
-              width={120}
-              height={33}
-              className={styles.brandLogo}
-              priority
-            />
-          </div>
+          <Image
+            src="/manuva-logo.png"
+            alt="Manuva"
+            width={140}
+            height={39}
+            className={styles.brandLogo}
+            priority
+          />
         </div>
 
         <div className={styles.userGreeting}>
