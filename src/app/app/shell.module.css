@@ -37,11 +37,18 @@
   padding: 4px 8px 16px;
 }
 
+.brandLogoContainer {
+  display: inline-flex;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 5px 10px;
+}
+
 .brandLogo {
-  height: 32px;
+  height: 26px;
   width: auto;
   object-fit: contain;
-  filter: var(--logo-filter, brightness(0) invert(1));
+  display: block;
 }
 
 .userGreeting {
