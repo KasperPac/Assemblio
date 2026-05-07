@@ -278,3 +278,26 @@
 .rollupSub { font-size: 10px; color: var(--stroke-strong); }
 .marginLow { color: var(--danger); }
 .rollupWarning { font-size: 10px; color: var(--warning); }
+
+.readOnlyBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--brand-dim);
+  border-bottom: 1px solid var(--brand-1);
+  font-size: 12px;
+  color: var(--brand-1);
+  flex-wrap: wrap;
+}
+
+.readOnlyBannerText {
+  font-weight: 500;
+}
+
+.readOnlyQty {
+  font-size: 13px;
+  color: var(--ink-strong);
+  font-weight: 500;
+}

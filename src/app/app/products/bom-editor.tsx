@@ -135,6 +135,7 @@ export default function BomEditor({
       ? ((sellPrice - totalCost) / sellPrice) * 100
       : null;
 
+  const readOnly = bom.is_active;
   const statusLabel = bom.is_active ? "ACTIVE" : bom.status.toUpperCase();
   const statusCls = bom.is_active ? styles.badgeActive : styles.badgeDraft;
 
@@ -158,16 +159,18 @@ export default function BomEditor({
           </span>
         </div>
         <div className={styles.toolbarRight}>
-          <BomLightbox
-            variantId={variantId}
-            variantLabel={variantLabel}
-            bomId={bom.id}
-            components={allComponents}
-            templates={templates}
-            sourceBoms={sourceBoms}
-            buttonLabel="+ Add component"
-            buttonClassName={styles.btnSecondary}
-          />
+          {!readOnly && (
+            <BomLightbox
+              variantId={variantId}
+              variantLabel={variantLabel}
+              bomId={bom.id}
+              components={allComponents}
+              templates={templates}
+              sourceBoms={sourceBoms}
+              buttonLabel="+ Add component"
+              buttonClassName={styles.btnSecondary}
+            />
+          )}
           <div className={styles.menuWrap} ref={menuRef}>
             <button
               type="button"
@@ -188,16 +191,18 @@ export default function BomEditor({
                     Duplicate to new draft
                   </button>
                 </form>
-                <form action={setBomArchived} onSubmit={() => setMenuOpen(false)}>
-                  <input type="hidden" name="bom_id" value={bom.id} />
-                  <button type="submit" className={styles.menuItem} role="menuitem">
-                    Archive
-                  </button>
-                </form>
+                {!readOnly && (
+                  <form action={setBomArchived} onSubmit={() => setMenuOpen(false)}>
+                    <input type="hidden" name="bom_id" value={bom.id} />
+                    <button type="submit" className={styles.menuItem} role="menuitem">
+                      Archive
+                    </button>
+                  </form>
+                )}
               </div>
             ) : null}
           </div>
-          {!bom.is_active && (
+          {!readOnly && (
             <form action={setBomActive}>
               <input type="hidden" name="bom_id" value={bom.id} />
               <button type="submit" className={styles.btnPrimary}>
@@ -207,6 +212,20 @@ export default function BomEditor({
           )}
         </div>
       </div>
+      {readOnly && (
+        <div className={styles.readOnlyBanner}>
+          <span className={styles.readOnlyBannerText}>
+            This BOM is active — changes require a new draft version.
+          </span>
+          <form action={duplicateAction}>
+            <input type="hidden" name="variant_id" value={variantId} />
+            <input type="hidden" name="source_bom_id" value={bom.id} />
+            <button type="submit" className={styles.btnPrimary} disabled={isDuplicating}>
+              {isDuplicating ? "Creating…" : "Create new draft"}
+            </button>
+          </form>
+        </div>
+      )}
       {duplicateState.error ? <p className={styles.menuError}>{duplicateState.error}</p> : null}
 
       <div className={styles.tableWrapper}>
@@ -220,7 +239,7 @@ export default function BomEditor({
               <th>Yield %</th>
               <th>Unit cost</th>
               <th>Line cost</th>
-              <th></th>
+              {!readOnly && <th></th>}
             </tr>
           </thead>
           <tbody>
@@ -228,7 +247,7 @@ export default function BomEditor({
               const local = localState.get(line.id) ?? { quantity: line.quantity, yieldPct: line.yield_pct };
               const cost = lineCost(local.quantity, local.yieldPct, line.component.cost_per_unit);
               const scrapCost =
-                local.yieldPct < 1 && line.component.cost_per_unit !== null
+                !readOnly && local.yieldPct < 1 && line.component.cost_per_unit !== null
                   ? (line.component.cost_per_unit * local.quantity * (1 - local.yieldPct)) / local.yieldPct
                   : null;
 
@@ -263,72 +282,86 @@ export default function BomEditor({
                   <td className={styles.dimText}>{line.component.sku ?? "—"}</td>
                   <td className={styles.dimText}>{line.component.unit ?? "—"}</td>
                   <td>
-                    <div className={styles.stepper}>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const newQty = Math.max(1, local.quantity - 1);
-                          updateLocal(line.id, { quantity: newQty });
-                          submitQty(newQty);
-                        }}
-                      >
-                        −
-                      </button>
-                      <input
-                        type="number"
-                        min={1}
-                        value={local.quantity}
-                        className={styles.stepperInput}
-                        onChange={(event) => updateLocal(line.id, { quantity: Math.max(1, Number(event.target.value)) })}
-                        onBlur={(event) => submitQty(Number(event.target.value))}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const newQty = local.quantity + 1;
-                          updateLocal(line.id, { quantity: newQty });
-                          submitQty(newQty);
-                        }}
-                      >
-                        +
-                      </button>
-                    </div>
+                    {readOnly ? (
+                      <span className={styles.readOnlyQty}>{line.quantity}</span>
+                    ) : (
+                      <div className={styles.stepper}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newQty = Math.max(1, local.quantity - 1);
+                            updateLocal(line.id, { quantity: newQty });
+                            submitQty(newQty);
+                          }}
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          min={1}
+                          value={local.quantity}
+                          className={styles.stepperInput}
+                          onChange={(event) => updateLocal(line.id, { quantity: Math.max(1, Number(event.target.value)) })}
+                          onBlur={(event) => submitQty(Number(event.target.value))}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newQty = local.quantity + 1;
+                            updateLocal(line.id, { quantity: newQty });
+                            submitQty(newQty);
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
+                    )}
                   </td>
                   <td>
-                    <input
-                      type="number"
-                      min={1}
-                      max={100}
-                      step={1}
-                      value={Math.round(local.yieldPct * 100)}
-                      className={`${styles.yieldInput} ${local.yieldPct < 1 ? styles.yieldLow : ""}`}
-                      onChange={(event) =>
-                        updateLocal(line.id, { yieldPct: Number(event.target.value) / 100 })
-                      }
-                      onBlur={(event) => submitYield(Number(event.target.value))}
-                    />
-                    {scrapCost !== null ? (
-                      <div className={styles.scrapNote}>+{fmt(scrapCost)} scrap</div>
-                    ) : null}
+                    {readOnly ? (
+                      <span className={styles.dimText}>{Math.round(line.yield_pct * 100)}%</span>
+                    ) : (
+                      <>
+                        <input
+                          type="number"
+                          min={1}
+                          max={100}
+                          step={1}
+                          value={Math.round(local.yieldPct * 100)}
+                          className={`${styles.yieldInput} ${local.yieldPct < 1 ? styles.yieldLow : ""}`}
+                          onChange={(event) =>
+                            updateLocal(line.id, { yieldPct: Number(event.target.value) / 100 })
+                          }
+                          onBlur={(event) => submitYield(Number(event.target.value))}
+                        />
+                        {scrapCost !== null ? (
+                          <div className={styles.scrapNote}>+{fmt(scrapCost)} scrap</div>
+                        ) : null}
+                      </>
+                    )}
                   </td>
                   <td className={styles.dimText}>{fmt(line.component.cost_per_unit)}</td>
                   <td>{fmt(cost)}</td>
-                  <td>
-                    <form action={removeBomComponentLine}>
-                      <input type="hidden" name="line_id" value={line.id} />
-                      <input type="hidden" name="variant_id" value={variantId} />
-                      <button type="submit" className={styles.removeBtn}>
-                        ✕
-                      </button>
-                    </form>
-                  </td>
+                  {!readOnly && (
+                    <td>
+                      <form action={removeBomComponentLine}>
+                        <input type="hidden" name="line_id" value={line.id} />
+                        <input type="hidden" name="variant_id" value={variantId} />
+                        <button type="submit" className={styles.removeBtn}>
+                          ✕
+                        </button>
+                      </form>
+                    </td>
+                  )}
                 </tr>
               );
             })}
             {bom.lines.length === 0 ? (
               <tr>
-                <td colSpan={8} className={styles.emptyRow}>
-                  No components yet — click + Add component above.
+                <td colSpan={readOnly ? 7 : 8} className={styles.emptyRow}>
+                  {readOnly
+                    ? "No components in this BOM."
+                    : "No components yet — click + Add component above."}
                 </td>
               </tr>
             ) : null}

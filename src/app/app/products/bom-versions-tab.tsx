@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState, useTransition } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { duplicateBomAsDraft } from "@/app/app/products/actions";
 import { setBomActive } from "@/app/app/bom/actions";
 import styles from "./bom-versions-tab.module.css";
@@ -99,14 +100,17 @@ function SingleVersionView({
   sellPrice,
   onActivate,
   isActivating,
+  onEditDraft,
 }: {
   bom: Bom;
   sellPrice: number | null;
   onActivate: (bomId: string) => void;
   isActivating: boolean;
+  onEditDraft: () => void;
 }) {
   const cost = totalMaterialCost(bom.lines);
   const gm = margin(cost, sellPrice);
+  const isDraft = !bom.is_active && bom.status !== "archived";
 
   return (
     <>
@@ -116,15 +120,24 @@ function SingleVersionView({
           {statusLabel(bom)}
         </span>
         <span className={styles.singleMeta}>{fmtDate(bom.created_at)}</span>
-        {!bom.is_active && bom.status !== "archived" ? (
-          <button
-            type="button"
-            className={styles.makeActiveBtn}
-            disabled={isActivating}
-            onClick={() => onActivate(bom.id)}
-          >
-            Make this the active version
-          </button>
+        {isDraft ? (
+          <>
+            <button
+              type="button"
+              className={styles.editDraftBtn}
+              onClick={onEditDraft}
+            >
+              Edit this draft →
+            </button>
+            <button
+              type="button"
+              className={styles.makeActiveBtn}
+              disabled={isActivating}
+              onClick={() => onActivate(bom.id)}
+            >
+              Make active
+            </button>
+          </>
         ) : null}
       </div>
 
@@ -145,7 +158,9 @@ function SingleVersionView({
             {bom.lines.length === 0 ? (
               <tr>
                 <td colSpan={7} className={styles.emptyRow}>
-                  No components in this version.
+                  {isDraft
+                    ? "No components yet — click \"Edit this draft\" to add some."
+                    : "No components in this version."}
                 </td>
               </tr>
             ) : (
@@ -448,6 +463,16 @@ export default function BomVersionsTab({ boms, variantId, sellPrice }: Props) {
   // Selection: up to two bom IDs
   const [selected, setSelected] = useState<[string | null, string | null]>([null, null]);
 
+  // Navigate to BOM editor tab
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  function handleEditDraft() {
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.set("tab", "bom");
+    router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
+  }
+
   function handleVersionClick(bomId: string) {
     setSelected(([a, b]) => {
       if (a === bomId) {
@@ -569,6 +594,7 @@ export default function BomVersionsTab({ boms, variantId, sellPrice }: Props) {
             sellPrice={sellPrice}
             onActivate={handleActivate}
             isActivating={isPending}
+            onEditDraft={handleEditDraft}
           />
         ) : (
           <div className={styles.emptyState}>

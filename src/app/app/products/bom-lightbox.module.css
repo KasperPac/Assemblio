@@ -300,6 +300,7 @@
   border-radius: 16px;
   box-shadow: var(--shadow-lg);
   width: min(900px, 95vw);
+  height: 90vh;
   max-height: 90vh;
   overflow: hidden;
   padding: 0;

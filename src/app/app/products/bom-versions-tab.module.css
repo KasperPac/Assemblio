@@ -263,6 +263,23 @@
   margin-left: auto;
 }
 
+.editDraftBtn {
+  background: none;
+  border: 1px solid var(--brand-1);
+  color: var(--brand-1);
+  border-radius: 5px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.editDraftBtn:hover {
+  background: var(--brand-dim);
+}
+
 .makeActiveBtn {
   background: var(--brand-1);
   color: var(--ink-on-brand);
