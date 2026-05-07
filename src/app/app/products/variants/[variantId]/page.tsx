@@ -187,7 +187,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
       .order("name"),
     supabase
       .from("component")
-      .select("id,name,sku,unit,group,cost_per_unit")
+      .select("id,name,sku,unit,cost_per_unit,group:group_id(name)")
       .order("name"),
     supabase.from("department").select("id,name,code").eq("is_active", true).order("name"),
   ]);
@@ -326,8 +326,8 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
       }
     : null;
 
-  // Only saved (active + archived) versions for the history tab — exclude in-progress drafts
-  const savedBoms = typedBoms.filter((bom) => bom.is_active || bom.status === "archived");
+  // Exclude in-progress drafts from the history tab; old active BOMs have status "active" and is_active false
+  const savedBoms = typedBoms.filter((bom) => bom.status !== "draft");
   const allBomsWithLines = savedBoms.map((bom) => ({
     ...bom,
     lines: (linesByBom[bom.id] ?? []).map((line) => {
@@ -358,7 +358,17 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
       : null;
 
   const variantTitle = typedVariant.title ?? "Untitled variant";
-  const typedAllComponents = (allComponents ?? []) as ComponentOption[];
+  const typedAllComponents: ComponentOption[] = (allComponents ?? []).map((c) => {
+    const rawGroup = Array.isArray(c.group) ? c.group[0] : c.group;
+    return {
+      id: c.id as string,
+      name: c.name as string,
+      sku: (c.sku as string | null) ?? null,
+      unit: (c.unit as string | null) ?? null,
+      cost_per_unit: (c.cost_per_unit as number | null) ?? null,
+      group: (rawGroup as { name: string } | null)?.name ?? null,
+    };
+  });
   const requestedTab = query.tab;
   const defaultTab: Tab =
     requestedTab === "overview" ||

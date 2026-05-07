@@ -108,13 +108,18 @@
 
 .btnSecondary {
   background: none;
-  border: 1px solid var(--stroke-strong);
-  color: var(--ink-faint);
+  border: 1px solid var(--brand-1);
+  color: var(--brand-1);
   border-radius: 5px;
   padding: 5px 12px;
   font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
   font-family: inherit;
+}
+
+.btnSecondary:hover {
+  background: var(--brand-dim);
 }
 
 .btnGhost {
@@ -135,8 +140,8 @@
 
 .btnDiscard {
   background: none;
-  border: 1px solid var(--stroke-strong);
-  color: var(--ink-muted);
+  border: 1px solid var(--stroke-card);
+  color: var(--ink-strong);
   border-radius: 5px;
   padding: 5px 12px;
   font-size: 13px;
