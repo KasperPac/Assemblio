@@ -14,7 +14,7 @@ export type DisplayBom = {
   version: number;
   status: string;
   is_active: boolean;
-  updated_at: string | null;
+  created_at: string | null;
   lineCount: number;
   matCost: number | null;
   hasMissingCosts: boolean;
@@ -25,7 +25,6 @@ export type VariantSummary = {
   title: string | null;
   sku: string | null;
   price: number | null;
-  updated_at: string | null;
   displayBom: DisplayBom | null;
   margin: number | null;
 };
@@ -94,7 +93,7 @@ export function VariantCoverageTable({ summaries, avgMargin, worstVariant }: Pro
                   </Link>
                   <div className={styles.variantSub}>
                     {v.displayBom
-                      ? `v${v.displayBom.version} ${v.displayBom.is_active ? "active" : "draft"} · updated ${timeAgo(v.displayBom.updated_at)}`
+                      ? `v${v.displayBom.version} ${v.displayBom.is_active ? "active" : "draft"} · created ${timeAgo(v.displayBom.created_at)}`
                       : "No BOM created yet"}
                   </div>
                 </td>

@@ -18,7 +18,7 @@ type VariantRecord = {
   sku: string | null;
   shopify_id: string;
   price: number | null;
-  updated_at: string;
+  created_at: string;
   product:
     | {
         id: string;
@@ -167,7 +167,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
   ] = await Promise.all([
     supabase
       .from("shopify_variant")
-      .select("id,title,sku,shopify_id,price,updated_at,product:product_id(id,title)")
+      .select("id,title,sku,shopify_id,price,created_at,product:product_id(id,title)")
       .eq("id", variantId)
       .maybeSingle(),
     supabase
@@ -423,10 +423,10 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                   </div>
                   <div>
                     <dt style={{ fontSize: "11px", color: "#666", textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                      Last synced
+                      Created
                     </dt>
                     <dd style={{ fontSize: "15px", color: "#eee", marginTop: "2px" }}>
-                      {new Date(typedVariant.updated_at).toLocaleDateString("en-AU")}
+                      {new Date(typedVariant.created_at).toLocaleDateString("en-AU")}
                     </dd>
                   </div>
                 </dl>

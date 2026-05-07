@@ -14,7 +14,6 @@ type ProductRecord = {
   id: string;
   title: string;
   shopify_id: string;
-  updated_at: string | null;
   created_at: string | null;
 };
 
@@ -23,7 +22,6 @@ type VariantRow = {
   title: string | null;
   sku: string | null;
   price: number | null;
-  updated_at: string | null;
 };
 
 type BomRow = {
@@ -32,7 +30,7 @@ type BomRow = {
   version: number;
   status: string;
   is_active: boolean;
-  updated_at: string | null;
+  created_at: string | null;
 };
 
 type BomLineRow = {
@@ -90,7 +88,7 @@ export default async function ProductDetailPage({ params }: Props) {
   // Fetch product
   const { data: productData } = await supabase
     .from("shopify_product")
-    .select("id,title,shopify_id,updated_at,created_at")
+    .select("id,title,shopify_id,created_at")
     .eq("id", productId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
@@ -101,7 +99,7 @@ export default async function ProductDetailPage({ params }: Props) {
   // Fetch all variants for this product
   const { data: variantsData } = await supabase
     .from("shopify_variant")
-    .select("id,title,sku,price,updated_at")
+    .select("id,title,sku,price")
     .eq("product_id", productId)
     .eq("tenant_id", tenantId)
     .order("created_at", { ascending: true });
@@ -117,7 +115,7 @@ export default async function ProductDetailPage({ params }: Props) {
   if (variantIds.length > 0) {
     const { data: bomsData } = await supabase
       .from("product_bom")
-      .select("id,variant_id,version,status,is_active,updated_at")
+      .select("id,variant_id,version,status,is_active,created_at")
       .in("variant_id", variantIds)
       .eq("tenant_id", tenantId)
       .order("is_active", { ascending: false })
@@ -178,7 +176,7 @@ export default async function ProductDetailPage({ params }: Props) {
         version: displayBomRaw.version,
         status: displayBomRaw.status,
         is_active: displayBomRaw.is_active,
-        updated_at: displayBomRaw.updated_at,
+        created_at: displayBomRaw.created_at,
         lineCount: lines.length,
         matCost: cost,
         hasMissingCosts,
@@ -194,7 +192,6 @@ export default async function ProductDetailPage({ params }: Props) {
       title: v.title,
       sku: v.sku,
       price: v.price,
-      updated_at: v.updated_at,
       displayBom,
       margin,
     };
@@ -223,7 +220,7 @@ export default async function ProductDetailPage({ params }: Props) {
       : null;
 
   // Header meta
-  const lastSync = product.updated_at ?? product.created_at;
+  const lastSync = product.created_at;
 
   return (
     <div className={styles.page}>
