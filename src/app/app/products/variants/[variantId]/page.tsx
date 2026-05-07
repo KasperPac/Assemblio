@@ -4,7 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import styles from "../../variant-detail.module.css";
 import BomSeedPanel from "../../bom-seed-panel";
 import BomEditor from "../../bom-editor";
-import VariantTabs from "../../variant-tabs";
+import VariantTabs, { type Tab } from "../../variant-tabs";
 import {
   createBomLaborLine,
   deleteBomLaborLine,
@@ -17,6 +17,7 @@ type VariantRecord = {
   sku: string | null;
   shopify_id: string;
   price: number | null;
+  updated_at: string;
   product:
     | {
         id: string;
@@ -139,6 +140,7 @@ type Props = {
   searchParams?: Promise<{
     laborSuccess?: string;
     laborError?: string;
+    tab?: string;
   }>;
 };
 
@@ -153,34 +155,41 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
   const query = (await searchParams) ?? {};
   const supabase = await createSupabaseServerClient();
 
-  const [{ data: variant }, { data: boms }, { data: sourceBoms }, { data: profile }, { data: templates }, { data: allComponents }, { data: departments }] =
-    await Promise.all([
-      supabase
-        .from("shopify_variant")
-        .select("id,title,sku,shopify_id,price,product:product_id(id,title)")
-        .eq("id", variantId)
-        .maybeSingle(),
-      supabase
-        .from("product_bom")
-        .select("id,version,status,is_active,created_at")
-        .eq("variant_id", variantId)
-        .order("version", { ascending: false }),
-      supabase
-        .from("product_bom")
-        .select("id,version,status,variant:variant_id(id,title,sku,product:product_id(title))")
-        .order("created_at", { ascending: false })
-        .limit(250),
-      supabase.from("profiles").select("role").single(),
-      supabase
-        .from("bom_template")
-        .select("id,name,description,bom_template_line(id)")
-        .order("name"),
-      supabase
-        .from("component")
-        .select("id,name,sku,unit,group,cost_per_unit")
-        .order("name"),
-      supabase.from("department").select("id,name,code").eq("is_active", true).order("name"),
-    ]);
+  const [
+    { data: variant },
+    { data: boms },
+    { data: sourceBoms },
+    { data: profile },
+    { data: templates },
+    { data: allComponents },
+    { data: departments },
+  ] = await Promise.all([
+    supabase
+      .from("shopify_variant")
+      .select("id,title,sku,shopify_id,price,updated_at,product:product_id(id,title)")
+      .eq("id", variantId)
+      .maybeSingle(),
+    supabase
+      .from("product_bom")
+      .select("id,version,status,is_active,created_at")
+      .eq("variant_id", variantId)
+      .order("version", { ascending: false }),
+    supabase
+      .from("product_bom")
+      .select("id,version,status,variant:variant_id(id,title,sku,product:product_id(title))")
+      .order("created_at", { ascending: false })
+      .limit(250),
+    supabase.from("profiles").select("role").single(),
+    supabase
+      .from("bom_template")
+      .select("id,name,description,bom_template_line(id)")
+      .order("name"),
+    supabase
+      .from("component")
+      .select("id,name,sku,unit,group,cost_per_unit")
+      .order("name"),
+    supabase.from("department").select("id,name,code").eq("is_active", true).order("name"),
+  ]);
 
   if (!variant) {
     notFound();
@@ -215,30 +224,39 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
           .in("product_bom_id", bomIds)
           .order("sequence", { ascending: true });
 
-  const linesByBom = ((bomLines ?? []) as BomLineRecord[]).reduce<
-    Record<string, BomLineRecord[]>
-  >((acc, line) => {
-    const bucket = acc[line.product_bom_id] ?? [];
-    bucket.push(line);
-    acc[line.product_bom_id] = bucket;
-    return acc;
-  }, {});
+  const linesByBom = ((bomLines ?? []) as BomLineRecord[]).reduce<Record<string, BomLineRecord[]>>(
+    (acc, line) => {
+      const bucket = acc[line.product_bom_id] ?? [];
+      bucket.push(line);
+      acc[line.product_bom_id] = bucket;
+      return acc;
+    },
+    {}
+  );
 
-  const laborLinesByBom = ((laborLines ?? []) as LaborLineRecord[]).reduce<
-    Record<string, LaborLineRecord[]>
-  >((acc, line) => {
-    const bucket = acc[line.product_bom_id] ?? [];
-    bucket.push(line);
-    acc[line.product_bom_id] = bucket;
-    return acc;
-  }, {});
+  const laborLinesByBom = ((laborLines ?? []) as LaborLineRecord[]).reduce<Record<string, LaborLineRecord[]>>(
+    (acc, line) => {
+      const bucket = acc[line.product_bom_id] ?? [];
+      bucket.push(line);
+      acc[line.product_bom_id] = bucket;
+      return acc;
+    },
+    {}
+  );
 
-  const templateOptions = (templates ?? []).map((t: { id: string; name: string; description: string | null; bom_template_line: Array<{ id: string }> | null }) => ({
-    id: t.id,
-    name: t.name,
-    description: t.description,
-    lineCount: Array.isArray(t.bom_template_line) ? t.bom_template_line.length : 0,
-  }));
+  const templateOptions = (templates ?? []).map(
+    (template: {
+      id: string;
+      name: string;
+      description: string | null;
+      bom_template_line: Array<{ id: string }> | null;
+    }) => ({
+      id: template.id,
+      name: template.name,
+      description: template.description,
+      lineCount: Array.isArray(template.bom_template_line) ? template.bom_template_line.length : 0,
+    })
+  );
 
   const copyOptions = ((sourceBoms ?? []) as SourceBomRecord[]).map((source) => {
     const sourceVariant = Array.isArray(source.variant)
@@ -258,13 +276,11 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
 
   const departmentOptions = (departments ?? []) as DepartmentOption[];
 
-  // Determine the editor BOM: prefer latest draft, fall back to active BOM
   const editorBom =
-    typedBoms.find((b) => b.status === "draft" && !b.is_active) ??
-    typedBoms.find((b) => b.is_active) ??
+    typedBoms.find((bom) => bom.status === "draft" && !bom.is_active) ??
+    typedBoms.find((bom) => bom.is_active) ??
     null;
 
-  // Build the editor BOM with its lines in the shape BomEditor expects
   type EditorBomData = {
     id: string;
     version: number;
@@ -289,29 +305,27 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
     ? {
         ...editorBom,
         lines: (linesByBom[editorBom.id] ?? []).map((line) => {
-          const comp = Array.isArray(line.component)
+          const component = Array.isArray(line.component)
             ? line.component[0] ?? null
             : line.component;
+
           return {
             id: line.id,
             component_id: line.component_id,
             quantity: line.quantity,
             yield_pct: line.yield_pct ?? 1,
             component: {
-              name: comp?.name ?? "Unknown",
-              sku: comp?.sku ?? null,
-              unit: comp?.unit ?? null,
-              cost_per_unit: comp?.cost_per_unit ?? null,
+              name: component?.name ?? "Unknown",
+              sku: component?.sku ?? null,
+              unit: component?.unit ?? null,
+              cost_per_unit: component?.cost_per_unit ?? null,
             },
           };
         }),
       }
     : null;
 
-  // Compute labourCost from all labor lines on the editor BOM
-  // (no hourly_rate in DB yet — show null so footer shows "—")
   const labourCost: number | null = null;
-
   const sellPrice =
     typedVariant.price !== null && typedVariant.price !== undefined
       ? Number(typedVariant.price)
@@ -319,6 +333,16 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
 
   const variantTitle = typedVariant.title ?? "Untitled variant";
   const typedAllComponents = (allComponents ?? []) as ComponentOption[];
+  const requestedTab = query.tab;
+  const defaultTab: Tab =
+    requestedTab === "overview" ||
+    requestedTab === "bom" ||
+    requestedTab === "routing" ||
+    requestedTab === "versions"
+      ? requestedTab
+      : query.laborSuccess || query.laborError
+        ? "routing"
+        : "bom";
 
   return (
     <div className={styles.page}>
@@ -340,44 +364,54 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
         <p className={styles.meta}>Shopify ID: {typedVariant.shopify_id}</p>
       </section>
 
-      <VariantTabs>
+      <VariantTabs defaultTab={defaultTab}>
         {(activeTab) => (
           <>
-            {/* ── Overview tab ───────────────────────── */}
-            {activeTab === "overview" && (
+            {activeTab === "overview" ? (
               <div>
                 <dl style={{ display: "grid", gap: "8px" }}>
                   <div>
-                    <dt style={{ fontSize: "11px", color: "#666", textTransform: "uppercase", letterSpacing: "0.04em" }}>Variant title</dt>
+                    <dt style={{ fontSize: "11px", color: "#666", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                      Variant title
+                    </dt>
                     <dd style={{ fontSize: "15px", color: "#eee", marginTop: "2px" }}>{typedVariant.title ?? "—"}</dd>
                   </div>
                   <div>
-                    <dt style={{ fontSize: "11px", color: "#666", textTransform: "uppercase", letterSpacing: "0.04em" }}>SKU</dt>
+                    <dt style={{ fontSize: "11px", color: "#666", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                      SKU
+                    </dt>
                     <dd style={{ fontSize: "15px", color: "#eee", marginTop: "2px" }}>{typedVariant.sku ?? "—"}</dd>
                   </div>
                   <div>
-                    <dt style={{ fontSize: "11px", color: "#666", textTransform: "uppercase", letterSpacing: "0.04em" }}>Shopify ID</dt>
+                    <dt style={{ fontSize: "11px", color: "#666", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                      Shopify ID
+                    </dt>
                     <dd style={{ fontSize: "15px", color: "#eee", marginTop: "2px" }}>{typedVariant.shopify_id}</dd>
                   </div>
                   <div>
-                    <dt style={{ fontSize: "11px", color: "#666", textTransform: "uppercase", letterSpacing: "0.04em" }}>Price</dt>
+                    <dt style={{ fontSize: "11px", color: "#666", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                      Price
+                    </dt>
                     <dd style={{ fontSize: "15px", color: "#eee", marginTop: "2px" }}>
                       {sellPrice !== null ? `$${sellPrice.toFixed(2)}` : "—"}
                     </dd>
                   </div>
+                  <div>
+                    <dt style={{ fontSize: "11px", color: "#666", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                      Last synced
+                    </dt>
+                    <dd style={{ fontSize: "15px", color: "#eee", marginTop: "2px" }}>
+                      {new Date(typedVariant.updated_at).toLocaleDateString("en-AU")}
+                    </dd>
+                  </div>
                 </dl>
               </div>
-            )}
+            ) : null}
 
-            {/* ── Bill of Materials tab ──────────────── */}
-            {activeTab === "bom" && (
+            {activeTab === "bom" ? (
               <>
-                {query.laborSuccess ? (
-                  <p className={styles.success}>{query.laborSuccess}</p>
-                ) : null}
-                {query.laborError ? (
-                  <p className={styles.error}>{query.laborError}</p>
-                ) : null}
+                {query.laborSuccess ? <p className={styles.success}>{query.laborSuccess}</p> : null}
+                {query.laborError ? <p className={styles.error}>{query.laborError}</p> : null}
                 {hasBom && editorBomWithLines ? (
                   <BomEditor
                     bom={editorBomWithLines}
@@ -403,16 +437,18 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                   </p>
                 )}
               </>
-            )}
+            ) : null}
 
-            {/* ── Labour & Routing tab ───────────────── */}
-            {activeTab === "routing" && (
+            {activeTab === "routing" ? (
               <div className={styles.bomList}>
                 {typedBoms.length === 0 ? (
-                  <p className={styles.notice} style={{ fontStyle: "italic" }}>No routing yet.</p>
+                  <p className={styles.notice} style={{ fontStyle: "italic" }}>
+                    No routing yet.
+                  </p>
                 ) : (
                   typedBoms.map((bom) => {
                     const laborRows = laborLinesByBom[bom.id] ?? [];
+
                     return (
                       <div key={bom.id} className={styles.lineTable}>
                         <div className={styles.bomHeader}>
@@ -584,14 +620,13 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                   })
                 )}
               </div>
-            )}
+            ) : null}
 
-            {/* ── Versions tab ────────────────────────── */}
-            {activeTab === "versions" && (
+            {activeTab === "versions" ? (
               <div>
                 <p style={{ color: "#555", fontStyle: "italic" }}>Version history — coming soon.</p>
               </div>
-            )}
+            ) : null}
           </>
         )}
       </VariantTabs>

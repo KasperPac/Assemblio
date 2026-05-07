@@ -20,6 +20,59 @@
 .toolbarLeft { display: flex; align-items: center; gap: 10px; }
 .toolbarRight { display: flex; align-items: center; gap: 8px; }
 
+.menuWrap {
+  position: relative;
+}
+
+.menuButton {
+  width: 34px;
+  height: 30px;
+  background: none;
+  border: 1px solid #333;
+  color: #aaa;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  font-family: inherit;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 180px;
+  padding: 6px;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  background: #111;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  z-index: 20;
+}
+
+.menuItem {
+  width: 100%;
+  background: none;
+  border: none;
+  color: #ddd;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.menuItem:hover {
+  background: #1a1a1a;
+}
+
+.menuError {
+  margin: 8px 16px 0;
+  font-size: 12px;
+  color: #e53e3e;
+}
+
 .badge {
   border-radius: 4px;
   padding: 2px 8px;
@@ -188,6 +241,38 @@
   font-size: 16px;
   font-weight: 700;
   color: #eee;
+}
+
+.inlineLinkButton {
+  margin-left: 8px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: #8cb8ff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.inlineLinkButton:hover {
+  color: #b7d1ff;
+}
+
+.routingLink {
+  padding: 0;
+  background: none;
+  border: none;
+  color: #8cb8ff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  text-align: left;
+}
+
+.routingLink:hover {
+  color: #b7d1ff;
 }
 
 .rollupSub { font-size: 10px; color: #444; }

@@ -1,16 +1,18 @@
 "use client";
 
-import { useState, useCallback, useTransition } from "react";
+import { useActionState, useCallback, useState, useTransition } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
-  updateBomComponentQuantity,
-  updateBomComponentYieldPct,
   removeBomComponentLine,
   setBomActive,
+  setBomArchived,
+  updateBomComponentQuantity,
+  updateBomComponentYieldPct,
 } from "@/app/app/bom/actions";
+import { duplicateBomAsDraft } from "@/app/app/products/actions";
 import BomLightbox from "./bom-lightbox";
 import styles from "./bom-editor.module.css";
 
-// Types
 type ComponentLine = {
   id: string;
   component_id: string;
@@ -54,9 +56,9 @@ type Props = {
   allComponents: ComponentOption[];
   templates: TemplateOption[];
   sourceBoms: SourceBomOption[];
+  onSwitchToRouting?: () => void;
 };
 
-// Helpers
 function lineCost(qty: number, yieldPct: number, costPerUnit: number | null): number | null {
   if (costPerUnit === null) return null;
   return (costPerUnit * qty) / yieldPct;
@@ -75,11 +77,17 @@ export default function BomEditor({
   allComponents,
   templates,
   sourceBoms,
+  onSwitchToRouting,
 }: Props) {
   const [localState, setLocalState] = useState(
-    () => new Map(bom.lines.map((l) => [l.id, { quantity: l.quantity, yieldPct: l.yield_pct }]))
+    () => new Map(bom.lines.map((line) => [line.id, { quantity: line.quantity, yieldPct: line.yield_pct }]))
   );
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [duplicateState, duplicateAction, isDuplicating] = useActionState(duplicateBomAsDraft, {});
   const [, startTransition] = useTransition();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const updateLocal = useCallback((lineId: string, patch: { quantity?: number; yieldPct?: number }) => {
     setLocalState((prev) => {
@@ -90,21 +98,27 @@ export default function BomEditor({
     });
   }, []);
 
-  // Compute rollup
   let materialCost: number | null = 0;
   let hasMissingCosts = false;
   for (const line of bom.lines) {
     const local = localState.get(line.id) ?? { quantity: line.quantity, yieldPct: line.yield_pct };
     const cost = lineCost(local.quantity, local.yieldPct, line.component.cost_per_unit);
-    if (cost === null) { hasMissingCosts = true; materialCost = null; }
-    else if (materialCost !== null) materialCost += cost;
+    if (cost === null) {
+      hasMissingCosts = true;
+      materialCost = null;
+    } else if (materialCost !== null) {
+      materialCost += cost;
+    }
   }
 
   const totalCost =
-    materialCost !== null && labourCost !== null ? materialCost + labourCost
-    : materialCost !== null ? materialCost
-    : labourCost !== null ? labourCost
-    : null;
+    materialCost !== null && labourCost !== null
+      ? materialCost + labourCost
+      : materialCost !== null
+        ? materialCost
+        : labourCost !== null
+          ? labourCost
+          : null;
 
   const grossMargin =
     totalCost !== null && sellPrice !== null && sellPrice > 0
@@ -114,9 +128,19 @@ export default function BomEditor({
   const statusLabel = bom.is_active ? "ACTIVE" : bom.status.toUpperCase();
   const statusCls = bom.is_active ? styles.badgeActive : styles.badgeDraft;
 
+  const handleSwitchToRouting = useCallback(() => {
+    if (onSwitchToRouting) {
+      onSwitchToRouting();
+      return;
+    }
+
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.set("tab", "routing");
+    router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
+  }, [onSwitchToRouting, pathname, router, searchParams]);
+
   return (
     <div className={styles.editor}>
-      {/* Toolbar */}
       <div className={styles.toolbar}>
         <div className={styles.toolbarLeft}>
           <span className={`${styles.badge} ${statusCls}`}>{statusLabel}</span>
@@ -135,16 +159,47 @@ export default function BomEditor({
             buttonLabel="+ Add component"
             buttonClassName={styles.btnSecondary}
           />
+          <div className={styles.menuWrap}>
+            <button
+              type="button"
+              className={styles.menuButton}
+              aria-haspopup="menu"
+              aria-expanded={menuOpen}
+              aria-label="Open BOM actions"
+              onClick={() => setMenuOpen((prev) => !prev)}
+            >
+              ⋯
+            </button>
+            {menuOpen ? (
+              <div className={styles.menu} role="menu">
+                <form action={duplicateAction} onSubmit={() => setMenuOpen(false)}>
+                  <input type="hidden" name="variant_id" value={variantId} />
+                  <input type="hidden" name="source_bom_id" value={bom.id} />
+                  <button type="submit" className={styles.menuItem} role="menuitem" disabled={isDuplicating}>
+                    Duplicate to new draft
+                  </button>
+                </form>
+                <form action={setBomArchived} onSubmit={() => setMenuOpen(false)}>
+                  <input type="hidden" name="bom_id" value={bom.id} />
+                  <button type="submit" className={styles.menuItem} role="menuitem">
+                    Archive
+                  </button>
+                </form>
+              </div>
+            ) : null}
+          </div>
           {!bom.is_active && (
             <form action={setBomActive}>
               <input type="hidden" name="bom_id" value={bom.id} />
-              <button type="submit" className={styles.btnPrimary}>Set Active</button>
+              <button type="submit" className={styles.btnPrimary}>
+                Set Active
+              </button>
             </form>
           )}
         </div>
       </div>
+      {duplicateState.error ? <p className={styles.menuError}>{duplicateState.error}</p> : null}
 
-      {/* Component lines table */}
       <div className={styles.tableWrapper}>
         <table className={styles.table}>
           <thead>
@@ -169,28 +224,32 @@ export default function BomEditor({
                   : null;
 
               const submitQty = (qty: number) => {
-                const fd = new FormData();
-                fd.set("line_id", line.id);
-                fd.set("variant_id", variantId);
-                fd.set("quantity", String(qty));
-                startTransition(() => { updateBomComponentQuantity(fd); });
+                const formData = new FormData();
+                formData.set("line_id", line.id);
+                formData.set("variant_id", variantId);
+                formData.set("quantity", String(qty));
+                startTransition(() => {
+                  updateBomComponentQuantity(formData);
+                });
               };
 
               const submitYield = (pct: number) => {
-                const fd = new FormData();
-                fd.set("line_id", line.id);
-                fd.set("variant_id", variantId);
-                fd.set("yield_pct", String(pct));
-                startTransition(() => { updateBomComponentYieldPct(fd); });
+                const formData = new FormData();
+                formData.set("line_id", line.id);
+                formData.set("variant_id", variantId);
+                formData.set("yield_pct", String(pct));
+                startTransition(() => {
+                  updateBomComponentYieldPct(formData);
+                });
               };
 
               return (
                 <tr key={line.id}>
                   <td>
                     <span>{line.component.name}</span>
-                    {line.component.cost_per_unit === null && (
+                    {line.component.cost_per_unit === null ? (
                       <span className={styles.noCostBadge}>no cost</span>
-                    )}
+                    ) : null}
                   </td>
                   <td className={styles.dimText}>{line.component.sku ?? "—"}</td>
                   <td className={styles.dimText}>{line.component.unit ?? "—"}</td>
@@ -203,14 +262,16 @@ export default function BomEditor({
                           updateLocal(line.id, { quantity: newQty });
                           submitQty(newQty);
                         }}
-                      >−</button>
+                      >
+                        −
+                      </button>
                       <input
                         type="number"
                         min={1}
                         value={local.quantity}
                         className={styles.stepperInput}
-                        onChange={(e) => updateLocal(line.id, { quantity: Number(e.target.value) })}
-                        onBlur={(e) => submitQty(Number(e.target.value))}
+                        onChange={(event) => updateLocal(line.id, { quantity: Number(event.target.value) })}
+                        onBlur={(event) => submitQty(Number(event.target.value))}
                       />
                       <button
                         type="button"
@@ -219,7 +280,9 @@ export default function BomEditor({
                           updateLocal(line.id, { quantity: newQty });
                           submitQty(newQty);
                         }}
-                      >+</button>
+                      >
+                        +
+                      </button>
                     </div>
                   </td>
                   <td>
@@ -230,12 +293,14 @@ export default function BomEditor({
                       step={1}
                       value={Math.round(local.yieldPct * 100)}
                       className={`${styles.yieldInput} ${local.yieldPct < 1 ? styles.yieldLow : ""}`}
-                      onChange={(e) => updateLocal(line.id, { yieldPct: Number(e.target.value) / 100 })}
-                      onBlur={(e) => submitYield(Number(e.target.value))}
+                      onChange={(event) =>
+                        updateLocal(line.id, { yieldPct: Number(event.target.value) / 100 })
+                      }
+                      onBlur={(event) => submitYield(Number(event.target.value))}
                     />
-                    {scrapCost !== null && (
+                    {scrapCost !== null ? (
                       <div className={styles.scrapNote}>+{fmt(scrapCost)} scrap</div>
-                    )}
+                    ) : null}
                   </td>
                   <td className={styles.dimText}>{fmt(line.component.cost_per_unit)}</td>
                   <td>{fmt(cost)}</td>
@@ -243,33 +308,39 @@ export default function BomEditor({
                     <form action={removeBomComponentLine}>
                       <input type="hidden" name="line_id" value={line.id} />
                       <input type="hidden" name="variant_id" value={variantId} />
-                      <button type="submit" className={styles.removeBtn}>✕</button>
+                      <button type="submit" className={styles.removeBtn}>
+                        ✕
+                      </button>
                     </form>
                   </td>
                 </tr>
               );
             })}
-            {bom.lines.length === 0 && (
+            {bom.lines.length === 0 ? (
               <tr>
                 <td colSpan={8} className={styles.emptyRow}>
                   No components yet — click + Add component above.
                 </td>
               </tr>
-            )}
+            ) : null}
           </tbody>
         </table>
       </div>
 
-      {/* Cost rollup footer */}
       <div className={styles.rollup}>
         <div className={styles.rollupCell}>
           <span className={styles.rollupLabel}>Materials</span>
           <span className={styles.rollupValue}>{fmt(materialCost)}</span>
-          {materialCost !== null && <span className={styles.rollupSub}>incl. scrap</span>}
+          {materialCost !== null ? <span className={styles.rollupSub}>incl. scrap</span> : null}
         </div>
         <div className={styles.rollupCell}>
           <span className={styles.rollupLabel}>Labour</span>
           <span className={styles.rollupValue}>{labourCost !== null ? fmt(labourCost) : "—"}</span>
+          {labourCost === null ? (
+            <button type="button" className={styles.routingLink} onClick={handleSwitchToRouting}>
+              Add routing →
+            </button>
+          ) : null}
         </div>
         <div className={styles.rollupCell}>
           <span className={styles.rollupLabel}>Total BOM cost</span>
@@ -277,15 +348,19 @@ export default function BomEditor({
         </div>
         <div className={styles.rollupCell}>
           <span className={styles.rollupLabel}>Sell price</span>
-          <span className={styles.rollupValue}>{sellPrice !== null ? `$${sellPrice.toFixed(2)}` : "—"}</span>
-          {sellPrice !== null && <span className={styles.rollupSub}>from Shopify</span>}
+          <span className={styles.rollupValue}>
+            {sellPrice !== null ? `$${sellPrice.toFixed(2)}` : "—"}
+          </span>
+          {sellPrice !== null ? <span className={styles.rollupSub}>from Shopify</span> : null}
         </div>
         <div className={styles.rollupCell}>
           <span className={styles.rollupLabel}>Gross margin</span>
           <span className={`${styles.rollupValue} ${grossMargin !== null && grossMargin < 20 ? styles.marginLow : ""}`}>
             {grossMargin !== null ? `${grossMargin.toFixed(1)}%` : "—"}
           </span>
-          {hasMissingCosts && <span className={styles.rollupWarning}>estimate — missing costs</span>}
+          {hasMissingCosts ? (
+            <span className={styles.rollupWarning}>⚠ estimate — missing costs</span>
+          ) : null}
         </div>
       </div>
     </div>
