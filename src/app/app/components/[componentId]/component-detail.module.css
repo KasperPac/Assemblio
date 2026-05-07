@@ -453,89 +453,138 @@
   }
 }
 
-/* ── Bin location section ─────────────── */
-
-.binSection {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 20px;
-  background: var(--bg-card-alt);
-  border: 1px solid var(--stroke);
-  border-radius: 14px;
-  margin-top: 16px;
-}
-
-.binSectionTitle {
-  margin: 0;
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: var(--ink-strong);
-}
-
-.binSectionDesc {
-  margin: 0;
-  font-size: 0.8rem;
-  color: var(--ink-muted);
-}
+/* ── Bin location form ────────────────── */
 
 .binFieldRow {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1fr;
-  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
 
 .binField {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
 }
 
 .binLabel {
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   color: var(--ink-faint);
 }
 
 .binInput {
-  border: 1px solid var(--stroke);
-  border-radius: 8px;
-  min-height: 38px;
-  padding: 0 10px;
+  border: 1px solid color-mix(in srgb, var(--stroke) 78%, transparent);
+  border-radius: 12px;
+  min-height: 42px;
+  padding: 0 12px;
   background: var(--bg-input);
   color: var(--ink-strong);
   font: inherit;
-  font-size: 0.88rem;
+  font-size: 0.95rem;
+}
+
+.binInput:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.binSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--brand-dim);
+  border: 1px solid color-mix(in srgb, var(--brand-1) 30%, transparent);
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+.binSummaryLabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--brand-2);
+  margin-bottom: 2px;
+}
+
+.binSummaryPath {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-strong);
+}
+
+.binSummaryCode {
+  font-size: 22px;
+  font-weight: 700;
+  font-family: monospace;
+  color: var(--brand-1);
+  letter-spacing: 0.15em;
+}
+
+.binActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 .binSaveBtn {
-  align-self: flex-start;
   display: inline-flex;
   align-items: center;
-  min-height: 36px;
-  padding: 0 14px;
+  border: none;
   border-radius: 999px;
-  background: var(--bg-card);
-  border: 1px solid var(--stroke);
-  color: var(--ink-strong);
-  font-size: 0.84rem;
+  min-height: 42px;
+  padding: 0 20px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--brand-2) 72%, #142131), color-mix(in srgb, var(--brand-1) 88%, #0e1624));
+  color: #f8fbff;
+  font: inherit;
+  font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
-  margin-top: 4px;
 }
 
-/* Bin location summary and clear button */
-.binSummary {
-  display: flex; align-items: center; justify-content: space-between;
-  background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 6px;
-  padding: 10px 14px; margin-top: 10px;
+.binClearBtn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--danger);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
 }
-.binSummaryLabel { font-size: 11px; color: #0369a1; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 2px; }
-.binSummaryPath { font-size: 14px; font-weight: 600; color: #0c4a6e; }
-.binSummaryCode { font-size: 20px; font-weight: 700; font-family: monospace; color: #0369a1; letter-spacing: .15em; }
-.binClearBtn { font-size: 13px; padding: 6px 14px; border: 1px solid #fca5a5; border-radius: 6px; background: var(--surface); color: #ef4444; cursor: pointer; }
+
+/* ── Location tab ─────────────────────── */
+
+.locationTabContent {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 560px;
+}
+
+.locationTabDesc {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+
+.binCard {
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
+  border-radius: 14px;
+  padding: 20px 22px;
+}
+
+.binForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
 /* ── Suppliers tab ────────────────────── */
 

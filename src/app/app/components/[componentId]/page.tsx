@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { notFound, redirect } from "next/navigation";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import DetailTabs from "./detail-tabs";
 import styles from "./component-detail.module.css";
 import { getStockStatus } from "../helpers";
-import { BinLocationSelect } from "./bin-location-select";
 import { getAvgActualLeadTimesForComponent } from "@/lib/suppliers/catalog";
 
 type Props = {
@@ -104,27 +103,35 @@ function unwrap<T>(val: T | T[] | null): T | null {
 
 export default async function ComponentDetailPage({ params }: Props) {
   const { componentId } = await params;
-  const supabase = await createSupabaseServerClient();
+
+  const context = await getServerTenantContext();
+  if (!context) redirect("/auth/login");
+  const { supabase, tenantId, role } = context;
+  const isAdmin = role === "admin" || role === "super_admin";
 
   const { data: component } = await supabase
     .from("component")
     .select("id,name,sku,unit,cost_per_unit,reorder_point,created_at,tenant_id,bin_sub_location_id,bin_aisle_id,bin_bay_id,supplier:supplier_id(name),location:location_id(name),group:group_id(name)")
     .eq("id", componentId)
+    .eq("tenant_id", tenantId)
     .maybeSingle();
 
   if (!component) notFound();
 
   const c = component as ComponentRecord;
 
-  const [whRes, slRes, aisleRes, bayRes] = await Promise.all([
-    supabase.from("location").select("id, name").eq("tenant_id", c.tenant_id).order("name"),
-    supabase.from("bin_sub_location").select("id, name, warehouse_id").eq("tenant_id", c.tenant_id).order("name"),
-    supabase.from("bin_aisle").select("id, name, warehouse_id, sub_location_id").eq("tenant_id", c.tenant_id).order("name"),
-    supabase.from("bin_bay").select("id, name, aisle_id").eq("tenant_id", c.tenant_id).order("name"),
-  ]);
+  // Only fetch bin location data for admins — members never see the Location tab
+  const [whRes, slRes, aisleRes, bayRes] = isAdmin
+    ? await Promise.all([
+        supabase.from("location").select("id, name").eq("tenant_id", tenantId).order("name"),
+        supabase.from("bin_sub_location").select("id, name, warehouse_id").eq("tenant_id", tenantId).order("name"),
+        supabase.from("bin_aisle").select("id, name, warehouse_id, sub_location_id").eq("tenant_id", tenantId).order("name"),
+        supabase.from("bin_bay").select("id, name, aisle_id").eq("tenant_id", tenantId).order("name"),
+      ])
+    : ([{ data: [] }, { data: [] }, { data: [] }, { data: [] }] as const);
 
-  const currentAisleForWh = (aisleRes.data ?? []).find((a) => a.id === c.bin_aisle_id);
-  const currentSlForWh = (slRes.data ?? []).find((s) => s.id === c.bin_sub_location_id);
+  const currentAisleForWh = (aisleRes.data ?? []).find((a: { id: string }) => a.id === c.bin_aisle_id) as { warehouse_id: string } | undefined;
+  const currentSlForWh = (slRes.data ?? []).find((s: { id: string }) => s.id === c.bin_sub_location_id) as { warehouse_id: string } | undefined;
   const currentWarehouseId = currentAisleForWh?.warehouse_id ?? currentSlForWh?.warehouse_id ?? null;
 
   const [
@@ -162,18 +169,18 @@ export default async function ComponentDetailPage({ params }: Props) {
         supplier_part_number, is_preferred,
         supplier:supplier_id(id, name)
       `)
-      .eq("tenant_id", c.tenant_id)
+      .eq("tenant_id", tenantId)
       .eq("component_id", componentId)
       .order("is_preferred", { ascending: false }),
     supabase
       .from("suppliers")
       .select("id, name")
-      .eq("tenant_id", c.tenant_id)
+      .eq("tenant_id", tenantId)
       .eq("is_active", true)
       .order("name"),
   ]);
 
-  const avgLtMap = await getAvgActualLeadTimesForComponent(supabase, c.tenant_id, componentId);
+  const avgLtMap = await getAvgActualLeadTimesForComponent(supabase, tenantId, componentId);
 
   const supplierCatalog = ((supplierCatalogRaw ?? []) as SupplierCatalogRow[]).map((row) => {
     const supplier = Array.isArray(row.supplier) ? row.supplier[0] : row.supplier;
@@ -355,24 +362,6 @@ export default async function ComponentDetailPage({ params }: Props) {
               Receive stock
             </Link>
           </div>
-
-          <section className={styles.binSection}>
-            <h3 className={styles.binSectionTitle}>Bin location</h3>
-            <p className={styles.binSectionDesc}>
-              Where this component lives in the warehouse. Used to group items in stocktake sheets.
-            </p>
-            <BinLocationSelect
-              componentId={c.id}
-              warehouses={whRes.data ?? []}
-              subLocations={slRes.data ?? []}
-              aisles={aisleRes.data ?? []}
-              bays={bayRes.data ?? []}
-              currentWarehouseId={currentWarehouseId}
-              currentSubLocationId={c.bin_sub_location_id}
-              currentAisleId={c.bin_aisle_id}
-              currentBayId={c.bin_bay_id}
-            />
-          </section>
         </aside>
 
         {/* ── Right: Tabbed content ─────── */}
@@ -384,6 +373,15 @@ export default async function ComponentDetailPage({ params }: Props) {
           supplierCatalog={supplierCatalog}
           allSuppliers={(allSuppliersRaw ?? []) as Array<{ id: string; name: string }>}
           componentId={componentId}
+          isAdmin={isAdmin}
+          warehouses={(whRes.data ?? []) as Array<{ id: string; name: string }>}
+          subLocations={(slRes.data ?? []) as Array<{ id: string; name: string; warehouse_id: string }>}
+          aisles={(aisleRes.data ?? []) as Array<{ id: string; name: string; warehouse_id: string; sub_location_id: string | null }>}
+          bays={(bayRes.data ?? []) as Array<{ id: string; name: string; aisle_id: string }>}
+          currentWarehouseId={currentWarehouseId}
+          currentSubLocationId={c.bin_sub_location_id}
+          currentAisleId={c.bin_aisle_id}
+          currentBayId={c.bin_bay_id}
         />
       </div>
     </div>

@@ -79,8 +79,21 @@ export async function updateBinLocation(_prevState: { error?: string }, formData
   if (!componentId) return {};
 
   const context = await getServerTenantContext();
-  if (!context) return {};
-  const { supabase, tenantId } = context;
+  if (!context) return { error: "Unauthorized" };
+  const { supabase, tenantId, role } = context;
+
+  if (role !== "admin" && role !== "super_admin") {
+    return { error: "Only managers and above can change bin locations." };
+  }
+
+  const { data: current } = await supabase
+    .from("component")
+    .select("name, bin_sub_location_id, bin_aisle_id, bin_bay_id")
+    .eq("id", componentId)
+    .eq("tenant_id", tenantId)
+    .maybeSingle();
+
+  if (!current) return { error: "Component not found." };
 
   const { error } = await supabase
     .from("component")
@@ -94,6 +107,26 @@ export async function updateBinLocation(_prevState: { error?: string }, formData
 
   if (error) return { error: error.message };
 
+  await supabase.from("activity_log").insert({
+    tenant_id: tenantId,
+    event: "bin_location_updated",
+    metadata: {
+      component_id: componentId,
+      component_name: current.name,
+      old: {
+        bin_sub_location_id: current.bin_sub_location_id,
+        bin_aisle_id: current.bin_aisle_id,
+        bin_bay_id: current.bin_bay_id,
+      },
+      new: {
+        bin_sub_location_id: binSubLocationId,
+        bin_aisle_id: binAisleId,
+        bin_bay_id: binBayId,
+      },
+    },
+  });
+
   revalidatePath(`/app/components/${componentId}`);
+  revalidatePath("/app/activity-log");
   return {};
 }

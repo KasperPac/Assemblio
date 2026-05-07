@@ -136,6 +136,33 @@ export async function setBomActive(formData: FormData) {
   revalidatePath(`/app/products/variants/${bom.variant_id}`);
 }
 
+export async function setBomArchived(formData: FormData) {
+  const bomId = formData.get("bom_id")?.toString() ?? "";
+  if (!bomId) return;
+
+  const context = await getServerTenantContext();
+  if (!context) return;
+  const { supabase, tenantId } = context;
+
+  const { data: bom } = await supabase
+    .from("product_bom")
+    .select("id,variant_id")
+    .eq("tenant_id", tenantId)
+    .eq("id", bomId)
+    .maybeSingle();
+  if (!bom?.variant_id) return;
+
+  await supabase
+    .from("product_bom")
+    .update({ status: "archived", is_active: false })
+    .eq("tenant_id", tenantId)
+    .eq("id", bom.id);
+
+  revalidatePath("/app/bom");
+  revalidatePath("/app");
+  revalidatePath(`/app/products/variants/${bom.variant_id}`);
+}
+
 export async function createBomComponentLine(
   _prevState: BomState,
   formData: FormData

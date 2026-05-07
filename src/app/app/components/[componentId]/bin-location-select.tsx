@@ -48,11 +48,7 @@ export function BinLocationSelect({
   }
 
   const filteredSl = subLocations.filter((s) => s.warehouse_id === whId);
-  const filteredAisles = aisles.filter((a) => {
-    if (a.warehouse_id !== whId) return false;
-    if (slId) return a.sub_location_id === slId || a.sub_location_id === null;
-    return true;
-  });
+  const filteredAisles = slId ? aisles.filter((a) => a.sub_location_id === slId) : [];
   const filteredBays = bays.filter((b) => b.aisle_id === aisleId);
 
   const currentWh = warehouses.find((w) => w.id === whId);
@@ -63,7 +59,7 @@ export function BinLocationSelect({
   const assignedCode = shortCode(bayId || aisleId || slId || whId || null);
 
   return (
-    <form action={formAction}>
+    <form action={formAction} className={styles.binForm}>
       <input type="hidden" name="component_id" value={componentId} />
       <input type="hidden" name="bin_sub_location_id" value={slId} />
       <input type="hidden" name="bin_aisle_id" value={aisleId} />
@@ -88,7 +84,7 @@ export function BinLocationSelect({
             className={styles.binInput}
             value={slId}
             disabled={!whId}
-            onChange={(e) => setSlId(e.target.value)}
+            onChange={(e) => { setSlId(e.target.value); setAisleId(""); setBayId(""); }}
           >
             <option value="">— None —</option>
             {filteredSl.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
@@ -100,7 +96,7 @@ export function BinLocationSelect({
           <select
             className={styles.binInput}
             value={aisleId}
-            disabled={!whId}
+            disabled={!slId}
             onChange={(e) => { setAisleId(e.target.value); setBayId(""); }}
           >
             <option value="">— None —</option>
@@ -132,19 +128,15 @@ export function BinLocationSelect({
         </div>
       )}
 
-      <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
+      <div className={styles.binActions}>
         <button type="submit" className={styles.binSaveBtn}>Save location</button>
         {(whId || slId || aisleId || bayId) && (
-          <button
-            type="button"
-            className={styles.binClearBtn}
-            onClick={handleClear}
-          >
+          <button type="button" className={styles.binClearBtn} onClick={handleClear}>
             Clear
           </button>
         )}
       </div>
-      {state?.error && <p style={{ color: "#ef4444", fontSize: 13, marginTop: 6 }}>{state.error}</p>}
+      {state?.error && <p className={styles.locationTabDesc} style={{ color: "var(--danger)" }}>{state.error}</p>}
     </form>
   );
 }

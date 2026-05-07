@@ -24,6 +24,12 @@ function shortCode(id: string) {
   return id.replace(/-/g, "").slice(-6).toUpperCase();
 }
 
+function toggle(set: Set<string>, id: string): Set<string> {
+  const next = new Set(set);
+  if (next.has(id)) next.delete(id); else next.add(id);
+  return next;
+}
+
 function InlineForm({ action, fields, onDone }: {
   action: (fd: FormData) => Promise<unknown>;
   fields: React.ReactNode;
@@ -106,15 +112,16 @@ function SimpleDeleteButton({ id, action }: {
 export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
   const [addingWh, setAddingWh] = useState(false);
   const [editingWh, setEditingWh] = useState<string | null>(null);
-  const [addingSl, setAddingSl] = useState<string | null>(null);
-  const [editingSl, setEditingSl] = useState<string | null>(null);
-  const [addingAisle, setAddingAisle] = useState<string | null>(null);
+  const [addingSl, setAddingSl] = useState<string | null>(null);    // warehouse id
+  const [editingSl, setEditingSl] = useState<string | null>(null);  // sub-location id
+  const [addingAisle, setAddingAisle] = useState<string | null>(null); // sub-location id
   const [editingAisle, setEditingAisle] = useState<string | null>(null);
   const [addingBay, setAddingBay] = useState<string | null>(null);
   const [editingBay, setEditingBay] = useState<string | null>(null);
-  const [barcode, setBarcode] = useState<{
-    id: string; type: string; name: string; path: string;
-  } | null>(null);
+  const [barcode, setBarcode] = useState<{ id: string; type: string; name: string; path: string } | null>(null);
+  const [collapsedWh, setCollapsedWh] = useState<Set<string>>(new Set());
+  const [collapsedSl, setCollapsedSl] = useState<Set<string>>(new Set());
+  const [collapsedAisle, setCollapsedAisle] = useState<Set<string>>(new Set());
 
   return (
     <div>
@@ -127,14 +134,24 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
           onClose={() => setBarcode(null)}
         />
       )}
+
       {warehouses.map((wh) => {
-        const subLocMap = new Map(wh.sub_locations.map((s) => [s.id, s.name]));
-        const aisles = [...wh.aisles].sort((a, b) => a.name.localeCompare(b.name));
+        const whCollapsed = collapsedWh.has(wh.id);
         const subLocs = [...wh.sub_locations].sort((a, b) => a.name.localeCompare(b.name));
+
+        // Group aisles by sub-location
+        const aislesBySl = new Map<string, Aisle[]>();
+        for (const aisle of wh.aisles) {
+          if (!aisle.sub_location_id) continue;
+          const arr = aislesBySl.get(aisle.sub_location_id) ?? [];
+          arr.push(aisle);
+          aislesBySl.set(aisle.sub_location_id, arr);
+        }
 
         return (
           <div key={wh.id} className={styles.warehouseBlock}>
-            {/* Warehouse row */}
+
+            {/* ── Warehouse row ── */}
             {editingWh === wh.id ? (
               <div className={styles.warehouseRow}>
                 <InlineForm action={editWarehouse} onDone={() => setEditingWh(null)} fields={<>
@@ -144,133 +161,170 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
               </div>
             ) : (
               <div className={styles.warehouseRow}>
-                <span className={styles.typeTag}>Warehouse</span>
+                <button
+                  className={styles.collapseBtn}
+                  onClick={() => setCollapsedWh(toggle(collapsedWh, wh.id))}
+                  aria-label={whCollapsed ? "Expand warehouse" : "Collapse warehouse"}
+                >
+                  {whCollapsed ? "▶" : "▼"}
+                </button>
+                <span className={styles.levelTagWh}>Warehouse</span>
                 <span className={styles.warehouseName}>{wh.name}</span>
-                <span className={styles.countTag}>{subLocs.length} sub-loc</span>
-                <span className={styles.countTag}>{aisles.length} aisles</span>
                 <span className={styles.shortCode}>{shortCode(wh.id)}</span>
-                <button className={styles.btnIcon} onClick={() => setAddingSl(wh.id)}>⊕ Sub-loc</button>
-                <button className={styles.btnIcon} onClick={() => setAddingAisle(wh.id)}>⊕ Aisle</button>
+                <button className={styles.btnIcon} onClick={() => { setAddingSl(wh.id); setCollapsedWh(s => { const n = new Set(s); n.delete(wh.id); return n; }); }}>⊕ Sub-loc</button>
                 <button className={styles.btnIcon} onClick={() => setBarcode({ id: wh.id, type: "Warehouse", name: wh.name, path: wh.name })}>▦ Barcode</button>
                 <button className={styles.btnIcon} onClick={() => setEditingWh(wh.id)}>✎ Edit</button>
               </div>
             )}
 
-            {/* Add sub-location form */}
-            {addingSl === wh.id && (
-              <div className={styles.subLocRow}>
-                <InlineForm action={addSubLocation} onDone={() => setAddingSl(null)} fields={<>
-                  <input type="hidden" name="warehouse_id" value={wh.id} />
-                  <input name="name" placeholder="Sub-location name" className={styles.inlineInput} autoFocus />
-                </>} />
-              </div>
-            )}
+            {/* ── Warehouse children ── */}
+            {!whCollapsed && (
+              <div className={styles.warehouseChildren}>
 
-            {/* Sub-location rows */}
-            {subLocs.map((sl) => (
-              <div key={sl.id} className={styles.subLocRow}>
-                {editingSl === sl.id ? (
-                  <InlineForm action={editSubLocation} onDone={() => setEditingSl(null)} fields={<>
-                    <input type="hidden" name="id" value={sl.id} />
-                    <input name="name" defaultValue={sl.name} className={styles.inlineInput} autoFocus />
-                  </>} />
-                ) : (
-                  <>
-                    <span className={styles.indent}>└</span>
-                    <span className={styles.typeTag}>Sub-loc</span>
-                    <span className={styles.entityName}>{sl.name}</span>
-                    <span className={styles.shortCode}>{shortCode(sl.id)}</span>
-                    <button className={styles.btnIcon} onClick={() => setBarcode({ id: sl.id, type: "Sub-location", name: sl.name, path: `${wh.name} · ${sl.name}` })}>▦ Barcode</button>
-                    <button className={styles.btnIcon} onClick={() => setEditingSl(sl.id)}>✎ Edit</button>
-                    <SimpleDeleteButton id={sl.id} action={deleteSubLocation} />
-                  </>
+                {/* Add sub-location form */}
+                {addingSl === wh.id && (
+                  <div className={styles.addSlRow}>
+                    <InlineForm action={addSubLocation} onDone={() => setAddingSl(null)} fields={<>
+                      <input type="hidden" name="warehouse_id" value={wh.id} />
+                      <input name="name" placeholder="Sub-location name" className={styles.inlineInput} autoFocus />
+                    </>} />
+                  </div>
                 )}
-              </div>
-            ))}
 
-            {/* Add aisle form */}
-            {addingAisle === wh.id && (
-              <div className={styles.aisleRow}>
-                <InlineForm action={addAisle} onDone={() => setAddingAisle(null)} fields={<>
-                  <input type="hidden" name="warehouse_id" value={wh.id} />
-                  <input name="name" placeholder="Aisle name" className={styles.inlineInput} autoFocus />
-                  <select name="sub_location_id" className={styles.inlineSelect}>
-                    <option value="">— No sub-location —</option>
-                    {subLocs.map((sl) => <option key={sl.id} value={sl.id}>{sl.name}</option>)}
-                  </select>
-                </>} />
-              </div>
-            )}
+                {subLocs.length === 0 && addingSl !== wh.id && (
+                  <p className={styles.emptyHint}>No sub-locations yet — add one to organise aisles.</p>
+                )}
 
-            {/* Aisle rows */}
-            {aisles.map((aisle) => {
-              const bays = [...(aisle.bays ?? [])].sort((a, b) => a.name.localeCompare(b.name));
-              const slName = aisle.sub_location_id ? subLocMap.get(aisle.sub_location_id) : null;
-              return (
-                <div key={aisle.id}>
-                  {editingAisle === aisle.id ? (
-                    <div className={styles.aisleRow}>
-                      <InlineForm action={editAisle} onDone={() => setEditingAisle(null)} fields={<>
-                        <input type="hidden" name="id" value={aisle.id} />
-                        <input name="name" defaultValue={aisle.name} className={styles.inlineInput} autoFocus />
-                        <select name="sub_location_id" className={styles.inlineSelect} defaultValue={aisle.sub_location_id ?? ""}>
-                          <option value="">— No sub-location —</option>
-                          {subLocs.map((sl) => <option key={sl.id} value={sl.id}>{sl.name}</option>)}
-                        </select>
-                      </>} />
-                    </div>
-                  ) : (
-                    <div className={styles.aisleRow}>
-                      <span className={styles.indent}>└</span>
-                      <span className={styles.typeTag}>Aisle</span>
-                      <span className={styles.entityName}>
-                        {aisle.name}
-                        {slName && <span className={styles.slTag}> · {slName}</span>}
-                        <span className={styles.bayCount}> · {bays.length} bays</span>
-                      </span>
-                      <span className={styles.shortCode}>{shortCode(aisle.id)}</span>
-                      <button className={styles.btnIcon} onClick={() => setBarcode({ id: aisle.id, type: "Aisle", name: aisle.name, path: `${wh.name} · ${aisle.name}` })}>▦ Barcode</button>
-                      <button className={styles.btnIcon} onClick={() => setAddingBay(aisle.id)}>⊕ Bay</button>
-                      <button className={styles.btnIcon} onClick={() => setEditingAisle(aisle.id)}>✎ Edit</button>
-                      <AisleDeleteButton aisleId={aisle.id} />
-                    </div>
-                  )}
+                {/* ── Sub-location groups ── */}
+                {subLocs.map((sl) => {
+                  const slCollapsed = collapsedSl.has(sl.id);
+                  const aisles = (aislesBySl.get(sl.id) ?? []).sort((a, b) => a.name.localeCompare(b.name));
 
-                  {/* Add bay form */}
-                  {addingBay === aisle.id && (
-                    <div className={styles.bayRow}>
-                      <InlineForm action={addBay} onDone={() => setAddingBay(null)} fields={<>
-                        <input type="hidden" name="aisle_id" value={aisle.id} />
-                        <input name="name" placeholder="Bay name" className={styles.inlineInput} autoFocus />
-                      </>} />
-                    </div>
-                  )}
+                  return (
+                    <div key={sl.id} className={styles.subLocGroup}>
 
-                  {/* Bay rows */}
-                  {bays.map((bay) => (
-                    <div key={bay.id} className={styles.bayRow}>
-                      {editingBay === bay.id ? (
-                        <InlineForm action={editBay} onDone={() => setEditingBay(null)} fields={<>
-                          <input type="hidden" name="id" value={bay.id} />
-                          <input name="name" defaultValue={bay.name} className={styles.inlineInput} autoFocus />
-                        </>} />
+                      {/* Sub-location row */}
+                      {editingSl === sl.id ? (
+                        <div className={styles.subLocRow}>
+                          <InlineForm action={editSubLocation} onDone={() => setEditingSl(null)} fields={<>
+                            <input type="hidden" name="id" value={sl.id} />
+                            <input name="name" defaultValue={sl.name} className={styles.inlineInput} autoFocus />
+                          </>} />
+                        </div>
                       ) : (
-                        <>
-                          <span className={styles.indent2}>└</span>
-                          <span className={styles.typeTag}>Bay</span>
-                          <span className={styles.entityName}>{bay.name}</span>
-                          <span className={styles.pathHint}>{aisle.name} · {bay.name}</span>
-                          <span className={styles.shortCode}>{shortCode(bay.id)}</span>
-                          <button className={styles.btnIcon} onClick={() => setBarcode({ id: bay.id, type: "Bay", name: bay.name, path: `${wh.name} · ${aisle.name} · ${bay.name}` })}>▦ Barcode</button>
-                          <button className={styles.btnIcon} onClick={() => setEditingBay(bay.id)}>✎ Edit</button>
-                          <SimpleDeleteButton id={bay.id} action={deleteBay} />
-                        </>
+                        <div className={styles.subLocRow}>
+                          <button
+                            className={styles.collapseBtn}
+                            onClick={() => setCollapsedSl(toggle(collapsedSl, sl.id))}
+                            aria-label={slCollapsed ? "Expand sub-location" : "Collapse sub-location"}
+                          >
+                            {slCollapsed ? "▶" : "▼"}
+                          </button>
+                          <span className={styles.levelTagSl}>Sub-loc</span>
+                          <span className={styles.entityName}>{sl.name}</span>
+                          <span className={styles.countTag}>{aisles.length} aisle{aisles.length !== 1 ? "s" : ""}</span>
+                          <span className={styles.shortCode}>{shortCode(sl.id)}</span>
+                          <button className={styles.btnIcon} onClick={() => { setAddingAisle(sl.id); setCollapsedSl(s => { const n = new Set(s); n.delete(sl.id); return n; }); }}>⊕ Aisle</button>
+                          <button className={styles.btnIcon} onClick={() => setBarcode({ id: sl.id, type: "Sub-location", name: sl.name, path: `${wh.name} · ${sl.name}` })}>▦ Barcode</button>
+                          <button className={styles.btnIcon} onClick={() => setEditingSl(sl.id)}>✎ Edit</button>
+                          <SimpleDeleteButton id={sl.id} action={deleteSubLocation} />
+                        </div>
+                      )}
+
+                      {/* Sub-location children (aisles) */}
+                      {!slCollapsed && (
+                        <div className={styles.slChildren}>
+
+                          {/* Add aisle form — sub_location_id is implicit */}
+                          {addingAisle === sl.id && (
+                            <div className={styles.aisleRow}>
+                              <InlineForm action={addAisle} onDone={() => setAddingAisle(null)} fields={<>
+                                <input type="hidden" name="warehouse_id" value={wh.id} />
+                                <input type="hidden" name="sub_location_id" value={sl.id} />
+                                <input name="name" placeholder="Aisle name" className={styles.inlineInput} autoFocus />
+                              </>} />
+                            </div>
+                          )}
+
+                          {aisles.length === 0 && addingAisle !== sl.id && (
+                            <p className={styles.emptyHintSl}>No aisles — click ⊕ Aisle to add one.</p>
+                          )}
+
+                          {/* ── Aisle rows ── */}
+                          {aisles.map((aisle) => {
+                            const bays = [...(aisle.bays ?? [])].sort((a, b) => a.name.localeCompare(b.name));
+                            const aisleCollapsed = collapsedAisle.has(aisle.id);
+
+                            return (
+                              <div key={aisle.id}>
+                                {editingAisle === aisle.id ? (
+                                  <div className={styles.aisleRow}>
+                                    <InlineForm action={editAisle} onDone={() => setEditingAisle(null)} fields={<>
+                                      <input type="hidden" name="id" value={aisle.id} />
+                                      <input type="hidden" name="sub_location_id" value={sl.id} />
+                                      <input name="name" defaultValue={aisle.name} className={styles.inlineInput} autoFocus />
+                                    </>} />
+                                  </div>
+                                ) : (
+                                  <div className={styles.aisleRow}>
+                                    <button
+                                      className={styles.collapseBtn}
+                                      onClick={() => setCollapsedAisle(toggle(collapsedAisle, aisle.id))}
+                                      aria-label={aisleCollapsed ? "Expand aisle" : "Collapse aisle"}
+                                    >
+                                      {aisleCollapsed ? "▶" : "▼"}
+                                    </button>
+                                    <span className={styles.levelTagAisle}>Aisle</span>
+                                    <span className={styles.entityName}>{aisle.name}</span>
+                                    <span className={styles.countTag}>{bays.length} bay{bays.length !== 1 ? "s" : ""}</span>
+                                    <span className={styles.shortCode}>{shortCode(aisle.id)}</span>
+                                    <button className={styles.btnIcon} onClick={() => { setAddingBay(aisle.id); setCollapsedAisle(s => { const n = new Set(s); n.delete(aisle.id); return n; }); }}>⊕ Bay</button>
+                                    <button className={styles.btnIcon} onClick={() => setBarcode({ id: aisle.id, type: "Aisle", name: aisle.name, path: `${wh.name} · ${sl.name} · ${aisle.name}` })}>▦ Barcode</button>
+                                    <button className={styles.btnIcon} onClick={() => setEditingAisle(aisle.id)}>✎ Edit</button>
+                                    <AisleDeleteButton aisleId={aisle.id} />
+                                  </div>
+                                )}
+
+                                {/* Add bay form and bay rows — hidden when aisle is collapsed */}
+                                {!aisleCollapsed && addingBay === aisle.id && (
+                                  <div className={styles.bayRow}>
+                                    <InlineForm action={addBay} onDone={() => setAddingBay(null)} fields={<>
+                                      <input type="hidden" name="aisle_id" value={aisle.id} />
+                                      <input name="name" placeholder="Bay name" className={styles.inlineInput} autoFocus />
+                                    </>} />
+                                  </div>
+                                )}
+
+                                {/* Bay rows */}
+                                {!aisleCollapsed && bays.map((bay) => (
+                                  <div key={bay.id} className={styles.bayRow}>
+                                    {editingBay === bay.id ? (
+                                      <InlineForm action={editBay} onDone={() => setEditingBay(null)} fields={<>
+                                        <input type="hidden" name="id" value={bay.id} />
+                                        <input name="name" defaultValue={bay.name} className={styles.inlineInput} autoFocus />
+                                      </>} />
+                                    ) : (
+                                      <>
+                                        <span className={styles.levelTagBay}>Bay</span>
+                                        <span className={styles.entityName}>{bay.name}</span>
+                                        <span className={styles.shortCode}>{shortCode(bay.id)}</span>
+                                        <button className={styles.btnIcon} onClick={() => setBarcode({ id: bay.id, type: "Bay", name: bay.name, path: `${wh.name} · ${sl.name} · ${aisle.name} · ${bay.name}` })}>▦ Barcode</button>
+                                        <button className={styles.btnIcon} onClick={() => setEditingBay(bay.id)}>✎ Edit</button>
+                                        <SimpleDeleteButton id={bay.id} action={deleteBay} />
+                                      </>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            );
+                          })}
+                        </div>
                       )}
                     </div>
-                  ))}
-                </div>
-              );
-            })}
+                  );
+                })}
+              </div>
+            )}
           </div>
         );
       })}

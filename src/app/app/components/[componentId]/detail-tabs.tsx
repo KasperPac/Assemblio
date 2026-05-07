@@ -3,6 +3,7 @@
 import { useState } from "react";
 import styles from "./component-detail.module.css";
 import { togglePreferred, linkComponent } from "@/app/app/suppliers/[supplierId]/actions";
+import { BinLocationSelect } from "./bin-location-select";
 
 type StatCard = {
   label: string;
@@ -50,6 +51,11 @@ type SupplierCatalogItem = {
   avgActualDays: number | null;
 };
 
+type Warehouse = { id: string; name: string };
+type SubLocation = { id: string; name: string; warehouse_id: string };
+type Aisle = { id: string; name: string; warehouse_id: string; sub_location_id: string | null };
+type Bay = { id: string; name: string; aisle_id: string };
+
 type Props = {
   stats: StatCard[];
   movements: MovementRow[];
@@ -58,12 +64,26 @@ type Props = {
   supplierCatalog: SupplierCatalogItem[];
   allSuppliers: Array<{ id: string; name: string }>;
   componentId: string;
+  isAdmin: boolean;
+  warehouses: Warehouse[];
+  subLocations: SubLocation[];
+  aisles: Aisle[];
+  bays: Bay[];
+  currentWarehouseId: string | null;
+  currentSubLocationId: string | null;
+  currentAisleId: string | null;
+  currentBayId: string | null;
 };
 
-const tabs = ["Overview", "Movements", "BOM Usage", "Suppliers"] as const;
-type Tab = (typeof tabs)[number];
+type Tab = "Overview" | "Movements" | "BOM Usage" | "Suppliers" | "Location";
+const baseTabs: Tab[] = ["Overview", "Movements", "BOM Usage", "Suppliers"];
 
-export default function DetailTabs({ stats, movements, bomUsage, recentReceipts, supplierCatalog, allSuppliers, componentId }: Props) {
+export default function DetailTabs({
+  stats, movements, bomUsage, recentReceipts, supplierCatalog, allSuppliers, componentId,
+  isAdmin, warehouses, subLocations, aisles, bays,
+  currentWarehouseId, currentSubLocationId, currentAisleId, currentBayId,
+}: Props) {
+  const tabs: Tab[] = isAdmin ? [...baseTabs, "Location"] : baseTabs;
   const [active, setActive] = useState<Tab>("Overview");
 
   return (
@@ -228,6 +248,23 @@ export default function DetailTabs({ stats, movements, bomUsage, recentReceipts,
               </div>
             </>
           )}
+        </div>
+      )}
+      {active === "Location" && isAdmin && (
+        <div className={styles.tabContent}>
+          <div className={styles.binCard}>
+            <BinLocationSelect
+              componentId={componentId}
+              warehouses={warehouses}
+              subLocations={subLocations}
+              aisles={aisles}
+              bays={bays}
+              currentWarehouseId={currentWarehouseId}
+              currentSubLocationId={currentSubLocationId}
+              currentAisleId={currentAisleId}
+              currentBayId={currentBayId}
+            />
+          </div>
         </div>
       )}
     </div>

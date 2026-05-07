@@ -1,130 +1,383 @@
-.page { padding: 24px; max-width: 860px; }
-.header { margin-bottom: 24px; }
-.title { font-size: 22px; font-weight: 700; margin: 0 0 4px; }
-.subtitle { font-size: 14px; color: var(--muted); margin: 0; }
-.error { color: var(--danger, #ef4444); }
-.empty { color: var(--muted); font-size: 14px; }
+.page { display: flex; flex-direction: column; gap: 18px; }
+.error { color: var(--danger); font-size: 0.9rem; }
 
-.warehouseBlock { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; overflow: hidden; }
+/* ── Warehouse blocks ─── */
+
+.warehouseBlock {
+  border: 1px solid var(--stroke-card);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--bg-card);
+}
 
 .warehouseRow {
-  display: flex; align-items: center; gap: 10px;
-  padding: 14px 16px; background: var(--surface-2);
-  border-bottom: 1px solid var(--border);
-}
-.subLocRow, .aisleRow {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 16px 10px 28px;
-  border-bottom: 1px solid var(--border);
-}
-.bayRow {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 16px 8px 48px;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--bg-card-alt);
+  border-bottom: 1px solid var(--stroke);
 }
 
-.typeTag {
-  font-size: 11px; text-transform: uppercase; letter-spacing: .05em;
-  color: var(--muted); width: 68px; flex-shrink: 0;
+.warehouseChildren { /* structural wrapper for sub-location groups */ }
+
+.subLocGroup { /* structural wrapper per sub-location */ }
+
+.subLocRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px 9px 28px;
+  border-bottom: 1px solid var(--stroke);
 }
-.warehouseName { font-size: 15px; font-weight: 600; flex: 1; }
-.entityName { font-size: 14px; font-weight: 500; flex: 1; }
-.slTag { font-weight: 400; color: var(--muted); }
-.bayCount { font-weight: 400; color: var(--muted); font-size: 12px; }
-.pathHint { font-size: 11px; color: var(--muted); }
-.countTag {
-  font-size: 11px; background: #dbeafe; color: #1d4ed8;
-  padding: 2px 8px; border-radius: 4px;
+
+/* Aisles + bays sit inside this container; the left border is the hierarchy connector */
+.slChildren {
+  border-left: 2px solid color-mix(in srgb, var(--stroke) 50%, transparent);
+  margin-left: 32px;
 }
-.shortCode {
-  font-family: monospace; font-size: 13px; font-weight: 600;
-  color: var(--muted); letter-spacing: .1em; margin-left: auto;
+
+.addSlRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px 9px 28px;
+  border-bottom: 1px solid var(--stroke);
 }
-.indent { color: var(--muted); font-size: 13px; width: 12px; flex-shrink: 0; }
-.indent2 { color: var(--muted); font-size: 13px; width: 12px; flex-shrink: 0; }
-.addWarehouseRow {
-  padding: 12px 16px;
-  border-top: 2px dashed var(--border);
-  display: flex; align-items: center; gap: 12px;
+
+.aisleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px 9px 12px;   /* total left from block edge: 32 + 12 = 44px */
+  border-bottom: 1px solid var(--stroke);
 }
-.addHint { font-size: 12px; color: var(--muted); }
+
+.bayRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px 8px 28px;  /* total left from block edge: 32 + 28 = 60px */
+  border-bottom: 1px solid var(--stroke);
+  background: var(--bg-card-alt);
+}
 
 .warehouseRow:last-child,
 .subLocRow:last-child,
 .aisleRow:last-child,
 .bayRow:last-child { border-bottom: none; }
 
-.btnIcon {
-  font-size: 12px; padding: 3px 10px;
-  border: 1px solid var(--border); border-radius: 4px;
-  background: var(--surface); cursor: pointer; white-space: nowrap;
-}
-.btnIcon:hover { background: var(--surface-2); }
-.btnDelete {
-  font-size: 12px; padding: 3px 10px;
-  border: 1px solid #fca5a5; border-radius: 4px;
-  background: var(--surface); color: #ef4444; cursor: pointer;
-}
-.btnDelete:hover { background: #fee2e2; }
-.btnSave {
-  font-size: 12px; padding: 4px 12px;
-  border: 1px solid var(--primary, #3b82f6); border-radius: 4px;
-  background: var(--primary, #3b82f6); color: white; cursor: pointer;
-}
-.btnCancel {
-  font-size: 12px; padding: 4px 10px;
-  border: 1px solid var(--border); border-radius: 4px;
-  background: var(--surface); cursor: pointer;
-}
-.btnAddWarehouse {
-  font-size: 13px; padding: 6px 16px;
-  border: 1px solid var(--border); border-radius: 6px;
-  background: var(--surface); cursor: pointer;
-}
-.inlineForm { display: flex; align-items: center; gap: 8px; flex: 1; }
-.inlineInput {
-  font-size: 13px; padding: 4px 8px;
-  border: 1px solid var(--border); border-radius: 4px;
-  background: var(--surface); flex: 1; min-width: 0;
-}
-.inlineSelect {
-  font-size: 13px; padding: 4px 8px;
-  border: 1px solid var(--border); border-radius: 4px;
-  background: var(--surface);
-}
-.formError { font-size: 12px; color: #ef4444; }
-.deleteError { font-size: 12px; color: #ef4444; margin-left: 6px; }
+/* ── Collapse button ─── */
 
-/* ── Barcode modal ─────────────────────────────────────────── */
+.collapseBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-faint);
+  font-size: 10px;
+  padding: 2px 4px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.collapseBtn:hover { color: var(--ink-strong); }
+
+/* ── Level tags — color-coded per hierarchy depth ─── */
+
+.levelTagWh, .levelTagSl, .levelTagAisle, .levelTagBay {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.levelTagWh {
+  background: color-mix(in srgb, var(--brand-1) 15%, transparent);
+  color: var(--brand-1);
+}
+
+.levelTagSl {
+  background: color-mix(in srgb, var(--brand-2) 15%, transparent);
+  color: var(--brand-2);
+}
+
+.levelTagAisle {
+  background: color-mix(in srgb, var(--ok) 15%, transparent);
+  color: var(--ok);
+}
+
+.levelTagBay {
+  background: color-mix(in srgb, var(--ink-muted) 18%, transparent);
+  color: var(--ink-muted);
+}
+
+/* ── Labels ─── */
+
+.warehouseName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-strong);
+  flex: 1;
+}
+
+.entityName {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-strong);
+  flex: 1;
+}
+
+.countTag {
+  font-size: 11px;
+  background: var(--brand-dim);
+  color: var(--brand-1);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.shortCode {
+  font-family: monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  letter-spacing: 0.1em;
+  margin-left: auto;
+}
+
+/* ── Empty state hints ─── */
+
+.emptyHint {
+  padding: 12px 28px;
+  font-size: 12px;
+  color: var(--ink-faint);
+  font-style: italic;
+  border-bottom: 1px solid var(--stroke);
+}
+
+.emptyHintSl {
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--ink-faint);
+  font-style: italic;
+  border-bottom: 1px solid var(--stroke);
+}
+
+/* ── Add warehouse row ─── */
+
+.addWarehouseRow {
+  padding: 12px 16px;
+  border: 1px dashed var(--stroke);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+}
+
+.addHint { font-size: 12px; color: var(--ink-faint); }
+
+/* ── Buttons ─── */
+
+.btnIcon {
+  font-size: 12px;
+  padding: 4px 10px;
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink-muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btnIcon:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink-strong);
+  border-color: var(--stroke-card);
+}
+
+.btnDelete {
+  font-size: 12px;
+  padding: 4px 10px;
+  border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--danger);
+  cursor: pointer;
+}
+
+.btnDelete:hover {
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+}
+
+.btnSave {
+  font-size: 12px;
+  padding: 4px 14px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--brand-2) 72%, #142131), color-mix(in srgb, var(--brand-1) 88%, #0e1624));
+  color: #f8fbff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btnCancel {
+  font-size: 12px;
+  padding: 4px 10px;
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.btnAddWarehouse {
+  font-size: 13px;
+  padding: 7px 16px;
+  border: 1px solid var(--stroke);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-strong);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnAddWarehouse:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* ── Inline forms ─── */
+
+.inlineForm { display: flex; align-items: center; gap: 8px; flex: 1; }
+
+.inlineInput {
+  font-size: 13px;
+  padding: 5px 10px;
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  background: var(--bg-input);
+  color: var(--ink-strong);
+  flex: 1;
+  min-width: 0;
+}
+
+.inlineSelect {
+  font-size: 13px;
+  padding: 5px 10px;
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  background: var(--bg-input);
+  color: var(--ink-strong);
+}
+
+.formError { font-size: 12px; color: var(--danger); }
+.deleteError { font-size: 12px; color: var(--danger); margin-left: 6px; }
+
+/* ── Barcode modal ─── */
+
 .modalOverlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,.45);
-  display: flex; align-items: center; justify-content: center; z-index: 100;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
 }
+
 .modal {
-  background: var(--surface, #fff); border-radius: 10px;
-  padding: 28px 32px; min-width: 320px; max-width: 420px;
-  position: relative; box-shadow: 0 8px 32px rgba(0,0,0,.18);
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
+  border-radius: 16px;
+  padding: 28px 32px;
+  min-width: 320px;
+  max-width: 420px;
+  position: relative;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
 }
+
 .modalClose {
-  position: absolute; top: 12px; right: 14px;
-  background: none; border: none; font-size: 16px; cursor: pointer; color: var(--muted);
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--ink-muted);
+  line-height: 1;
+  padding: 2px 4px;
 }
-.modalType { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 4px; }
-.modalName { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
-.modalPath { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
-.barcodeBox { text-align: center; background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin-bottom: 16px; }
-.shortCode2 { font-size: 24px; font-weight: 700; font-family: monospace; letter-spacing: .2em; margin-top: 8px; }
-.shortCodeLabel { font-size: 11px; color: var(--muted); }
+
+.modalClose:hover { color: var(--ink-strong); }
+
+.modalType {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+  margin-bottom: 4px;
+}
+
+.modalName {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink-strong);
+  margin-bottom: 4px;
+}
+
+.modalPath {
+  font-size: 13px;
+  color: var(--ink-muted);
+  margin-bottom: 20px;
+}
+
+.barcodeBox {
+  text-align: center;
+  background: #fff;
+  border: 1px solid var(--stroke-card);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.shortCode2 {
+  font-size: 22px;
+  font-weight: 700;
+  font-family: monospace;
+  letter-spacing: 0.2em;
+  margin-top: 8px;
+  color: #111;
+}
+
+.shortCodeLabel {
+  font-size: 11px;
+  color: #888;
+  margin-top: 2px;
+}
+
 .modalActions { display: flex; gap: 10px; justify-content: center; }
 
-/* Print label — hidden on screen, shown only on print */
+/* Print label — hidden on screen, shown only when printing a barcode */
 .printLabel { display: none; }
+
 @media print {
   body * { visibility: hidden !important; }
-  .printLabel { display: block !important; visibility: visible !important; position: fixed; top: 0; left: 0; font-family: sans-serif; padding: 12px; width: 60mm; }
+  .printLabel {
+    display: block !important;
+    visibility: visible !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    font-family: sans-serif;
+    padding: 12px;
+    width: 60mm;
+  }
   .printLabel * { visibility: visible !important; }
   .printPath { font-size: 9px; color: #6b7280; margin-bottom: 4px; }
   .printName { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-  .printCode { font-size: 13px; font-weight: 700; font-family: monospace; letter-spacing: .2em; margin-top: 4px; }
+  .printCode { font-size: 13px; font-weight: 700; font-family: monospace; letter-spacing: 0.2em; margin-top: 4px; }
 }
