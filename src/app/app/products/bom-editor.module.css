@@ -1,0 +1,195 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid #2a2a2a;
+  background: #111;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.toolbarLeft { display: flex; align-items: center; gap: 10px; }
+.toolbarRight { display: flex; align-items: center; gap: 8px; }
+
+.badge {
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.badgeActive { background: #4caf5022; color: #4caf50; border: 1px solid #4caf5044; }
+.badgeDraft { background: #f59e0b22; color: #f59e0b; border: 1px solid #f59e0b44; }
+
+.versionInfo { color: #666; font-size: 13px; }
+
+.btnPrimary {
+  background: #4a9eff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btnSecondary {
+  background: none;
+  border: 1px solid #333;
+  color: #aaa;
+  border-radius: 5px;
+  padding: 5px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.tableWrapper { overflow-x: auto; }
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table th {
+  padding: 7px 12px;
+  text-align: left;
+  font-size: 10px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 1px solid #1e1e1e;
+  background: #111;
+  font-weight: 400;
+}
+
+.table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #1a1a1a;
+  color: #ddd;
+  vertical-align: middle;
+}
+
+.dimText { color: #666; font-size: 12px; }
+
+.noCostBadge {
+  margin-left: 6px;
+  background: #2a0a0a;
+  color: #e53e3e;
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-size: 10px;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stepper button {
+  width: 24px;
+  height: 24px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.stepperInput {
+  width: 44px;
+  text-align: center;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #eee;
+  font-size: 13px;
+  padding: 3px 4px;
+}
+
+.yieldInput {
+  width: 52px;
+  text-align: center;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #eee;
+  font-size: 13px;
+  padding: 3px 4px;
+}
+
+.yieldLow { border-color: #f59e0b44; color: #f59e0b; }
+
+.scrapNote {
+  font-size: 10px;
+  color: #f59e0b;
+  margin-top: 2px;
+}
+
+.removeBtn {
+  background: none;
+  border: none;
+  color: #444;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 4px;
+}
+.removeBtn:hover { color: #e53e3e; }
+
+.emptyRow {
+  text-align: center;
+  color: #555;
+  padding: 24px;
+  font-style: italic;
+}
+
+.rollup {
+  display: flex;
+  border-top: 2px solid #2a2a2a;
+  background: #0d1117;
+  flex-wrap: wrap;
+}
+
+.rollupCell {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px 16px;
+  border-right: 1px solid #1e1e1e;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.rollupCell:last-child { border-right: none; }
+
+.rollupLabel {
+  font-size: 10px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.rollupValue {
+  font-size: 16px;
+  font-weight: 700;
+  color: #eee;
+}
+
+.rollupSub { font-size: 10px; color: #444; }
+.marginLow { color: #e53e3e; }
+.rollupWarning { font-size: 10px; color: #f59e0b; }
