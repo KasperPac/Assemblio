@@ -153,7 +153,7 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
         .order("name"),
       supabase
         .from("component")
-        .select("id,name,sku,unit,group:group_id(name)")
+        .select("id,name,sku,unit,cost_per_unit,group:group_id(name)")
         .order("name"),
     ]);
 
@@ -180,6 +180,7 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
       sku: (c.sku as string | null) ?? null,
       unit: (c.unit as string | null) ?? null,
       group: (g as { name: string } | null)?.name ?? null,
+      cost_per_unit: (c.cost_per_unit as number | null) ?? null,
     };
   });
 

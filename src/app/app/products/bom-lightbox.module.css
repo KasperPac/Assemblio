@@ -53,6 +53,7 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .panelHeader h2 {
@@ -167,12 +168,16 @@
   font-size: 11px;
   cursor: pointer;
   text-align: center;
-  width: 100%;
 }
 
 .btnPrimary {
   background: var(--brand-1);
   color: #0b0f19;
+}
+
+.btnPrimary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btnSecondary {
@@ -294,16 +299,338 @@
   border: 1px solid var(--stroke-card);
   border-radius: 16px;
   box-shadow: 0 32px 64px rgba(0, 0, 0, 0.4);
-  width: min(820px, 94vw);
-  max-height: 88vh;
+  width: min(900px, 95vw);
+  max-height: 90vh;
   overflow: hidden;
-  padding: 24px;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
 }
 
-/* ── Component Picker ─────────────────── */
+.panelWide .panelHeader {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #1e1e1e;
+}
+
+/* ── Component Picker Layout ──────────── */
+
+.pickerLayout {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.searchRow {
+  padding: 10px 16px;
+  border-bottom: 1px solid #2a2a2a;
+  flex-shrink: 0;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 6px 10px;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 5px;
+  color: #eee;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.searchInput::placeholder {
+  color: var(--ink-faint);
+}
+
+.browsePanel {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.categorySidebar {
+  width: 150px;
+  flex-shrink: 0;
+  border-right: 1px solid #2a2a2a;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+
+.catBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 6px 12px;
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.catBtn:hover {
+  background: #1e1e1e;
+  color: #eee;
+}
+
+.catBtnActive {
+  background: #1a2332;
+  color: #4a9eff;
+}
+
+.catCount {
+  font-size: 10px;
+  color: #555;
+  background: #222;
+  border-radius: 8px;
+  padding: 1px 5px;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+.componentList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.componentRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-bottom: 1px solid #1a1a1a;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.componentRow:hover {
+  background: #161b22;
+}
+
+.componentRowSelected {
+  background: #1a2332;
+}
+
+.componentCheck {
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: var(--brand-1);
+  width: 16px;
+  height: 16px;
+}
+
+.componentInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.componentName {
+  display: block;
+  color: #eee;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.componentSku {
+  display: block;
+  font-size: 11px;
+  color: #666;
+  font-family: var(--font-plex-mono), monospace;
+}
+
+.componentUnit {
+  color: #666;
+  font-size: 12px;
+  min-width: 36px;
+  flex-shrink: 0;
+}
+
+.componentCost {
+  color: #888;
+  font-size: 12px;
+  min-width: 56px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.noCost {
+  color: #e53e3e;
+  font-size: 10px;
+  background: #2a0a0a;
+  border-radius: 3px;
+  padding: 1px 4px;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.stepper button {
+  width: 22px;
+  height: 22px;
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 3px;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+}
+
+.stepper button:hover {
+  background: #333;
+  color: #eee;
+}
+
+.stepperQty {
+  width: 38px;
+  text-align: center;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 3px;
+  color: #eee;
+  font-size: 12px;
+  padding: 2px 4px;
+}
+
+.emptyList {
+  padding: 20px 16px;
+  color: #555;
+  font-size: 13px;
+  text-align: center;
+  font-style: italic;
+}
+
+/* ── BOM Preview Table ────────────────── */
+
+.previewPanel {
+  max-height: 220px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.previewHeader {
+  padding: 5px 16px;
+  font-size: 10px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 1px solid #1e1e1e;
+  background: #111;
+  flex-shrink: 0;
+}
+
+.previewEmpty {
+  padding: 12px 16px;
+  color: #555;
+  font-size: 13px;
+  font-style: italic;
+}
+
+.previewTableWrap {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.previewTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.previewTable th {
+  padding: 4px 12px;
+  text-align: left;
+  color: #555;
+  font-weight: 400;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  border-bottom: 1px solid #1e1e1e;
+  position: sticky;
+  top: 0;
+  background: var(--bg-card);
+}
+
+.previewTable td {
+  padding: 6px 12px;
+  border-bottom: 1px solid #1a1a1a;
+  color: #aaa;
+}
+
+.removeBtn {
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0 4px;
+}
+
+.removeBtn:hover {
+  color: #e53e3e;
+}
+
+/* ── Preview Footer ───────────────────── */
+
+.previewFooter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-top: 1px solid #2a2a2a;
+  background: #0d1117;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.costTotal {
+  font-size: 13px;
+  color: #aaa;
+  flex: 1;
+}
+
+.footerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.linkBtn {
+  background: none;
+  border: none;
+  color: #4a9eff;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.footerSelect {
+  background: #111;
+  border: 1px solid #333;
+  color: #aaa;
+  border-radius: 4px;
+  padding: 3px 6px;
+  font-size: 12px;
+}
+
+/* ── Legacy picker classes (kept for compatibility) ───── */
 
 .pickerWrap {
   display: flex;
@@ -317,20 +644,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.searchInput {
-  flex: 1;
-  border: 1px solid var(--stroke);
-  border-radius: 8px;
-  padding: 8px 12px;
-  background: var(--bg-input);
-  color: var(--ink-strong);
-  font-size: 12px;
-}
-
-.searchInput::placeholder {
-  color: var(--ink-faint);
 }
 
 .selectedCount {
@@ -441,8 +754,6 @@
   font-size: 12px;
 }
 
-/* ── Notes ────────────────────────────── */
-
 .notesWrap {
   flex-shrink: 0;
 }
@@ -458,8 +769,6 @@
   font-family: inherit;
   resize: vertical;
 }
-
-/* ── Picker footer ────────────────────── */
 
 .pickerFooter {
   display: flex;
