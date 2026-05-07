@@ -150,7 +150,11 @@ export default function BomEditor({
         <div className={styles.toolbarLeft}>
           <span className={`${styles.badge} ${statusCls}`}>{statusLabel}</span>
           <span className={styles.versionInfo}>
-            v{bom.version} · {new Date(bom.created_at).toLocaleDateString("en-AU")}
+            v{bom.version} · {new Date(bom.created_at).toLocaleDateString("en-AU", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            })}
           </span>
         </div>
         <div className={styles.toolbarRight}>

@@ -1,7 +1,7 @@
 .editor {
   display: flex;
   flex-direction: column;
-  border: 1px solid #2a2a2a;
+  border: 1px solid var(--stroke-card);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -11,8 +11,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 16px;
-  border-bottom: 1px solid #2a2a2a;
-  background: #111;
+  border-bottom: 1px solid var(--stroke-card);
+  background: var(--bg-card-2);
   flex-wrap: wrap;
   gap: 8px;
 }
@@ -28,8 +28,8 @@
   width: 34px;
   height: 30px;
   background: none;
-  border: 1px solid #333;
-  color: #aaa;
+  border: 1px solid var(--stroke-strong);
+  color: var(--ink-faint);
   border-radius: 5px;
   cursor: pointer;
   font-size: 18px;
@@ -43,10 +43,10 @@
   right: 0;
   min-width: 180px;
   padding: 6px;
-  border: 1px solid #2a2a2a;
+  border: 1px solid var(--stroke-card);
   border-radius: 8px;
-  background: #111;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-md);
   z-index: 20;
 }
 
@@ -54,7 +54,7 @@
   width: 100%;
   background: none;
   border: none;
-  color: #ddd;
+  color: var(--ink-strong);
   text-align: left;
   padding: 8px 10px;
   border-radius: 6px;
@@ -64,13 +64,13 @@
 }
 
 .menuItem:hover {
-  background: #1a1a1a;
+  background: var(--bg-card-2);
 }
 
 .menuError {
   margin: 8px 16px 0;
   font-size: 12px;
-  color: #e53e3e;
+  color: var(--danger);
 }
 
 .badge {
@@ -81,14 +81,14 @@
   letter-spacing: 0.3px;
 }
 
-.badgeActive { background: #4caf5022; color: #4caf50; border: 1px solid #4caf5044; }
-.badgeDraft { background: #f59e0b22; color: #f59e0b; border: 1px solid #f59e0b44; }
+.badgeActive { background: var(--ok-dim); color: var(--ok); border: 1px solid var(--ok-dim); }
+.badgeDraft { background: var(--warning-dim); color: var(--warning); border: 1px solid var(--warning-dim); }
 
-.versionInfo { color: #666; font-size: 13px; }
+.versionInfo { color: var(--ink-muted); font-size: 13px; }
 
 .btnPrimary {
-  background: #4a9eff;
-  color: #fff;
+  background: var(--brand-1);
+  color: var(--ink-on-brand);
   border: none;
   border-radius: 5px;
   padding: 5px 14px;
@@ -100,8 +100,8 @@
 
 .btnSecondary {
   background: none;
-  border: 1px solid #333;
-  color: #aaa;
+  border: 1px solid var(--stroke-strong);
+  color: var(--ink-faint);
   border-radius: 5px;
   padding: 5px 12px;
   font-size: 13px;
@@ -121,27 +121,27 @@
   padding: 7px 12px;
   text-align: left;
   font-size: 10px;
-  color: #555;
+  color: var(--ink-muted);
   text-transform: uppercase;
   letter-spacing: 0.4px;
-  border-bottom: 1px solid #1e1e1e;
-  background: #111;
+  border-bottom: 1px solid var(--stroke);
+  background: var(--bg-card-2);
   font-weight: 400;
 }
 
 .table td {
   padding: 10px 12px;
-  border-bottom: 1px solid #1a1a1a;
-  color: #ddd;
+  border-bottom: 1px solid var(--stroke);
+  color: var(--ink-strong);
   vertical-align: middle;
 }
 
-.dimText { color: #666; font-size: 12px; }
+.dimText { color: var(--ink-muted); font-size: 12px; }
 
 .noCostBadge {
   margin-left: 6px;
-  background: #2a0a0a;
-  color: #e53e3e;
+  background: var(--danger-dim);
+  color: var(--danger);
   border-radius: 3px;
   padding: 1px 5px;
   font-size: 10px;
@@ -156,10 +156,10 @@
 .stepper button {
   width: 24px;
   height: 24px;
-  background: #1a1a1a;
-  border: 1px solid #333;
+  background: var(--bg-card-2);
+  border: 1px solid var(--stroke-strong);
   border-radius: 4px;
-  color: #aaa;
+  color: var(--ink-faint);
   cursor: pointer;
   font-size: 14px;
   font-family: inherit;
@@ -168,10 +168,10 @@
 .stepperInput {
   width: 44px;
   text-align: center;
-  background: #111;
-  border: 1px solid #333;
+  background: var(--bg-input);
+  border: 1px solid var(--stroke-strong);
   border-radius: 4px;
-  color: #eee;
+  color: var(--ink-strong);
   font-size: 13px;
   padding: 3px 4px;
 }
@@ -179,43 +179,43 @@
 .yieldInput {
   width: 52px;
   text-align: center;
-  background: #111;
-  border: 1px solid #333;
+  background: var(--bg-input);
+  border: 1px solid var(--stroke-strong);
   border-radius: 4px;
-  color: #eee;
+  color: var(--ink-strong);
   font-size: 13px;
   padding: 3px 4px;
 }
 
-.yieldLow { border-color: #f59e0b44; color: #f59e0b; }
+.yieldLow { border-color: var(--warning-dim); color: var(--warning); }
 
 .scrapNote {
   font-size: 10px;
-  color: #f59e0b;
+  color: var(--warning);
   margin-top: 2px;
 }
 
 .removeBtn {
   background: none;
   border: none;
-  color: #444;
+  color: var(--stroke-strong);
   cursor: pointer;
   font-size: 12px;
   padding: 2px 4px;
 }
-.removeBtn:hover { color: #e53e3e; }
+.removeBtn:hover { color: var(--danger); }
 
 .emptyRow {
   text-align: center;
-  color: #555;
+  color: var(--ink-muted);
   padding: 24px;
   font-style: italic;
 }
 
 .rollup {
   display: flex;
-  border-top: 2px solid #2a2a2a;
-  background: #0d1117;
+  border-top: 2px solid var(--stroke-card);
+  background: var(--bg-card-2);
   flex-wrap: wrap;
 }
 
@@ -223,7 +223,7 @@
   flex: 1;
   min-width: 120px;
   padding: 12px 16px;
-  border-right: 1px solid #1e1e1e;
+  border-right: 1px solid var(--stroke);
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -232,7 +232,7 @@
 
 .rollupLabel {
   font-size: 10px;
-  color: #555;
+  color: var(--ink-muted);
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
@@ -240,7 +240,7 @@
 .rollupValue {
   font-size: 16px;
   font-weight: 700;
-  color: #eee;
+  color: var(--ink-strong);
 }
 
 .inlineLinkButton {
@@ -248,7 +248,7 @@
   padding: 0;
   background: none;
   border: none;
-  color: #8cb8ff;
+  color: var(--brand-2);
   cursor: pointer;
   font: inherit;
   font-size: 13px;
@@ -256,14 +256,14 @@
 }
 
 .inlineLinkButton:hover {
-  color: #b7d1ff;
+  color: var(--brand-1);
 }
 
 .routingLink {
   padding: 0;
   background: none;
   border: none;
-  color: #8cb8ff;
+  color: var(--brand-2);
   cursor: pointer;
   font: inherit;
   font-size: 11px;
@@ -272,9 +272,9 @@
 }
 
 .routingLink:hover {
-  color: #b7d1ff;
+  color: var(--brand-1);
 }
 
-.rollupSub { font-size: 10px; color: #444; }
-.marginLow { color: #e53e3e; }
-.rollupWarning { font-size: 10px; color: #f59e0b; }
+.rollupSub { font-size: 10px; color: var(--stroke-strong); }
+.marginLow { color: var(--danger); }
+.rollupWarning { font-size: 10px; color: var(--warning); }

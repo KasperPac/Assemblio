@@ -2,7 +2,7 @@
   display: flex;
   gap: 0;
   min-height: 400px;
-  border: 1px solid #2a2a2a;
+  border: 1px solid var(--stroke-card);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -12,22 +12,22 @@
 .sidebar {
   width: 210px;
   flex-shrink: 0;
-  border-right: 1px solid #2a2a2a;
-  background: #0d1117;
+  border-right: 1px solid var(--stroke-card);
+  background: var(--bg-card-2);
   display: flex;
   flex-direction: column;
 }
 
 .sidebarHeader {
   padding: 10px 12px;
-  border-bottom: 1px solid #1e1e1e;
+  border-bottom: 1px solid var(--stroke);
 }
 
 .newDraftBtn {
   width: 100%;
   background: none;
-  border: 1px solid #333;
-  color: #aaa;
+  border: 1px solid var(--stroke-strong);
+  color: var(--ink-faint);
   border-radius: 5px;
   padding: 5px 10px;
   font-size: 12px;
@@ -37,8 +37,8 @@
 }
 
 .newDraftBtn:hover:not(:disabled) {
-  border-color: #4a9eff;
-  color: #4a9eff;
+  border-color: var(--brand-1);
+  color: var(--brand-1);
 }
 
 .newDraftBtn:disabled {
@@ -49,7 +49,7 @@
 .sidebarError {
   margin: 6px 12px 0;
   font-size: 11px;
-  color: #e53e3e;
+  color: var(--danger);
 }
 
 .versionList {
@@ -60,13 +60,13 @@
 .sidebarEmpty {
   padding: 16px;
   font-size: 12px;
-  color: #666;
+  color: var(--ink-muted);
   font-style: italic;
 }
 
 .versionItem {
   padding: 10px 12px;
-  border-bottom: 1px solid #1a1a1a;
+  border-bottom: 1px solid var(--stroke);
   cursor: pointer;
   border-left: 3px solid transparent;
   transition: background 0.1s;
@@ -74,16 +74,16 @@
 }
 
 .versionItem:hover {
-  background: #111;
+  background: var(--bg-card);
 }
 
 .versionItemActive {
-  border-left-color: #4a9eff;
-  background: #0a1628;
+  border-left-color: var(--brand-1);
+  background: var(--brand-dim);
 }
 
 .versionItemSelected {
-  background: #161616;
+  background: var(--bg-card);
 }
 
 .versionItemArchived {
@@ -101,18 +101,18 @@
 .versionLabel {
   font-size: 13px;
   font-weight: 600;
-  color: #eee;
+  color: var(--ink-strong);
 }
 
 .versionDate {
   font-size: 11px;
-  color: #555;
+  color: var(--ink-muted);
   margin-bottom: 2px;
 }
 
 .versionCost {
   font-size: 11px;
-  color: #888;
+  color: var(--ink-faint);
 }
 
 /* ── Status badges ────────────────────────────────────────── */
@@ -126,21 +126,21 @@
 }
 
 .badgeActive {
-  background: #4caf5022;
-  color: #4caf50;
-  border: 1px solid #4caf5044;
+  background: var(--ok-dim);
+  color: var(--ok);
+  border: 1px solid var(--ok-dim);
 }
 
 .badgeDraft {
-  background: #f59e0b22;
-  color: #f59e0b;
-  border: 1px solid #f59e0b44;
+  background: var(--warning-dim);
+  color: var(--warning);
+  border: 1px solid var(--warning-dim);
 }
 
 .badgeArchived {
-  background: #33333322;
-  color: #777;
-  border: 1px solid #33333344;
+  background: var(--bg-card-2);
+  color: var(--ink-faint);
+  border: 1px solid var(--stroke);
 }
 
 /* ── Main panel ───────────────────────────────────────────── */
@@ -157,7 +157,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #555;
+  color: var(--ink-muted);
   font-style: italic;
   font-size: 13px;
   padding: 32px;
@@ -171,20 +171,20 @@
   align-items: center;
   gap: 10px;
   padding: 10px 16px;
-  border-bottom: 1px solid #1e1e1e;
-  background: #111;
+  border-bottom: 1px solid var(--stroke);
+  background: var(--bg-card-2);
   flex-wrap: wrap;
 }
 
 .singleTitle {
   font-size: 14px;
   font-weight: 600;
-  color: #eee;
+  color: var(--ink-strong);
 }
 
 .singleMeta {
   font-size: 12px;
-  color: #666;
+  color: var(--ink-muted);
   margin-left: auto;
 }
 
@@ -203,29 +203,29 @@
   padding: 7px 12px;
   text-align: left;
   font-size: 10px;
-  color: #555;
+  color: var(--ink-muted);
   text-transform: uppercase;
   letter-spacing: 0.4px;
-  border-bottom: 1px solid #1e1e1e;
-  background: #111;
+  border-bottom: 1px solid var(--stroke);
+  background: var(--bg-card-2);
   font-weight: 400;
 }
 
 .table td {
   padding: 9px 12px;
-  border-bottom: 1px solid #1a1a1a;
-  color: #ddd;
+  border-bottom: 1px solid var(--stroke);
+  color: var(--ink-strong);
   vertical-align: middle;
 }
 
 .dimText {
-  color: #666;
+  color: var(--ink-muted);
   font-size: 12px;
 }
 
 .emptyRow {
   text-align: center;
-  color: #555;
+  color: var(--ink-muted);
   padding: 24px;
   font-style: italic;
 }
@@ -235,8 +235,8 @@
 .compHeader {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border-bottom: 1px solid #1e1e1e;
-  background: #111;
+  border-bottom: 1px solid var(--stroke);
+  background: var(--bg-card-2);
 }
 
 .compHeaderCell {
@@ -248,24 +248,24 @@
 }
 
 .compHeaderCell:first-child {
-  border-right: 1px solid #1e1e1e;
+  border-right: 1px solid var(--stroke);
 }
 
 .compHeaderTitle {
   font-size: 13px;
   font-weight: 600;
-  color: #eee;
+  color: var(--ink-strong);
 }
 
 .compHeaderCost {
   font-size: 12px;
-  color: #888;
+  color: var(--ink-faint);
   margin-left: auto;
 }
 
 .makeActiveBtn {
-  background: #4a9eff;
-  color: #fff;
+  background: var(--brand-1);
+  color: var(--ink-on-brand);
   border: none;
   border-radius: 5px;
   padding: 4px 12px;
@@ -291,18 +291,18 @@
 .compColHeader {
   padding: 6px 12px;
   font-size: 10px;
-  color: #555;
+  color: var(--ink-muted);
   text-transform: uppercase;
   letter-spacing: 0.4px;
-  border-bottom: 1px solid #1e1e1e;
-  background: #0d1117;
+  border-bottom: 1px solid var(--stroke);
+  background: var(--bg-card-2);
   display: grid;
   grid-template-columns: 1fr auto auto;
   gap: 8px;
 }
 
 .compColHeader:first-child {
-  border-right: 1px solid #1a1a1a;
+  border-right: 1px solid var(--stroke);
 }
 
 .compRow {
@@ -311,8 +311,8 @@
 
 .compCell {
   padding: 9px 12px;
-  border-bottom: 1px solid #1a1a1a;
-  color: #ddd;
+  border-bottom: 1px solid var(--stroke);
+  color: var(--ink-strong);
   font-size: 13px;
   display: flex;
   flex-direction: column;
@@ -322,37 +322,37 @@
 }
 
 .compCellLeft {
-  border-right: 1px solid #1a1a1a;
+  border-right: 1px solid var(--stroke);
 }
 
 /* Diff states */
 
 .diffUnchanged {
-  color: #444;
+  color: var(--stroke-strong);
 }
 
 .diffUnchanged .compCellName {
-  color: #555;
+  color: var(--ink-muted);
 }
 
 .diffChanged .compCellName {
-  color: #ddd;
+  color: var(--ink-strong);
 }
 
 .diffAdded {
-  background: #0a1f0d;
+  background: var(--ok-dim);
 }
 
 .diffAdded .compCellName {
-  color: #4caf50;
+  color: var(--ok);
 }
 
 .diffRemoved {
-  background: #1f0a0a;
+  background: var(--danger-dim);
 }
 
 .diffRemoved .compCellName {
-  color: #e53e3e;
+  color: var(--danger);
 }
 
 .compCellName {
@@ -361,17 +361,17 @@
 
 .compCellCost {
   font-size: 12px;
-  color: #888;
+  color: var(--ink-faint);
 }
 
 .compCellSub {
   font-size: 11px;
-  color: #f59e0b;
+  color: var(--warning);
 }
 
 .compCellAbsent {
   font-style: italic;
-  color: #444;
+  color: var(--stroke-strong);
   font-size: 12px;
 }
 
@@ -379,8 +379,8 @@
   display: inline-block;
   font-size: 10px;
   font-weight: 700;
-  color: #4caf50;
-  border: 1px solid #4caf5044;
+  color: var(--ok);
+  border: 1px solid var(--ok-dim);
   border-radius: 3px;
   padding: 1px 5px;
   margin-left: 4px;
@@ -390,8 +390,8 @@
   display: inline-block;
   font-size: 10px;
   font-weight: 700;
-  color: #e53e3e;
-  border: 1px solid #e53e3e44;
+  color: var(--danger);
+  border: 1px solid var(--danger-dim);
   border-radius: 3px;
   padding: 1px 5px;
   margin-left: 4px;
@@ -401,14 +401,14 @@
 
 .footer {
   display: flex;
-  border-top: 2px solid #2a2a2a;
-  background: #0d1117;
+  border-top: 2px solid var(--stroke-card);
+  background: var(--bg-card-2);
 }
 
 .footerCell {
   flex: 1;
   padding: 12px 16px;
-  border-right: 1px solid #1e1e1e;
+  border-right: 1px solid var(--stroke);
   display: flex;
   flex-direction: column;
   gap: 3px;
@@ -420,7 +420,7 @@
 
 .footerLabel {
   font-size: 10px;
-  color: #555;
+  color: var(--ink-muted);
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
@@ -428,32 +428,32 @@
 .footerValue {
   font-size: 15px;
   font-weight: 700;
-  color: #eee;
+  color: var(--ink-strong);
 }
 
 .footerDeltaPos {
-  color: #e53e3e;
+  color: var(--danger);
 }
 
 .footerDeltaNeg {
-  color: #4caf50;
+  color: var(--ok);
 }
 
 .footerSub {
   font-size: 11px;
-  color: #666;
+  color: var(--ink-muted);
 }
 
 .footerWarning {
   font-size: 11px;
-  color: #f59e0b;
+  color: var(--warning);
 }
 
 .compFooter {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border-top: 2px solid #2a2a2a;
-  background: #0d1117;
+  border-top: 2px solid var(--stroke-card);
+  background: var(--bg-card-2);
 }
 
 .compFooterCell {
@@ -464,5 +464,5 @@
 }
 
 .compFooterCell:first-child {
-  border-right: 1px solid #1e1e1e;
+  border-right: 1px solid var(--stroke);
 }
