@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "../product-detail.module.css";
+import { timeAgo } from "@/lib/utils/time";
 
 // ---------------------------------------------------------------------------
 // Types (mirrored from page.tsx — kept in sync manually)
@@ -32,17 +33,6 @@ export type VariantSummary = {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-function timeAgo(iso: string | null): string {
-  if (!iso) return "unknown";
-  const ms = Date.now() - new Date(iso).getTime();
-  const mins = Math.floor(ms / 60000);
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  return `${days}d ago`;
-}
 
 function fmtCurrency(n: number): string {
   return `$${n.toFixed(2)}`;
@@ -123,11 +113,13 @@ export function VariantCoverageTable({ summaries, avgMargin, worstVariant }: Pro
                 </td>
                 <td>
                   {v.displayBom?.matCost != null ? (
-                    <span className={styles.costValue}>
+                    <span className={styles.matCostGood}>
                       {fmtCurrency(v.displayBom.matCost)}
                     </span>
+                  ) : v.displayBom?.hasMissingCosts ? (
+                    <span className={styles.matCostPartial}>⚠ partial</span>
                   ) : (
-                    <span className={styles.meta}>—</span>
+                    <span className={styles.matCostMissing}>—</span>
                   )}
                 </td>
                 <td>
@@ -179,15 +171,13 @@ export function VariantCoverageTable({ summaries, avgMargin, worstVariant }: Pro
             Avg margin:{" "}
             <strong>{avgMargin !== null ? fmtPct(avgMargin) : "—"}</strong>
           </span>
-          {worstVariant && (
-            <span className={styles.footerStat}>
-              Worst:{" "}
-              <strong>
-                {worstVariant.title ?? "Untitled"} (
-                {fmtPct(worstVariant.margin!)})
-              </strong>
-            </span>
-          )}
+          <span className={styles.footerStat}>
+            Worst:{" "}
+            <strong>
+              {worstVariant.title ?? "Untitled"} (
+              {fmtPct(worstVariant.margin!)})
+            </strong>
+          </span>
         </div>
       )}
     </div>

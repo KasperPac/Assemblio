@@ -146,6 +146,21 @@
   font-size: 0.9rem;
 }
 
+.matCostGood {
+  color: var(--ink-strong);
+  font-size: 0.9rem;
+}
+
+.matCostPartial {
+  color: #f59e0b;
+  font-size: 12px;
+}
+
+.matCostMissing {
+  color: var(--ink-muted);
+  font-size: 0.88rem;
+}
+
 /* ── Badges ─────────────────────────────────── */
 
 .badgeGreen,

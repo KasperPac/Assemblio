@@ -4,6 +4,7 @@ import styles from "../product-detail.module.css";
 import PageHeader from "@/app/app/_ui/page-header";
 import { VariantCoverageTable } from "./variant-coverage-table";
 import type { DisplayBom, VariantSummary } from "./variant-coverage-table";
+import { timeAgo } from "@/lib/utils/time";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -36,7 +37,7 @@ type BomRow = {
 
 type BomLineRow = {
   id: string;
-  bom_id: string;
+  product_bom_id: string;
   quantity: number;
   yield_pct: number;
   component:
@@ -65,17 +66,6 @@ function calcMatCost(
 function calcMargin(cost: number | null, sell: number | null): number | null {
   if (cost === null || sell === null || sell <= 0) return null;
   return ((sell - cost) / sell) * 100;
-}
-
-function timeAgo(iso: string | null): string {
-  if (!iso) return "unknown";
-  const ms = Date.now() - new Date(iso).getTime();
-  const mins = Math.floor(ms / 60000);
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  return `${days}d ago`;
 }
 
 // ---------------------------------------------------------------------------
@@ -118,10 +108,6 @@ export default async function ProductDetailPage({ params }: Props) {
 
   const variants = (variantsData ?? []) as VariantRow[];
 
-  if (variants.length === 0) {
-    // Still render the page but with no variants
-  }
-
   const variantIds = variants.map((v) => v.id);
 
   // Fetch all BOMs for these variants
@@ -144,8 +130,8 @@ export default async function ProductDetailPage({ params }: Props) {
     if (bomIds.length > 0) {
       const { data: linesData } = await supabase
         .from("product_bom_component")
-        .select("id,bom_id,quantity,yield_pct,component:component_id(cost_per_unit)")
-        .in("bom_id", bomIds)
+        .select("id,product_bom_id,quantity,yield_pct,component:component_id(cost_per_unit)")
+        .in("product_bom_id", bomIds)
         .eq("tenant_id", tenantId);
 
       bomLines = (linesData ?? []) as BomLineRow[];
@@ -162,18 +148,18 @@ export default async function ProductDetailPage({ params }: Props) {
 
   const linesByBom = new Map<string, BomLineRow[]>();
   for (const line of bomLines) {
-    const existing = linesByBom.get(line.bom_id) ?? [];
+    const existing = linesByBom.get(line.product_bom_id) ?? [];
     existing.push(line);
-    linesByBom.set(line.bom_id, existing);
+    linesByBom.set(line.product_bom_id, existing);
   }
 
   // Build variant summaries
   const variantSummaries: VariantSummary[] = variants.map((v) => {
     const variantBoms = bomsByVariant.get(v.id) ?? [];
 
-    // Pick display BOM: active first, then latest draft, then null
-    const activeBom = variantBoms.find((b) => b.is_active) ?? null;
-    const displayBomRaw = activeBom ?? variantBoms[0] ?? null;
+    // Pick display BOM: active first, then latest draft, never archived
+    const activeBom = variantBoms.find((b) => b.is_active);
+    const displayBomRaw = activeBom ?? variantBoms.find((b) => b.status === "draft") ?? null;
 
     let displayBom: DisplayBom | null = null;
     if (displayBomRaw) {
