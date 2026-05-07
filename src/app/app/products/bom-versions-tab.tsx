@@ -70,9 +70,9 @@ function fmtDate(iso: string): string {
   });
 }
 
-function statusBadgeClass(status: string): string {
-  if (status === "active") return styles.badgeActive;
-  if (status === "archived") return styles.badgeArchived;
+function statusBadgeClass(bom: Bom): string {
+  if (bom.is_active) return styles.badgeActive;
+  if (bom.status === "archived") return styles.badgeArchived;
   return styles.badgeDraft;
 }
 
@@ -102,7 +102,7 @@ function SingleVersionView({ bom, sellPrice }: { bom: Bom; sellPrice: number | n
     <>
       <div className={styles.singleHeader}>
         <span className={styles.singleTitle}>v{bom.version}</span>
-        <span className={`${styles.badge} ${statusBadgeClass(bom.status)}`}>
+        <span className={`${styles.badge} ${statusBadgeClass(bom)}`}>
           {statusLabel(bom)}
         </span>
         <span className={styles.singleMeta}>{fmtDate(bom.created_at)}</span>
@@ -279,14 +279,14 @@ function ComparisonView({
       <div className={styles.compHeader}>
         <div className={styles.compHeaderCell}>
           <span className={styles.compHeaderTitle}>v{left.version}</span>
-          <span className={`${styles.badge} ${statusBadgeClass(left.status)}`}>
+          <span className={`${styles.badge} ${statusBadgeClass(left)}`}>
             {statusLabel(left)}
           </span>
           <span className={styles.compHeaderCost}>{fmt(leftCost)}</span>
         </div>
         <div className={styles.compHeaderCell}>
           <span className={styles.compHeaderTitle}>v{right.version}</span>
-          <span className={`${styles.badge} ${statusBadgeClass(right.status)}`}>
+          <span className={`${styles.badge} ${statusBadgeClass(right)}`}>
             {statusLabel(right)}
           </span>
           <span className={styles.compHeaderCost}>{fmt(rightCost)}</span>
@@ -425,7 +425,7 @@ export default function BomVersionsTab({ boms, variantId, sellPrice }: Props) {
   const [duplicateState, duplicateAction, isDuplicating] = useActionState(duplicateBomAsDraft, {});
 
   // setBomActive — plain server action called via startTransition
-  const [, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
 
   // Selection: up to two bom IDs
   const [selected, setSelected] = useState<[string | null, string | null]>([null, null]);
@@ -518,7 +518,7 @@ export default function BomVersionsTab({ boms, variantId, sellPrice }: Props) {
                 >
                   <div className={styles.versionRow}>
                     <span className={styles.versionLabel}>v{bom.version}</span>
-                    <span className={`${styles.badge} ${statusBadgeClass(bom.status)}`}>
+                    <span className={`${styles.badge} ${statusBadgeClass(bom)}`}>
                       {statusLabel(bom)}
                     </span>
                   </div>
@@ -543,7 +543,7 @@ export default function BomVersionsTab({ boms, variantId, sellPrice }: Props) {
             right={rightBom!}
             sellPrice={sellPrice}
             variantId={variantId}
-            isActivating={false}
+            isActivating={isPending}
             onActivate={handleActivate}
           />
         ) : leftBom ? (
