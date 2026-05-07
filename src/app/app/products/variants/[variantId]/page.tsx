@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import styles from "../../variant-detail.module.css";
 import BomSeedPanel from "../../bom-seed-panel";
 import BomEditor from "../../bom-editor";
+import BomVersionsTab from "../../bom-versions-tab";
 import VariantTabs, { type Tab } from "../../variant-tabs";
 import {
   createBomLaborLine,
@@ -325,6 +326,30 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
       }
     : null;
 
+  // All boms with their lines — used by BomVersionsTab
+  const allBomsWithLines = typedBoms.map((bom) => ({
+    ...bom,
+    lines: (linesByBom[bom.id] ?? []).map((line) => {
+      const component = Array.isArray(line.component)
+        ? line.component[0] ?? null
+        : line.component;
+      return {
+        id: line.id,
+        component_id: line.component_id,
+        quantity: line.quantity,
+        yield_pct: line.yield_pct ?? 1,
+        component: component
+          ? {
+              name: component.name ?? "Unknown",
+              sku: component.sku ?? null,
+              unit: component.unit ?? null,
+              cost_per_unit: component.cost_per_unit ?? null,
+            }
+          : null,
+      };
+    }),
+  }));
+
   const labourCost: number | null = null;
   const sellPrice =
     typedVariant.price !== null && typedVariant.price !== undefined
@@ -623,9 +648,11 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
             ) : null}
 
             {activeTab === "versions" ? (
-              <div>
-                <p style={{ color: "#555", fontStyle: "italic" }}>Version history — coming soon.</p>
-              </div>
+              <BomVersionsTab
+                boms={allBomsWithLines}
+                variantId={variant.id}
+                sellPrice={sellPrice}
+              />
             ) : null}
           </>
         )}

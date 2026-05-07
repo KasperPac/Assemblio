@@ -1,0 +1,461 @@
+.container {
+  display: flex;
+  gap: 0;
+  min-height: 400px;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────── */
+
+.sidebar {
+  width: 210px;
+  flex-shrink: 0;
+  border-right: 1px solid #2a2a2a;
+  background: #0d1117;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebarHeader {
+  padding: 10px 12px;
+  border-bottom: 1px solid #1e1e1e;
+}
+
+.newDraftBtn {
+  width: 100%;
+  background: none;
+  border: 1px solid #333;
+  color: #aaa;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.newDraftBtn:hover:not(:disabled) {
+  border-color: #4a9eff;
+  color: #4a9eff;
+}
+
+.newDraftBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sidebarError {
+  margin: 6px 12px 0;
+  font-size: 11px;
+  color: #e53e3e;
+}
+
+.versionList {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.versionItem {
+  padding: 10px 12px;
+  border-bottom: 1px solid #1a1a1a;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: background 0.1s;
+  user-select: none;
+}
+
+.versionItem:hover {
+  background: #111;
+}
+
+.versionItemActive {
+  border-left-color: #4a9eff;
+  background: #0a1628;
+}
+
+.versionItemSelected {
+  background: #161616;
+}
+
+.versionItemArchived {
+  opacity: 0.55;
+}
+
+.versionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.versionLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #eee;
+}
+
+.versionDate {
+  font-size: 11px;
+  color: #555;
+  margin-bottom: 2px;
+}
+
+.versionCost {
+  font-size: 11px;
+  color: #888;
+}
+
+/* ── Status badges ────────────────────────────────────────── */
+
+.badge {
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.badgeActive {
+  background: #4caf5022;
+  color: #4caf50;
+  border: 1px solid #4caf5044;
+}
+
+.badgeDraft {
+  background: #f59e0b22;
+  color: #f59e0b;
+  border: 1px solid #f59e0b44;
+}
+
+.badgeArchived {
+  background: #33333322;
+  color: #777;
+  border: 1px solid #33333344;
+}
+
+/* ── Main panel ───────────────────────────────────────────── */
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.emptyState {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  font-style: italic;
+  font-size: 13px;
+  padding: 32px;
+  text-align: center;
+}
+
+/* ── Single version view ──────────────────────────────────── */
+
+.singleHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #1e1e1e;
+  background: #111;
+  flex-wrap: wrap;
+}
+
+.singleTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #eee;
+}
+
+.singleMeta {
+  font-size: 12px;
+  color: #666;
+  margin-left: auto;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  flex: 1;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table th {
+  padding: 7px 12px;
+  text-align: left;
+  font-size: 10px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 1px solid #1e1e1e;
+  background: #111;
+  font-weight: 400;
+}
+
+.table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid #1a1a1a;
+  color: #ddd;
+  vertical-align: middle;
+}
+
+.dimText {
+  color: #666;
+  font-size: 12px;
+}
+
+.emptyRow {
+  text-align: center;
+  color: #555;
+  padding: 24px;
+  font-style: italic;
+}
+
+/* ── Comparison view ──────────────────────────────────────── */
+
+.compHeader {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid #1e1e1e;
+  background: #111;
+}
+
+.compHeaderCell {
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.compHeaderCell:first-child {
+  border-right: 1px solid #1e1e1e;
+}
+
+.compHeaderTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #eee;
+}
+
+.compHeaderCost {
+  font-size: 12px;
+  color: #888;
+  margin-left: auto;
+}
+
+.makeActiveBtn {
+  background: #4a9eff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.makeActiveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.compGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex: 1;
+  overflow-x: auto;
+}
+
+.compColHeader {
+  padding: 6px 12px;
+  font-size: 10px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 1px solid #1e1e1e;
+  background: #0d1117;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+}
+
+.compColHeader:first-child {
+  border-right: 1px solid #1a1a1a;
+}
+
+.compRow {
+  display: contents;
+}
+
+.compCell {
+  padding: 9px 12px;
+  border-bottom: 1px solid #1a1a1a;
+  color: #ddd;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 48px;
+  justify-content: center;
+}
+
+.compCellLeft {
+  border-right: 1px solid #1a1a1a;
+}
+
+/* Diff states */
+
+.diffUnchanged {
+  color: #444;
+}
+
+.diffUnchanged .compCellName {
+  color: #555;
+}
+
+.diffChanged .compCellName {
+  color: #ddd;
+}
+
+.diffAdded {
+  background: #0a1f0d;
+}
+
+.diffAdded .compCellName {
+  color: #4caf50;
+}
+
+.diffRemoved {
+  background: #1f0a0a;
+}
+
+.diffRemoved .compCellName {
+  color: #e53e3e;
+}
+
+.compCellName {
+  font-weight: 500;
+}
+
+.compCellCost {
+  font-size: 12px;
+  color: #888;
+}
+
+.compCellSub {
+  font-size: 11px;
+  color: #f59e0b;
+}
+
+.compCellAbsent {
+  font-style: italic;
+  color: #444;
+  font-size: 12px;
+}
+
+.newLabel {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  color: #4caf50;
+  border: 1px solid #4caf5044;
+  border-radius: 3px;
+  padding: 1px 5px;
+  margin-left: 4px;
+}
+
+.removedLabel {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  color: #e53e3e;
+  border: 1px solid #e53e3e44;
+  border-radius: 3px;
+  padding: 1px 5px;
+  margin-left: 4px;
+}
+
+/* ── Footer ───────────────────────────────────────────────── */
+
+.footer {
+  display: flex;
+  border-top: 2px solid #2a2a2a;
+  background: #0d1117;
+}
+
+.footerCell {
+  flex: 1;
+  padding: 12px 16px;
+  border-right: 1px solid #1e1e1e;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.footerCell:last-child {
+  border-right: none;
+}
+
+.footerLabel {
+  font-size: 10px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.footerValue {
+  font-size: 15px;
+  font-weight: 700;
+  color: #eee;
+}
+
+.footerDeltaPos {
+  color: #e53e3e;
+}
+
+.footerDeltaNeg {
+  color: #4caf50;
+}
+
+.footerSub {
+  font-size: 11px;
+  color: #666;
+}
+
+.footerWarning {
+  font-size: 11px;
+  color: #f59e0b;
+}
+
+.compFooter {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 2px solid #2a2a2a;
+  background: #0d1117;
+}
+
+.compFooterCell {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.compFooterCell:first-child {
+  border-right: 1px solid #1e1e1e;
+}
