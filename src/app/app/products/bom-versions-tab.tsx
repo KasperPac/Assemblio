@@ -1,9 +1,7 @@
 "use client";
 
-import { useActionState, useState, useTransition } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { duplicateBomAsDraft } from "@/app/app/products/actions";
-import { deleteBomDraft, setBomActive } from "@/app/app/bom/actions";
+import { useState, useTransition } from "react";
+import { setBomActive } from "@/app/app/bom/actions";
 import styles from "./bom-versions-tab.module.css";
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -87,33 +85,21 @@ function margin(cost: number | null, sell: number | null): number | null {
   return ((sell - cost) / sell) * 100;
 }
 
-// ── Active BOM lookup (first active, or null) ──────────────────────────────
-
-function findActiveBom(boms: Bom[]): Bom | null {
-  return boms.find((b) => b.is_active) ?? null;
-}
-
 // ── Single version panel ───────────────────────────────────────────────────
 
 function SingleVersionView({
   bom,
-  variantId,
   sellPrice,
   onActivate,
   isActivating,
-  onEditDraft,
 }: {
   bom: Bom;
-  variantId: string;
   sellPrice: number | null;
   onActivate: (bomId: string) => void;
   isActivating: boolean;
-  onEditDraft: () => void;
 }) {
   const cost = totalMaterialCost(bom.lines);
   const gm = margin(cost, sellPrice);
-  const isDraft = !bom.is_active && bom.status !== "archived";
-
   return (
     <>
       <div className={styles.singleHeader}>
@@ -122,31 +108,15 @@ function SingleVersionView({
           {statusLabel(bom)}
         </span>
         <span className={styles.singleMeta}>{fmtDate(bom.created_at)}</span>
-        {isDraft ? (
-          <>
-            <button
-              type="button"
-              className={styles.editDraftBtn}
-              onClick={onEditDraft}
-            >
-              Edit this draft →
-            </button>
-            <button
-              type="button"
-              className={styles.makeActiveBtn}
-              disabled={isActivating}
-              onClick={() => onActivate(bom.id)}
-            >
-              Make active
-            </button>
-            <form action={deleteBomDraft}>
-              <input type="hidden" name="bom_id" value={bom.id} />
-              <input type="hidden" name="variant_id" value={variantId} />
-              <button type="submit" className={styles.deleteDraftBtn}>
-                Delete draft
-              </button>
-            </form>
-          </>
+        {!bom.is_active && bom.status !== "archived" ? (
+          <button
+            type="button"
+            className={styles.makeActiveBtn}
+            disabled={isActivating}
+            onClick={() => onActivate(bom.id)}
+          >
+            Make active
+          </button>
         ) : null}
       </div>
 
@@ -167,9 +137,7 @@ function SingleVersionView({
             {bom.lines.length === 0 ? (
               <tr>
                 <td colSpan={7} className={styles.emptyRow}>
-                  {isDraft
-                    ? "No components yet — click \"Edit this draft\" to add some."
-                    : "No components in this version."}
+                  {"No components in this version."}
                 </td>
               </tr>
             ) : (
@@ -460,27 +428,9 @@ function ComparisonView({
 
 // ── Root component ─────────────────────────────────────────────────────────
 
-export default function BomVersionsTab({ boms, variantId, sellPrice }: Props) {
-  const activeBom = findActiveBom(boms);
-
-  // Duplicate-as-draft action state
-  const [duplicateState, duplicateAction, isDuplicating] = useActionState(duplicateBomAsDraft, {});
-
-  // setBomActive — plain server action called via startTransition
+export default function BomVersionsTab({ boms, sellPrice }: Props) {
   const [isPending, startTransition] = useTransition();
-
-  // Selection: up to two bom IDs
   const [selected, setSelected] = useState<[string | null, string | null]>([null, null]);
-
-  // Navigate to BOM editor tab
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  function handleEditDraft() {
-    const nextParams = new URLSearchParams(searchParams.toString());
-    nextParams.set("tab", "bom");
-    router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
-  }
 
   function handleVersionClick(bomId: string) {
     setSelected(([a, b]) => {
@@ -520,25 +470,7 @@ export default function BomVersionsTab({ boms, variantId, sellPrice }: Props) {
       {/* Sidebar */}
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
-          <form action={duplicateAction}>
-            <input type="hidden" name="variant_id" value={variantId} />
-            <input
-              type="hidden"
-              name="source_bom_id"
-              value={activeBom?.id ?? ""}
-            />
-            <button
-              type="submit"
-              className={styles.newDraftBtn}
-              disabled={isDuplicating || activeBom === null}
-              title={activeBom === null ? "No active BOM to duplicate" : undefined}
-            >
-              + New draft
-            </button>
-          </form>
-          {duplicateState.error ? (
-            <p className={styles.sidebarError}>{duplicateState.error}</p>
-          ) : null}
+          <span className={styles.sidebarTitle}>Version history</span>
         </div>
 
         <div className={styles.versionList}>
@@ -600,11 +532,9 @@ export default function BomVersionsTab({ boms, variantId, sellPrice }: Props) {
         ) : leftBom ? (
           <SingleVersionView
             bom={leftBom}
-            variantId={variantId}
             sellPrice={sellPrice}
             onActivate={handleActivate}
             isActivating={isPending}
-            onEditDraft={handleEditDraft}
           />
         ) : (
           <div className={styles.emptyState}>

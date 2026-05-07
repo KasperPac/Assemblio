@@ -277,10 +277,10 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
 
   const departmentOptions = (departments ?? []) as DepartmentOption[];
 
-  const editorBom =
-    typedBoms.find((bom) => bom.status === "draft" && !bom.is_active) ??
-    typedBoms.find((bom) => bom.is_active) ??
-    null;
+  const activeBom = typedBoms.find((bom) => bom.is_active) ?? null;
+  const draftBom = typedBoms.find((bom) => !bom.is_active && bom.status === "draft") ?? null;
+  // Show active BOM by default; show draft when one exists (user is mid-edit)
+  const editorBom = draftBom ?? activeBom;
 
   type EditorBomData = {
     id: string;
@@ -326,8 +326,9 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
       }
     : null;
 
-  // All boms with their lines — used by BomVersionsTab
-  const allBomsWithLines = typedBoms.map((bom) => ({
+  // Only saved (active + archived) versions for the history tab — exclude in-progress drafts
+  const savedBoms = typedBoms.filter((bom) => bom.is_active || bom.status === "archived");
+  const allBomsWithLines = savedBoms.map((bom) => ({
     ...bom,
     lines: (linesByBom[bom.id] ?? []).map((line) => {
       const component = Array.isArray(line.component)
@@ -435,6 +436,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                 allComponents={typedAllComponents}
                 templates={templateOptions}
                 sourceBoms={copyOptions}
+                activeVersion={draftBom ? (activeBom?.version ?? null) : null}
               />
             ) : canManageBom ? (
               <BomSeedPanel

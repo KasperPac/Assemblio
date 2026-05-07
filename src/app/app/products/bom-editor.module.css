@@ -117,6 +117,53 @@
   font-family: inherit;
 }
 
+.btnGhost {
+  background: none;
+  border: none;
+  color: var(--ink-muted);
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btnGhost:hover {
+  color: var(--ink-strong);
+  background: var(--bg-card-2);
+}
+
+.btnDiscard {
+  background: none;
+  border: 1px solid var(--stroke-strong);
+  color: var(--ink-muted);
+  border-radius: 5px;
+  padding: 5px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btnDiscard:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.draftIndicator {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--warning);
+  background: var(--warning-dim);
+  border: 1px solid var(--warning-dim);
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+
+.liveNote {
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
 .tableWrapper { overflow-x: auto; }
 
 .table {

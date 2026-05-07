@@ -6,7 +6,6 @@ import {
   deleteBomDraft,
   removeBomComponentLine,
   setBomActive,
-  setBomArchived,
   updateBomComponentQuantity,
   updateBomComponentYieldPct,
 } from "@/app/app/bom/actions";
@@ -57,6 +56,7 @@ type Props = {
   allComponents: ComponentOption[];
   templates: TemplateOption[];
   sourceBoms: SourceBomOption[];
+  activeVersion?: number | null;
 };
 
 function lineCost(qty: number, yieldPct: number, costPerUnit: number | null): number | null {
@@ -77,6 +77,7 @@ export default function BomEditor({
   allComponents,
   templates,
   sourceBoms,
+  activeVersion,
 }: Props) {
   const [localState, setLocalState] = useState(
     () => new Map(bom.lines.map((line) => [line.id, { quantity: line.quantity, yieldPct: line.yield_pct }]))
@@ -109,6 +110,18 @@ export default function BomEditor({
     });
   }, []);
 
+  const handleSwitchToVersions = useCallback(() => {
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.set("tab", "versions");
+    router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
+  }, [pathname, router, searchParams]);
+
+  const handleSwitchToRouting = useCallback(() => {
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.set("tab", "routing");
+    router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
+  }, [pathname, router, searchParams]);
+
   let materialCost: number | null = 0;
   let hasMissingCosts = false;
   for (const line of bom.lines) {
@@ -136,106 +149,104 @@ export default function BomEditor({
       ? ((sellPrice - totalCost) / sellPrice) * 100
       : null;
 
-  const readOnly = bom.is_active;
-  const statusLabel = bom.is_active ? "ACTIVE" : bom.status.toUpperCase();
-  const statusCls = bom.is_active ? styles.badgeActive : styles.badgeDraft;
-
-  const handleSwitchToRouting = useCallback(() => {
-    const nextParams = new URLSearchParams(searchParams.toString());
-    nextParams.set("tab", "routing");
-    router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
-  }, [pathname, router, searchParams]);
+  const isDraft = !bom.is_active;
 
   return (
     <div className={styles.editor}>
       <div className={styles.toolbar}>
         <div className={styles.toolbarLeft}>
-          <span className={`${styles.badge} ${statusCls}`}>{statusLabel}</span>
-          <span className={styles.versionInfo}>
-            v{bom.version} · {new Date(bom.created_at).toLocaleDateString("en-AU", {
-              day: "numeric",
-              month: "short",
-              year: "numeric",
-            })}
-          </span>
-        </div>
-        <div className={styles.toolbarRight}>
-          {!readOnly && (
-            <BomLightbox
-              variantId={variantId}
-              variantLabel={variantLabel}
-              bomId={bom.id}
-              components={allComponents}
-              templates={templates}
-              sourceBoms={sourceBoms}
-              buttonLabel="+ Add component"
-              buttonClassName={styles.btnSecondary}
-            />
+          {isDraft ? (
+            <>
+              <span className={styles.draftIndicator}>Unsaved changes</span>
+              {activeVersion != null ? (
+                <span className={styles.liveNote}>v{activeVersion} is live</span>
+              ) : null}
+            </>
+          ) : (
+            <>
+              <span className={`${styles.badge} ${styles.badgeActive}`}>ACTIVE</span>
+              <span className={styles.versionInfo}>
+                v{bom.version} · {new Date(bom.created_at).toLocaleDateString("en-AU", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })}
+              </span>
+            </>
           )}
-          <div className={styles.menuWrap} ref={menuRef}>
-            <button
-              type="button"
-              className={styles.menuButton}
-              aria-haspopup="menu"
-              aria-expanded={menuOpen}
-              aria-label="Open BOM actions"
-              onClick={() => setMenuOpen((prev) => !prev)}
-            >
-              ⋯
-            </button>
-            {menuOpen ? (
-              <div className={styles.menu} role="menu">
-                <form action={duplicateAction} onSubmit={() => setMenuOpen(false)}>
-                  <input type="hidden" name="variant_id" value={variantId} />
-                  <input type="hidden" name="source_bom_id" value={bom.id} />
-                  <button type="submit" className={styles.menuItem} role="menuitem" disabled={isDuplicating}>
-                    Duplicate to new draft
-                  </button>
-                </form>
-                {!readOnly && (
-                  <form action={setBomArchived} onSubmit={() => setMenuOpen(false)}>
-                    <input type="hidden" name="bom_id" value={bom.id} />
-                    <button type="submit" className={styles.menuItem} role="menuitem">
-                      Archive
-                    </button>
-                  </form>
-                )}
-                {!readOnly && (
-                  <form action={deleteBomDraft} onSubmit={() => setMenuOpen(false)}>
-                    <input type="hidden" name="bom_id" value={bom.id} />
-                    <input type="hidden" name="variant_id" value={variantId} />
-                    <button type="submit" className={`${styles.menuItem} ${styles.menuItemDanger}`} role="menuitem">
-                      Delete draft
-                    </button>
-                  </form>
-                )}
+        </div>
+
+        <div className={styles.toolbarRight}>
+          {isDraft ? (
+            <>
+              <BomLightbox
+                variantId={variantId}
+                variantLabel={variantLabel}
+                bomId={bom.id}
+                components={allComponents}
+                templates={templates}
+                sourceBoms={sourceBoms}
+                buttonLabel="+ Add component"
+                buttonClassName={styles.btnSecondary}
+              />
+              <form action={deleteBomDraft}>
+                <input type="hidden" name="bom_id" value={bom.id} />
+                <input type="hidden" name="variant_id" value={variantId} />
+                <button type="submit" className={styles.btnDiscard}>
+                  Discard
+                </button>
+              </form>
+              <form action={setBomActive}>
+                <input type="hidden" name="bom_id" value={bom.id} />
+                <button type="submit" className={styles.btnPrimary}>
+                  Save BOM
+                </button>
+              </form>
+              <div className={styles.menuWrap} ref={menuRef}>
+                <button
+                  type="button"
+                  className={styles.menuButton}
+                  aria-haspopup="menu"
+                  aria-expanded={menuOpen}
+                  aria-label="Open BOM actions"
+                  onClick={() => setMenuOpen((prev) => !prev)}
+                >
+                  ⋯
+                </button>
+                {menuOpen ? (
+                  <div className={styles.menu} role="menu">
+                    <form action={deleteBomDraft} onSubmit={() => setMenuOpen(false)}>
+                      <input type="hidden" name="bom_id" value={bom.id} />
+                      <input type="hidden" name="variant_id" value={variantId} />
+                      <button type="submit" className={`${styles.menuItem} ${styles.menuItemDanger}`} role="menuitem">
+                        Delete draft
+                      </button>
+                    </form>
+                  </div>
+                ) : null}
               </div>
-            ) : null}
-          </div>
-          {!readOnly && (
-            <form action={setBomActive}>
-              <input type="hidden" name="bom_id" value={bom.id} />
-              <button type="submit" className={styles.btnPrimary}>
-                Set Active
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                className={styles.btnGhost}
+                onClick={handleSwitchToVersions}
+              >
+                Version history
               </button>
-            </form>
+              <form action={duplicateAction}>
+                <input type="hidden" name="variant_id" value={variantId} />
+                <input type="hidden" name="source_bom_id" value={bom.id} />
+                <button type="submit" className={styles.btnPrimary} disabled={isDuplicating}>
+                  {isDuplicating ? "Opening…" : "Edit BOM"}
+                </button>
+              </form>
+            </>
           )}
         </div>
       </div>
-      {readOnly && (
-        <div className={styles.readOnlyBanner}>
-          <span className={styles.readOnlyBannerText}>
-            This BOM is active — changes require a new draft version.
-          </span>
-          <form action={duplicateAction}>
-            <input type="hidden" name="variant_id" value={variantId} />
-            <input type="hidden" name="source_bom_id" value={bom.id} />
-            <button type="submit" className={styles.btnPrimary} disabled={isDuplicating}>
-              {isDuplicating ? "Creating…" : "Create new draft"}
-            </button>
-          </form>
-        </div>
-      )}
+
       {duplicateState.error ? <p className={styles.menuError}>{duplicateState.error}</p> : null}
 
       <div className={styles.tableWrapper}>
@@ -249,7 +260,7 @@ export default function BomEditor({
               <th>Yield %</th>
               <th>Unit cost</th>
               <th>Line cost</th>
-              {!readOnly && <th></th>}
+              {isDraft && <th></th>}
             </tr>
           </thead>
           <tbody>
@@ -257,7 +268,7 @@ export default function BomEditor({
               const local = localState.get(line.id) ?? { quantity: line.quantity, yieldPct: line.yield_pct };
               const cost = lineCost(local.quantity, local.yieldPct, line.component.cost_per_unit);
               const scrapCost =
-                !readOnly && local.yieldPct < 1 && line.component.cost_per_unit !== null
+                isDraft && local.yieldPct < 1 && line.component.cost_per_unit !== null
                   ? (line.component.cost_per_unit * local.quantity * (1 - local.yieldPct)) / local.yieldPct
                   : null;
 
@@ -292,7 +303,7 @@ export default function BomEditor({
                   <td className={styles.dimText}>{line.component.sku ?? "—"}</td>
                   <td className={styles.dimText}>{line.component.unit ?? "—"}</td>
                   <td>
-                    {readOnly ? (
+                    {!isDraft ? (
                       <span className={styles.readOnlyQty}>{line.quantity}</span>
                     ) : (
                       <div className={styles.stepper}>
@@ -328,7 +339,7 @@ export default function BomEditor({
                     )}
                   </td>
                   <td>
-                    {readOnly ? (
+                    {!isDraft ? (
                       <span className={styles.dimText}>{Math.round(line.yield_pct * 100)}%</span>
                     ) : (
                       <>
@@ -352,7 +363,7 @@ export default function BomEditor({
                   </td>
                   <td className={styles.dimText}>{fmt(line.component.cost_per_unit)}</td>
                   <td>{fmt(cost)}</td>
-                  {!readOnly && (
+                  {isDraft && (
                     <td>
                       <form action={removeBomComponentLine}>
                         <input type="hidden" name="line_id" value={line.id} />
@@ -368,10 +379,10 @@ export default function BomEditor({
             })}
             {bom.lines.length === 0 ? (
               <tr>
-                <td colSpan={readOnly ? 7 : 8} className={styles.emptyRow}>
-                  {readOnly
-                    ? "No components in this BOM."
-                    : "No components yet — click + Add component above."}
+                <td colSpan={isDraft ? 8 : 7} className={styles.emptyRow}>
+                  {isDraft
+                    ? "No components yet — click + Add component above."
+                    : "No components in this BOM."}
                 </td>
               </tr>
             ) : null}
