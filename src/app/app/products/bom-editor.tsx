@@ -3,6 +3,7 @@
 import { useActionState, useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
+  deleteBomDraft,
   removeBomComponentLine,
   setBomActive,
   setBomArchived,
@@ -196,6 +197,15 @@ export default function BomEditor({
                     <input type="hidden" name="bom_id" value={bom.id} />
                     <button type="submit" className={styles.menuItem} role="menuitem">
                       Archive
+                    </button>
+                  </form>
+                )}
+                {!readOnly && (
+                  <form action={deleteBomDraft} onSubmit={() => setMenuOpen(false)}>
+                    <input type="hidden" name="bom_id" value={bom.id} />
+                    <input type="hidden" name="variant_id" value={variantId} />
+                    <button type="submit" className={`${styles.menuItem} ${styles.menuItemDanger}`} role="menuitem">
+                      Delete draft
                     </button>
                   </form>
                 )}

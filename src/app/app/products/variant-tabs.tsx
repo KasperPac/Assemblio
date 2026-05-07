@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import styles from "./variant-detail.module.css";
 
@@ -12,6 +11,8 @@ const TAB_LABELS: Record<Tab, string> = {
   routing: "Labour & Routing",
   versions: "Versions",
 };
+
+const VALID_TABS = new Set<Tab>(["overview", "bom", "routing", "versions"]);
 
 type Props = {
   defaultTab?: Tab;
@@ -28,13 +29,14 @@ export default function VariantTabs({
   routing,
   versions,
 }: Props) {
-  const [active, setActive] = useState<Tab>(defaultTab);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const urlTab = searchParams.get("tab") as Tab | null;
+  const active: Tab = urlTab && VALID_TABS.has(urlTab) ? urlTab : defaultTab;
+
   function handleTabClick(tab: Tab) {
-    setActive(tab);
     const nextParams = new URLSearchParams(searchParams.toString());
     nextParams.set("tab", tab);
     router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });

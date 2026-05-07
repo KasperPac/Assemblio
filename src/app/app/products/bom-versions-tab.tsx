@@ -3,7 +3,7 @@
 import { useActionState, useState, useTransition } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { duplicateBomAsDraft } from "@/app/app/products/actions";
-import { setBomActive } from "@/app/app/bom/actions";
+import { deleteBomDraft, setBomActive } from "@/app/app/bom/actions";
 import styles from "./bom-versions-tab.module.css";
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -97,12 +97,14 @@ function findActiveBom(boms: Bom[]): Bom | null {
 
 function SingleVersionView({
   bom,
+  variantId,
   sellPrice,
   onActivate,
   isActivating,
   onEditDraft,
 }: {
   bom: Bom;
+  variantId: string;
   sellPrice: number | null;
   onActivate: (bomId: string) => void;
   isActivating: boolean;
@@ -137,6 +139,13 @@ function SingleVersionView({
             >
               Make active
             </button>
+            <form action={deleteBomDraft}>
+              <input type="hidden" name="bom_id" value={bom.id} />
+              <input type="hidden" name="variant_id" value={variantId} />
+              <button type="submit" className={styles.deleteDraftBtn}>
+                Delete draft
+              </button>
+            </form>
           </>
         ) : null}
       </div>
@@ -591,6 +600,7 @@ export default function BomVersionsTab({ boms, variantId, sellPrice }: Props) {
         ) : leftBom ? (
           <SingleVersionView
             bom={leftBom}
+            variantId={variantId}
             sellPrice={sellPrice}
             onActivate={handleActivate}
             isActivating={isPending}

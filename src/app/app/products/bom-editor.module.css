@@ -67,6 +67,14 @@
   background: var(--bg-card-2);
 }
 
+.menuItemDanger {
+  color: var(--danger);
+}
+
+.menuItemDanger:hover {
+  background: var(--danger-dim);
+}
+
 .menuError {
   margin: 8px 16px 0;
   font-size: 12px;

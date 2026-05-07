@@ -298,6 +298,23 @@
   cursor: not-allowed;
 }
 
+.deleteDraftBtn {
+  background: none;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  border-radius: 5px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.deleteDraftBtn:hover {
+  background: var(--danger-dim);
+}
+
 .compGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;

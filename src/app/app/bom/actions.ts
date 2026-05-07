@@ -252,6 +252,43 @@ export async function removeBomComponentLine(formData: FormData) {
   if (variantId) revalidatePath(`/app/products/variants/${variantId}`);
 }
 
+export async function deleteBomDraft(formData: FormData) {
+  const bomId = formData.get("bom_id")?.toString() ?? "";
+  const variantId = formData.get("variant_id")?.toString() ?? "";
+  if (!bomId) return;
+
+  const context = await getServerTenantContext();
+  if (!context) return;
+  const { supabase, tenantId } = context;
+
+  const { data: bom } = await supabase
+    .from("product_bom")
+    .select("id,variant_id,is_active")
+    .eq("tenant_id", tenantId)
+    .eq("id", bomId)
+    .maybeSingle();
+
+  // Safety: never delete an active BOM
+  if (!bom || bom.is_active) return;
+
+  await supabase
+    .from("product_bom_component")
+    .delete()
+    .eq("tenant_id", tenantId)
+    .eq("product_bom_id", bomId);
+
+  await supabase
+    .from("product_bom")
+    .delete()
+    .eq("tenant_id", tenantId)
+    .eq("id", bomId);
+
+  const vid = variantId || bom.variant_id;
+  revalidatePath("/app/bom");
+  revalidatePath("/app");
+  if (vid) revalidatePath(`/app/products/variants/${vid}`);
+}
+
 export async function addComponentsToBom(
   _prevState: BomState,
   formData: FormData
