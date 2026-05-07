@@ -133,6 +133,7 @@ export async function setBomActive(formData: FormData) {
 
   revalidatePath("/app/bom");
   revalidatePath("/app");
+  revalidatePath(`/app/products/variants/${bom.variant_id}`);
 }
 
 export async function createBomComponentLine(
@@ -164,6 +165,7 @@ export async function createBomComponentLine(
 
 export async function updateBomComponentQuantity(formData: FormData) {
   const lineId = formData.get("line_id")?.toString() ?? "";
+  const variantId = formData.get("variant_id")?.toString() ?? "";
   const quantity = parseNumber(formData.get("quantity"));
   if (!lineId || quantity === null) return;
 
@@ -177,4 +179,89 @@ export async function updateBomComponentQuantity(formData: FormData) {
     .eq("tenant_id", tenantId)
     .eq("id", lineId);
   revalidatePath("/app/bom");
+  if (variantId) revalidatePath(`/app/products/variants/${variantId}`);
+}
+
+export async function updateBomComponentYieldPct(formData: FormData) {
+  const lineId = formData.get("line_id")?.toString() ?? "";
+  const variantId = formData.get("variant_id")?.toString() ?? "";
+  const raw = parseNumber(formData.get("yield_pct"));
+  if (!lineId || raw === null) return;
+
+  // Accept either a decimal (0.85) or a percentage (85) — normalise to decimal
+  const yieldPct = raw > 1 ? raw / 100 : raw;
+  if (yieldPct <= 0 || yieldPct > 1) return;
+
+  const context = await getServerTenantContext();
+  if (!context) return;
+  const { supabase, tenantId } = context;
+
+  await supabase
+    .from("product_bom_component")
+    .update({ yield_pct: yieldPct })
+    .eq("tenant_id", tenantId)
+    .eq("id", lineId);
+
+  revalidatePath("/app/bom");
+  if (variantId) revalidatePath(`/app/products/variants/${variantId}`);
+}
+
+export async function removeBomComponentLine(formData: FormData) {
+  const lineId = formData.get("line_id")?.toString() ?? "";
+  const variantId = formData.get("variant_id")?.toString() ?? "";
+  if (!lineId) return;
+
+  const context = await getServerTenantContext();
+  if (!context) return;
+  const { supabase, tenantId } = context;
+
+  await supabase
+    .from("product_bom_component")
+    .delete()
+    .eq("tenant_id", tenantId)
+    .eq("id", lineId);
+
+  revalidatePath("/app/bom");
+  if (variantId) revalidatePath(`/app/products/variants/${variantId}`);
+}
+
+export async function addComponentsToBom(
+  _prevState: BomState,
+  formData: FormData
+): Promise<BomState> {
+  const bomId = formData.get("bom_id")?.toString() ?? "";
+  const variantId = formData.get("variant_id")?.toString() ?? "";
+  const linesJson = formData.get("lines")?.toString() ?? "[]";
+
+  if (!bomId) return { error: "BOM is required." };
+
+  let lines: Array<{ component_id: string; quantity: number; yield_pct?: number }>;
+  try {
+    lines = JSON.parse(linesJson);
+  } catch {
+    return { error: "Invalid component data." };
+  }
+
+  if (lines.length === 0) return { error: "Select at least one component." };
+
+  const context = await getServerTenantContext();
+  if (!context) return { error: "Missing tenant context." };
+  const { supabase, tenantId } = context;
+
+  const rows = lines
+    .filter((l) => l.quantity > 0)
+    .map((l) => ({
+      tenant_id: tenantId,
+      product_bom_id: bomId,
+      component_id: l.component_id,
+      quantity: l.quantity,
+      yield_pct: l.yield_pct ?? 1.0,
+    }));
+
+  const { error } = await supabase.from("product_bom_component").insert(rows);
+  if (error) return { error: error.message };
+
+  revalidatePath("/app/bom");
+  if (variantId) revalidatePath(`/app/products/variants/${variantId}`);
+  return { success: `Added ${rows.length} component(s).` };
 }

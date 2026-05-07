@@ -88,7 +88,7 @@ export async function createBomWithComponents(
 
   if (!variantId) return { error: "Variant is required." };
 
-  let lines: Array<{ component_id: string; quantity: number }>;
+  let lines: Array<{ component_id: string; quantity: number; yield_pct?: number }>;
   try {
     lines = JSON.parse(linesJson);
   } catch {
@@ -135,6 +135,7 @@ export async function createBomWithComponents(
       product_bom_id: insertedBom.id,
       component_id: l.component_id,
       quantity: l.quantity,
+      yield_pct: l.yield_pct ?? 1.0,
     }));
 
   if (rows.length > 0) {
@@ -275,7 +276,7 @@ export async function copyBomToDraft(
 
   const { data: sourceLines, error: sourceLinesError } = await supabase
     .from("product_bom_component")
-    .select("component_id,quantity")
+    .select("component_id,quantity,yield_pct")
     .eq("tenant_id", tenantId)
     .eq("product_bom_id", sourceBomId);
 
@@ -288,6 +289,7 @@ export async function copyBomToDraft(
     product_bom_id: insertedBom.id,
     component_id: line.component_id,
     quantity: line.quantity,
+    yield_pct: line.yield_pct ?? 1.0,
   }));
 
   if (rowsToInsert.length > 0) {
@@ -585,4 +587,68 @@ export async function deleteBomLaborLine(formData: FormData) {
   redirectVariantResult(variantId, {
     laborSuccess: encodeMessage("Removed labor operation."),
   });
+}
+
+export async function duplicateBomAsDraft(
+  _prevState: BomActionState,
+  formData: FormData
+): Promise<BomActionState> {
+  const variantId = formData.get("variant_id")?.toString() ?? "";
+  const sourceBomId = formData.get("source_bom_id")?.toString() ?? "";
+
+  if (!variantId || !sourceBomId) {
+    return { error: "Variant and source BOM are required." };
+  }
+
+  const context = await requireBomEditor();
+  if ("error" in context) return { error: context.error };
+  const { supabase, tenantId } = context;
+
+  const { data: sourceLines, error: linesError } = await supabase
+    .from("product_bom_component")
+    .select("component_id,quantity,yield_pct")
+    .eq("tenant_id", tenantId)
+    .eq("product_bom_id", sourceBomId);
+
+  if (linesError) return { error: linesError.message };
+
+  const version = await getNextBomVersion(tenantId, variantId, supabase);
+
+  const { data: newBom, error: bomError } = await supabase
+    .from("product_bom")
+    .insert({
+      tenant_id: tenantId,
+      variant_id: variantId,
+      version,
+      status: "draft",
+      is_active: false,
+    })
+    .select("id")
+    .single();
+
+  if (bomError || !newBom?.id) {
+    return { error: bomError?.message ?? "Failed to create draft BOM." };
+  }
+
+  const rows = (sourceLines ?? []).map((l) => ({
+    tenant_id: tenantId,
+    product_bom_id: newBom.id,
+    component_id: l.component_id,
+    quantity: l.quantity,
+    yield_pct: l.yield_pct ?? 1.0,
+  }));
+
+  if (rows.length > 0) {
+    const { error: insertError } = await supabase
+      .from("product_bom_component")
+      .insert(rows);
+    if (insertError) {
+      await supabase.from("product_bom").delete().eq("id", newBom.id);
+      return { error: insertError.message };
+    }
+  }
+
+  revalidatePath(`/app/products/variants/${variantId}`);
+  revalidatePath("/app/bom");
+  return { success: `Draft BOM v${version} created (${rows.length} lines).` };
 }

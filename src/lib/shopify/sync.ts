@@ -18,7 +18,7 @@ type ShopifyProductNode = {
   title: string;
   description: string;
   featuredImage: { url: string | null } | null;
-  variants: { nodes: Array<{ id: string; title: string | null; sku: string | null }> };
+  variants: { nodes: Array<{ id: string; title: string | null; sku: string | null; price: string | null }> };
 };
 
 type ShopifyOrderNode = {
@@ -119,7 +119,7 @@ async function fetchProducts(shopDomain: string, accessToken: string) {
           description
           featuredImage { url }
           variants(first: 100) {
-            nodes { id title sku }
+            nodes { id title sku price }
           }
         }
       }
@@ -229,6 +229,7 @@ export async function syncShopifyStoreData(
         shopify_id: variant.id,
         title: variant.title ?? "",
         sku: variant.sku,
+        price: variant.price ? parseFloat(variant.price) : null,
       }))
       .filter((variant) => variant.product_id)
   );
