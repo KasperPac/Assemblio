@@ -150,7 +150,7 @@ export default function BomEditor({
         <div className={styles.toolbarLeft}>
           <span className={`${styles.badge} ${statusCls}`}>{statusLabel}</span>
           <span className={styles.versionInfo}>
-            v{bom.version} · {new Date(bom.created_at).toLocaleDateString()}
+            v{bom.version} · {new Date(bom.created_at).toLocaleDateString("en-AU")}
           </span>
         </div>
         <div className={styles.toolbarRight}>
@@ -233,8 +233,8 @@ export default function BomEditor({
                 formData.set("line_id", line.id);
                 formData.set("variant_id", variantId);
                 formData.set("quantity", String(qty));
-                startTransition(() => {
-                  updateBomComponentQuantity(formData);
+                startTransition(async () => {
+                  await updateBomComponentQuantity(formData);
                 });
               };
 
@@ -243,8 +243,8 @@ export default function BomEditor({
                 formData.set("line_id", line.id);
                 formData.set("variant_id", variantId);
                 formData.set("yield_pct", String(pct));
-                startTransition(() => {
-                  updateBomComponentYieldPct(formData);
+                startTransition(async () => {
+                  await updateBomComponentYieldPct(formData);
                 });
               };
 

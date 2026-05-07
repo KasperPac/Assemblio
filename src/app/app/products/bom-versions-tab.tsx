@@ -469,8 +469,8 @@ export default function BomVersionsTab({ boms, variantId, sellPrice }: Props) {
   function handleActivate(bomId: string) {
     const formData = new FormData();
     formData.set("bom_id", bomId);
-    startTransition(() => {
-      setBomActive(formData);
+    startTransition(async () => {
+      await setBomActive(formData);
     });
   }
 
