@@ -15,6 +15,8 @@ type ProductRecord = {
   title: string;
   shopify_id: string;
   created_at: string | null;
+  image_url: string | null;
+  description: string | null;
 };
 
 type VariantRow = {
@@ -88,7 +90,7 @@ export default async function ProductDetailPage({ params }: Props) {
   // Fetch product
   const { data: productData } = await supabase
     .from("shopify_product")
-    .select("id,title,shopify_id,created_at")
+    .select("id,title,shopify_id,created_at,image_url,description")
     .eq("id", productId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
@@ -228,6 +230,26 @@ export default async function ProductDetailPage({ params }: Props) {
         title={product.title}
         description={`Shopify ID: ${product.shopify_id} · ${variants.length} variant${variants.length === 1 ? "" : "s"} · Last sync ${timeAgo(lastSync)}`}
       />
+
+      {/* Product image + description */}
+      {(product.image_url || product.description) && (
+        <div className={styles.productMeta}>
+          {product.image_url && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={product.image_url}
+              alt={product.title}
+              className={styles.productImage}
+            />
+          )}
+          {product.description && (
+            <div
+              className={styles.productDescription}
+              dangerouslySetInnerHTML={{ __html: product.description }}
+            />
+          )}
+        </div>
+      )}
 
       {/* BOM Coverage bar */}
       <div className={styles.coverageCard}>

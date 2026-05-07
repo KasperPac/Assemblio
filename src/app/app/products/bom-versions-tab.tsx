@@ -340,17 +340,23 @@ function ComparisonView({
               <div className={cellClass(row.kind, "left")}>
                 {row.left ? (
                   <>
+                    {/* Col 1: name + sub-lines */}
                     <span className={styles.compCellName}>
                       {row.name}
                       {row.kind === "removed" ? (
                         <span className={styles.removedLabel}>Removed in v{right.version}</span>
                       ) : null}
                     </span>
-                    <span className={styles.compCellCost}>
-                      {row.left.qty} &times;{" "}
-                      {Math.round(row.left.yieldPct * 100)}% yield ={" "}
-                      {cellCostStr(row.left)}
-                    </span>
+                    {/* Col 2: qty */}
+                    <span className={styles.compCellQty}>{row.left.qty}</span>
+                    {/* Col 3: line cost */}
+                    <span className={styles.compCellLineCost}>{cellCostStr(row.left)}</span>
+                    {/* Sub-line: yield % (col 1 only) when < 100% */}
+                    {Math.round(row.left.yieldPct * 100) < 100 ? (
+                      <span className={styles.compCellSubLine}>
+                        {Math.round(row.left.yieldPct * 100)}% yield
+                      </span>
+                    ) : null}
                   </>
                 ) : (
                   <span className={styles.compCellAbsent}>Not included</span>
@@ -361,20 +367,40 @@ function ComparisonView({
               <div className={cellClass(row.kind, "right")}>
                 {row.right ? (
                   <>
+                    {/* Col 1: name + sub-lines */}
                     <span className={styles.compCellName}>
                       {row.name}
                       {row.kind === "added" ? (
                         <span className={styles.newLabel}>New in v{right.version}</span>
                       ) : null}
                     </span>
-                    <span className={row.kind === "changed" ? styles.compCellSub : styles.compCellCost}>
-                      {row.right.qty} &times;{" "}
-                      {Math.round(row.right.yieldPct * 100)}% yield ={" "}
+                    {/* Col 2: qty (warning color if changed) */}
+                    <span
+                      className={
+                        row.kind === "changed" ? styles.compCellSub : styles.compCellQty
+                      }
+                    >
+                      {row.right.qty}
+                    </span>
+                    {/* Col 3: line cost (warning color if changed) */}
+                    <span
+                      className={
+                        row.kind === "changed" ? styles.compCellSub : styles.compCellLineCost
+                      }
+                    >
                       {cellCostStr(row.right)}
                     </span>
+                    {/* Sub-line: "was X qty / Y% yield" for changed rows */}
                     {row.kind === "changed" && row.left ? (
-                      <span className={styles.compCellSub}>
-                        was {row.left.qty} qty / {Math.round(row.left.yieldPct * 100)}% yield
+                      <span className={`${styles.compCellSubLine} ${styles.compCellSub}`}>
+                        was {row.left.qty} qty
+                        {Math.round(row.left.yieldPct * 100) < 100
+                          ? ` / ${Math.round(row.left.yieldPct * 100)}% yield`
+                          : ""}
+                      </span>
+                    ) : Math.round(row.right.yieldPct * 100) < 100 ? (
+                      <span className={styles.compCellSubLine}>
+                        {Math.round(row.right.yieldPct * 100)}% yield
                       </span>
                     ) : null}
                   </>
@@ -389,13 +415,20 @@ function ComparisonView({
 
       {/* Comparison footer */}
       <div className={styles.compFooter}>
+        {/* Left footer */}
         <div className={styles.compFooterCell}>
           <span className={styles.footerLabel}>Material cost</span>
           <span className={styles.footerValue}>{fmt(leftCost)}</span>
-          {leftMargin !== null ? (
-            <span className={styles.footerSub}>Margin: {leftMargin.toFixed(1)}%</span>
-          ) : null}
+          <span className={styles.footerLabel} style={{ marginTop: 6 }}>Sell price</span>
+          <span className={styles.footerSub}>
+            {sellPrice !== null ? `$${sellPrice.toFixed(2)}` : "—"}
+          </span>
+          <span className={styles.footerLabel} style={{ marginTop: 6 }}>Gross margin</span>
+          <span className={styles.footerSub}>
+            {leftMargin !== null ? `${leftMargin.toFixed(1)}%` : "—"}
+          </span>
         </div>
+        {/* Right footer */}
         <div className={styles.compFooterCell}>
           <span className={styles.footerLabel}>Material cost</span>
           <span className={styles.footerValue}>{fmt(rightCost)}</span>
@@ -412,14 +445,20 @@ function ComparisonView({
               {delta > 0 ? `+${fmt(delta)}` : delta < 0 ? fmt(delta) : "No change"}
             </span>
           ) : null}
+          <span className={styles.footerLabel} style={{ marginTop: 6 }}>Sell price</span>
+          <span className={styles.footerSub}>
+            {sellPrice !== null ? `$${sellPrice.toFixed(2)}` : "—"}
+          </span>
+          <span className={styles.footerLabel} style={{ marginTop: 6 }}>Gross margin</span>
           {delta !== null && delta > 0 && rightMargin !== null ? (
             <span className={styles.footerWarning}>
-              Margin drops to {rightMargin.toFixed(1)}% if activated
+              {rightMargin.toFixed(1)}% (drops if activated)
             </span>
-          ) : null}
-          {rightMargin !== null && (delta === null || delta <= 0) ? (
-            <span className={styles.footerSub}>Margin: {rightMargin.toFixed(1)}%</span>
-          ) : null}
+          ) : (
+            <span className={styles.footerSub}>
+              {rightMargin !== null ? `${rightMargin.toFixed(1)}%` : "—"}
+            </span>
+          )}
         </div>
       </div>
     </>

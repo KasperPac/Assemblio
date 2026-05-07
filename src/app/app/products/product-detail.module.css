@@ -4,6 +4,37 @@
   gap: 18px;
 }
 
+/* ── Product meta (image + description) ────── */
+
+.productMeta {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.productImage {
+  flex-shrink: 0;
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--stroke-card);
+}
+
+.productDescription {
+  font-size: 13px;
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+
+.productDescription p {
+  margin: 0 0 8px 0;
+}
+
+.productDescription p:last-child {
+  margin-bottom: 0;
+}
+
 /* ── Coverage bar ──────────────────────────── */
 
 .coverageCard {

@@ -358,11 +358,11 @@
   border-bottom: 1px solid var(--stroke);
   color: var(--ink-strong);
   font-size: 13px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-height: 48px;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 4px 12px;
+  align-items: center;
+  min-height: 42px;
 }
 
 .compCellLeft {
@@ -417,6 +417,28 @@
   font-style: italic;
   color: var(--stroke-strong);
   font-size: 12px;
+  grid-column: 1 / -1;
+}
+
+.compCellQty {
+  font-size: 13px;
+  color: var(--ink-strong);
+  font-weight: 500;
+  text-align: right;
+}
+
+.compCellLineCost {
+  font-size: 12px;
+  color: var(--ink-muted);
+  text-align: right;
+  min-width: 72px;
+}
+
+.compCellSubLine {
+  grid-column: 1;
+  font-size: 11px;
+  color: var(--ink-muted);
+  margin-top: 1px;
 }
 
 .newLabel {
