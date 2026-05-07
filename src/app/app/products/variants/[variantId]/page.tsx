@@ -396,36 +396,26 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
               <div>
                 <dl style={{ display: "grid", gap: "8px" }}>
                   <div>
-                    <dt style={{ fontSize: "11px", color: "#666", textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                      Variant title
-                    </dt>
-                    <dd style={{ fontSize: "15px", color: "#eee", marginTop: "2px" }}>{typedVariant.title ?? "—"}</dd>
+                    <dt className={styles.overviewLabel}>Variant title</dt>
+                    <dd className={styles.overviewValue}>{typedVariant.title ?? "—"}</dd>
                   </div>
                   <div>
-                    <dt style={{ fontSize: "11px", color: "#666", textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                      SKU
-                    </dt>
-                    <dd style={{ fontSize: "15px", color: "#eee", marginTop: "2px" }}>{typedVariant.sku ?? "—"}</dd>
+                    <dt className={styles.overviewLabel}>SKU</dt>
+                    <dd className={styles.overviewValue}>{typedVariant.sku ?? "—"}</dd>
                   </div>
                   <div>
-                    <dt style={{ fontSize: "11px", color: "#666", textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                      Shopify ID
-                    </dt>
-                    <dd style={{ fontSize: "15px", color: "#eee", marginTop: "2px" }}>{typedVariant.shopify_id}</dd>
+                    <dt className={styles.overviewLabel}>Shopify ID</dt>
+                    <dd className={styles.overviewValue}>{typedVariant.shopify_id}</dd>
                   </div>
                   <div>
-                    <dt style={{ fontSize: "11px", color: "#666", textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                      Price
-                    </dt>
-                    <dd style={{ fontSize: "15px", color: "#eee", marginTop: "2px" }}>
+                    <dt className={styles.overviewLabel}>Price</dt>
+                    <dd className={styles.overviewValue}>
                       {sellPrice !== null ? `$${sellPrice.toFixed(2)}` : "—"}
                     </dd>
                   </div>
                   <div>
-                    <dt style={{ fontSize: "11px", color: "#666", textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                      Created
-                    </dt>
-                    <dd style={{ fontSize: "15px", color: "#eee", marginTop: "2px" }}>
+                    <dt className={styles.overviewLabel}>Created</dt>
+                    <dd className={styles.overviewValue}>
                       {new Date(typedVariant.created_at).toLocaleDateString("en-AU")}
                     </dd>
                   </div>

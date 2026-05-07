@@ -28,10 +28,10 @@
   border-radius: 10px;
   padding: 10px 14px;
   background: var(--brand-1);
-  color: #0b0f19;
+  color: var(--ink-on-brand);
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 8px 16px rgba(74, 222, 128, 0.15);
+  box-shadow: var(--shadow-md);
 }
 
 .filters {
@@ -52,7 +52,7 @@
   background: var(--bg-card);
   border-radius: 14px;
   border: 1px solid var(--stroke-card);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
 }
 
@@ -69,7 +69,7 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--ink-faint);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-card-2);
   font-size: 11px;
   font-weight: 700;
 }
@@ -91,7 +91,7 @@
   width: 46px;
   height: 46px;
   border-radius: 10px;
-  background: var(--bg-card-alt);
+  background: var(--bg-card-2);
   border: 1px solid var(--stroke);
   display: grid;
   place-items: center;
@@ -131,12 +131,12 @@
 }
 
 .statusActive {
-  background: rgba(74, 222, 128, 0.15);
-  color: var(--brand-1);
+  background: var(--ok-dim);
+  color: var(--ok);
 }
 
 .statusPending {
-  background: rgba(245, 158, 11, 0.15);
+  background: var(--warning-dim);
   color: var(--warning);
 }
 
