@@ -439,6 +439,66 @@
   line-height: 1.4;
 }
 
+/* ── Empty state (no BOM yet) ──────────── */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  text-align: center;
+}
+
+.emptyIcon {
+  width: 56px;
+  height: 56px;
+  border: 2px dashed #333;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: #444;
+  margin-bottom: 16px;
+}
+
+.emptyHeading {
+  font-size: 18px;
+  color: #eee;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.emptyDescription {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 20px;
+  max-width: 360px;
+}
+
+.emptySecondary {
+  font-size: 13px;
+  color: #555;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.linkButton {
+  background: none;
+  border: none;
+  color: #4a9eff;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font-family: inherit;
+}
+
 /* ── Responsive ───────────────────────── */
 
 @media (max-width: 700px) {

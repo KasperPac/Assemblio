@@ -158,7 +158,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
         .order("name"),
       supabase
         .from("component")
-        .select("id,name,sku")
+        .select("id,name,sku,unit,group,cost_per_unit")
         .order("name"),
       supabase.from("department").select("id,name,code").eq("is_active", true).order("name"),
     ]);
@@ -470,9 +470,10 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
         ) : canManageBom ? (
           <BomSeedPanel
             targetVariantId={typedVariant.id}
+            variantLabel={typedVariant.title ?? "Untitled variant"}
             sourceBoms={copyOptions}
             templates={templateOptions}
-            components={(allComponents ?? []) as Array<{ id: string; name: string; sku: string | null }>}
+            components={(allComponents ?? []) as Array<{ id: string; name: string; sku: string | null; unit: string | null; group: string | null; cost_per_unit: number | null }>}
           />
         ) : (
           <p className={styles.notice}>
