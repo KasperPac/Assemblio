@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
 import { useActionState } from "react";
 import {
   createBomWithComponents,
@@ -134,6 +134,14 @@ function ComponentPicker({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (templateState.success) onDone();
+  }, [templateState.success, onDone]);
+
+  useEffect(() => {
+    if (copyState.success) onDone();
+  }, [copyState.success, onDone]);
+
   // Build category map: group name → count (all components, not filtered)
   const categories = useMemo(() => {
     const map: Record<string, number> = {};
@@ -167,7 +175,7 @@ function ComponentPicker({
   );
 
   const runningCost = useMemo(() => {
-    if (selectedComponents.length === 0) return 0;
+    if (selectedComponents.length === 0) return null;
     let total = 0;
     for (const c of selectedComponents) {
       if (c.cost_per_unit === null) return null;
@@ -205,6 +213,12 @@ function ComponentPicker({
     const lines = Object.entries(selection)
       .filter(([, qty]) => qty > 0)
       .map(([id, qty]) => ({ component_id: id, quantity: qty }));
+
+    if (lines.length === 0) {
+      setError("Select at least one component.");
+      setSaving(false);
+      return;
+    }
 
     const formData = new FormData();
     formData.set("lines", JSON.stringify(lines));
