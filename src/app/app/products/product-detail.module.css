@@ -191,6 +191,7 @@
 }
 
 .marginWarn {
+  display: block;
   font-weight: 700;
   font-size: 10px;
   opacity: 0.9;
@@ -213,7 +214,7 @@
 }
 
 .btnPrimary {
-  background: var(--brand-1, #4ade80);
+  background: #4a9eff;
   color: #0b0f19;
   border: none;
 }
