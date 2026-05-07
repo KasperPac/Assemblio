@@ -643,7 +643,7 @@ export async function duplicateBomAsDraft(
       .from("product_bom_component")
       .insert(rows);
     if (insertError) {
-      await supabase.from("product_bom").delete().eq("id", newBom.id);
+      await supabase.from("product_bom").delete().eq("tenant_id", tenantId).eq("id", newBom.id);
       return { error: insertError.message };
     }
   }

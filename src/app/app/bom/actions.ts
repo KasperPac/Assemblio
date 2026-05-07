@@ -258,6 +258,8 @@ export async function addComponentsToBom(
       yield_pct: l.yield_pct ?? 1.0,
     }));
 
+  if (rows.length === 0) return { error: "All selected components have quantity 0." };
+
   const { error } = await supabase.from("product_bom_component").insert(rows);
   if (error) return { error: error.message };
 
