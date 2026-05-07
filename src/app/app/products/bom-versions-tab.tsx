@@ -82,7 +82,7 @@ function statusLabel(bom: Bom): string {
 }
 
 function margin(cost: number | null, sell: number | null): number | null {
-  if (cost === null || sell === null || sell === 0) return null;
+  if (cost === null || sell === null || sell <= 0) return null;
   return ((sell - cost) / sell) * 100;
 }
 
@@ -94,7 +94,17 @@ function findActiveBom(boms: Bom[]): Bom | null {
 
 // ── Single version panel ───────────────────────────────────────────────────
 
-function SingleVersionView({ bom, sellPrice }: { bom: Bom; sellPrice: number | null }) {
+function SingleVersionView({
+  bom,
+  sellPrice,
+  onActivate,
+  isActivating,
+}: {
+  bom: Bom;
+  sellPrice: number | null;
+  onActivate: (bomId: string) => void;
+  isActivating: boolean;
+}) {
   const cost = totalMaterialCost(bom.lines);
   const gm = margin(cost, sellPrice);
 
@@ -106,6 +116,16 @@ function SingleVersionView({ bom, sellPrice }: { bom: Bom; sellPrice: number | n
           {statusLabel(bom)}
         </span>
         <span className={styles.singleMeta}>{fmtDate(bom.created_at)}</span>
+        {!bom.is_active && bom.status !== "archived" ? (
+          <button
+            type="button"
+            className={styles.makeActiveBtn}
+            disabled={isActivating}
+            onClick={() => onActivate(bom.id)}
+          >
+            Make this the active version
+          </button>
+        ) : null}
       </div>
 
       <div className={styles.tableWrapper}>
@@ -240,14 +260,12 @@ function ComparisonView({
   left,
   right,
   sellPrice,
-  variantId,
   isActivating,
   onActivate,
 }: {
   left: Bom;
   right: Bom;
   sellPrice: number | null;
-  variantId: string;
   isActivating: boolean;
   onActivate: (bomId: string) => void;
 }) {
@@ -491,7 +509,7 @@ export default function BomVersionsTab({ boms, variantId, sellPrice }: Props) {
 
         <div className={styles.versionList}>
           {boms.length === 0 ? (
-            <div style={{ padding: "16px 12px", color: "#555", fontSize: "12px", fontStyle: "italic" }}>
+            <div className={styles.sidebarEmpty}>
               No BOM versions yet.
             </div>
           ) : (
@@ -542,12 +560,16 @@ export default function BomVersionsTab({ boms, variantId, sellPrice }: Props) {
             left={leftBom!}
             right={rightBom!}
             sellPrice={sellPrice}
-            variantId={variantId}
             isActivating={isPending}
             onActivate={handleActivate}
           />
         ) : leftBom ? (
-          <SingleVersionView bom={leftBom} sellPrice={sellPrice} />
+          <SingleVersionView
+            bom={leftBom}
+            sellPrice={sellPrice}
+            onActivate={handleActivate}
+            isActivating={isPending}
+          />
         ) : (
           <div className={styles.emptyState}>
             Select a version to view its components.
