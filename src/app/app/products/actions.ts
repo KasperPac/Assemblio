@@ -524,6 +524,30 @@ export async function updateBomLaborLine(formData: FormData) {
     tenantId: string;
   };
 
+  // Check sequence uniqueness within BOM
+  const { data: existingLine } = await supabase
+    .from("product_bom_labor")
+    .select("product_bom_id")
+    .eq("id", lineId)
+    .single();
+
+  if (existingLine) {
+    const { count } = await supabase
+      .from("product_bom_labor")
+      .select("id", { count: "exact", head: true })
+      .eq("product_bom_id", existingLine.product_bom_id)
+      .eq("sequence", sequence)
+      .neq("id", lineId);
+
+    if ((count ?? 0) > 0) {
+      redirectVariantResult(variantId, {
+        tab: "routing",
+        laborError: encodeMessage(`Sequence ${sequence} is already used by another operation in this BOM.`),
+      });
+      return;
+    }
+  }
+
   const { error } = await supabase
     .from("product_bom_labor")
     .update({

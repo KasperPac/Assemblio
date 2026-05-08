@@ -572,3 +572,17 @@
     grid-template-columns: 1fr;
   }
 }
+
+.routingDepsWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.routingDepLabel {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+}

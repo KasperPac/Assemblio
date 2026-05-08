@@ -579,14 +579,15 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                                           defaultValue={line.notes ?? `${department?.name ?? "Department"} operation`}
                                         />
                                       </div>
-                                      {laborRows.filter((other) => other.id !== line.id).length > 0 ? (
-                                        <div className={`${styles.routingField} ${styles.routingSpanTwo}`}>
-                                          <label>Depends on (must complete before this step starts)</label>
-                                          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", paddingTop: "4px" }}>
-                                            {laborRows
-                                              .filter((other) => other.id !== line.id)
-                                              .map((other) => (
-                                                <label key={other.id} style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "13px" }}>
+                                      {(() => {
+                                        const otherRows = laborRows.filter((other) => other.id !== line.id);
+                                        if (otherRows.length === 0) return null;
+                                        return (
+                                          <div className={`${styles.routingField} ${styles.routingSpanTwo}`}>
+                                            <label>Depends on (must complete before this step starts)</label>
+                                            <div className={styles.routingDepsWrapper}>
+                                              {otherRows.map((other) => (
+                                                <label key={other.id} className={styles.routingDepLabel}>
                                                   <input
                                                     type="checkbox"
                                                     name="blocked_by"
@@ -596,9 +597,10 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                                                   Step {other.sequence}: {other.operation_name}
                                                 </label>
                                               ))}
+                                            </div>
                                           </div>
-                                        </div>
-                                      ) : null}
+                                        );
+                                      })()}
                                       <div className={`${styles.routingActions} ${styles.routingSpanTwo}`}>
                                         <button className={styles.secondaryButton} type="submit">
                                           Save Operation
