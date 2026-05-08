@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -7,7 +8,7 @@ function renderTemplate(template: string, vars: Record<string, string>): string 
 }
 
 type FireParams = {
-  supabase: any;
+  supabase: SupabaseClient;
   tenantId: string;
   stepId: string;
   orderLineId: string;
@@ -43,6 +44,9 @@ export async function fireNotificationIfConfigured({
   const order = ol?.orders as any;
   const customerEmail: string | null = order?.customer_email ?? null;
   if (!customerEmail) return;
+
+  const orderId: string | null = order?.id ?? null;
+  if (!orderId) return;
 
   const variant = ol?.variant as any;
   const product = variant?.product as any;
@@ -83,7 +87,7 @@ export async function fireNotificationIfConfigured({
 
   await supabase.from("notification_log").insert({
     tenant_id: tenantId,
-    order_id: order?.id,
+    order_id: orderId,
     order_line_id: orderLineId,
     trigger_id: trigger.id,
     channel: trigger.channel,

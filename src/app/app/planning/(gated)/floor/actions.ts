@@ -108,7 +108,7 @@ export async function completeStep(stepId: string) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  // 1. Mark this step complete
+  // Mark this step complete
   const { data: completed, error } = await supabase
     .from("job_routing_step")
     .update({ status: "complete", actual_end: new Date().toISOString(), updated_at: new Date().toISOString(), completed_by: user?.id ?? null })
@@ -125,15 +125,19 @@ export async function completeStep(stepId: string) {
     return;
   }
 
-  // 3. Fire notification if trigger configured for this step
-  await fireNotificationIfConfigured({
-    supabase,
-    tenantId,
-    stepId,
-    orderLineId: completed.order_line_id,
-  });
+  // Fire notification — non-critical; must not abort step-complete flow
+  try {
+    await fireNotificationIfConfigured({
+      supabase,
+      tenantId,
+      stepId,
+      orderLineId: completed.order_line_id,
+    });
+  } catch {
+    // intentional — notification failure must not break unlock cascade
+  }
 
-  // 2. Find all blocked steps for this order line
+  // Find all blocked steps for this order line
   const { data: blockedSteps } = await supabase
     .from("job_routing_step")
     .select("id, sequence, blocked_by")
@@ -147,7 +151,7 @@ export async function completeStep(stepId: string) {
     return;
   }
 
-  // 3. Find all complete sequences for this order line
+  // Find all complete sequences for this order line
   const { data: completeSteps } = await supabase
     .from("job_routing_step")
     .select("sequence")
@@ -157,7 +161,7 @@ export async function completeStep(stepId: string) {
 
   const completedSeqs = new Set((completeSteps ?? []).map((s) => s.sequence));
 
-  // 4. Compute which blocked steps are now unblocked
+  // Compute which blocked steps are now unblocked
   const toUnlock = computeUnlocked(
     blockedSteps.map((s) => ({ id: s.id, sequence: s.sequence, blocked_by: s.blocked_by ?? [] })),
     completedSeqs
