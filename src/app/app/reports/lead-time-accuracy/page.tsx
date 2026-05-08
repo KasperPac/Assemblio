@@ -106,7 +106,7 @@ export default async function LeadTimeAccuracyPage({
 
   const columns: TableColumn<SupplierAccuracy>[] = [
     { key: "supplier", header: "Supplier", render: (r) => r.supplier },
-    { key: "received", header: "Received", align: "right", render: (r) => r.received },
+    { key: "received", header: "POs Received", align: "right", render: (r) => r.received },
     { key: "onTime", header: "On time", align: "right", render: (r) => r.onTime },
     {
       key: "late",
