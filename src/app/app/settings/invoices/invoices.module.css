@@ -47,7 +47,7 @@
 }
 
 .paidBadge {
-  font-size: var(--fs-badge);
+  font-size: var(--fs-xs);
   font-weight: var(--fw-medium);
   color: var(--ok);
   background: var(--ok-dim);

@@ -162,7 +162,7 @@
 .productThumbEmpty {
   width: 52px;
   height: 52px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   object-fit: cover;
   flex-shrink: 0;
   border: 1px solid var(--stroke-card);
@@ -320,7 +320,7 @@
 .okBadge, .shortBadge {
   display: inline-block;
   padding: 2px 8px;
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
   font-size: 0.78rem;
   font-weight: 600;
   white-space: nowrap;
@@ -432,7 +432,7 @@
 
 .weekField input {
   border: 1px solid var(--stroke);
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   min-height: 44px;
   padding: 0 14px;
   background: var(--bg-input);

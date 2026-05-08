@@ -34,7 +34,7 @@
 .dialog {
   background: var(--bg-card);
   border: 1px solid var(--stroke);
-  border-radius: 20px;
+  border-radius: var(--radius-xl);
   padding: 28px;
   width: 440px;
   max-width: 90vw;
@@ -50,20 +50,20 @@
 .optional { font-weight: 400; opacity: 0.6; }
 .select, .input {
   border: 1px solid var(--stroke);
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   min-height: 42px;
   padding: 0 12px;
   background: var(--bg-input);
   color: var(--ink-strong);
   font: inherit;
 }
-.checkboxRow { display: flex; align-items: flex-start; gap: 10px; padding: 12px; border-radius: 10px; background: var(--bg-card-alt); border: 1px solid var(--stroke-card); cursor: pointer; }
+.checkboxRow { display: flex; align-items: flex-start; gap: 10px; padding: 12px; border-radius: var(--radius-lg); background: var(--bg-card-alt); border: 1px solid var(--stroke-card); cursor: pointer; }
 .checkboxLabel { display: block; font-weight: 600; color: var(--ink-strong); font-size: 0.88rem; }
 .checkboxDesc { display: block; font-size: 0.78rem; color: var(--ink-muted); margin-top: 2px; }
 .dialogActions { display: flex; gap: 10px; justify-content: flex-end; }
 
 /* Panel */
-.panel { display: flex; flex-direction: column; border: 1px solid var(--stroke); border-radius: 20px; background: var(--bg-card); overflow: hidden; }
+.panel { display: flex; flex-direction: column; border: 1px solid var(--stroke); border-radius: var(--radius-xl); background: var(--bg-card); overflow: hidden; }
 .panelHeader { padding: 20px 24px 16px; border-bottom: 1px solid var(--stroke); }
 .eyebrow { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--ink-faint); }
 .panelTitle { margin: 6px 0 0; color: var(--ink-strong); }
@@ -109,7 +109,7 @@
   gap: 10px;
   padding: 10px 12px;
   border: 1px solid var(--stroke-card);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   background: var(--bg-card-alt);
 }

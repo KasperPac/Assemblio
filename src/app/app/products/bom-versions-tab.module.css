@@ -3,7 +3,7 @@
   gap: 0;
   min-height: 400px;
   border: 1px solid var(--stroke-card);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 
@@ -128,7 +128,7 @@
 /* ── Status badges ────────────────────────────────────────── */
 
 .badge {
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
   padding: 2px 7px;
   font-size: 10px;
   font-weight: 700;

@@ -30,7 +30,7 @@
   display: grid;
   grid-template-columns: 60px 1fr;
   height: 120px;
-  border-radius: 12px 12px 0 0;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   overflow: hidden;
 }
 

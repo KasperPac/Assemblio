@@ -14,7 +14,7 @@
 
 .backButton {
   border: 1px solid var(--stroke);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 7px 14px;
   text-decoration: none;
   color: var(--ink-muted);
@@ -109,7 +109,7 @@
 .tab {
   padding: 9px 20px;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   background: transparent;
   color: var(--ink-muted);
   font-size: 14px;
@@ -399,7 +399,7 @@
 .filterChip,
 .filterChipActive {
   padding: 6px 14px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -455,7 +455,7 @@
 .badgeOpen {
   display: inline-block;
   padding: 2px 8px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   font-size: 12px;
   background: rgba(79, 142, 247, 0.2);
   color: #4f8ef7;
@@ -464,7 +464,7 @@
 .badgeReceived {
   display: inline-block;
   padding: 2px 8px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   font-size: 12px;
   background: rgba(72, 199, 116, 0.2);
   color: #48c774;
@@ -473,7 +473,7 @@
 .badgeInTransit {
   display: inline-block;
   padding: 2px 8px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   font-size: 12px;
   background: rgba(255, 165, 0, 0.18);
   color: #f5a623;
@@ -482,7 +482,7 @@
 .badgeCancelled {
   display: inline-block;
   padding: 2px 8px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   font-size: 12px;
   background: var(--surface-1);
   color: var(--ink-faint);

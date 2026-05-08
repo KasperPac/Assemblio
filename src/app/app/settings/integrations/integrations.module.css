@@ -29,7 +29,7 @@
 }
 
 .cardName {
-  font-size: var(--fs-h3);
+  font-size: var(--fs-md);
   font-weight: var(--fw-semibold);
   color: var(--ink-strong);
 }
@@ -140,7 +140,7 @@
 
 .shopifyCard h3 {
   margin: 0;
-  font-size: var(--fs-h3);
+  font-size: var(--fs-md);
   font-weight: var(--fw-semibold);
   color: var(--ink-strong);
 }
@@ -240,7 +240,7 @@
 
 .syncModal h4 {
   margin: 0;
-  font-size: var(--fs-h3);
+  font-size: var(--fs-md);
   font-weight: var(--fw-semibold);
   color: var(--ink-strong);
 }
@@ -295,7 +295,7 @@
   border-radius: var(--radius-pill);
   border: 1px solid var(--stroke);
   background: var(--bg-card-2);
-  font-size: var(--fs-badge);
+  font-size: var(--fs-xs);
   color: var(--ink-muted);
   white-space: nowrap;
 }

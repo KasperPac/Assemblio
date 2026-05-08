@@ -33,7 +33,7 @@
 }
 
 .defaultBadge {
-  font-size: var(--fs-badge);
+  font-size: var(--fs-xs);
   font-weight: var(--fw-medium);
   color: var(--brand-1);
   background: var(--bg-card);

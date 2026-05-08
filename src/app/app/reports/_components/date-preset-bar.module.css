@@ -8,7 +8,7 @@
 
 .preset {
   border: 1px solid var(--stroke-strong);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   padding: 5px 10px;
   background: var(--surface-1);
   color: var(--ink-muted);
@@ -43,7 +43,7 @@
 
 .dateInput {
   border: 1px solid var(--stroke-strong);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   padding: 5px 8px;
   font-size: 13px;
   background: var(--surface-1);
@@ -52,7 +52,7 @@
 
 .actionBtn {
   border: 1px solid var(--stroke-strong);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   padding: 5px 10px;
   background: var(--surface-1);
   color: var(--ink-strong);

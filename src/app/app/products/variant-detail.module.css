@@ -23,7 +23,7 @@
 .card {
   background: var(--bg-card);
   border: 1px solid var(--stroke-card);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   padding: 16px 18px;
   display: flex;
   flex-direction: column;
@@ -73,7 +73,7 @@
 .seedCard {
   background: var(--bg-card);
   border: 1px solid var(--stroke-card);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   padding: 20px 18px;
   display: flex;
   flex-direction: column;
@@ -83,7 +83,7 @@
 .seedIcon {
   width: 36px;
   height: 36px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   display: grid;
   place-items: center;
   font-size: 18px;
@@ -124,7 +124,7 @@
 
 .seedCard select {
   border: 1px solid var(--stroke);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 9px 10px;
   background: var(--bg-input);
   color: var(--ink-strong);
@@ -135,7 +135,7 @@
 .primaryButton,
 .secondaryButton {
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 9px 12px;
   font-weight: 700;
   font-size: 12px;
@@ -213,7 +213,7 @@
 
 .lineTable {
   border: 1px solid var(--stroke);
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
 }
 
@@ -252,18 +252,18 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 
 .routingRow {
   border: 1px solid var(--stroke);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 
 .routingEditor,
 .routingCreateForm {
   border: 1px solid var(--stroke);
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   padding: 12px;
   display: grid;
   gap: 10px;
@@ -295,7 +295,7 @@
 .routingField input,
 .routingField select {
   border: 1px solid var(--stroke);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 9px 10px;
   background: var(--bg-input);
   color: var(--ink-strong);
@@ -358,7 +358,7 @@
 
 .wizardDialog {
   border: none;
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   background: var(--bg-card);
   color: var(--ink-strong);
   box-shadow: var(--shadow-lg);
@@ -433,7 +433,7 @@
 .wizardField input,
 .wizardField textarea {
   border: 1px solid var(--stroke);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 9px 11px;
   background: var(--bg-input);
   color: var(--ink-strong);
@@ -469,7 +469,7 @@
   width: 56px;
   height: 56px;
   border: 2px dashed var(--stroke-strong);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;

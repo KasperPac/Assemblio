@@ -129,7 +129,7 @@
 .openPoBadge {
   display: inline-block;
   padding: 2px 8px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   font-size: 0.78rem;
   background: rgba(79, 142, 247, 0.2);
   color: #4f8ef7;

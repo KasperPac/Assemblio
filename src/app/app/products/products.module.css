@@ -25,7 +25,7 @@
 
 .importButton {
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   padding: 10px 14px;
   background: var(--brand-1);
   color: var(--ink-on-brand);
@@ -42,7 +42,7 @@
 
 .filters input,
 .filters select {
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   background: var(--bg-input);
   border: 1px solid var(--stroke);
   color: var(--ink-strong);
@@ -50,7 +50,7 @@
 
 .table {
   background: var(--bg-card);
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--stroke-card);
   box-shadow: var(--shadow-md);
   overflow: hidden;
@@ -90,7 +90,7 @@
 .thumb {
   width: 46px;
   height: 46px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   background: var(--bg-card-2);
   border: 1px solid var(--stroke);
   display: grid;
