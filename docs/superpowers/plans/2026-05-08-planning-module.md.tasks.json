@@ -1,0 +1,75 @@
+{
+  "planPath": "docs/superpowers/plans/2026-05-08-planning-module.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 1: Database schema",
+      "status": "pending",
+      "description": "**Goal:** Add all new columns and tables required by the planning module.\n\n**Files:**\n- Create: `supabase/patches/planning_module_schema.sql`\n\n**Acceptance Criteria:**\n- [ ] tenant.has_planning_module column exists, defaults to false\n- [ ] orders.customer_email column exists, nullable\n- [ ] product_bom_labor.blocked_by column exists as integer[], defaults to {}\n- [ ] job_routing_step table exists with RLS enabled\n- [ ] product_notification_trigger table exists with RLS enabled\n- [ ] notification_log table exists with RLS enabled\n\n**Verify:** Apply patch to local Supabase, confirm tables appear with no errors.\n\n```json:metadata\n{\"files\": [\"supabase/patches/planning_module_schema.sql\"], \"verifyCommand\": \"npx supabase db push\", \"acceptanceCriteria\": [\"tenant.has_planning_module exists\", \"orders.customer_email exists\", \"product_bom_labor.blocked_by exists\", \"job_routing_step table with RLS\", \"product_notification_trigger table with RLS\", \"notification_log table with RLS\"]}\n```"
+    },
+    {
+      "id": 1,
+      "subject": "Task 2: Module gating — layout, upgrade page, sidebar nav, route meta",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Gate planning behind has_planning_module flag; show upgrade page for ungated tenants; conditionally show Planning in sidebar.\n\n**Files:**\n- Create: `src/app/app/planning/upgrade/page.tsx`\n- Create: `src/app/app/planning/upgrade/upgrade.module.css`\n- Create: `src/app/app/planning/(gated)/layout.tsx`\n- Create: `src/app/app/planning/(gated)/page.tsx`\n- Modify: `src/app/app/layout.tsx`\n- Modify: `src/app/app/sidebar-nav.tsx`\n- Modify: `src/app/app/route-meta.ts`\n\n**Verify:** `npx tsc --noEmit` → 0 errors.\n\n```json:metadata\n{\"files\": [\"src/app/app/planning/upgrade/page.tsx\", \"src/app/app/planning/(gated)/layout.tsx\", \"src/app/app/sidebar-nav.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Visiting /app/planning without flag redirects to upgrade\", \"Sidebar shows Planning only when enabled\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 3: Planning types and scheduling algorithm",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Define shared TypeScript types and implement greedy auto-scheduling algorithm with tests.\n\n**Files:**\n- Create: `src/lib/planning/types.ts`\n- Create: `src/lib/planning/scheduling.ts`\n- Create: `src/lib/planning/__tests__/scheduling.test.ts`\n- Create: `jest.config.ts`\n\n**Verify:** `npx jest src/lib/planning/__tests__/scheduling.test.ts` → PASS\n\n```json:metadata\n{\"files\": [\"src/lib/planning/types.ts\", \"src/lib/planning/scheduling.ts\"], \"verifyCommand\": \"npx jest src/lib/planning/__tests__/scheduling.test.ts\", \"acceptanceCriteria\": [\"scheduleJob() respects blocked_by dependencies\", \"Steps with no deps scheduled from startFrom\", \"All 4 scheduling tests pass\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 4: Floor board — data fetching, department columns, job cards",
+      "status": "pending",
+      "blockedBy": [2],
+      "description": "**Goal:** Render the primary planning view — department columns each showing active/queued/blocked routing steps.\n\n**Files:**\n- Create: `src/app/app/planning/(gated)/floor/page.tsx`\n- Create: `src/app/app/planning/(gated)/floor/floor-board.tsx`\n- Create: `src/app/app/planning/(gated)/floor/job-card.tsx`\n- Create: `src/app/app/planning/(gated)/floor/floor.module.css`\n\n**Verify:** `npx tsc --noEmit` → 0 errors. Visit /app/planning/floor.\n\n```json:metadata\n{\"files\": [\"src/app/app/planning/(gated)/floor/page.tsx\", \"src/app/app/planning/(gated)/floor/floor-board.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Column per active department\", \"Active/queued/blocked steps shown\", \"Blocked steps show lock icon\", \"Clicking card opens detail drawer\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 5: Start job flow — modal and server action",
+      "status": "pending",
+      "blockedBy": [3],
+      "description": "**Goal:** Let manager start a job for an order line — auto-schedule or manual dates — creating job_routing_step rows.\n\n**Files:**\n- Create: `src/app/app/planning/(gated)/floor/actions.ts`\n- Create: `src/app/app/planning/(gated)/floor/start-job-modal.tsx`\n- Modify: `src/app/app/planning/(gated)/floor/page.tsx`\n\n**Verify:** `npx tsc --noEmit` → 0 errors. Start a job, confirm rows in job_routing_step.\n\n```json:metadata\n{\"files\": [\"src/app/app/planning/(gated)/floor/actions.ts\", \"src/app/app/planning/(gated)/floor/start-job-modal.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"startJob creates one routing step per BOM labor operation\", \"Steps with no blocked_by get status queued\", \"Steps with deps get status blocked\", \"Auto-schedule fills scheduled_start/end\"]}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 6: Step lifecycle — start, complete, and unlock cascade",
+      "status": "pending",
+      "blockedBy": [4],
+      "description": "**Goal:** Operators and managers start/complete routing steps. Completing unlocks dependent steps.\n\n**Files:**\n- Create: `src/lib/planning/unlock-cascade.ts`\n- Create: `src/lib/planning/__tests__/unlock-cascade.test.ts`\n- Modify: `src/app/app/planning/(gated)/floor/actions.ts`\n\n**Verify:** `npx jest src/lib/planning/__tests__/unlock-cascade.test.ts` → PASS\n\n```json:metadata\n{\"files\": [\"src/lib/planning/unlock-cascade.ts\", \"src/app/app/planning/(gated)/floor/actions.ts\"], \"verifyCommand\": \"npx jest src/lib/planning/__tests__/unlock-cascade.test.ts\", \"acceptanceCriteria\": [\"completeStep sets actual_end and status=complete\", \"runUnlockCascade sets newly-unblocked steps to queued\", \"startStep sets actual_start and status=active\", \"2 unlock cascade tests pass\"]}\n```"
+    },
+    {
+      "id": 6,
+      "subject": "Task 7: Shop floor app",
+      "status": "pending",
+      "blockedBy": [5],
+      "description": "**Goal:** Mobile-optimised full-screen page at /app/planning/shopfloor for operators with Start/Complete buttons.\n\n**Files:**\n- Create: `src/app/app/planning/(gated)/shopfloor/page.tsx`\n- Create: `src/app/app/planning/(gated)/shopfloor/operator-queue.tsx`\n- Create: `src/app/app/planning/(gated)/shopfloor/shopfloor.module.css`\n\n**Verify:** `npx tsc --noEmit` → 0 errors. Open /app/planning/shopfloor on mobile viewport.\n\n```json:metadata\n{\"files\": [\"src/app/app/planning/(gated)/shopfloor/page.tsx\", \"src/app/app/planning/(gated)/shopfloor/operator-queue.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Department picker on first load\", \"Active jobs highlighted, queued below, blocked disabled\", \"Start and Complete buttons work\", \"Manager PIN reveals override menu\"]}\n```"
+    },
+    {
+      "id": 7,
+      "subject": "Task 8: Customer notification engine",
+      "status": "pending",
+      "blockedBy": [6],
+      "description": "**Goal:** Install Resend and implement notification engine that fires on step complete when a product_notification_trigger exists.\n\n**Files:**\n- Create: `src/lib/notifications/notification-engine.ts`\n- Modify: `src/app/app/planning/(gated)/floor/actions.ts`\n\n**Verify:** `npx tsc --noEmit` → 0 errors. Trigger a complete, check notification_log.\n\n```json:metadata\n{\"files\": [\"src/lib/notifications/notification-engine.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"fireNotificationIfConfigured queries trigger for BOM+sequence\", \"Renders template with variables\", \"Sends via Resend\", \"Logs to notification_log\", \"Skips silently if no customer_email\", \"Sets delivery_status=failed on Resend error\"]}\n```"
+    },
+    {
+      "id": 8,
+      "subject": "Task 9: Product notification trigger configuration UI",
+      "status": "pending",
+      "blockedBy": [7],
+      "description": "**Goal:** Add Notifications tab to variant detail page where admins configure which routing steps send customer notifications.\n\n**Files:**\n- Modify: `src/app/app/products/variant-tabs.tsx`\n- Modify: `src/app/app/products/variants/[variantId]/page.tsx`\n- Create: `src/app/app/products/variants/[variantId]/notifications-tab.tsx`\n- Modify: `src/app/app/products/actions.ts`\n\n**Verify:** `npx tsc --noEmit` → 0 errors. Visit variant detail, configure a trigger, verify DB row.\n\n```json:metadata\n{\"files\": [\"src/app/app/products/variants/[variantId]/notifications-tab.tsx\", \"src/app/app/products/actions.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Notifications tab appears in variant detail\", \"Each BOM step shows toggle + message template\", \"Save upserts product_notification_trigger row\", \"Remove deletes the trigger row\"]}\n```"
+    },
+    {
+      "id": 9,
+      "subject": "Task 10: BOM routing dependency configuration",
+      "status": "pending",
+      "blockedBy": [8],
+      "description": "**Goal:** Let admins set blocked_by on each BOM labor operation in the Labour & Routing tab.\n\n**Files:**\n- Modify: `src/app/app/products/variants/[variantId]/page.tsx`\n- Modify: `src/app/app/products/actions.ts`\n\n**Verify:** `npx tsc --noEmit` → 0 errors. Set a dependency, confirm blocked_by column updated.\n\n```json:metadata\n{\"files\": [\"src/app/app/products/variants/[variantId]/page.tsx\", \"src/app/app/products/actions.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Each labor row shows checkboxes for other steps as dependencies\", \"Step cannot depend on itself\", \"Saving updates product_bom_labor.blocked_by array\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-05-08T00:00:00Z"
+}
