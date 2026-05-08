@@ -51,13 +51,13 @@ export async function PurchasingSignals({ supabase, tenantId }: Props) {
         </Link>
       </div>
       {all.length === 0 ? (
-        <p style={{ margin: 0, color: "var(--ink-muted)", fontSize: "0.9rem" }}>No active POs or low-stock components.</p>
+        <p className={styles.emptyText}>No active POs or low-stock components.</p>
       ) : (
         <div className={styles.rowList}>
           {all.map((sig) => (
-            <div key={sig.id} className={styles.row} style={{ fontSize: "0.88rem" }}>
+            <div key={sig.id} className={styles.row}>
               <span className={styles.rowLabel}>{sig.label}</span>
-              <span style={{ fontSize: "0.75rem", padding: "2px 7px", borderRadius: 4, fontWeight: 700, background: sig.type === "po" ? "rgba(96,165,250,0.15)" : "rgba(251,191,36,0.15)", color: sig.type === "po" ? "#60a5fa" : "#fbbf24" }}>
+              <span className={`${styles.badge} ${sig.type === "po" ? styles.badgePo : styles.badgeStock}`}>
                 {sig.type === "po" ? "PO" : "Low stock"}
               </span>
             </div>

@@ -151,3 +151,34 @@
   font-size: 0.82rem;
   color: var(--brand-1);
 }
+
+/* Empty state text inside cards */
+.emptyText {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+}
+
+/* Days value with bold weight, colored via trend classes */
+.daysValue {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+/* Type badge chips (PO / Low stock) */
+.badge {
+  font-size: 0.75rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.badgePo {
+  background: color-mix(in srgb, var(--brand-1) 15%, transparent);
+  color: var(--brand-1);
+}
+
+.badgeStock {
+  background: color-mix(in srgb, var(--warning) 15%, transparent);
+  color: var(--warning);
+}

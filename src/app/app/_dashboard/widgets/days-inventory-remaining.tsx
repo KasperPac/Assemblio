@@ -53,15 +53,15 @@ export async function DaysInventoryRemaining({ supabase, tenantId }: Props) {
         </div>
       </div>
       {rows.length === 0 ? (
-        <p style={{ margin: 0, color: "var(--ink-muted)", fontSize: "0.9rem" }}>All components have 30+ days of stock remaining.</p>
+        <p className={styles.emptyText}>All components have 30+ days of stock remaining.</p>
       ) : (
         <div className={styles.rowList}>
           {rows.map((r) => {
-            const color = r.days <= 3 ? "var(--danger)" : r.days <= 10 ? "var(--warning)" : "var(--ok)";
+            const trendClass = r.days <= 3 ? styles.trendDown : r.days <= 10 ? styles.trendWarn : styles.trendUp;
             return (
               <div key={r.id} className={styles.row}>
                 <span className={styles.rowLabel}>{r.name}</span>
-                <strong style={{ color, fontSize: "0.9rem", fontWeight: 700 }}>{r.days}d</strong>
+                <strong className={`${styles.daysValue} ${trendClass}`}>{r.days}d</strong>
               </div>
             );
           })}
