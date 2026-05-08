@@ -142,11 +142,10 @@
 
 .rowNoBom td {
   background: var(--warning-dim);
-  background: color-mix(in srgb, var(--warning-dim) 20%, transparent);
 }
 
 .rowNoBom:hover td {
-  background: color-mix(in srgb, var(--warning-dim) 35%, transparent);
+  background: var(--warning-dim);
 }
 
 /* ── Cell content ───────────────────────────── */
