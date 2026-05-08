@@ -1,0 +1,14 @@
+.shell {
+  padding: 32px 40px;
+  max-width: 1200px;
+}
+
+@media print {
+  .shell {
+    padding: 0;
+    max-width: none;
+  }
+  :global(aside) {
+    display: none !important;
+  }
+}

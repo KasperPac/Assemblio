@@ -1,164 +1,124 @@
 .page {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  padding: 32px 40px;
+  max-width: 1200px;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-}
-
-.header h1 {
-  margin: 0 0 8px;
-  font-size: clamp(1.8rem, 1.3vw + 1.2rem, 2.4rem);
-  color: var(--ink-strong);
-}
-
-.header p,
-.grid p,
-.tableRow span {
-  margin: 0;
-  color: var(--ink-muted);
-  font-size: 0.95rem;
-  line-height: 1.6;
-}
-
-.primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 42px;
-  padding: 0 18px;
-  border: none;
-  border-radius: 999px;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--brand-2) 72%, #142131), color-mix(in srgb, var(--brand-1) 88%, #0e1624));
-  color: #f8fbff;
-  font-size: 0.9rem;
+.pageTitle {
+  font-size: 26px;
   font-weight: 700;
-  cursor: pointer;
+  color: var(--ink-strong);
+  margin-bottom: 4px;
+}
+
+.pageDesc {
+  font-size: 14px;
+  color: var(--ink-muted);
+  margin-bottom: 32px;
+}
+
+.section {
+  margin-bottom: 32px;
+}
+
+.sectionLabel {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 5px;
+  margin-bottom: 12px;
+}
+
+.sectionLabelInventory {
+  background: var(--brand-dim);
+  color: var(--brand-1);
+}
+
+.sectionLabelPurchasing {
+  background: var(--brand-dim);
+  color: var(--brand-1);
+}
+
+.sectionLabelSystem {
+  background: var(--surface-1);
+  color: var(--ink-muted);
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-}
-
-.grid div,
-.table {
-  border: 1px solid color-mix(in srgb, var(--stroke-strong) 70%, transparent);
-  border-radius: 22px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--surface-raised) 92%, transparent), color-mix(in srgb, var(--surface) 94%, transparent));
-  box-shadow: 0 18px 38px rgba(5, 8, 15, 0.2);
-}
-
-.grid div {
-  padding: 22px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
 }
 
 .card {
-  display: grid;
-  gap: 8px;
-}
-
-.grid h3,
-.table h3 {
-  margin: 0 0 8px;
-  color: var(--ink-strong);
-}
-
-.value {
-  font-size: clamp(1.5rem, 1vw + 1rem, 2.2rem);
-  letter-spacing: -0.03em;
-  color: var(--ink-strong);
-}
-
-.table {
-  padding: 22px;
-}
-
-.tableRows {
-  display: grid;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.tableRow {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
+  border: 1px solid var(--stroke);
+  border-radius: 12px;
   padding: 16px;
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--surface) 82%, transparent);
-  border: 1px solid color-mix(in srgb, var(--stroke) 66%, transparent);
+  background: var(--bg-card);
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+  transition: border-color 0.15s;
 }
 
-.tableRow strong {
-  color: var(--ink-strong);
+.card:hover {
+  border-color: var(--brand-1);
 }
 
-.integritySection {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+.cardAmber {
+  border-color: var(--warning);
+  background: color-mix(in srgb, var(--warning) 10%, var(--bg-card));
 }
 
-.integrityHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
+.cardAmber:hover {
+  border-color: var(--warning);
+  filter: brightness(0.97);
 }
 
-.eyebrow {
-  font-size: 0.72rem;
+.cardRed {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 10%, var(--bg-card));
+}
+
+.cardRed:hover {
+  border-color: var(--danger);
+  filter: brightness(0.97);
+}
+
+.cardName {
+  font-size: 12px;
+  color: var(--ink-muted);
+  margin-bottom: 4px;
+}
+
+.cardNameAmber { color: var(--warning); }
+.cardNameRed   { color: var(--danger); }
+
+.cardValue {
+  font-size: 26px;
   font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  margin: 0 0 4px;
-}
-
-.integrityTitle {
-  margin: 0;
-  font-size: clamp(1.1rem, 0.7vw + 0.9rem, 1.4rem);
   color: var(--ink-strong);
+  margin-bottom: 2px;
+  line-height: 1.1;
 }
 
-.integrityPill {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  border: 1px solid transparent;
+.cardValueAmber { color: var(--warning); }
+.cardValueRed   { color: var(--danger); }
+.cardValueGreen { color: var(--ok); }
+
+.cardSub {
+  font-size: 12px;
+  color: var(--ink-muted);
 }
 
-.pillOk {
-  background: var(--brand-dim);
+.cardSubAmber { color: var(--warning); }
+.cardSubRed   { color: var(--danger); }
+
+.cardLink {
+  margin-top: 12px;
+  font-size: 12px;
   color: var(--brand-1);
-  border-color: rgba(74, 222, 128, 0.18);
-}
-
-.pillWarn {
-  background: rgba(245, 158, 11, 0.14);
-  color: var(--warning);
-  border-color: rgba(245, 158, 11, 0.28);
-}
-
-@media (max-width: 900px) {
-  .header,
-  .tableRow,
-  .integrityHeader {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+  font-weight: 600;
 }

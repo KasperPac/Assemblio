@@ -1,0 +1,72 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.preset {
+  border: 1px solid var(--stroke-strong);
+  border-radius: 6px;
+  padding: 5px 10px;
+  background: var(--surface-1);
+  color: var(--ink-muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.preset:hover {
+  border-color: var(--brand-1);
+  color: var(--ink-strong);
+}
+
+.presetActive {
+  border-color: var(--brand-1);
+  background: var(--brand-dim);
+  color: var(--brand-1);
+  font-weight: 600;
+}
+
+.exports {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+
+.customInputs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dateInput {
+  border: 1px solid var(--stroke-strong);
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 13px;
+  background: var(--surface-1);
+  color: var(--ink-strong);
+}
+
+.actionBtn {
+  border: 1px solid var(--stroke-strong);
+  border-radius: 6px;
+  padding: 5px 10px;
+  background: var(--surface-1);
+  color: var(--ink-strong);
+  font-size: 13px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.actionBtn:hover {
+  border-color: var(--brand-1);
+}
+
+@media print {
+  .bar {
+    display: none !important;
+  }
+}

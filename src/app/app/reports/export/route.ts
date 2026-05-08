@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import {
   loadInventoryIntegrityAudit,
   type AuditClient,
@@ -9,7 +9,6 @@ type ExportBalanceRow = {
   on_hand: number | null;
   in_prod: number | null;
   reserved: number | null;
-  location: { name: string | null } | Array<{ name: string | null }> | null;
   component:
     | { name: string | null; sku: string | null; reorder_point: number | null; cost_per_unit: number | null }
     | Array<{
@@ -35,9 +34,11 @@ function csvCell(value: unknown) {
 }
 
 export async function GET() {
-  const supabase = await createSupabaseServerClient();
+  const ctx = await getServerTenantContext();
+  if (!ctx) return new NextResponse("Unauthorized", { status: 401 });
+  const { supabase, tenantId } = ctx;
+
   const [
-    { data: profile },
     { data: balances, error: balancesError },
     { count: totalOrders },
     { count: fulfilledOrders },
@@ -46,39 +47,46 @@ export async function GET() {
     { count: totalVariants },
     { data: purchaseOrders },
   ] = await Promise.all([
-    supabase.from("profiles").select("tenant_id").single(),
     supabase
       .from("inventory_balance")
-      .select(
-        "on_hand,in_prod,reserved,location:location_id(name),component:component_id(name,sku,reorder_point,cost_per_unit)"
-      ),
-    supabase.from("orders").select("*", { count: "exact", head: true }),
+      .select("on_hand,in_prod,reserved,component:component_id(name,sku,reorder_point,cost_per_unit)")
+      .eq("tenant_id", tenantId),
     supabase
       .from("orders")
       .select("*", { count: "exact", head: true })
+      .eq("tenant_id", tenantId),
+    supabase
+      .from("orders")
+      .select("*", { count: "exact", head: true })
+      .eq("tenant_id", tenantId)
       .eq("status", "fulfilled"),
     supabase
       .from("orders")
       .select("*", { count: "exact", head: true })
+      .eq("tenant_id", tenantId)
       .eq("status", "cancelled"),
     supabase
       .from("product_bom")
       .select("*", { count: "exact", head: true })
+      .eq("tenant_id", tenantId)
       .eq("is_active", true),
-    supabase.from("shopify_variant").select("*", { count: "exact", head: true }),
-    supabase.from("purchase_order").select("status"),
+    supabase
+      .from("shopify_variant")
+      .select("*", { count: "exact", head: true })
+      .eq("tenant_id", tenantId),
+    supabase
+      .from("purchase_order")
+      .select("status")
+      .eq("tenant_id", tenantId),
   ]);
 
   if (balancesError) {
     return NextResponse.json({ error: balancesError.message }, { status: 500 });
   }
-  if (!profile?.tenant_id) {
-    return NextResponse.json({ error: "Missing tenant context" }, { status: 403 });
-  }
 
   const audit = await loadInventoryIntegrityAudit(
     supabase as unknown as AuditClient,
-    profile.tenant_id
+    tenantId
   );
   const balanceRows = (balances ?? []) as ExportBalanceRow[];
   const inventoryValue = balanceRows.reduce((sum, row) => {
@@ -107,7 +115,7 @@ export async function GET() {
   const rows: Array<Array<string | number>> = [
     ["section", "key", "value", "detail"],
     ["meta", "generated_at", new Date().toISOString(), ""],
-    ["meta", "tenant_id", profile.tenant_id, ""],
+    ["meta", "tenant_id", tenantId, ""],
     ["kpi", "inventory_value_on_hand", inventoryValue.toFixed(2), "AUD"],
     ["kpi", "inventory_value_in_production", inProductionValue.toFixed(2), "AUD"],
     ["kpi", "bom_coverage_pct", bomCoveragePct, ""],

@@ -1,0 +1,61 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.card {
+  border: 1px solid var(--stroke-strong);
+  border-radius: 10px;
+  padding: 16px;
+  background: var(--bg-card);
+}
+
+.cardAmber {
+  border-color: var(--warning);
+  background: color-mix(in srgb, var(--warning) 10%, var(--bg-card));
+}
+
+.cardRed {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 10%, var(--bg-card));
+}
+
+.cardGreen {
+  border-color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 10%, var(--bg-card));
+}
+
+.label {
+  font-size: 12px;
+  color: var(--ink-muted);
+  margin-bottom: 4px;
+}
+
+.labelAmber { color: var(--warning); }
+.labelRed   { color: var(--danger); }
+.labelGreen { color: var(--ok); }
+
+.value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink-strong);
+  line-height: 1.1;
+}
+
+.valueAmber { color: var(--warning); }
+.valueRed   { color: var(--danger); }
+.valueGreen { color: var(--ok); }
+
+.sub {
+  font-size: 12px;
+  color: var(--ink-muted);
+  margin-top: 2px;
+}
+
+@media print {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
