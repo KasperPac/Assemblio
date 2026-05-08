@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { scheduleJob } from "@/lib/planning/scheduling";
+import { computeUnlocked } from "@/lib/planning/unlock-cascade";
 
 export async function startJob(formData: FormData) {
   const orderLineId = formData.get("order_line_id")?.toString() ?? "";
@@ -77,4 +78,84 @@ export async function startJob(formData: FormData) {
   const { error } = await supabase.from("job_routing_step").insert(rows);
   if (error) throw new Error(error.message);
   revalidatePath("/app/planning/floor");
+}
+
+export async function startStep(stepId: string) {
+  const ctx = await getServerTenantContext();
+  if (!ctx) return;
+  const { supabase, tenantId } = ctx;
+
+  const { error } = await supabase
+    .from("job_routing_step")
+    .update({ status: "active", actual_start: new Date().toISOString(), updated_at: new Date().toISOString() })
+    .eq("id", stepId)
+    .eq("tenant_id", tenantId)
+    .eq("status", "queued");
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/app/planning/floor");
+  revalidatePath("/app/planning/shopfloor");
+}
+
+export async function completeStep(stepId: string) {
+  const ctx = await getServerTenantContext();
+  if (!ctx) return;
+  const { supabase, tenantId } = ctx;
+
+  // 1. Mark this step complete
+  const { data: completed, error } = await supabase
+    .from("job_routing_step")
+    .update({ status: "complete", actual_end: new Date().toISOString(), updated_at: new Date().toISOString() })
+    .eq("id", stepId)
+    .eq("tenant_id", tenantId)
+    .in("status", ["active", "queued"])
+    .select("order_line_id, sequence")
+    .single();
+
+  if (error) throw new Error(error.message);
+  if (!completed) return;
+
+  // 2. Find all blocked steps for this order line
+  const { data: blockedSteps } = await supabase
+    .from("job_routing_step")
+    .select("id, sequence, blocked_by")
+    .eq("order_line_id", completed.order_line_id)
+    .eq("tenant_id", tenantId)
+    .eq("status", "blocked");
+
+  if (!blockedSteps || blockedSteps.length === 0) {
+    revalidatePath("/app/planning/floor");
+    revalidatePath("/app/planning/shopfloor");
+    return;
+  }
+
+  // 3. Find all complete sequences for this order line
+  const { data: completeSteps } = await supabase
+    .from("job_routing_step")
+    .select("sequence")
+    .eq("order_line_id", completed.order_line_id)
+    .eq("tenant_id", tenantId)
+    .eq("status", "complete");
+
+  const completedSeqs = new Set((completeSteps ?? []).map((s) => s.sequence));
+
+  // 4. Compute which blocked steps are now unblocked
+  const toUnlock = computeUnlocked(
+    blockedSteps.map((s) => ({ id: s.id, sequence: s.sequence, blocked_by: s.blocked_by ?? [] })),
+    completedSeqs
+  );
+
+  if (toUnlock.length > 0) {
+    const { error: unlockError } = await supabase
+      .from("job_routing_step")
+      .update({ status: "queued", updated_at: new Date().toISOString() })
+      .in("id", toUnlock.map((s) => s.id))
+      .eq("tenant_id", tenantId);
+
+    if (unlockError) throw new Error(unlockError.message);
+  }
+
+  revalidatePath("/app/planning/floor");
+  revalidatePath("/app/planning/shopfloor");
 }
