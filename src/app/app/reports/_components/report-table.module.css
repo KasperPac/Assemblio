@@ -41,7 +41,7 @@
 }
 
 .table tr:hover td {
-  background: var(--surface-raised);
+  background: var(--surface-1);
 }
 
 .badge {
@@ -52,11 +52,11 @@
   font-weight: 600;
 }
 
-.badgeGreen { background: #dcfce7; color: #166534; }
-.badgeBlue  { background: #dbeafe; color: #1e40af; }
-.badgeAmber { background: #fef3c7; color: #92400e; }
-.badgeRed   { background: #fee2e2; color: #991b1b; }
-.badgeGray  { background: var(--surface-raised); color: var(--ink-muted); }
+.badgeGreen { background: color-mix(in srgb, var(--ok) 15%, var(--bg-card)); color: var(--ok); }
+.badgeBlue  { background: color-mix(in srgb, var(--brand-1) 15%, var(--bg-card)); color: var(--brand-1); }
+.badgeAmber { background: color-mix(in srgb, var(--warning) 15%, var(--bg-card)); color: var(--warning); }
+.badgeRed   { background: color-mix(in srgb, var(--danger) 15%, var(--bg-card)); color: var(--danger); }
+.badgeGray  { background: var(--surface-1); color: var(--ink-muted); }
 
 .empty {
   padding: 40px;

@@ -13,18 +13,18 @@
 }
 
 .cardAmber {
-  border-color: #fcd34d;
-  background: #fffbeb;
+  border-color: var(--warning);
+  background: color-mix(in srgb, var(--warning) 10%, var(--bg-card));
 }
 
 .cardRed {
-  border-color: #fca5a5;
-  background: #fff5f5;
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 10%, var(--bg-card));
 }
 
 .cardGreen {
-  border-color: #86efac;
-  background: #f0fdf4;
+  border-color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 10%, var(--bg-card));
 }
 
 .label {
@@ -33,9 +33,9 @@
   margin-bottom: 4px;
 }
 
-.labelAmber { color: #92400e; }
-.labelRed   { color: #991b1b; }
-.labelGreen { color: #166534; }
+.labelAmber { color: var(--warning); }
+.labelRed   { color: var(--danger); }
+.labelGreen { color: var(--ok); }
 
 .value {
   font-size: 24px;
@@ -44,9 +44,9 @@
   line-height: 1.1;
 }
 
-.valueAmber { color: #d97706; }
-.valueRed   { color: #dc2626; }
-.valueGreen { color: #16a34a; }
+.valueAmber { color: var(--warning); }
+.valueRed   { color: var(--danger); }
+.valueGreen { color: var(--ok); }
 
 .sub {
   font-size: 12px;
