@@ -147,6 +147,18 @@ function buildNavSections(hasPlanning: boolean): { label: string; items: NavItem
                 </svg>
               ),
             },
+            {
+              label: "Departments",
+              href: "/app/departments",
+              icon: (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 21h18" />
+                  <path d="M5 21V7l7-4 7 4v14" />
+                  <path d="M9 9h.01" />
+                  <path d="M15 9h.01" />
+                </svg>
+              ),
+            },
           ]
         : []),
     ],
