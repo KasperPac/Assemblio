@@ -3,6 +3,7 @@ import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "./floor.module.css";
 import { FloorBoard, type DepartmentColumn, type DrawerStep } from "./floor-board";
 import type { JobCardData } from "./job-card";
+import { UnstartedPanel, type UnstartedLine } from "./unstarted-panel";
 
 // ── Raw DB row shapes ──────────────────────────────────────────────────────────
 
@@ -52,6 +53,37 @@ export default async function FloorPage() {
   if (!ctx) redirect("/login");
 
   const { supabase, tenantId } = ctx;
+
+  // 0. Find order lines that already have routing steps
+  const { data: startedLineIds } = await supabase
+    .from("job_routing_step")
+    .select("order_line_id")
+    .eq("tenant_id", tenantId)
+    .order("order_line_id");
+
+  const startedIds = [...new Set((startedLineIds ?? []).map((r: any) => r.order_line_id as string))];
+
+  // Fetch unstarted order lines (exclude already-started ones)
+  const unstartedQuery = supabase
+    .from("order_line")
+    .select(`id, quantity, orders:order_id(order_number), variant:variant_id(title, product:product_id(title))`)
+    .eq("tenant_id", tenantId)
+    .limit(50);
+
+  const { data: unstartedRaw } = startedIds.length > 0
+    ? await unstartedQuery.not("id", "in", `(${startedIds.map((id) => `"${id}"`).join(",")})`)
+    : await unstartedQuery;
+
+  const unstartedLines: UnstartedLine[] = (unstartedRaw ?? []).map((row: any) => {
+    const variant = row.variant as any;
+    const order = row.orders as any;
+    return {
+      id: row.id as string,
+      quantity: Number(row.quantity),
+      orderNumber: order?.order_number ?? "—",
+      productTitle: variant?.product?.title ?? variant?.title ?? "Unknown product",
+    };
+  });
 
   // 1. Parallel-fetch departments (active) + routing steps (active/queued/blocked)
   const [{ data: deptData }, { data: stepData }] = await Promise.all([
@@ -169,6 +201,9 @@ export default async function FloorPage() {
       <div className={styles.header}>
         <h1>Floor Board</h1>
       </div>
+      {unstartedLines.length > 0 && (
+        <UnstartedPanel lines={unstartedLines} />
+      )}
       <FloorBoard columns={columns} drawerSteps={drawerSteps} />
     </div>
   );
