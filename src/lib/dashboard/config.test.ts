@@ -36,4 +36,18 @@ describe("loadDashboardConfig", () => {
     const result = await loadDashboardConfig(mockSupabase({ widgets: ["bad-id"] }), "tenant-1");
     expect(result).toEqual(PRESET_WIDGETS.owner);
   });
+
+  it("returns owner preset when the DB call returns an error", async () => {
+    const errSupabase = {
+      from: () => ({
+        select: () => ({
+          eq: () => ({
+            maybeSingle: async () => ({ data: null, error: { message: "connection refused" } }),
+          }),
+        }),
+      }),
+    } as any;
+    const result = await loadDashboardConfig(errSupabase, "tenant-1");
+    expect(result).toEqual(PRESET_WIDGETS.owner);
+  });
 });

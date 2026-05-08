@@ -31,7 +31,7 @@ export type WidgetMeta = {
   gated: boolean;
 };
 
-export const WIDGET_CATALOG: WidgetMeta[] = [
+export const WIDGET_CATALOG: readonly WidgetMeta[] = [
   { id: "open-orders-queue",        label: "Open orders queue",          description: "Count + mini-list of unfulfilled orders",              category: "operations", size: "half", gated: false },
   { id: "on-time-fulfillment",      label: "On-time fulfillment rate",   description: "% fulfilled on time, rolling 30 days",                 category: "operations", size: "stat", gated: false },
   { id: "production-throughput",    label: "Production throughput",      description: "Orders completed this week vs last week",              category: "operations", size: "stat", gated: false },
@@ -48,7 +48,7 @@ export const WIDGET_CATALOG: WidgetMeta[] = [
   { id: "gross-margin",             label: "Gross margin %",             description: "Sell price minus COGS across all orders this month",   category: "finance",    size: "stat", gated: true  },
   { id: "avg-order-value",          label: "Average order value",        description: "Mean sell value per order, this month vs last",        category: "finance",    size: "stat", gated: true  },
   { id: "gmroi",                    label: "GMROI",                      description: "Gross margin return per $1 of inventory held",         category: "finance",    size: "stat", gated: true  },
-  { id: "sell-through-rate",        label: "Sell-through rate",          description: "% of received inventory sold in the period",           category: "planning",   size: "stat", gated: true  },
+  { id: "sell-through-rate",        label: "Sell-through rate",          description: "% of received inventory sold in the period",           category: "finance",    size: "stat", gated: true  },
 ];
 
 export const PRESET_WIDGETS: Record<"owner" | "ops", WidgetId[]> = {

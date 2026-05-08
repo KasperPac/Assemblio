@@ -13,7 +13,8 @@ export async function loadDashboardConfig(
 
   if (!data) return [...PRESET_WIDGETS.owner];
 
-  const valid = (data.widgets as string[]).filter((id): id is WidgetId =>
+  const raw = Array.isArray(data.widgets) ? (data.widgets as string[]) : [];
+  const valid = raw.filter((id): id is WidgetId =>
     (WIDGET_IDS as readonly string[]).includes(id)
   );
   return valid.length > 0 ? valid : [...PRESET_WIDGETS.owner];
