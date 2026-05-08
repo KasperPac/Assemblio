@@ -23,7 +23,8 @@ export async function updateProfile(
   const { error } = await ctx.supabase
     .from("profiles")
     .update({ full_name: fullName })
-    .eq("id", user.id);
+    .eq("id", user.id)
+    .eq("tenant_id", ctx.tenantId);
 
   if (error) return { error: error.message };
 

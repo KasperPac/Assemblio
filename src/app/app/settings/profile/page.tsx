@@ -14,7 +14,7 @@ export default async function ProfilePage() {
 
   const { data: profile } = await ctx.supabase
     .from("profiles")
-    .select("full_name, role")
+    .select("full_name")
     .eq("id", user.id)
     .single();
 
