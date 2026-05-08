@@ -1,0 +1,72 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import styles from "../widget.module.css";
+import { calcDaysRemaining } from "@/lib/dashboard/calculations";
+
+type Props = { supabase: SupabaseClient; tenantId: string };
+
+export async function DaysInventoryRemaining({ supabase, tenantId }: Props) {
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+  const [{ data: components }, { data: balances }, { data: bomUsage }] = await Promise.all([
+    supabase.from("component").select("id,name,reorder_point").eq("tenant_id", tenantId),
+    supabase.from("inventory_balance").select("component_id,on_hand,reserved").eq("tenant_id", tenantId),
+    supabase
+      .from("bom_component")
+      .select("component_id,quantity")
+      .eq("tenant_id", tenantId),
+  ]);
+
+  const { data: recentOrders } = await supabase
+    .from("orders")
+    .select("id", { count: "exact", head: false })
+    .eq("tenant_id", tenantId)
+    .eq("status", "fulfilled")
+    .gte("updated_at", thirtyDaysAgo);
+
+  const orderCount = (recentOrders ?? []).length || 1;
+
+  const burnByComponent = new Map<string, number>();
+  (bomUsage ?? []).forEach((bc) => {
+    const current = burnByComponent.get(bc.component_id) ?? 0;
+    burnByComponent.set(bc.component_id, current + (Number(bc.quantity ?? 0) * orderCount) / 30);
+  });
+
+  const nameMap    = new Map((components ?? []).map((c) => [c.id, c.name ?? "Unknown"]));
+  const reorderMap = new Map((components ?? []).map((c) => [c.id, Number(c.reorder_point ?? 0)]));
+
+  const rows = (balances ?? [])
+    .map((b) => {
+      const burn = burnByComponent.get(b.component_id) ?? 0;
+      const days = calcDaysRemaining(Number(b.on_hand ?? 0), Number(b.reserved ?? 0), burn);
+      return { id: b.component_id, name: nameMap.get(b.component_id) ?? "Unknown", days, reorderPoint: reorderMap.get(b.component_id) ?? 0 };
+    })
+    .filter((r) => r.days !== null && r.days < 30)
+    .sort((a, b) => (a.days ?? 999) - (b.days ?? 999))
+    .slice(0, 5) as Array<{ id: string; name: string; days: number; reorderPoint: number }>;
+
+  return (
+    <div className={styles.card}>
+      <div className={styles.cardHeader}>
+        <div>
+          <p className={styles.eyebrow}>Stock runway</p>
+          <h3 className={styles.title}>Days of inventory remaining</h3>
+        </div>
+      </div>
+      {rows.length === 0 ? (
+        <p style={{ margin: 0, color: "var(--ink-muted)", fontSize: "0.9rem" }}>All components have 30+ days of stock remaining.</p>
+      ) : (
+        <div className={styles.rowList}>
+          {rows.map((r) => {
+            const color = r.days <= 3 ? "var(--danger)" : r.days <= 10 ? "var(--warning)" : "var(--ok)";
+            return (
+              <div key={r.id} className={styles.row}>
+                <span className={styles.rowLabel}>{r.name}</span>
+                <strong style={{ color, fontSize: "0.9rem", fontWeight: 700 }}>{r.days}d</strong>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
