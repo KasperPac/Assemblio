@@ -85,9 +85,11 @@ export async function startStep(stepId: string) {
   if (!ctx) return;
   const { supabase, tenantId } = ctx;
 
+  const { data: { user } } = await supabase.auth.getUser();
+
   const { error } = await supabase
     .from("job_routing_step")
-    .update({ status: "active", actual_start: new Date().toISOString(), updated_at: new Date().toISOString() })
+    .update({ status: "active", actual_start: new Date().toISOString(), updated_at: new Date().toISOString(), started_by: user?.id ?? null })
     .eq("id", stepId)
     .eq("tenant_id", tenantId)
     .eq("status", "queued");
@@ -103,10 +105,12 @@ export async function completeStep(stepId: string) {
   if (!ctx) return;
   const { supabase, tenantId } = ctx;
 
+  const { data: { user } } = await supabase.auth.getUser();
+
   // 1. Mark this step complete
   const { data: completed, error } = await supabase
     .from("job_routing_step")
-    .update({ status: "complete", actual_end: new Date().toISOString(), updated_at: new Date().toISOString() })
+    .update({ status: "complete", actual_end: new Date().toISOString(), updated_at: new Date().toISOString(), completed_by: user?.id ?? null })
     .eq("id", stepId)
     .eq("tenant_id", tenantId)
     .in("status", ["active", "queued"])
@@ -114,7 +118,11 @@ export async function completeStep(stepId: string) {
     .single();
 
   if (error) throw new Error(error.message);
-  if (!completed) return;
+  if (!completed) {
+    revalidatePath("/app/planning/floor");
+    revalidatePath("/app/planning/shopfloor");
+    return;
+  }
 
   // 2. Find all blocked steps for this order line
   const { data: blockedSteps } = await supabase

@@ -1,5 +1,7 @@
 export type RoutingStepStatus = "blocked" | "queued" | "active" | "complete" | "skipped";
 
+export type BlockedStep = { id: string; sequence: number; blocked_by: number[] };
+
 export type BomLaborRow = {
   id: string;
   department_id: string;
