@@ -119,16 +119,7 @@ export default async function DepartmentsPage({ searchParams }: Props) {
                       <label>Code</label>
                       <input name="code" defaultValue={row.code} required />
                     </div>
-                    <div className={styles.field}>
-                      <label>Efficiency %</label>
-                      <input
-                        name="default_efficiency_pct"
-                        type="number"
-                        min="0"
-                        step="1"
-                        defaultValue={row.default_efficiency_pct}
-                      />
-                    </div>
+                    <input type="hidden" name="default_efficiency_pct" value={row.default_efficiency_pct} />
                     <div className={styles.field}>
                       <label>Labor $/hr</label>
                       <input name="labor_rate_per_hour" type="number" min="0" step="0.01" defaultValue={rate?.labor_rate_per_hour ?? 0} />
@@ -170,10 +161,7 @@ export default async function DepartmentsPage({ searchParams }: Props) {
               <label htmlFor="code">Code</label>
               <input id="code" name="code" placeholder="ASM" required />
             </div>
-            <div className={styles.field}>
-              <label htmlFor="default_efficiency_pct">Efficiency %</label>
-              <input id="default_efficiency_pct" name="default_efficiency_pct" type="number" min="0" step="1" defaultValue="100" />
-            </div>
+            <input type="hidden" id="default_efficiency_pct" name="default_efficiency_pct" value="100" />
             <div className={styles.field}>
               <label htmlFor="labor_rate_per_hour">Labor $/hr</label>
               <input id="labor_rate_per_hour" name="labor_rate_per_hour" type="number" min="0" step="0.01" defaultValue="0" />
