@@ -76,6 +76,7 @@ type LaborLineRecord = {
   department_id: string;
   operation_name: string;
   sequence: number;
+  blocked_by: number[];
   setup_hours: number;
   run_hours_per_unit: number;
   admin_hours_per_unit: number;
@@ -225,7 +226,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
       : await supabase
           .from("product_bom_labor")
           .select(
-            "id,product_bom_id,department_id,operation_name,sequence,setup_hours,run_hours_per_unit,admin_hours_per_unit,electricity_kwh_per_unit,gas_units_per_unit,notes,department:department_id(name,code)"
+            "id,product_bom_id,department_id,operation_name,sequence,blocked_by,setup_hours,run_hours_per_unit,admin_hours_per_unit,electricity_kwh_per_unit,gas_units_per_unit,notes,department:department_id(name,code)"
           )
           .in("product_bom_id", bomIds)
           .order("sequence", { ascending: true });
@@ -578,6 +579,26 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                                           defaultValue={line.notes ?? `${department?.name ?? "Department"} operation`}
                                         />
                                       </div>
+                                      {laborRows.filter((other) => other.id !== line.id).length > 0 ? (
+                                        <div className={`${styles.routingField} ${styles.routingSpanTwo}`}>
+                                          <label>Depends on (must complete before this step starts)</label>
+                                          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", paddingTop: "4px" }}>
+                                            {laborRows
+                                              .filter((other) => other.id !== line.id)
+                                              .map((other) => (
+                                                <label key={other.id} style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "13px" }}>
+                                                  <input
+                                                    type="checkbox"
+                                                    name="blocked_by"
+                                                    value={other.sequence.toString()}
+                                                    defaultChecked={(line.blocked_by ?? []).includes(other.sequence)}
+                                                  />
+                                                  Step {other.sequence}: {other.operation_name}
+                                                </label>
+                                              ))}
+                                          </div>
+                                        </div>
+                                      ) : null}
                                       <div className={`${styles.routingActions} ${styles.routingSpanTwo}`}>
                                         <button className={styles.secondaryButton} type="submit">
                                           Save Operation

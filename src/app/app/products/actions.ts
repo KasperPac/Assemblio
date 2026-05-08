@@ -488,6 +488,10 @@ export async function updateBomLaborLine(formData: FormData) {
   const gasUnitsPerUnit = parseNumber(formData.get("gas_units_per_unit")) ?? 0;
   const notes = formData.get("notes")?.toString().trim() ?? "";
   const variantId = formData.get("variant_id")?.toString() ?? "";
+  const blockedByRaw = formData.getAll("blocked_by");
+  const blockedBy = blockedByRaw
+    .map((v) => parseInt(v.toString(), 10))
+    .filter((n) => Number.isFinite(n));
 
   if (!lineId || !departmentId || !operationName || !variantId) {
     redirectVariantResult(variantId || "", {
@@ -526,6 +530,7 @@ export async function updateBomLaborLine(formData: FormData) {
       department_id: departmentId,
       operation_name: operationName,
       sequence,
+      blocked_by: blockedBy,
       setup_hours: setupHours,
       run_hours_per_unit: runHoursPerUnit,
       admin_hours_per_unit: adminHoursPerUnit,
