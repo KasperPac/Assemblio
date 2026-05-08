@@ -20,7 +20,6 @@ export function useTheme() {
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemeId>("daylight");
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY) as ThemeId | null;
@@ -28,17 +27,12 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
       setThemeState(stored);
       document.documentElement.setAttribute("data-theme", stored);
     }
-    setMounted(true);
   }, []);
 
   function setTheme(id: ThemeId) {
     setThemeState(id);
     localStorage.setItem(STORAGE_KEY, id);
     document.documentElement.setAttribute("data-theme", id);
-  }
-
-  if (!mounted) {
-    return <>{children}</>;
   }
 
   return (

@@ -4,6 +4,7 @@
   --bg-page:     #F8F7F5;
   --bg-sidebar:  #F0EEE9;
   --bg-card:     #FFFFFF;
+  --bg-card-2:   #ECEAE6;
   --bg-card-alt: #F3F2EF;
   --bg-input:    #F3F2EF;
 
@@ -53,6 +54,7 @@
   --bg-page:     #0D1117;
   --bg-sidebar:  #10161F;
   --bg-card:     #161D2D;
+  --bg-card-2:   #1C253A;
   --bg-card-alt: #131929;
   --bg-input:    #1C253A;
 
@@ -156,9 +158,55 @@
   --font-body: var(--font-inter), system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
 
-  --ls-tight:  -0.01em;
+  --ls-tight:  -0.015em;
   --ls-normal: 0;
   --ls-caps:   0.08em;
+
+  /* Radius scale */
+  --radius-xs:   4px;
+  --radius-sm:   6px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-pill: 999px;
+
+  /* Spacing (4px base) */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Type scale */
+  --fs-xs:   11px;
+  --fs-sm:   12px;
+  --fs-base: 13px;
+  --fs-md:   14px;
+  --fs-lg:   16px;
+  --fs-xl:   20px;
+  --fs-2xl:  26px;
+
+  /* Font weights */
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  /* Line heights */
+  --lh-tight:  1.2;
+  --lh-snug:   1.4;
+  --lh-normal: 1.6;
+
+  /* Motion */
+  --dur-fast:   120ms;
+  --dur-base:   180ms;
+  --dur-slow:   280ms;
+  --ease-out:   cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-inout: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 *,
