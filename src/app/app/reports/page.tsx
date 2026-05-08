@@ -9,7 +9,7 @@ import styles from "./reports.module.css";
 
 export default async function ReportsHubPage() {
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/login");
+  if (!ctx) redirect("/auth/login");
   const { supabase, tenantId } = ctx;
 
   const now = new Date();
@@ -31,39 +31,48 @@ export default async function ReportsHubPage() {
     supabase
       .from("inventory_balance")
       .select("component_id,on_hand,component:component_id(cost_per_unit)")
+      .eq("tenant_id", tenantId)
       .gt("on_hand", 0),
     supabase
       .from("inventory_movement")
       .select("id", { count: "exact", head: true })
+      .eq("tenant_id", tenantId)
       .gte("created_at", cutoff30d),
     supabase
       .from("inventory_movement")
       .select("component_id,created_at")
+      .eq("tenant_id", tenantId)
       .gte("created_at", cutoff90d),
     supabase
       .from("stocktake_session")
-      .select("id", { count: "exact", head: true }),
+      .select("id", { count: "exact", head: true })
+      .eq("tenant_id", tenantId),
     supabase
       .from("stocktake_session")
       .select("created_at,status")
+      .eq("tenant_id", tenantId)
       .order("created_at", { ascending: false })
       .limit(1),
     supabase
       .from("purchase_order")
       .select("id,expected_date,status,lines:purchase_order_line(quantity,unit_cost)")
+      .eq("tenant_id", tenantId)
       .not("status", "in", '("received","cancelled")'),
     supabase
       .from("purchase_order")
       .select("supplier_id,lines:purchase_order_line(quantity,unit_cost)")
+      .eq("tenant_id", tenantId)
       .gte("created_at", startOfYear),
     supabase
       .from("delivery_receipt")
       .select("received_at,purchase_order:purchase_order_id(expected_date)")
+      .eq("tenant_id", tenantId)
       .not("purchase_order_id", "is", null)
       .gte("received_at", cutoff90d),
     supabase
       .from("delivery_receipt")
       .select("id", { count: "exact", head: true })
+      .eq("tenant_id", tenantId)
       .eq("status", "discrepancy"),
   ]);
 
@@ -153,8 +162,13 @@ export default async function ReportsHubPage() {
     integrity.duplicateAllocationKeys.length +
     integrity.poOverReceipt.length;
 
-  const fmt = (n: number) =>
-    n >= 1000 ? `$${(n / 1000).toFixed(1)}k` : `$${Math.round(n)}`;
+  const fmtCurrency = (n: number) =>
+    new Intl.NumberFormat("en-AU", {
+      style: "currency",
+      currency: "AUD",
+      maximumFractionDigits: 0,
+      notation: n >= 100_000 ? "compact" : "standard",
+    }).format(n);
 
   return (
     <div className={styles.page}>
@@ -172,7 +186,7 @@ export default async function ReportsHubPage() {
           <Link href="/app/reports/stock-on-hand" className={styles.card}>
             <div className={styles.cardName}>Stock on hand</div>
             <div className={styles.cardValue}>{balances.length}</div>
-            <div className={styles.cardSub}>{fmt(totalValue)} total value</div>
+            <div className={styles.cardSub}>{fmtCurrency(totalValue)} total value</div>
             <div className={styles.cardLink}>View report →</div>
           </Link>
 
@@ -185,7 +199,7 @@ export default async function ReportsHubPage() {
 
           <Link href="/app/reports/valuation" className={styles.card}>
             <div className={styles.cardName}>Inventory valuation</div>
-            <div className={styles.cardValue}>{fmt(totalValue)}</div>
+            <div className={styles.cardValue}>{fmtCurrency(totalValue)}</div>
             <div className={styles.cardSub}>current on-hand value</div>
             <div className={styles.cardLink}>View report →</div>
           </Link>
@@ -201,7 +215,7 @@ export default async function ReportsHubPage() {
               {deadCount > 0 ? `${deadCount} components` : "None"}
             </div>
             <div className={`${styles.cardSub} ${deadCount > 0 ? styles.cardSubAmber : ""}`}>
-              {deadCount > 0 ? `${fmt(deadValue)} tied up · no demand 90d` : "No idle stock"}
+              {deadCount > 0 ? `${fmtCurrency(deadValue)} tied up · no demand 90d` : "No idle stock"}
             </div>
             <div className={styles.cardLink}>View report →</div>
           </Link>
@@ -233,7 +247,7 @@ export default async function ReportsHubPage() {
               PO summary
             </div>
             <div className={`${styles.cardValue} ${overduePOs > 0 ? styles.cardValueRed : ""}`}>
-              {fmt(openLiability)}
+              {fmtCurrency(openLiability)}
             </div>
             <div className={`${styles.cardSub} ${overduePOs > 0 ? styles.cardSubRed : ""}`}>
               open liability
@@ -246,7 +260,7 @@ export default async function ReportsHubPage() {
 
           <Link href="/app/reports/spend-by-supplier" className={styles.card}>
             <div className={styles.cardName}>Spend by supplier</div>
-            <div className={styles.cardValue}>{fmt(yearSpend)}</div>
+            <div className={styles.cardValue}>{fmtCurrency(yearSpend)}</div>
             <div className={styles.cardSub}>this year · {supplierCount} suppliers</div>
             <div className={styles.cardLink}>View report →</div>
           </Link>
