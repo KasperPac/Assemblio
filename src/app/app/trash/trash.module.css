@@ -71,7 +71,7 @@
 
 .restoreBtn {
   border: 1px solid var(--stroke-strong);
-  background: var(--surface-raised);
+  background: var(--surface-1);
   border-radius: 999px;
   min-height: 38px;
   padding: 0 14px;

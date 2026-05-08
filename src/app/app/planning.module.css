@@ -61,7 +61,7 @@
 
 .secondary {
   border: 1px solid var(--stroke-strong);
-  background: var(--surface-raised);
+  background: var(--surface-1);
   color: var(--ink-strong);
 }
 
@@ -79,7 +79,7 @@
 .stackRow {
   border: 1px solid var(--stroke-strong);
   border-radius: var(--radius-xl);
-  background: var(--surface-raised);
+  background: var(--surface-1);
   box-shadow: var(--shadow-card);
 }
 
@@ -200,7 +200,7 @@
   border: 1px solid var(--stroke);
   border-radius: var(--radius-lg);
   padding: 10px 14px;
-  background: var(--surface);
+  background: var(--surface-1);
   color: var(--ink-strong);
   font: inherit;
 }

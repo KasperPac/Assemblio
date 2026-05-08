@@ -592,7 +592,7 @@
 .tabCount { font-size: 0.82rem; opacity: 0.5; }
 .btnSmall { padding: 0.3rem 0.75rem; font-size: 0.78rem; border-radius: var(--radius-xs); border: 1px solid var(--stroke); background: var(--surface-1); color: inherit; cursor: pointer; }
 .linkForm { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; padding: 0.75rem; background: var(--surface-1); border-radius: var(--radius-sm); margin-bottom: 0.75rem; }
-.miniInput { padding: 0.3rem 0.5rem; border-radius: var(--radius-xs); border: 1px solid var(--stroke); background: var(--surface); color: inherit; font-size: 0.8rem; }
+.miniInput { padding: 0.3rem 0.5rem; border-radius: var(--radius-xs); border: 1px solid var(--stroke); background: var(--surface-1); color: inherit; font-size: 0.8rem; }
 
 .suppliersTable { margin-top: 0.5rem; }
 .suppliersHeader,

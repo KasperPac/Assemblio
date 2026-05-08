@@ -70,7 +70,7 @@
   border-radius: 999px;
   min-height: 38px;
   padding: 0 16px;
-  background: var(--surface-raised);
+  background: var(--surface-1);
   color: var(--ink-strong);
   font-size: 0.88rem;
   font-weight: 600;
@@ -128,7 +128,7 @@
 }
 
 .tabContent {
-  background: var(--surface-1);
+  background: var(--bg-card);
   border: 1px solid var(--stroke-card);
   border-radius: var(--radius-xl);
   padding: 22px;
@@ -146,7 +146,7 @@
   border-radius: var(--radius-md);
   min-height: 38px;
   padding: 0 10px;
-  background: var(--surface);
+  background: var(--surface-1);
   color: var(--ink-strong);
   font: inherit;
   font-size: 0.9rem;
@@ -331,7 +331,7 @@
 }
 
 .catalogRow:last-child { border-bottom: none; }
-.catalogRow:hover { background: var(--bg-card-2); }
+.catalogRow:hover { background: var(--surface-hover); }
 
 .catalogPartNum {
   font-family: monospace;
@@ -444,7 +444,7 @@
 }
 
 .poRow:last-child { border-bottom: none; }
-.poRow:hover { background: var(--bg-card-2); }
+.poRow:hover { background: var(--surface-hover); }
 
 .poRef {
   font-family: monospace;

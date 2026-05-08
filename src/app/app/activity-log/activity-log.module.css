@@ -16,7 +16,7 @@
   border-radius: var(--radius-lg);
   min-height: 44px;
   padding: 0 14px;
-  background: var(--surface);
+  background: var(--surface-1);
   color: var(--ink-strong);
 }
 
@@ -30,7 +30,7 @@
 .detailCard {
   border: 1px solid var(--stroke-strong);
   border-radius: var(--radius-xl);
-  background: var(--surface-raised);
+  background: var(--surface-1);
   box-shadow: var(--shadow-card);
 }
 
@@ -129,7 +129,7 @@
 .detailBox {
   padding: 10px 12px;
   border-radius: var(--radius-lg);
-  background: var(--surface-raised);
+  background: var(--surface-1);
 }
 
 .detailCode {

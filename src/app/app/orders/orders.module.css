@@ -25,7 +25,7 @@
 
 .secondary {
   border: 1px solid var(--stroke-strong);
-  background: var(--surface-raised);
+  background: var(--surface-1);
   color: var(--ink-strong);
 }
 
