@@ -1,0 +1,314 @@
+/* Card grid */
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.cardHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.cardTitleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.cardName {
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-semibold);
+  color: var(--ink-strong);
+}
+
+.cardDesc {
+  margin: 0;
+  font-size: var(--fs-body);
+  color: var(--ink-muted);
+}
+
+/* Manage panel (shopify-manage.tsx) */
+.managePanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.manageToggle {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  background: transparent;
+  color: var(--brand-1);
+  border: 1px solid var(--brand-dim);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.manageToggle:hover {
+  background: var(--brand-dim);
+}
+
+.manageContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--stroke);
+}
+
+.storeList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.storeListHeading {
+  margin: 0;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+}
+
+.storeRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--bg-card-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--stroke);
+}
+
+.storeMeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.storeDetail {
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+}
+
+.storeActions {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.disconnectButton {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  color: var(--danger);
+  background: transparent;
+  border: 1px solid var(--danger-dim);
+  border-radius: var(--radius-xs);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+}
+
+.disconnectButton:hover {
+  background: var(--danger-dim);
+}
+
+/* shopify-connect.tsx classes */
+.shopifyCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.shopifyCard h3 {
+  margin: 0;
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-semibold);
+  color: var(--ink-strong);
+}
+
+.shopifyCard p {
+  margin: 0;
+  color: var(--ink-muted);
+}
+
+.notice {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--ok);
+  line-height: var(--lh-normal);
+}
+
+.shopifyForm {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.shopifyForm input {
+  flex: 1;
+  min-width: 240px;
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  color: var(--ink-strong);
+  background: var(--bg-input);
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+}
+
+.shopifyForm button {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  background: var(--brand-1);
+  color: var(--ink-on-brand);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.shopifyForm button:hover {
+  background: var(--brand-2);
+}
+
+/* sync-submit-form.tsx classes */
+.syncButton {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  background: var(--brand-1);
+  color: var(--ink-on-brand);
+  border: none;
+  border-radius: var(--radius-xs);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.syncButton:hover:not(:disabled) {
+  background: var(--brand-2);
+}
+
+.syncButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.syncOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: var(--bg-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.syncModal {
+  width: min(440px, 100%);
+  background: var(--bg-card);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.syncModal h4 {
+  margin: 0;
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-semibold);
+  color: var(--ink-strong);
+}
+
+.syncModal p {
+  margin: 0;
+  color: var(--ink-muted);
+}
+
+.syncProgressTrack {
+  height: 8px;
+  background: var(--stroke);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  position: relative;
+}
+
+.syncProgressBar {
+  position: absolute;
+  top: 0;
+  left: -45%;
+  width: 45%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--brand-2) 0%, var(--brand-1) 100%);
+  animation: sync-progress 1.2s ease-in-out infinite;
+}
+
+@keyframes sync-progress {
+  0% { left: -45%; }
+  100% { left: 100%; }
+}
+
+/* sync-meta-chips.tsx classes */
+.meta {
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+}
+
+.syncMetaChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+
+.syncMetaChip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--stroke);
+  background: var(--bg-card-2);
+  font-size: var(--fs-badge);
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.syncMetaChipLabel {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: var(--fw-bold);
+}
+
+.syncMetaChipValue {
+  color: var(--ink-strong);
+  font-weight: var(--fw-semibold);
+}

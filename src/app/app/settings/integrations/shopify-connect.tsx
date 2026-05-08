@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import styles from "./settings.module.css";
+import styles from "./integrations.module.css";
 
 type Props = {
   status?: string;

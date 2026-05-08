@@ -1,4 +1,4 @@
-import styles from "./settings.module.css";
+import styles from "./integrations.module.css";
 
 type Props = {
   meta: Record<string, unknown> | null;

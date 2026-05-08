@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import styles from "./settings.module.css";
+import styles from "./integrations.module.css";
 
 type Props = {
   storeId?: string;
-  buttonClassName: string;
+  buttonClassName?: string;
   buttonLabel: string;
 };
 
@@ -20,7 +20,7 @@ export default function SyncSubmitForm({ storeId, buttonClassName, buttonLabel }
         onSubmit={() => setIsSubmitting(true)}
       >
         {storeId ? <input type="hidden" name="store_id" value={storeId} /> : null}
-        <button type="submit" className={buttonClassName} disabled={isSubmitting}>
+        <button type="submit" className={buttonClassName ?? styles.syncButton} disabled={isSubmitting}>
           {isSubmitting ? "Syncing..." : buttonLabel}
         </button>
       </form>
