@@ -29,7 +29,7 @@ export default function SettingsSidebar({ isAdmin }: { isAdmin: boolean }) {
             <Link
               href={link.href}
               className={`${styles.navLink} ${
-                pathname.startsWith(link.href) ? styles.navLinkActive : ""
+                pathname === link.href || pathname.startsWith(link.href + "/") ? styles.navLinkActive : ""
               }`}
             >
               {link.label}
@@ -47,7 +47,7 @@ export default function SettingsSidebar({ isAdmin }: { isAdmin: boolean }) {
                 <Link
                   href={link.href}
                   className={`${styles.navLink} ${
-                    pathname.startsWith(link.href) ? styles.navLinkActive : ""
+                    pathname === link.href || pathname.startsWith(link.href + "/") ? styles.navLinkActive : ""
                   }`}
                 >
                   {link.label}
