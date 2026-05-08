@@ -25,17 +25,27 @@ export function DatePresetBar({ csvHref, hideDateRange }: Props) {
 
   const currentFrom = sp.get("from") ?? "";
   const currentTo = sp.get("to") ?? "";
-  const isCustom = !!(currentFrom || currentTo);
+  const activePreset = sp.get("preset");
+  const isCustom = !!(currentFrom || currentTo) && !activePreset;
 
   function applyPreset(days: number) {
     const params = new URLSearchParams(sp.toString());
     if (days === -1) {
       return;
     }
+    if (days === 365) {
+      const now = new Date();
+      params.set("from", `${now.getFullYear()}-01-01`);
+      params.set("to", fmtParam(now));
+      params.set("preset", "365");
+      router.push(`${pathname}?${params.toString()}`);
+      return;
+    }
     if (days === 0) {
       const today = fmtParam(new Date());
       params.set("from", today);
       params.set("to", today);
+      params.set("preset", "0");
     } else {
       const now = new Date();
       params.set("to", fmtParam(now));
@@ -43,6 +53,7 @@ export function DatePresetBar({ csvHref, hideDateRange }: Props) {
         "from",
         fmtParam(new Date(now.getTime() - days * 24 * 60 * 60 * 1000))
       );
+      params.set("preset", String(days));
     }
     router.push(`${pathname}?${params.toString()}`);
   }
@@ -51,6 +62,7 @@ export function DatePresetBar({ csvHref, hideDateRange }: Props) {
     const params = new URLSearchParams(sp.toString());
     if (value) params.set(key, value);
     else params.delete(key);
+    params.delete("preset");
     router.push(`${pathname}?${params.toString()}`);
   }
 
@@ -61,7 +73,7 @@ export function DatePresetBar({ csvHref, hideDateRange }: Props) {
           const active =
             p.days === -1
               ? isCustom
-              : !isCustom && !currentFrom && p.days === 30;
+              : activePreset === String(p.days) || (!activePreset && !currentFrom && p.days === 30);
           return (
             <button
               key={p.label}
@@ -94,30 +106,14 @@ export function DatePresetBar({ csvHref, hideDateRange }: Props) {
         <a
           href={csvHref}
           download
-          style={{
-            border: "1px solid var(--stroke-strong)",
-            borderRadius: 6,
-            padding: "5px 10px",
-            background: "var(--surface-raised)",
-            color: "var(--ink-strong)",
-            fontSize: 13,
-            textDecoration: "none",
-          }}
+          className={styles.actionBtn}
         >
           Export CSV
         </a>
         <button
           type="button"
           onClick={() => window.print()}
-          style={{
-            border: "1px solid var(--stroke-strong)",
-            borderRadius: 6,
-            padding: "5px 10px",
-            background: "var(--surface-raised)",
-            color: "var(--ink-strong)",
-            fontSize: 13,
-            cursor: "pointer",
-          }}
+          className={styles.actionBtn}
         >
           Print / PDF
         </button>

@@ -1,13 +1,18 @@
 export type DateRange = { from: Date; to: Date };
 
+function safeDate(s: string): Date | null {
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? null : d;
+}
+
 export function resolveDateRange(
   sp: { from?: string; to?: string },
   defaultDays = 30
 ): DateRange {
   const now = new Date();
-  const to = sp.to ? new Date(sp.to) : now;
+  const to = sp.to ? (safeDate(sp.to) ?? now) : now;
   const from = sp.from
-    ? new Date(sp.from)
+    ? (safeDate(sp.from) ?? new Date(now.getTime() - defaultDays * 24 * 60 * 60 * 1000))
     : new Date(now.getTime() - defaultDays * 24 * 60 * 60 * 1000);
   return { from, to };
 }

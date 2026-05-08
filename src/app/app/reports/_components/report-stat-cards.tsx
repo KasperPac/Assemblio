@@ -43,7 +43,7 @@ export function ReportStatCards({ cards }: Props) {
           .filter(Boolean)
           .join(" ");
         return (
-          <div key={i} className={cardCls}>
+          <div key={c.label} className={cardCls}>
             <div className={labelCls}>{c.label}</div>
             <div className={valueCls}>{c.value}</div>
             {c.sub && <div className={styles.sub}>{c.sub}</div>}

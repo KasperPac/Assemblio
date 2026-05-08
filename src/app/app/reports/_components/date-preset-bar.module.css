@@ -50,6 +50,21 @@
   color: var(--ink-strong);
 }
 
+.actionBtn {
+  border: 1px solid var(--stroke-strong);
+  border-radius: 6px;
+  padding: 5px 10px;
+  background: var(--surface-raised);
+  color: var(--ink-strong);
+  font-size: 13px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.actionBtn:hover {
+  border-color: var(--brand-1);
+}
+
 @media print {
   .bar {
     display: none !important;

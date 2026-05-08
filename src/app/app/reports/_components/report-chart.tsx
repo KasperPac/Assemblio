@@ -51,12 +51,27 @@ export function ReportChart(props: Props) {
             margin={{ top: 4, right: 12, bottom: 4, left: 0 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="var(--stroke-strong)" />
-            <XAxis dataKey={props.xKey} tick={{ fontSize: 11 }} />
-            <YAxis tick={{ fontSize: 11 }} width={48} />
+            {props.layout === "vertical" ? (
+              <>
+                <XAxis type="number" tick={{ fontSize: 11 }} />
+                <YAxis dataKey={props.xKey} type="category" tick={{ fontSize: 11 }} width={120} />
+              </>
+            ) : (
+              <>
+                <XAxis dataKey={props.xKey} tick={{ fontSize: 11 }} />
+                <YAxis tick={{ fontSize: 11 }} width={48} />
+              </>
+            )}
             <Tooltip />
             {props.series.length > 1 && <Legend />}
             {props.series.map((s) => (
-              <Bar key={s.dataKey} dataKey={s.dataKey} fill={s.color} name={s.name ?? s.dataKey} radius={[2, 2, 0, 0]} />
+              <Bar
+                key={s.dataKey}
+                dataKey={s.dataKey}
+                fill={s.color}
+                name={s.name ?? s.dataKey}
+                radius={props.layout === "vertical" ? [0, 2, 2, 0] : [2, 2, 0, 0]}
+              />
             ))}
           </BarChart>
         ) : (
