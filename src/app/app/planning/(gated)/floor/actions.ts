@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { scheduleJob } from "@/lib/planning/scheduling";
 import { computeUnlocked } from "@/lib/planning/unlock-cascade";
+import { fireNotificationIfConfigured } from "@/lib/notifications/notification-engine";
 
 export async function startJob(formData: FormData) {
   const orderLineId = formData.get("order_line_id")?.toString() ?? "";
@@ -123,6 +124,14 @@ export async function completeStep(stepId: string) {
     revalidatePath("/app/planning/shopfloor");
     return;
   }
+
+  // 3. Fire notification if trigger configured for this step
+  await fireNotificationIfConfigured({
+    supabase,
+    tenantId,
+    stepId,
+    orderLineId: completed.order_line_id,
+  });
 
   // 2. Find all blocked steps for this order line
   const { data: blockedSteps } = await supabase
