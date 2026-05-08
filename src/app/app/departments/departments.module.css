@@ -1,0 +1,121 @@
+.notice {
+  padding: 12px 18px;
+  border-radius: 14px;
+  font-size: 0.9rem;
+}
+
+.noticeSuccess {
+  background: color-mix(in srgb, #4caf87 12%, transparent);
+  border: 1px solid color-mix(in srgb, #4caf87 30%, transparent);
+  color: #4caf87;
+}
+
+.noticeError {
+  background: color-mix(in srgb, #e05c5c 12%, transparent);
+  border: 1px solid color-mix(in srgb, #e05c5c 30%, transparent);
+  color: #e05c5c;
+}
+
+.deptCard {
+  border: 1px solid color-mix(in srgb, var(--stroke) 60%, transparent);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface-raised) 60%, transparent);
+  padding: 18px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.deptCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.deptIdentity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.deptName {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink-strong);
+}
+
+.codeBadge {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--brand-1) 14%, transparent);
+  color: color-mix(in srgb, var(--brand-2) 80%, white);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.activeToggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.divider {
+  height: 1px;
+  background: color-mix(in srgb, var(--stroke) 50%, transparent);
+  margin: 0 -20px;
+}
+
+.fieldsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.rateSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rateLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-faint);
+}
+
+.ratesGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.saveRow {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 900px) {
+  .fieldsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ratesGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .fieldsGrid,
+  .ratesGrid {
+    grid-template-columns: 1fr;
+  }
+}
