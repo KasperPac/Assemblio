@@ -8,9 +8,9 @@
 .tableCard {
   background: var(--bg-card);
   padding: 20px;
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   border: 1px solid var(--stroke-card);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-card);
 }
 
 .card h3,
@@ -66,8 +66,8 @@
   grid-template-columns: 1.4fr 0.4fr 1fr;
   gap: 12px;
   padding: 10px 12px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
 }
 
 @media (max-width: 900px) {

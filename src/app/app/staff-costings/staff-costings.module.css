@@ -88,7 +88,7 @@
 }
 
 .tableHeader {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-card-alt);
   color: var(--ink-faint);
   font-weight: 700;
   text-transform: uppercase;
@@ -102,7 +102,7 @@
 }
 
 .tableRow:hover {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--bg-card-alt);
 }
 
 .deptName {
@@ -196,7 +196,7 @@
 
 .removeBtn:hover {
   color: var(--danger);
-  background: rgba(239, 68, 68, 0.08);
+  background: var(--danger-dim);
 }
 
 /* ── Hint ─────────────────────────────── */
@@ -211,10 +211,10 @@
 
 .dialog {
   border: none;
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   background: var(--bg-card);
   color: var(--ink-strong);
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-card);
   padding: 0;
   max-width: 420px;
   width: 92vw;
