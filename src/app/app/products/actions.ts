@@ -652,3 +652,70 @@ export async function duplicateBomAsDraft(
   revalidatePath("/app/bom");
   return { success: `Draft BOM v${version} created (${rows.length} lines).` };
 }
+
+export async function upsertNotificationTrigger(formData: FormData) {
+  const auth = await requireBomEditor();
+  if ("error" in auth) return;
+  const { supabase, tenantId } = auth;
+
+  const productBomId = formData.get("product_bom_id")?.toString() ?? "";
+  const routingSequenceRaw = formData.get("routing_sequence")?.toString() ?? "";
+  const messageTemplate = formData.get("message_template")?.toString()?.trim() ?? "";
+  const variantId = formData.get("variant_id")?.toString() ?? "";
+
+  if (!productBomId || !routingSequenceRaw || !messageTemplate || !variantId) {
+    redirectVariantResult(variantId, { tab: "notifications", notifError: encodeMessage("Missing required fields.") });
+    return;
+  }
+
+  const routingSequence = parseInt(routingSequenceRaw, 10);
+  if (!Number.isFinite(routingSequence)) {
+    redirectVariantResult(variantId, { tab: "notifications", notifError: encodeMessage("Invalid sequence.") });
+    return;
+  }
+
+  const { error } = await supabase
+    .from("product_notification_trigger")
+    .upsert(
+      { tenant_id: tenantId, product_bom_id: productBomId, routing_sequence: routingSequence, message_template: messageTemplate, channel: "email" },
+      { onConflict: "tenant_id,product_bom_id,routing_sequence" }
+    );
+
+  if (error) {
+    redirectVariantResult(variantId, { tab: "notifications", notifError: encodeMessage(error.message) });
+    return;
+  }
+
+  redirectVariantResult(variantId, { tab: "notifications", notifSuccess: encodeMessage("Notification saved.") });
+}
+
+export async function removeNotificationTrigger(formData: FormData) {
+  const auth = await requireBomEditor();
+  if ("error" in auth) return;
+  const { supabase, tenantId } = auth;
+
+  const productBomId = formData.get("product_bom_id")?.toString() ?? "";
+  const routingSequenceRaw = formData.get("routing_sequence")?.toString() ?? "";
+  const variantId = formData.get("variant_id")?.toString() ?? "";
+
+  if (!productBomId || !routingSequenceRaw || !variantId) {
+    redirectVariantResult(variantId, { tab: "notifications", notifError: encodeMessage("Missing required fields.") });
+    return;
+  }
+
+  const routingSequence = parseInt(routingSequenceRaw, 10);
+
+  const { error } = await supabase
+    .from("product_notification_trigger")
+    .delete()
+    .eq("tenant_id", tenantId)
+    .eq("product_bom_id", productBomId)
+    .eq("routing_sequence", routingSequence);
+
+  if (error) {
+    redirectVariantResult(variantId, { tab: "notifications", notifError: encodeMessage(error.message) });
+    return;
+  }
+
+  redirectVariantResult(variantId, { tab: "notifications", notifSuccess: encodeMessage("Notification removed.") });
+}
