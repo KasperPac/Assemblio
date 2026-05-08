@@ -23,7 +23,7 @@ export async function inviteMember(
   if (err) return err;
 
   const email = (formData.get("email") as string)?.trim().toLowerCase();
-  if (!email || !email.includes("@")) {
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return { error: "Valid email address required" };
   }
 
@@ -50,6 +50,8 @@ export async function updateMemberRole(
   const profileId = formData.get("profile_id") as string;
   const role = formData.get("role") as string;
 
+  const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!profileId || !uuidRe.test(profileId)) return { error: "Invalid request" };
   if (!["member", "admin"].includes(role)) {
     return { error: "Invalid role" };
   }

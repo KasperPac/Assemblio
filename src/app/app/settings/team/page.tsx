@@ -36,8 +36,8 @@ export default async function TeamPage() {
         </div>
 
         <table className={styles.table}>
-          <thead>
-            <tr className={styles.thead}>
+          <thead className={styles.thead}>
+            <tr>
               <th className={styles.th}>Name</th>
               <th className={styles.th}>Role</th>
               <th className={styles.th}>Status</th>
