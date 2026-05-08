@@ -115,8 +115,8 @@
 .errorPanel {
   padding: 24px;
   border-radius: var(--radius-xl);
-  border: 1px solid color-mix(in srgb, var(--danger) 42%, transparent);
-  background: color-mix(in srgb, var(--danger) 10%, var(--surface));
+  border: 1px solid var(--danger);
+  background: var(--danger-dim);
 }
 
 .movementForm {
