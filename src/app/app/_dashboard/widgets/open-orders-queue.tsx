@@ -30,7 +30,7 @@ export async function OpenOrdersQueue({ supabase, tenantId }: Props) {
           <p className={styles.eyebrow}>Live queue</p>
           <h3 className={styles.title}>Open orders</h3>
         </div>
-        <Link href="/app/orders" style={{ fontSize: "0.84rem", fontWeight: 700, color: "var(--ink-muted)", textDecoration: "none" }}>
+        <Link href="/app/orders" className={styles.viewAllLink}>
           View all ({openCount ?? 0})
         </Link>
       </div>
@@ -44,7 +44,7 @@ export async function OpenOrdersQueue({ supabase, tenantId }: Props) {
             const label = `#${order.order_number ?? order.shopify_order_id ?? order.id.slice(0, 6)}`;
             const date = new Date(order.created_at).toLocaleDateString("en-GB");
             return (
-              <Link key={order.id} href={`/app/orders/${order.id}`} className={styles.row} style={{ textDecoration: "none" }}>
+              <Link key={order.id} href={`/app/orders/${order.id}`} className={`${styles.row} ${styles.rowLink}`}>
                 <div>
                   <strong className={styles.rowLabel}>{label}</strong>
                   <p className={styles.rowMeta}>{date}</p>

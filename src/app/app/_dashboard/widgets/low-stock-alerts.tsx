@@ -6,29 +6,43 @@ import { calcDaysRemaining } from "@/lib/dashboard/calculations";
 type Props = { supabase: SupabaseClient; tenantId: string };
 
 export async function LowStockAlerts({ supabase, tenantId }: Props) {
-  const [{ data: components }, { data: balances }] = await Promise.all([
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+  const [{ data: components }, { data: balances }, { data: bomUsage }, { data: recentOrders }] = await Promise.all([
     supabase.from("component").select("id,name,reorder_point").eq("tenant_id", tenantId),
     supabase.from("inventory_balance").select("component_id,on_hand,reserved").eq("tenant_id", tenantId),
+    supabase.from("bom_component").select("component_id,quantity").eq("tenant_id", tenantId),
+    supabase.from("orders").select("id").eq("tenant_id", tenantId).eq("status", "fulfilled").gte("updated_at", thirtyDaysAgo),
   ]);
+
+  const orderCount = (recentOrders ?? []).length || 1;
+
+  const burnByComponent = new Map<string, number>();
+  (bomUsage ?? []).forEach((bc) => {
+    const current = burnByComponent.get(bc.component_id) ?? 0;
+    burnByComponent.set(bc.component_id, current + (Number(bc.quantity ?? 0) * orderCount) / 30);
+  });
 
   const reorderMap = new Map((components ?? []).map((c) => [c.id, Number(c.reorder_point ?? 0)]));
   const nameMap    = new Map((components ?? []).map((c) => [c.id, c.name ?? "Unknown"]));
 
   const atRisk = (balances ?? [])
-    .map((b) => ({
-      id: b.component_id,
-      name: nameMap.get(b.component_id) ?? "Unknown",
-      onHand: Number(b.on_hand ?? 0),
-      reserved: Number(b.reserved ?? 0),
-      reorderPoint: reorderMap.get(b.component_id) ?? 0,
-    }))
-    .filter((b) => b.onHand - b.reserved <= b.reorderPoint)
+    .map((b) => {
+      const onHand = Number(b.on_hand ?? 0);
+      const reserved = Number(b.reserved ?? 0);
+      const days = calcDaysRemaining(onHand, reserved, burnByComponent.get(b.component_id) ?? 0);
+      return {
+        id: b.component_id,
+        name: nameMap.get(b.component_id) ?? "Unknown",
+        available: onHand - reserved,
+        reorderPoint: reorderMap.get(b.component_id) ?? 0,
+        days,
+      };
+    })
+    .filter((b) => b.available <= b.reorderPoint)
     .slice(0, 6);
 
   const statusVariant = atRisk.length === 0 ? "success" : atRisk.length > 3 ? "danger" : "warning";
-
-  // calcDaysRemaining is available for per-row burn-rate display if needed in future iterations
-  void calcDaysRemaining;
 
   return (
     <div className={styles.card}>
@@ -42,15 +56,23 @@ export async function LowStockAlerts({ supabase, tenantId }: Props) {
         </StatusBadge>
       </div>
       {atRisk.length === 0 ? (
-        <p style={{ margin: 0, color: "var(--ink-muted)", fontSize: "0.9rem" }}>All components are above their reorder points.</p>
+        <p className={styles.emptyText}>All components are above their reorder points.</p>
       ) : (
         <div className={styles.rowList}>
           {atRisk.map((b) => {
-            const available = b.onHand - b.reserved;
+            const trendClass = b.days === null ? "" : b.days <= 3 ? styles.trendDown : b.days <= 10 ? styles.trendWarn : styles.trendUp;
+            const barPct = b.days !== null ? Math.min((b.days / 30) * 100, 100) : 0;
             return (
               <div key={b.id} className={styles.row}>
-                <span className={styles.rowLabel}>{b.name}</span>
-                <span className={styles.rowMeta}>{available} avail / {b.reorderPoint} reorder</span>
+                <div className={styles.rowBody}>
+                  <span className={styles.rowLabel}>{b.name}</span>
+                  <div className={styles.daysBarWrap}>
+                    <div className={`${styles.daysBarFill} ${trendClass}`} style={{ width: `${barPct}%` }} />
+                  </div>
+                </div>
+                <span className={`${styles.daysValue} ${trendClass}`}>
+                  {b.days !== null ? `${b.days}d` : `${b.available} avail`}
+                </span>
               </div>
             );
           })}

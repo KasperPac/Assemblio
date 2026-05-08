@@ -7,7 +7,7 @@ export function FinanceGated({ label, description }: FinanceGatedProps) {
   return (
     <div className={styles.gated}>
       <p className={styles.gatedLabel}>{label}</p>
-      <p style={{ margin: 0, fontSize: "0.82rem", color: "var(--ink-faint)" }}>{description}</p>
+      <p className={styles.gatedDescription}>{description}</p>
       <Link href="/app/settings" className={styles.gatedCta}>
         Enable Shopify price sync in Settings →
       </Link>

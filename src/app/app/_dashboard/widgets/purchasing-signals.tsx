@@ -46,7 +46,7 @@ export async function PurchasingSignals({ supabase, tenantId }: Props) {
           <p className={styles.eyebrow}>Action needed</p>
           <h3 className={styles.title}>Purchasing signals</h3>
         </div>
-        <Link href="/app/purchasing" style={{ fontSize: "0.84rem", fontWeight: 700, color: "var(--ink-muted)", textDecoration: "none" }}>
+        <Link href="/app/purchasing" className={styles.viewAllLink}>
           View all
         </Link>
       </div>

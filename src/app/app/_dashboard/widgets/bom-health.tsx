@@ -44,8 +44,8 @@ export async function BomHealth({ supabase, tenantId }: Props) {
       </div>
       <div className={styles.rowList}>
         <div className={styles.row}><span className={styles.rowLabel}>BOM coverage</span><strong>{coverage}%</strong></div>
-        <div className={styles.row}><span className={styles.rowLabel}>Missing BOMs</span><strong style={{ color: missingBoms > 0 ? "var(--warning)" : "inherit" }}>{missingBoms}</strong></div>
-        <div className={styles.row}><span className={styles.rowLabel}>Integrity issues</span><strong style={{ color: issues.length > 0 ? "var(--danger)" : "inherit" }}>{issues.length}</strong></div>
+        <div className={styles.row}><span className={styles.rowLabel}>Missing BOMs</span><strong className={missingBoms > 0 ? styles.trendWarn : undefined}>{missingBoms}</strong></div>
+        <div className={styles.row}><span className={styles.rowLabel}>Integrity issues</span><strong className={issues.length > 0 ? styles.trendDown : undefined}>{issues.length}</strong></div>
       </div>
     </div>
   );

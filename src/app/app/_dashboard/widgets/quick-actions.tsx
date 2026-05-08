@@ -1,3 +1,4 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import styles from "../widget.module.css";
 
 const ACTIONS = [
@@ -7,7 +8,7 @@ const ACTIONS = [
   { href: "/app/settings",    label: "Open settings",       sub: "Check Shopify sync and workspace config" },
 ];
 
-export function QuickActions() {
+export function QuickActions(_props: { supabase: SupabaseClient; tenantId: string }) {
   return (
     <div className={styles.card}>
       <div className={styles.cardHeader}>
@@ -16,11 +17,11 @@ export function QuickActions() {
           <h3 className={styles.title}>Jump into the work</h3>
         </div>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 14 }}>
+      <div className={styles.actionsGrid}>
         {ACTIONS.map((a) => (
-          <a key={a.href} href={a.href} style={{ display: "flex", flexDirection: "column", gap: 6, padding: 18, borderRadius: 18, border: "1px solid color-mix(in srgb, var(--stroke-card) 100%, transparent)", background: "color-mix(in srgb, var(--surface-1) 78%, var(--bg-card))", textDecoration: "none" }}>
-            <strong style={{ color: "var(--ink-strong)", fontSize: "0.98rem" }}>{a.label}</strong>
-            <span style={{ color: "var(--ink-muted)", fontSize: "0.84rem" }}>{a.sub}</span>
+          <a key={a.href} href={a.href} className={styles.actionCard}>
+            <strong className={styles.actionCardLabel}>{a.label}</strong>
+            <span className={styles.actionCardSub}>{a.sub}</span>
           </a>
         ))}
       </div>

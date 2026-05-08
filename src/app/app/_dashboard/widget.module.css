@@ -182,3 +182,75 @@
   background: color-mix(in srgb, var(--warning) 15%, transparent);
   color: var(--warning);
 }
+
+/* View-all link in card headers */
+.viewAllLink {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--ink-muted);
+  text-decoration: none;
+}
+
+/* Row link (removes underline when .row is on an anchor) */
+.rowLink {
+  text-decoration: none;
+}
+
+/* Flex body inside a row — takes remaining space */
+.rowBody {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Days-remaining progress bar */
+.daysBarWrap {
+  height: 4px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--stroke-card) 80%, transparent);
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.daysBarFill {
+  height: 100%;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+/* Quick-actions card grid */
+.actionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.actionCard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--stroke-card) 100%, transparent);
+  background: color-mix(in srgb, var(--surface-1) 78%, var(--bg-card));
+  text-decoration: none;
+}
+
+.actionCardLabel {
+  display: block;
+  color: var(--ink-strong);
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.actionCardSub {
+  display: block;
+  color: var(--ink-muted);
+  font-size: 0.84rem;
+}
+
+/* Gated widget description text */
+.gatedDescription {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--ink-faint);
+}
