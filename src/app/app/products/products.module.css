@@ -140,15 +140,20 @@
   color: var(--warning);
 }
 
-.dateCell {
-  color: var(--ink-muted);
+.sellPriceCell {
+  color: var(--ink-strong);
   font-size: 13px;
+  font-weight: 600;
 }
 
-.marginCell {
-  color: var(--ink-muted);
+.gpCell {
   font-size: 13px;
+  font-weight: 700;
 }
+
+.gpGood { color: var(--ok); }
+.gpWarn { color: var(--warning); }
+.gpBad  { color: var(--danger); }
 
 .empty {
   padding: 18px;
