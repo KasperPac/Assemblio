@@ -68,6 +68,29 @@ export function StartJobModal({ orderLineId, orderNumber, productTitle, onClose 
               The system will schedule each step starting from now, respecting routing dependencies.
             </p>
           )}
+          {mode === "manual" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <label style={{ fontSize: "0.82rem", color: "var(--ink-muted)" }}>
+                Job start date
+              </label>
+              <input
+                type="datetime-local"
+                name="manual_start"
+                required={mode === "manual"}
+                style={{
+                  padding: "8px 12px",
+                  borderRadius: 10,
+                  border: "1px solid color-mix(in srgb, var(--stroke) 60%, transparent)",
+                  background: "var(--surface-raised)",
+                  color: "var(--ink-strong)",
+                  fontSize: "0.88rem",
+                }}
+              />
+              <p style={{ fontSize: "0.82rem", color: "var(--ink-muted)", margin: 0 }}>
+                Subsequent steps will be scheduled from this start time.
+              </p>
+            </div>
+          )}
           <button
             type="submit"
             disabled={pending}

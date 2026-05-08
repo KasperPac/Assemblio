@@ -7,7 +7,6 @@ import { scheduleJob } from "@/lib/planning/scheduling";
 export async function startJob(formData: FormData) {
   const orderLineId = formData.get("order_line_id")?.toString() ?? "";
   const mode = formData.get("mode")?.toString() as "auto" | "manual";
-  const manualDatesJson = formData.get("manual_dates")?.toString() ?? "{}";
 
   if (!orderLineId) return;
 
@@ -44,28 +43,23 @@ export async function startJob(formData: FormData) {
     run_hours_per_unit: op.run_hours_per_unit ?? 0,
   }));
 
-  const startFrom = new Date();
+  const manualStart = formData.get("manual_start")?.toString();
+  const startFrom = mode === "manual" && manualStart ? new Date(manualStart) : new Date();
   const scheduled = scheduleJob(bomLaborRows, Number(orderLine.quantity), startFrom);
 
-  const manualDates: Record<number, { start: string; end: string }> =
-    mode === "manual" ? JSON.parse(manualDatesJson) : {};
-
-  const rows = scheduled.map((s) => {
-    const manual = manualDates[s.sequence];
-    return {
-      tenant_id: tenantId,
-      order_line_id: orderLineId,
-      department_id: s.departmentId,
-      bom_labor_id: s.bomLaborId,
-      sequence: s.sequence,
-      blocked_by: s.blockedBy,
-      operation_name: s.operationName,
-      status: s.initialStatus as "queued" | "blocked",
-      scheduled_start: manual?.start ?? s.scheduledStart.toISOString(),
-      scheduled_end: manual?.end ?? s.scheduledEnd.toISOString(),
-      priority: s.sequence * 10,
-    };
-  });
+  const rows = scheduled.map((s) => ({
+    tenant_id: tenantId,
+    order_line_id: orderLineId,
+    department_id: s.departmentId,
+    bom_labor_id: s.bomLaborId,
+    sequence: s.sequence,
+    blocked_by: s.blockedBy,
+    operation_name: s.operationName,
+    status: s.initialStatus as "queued" | "blocked",
+    scheduled_start: s.scheduledStart.toISOString(),
+    scheduled_end: s.scheduledEnd.toISOString(),
+    priority: s.sequence * 10,
+  }));
 
   await supabase.from("job_routing_step").insert(rows);
   revalidatePath("/app/planning/floor");
