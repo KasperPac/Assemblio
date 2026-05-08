@@ -12,11 +12,15 @@ export async function getServerTenantContext() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("tenant_id,role")
+    .select("tenant_id,role,status")
     .eq("id", user.id)
     .single();
 
   if (!profile?.tenant_id) {
+    return null;
+  }
+
+  if (profile.status === "deactivated") {
     return null;
   }
 
