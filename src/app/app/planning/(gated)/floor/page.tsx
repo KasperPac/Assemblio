@@ -54,25 +54,17 @@ export default async function FloorPage() {
 
   const { supabase, tenantId } = ctx;
 
-  // 0. Find order lines that already have routing steps
-  const { data: startedLineIds } = await supabase
-    .from("job_routing_step")
-    .select("order_line_id")
-    .eq("tenant_id", tenantId)
-    .order("order_line_id");
-
-  const startedIds = [...new Set((startedLineIds ?? []).map((r: any) => r.order_line_id as string))];
-
-  // Fetch unstarted order lines (exclude already-started ones)
-  const unstartedQuery = supabase
+  // 0. Fetch unstarted order lines in a single round-trip using a Postgres subquery
+  const { data: unstartedRaw } = await supabase
     .from("order_line")
-    .select(`id, quantity, orders:order_id(order_number), variant:variant_id(title, product:product_id(title))`)
+    .select(`
+      id, quantity,
+      orders:order_id ( order_number ),
+      variant:variant_id ( title, product:product_id ( title ) )
+    `)
     .eq("tenant_id", tenantId)
+    .not("id", "in", `(select order_line_id from job_routing_step where tenant_id = '${tenantId}')`)
     .limit(50);
-
-  const { data: unstartedRaw } = startedIds.length > 0
-    ? await unstartedQuery.not("id", "in", `(${startedIds.map((id) => `"${id}"`).join(",")})`)
-    : await unstartedQuery;
 
   const unstartedLines: UnstartedLine[] = (unstartedRaw ?? []).map((row: any) => {
     const variant = row.variant as any;

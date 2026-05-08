@@ -14,6 +14,15 @@ export async function startJob(formData: FormData) {
   if (!ctx) return;
   const { supabase, tenantId } = ctx;
 
+  // Early return if job already started (duplicate-start guard)
+  const { count } = await supabase
+    .from("job_routing_step")
+    .select("id", { count: "exact", head: true })
+    .eq("order_line_id", orderLineId)
+    .eq("tenant_id", tenantId);
+
+  if ((count ?? 0) > 0) return;
+
   // Get order line with its variant's active BOM and labor operations
   const { data: orderLine } = await supabase
     .from("order_line")
@@ -44,7 +53,11 @@ export async function startJob(formData: FormData) {
   }));
 
   const manualStart = formData.get("manual_start")?.toString();
-  const startFrom = mode === "manual" && manualStart ? new Date(manualStart) : new Date();
+  const parsedManual = manualStart ? new Date(manualStart) : null;
+  const startFrom =
+    mode === "manual" && parsedManual && !isNaN(parsedManual.getTime())
+      ? parsedManual
+      : new Date();
   const scheduled = scheduleJob(bomLaborRows, Number(orderLine.quantity), startFrom);
 
   const rows = scheduled.map((s) => ({
@@ -61,6 +74,7 @@ export async function startJob(formData: FormData) {
     priority: s.sequence * 10,
   }));
 
-  await supabase.from("job_routing_step").insert(rows);
+  const { error } = await supabase.from("job_routing_step").insert(rows);
+  if (error) throw new Error(error.message);
   revalidatePath("/app/planning/floor");
 }
