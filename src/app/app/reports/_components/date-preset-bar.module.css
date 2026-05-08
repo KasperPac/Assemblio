@@ -10,7 +10,7 @@
   border: 1px solid var(--stroke-strong);
   border-radius: 6px;
   padding: 5px 10px;
-  background: var(--surface-raised);
+  background: var(--surface-1);
   color: var(--ink-muted);
   font-size: 13px;
   cursor: pointer;
@@ -46,7 +46,7 @@
   border-radius: 6px;
   padding: 5px 8px;
   font-size: 13px;
-  background: var(--surface-raised);
+  background: var(--surface-1);
   color: var(--ink-strong);
 }
 
@@ -54,7 +54,7 @@
   border: 1px solid var(--stroke-strong);
   border-radius: 6px;
   padding: 5px 10px;
-  background: var(--surface-raised);
+  background: var(--surface-1);
   color: var(--ink-strong);
   font-size: 13px;
   text-decoration: none;
