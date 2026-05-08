@@ -16,6 +16,13 @@ export async function startJob(formData: FormData) {
   if (!ctx) return;
   const { supabase, tenantId } = ctx;
 
+  const { data: tenant } = await supabase
+    .from("tenant")
+    .select("has_planning_module")
+    .eq("id", tenantId)
+    .maybeSingle();
+  if (!tenant?.has_planning_module) return;
+
   // Early return if job already started (duplicate-start guard)
   const { count } = await supabase
     .from("job_routing_step")
@@ -33,7 +40,7 @@ export async function startJob(formData: FormData) {
     )
     .eq("id", orderLineId)
     .eq("tenant_id", tenantId)
-    .single();
+    .maybeSingle();
 
   if (!orderLine) return;
 
@@ -86,6 +93,13 @@ export async function startStep(stepId: string) {
   if (!ctx) return;
   const { supabase, tenantId } = ctx;
 
+  const { data: tenant } = await supabase
+    .from("tenant")
+    .select("has_planning_module")
+    .eq("id", tenantId)
+    .maybeSingle();
+  if (!tenant?.has_planning_module) return;
+
   const { data: { user } } = await supabase.auth.getUser();
 
   const { error } = await supabase
@@ -106,6 +120,13 @@ export async function completeStep(stepId: string) {
   if (!ctx) return;
   const { supabase, tenantId } = ctx;
 
+  const { data: tenant } = await supabase
+    .from("tenant")
+    .select("has_planning_module")
+    .eq("id", tenantId)
+    .maybeSingle();
+  if (!tenant?.has_planning_module) return;
+
   const { data: { user } } = await supabase.auth.getUser();
 
   // Mark this step complete
@@ -116,7 +137,7 @@ export async function completeStep(stepId: string) {
     .eq("tenant_id", tenantId)
     .in("status", ["active", "queued"])
     .select("order_line_id, sequence")
-    .single();
+    .maybeSingle();
 
   if (error) throw new Error(error.message);
   if (!completed) {

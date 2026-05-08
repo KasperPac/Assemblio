@@ -32,6 +32,7 @@ export async function fireNotificationIfConfigured({
       )
     `)
     .eq("id", stepId)
+    .eq("tenant_id", tenantId)
     .single();
 
   if (!step) return;
@@ -61,6 +62,14 @@ export async function fireNotificationIfConfigured({
     .maybeSingle();
 
   if (!trigger) return;
+
+  // Skip if already sent for this step+trigger (deduplication)
+  const { count: existingCount } = await supabase
+    .from("notification_log")
+    .select("id", { count: "exact", head: true })
+    .eq("order_line_id", orderLineId)
+    .eq("trigger_id", trigger.id);
+  if ((existingCount ?? 0) > 0) return;
 
   // 3. Render template
   const vars: Record<string, string> = {

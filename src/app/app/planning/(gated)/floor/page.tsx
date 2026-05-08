@@ -54,8 +54,14 @@ export default async function FloorPage() {
 
   const { supabase, tenantId } = ctx;
 
-  // 0. Fetch unstarted order lines in a single round-trip using a Postgres subquery
-  const { data: unstartedRaw } = await supabase
+  // 0. Fetch unstarted order lines via two-step approach (avoids raw SQL subquery interpolation)
+  const { data: startedLineRows } = await supabase
+    .from("job_routing_step")
+    .select("order_line_id")
+    .eq("tenant_id", tenantId);
+  const startedLineIds = [...new Set((startedLineRows ?? []).map((r: any) => r.order_line_id as string))];
+
+  let unstartedQuery = supabase
     .from("order_line")
     .select(`
       id, quantity,
@@ -63,8 +69,11 @@ export default async function FloorPage() {
       variant:variant_id ( title, product:product_id ( title ) )
     `)
     .eq("tenant_id", tenantId)
-    .not("id", "in", `(select order_line_id from job_routing_step where tenant_id = '${tenantId}')`)
     .limit(50);
+  if (startedLineIds.length > 0) {
+    unstartedQuery = unstartedQuery.not("id", "in", `(${startedLineIds.join(",")})`);
+  }
+  const { data: unstartedRaw } = await unstartedQuery;
 
   const unstartedLines: UnstartedLine[] = (unstartedRaw ?? []).map((row: any) => {
     const variant = row.variant as any;
