@@ -3,6 +3,7 @@ create extension if not exists "pgcrypto";
 create table public.tenant (
   id uuid primary key default gen_random_uuid(),
   name text not null,
+  has_planning_module boolean not null default false,
   created_at timestamptz not null default now()
 );
 
@@ -287,6 +288,7 @@ create table public.orders (
   tenant_id uuid not null references public.tenant(id),
   shopify_order_id text,
   order_number text,
+  customer_email text,
   status text not null default 'open',
   created_at timestamptz not null default now(),
   unique (tenant_id, shopify_order_id)
@@ -376,6 +378,7 @@ create table public.product_bom_labor (
   admin_hours_per_unit numeric not null default 0,
   electricity_kwh_per_unit numeric not null default 0,
   gas_units_per_unit numeric not null default 0,
+  blocked_by integer[] not null default '{}',
   notes text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -1412,7 +1415,7 @@ create table if not exists public.job_routing_step (
   tenant_id         uuid        not null references public.tenant(id),
   order_line_id     uuid        not null references public.order_line(id) on delete cascade,
   department_id     uuid        not null references public.department(id),
-  bom_labor_id      uuid        references public.product_bom_labor(id),
+  bom_labor_id      uuid        references public.product_bom_labor(id) on delete set null,
   sequence          integer     not null,
   blocked_by        integer[]   not null default '{}',
   operation_name    text        not null,
@@ -1426,19 +1429,20 @@ create table if not exists public.job_routing_step (
   completed_by      uuid        references auth.users(id),
   priority          integer     not null default 0,
   created_at        timestamptz not null default now(),
-  updated_at        timestamptz not null default now()
+  updated_at        timestamptz not null default now(),
+  unique (order_line_id, sequence)
 );
 
 create index if not exists jrs_tenant_idx       on public.job_routing_step(tenant_id);
 create index if not exists jrs_order_line_idx   on public.job_routing_step(order_line_id);
 create index if not exists jrs_department_idx   on public.job_routing_step(department_id);
-create index if not exists jrs_status_idx       on public.job_routing_step(status);
+create index if not exists jrs_dept_status_idx  on public.job_routing_step(tenant_id, department_id, status);
 
 alter table public.job_routing_step enable row level security;
 
 create policy "Tenant isolation" on public.job_routing_step
-  using  (tenant_id = current_tenant_id())
-  with check (tenant_id = current_tenant_id());
+  using  (tenant_id = current_tenant_id() or public.is_super_admin())
+  with check (tenant_id = current_tenant_id() or public.is_super_admin());
 
 -- Product notification trigger — per-BOM per-sequence notification config
 create table if not exists public.product_notification_trigger (
@@ -1457,8 +1461,8 @@ create table if not exists public.product_notification_trigger (
 alter table public.product_notification_trigger enable row level security;
 
 create policy "Tenant isolation" on public.product_notification_trigger
-  using  (tenant_id = current_tenant_id())
-  with check (tenant_id = current_tenant_id());
+  using  (tenant_id = current_tenant_id() or public.is_super_admin())
+  with check (tenant_id = current_tenant_id() or public.is_super_admin());
 
 -- Notification log — audit trail of every sent notification
 create table if not exists public.notification_log (
@@ -1466,8 +1470,8 @@ create table if not exists public.notification_log (
   tenant_id       uuid     not null references public.tenant(id),
   order_id        uuid     not null references public.orders(id),
   order_line_id   uuid     not null references public.order_line(id),
-  trigger_id      uuid     references public.product_notification_trigger(id),
-  channel         text     not null,
+  trigger_id      uuid     references public.product_notification_trigger(id) on delete set null,
+  channel         text     not null check (channel in ('email')),
   recipient       text     not null,
   sent_at         timestamptz not null default now(),
   delivery_status text     not null default 'sent'
@@ -1475,13 +1479,14 @@ create table if not exists public.notification_log (
   created_at      timestamptz not null default now()
 );
 
-create index if not exists notif_log_order_idx  on public.notification_log(order_id);
-create index if not exists notif_log_tenant_idx on public.notification_log(tenant_id);
+create index if not exists notif_log_order_idx       on public.notification_log(order_id);
+create index if not exists notif_log_order_line_idx  on public.notification_log(order_line_id);
+create index if not exists notif_log_tenant_idx      on public.notification_log(tenant_id);
 
 alter table public.notification_log enable row level security;
 
 create policy "Tenant isolation" on public.notification_log
-  using  (tenant_id = current_tenant_id())
-  with check (tenant_id = current_tenant_id());
+  using  (tenant_id = current_tenant_id() or public.is_super_admin())
+  with check (tenant_id = current_tenant_id() or public.is_super_admin());
 
 grant execute on function public.generate_financial_plans_for_open_orders(date) to authenticated;
