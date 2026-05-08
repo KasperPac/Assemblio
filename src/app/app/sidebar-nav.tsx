@@ -128,72 +128,12 @@ function buildNavSections(hasPlanning: boolean): { label: string; items: NavItem
   {
     label: "Planning",
     items: [
-      {
-        label: "Departments",
-        href: "/app/departments",
-        icon: (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 21h18" />
-            <path d="M5 21V7l7-4 7 4v14" />
-            <path d="M9 9h.01" />
-            <path d="M15 9h.01" />
-          </svg>
-        ),
-      },
-      {
-        label: "Staffing",
-        href: "/app/staffing",
-        icon: (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-          </svg>
-        ),
-      },
-      {
-        label: "Costing",
-        href: "/app/costing",
-        icon: (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" x2="12" y1="2" y2="22" />
-            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14.5a3.5 3.5 0 0 1 0 7H6" />
-          </svg>
-        ),
-      },
-      {
-        label: "Capacity",
-        href: "/app/capacity",
-        icon: (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 20V10" />
-            <path d="M18 20V4" />
-            <path d="M6 20v-4" />
-          </svg>
-        ),
-      },
-      {
-        label: "Actual Time",
-        href: "/app/actual-time",
-        icon: (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <polyline points="12 6 12 12 16 14" />
-          </svg>
-        ),
-      },
-      {
-        label: "Staff Costings",
-        href: "/app/staff-costings",
-        icon: (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <line x1="17" x2="22" y1="11" y2="11" />
-            <line x1="19.5" x2="19.5" y1="8.5" y2="13.5" />
-          </svg>
-        ),
-      },
+      // DEPRECATED: /app/departments — hidden pending deletion
+      // DEPRECATED: /app/staffing — hidden pending deletion
+      // DEPRECATED: /app/costing — hidden pending deletion
+      // DEPRECATED: /app/capacity — superseded by Planning > Floor Board
+      // DEPRECATED: /app/actual-time — hidden pending deletion
+      // DEPRECATED: /app/staff-costings — hidden pending deletion
       ...(hasPlanning
         ? [
             {
@@ -256,7 +196,7 @@ export default function SidebarNav({ hasPlanning = false }: { hasPlanning?: bool
 
   return (
     <nav className={styles.nav}>
-      {navSections.map((section) => (
+      {navSections.filter((section) => section.items.length > 0).map((section) => (
         <div key={section.label} className={styles.navSection}>
           <p className={styles.navSectionLabel}>{section.label}</p>
           {section.items.map((item) => {
