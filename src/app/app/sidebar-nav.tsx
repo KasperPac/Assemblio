@@ -10,7 +10,8 @@ type NavItem = {
   icon: ReactNode;
 };
 
-const navSections: { label: string; items: NavItem[] }[] = [
+function buildNavSections(hasPlanning: boolean): { label: string; items: NavItem[] }[] {
+  return [
   {
     label: "Operations",
     items: [
@@ -193,6 +194,21 @@ const navSections: { label: string; items: NavItem[] }[] = [
           </svg>
         ),
       },
+      ...(hasPlanning
+        ? [
+            {
+              label: "Production Planning",
+              href: "/app/planning/floor",
+              icon: (
+                <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
+                  <rect x="1" y="3" width="14" height="2" rx="1" fill="currentColor" opacity=".4"/>
+                  <rect x="1" y="7" width="9" height="2" rx="1" fill="currentColor" opacity=".7"/>
+                  <rect x="1" y="11" width="12" height="2" rx="1" fill="currentColor"/>
+                </svg>
+              ),
+            },
+          ]
+        : []),
     ],
   },
   {
@@ -231,10 +247,12 @@ const navSections: { label: string; items: NavItem[] }[] = [
       },
     ],
   },
-];
+  ];
+}
 
-export default function SidebarNav() {
+export default function SidebarNav({ hasPlanning = false }: { hasPlanning?: boolean }) {
   const pathname = usePathname();
+  const navSections = buildNavSections(hasPlanning);
 
   return (
     <nav className={styles.nav}>

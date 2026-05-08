@@ -3,16 +3,17 @@
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import styles from "./variant-detail.module.css";
 
-export type Tab = "overview" | "bom" | "routing" | "versions";
+export type Tab = "overview" | "bom" | "routing" | "versions" | "notifications";
 
 const TAB_LABELS: Record<Tab, string> = {
   overview: "Overview",
   bom: "Bill of Materials",
   routing: "Labour & Routing",
   versions: "Versions",
+  notifications: "Notifications",
 };
 
-const VALID_TABS = new Set<Tab>(["overview", "bom", "routing", "versions"]);
+const VALID_TABS = new Set<Tab>(["overview", "bom", "routing", "versions", "notifications"]);
 
 type Props = {
   defaultTab?: Tab;
@@ -20,6 +21,7 @@ type Props = {
   bom: React.ReactNode;
   routing: React.ReactNode;
   versions: React.ReactNode;
+  notifications: React.ReactNode;
 };
 
 export default function VariantTabs({
@@ -28,6 +30,7 @@ export default function VariantTabs({
   bom,
   routing,
   versions,
+  notifications,
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
@@ -42,7 +45,7 @@ export default function VariantTabs({
     router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
   }
 
-  const content: Record<Tab, React.ReactNode> = { overview, bom, routing, versions };
+  const content: Record<Tab, React.ReactNode> = { overview, bom, routing, versions, notifications };
 
   return (
     <div>

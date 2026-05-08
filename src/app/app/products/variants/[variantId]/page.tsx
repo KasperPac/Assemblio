@@ -6,10 +6,13 @@ import BomSeedPanel from "../../bom-seed-panel";
 import BomEditor from "../../bom-editor";
 import BomVersionsTab from "../../bom-versions-tab";
 import VariantTabs, { type Tab } from "../../variant-tabs";
+import NotificationsTab from "./notifications-tab";
 import {
   createBomLaborLine,
   deleteBomLaborLine,
   updateBomLaborLine,
+  upsertNotificationTrigger,
+  removeNotificationTrigger,
 } from "../../actions";
 
 type VariantRecord = {
@@ -73,6 +76,7 @@ type LaborLineRecord = {
   department_id: string;
   operation_name: string;
   sequence: number;
+  blocked_by: number[];
   setup_hours: number;
   run_hours_per_unit: number;
   admin_hours_per_unit: number;
@@ -142,6 +146,8 @@ type Props = {
     laborSuccess?: string;
     laborError?: string;
     tab?: string;
+    notifSuccess?: string;
+    notifError?: string;
   }>;
 };
 
@@ -220,7 +226,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
       : await supabase
           .from("product_bom_labor")
           .select(
-            "id,product_bom_id,department_id,operation_name,sequence,setup_hours,run_hours_per_unit,admin_hours_per_unit,electricity_kwh_per_unit,gas_units_per_unit,notes,department:department_id(name,code)"
+            "id,product_bom_id,department_id,operation_name,sequence,blocked_by,setup_hours,run_hours_per_unit,admin_hours_per_unit,electricity_kwh_per_unit,gas_units_per_unit,notes,department:department_id(name,code)"
           )
           .in("product_bom_id", bomIds)
           .order("sequence", { ascending: true });
@@ -244,6 +250,15 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
     },
     {}
   );
+
+  const activeBomId = typedBoms.find((bom) => bom.is_active)?.id ?? null;
+
+  const { data: notifTriggers } = activeBomId
+    ? await supabase
+        .from("product_notification_trigger")
+        .select("id, routing_sequence, message_template, channel")
+        .eq("product_bom_id", activeBomId)
+    : { data: [] };
 
   const templateOptions = (templates ?? []).map(
     (template: {
@@ -374,11 +389,14 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
     requestedTab === "overview" ||
     requestedTab === "bom" ||
     requestedTab === "routing" ||
-    requestedTab === "versions"
+    requestedTab === "versions" ||
+    requestedTab === "notifications"
       ? requestedTab
       : query.laborSuccess || query.laborError
         ? "routing"
-        : "bom";
+        : query.notifSuccess || query.notifError
+          ? "notifications"
+          : "bom";
 
   return (
     <div className={styles.page}>
@@ -561,6 +579,28 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                                           defaultValue={line.notes ?? `${department?.name ?? "Department"} operation`}
                                         />
                                       </div>
+                                      {(() => {
+                                        const otherRows = laborRows.filter((other) => other.id !== line.id);
+                                        if (otherRows.length === 0) return null;
+                                        return (
+                                          <div className={`${styles.routingField} ${styles.routingSpanTwo}`}>
+                                            <label>Depends on (must complete before this step starts)</label>
+                                            <div className={styles.routingDepsWrapper}>
+                                              {otherRows.map((other) => (
+                                                <label key={other.id} className={styles.routingDepLabel}>
+                                                  <input
+                                                    type="checkbox"
+                                                    name="blocked_by"
+                                                    value={other.sequence.toString()}
+                                                    defaultChecked={(line.blocked_by ?? []).includes(other.sequence)}
+                                                  />
+                                                  Step {other.sequence}: {other.operation_name}
+                                                </label>
+                                              ))}
+                                            </div>
+                                          </div>
+                                        );
+                                      })()}
                                       <div className={`${styles.routingActions} ${styles.routingSpanTwo}`}>
                                         <button className={styles.secondaryButton} type="submit">
                                           Save Operation
@@ -650,6 +690,30 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
             boms={allBomsWithLines}
             variantId={variant.id}
             sellPrice={sellPrice}
+          />
+        }
+        notifications={
+          <NotificationsTab
+            activeBomId={activeBomId}
+            laborLines={(activeBomId ? (laborLinesByBom[activeBomId] ?? []) : []).map((line) => {
+              const dept = Array.isArray(line.department) ? line.department[0] ?? null : line.department;
+              return {
+                id: line.id,
+                sequence: line.sequence,
+                operationName: line.operation_name,
+                departmentName: dept?.name ?? "Unknown",
+              };
+            })}
+            existingTriggers={(notifTriggers ?? []).map((t) => ({
+              routingSequence: t.routing_sequence,
+              messageTemplate: t.message_template,
+            }))}
+            variantId={typedVariant.id}
+            canManage={canManageBom}
+            upsertAction={upsertNotificationTrigger}
+            removeAction={removeNotificationTrigger}
+            successMessage={query.notifSuccess}
+            errorMessage={query.notifError}
           />
         }
       />

@@ -14,7 +14,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("tenant_id,role,tenant:tenant_id(id,name)")
+    .select("tenant_id,role,tenant:tenant_id(id,name,has_planning_module)")
     .eq("id", user?.id ?? "")
     .maybeSingle();
 
@@ -54,14 +54,17 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     ? profileTenant
     : accessTenant ?? profileTenant;
 
+  let hasPlanning = (profile?.tenant as any)?.has_planning_module ?? false;
+
   if (!tenant?.name && profile?.tenant_id) {
     const { data: directTenant } = await supabase
       .from("tenant")
-      .select("id,name")
+      .select("id,name,has_planning_module")
       .eq("id", profile.tenant_id)
       .maybeSingle();
     if (directTenant?.name) {
       tenant = directTenant;
+      hasPlanning = directTenant.has_planning_module ?? false;
     }
   }
 
@@ -98,7 +101,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           <p>Inventory, BOMs, purchasing, and planning run from one tenant-scoped workspace.</p>
         </div>
 
-        <SidebarNav />
+        <SidebarNav hasPlanning={hasPlanning} />
 
         <div className={styles.sidebarFooter}>
           {selectableTenants.length > 1 ? (

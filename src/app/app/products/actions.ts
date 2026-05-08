@@ -488,6 +488,10 @@ export async function updateBomLaborLine(formData: FormData) {
   const gasUnitsPerUnit = parseNumber(formData.get("gas_units_per_unit")) ?? 0;
   const notes = formData.get("notes")?.toString().trim() ?? "";
   const variantId = formData.get("variant_id")?.toString() ?? "";
+  const blockedByRaw = formData.getAll("blocked_by");
+  const blockedBy = blockedByRaw
+    .map((v) => parseInt(v.toString(), 10))
+    .filter((n) => Number.isFinite(n));
 
   if (!lineId || !departmentId || !operationName || !variantId) {
     redirectVariantResult(variantId || "", {
@@ -520,12 +524,37 @@ export async function updateBomLaborLine(formData: FormData) {
     tenantId: string;
   };
 
+  // Check sequence uniqueness within BOM
+  const { data: existingLine } = await supabase
+    .from("product_bom_labor")
+    .select("product_bom_id")
+    .eq("id", lineId)
+    .single();
+
+  if (existingLine) {
+    const { count } = await supabase
+      .from("product_bom_labor")
+      .select("id", { count: "exact", head: true })
+      .eq("product_bom_id", existingLine.product_bom_id)
+      .eq("sequence", sequence)
+      .neq("id", lineId);
+
+    if ((count ?? 0) > 0) {
+      redirectVariantResult(variantId, {
+        tab: "routing",
+        laborError: encodeMessage(`Sequence ${sequence} is already used by another operation in this BOM.`),
+      });
+      return;
+    }
+  }
+
   const { error } = await supabase
     .from("product_bom_labor")
     .update({
       department_id: departmentId,
       operation_name: operationName,
       sequence,
+      blocked_by: blockedBy,
       setup_hours: setupHours,
       run_hours_per_unit: runHoursPerUnit,
       admin_hours_per_unit: adminHoursPerUnit,
@@ -651,4 +680,79 @@ export async function duplicateBomAsDraft(
   revalidatePath(`/app/products/variants/${variantId}`);
   revalidatePath("/app/bom");
   return { success: `Draft BOM v${version} created (${rows.length} lines).` };
+}
+
+export async function upsertNotificationTrigger(formData: FormData) {
+  const auth = await requireBomEditor();
+  if ("error" in auth) return;
+  const { supabase, tenantId } = auth;
+
+  const productBomId = formData.get("product_bom_id")?.toString() ?? "";
+  const routingSequenceRaw = formData.get("routing_sequence")?.toString() ?? "";
+  const messageTemplate = formData.get("message_template")?.toString()?.trim() ?? "";
+  const variantId = formData.get("variant_id")?.toString() ?? "";
+
+  if (!productBomId || !routingSequenceRaw || !messageTemplate || !variantId) {
+    redirectVariantResult(variantId, { tab: "notifications", notifError: encodeMessage("Missing required fields.") });
+    return;
+  }
+
+  const routingSequence = parseInt(routingSequenceRaw, 10);
+  if (!Number.isFinite(routingSequence)) {
+    redirectVariantResult(variantId, { tab: "notifications", notifError: encodeMessage("Invalid sequence.") });
+    return;
+  }
+
+  const { error } = await supabase
+    .from("product_notification_trigger")
+    .upsert(
+      { tenant_id: tenantId, product_bom_id: productBomId, routing_sequence: routingSequence, message_template: messageTemplate, channel: "email" },
+      { onConflict: "tenant_id,product_bom_id,routing_sequence" }
+    );
+
+  if (error) {
+    redirectVariantResult(variantId, { tab: "notifications", notifError: encodeMessage(error.message) });
+    return;
+  }
+
+  revalidatePath(`/app/products/variants/${variantId}`);
+  revalidatePath("/app/products");
+  redirectVariantResult(variantId, { tab: "notifications", notifSuccess: encodeMessage("Notification saved.") });
+}
+
+export async function removeNotificationTrigger(formData: FormData) {
+  const auth = await requireBomEditor();
+  if ("error" in auth) return;
+  const { supabase, tenantId } = auth;
+
+  const productBomId = formData.get("product_bom_id")?.toString() ?? "";
+  const routingSequenceRaw = formData.get("routing_sequence")?.toString() ?? "";
+  const variantId = formData.get("variant_id")?.toString() ?? "";
+
+  if (!productBomId || !routingSequenceRaw || !variantId) {
+    redirectVariantResult(variantId, { tab: "notifications", notifError: encodeMessage("Missing required fields.") });
+    return;
+  }
+
+  const routingSequence = parseInt(routingSequenceRaw, 10);
+  if (!Number.isFinite(routingSequence)) {
+    redirectVariantResult(variantId, { tab: "notifications", notifError: encodeMessage("Invalid sequence.") });
+    return;
+  }
+
+  const { error } = await supabase
+    .from("product_notification_trigger")
+    .delete()
+    .eq("tenant_id", tenantId)
+    .eq("product_bom_id", productBomId)
+    .eq("routing_sequence", routingSequence);
+
+  if (error) {
+    redirectVariantResult(variantId, { tab: "notifications", notifError: encodeMessage(error.message) });
+    return;
+  }
+
+  revalidatePath(`/app/products/variants/${variantId}`);
+  revalidatePath("/app/products");
+  redirectVariantResult(variantId, { tab: "notifications", notifSuccess: encodeMessage("Notification removed.") });
 }
