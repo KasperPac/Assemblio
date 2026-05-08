@@ -37,17 +37,18 @@
 /* Eyebrow label above title */
 .eyebrow {
   margin: 0;
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 0.7rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   color: var(--ink-faint);
 }
 
 /* Title inside card */
 .title {
-  margin: 4px 0 0;
-  font-size: clamp(1rem, 1vw + 0.8rem, 1.4rem);
+  margin: 6px 0 0;
+  font-size: clamp(1.05rem, 1vw + 0.85rem, 1.45rem);
+  font-weight: 700;
   line-height: 1.1;
   color: var(--ink-strong);
 }
@@ -72,8 +73,8 @@
 /* Stat card label */
 .statLabel {
   margin: 0;
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 0.7rem;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: var(--ink-faint);
@@ -158,8 +159,8 @@
 
 .gatedLabel {
   margin: 0;
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 1.1rem;
+  font-weight: 800;
   color: var(--ink-strong);
 }
 
