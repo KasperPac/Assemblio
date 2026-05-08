@@ -1,0 +1,75 @@
+{
+  "planPath": "docs/superpowers/plans/2026-05-08-settings-redesign.md",
+  "tasks": [
+    {
+      "id": 9,
+      "subject": "Task 1: Database patch — settings schema",
+      "status": "pending",
+      "description": "**Goal:** Add new columns to `tenant` and `profiles`, create `tenant_invoices` table, add auth trigger for invited users.\n\n**Files:**\n- Create: `supabase/patches/settings_redesign_schema.sql`\n\n**Acceptance Criteria:**\n- [ ] `tenant` table has `logo_url`, `timezone`, `currency` columns\n- [ ] `profiles` table has `full_name` and `status` columns\n- [ ] `tenant_invoices` table exists with RLS\n- [ ] Auth trigger for invited users\n- [ ] Storage buckets `tenant-logos` and `tenant-invoices` created\n\n**Verify:** Apply patch via Supabase MCP.\n\n```json:metadata\n{\"files\": [\"supabase/patches/settings_redesign_schema.sql\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"tenant columns added\", \"profiles columns added\", \"tenant_invoices table with RLS\", \"invite trigger\"]}\n```"
+    },
+    {
+      "id": 10,
+      "subject": "Task 2: Settings layout with sidebar navigation",
+      "status": "pending",
+      "blockedBy": [9],
+      "description": "**Goal:** Two-column settings layout with sidebar nav, root redirect by role.\n\n**Files:**\n- Create: `src/app/app/settings/layout.tsx`\n- Create: `src/app/app/settings/settings-sidebar.tsx`\n- Create: `src/app/app/settings/settings-layout.module.css`\n- Modify: `src/app/app/settings/page.tsx`\n- Modify: `src/app/app/route-meta.ts`\n\n**Verify:** `npx tsc --noEmit` → zero errors.\n\n```json:metadata\n{\"files\": [\"src/app/app/settings/layout.tsx\", \"src/app/app/settings/settings-sidebar.tsx\", \"src/app/app/settings/settings-layout.module.css\", \"src/app/app/settings/page.tsx\", \"src/app/app/route-meta.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Root redirects by role\", \"Sidebar groups correct\", \"Active link styled\"]}\n```"
+    },
+    {
+      "id": 11,
+      "subject": "Task 3: Profile section",
+      "status": "pending",
+      "blockedBy": [10],
+      "description": "**Goal:** Profile section with editable name and password reset.\n\n**Files:**\n- Create: `src/app/app/settings/profile/page.tsx`\n- Create: `src/app/app/settings/profile/profile-form.tsx`\n- Create: `src/app/app/settings/profile/actions.ts`\n- Create: `src/app/app/settings/profile/profile.module.css`\n\n**Verify:** `npx tsc --noEmit` → zero errors.\n\n```json:metadata\n{\"files\": [\"src/app/app/settings/profile/page.tsx\", \"src/app/app/settings/profile/profile-form.tsx\", \"src/app/app/settings/profile/actions.ts\", \"src/app/app/settings/profile/profile.module.css\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Name editable\", \"Email read-only\", \"Password reset works\"]}\n```"
+    },
+    {
+      "id": 12,
+      "subject": "Task 4: Appearance section and theme redirect",
+      "status": "pending",
+      "blockedBy": [10],
+      "description": "**Goal:** Appearance section with theme picker. Redirect /theme. Update topbar.\n\n**Files:**\n- Create: `src/app/app/settings/appearance/page.tsx`\n- Create: `src/app/app/settings/appearance/theme-picker.tsx`\n- Create: `src/app/app/settings/appearance/appearance.module.css`\n- Modify: `src/app/app/settings/theme/page.tsx`\n- Modify: `src/app/app/topbar.tsx`\n\n**Verify:** `npx tsc --noEmit` → zero errors.\n\n```json:metadata\n{\"files\": [\"src/app/app/settings/appearance/page.tsx\", \"src/app/app/topbar.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Appearance shows theme picker\", \"/settings/theme redirects\", \"Topbar updated\"]}\n```"
+    },
+    {
+      "id": 13,
+      "subject": "Task 5: Company section",
+      "status": "pending",
+      "blockedBy": [9, 10],
+      "description": "**Goal:** Company section with name, timezone, currency, logo upload.\n\n**Files:**\n- Create: `src/app/app/settings/company/page.tsx`\n- Create: `src/app/app/settings/company/company-form.tsx`\n- Create: `src/app/app/settings/company/actions.ts`\n- Create: `src/app/app/settings/company/company.module.css`\n\n**Verify:** `npx tsc --noEmit` → zero errors.\n\n```json:metadata\n{\"files\": [\"src/app/app/settings/company/page.tsx\", \"src/app/app/settings/company/actions.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Fields editable and persist\", \"Logo upload works\"]}\n```"
+    },
+    {
+      "id": 14,
+      "subject": "Task 6: Team section and deactivation enforcement",
+      "status": "pending",
+      "blockedBy": [9, 10],
+      "description": "**Goal:** Team section with invite, role change, deactivate. Add status enforcement to getServerTenantContext().\n\n**Files:**\n- Create: `src/lib/supabase/admin.ts`\n- Modify: `src/lib/tenant/context.ts`\n- Create: `src/app/app/settings/team/page.tsx`\n- Create: `src/app/app/settings/team/invite-form.tsx`\n- Create: `src/app/app/settings/team/team-row-actions.tsx`\n- Create: `src/app/app/settings/team/actions.ts`\n- Create: `src/app/app/settings/team/team.module.css`\n\n**Verify:** `npx tsc --noEmit` → zero errors.\n\n```json:metadata\n{\"files\": [\"src/lib/supabase/admin.ts\", \"src/lib/tenant/context.ts\", \"src/app/app/settings/team/page.tsx\", \"src/app/app/settings/team/actions.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Deactivated users blocked\", \"Invite works\", \"Role change works\"]}\n```"
+    },
+    {
+      "id": 15,
+      "subject": "Task 7: Integrations section",
+      "status": "pending",
+      "blockedBy": [10],
+      "description": "**Goal:** Integrations card grid. Move Shopify components to integrations/. Delete originals.\n\n**Files:**\n- Create: `src/app/app/settings/integrations/page.tsx`\n- Create: `src/app/app/settings/integrations/shopify-manage.tsx`\n- Create: `src/app/app/settings/integrations/integrations.module.css`\n- Move+delete: shopify-connect.tsx, sync-submit-form.tsx, sync-meta-chips.tsx\n\n**Verify:** `npx tsc --noEmit` → zero errors.\n\n```json:metadata\n{\"files\": [\"src/app/app/settings/integrations/page.tsx\", \"src/app/app/settings/integrations/shopify-manage.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Shopify tile renders\", \"Manage panel works\", \"Old files deleted\"]}\n```"
+    },
+    {
+      "id": 16,
+      "subject": "Task 8: Locations section",
+      "status": "pending",
+      "blockedBy": [10],
+      "description": "**Goal:** Locations section with list and default picker.\n\n**Files:**\n- Create: `src/app/app/settings/locations/page.tsx`\n- Create: `src/app/app/settings/locations/actions.ts`\n- Create: `src/app/app/settings/locations/locations.module.css`\n\n**Verify:** `npx tsc --noEmit` → zero errors.\n\n```json:metadata\n{\"files\": [\"src/app/app/settings/locations/page.tsx\", \"src/app/app/settings/locations/actions.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Locations listed\", \"Set default works\"]}\n```"
+    },
+    {
+      "id": 17,
+      "subject": "Task 9: Invoices section",
+      "status": "pending",
+      "blockedBy": [9, 10],
+      "description": "**Goal:** Invoices section with signed PDF download links.\n\n**Files:**\n- Create: `src/app/app/settings/invoices/page.tsx`\n- Create: `src/app/app/settings/invoices/invoices.module.css`\n\n**Verify:** `npx tsc --noEmit` → zero errors.\n\n```json:metadata\n{\"files\": [\"src/app/app/settings/invoices/page.tsx\", \"src/app/app/settings/invoices/invoices.module.css\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Invoice table renders\", \"Signed URLs work\", \"Empty state correct\"]}\n```"
+    },
+    {
+      "id": 18,
+      "subject": "Task 10: Cleanup",
+      "status": "pending",
+      "blockedBy": [11, 12, 13, 14, 15, 16, 17],
+      "description": "**Goal:** Delete settings.module.css and verify no orphaned files.\n\n**Files:**\n- Delete: `src/app/app/settings/settings.module.css`\n\n**Verify:** `grep -r \"settings.module.css\" src/` → no output. All 8 routes render.\n\n```json:metadata\n{\"files\": [\"src/app/app/settings/settings.module.css\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"settings.module.css deleted\", \"No remaining imports\", \"All routes render\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-05-08T00:00:00.000Z"
+}
