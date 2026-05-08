@@ -181,6 +181,30 @@ const ROUTES: RouteDefinition[] = [
     crumbs: ["Warehouse"],
   },
   {
+    prefix: "/app/planning/upgrade",
+    title: "Production Planning",
+    subtitle: "Upgrade your workspace to access Production Planning.",
+    crumbs: ["Planning"],
+  },
+  {
+    prefix: "/app/planning/floor",
+    title: "Floor Board",
+    subtitle: "Live department queues and job status.",
+    crumbs: ["Planning", "Floor Board"],
+  },
+  {
+    prefix: "/app/planning/shopfloor",
+    title: "Shop Floor",
+    subtitle: "Operator queue for your department.",
+    crumbs: ["Planning", "Shop Floor"],
+  },
+  {
+    prefix: "/app/planning",
+    title: "Production Planning",
+    subtitle: "Schedule jobs and manage production across departments.",
+    crumbs: ["Planning"],
+  },
+  {
     prefix: "/app",
     title: "Overview",
     subtitle: "Inventory, demand, and workflow risk across the workspace.",

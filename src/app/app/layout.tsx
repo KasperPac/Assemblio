@@ -65,6 +65,14 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     }
   }
 
+  const { data: tenantRow } = await supabase
+    .from("tenant")
+    .select("has_planning_module")
+    .eq("id", profile?.tenant_id ?? "")
+    .maybeSingle();
+
+  const hasPlanning = tenantRow?.has_planning_module ?? false;
+
   const userInitial = (user?.email ?? "U").slice(0, 1).toUpperCase();
   const firstName = user?.email?.split("@")[0] ?? "User";
 
@@ -98,7 +106,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           <p>Inventory, BOMs, purchasing, and planning run from one tenant-scoped workspace.</p>
         </div>
 
-        <SidebarNav />
+        <SidebarNav hasPlanning={hasPlanning} />
 
         <div className={styles.sidebarFooter}>
           {selectableTenants.length > 1 ? (
