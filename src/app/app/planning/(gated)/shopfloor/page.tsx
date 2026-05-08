@@ -1,14 +1,14 @@
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { redirect } from "next/navigation";
-import { OperatorQueue } from "./operator-queue";
+import { OperatorQueue, type StepItem } from "./operator-queue";
 
 export default async function ShopFloorPage() {
   const ctx = await getServerTenantContext();
   if (!ctx) redirect("/login");
-  const { supabase } = ctx;
+  const { supabase, tenantId } = ctx;
 
   const [{ data: departments }, { data: routingSteps }] = await Promise.all([
-    supabase.from("department").select("id,name").eq("is_active", true).order("name"),
+    supabase.from("department").select("id,name").eq("tenant_id", tenantId).eq("is_active", true).order("name"),
     supabase
       .from("job_routing_step")
       .select(`
@@ -18,18 +18,12 @@ export default async function ShopFloorPage() {
           variant:variant_id ( title, product:product_id ( title ) )
         )
       `)
+      .eq("tenant_id", tenantId)
       .in("status", ["active", "queued", "blocked"])
       .order("priority", { ascending: true }),
   ]);
 
-  const stepsByDept: Record<string, {
-    id: string;
-    orderNumber: string | null;
-    productTitle: string;
-    operationName: string;
-    status: "active" | "queued" | "blocked";
-    blockedBy: number[];
-  }[]> = {};
+  const stepsByDept: Record<string, StepItem[]> = {};
 
   for (const step of routingSteps ?? []) {
     const ol = step.order_line as any;

@@ -2,7 +2,7 @@
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: var(--surface);
+  background: var(--bg-page);
   color: var(--ink-strong);
 }
 .topbar {

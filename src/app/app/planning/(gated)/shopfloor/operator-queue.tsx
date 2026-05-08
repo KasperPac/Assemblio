@@ -4,7 +4,7 @@ import { useState, useTransition, useEffect } from "react";
 import { startStep, completeStep } from "../floor/actions";
 import styles from "./shopfloor.module.css";
 
-type StepItem = {
+export type StepItem = {
   id: string;
   orderNumber: string | null;
   productTitle: string;
@@ -20,6 +20,7 @@ type Props = {
   stepsByDept: Record<string, StepItem[]>;
 };
 
+// TODO: replace with server-side PIN verification before production
 const MANAGER_PIN = "1234";
 
 export function OperatorQueue({ departments, stepsByDept }: Props) {
@@ -35,6 +36,11 @@ export function OperatorQueue({ departments, stepsByDept }: Props) {
   function selectDept(id: string) {
     localStorage.setItem("shopfloor_dept", id);
     setDeptId(id);
+  }
+
+  function clearDept() {
+    localStorage.removeItem("shopfloor_dept");
+    setDeptId(null);
   }
 
   function handleManagerPin() {
@@ -77,7 +83,7 @@ export function OperatorQueue({ departments, stepsByDept }: Props) {
       <div className={styles.topbar}>
         <span className={styles.deptLabel}>{dept?.name}</span>
         <div style={{ display: "flex", gap: 8 }}>
-          <button className={styles.managerBtn} onClick={() => setDeptId(null)}>
+          <button className={styles.managerBtn} onClick={clearDept}>
             Change dept
           </button>
           {!managerMode && (
