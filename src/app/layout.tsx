@@ -6,6 +6,7 @@ import ThemeProvider from "./theme-provider";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -17,7 +18,7 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Assemblio",
+  title: "Manuva",
   description:
     "BOM, inventory, and allocation operations for Shopify-connected manufacturers.",
 };
