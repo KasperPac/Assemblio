@@ -11,8 +11,7 @@
   border-radius: 999px;
   min-height: 42px;
   padding: 0 18px;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--brand-2) 72%, #142131), color-mix(in srgb, var(--brand-1) 88%, #0e1624));
+  background: linear-gradient(135deg, var(--brand-2), var(--brand-1));
   color: #f8fbff;
   font-size: 0.9rem;
   font-weight: 700;
@@ -36,7 +35,7 @@
 .tab,
 .tabActive {
   padding: 7px 14px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 13px;
   font-weight: 500;
   text-decoration: none;
@@ -51,7 +50,7 @@
 }
 
 .tab:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface-1);
   color: var(--ink-strong);
 }
 
@@ -65,7 +64,7 @@
 .tableCard {
   background: var(--bg-card);
   border: 1px solid var(--stroke-card);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   overflow: hidden;
 }
 
@@ -84,7 +83,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-bottom: 1px solid var(--stroke);
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--bg-card-alt);
 }
 
 .table td {
@@ -99,7 +98,7 @@
 }
 
 .table tbody tr:hover td {
-  background: rgba(255, 255, 255, 0.025);
+  background: var(--bg-card-2);
 }
 
 .archivedRow td {
@@ -151,7 +150,7 @@
 
 .dialog {
   border: none;
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   background: var(--bg-card);
   color: var(--ink-strong);
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
@@ -213,11 +212,11 @@
 }
 
 .field input {
-  border: 1px solid color-mix(in srgb, var(--stroke) 78%, transparent);
-  border-radius: 12px;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
   min-height: 42px;
   padding: 0 12px;
-  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  background: var(--surface);
   color: var(--ink-strong);
   font-size: 0.95rem;
 }
@@ -246,14 +245,13 @@
 }
 
 .btnCancel {
-  border: 1px solid color-mix(in srgb, var(--stroke-strong) 72%, transparent);
-  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+  border: 1px solid var(--stroke-strong);
+  background: var(--surface-raised);
   color: var(--ink-strong);
 }
 
 .btnSubmit {
   border: none;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--brand-2) 72%, #142131), color-mix(in srgb, var(--brand-1) 88%, #0e1624));
+  background: linear-gradient(135deg, var(--brand-2), var(--brand-1));
   color: #f8fbff;
 }

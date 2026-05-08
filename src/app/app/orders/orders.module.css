@@ -19,14 +19,13 @@
 
 .primary {
   border: none;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--brand-2) 72%, #142131), color-mix(in srgb, var(--brand-1) 88%, #0e1624));
+  background: linear-gradient(135deg, var(--brand-2), var(--brand-1));
   color: #f8fbff;
 }
 
 .secondary {
-  border: 1px solid color-mix(in srgb, var(--stroke-strong) 72%, transparent);
-  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+  border: 1px solid var(--stroke-strong);
+  background: var(--surface-raised);
   color: var(--ink-strong);
 }
 
@@ -61,7 +60,7 @@
 
 
 .viewLink {
-  color: color-mix(in srgb, var(--brand-2) 72%, white);
+  color: var(--brand-2);
   text-decoration: none;
   font-size: 0.84rem;
   font-weight: 700;
