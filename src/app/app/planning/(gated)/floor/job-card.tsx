@@ -42,12 +42,14 @@ export function JobCard({ step, onClick }: Props) {
       {step.customerName && (
         <div className={styles.cardCustomer}>{step.customerName}</div>
       )}
-      {step.status === "blocked" && step.blockedBy.length > 0 && (
+      {step.status === "blocked" && (
         <div className={styles.lockRow}>
           <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
             <path d="M9 5V4a3 3 0 1 0-6 0v1H2v6h8V5H9zm-4-1a1 1 0 1 1 2 0v1H5V4z" opacity=".6"/>
           </svg>
-          Waiting: step{step.blockedBy.length > 1 ? "s" : ""} {step.blockedBy.join(", ")}
+          {step.blockedBy.length > 0
+            ? `Waiting: step${step.blockedBy.length > 1 ? "s" : ""} ${step.blockedBy.join(", ")}`
+            : "Waiting on dependencies"}
         </div>
       )}
     </div>

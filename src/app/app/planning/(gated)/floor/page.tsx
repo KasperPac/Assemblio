@@ -84,10 +84,8 @@ export default async function FloorPage() {
     stepsByDept.set(step.department_id, list);
   }
 
-  // 3. Build columns (every active dept, non-empty first)
-  const columns: DepartmentColumn[] = departments
-    .filter((d) => stepsByDept.has(d.id))
-    .map((dept) => {
+  // 3. Build columns — ALL active departments (empty ones show "No active jobs")
+  const columns: DepartmentColumn[] = departments.map((dept) => {
       const deptSteps = stepsByDept.get(dept.id) ?? [];
       const cardSteps: JobCardData[] = deptSteps.map((s) => {
         const ol = s.order_line;
