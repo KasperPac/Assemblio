@@ -1,0 +1,75 @@
+{
+  "planPath": "docs/superpowers/plans/2026-05-08-dashboard-redesign.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 0: Database schema",
+      "status": "pending",
+      "description": "**Goal:** Create `tenant_dashboard_config` table with RLS so tenant members can read and admins can write.\n\n**Files:**\n- Create: `supabase/patches/dashboard_config.sql`\n\n**Acceptance Criteria:**\n- [ ] Table exists with `tenant_id` (PK), `preset` (text), `widgets` (text[]), `updated_at`\n- [ ] RLS enabled; members can SELECT; admin/super_admin can INSERT/UPDATE/DELETE\n- [ ] Patch is idempotent (safe to run twice)\n\n**Verify:** Apply patch via Supabase MCP `apply_migration` → no errors. Query `select * from tenant_dashboard_config` → empty result (no error).\n\n**Steps:**\n- Write SQL patch to `supabase/patches/dashboard_config.sql`\n- Apply via Supabase MCP `apply_migration` with name `dashboard_config`\n- Commit\n\n```json:metadata\n{\"files\": [\"supabase/patches/dashboard_config.sql\"], \"verifyCommand\": \"supabase db push\", \"acceptanceCriteria\": [\"Table exists with tenant_id PK, preset, widgets, updated_at\", \"RLS enabled; members SELECT; admin/super_admin ALL\", \"Patch is idempotent\"]}\n```"
+    },
+    {
+      "id": 1,
+      "subject": "Task 1: Widget catalog types and config loader",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Define all widget IDs, metadata, and preset definitions; implement `loadDashboardConfig` with Owner-preset fallback.\n\n**Files:**\n- Create: `src/lib/dashboard/types.ts`\n- Create: `src/lib/dashboard/config.ts`\n- Create: `src/lib/dashboard/config.test.ts`\n\n**Acceptance Criteria:**\n- [ ] `WIDGET_IDS` is a readonly const tuple of all 17 widget ID strings\n- [ ] `WIDGET_CATALOG` has an entry for each ID with correct `size` and `gated` flag\n- [ ] `PRESET_WIDGETS.owner` and `PRESET_WIDGETS.ops` each contain 8 valid widget IDs\n- [ ] `loadDashboardConfig` returns owner preset when no DB row exists\n- [ ] `loadDashboardConfig` filters out unknown widget IDs from saved config\n- [ ] All 4 unit tests pass\n\n**Verify:** `npx vitest run --pool threads --maxWorkers 1 src/lib/dashboard/config.test.ts` → 4 tests pass\n\n**Steps:**\n- Write failing tests\n- Run tests to confirm failure\n- Write types.ts with WIDGET_IDS, WIDGET_CATALOG, PRESET_WIDGETS\n- Write config.ts with loadDashboardConfig\n- Run tests to confirm pass\n- Commit\n\n```json:metadata\n{\"files\": [\"src/lib/dashboard/types.ts\", \"src/lib/dashboard/config.ts\", \"src/lib/dashboard/config.test.ts\"], \"verifyCommand\": \"npx vitest run --pool threads --maxWorkers 1 src/lib/dashboard/config.test.ts\", \"acceptanceCriteria\": [\"WIDGET_IDS readonly const tuple of 17 IDs\", \"WIDGET_CATALOG has entry for each ID with size and gated\", \"PRESET_WIDGETS.owner and .ops each have 8 valid IDs\", \"loadDashboardConfig returns owner preset when no DB row\", \"loadDashboardConfig filters unknown IDs\", \"4 unit tests pass\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: Calculation helpers for new widgets",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Implement pure functions for days-of-inventory and inventory turnover so they can be tested independently of Supabase.\n\n**Files:**\n- Create: `src/lib/dashboard/calculations.ts`\n- Create: `src/lib/dashboard/calculations.test.ts`\n\n**Acceptance Criteria:**\n- [ ] `calcDaysRemaining(onHand, reserved, avgDailyBurn)` returns correct integer or `null` when no burn data\n- [ ] `calcTurnoverRatio(cogs90d, startValue, endValue)` returns ratio rounded to 1dp or `null` when no data\n- [ ] All 8 unit tests pass\n\n**Verify:** `npx vitest run --pool threads --maxWorkers 1 src/lib/dashboard/calculations.test.ts` → 8 tests pass\n\n**Steps:**\n- Write failing tests\n- Run tests to confirm failure\n- Write calculations.ts\n- Run tests to confirm pass\n- Commit\n\n```json:metadata\n{\"files\": [\"src/lib/dashboard/calculations.ts\", \"src/lib/dashboard/calculations.test.ts\"], \"verifyCommand\": \"npx vitest run --pool threads --maxWorkers 1 src/lib/dashboard/calculations.test.ts\", \"acceptanceCriteria\": [\"calcDaysRemaining returns correct integer or null\", \"calcTurnoverRatio returns ratio to 1dp or null\", \"8 unit tests pass\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: Widget grid layout and shared widget styles",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Create the CSS grid wrapper that renders widget cells at stat/half/full width, plus shared widget card styles used by all widget components.\n\n**Files:**\n- Create: `src/app/app/_dashboard/widget-grid.module.css`\n- Create: `src/app/app/_dashboard/widget.module.css`\n- Modify: `src/app/app/dashboard.module.css` — add `.widgetGrid`, `.widgetStat`, `.widgetHalf`, `.widgetFull`\n\n**Acceptance Criteria:**\n- [ ] 6-column grid renders stat (2 cols), half (3 cols), full (6 cols) correctly\n- [ ] Responsive: at ≤1180px stat→3 cols, half→6 cols; at ≤820px stat→6 cols\n- [ ] Widget card styles follow existing `--bg-card`, `--ink-strong`, `--stroke-card` tokens\n\n**Verify:** Visual check after Task 7 wires up the dashboard.\n\n**Steps:**\n- Write widget-grid.module.css (6-col grid)\n- Write widget.module.css (shared card/stat styles with design system tokens)\n- Add widgetGrid classes to dashboard.module.css\n- Commit\n\n```json:metadata\n{\"files\": [\"src/app/app/_dashboard/widget-grid.module.css\", \"src/app/app/_dashboard/widget.module.css\", \"src/app/app/dashboard.module.css\"], \"verifyCommand\": \"\", \"acceptanceCriteria\": [\"6-col grid: stat 2 cols, half 3 cols, full 6 cols\", \"Responsive breakpoints at 1180px and 820px\", \"Card styles use design system tokens only\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: Refactor existing widgets into standalone components",
+      "status": "pending",
+      "blockedBy": [2, 3],
+      "description": "**Goal:** Extract the eight existing dashboard pieces into self-contained server components under `src/app/app/_dashboard/widgets/`.\n\n**Files:**\n- Create: `src/app/app/_dashboard/widgets/open-orders-queue.tsx`\n- Create: `src/app/app/_dashboard/widgets/on-time-fulfillment.tsx`\n- Create: `src/app/app/_dashboard/widgets/order-trend-chart.tsx`\n- Create: `src/app/app/_dashboard/widgets/inventory-value-snapshot.tsx`\n- Create: `src/app/app/_dashboard/widgets/low-stock-alerts.tsx`\n- Create: `src/app/app/_dashboard/widgets/top-products-demand.tsx`\n- Create: `src/app/app/_dashboard/widgets/bom-health.tsx`\n- Create: `src/app/app/_dashboard/widgets/quick-actions.tsx`\n\n**Acceptance Criteria:**\n- [ ] Each widget is an `async function` accepting `{ supabase, tenantId }` props\n- [ ] Data queries are copied from `page.tsx` into the widget\n- [ ] Each widget renders using `widget.module.css` tokens — no hardcoded colors\n- [ ] `low-stock-alerts` shows days-remaining bars using `calcDaysRemaining` from Task 2\n\n**Verify:** After Task 7 rewires the dashboard, visit `/app` — existing widgets appear with same data as before.\n\n```json:metadata\n{\"files\": [\"src/app/app/_dashboard/widgets/open-orders-queue.tsx\", \"src/app/app/_dashboard/widgets/on-time-fulfillment.tsx\", \"src/app/app/_dashboard/widgets/order-trend-chart.tsx\", \"src/app/app/_dashboard/widgets/inventory-value-snapshot.tsx\", \"src/app/app/_dashboard/widgets/low-stock-alerts.tsx\", \"src/app/app/_dashboard/widgets/top-products-demand.tsx\", \"src/app/app/_dashboard/widgets/bom-health.tsx\", \"src/app/app/_dashboard/widgets/quick-actions.tsx\"], \"verifyCommand\": \"\", \"acceptanceCriteria\": [\"Each widget async function accepts supabase and tenantId\", \"Queries copied from page.tsx into each widget\", \"All styles use widget.module.css tokens\", \"low-stock-alerts uses calcDaysRemaining\"]}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 5: New operations widgets — production throughput and purchasing signals",
+      "status": "pending",
+      "blockedBy": [3],
+      "description": "**Goal:** Build the two new operations widgets that don't exist yet.\n\n**Files:**\n- Create: `src/app/app/_dashboard/widgets/production-throughput.tsx`\n- Create: `src/app/app/_dashboard/widgets/purchasing-signals.tsx`\n\n**Acceptance Criteria:**\n- [ ] Production throughput queries fulfilled orders in current vs prior ISO week\n- [ ] Purchasing signals shows active POs (not received/cancelled/archived) + low-stock components, ordered by urgency\n- [ ] Both use `widget.module.css` stat/card styles\n\n**Verify:** Visual check after Task 7 — both widgets show data with real POs and components.\n\n```json:metadata\n{\"files\": [\"src/app/app/_dashboard/widgets/production-throughput.tsx\", \"src/app/app/_dashboard/widgets/purchasing-signals.tsx\"], \"verifyCommand\": \"\", \"acceptanceCriteria\": [\"Production throughput queries current vs prior ISO week fulfilled orders\", \"Purchasing signals: active POs NOT IN received/cancelled/archived + low-stock\", \"Both use widget.module.css styles\"]}\n```"
+    },
+    {
+      "id": 6,
+      "subject": "Task 6: New inventory widgets — turnover and days remaining",
+      "status": "pending",
+      "blockedBy": [2, 3],
+      "description": "**Goal:** Build the two new inventory widgets using the calculation helpers from Task 2.\n\n**Files:**\n- Create: `src/app/app/_dashboard/widgets/inventory-turnover.tsx`\n- Create: `src/app/app/_dashboard/widgets/days-inventory-remaining.tsx`\n\n**Acceptance Criteria:**\n- [ ] Inventory turnover uses `calcTurnoverRatio` with 90-day COGS from `job_cost_snapshot`\n- [ ] Days remaining uses `calcDaysRemaining` with 30-day burn rate from `bom_component` usage\n- [ ] Both show \"—\" gracefully when data is insufficient\n\n**Verify:** Visual check after Task 7 — widgets render without error on an empty/sparse tenant.\n\n```json:metadata\n{\"files\": [\"src/app/app/_dashboard/widgets/inventory-turnover.tsx\", \"src/app/app/_dashboard/widgets/days-inventory-remaining.tsx\"], \"verifyCommand\": \"\", \"acceptanceCriteria\": [\"Turnover uses calcTurnoverRatio with 90d COGS from job_cost_snapshot\", \"Days remaining uses calcDaysRemaining with 30d burn rate from bom_component\", \"Both degrade gracefully with insufficient data\"]}\n```"
+    },
+    {
+      "id": 7,
+      "subject": "Task 7: Finance gated widget components",
+      "status": "pending",
+      "blockedBy": [3],
+      "description": "**Goal:** Build the five finance widgets that require Shopify price sync, each showing a graceful \"unavailable\" state with a CTA to Settings.\n\n**Files:**\n- Create: `src/app/app/_dashboard/widgets/finance-gated.tsx`\n\n**Acceptance Criteria:**\n- [ ] `FinanceGated` component accepts `label` and renders a dashed-border unavailable card\n- [ ] Five named exports (one per finance widget) each use `FinanceGated` with their label\n- [ ] Renders correctly at stat, half, and full widths\n\n**Verify:** After Task 8 wires up the dashboard with the Owner preset, finance widget slots show the unavailable state with \"Fix in Settings →\" CTA.\n\n```json:metadata\n{\"files\": [\"src/app/app/_dashboard/widgets/finance-gated.tsx\"], \"verifyCommand\": \"\", \"acceptanceCriteria\": [\"FinanceGated renders dashed-border unavailable card\", \"Five named exports: RevenueTrend, GrossMargin, AvgOrderValue, Gmroi, SellThroughRate\", \"CTA links to /app/settings\"]}\n```"
+    },
+    {
+      "id": 8,
+      "subject": "Task 8: Widget router and dashboard page rewire",
+      "status": "pending",
+      "blockedBy": [4, 5, 6, 7],
+      "description": "**Goal:** Create `render-widget.tsx` which maps a `WidgetId` to the correct component, then rewrite `page.tsx` to load config and render the widget grid.\n\n**Files:**\n- Create: `src/app/app/_dashboard/render-widget.tsx`\n- Modify: `src/app/app/page.tsx`\n\n**Acceptance Criteria:**\n- [ ] `renderWidget(id, ctx)` returns a React element for every valid WidgetId\n- [ ] Dashboard page loads tenant config from DB, falls back to Owner preset\n- [ ] Page renders all configured widgets in the 6-column grid with correct size classes\n- [ ] No data from old hardcoded sections remains in page.tsx\n\n**Verify:** Run `npx next build` → no TypeScript errors. Visit `/app` → widgets render.\n\n```json:metadata\n{\"files\": [\"src/app/app/_dashboard/render-widget.tsx\", \"src/app/app/page.tsx\"], \"verifyCommand\": \"npx next build 2>&1 | tail -20\", \"acceptanceCriteria\": [\"renderWidget covers all 17 WidgetIds\", \"Page loads config with Owner preset fallback\", \"6-col grid renders with correct size classes\", \"No hardcoded sections remain\"]}\n```"
+    },
+    {
+      "id": 9,
+      "subject": "Task 9: Settings dashboard sub-page",
+      "status": "pending",
+      "blockedBy": [8],
+      "description": "**Goal:** Build `/app/settings/dashboard` — preset selector + widget toggles + save action — following the existing `/app/settings/theme` sub-page pattern.\n\n**Files:**\n- Create: `src/app/app/settings/dashboard/page.tsx`\n- Create: `src/app/app/settings/dashboard/actions.ts`\n- Create: `src/app/app/settings/dashboard/dashboard-settings.tsx`\n- Create: `src/app/app/settings/dashboard/dashboard-settings.module.css`\n- Modify: `src/app/app/settings/page.tsx` — add Dashboard settings link\n\n**Acceptance Criteria:**\n- [ ] Page loads current preset and widgets from DB (or falls back to defaults)\n- [ ] Admin can select a preset — widget toggle list updates to that preset's defaults\n- [ ] Admin can toggle individual widgets on/off\n- [ ] Save action writes to `tenant_dashboard_config`, revalidates `/app`\n- [ ] Only admin/super_admin users see the save button\n- [ ] Main settings page has a Dashboard settings link\n\n**Verify:** Visit `/app/settings/dashboard`, toggle widgets, save → visit `/app` and confirm the change takes effect.\n\n```json:metadata\n{\"files\": [\"src/app/app/settings/dashboard/page.tsx\", \"src/app/app/settings/dashboard/actions.ts\", \"src/app/app/settings/dashboard/dashboard-settings.tsx\", \"src/app/app/settings/dashboard/dashboard-settings.module.css\", \"src/app/app/settings/page.tsx\"], \"verifyCommand\": \"npx next build 2>&1 | tail -20\", \"acceptanceCriteria\": [\"Page loads config with fallback to defaults\", \"Preset selector updates widget list\", \"Widget toggles work\", \"Save upserts to tenant_dashboard_config and revalidates /app\", \"Admin-only save button\", \"Settings page links to /settings/dashboard\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-05-08T00:00:00.000Z"
+}
