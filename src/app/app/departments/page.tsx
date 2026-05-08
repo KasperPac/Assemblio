@@ -130,6 +130,10 @@ export default async function DepartmentsPage({ searchParams }: Props) {
                       />
                     </div>
                     <div className={styles.field}>
+                      <label>Labor $/hr</label>
+                      <input name="labor_rate_per_hour" type="number" min="0" step="0.01" defaultValue={rate?.labor_rate_per_hour ?? 0} />
+                    </div>
+                    <div className={styles.field}>
                       <label>Rates from</label>
                       <input
                         name="effective_from"
@@ -138,32 +142,10 @@ export default async function DepartmentsPage({ searchParams }: Props) {
                       />
                     </div>
                   </div>
-
-                  <div className={deptStyles.rateSection}>
-                    <span className={deptStyles.rateLabel}>Cost rates</span>
-                    <div className={deptStyles.ratesGrid}>
-                      <div className={styles.field}>
-                        <label>Labor $/hr</label>
-                        <input name="labor_rate_per_hour" type="number" min="0" step="0.01" defaultValue={rate?.labor_rate_per_hour ?? 0} />
-                      </div>
-                      <div className={styles.field}>
-                        <label>Admin $/hr</label>
-                        <input name="admin_rate_per_hour" type="number" min="0" step="0.01" defaultValue={rate?.admin_rate_per_hour ?? 0} />
-                      </div>
-                      <div className={styles.field}>
-                        <label>Electricity $/kWh</label>
-                        <input name="electricity_rate_per_kwh" type="number" min="0" step="0.01" defaultValue={rate?.electricity_rate_per_kwh ?? 0} />
-                      </div>
-                      <div className={styles.field}>
-                        <label>Gas $/unit</label>
-                        <input name="gas_rate_per_unit" type="number" min="0" step="0.01" defaultValue={rate?.gas_rate_per_unit ?? 0} />
-                      </div>
-                      <div className={styles.field}>
-                        <label>Overhead $/hr</label>
-                        <input name="overhead_rate_per_hour" type="number" min="0" step="0.01" defaultValue={rate?.overhead_rate_per_hour ?? 0} />
-                      </div>
-                    </div>
-                  </div>
+                  <input type="hidden" name="admin_rate_per_hour" value={rate?.admin_rate_per_hour ?? 0} />
+                  <input type="hidden" name="electricity_rate_per_kwh" value={rate?.electricity_rate_per_kwh ?? 0} />
+                  <input type="hidden" name="gas_rate_per_unit" value={rate?.gas_rate_per_unit ?? 0} />
+                  <input type="hidden" name="overhead_rate_per_hour" value={rate?.overhead_rate_per_hour ?? 0} />
 
                   <div className={deptStyles.saveRow}>
                     <button className={styles.primary} type="submit">Save</button>
@@ -193,36 +175,18 @@ export default async function DepartmentsPage({ searchParams }: Props) {
               <input id="default_efficiency_pct" name="default_efficiency_pct" type="number" min="0" step="1" defaultValue="100" />
             </div>
             <div className={styles.field}>
+              <label htmlFor="labor_rate_per_hour">Labor $/hr</label>
+              <input id="labor_rate_per_hour" name="labor_rate_per_hour" type="number" min="0" step="0.01" defaultValue="0" />
+            </div>
+            <div className={styles.field}>
               <label htmlFor="effective_from">Rates from</label>
               <input id="effective_from" name="effective_from" type="date" defaultValue={today} />
             </div>
           </div>
-
-          <div className={deptStyles.rateSection}>
-            <span className={deptStyles.rateLabel}>Cost rates</span>
-            <div className={deptStyles.ratesGrid}>
-              <div className={styles.field}>
-                <label htmlFor="labor_rate_per_hour">Labor $/hr</label>
-                <input id="labor_rate_per_hour" name="labor_rate_per_hour" type="number" min="0" step="0.01" defaultValue="0" />
-              </div>
-              <div className={styles.field}>
-                <label htmlFor="admin_rate_per_hour">Admin $/hr</label>
-                <input id="admin_rate_per_hour" name="admin_rate_per_hour" type="number" min="0" step="0.01" defaultValue="0" />
-              </div>
-              <div className={styles.field}>
-                <label htmlFor="electricity_rate_per_kwh">Electricity $/kWh</label>
-                <input id="electricity_rate_per_kwh" name="electricity_rate_per_kwh" type="number" min="0" step="0.01" defaultValue="0" />
-              </div>
-              <div className={styles.field}>
-                <label htmlFor="gas_rate_per_unit">Gas $/unit</label>
-                <input id="gas_rate_per_unit" name="gas_rate_per_unit" type="number" min="0" step="0.01" defaultValue="0" />
-              </div>
-              <div className={styles.field}>
-                <label htmlFor="overhead_rate_per_hour">Overhead $/hr</label>
-                <input id="overhead_rate_per_hour" name="overhead_rate_per_hour" type="number" min="0" step="0.01" defaultValue="0" />
-              </div>
-            </div>
-          </div>
+          <input type="hidden" name="admin_rate_per_hour" value="0" />
+          <input type="hidden" name="electricity_rate_per_kwh" value="0" />
+          <input type="hidden" name="gas_rate_per_unit" value="0" />
+          <input type="hidden" name="overhead_rate_per_hour" value="0" />
 
           <div className={deptStyles.saveRow}>
             <button className={styles.primary} type="submit">Create Department</button>

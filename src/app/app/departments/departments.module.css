@@ -74,26 +74,6 @@
 
 .fieldsGrid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.rateSection {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.rateLabel {
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--ink-faint);
-}
-
-.ratesGrid {
-  display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
 }
@@ -105,10 +85,6 @@
 
 @media (max-width: 900px) {
   .fieldsGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .ratesGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
