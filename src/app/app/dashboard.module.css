@@ -456,3 +456,24 @@
     align-items: flex-start;
   }
 }
+
+/* Widget grid layout - 6-column base grid with responsive breakpoints */
+.widgetGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+.widgetStat { grid-column: span 2; }
+.widgetHalf { grid-column: span 3; }
+.widgetFull { grid-column: span 6; }
+
+@media (max-width: 1180px) {
+  .widgetStat { grid-column: span 3; }
+  .widgetHalf { grid-column: span 6; }
+}
+
+@media (max-width: 820px) {
+  .widgetStat { grid-column: span 6; }
+}

@@ -1,0 +1,147 @@
+/* Shared widget card and content styles */
+
+/* Base card for full-size and half-size widgets */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  border: 1px solid color-mix(in srgb, var(--stroke-card) 100%, transparent);
+  border-radius: 24px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface-1) 88%, var(--bg-card)),
+    color-mix(in srgb, var(--surface-0) 94%, var(--bg-card))
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 18px 40px rgba(5, 8, 15, 0.28);
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* Card header - for titles and actions */
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Eyebrow label above title */
+.eyebrow {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-faint);
+}
+
+/* Title inside card */
+.title {
+  margin: 4px 0 0;
+  font-size: clamp(1rem, 1vw + 0.8rem, 1.4rem);
+  line-height: 1.1;
+  color: var(--ink-strong);
+}
+
+/* Stat card variant - smaller, denser styling */
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  border: 1px solid color-mix(in srgb, var(--stroke-card) 100%, transparent);
+  border-radius: 22px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface-1) 72%, var(--bg-card)),
+    color-mix(in srgb, var(--surface-0) 96%, var(--bg-card))
+  );
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* Stat card label */
+.statLabel {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--ink-faint);
+}
+
+/* Stat card large value */
+.statValue {
+  margin: 0;
+  font-size: clamp(1.5rem, 1.5vw + 1rem, 2.4rem);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--ink-strong);
+}
+
+/* Stat card detail/trend line */
+.statDetail {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--ink-muted);
+}
+
+/* Trend indicators */
+.trendUp   { color: #4ade80; }
+.trendDown { color: #f87171; }
+.trendWarn { color: #fbbf24; }
+
+/* List of rows */
+.rowList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Individual row in a list */
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--surface-1) 78%, var(--bg-card));
+  border: 1px solid color-mix(in srgb, var(--stroke-card) 100%, transparent);
+  font-size: 0.9rem;
+}
+
+.rowLabel { color: var(--ink-strong); flex: 1; }
+.rowMeta  { color: var(--ink-muted); font-size: 0.82rem; }
+
+/* Gated/unavailable widget state */
+.gated {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  border: 1px dashed color-mix(in srgb, var(--stroke-card) 60%, transparent);
+  border-radius: 24px;
+  text-align: center;
+  height: 100%;
+  box-sizing: border-box;
+  min-height: 120px;
+}
+
+.gatedLabel {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ink-faint);
+}
+
+.gatedCta {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--brand-1);
+}
