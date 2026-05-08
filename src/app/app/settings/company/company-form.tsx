@@ -133,6 +133,7 @@ export default function CompanyForm({
           PNG, JPEG, WebP, or SVG. Max 2 MB. Used in exported reports.
         </p>
         {logoUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={logoUrl}
             alt="Company logo"

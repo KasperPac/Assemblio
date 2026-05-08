@@ -58,7 +58,13 @@ export async function uploadLogo(
     return { error: "Use PNG, JPEG, WebP, or SVG" };
   }
 
-  const ext = file.name.split(".").pop() ?? "png";
+  const extMap: Record<string, string> = {
+    "image/png": "png",
+    "image/jpeg": "jpg",
+    "image/webp": "webp",
+    "image/svg+xml": "svg",
+  };
+  const ext = extMap[file.type] ?? "png";
   const path = `${ctx.tenantId}/logo.${ext}`;
   const bytes = await file.arrayBuffer();
 
@@ -72,10 +78,12 @@ export async function uploadLogo(
     data: { publicUrl },
   } = ctx.supabase.storage.from("tenant-logos").getPublicUrl(path);
 
-  await ctx.supabase
+  const { error: dbError } = await ctx.supabase
     .from("tenant")
     .update({ logo_url: publicUrl })
     .eq("id", ctx.tenantId);
+
+  if (dbError) return { error: dbError.message };
 
   revalidatePath("/app/settings/company");
   return { success: "Logo updated" };
