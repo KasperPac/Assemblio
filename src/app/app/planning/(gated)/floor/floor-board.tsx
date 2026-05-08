@@ -33,8 +33,8 @@ type Props = {
 };
 
 export function FloorBoard({ columns, drawerSteps }: Props) {
-  const [openStepId, setOpenStepId] = useState<string | null>(null);
-  const drawer = openStepId ? drawerSteps[openStepId] : null;
+  const [openStep, setOpenStep] = useState<JobCardData | null>(null);
+  const drawer = openStep ? drawerSteps[openStep.orderLineId] : null;
 
   return (
     <>
@@ -49,7 +49,7 @@ export function FloorBoard({ columns, drawerSteps }: Props) {
               {col.steps.length === 0 ? (
                 <div className={styles.emptyCol}>No active jobs</div>
               ) : (
-                col.steps
+                [...col.steps]
                   .sort((a, b) => {
                     const order = { active: 0, queued: 1, blocked: 2 };
                     return order[a.status] - order[b.status];
@@ -58,7 +58,7 @@ export function FloorBoard({ columns, drawerSteps }: Props) {
                     <JobCard
                       key={step.id}
                       step={step}
-                      onClick={setOpenStepId}
+                      onClick={(id) => setOpenStep(col.steps.find((s) => s.id === id) ?? null)}
                     />
                   ))
               )}
@@ -71,12 +71,12 @@ export function FloorBoard({ columns, drawerSteps }: Props) {
         <>
           <div
             className={styles.drawerOverlay}
-            onClick={() => setOpenStepId(null)}
+            onClick={() => setOpenStep(null)}
           />
           <div className={styles.drawer}>
             <button
               className={styles.drawerClose}
-              onClick={() => setOpenStepId(null)}
+              onClick={() => setOpenStep(null)}
             >
               ✕
             </button>

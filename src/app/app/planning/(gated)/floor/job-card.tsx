@@ -4,6 +4,7 @@ import styles from "./floor.module.css";
 
 export type JobCardData = {
   id: string;
+  orderLineId: string;
   orderNumber: string | null;
   customerName: string | null;
   productTitle: string;

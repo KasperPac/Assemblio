@@ -95,6 +95,7 @@ export default async function FloorPage() {
           variant?.product?.title ?? variant?.title ?? "Unknown product";
         return {
           id: s.id,
+          orderLineId: s.order_line_id,
           orderNumber: order?.order_number ?? null,
           customerName: order?.customer_email ?? null,
           productTitle,
@@ -134,8 +135,9 @@ export default async function FloorPage() {
       siblingsByLine.set(sib.order_line_id, list);
     }
 
-    // Build drawerSteps keyed by step.id (the board step)
+    // Build drawerSteps keyed by order_line_id (deduplicated — many board steps share a line)
     for (const step of steps) {
+      if (drawerSteps[step.order_line_id]) continue; // already built for this order line
       const ol = step.order_line as any;
       const variant = ol?.variant as any;
       const order = ol?.orders as any;
@@ -143,8 +145,8 @@ export default async function FloorPage() {
         variant?.product?.title ?? variant?.title ?? "Unknown product";
 
       const lineSiblings = siblingsByLine.get(step.order_line_id) ?? [];
-      drawerSteps[step.id] = {
-        id: step.id,
+      drawerSteps[step.order_line_id] = {
+        id: step.order_line_id,
         orderNumber: order?.order_number ?? null,
         productTitle,
         orderLineParts: lineSiblings.map((sib) => ({
