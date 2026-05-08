@@ -11,7 +11,7 @@ export function calcDaysRemaining(
   reserved: number,
   avgDailyBurn: number
 ): number | null {
-  if (avgDailyBurn <= 0) return null;
+  if (!Number.isFinite(avgDailyBurn) || avgDailyBurn <= 0) return null;
   const available = onHand - reserved;
   return Math.max(0, Math.floor(available / avgDailyBurn));
 }
@@ -31,5 +31,5 @@ export function calcTurnoverRatio(
 ): number | null {
   const avg = (startInventoryValue + endInventoryValue) / 2;
   if (avg <= 0) return null;
-  return Math.round((cogs90d / avg) * 10) / 10;
+  return parseFloat((cogs90d / avg).toFixed(1));
 }

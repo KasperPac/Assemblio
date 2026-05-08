@@ -22,6 +22,10 @@ describe("calcDaysRemaining", () => {
     expect(calcDaysRemaining(0, 0, 5)).toBe(0);
     expect(calcDaysRemaining(5, 10, 5)).toBe(0);
   });
+
+  it("returns null when avgDailyBurn is NaN", () => {
+    expect(calcDaysRemaining(100, 0, NaN)).toBeNull();
+  });
 });
 
 describe("calcTurnoverRatio", () => {
@@ -35,5 +39,9 @@ describe("calcTurnoverRatio", () => {
 
   it("returns 0.0 when cogs is zero", () => {
     expect(calcTurnoverRatio(0, 10_000, 20_000)).toBe(0.0);
+  });
+
+  it("returns negative ratio when COGS is negative (returns exceed sales)", () => {
+    expect(calcTurnoverRatio(-5_000, 10_000, 10_000)).toBe(-0.5);
   });
 });
