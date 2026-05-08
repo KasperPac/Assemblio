@@ -3,19 +3,20 @@
   gap: 10px;
   padding: 20px 18px;
   border: 1px dashed var(--stroke);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
 }
 
 .title {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-bold);
+  color: var(--ink-strong);
   margin: 0;
 }
 
 .message {
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
   color: var(--ink-muted);
   margin: 0;
 }

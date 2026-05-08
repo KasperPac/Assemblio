@@ -3,17 +3,10 @@
   flex-direction: column;
   gap: 16px;
   padding: 22px;
-  border: 1px solid color-mix(in srgb, var(--stroke-card) 100%, transparent);
-  border-radius: 24px;
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--surface-1) 88%, var(--bg-card)),
-      color-mix(in srgb, var(--surface-0) 96%, var(--bg-card))
-    );
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.035),
-    0 18px 38px rgba(5, 8, 15, 0.2);
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
 }
 
 .sectionHeader {
@@ -25,24 +18,24 @@
 
 .eyebrow {
   margin: 0 0 6px;
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
   text-transform: uppercase;
-  letter-spacing: 0.16em;
+  letter-spacing: var(--ls-caps);
   color: var(--ink-faint);
 }
 
 .title {
   margin: 0;
   color: var(--ink-strong);
-  font-size: clamp(1.1rem, 0.8vw + 1rem, 1.5rem);
+  font-size: var(--fs-lg);
 }
 
 .description {
   margin: 8px 0 0;
   color: var(--ink-muted);
-  font-size: 0.94rem;
-  line-height: 1.55;
+  font-size: var(--fs-base);
+  line-height: var(--lh-snug);
 }
 
 .headerAction {
@@ -62,10 +55,10 @@
 .tableHeader {
   padding: 0 6px;
   color: var(--ink-faint);
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
   text-transform: uppercase;
-  letter-spacing: 0.16em;
+  letter-spacing: var(--ls-caps);
 }
 
 .body {
@@ -75,17 +68,20 @@
 }
 
 .row {
-  padding: 16px;
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--surface-1) 78%, var(--bg-card));
-  border: 1px solid color-mix(in srgb, var(--stroke-card) 100%, transparent);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  padding: 14px 16px;
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
+  border: 1px solid var(--stroke-card);
+  transition: background var(--dur-base) var(--ease-out);
+}
+
+.row:hover {
+  background: var(--surface-hover);
 }
 
 @media (max-width: 860px) {
   .panel {
     padding: 20px;
-    border-radius: 20px;
   }
 
   .sectionHeader {
