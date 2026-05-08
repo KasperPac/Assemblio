@@ -15,7 +15,7 @@ export async function LowStockAlerts({ supabase, tenantId }: Props) {
     supabase.from("orders").select("id").eq("tenant_id", tenantId).eq("status", "fulfilled").gte("updated_at", thirtyDaysAgo),
   ]);
 
-  const orderCount = (recentOrders ?? []).length || 1;
+  const orderCount = (recentOrders ?? []).length;
 
   const burnByComponent = new Map<string, number>();
   (bomUsage ?? []).forEach((bc) => {

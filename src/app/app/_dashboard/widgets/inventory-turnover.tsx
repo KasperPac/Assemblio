@@ -30,6 +30,7 @@ export async function InventoryTurnover({ supabase, tenantId }: Props) {
     return s + Number(r.on_hand ?? 0) * cpu;
   }, 0);
 
+  // inventory_balance has no historical snapshots; current value proxies the period average
   const ratio = calcTurnoverRatio(cogs90d, currentValue, currentValue);
   const display = ratio !== null ? `${ratio}×` : "—";
   const detail = ratio !== null

@@ -37,7 +37,7 @@ export async function PurchasingSignals({ supabase, tenantId }: Props) {
     type: "po" as const,
   }));
 
-  const all = [...poSignals, ...lowStock];
+  const all = [...poSignals, ...lowStock].slice(0, 6);
 
   return (
     <div className={styles.card}>
