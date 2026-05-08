@@ -308,31 +308,6 @@
   margin-right: 10px;
 }
 
-.legendGreen::before,
-.notifGreen {
-  background: #4ade80;
-}
-
-.legendYellow::before,
-.notifYellow {
-  background: #fbbf24;
-}
-
-.legendBlue::before,
-.notifBlue,
-.activityDot {
-  background: #60a5fa;
-}
-
-.legendPurple::before {
-  background: #a78bfa;
-}
-
-.legendPink::before,
-.notifRed {
-  background: #f472b6;
-}
-
 .legendValue {
   font-size: 0.86rem;
   font-weight: 700;

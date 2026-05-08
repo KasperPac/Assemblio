@@ -59,5 +59,7 @@ export function renderWidget(id: WidgetId, ctx: Ctx): ReactNode {
       return <GmroiWidget />;
     case "sell-through-rate":
       return <SellThroughRateWidget />;
+    default:
+      return null;
   }
 }

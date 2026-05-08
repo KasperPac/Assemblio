@@ -53,14 +53,14 @@ export const WIDGET_CATALOG: readonly WidgetMeta[] = [
 
 export const PRESET_WIDGETS: Record<"owner" | "ops", WidgetId[]> = {
   owner: [
-    "revenue-trend",
-    "gross-margin",
-    "avg-order-value",
-    "gmroi",
-    "inventory-value-snapshot",
-    "inventory-turnover",
     "open-orders-queue",
+    "inventory-value-snapshot",
+    "on-time-fulfillment",
+    "production-throughput",
+    "inventory-turnover",
     "top-products-demand",
+    "low-stock-alerts",
+    "revenue-trend",
   ],
   ops: [
     "open-orders-queue",
