@@ -13,10 +13,46 @@ type RouteDefinition = {
 
 const ROUTES: RouteDefinition[] = [
   {
-    prefix: "/app/settings/theme",
-    title: "Theme",
-    subtitle: "Change workspace color themes and interface mood.",
-    crumbs: ["Settings", "Theme"],
+    prefix: "/app/settings/profile",
+    title: "Profile",
+    subtitle: "Your display name and account security.",
+    crumbs: ["Settings", "Profile"],
+  },
+  {
+    prefix: "/app/settings/appearance",
+    title: "Appearance",
+    subtitle: "Visual theme for your workspace.",
+    crumbs: ["Settings", "Appearance"],
+  },
+  {
+    prefix: "/app/settings/company",
+    title: "Company",
+    subtitle: "Workspace name, logo, timezone, and currency.",
+    crumbs: ["Settings", "Company"],
+  },
+  {
+    prefix: "/app/settings/team",
+    title: "Team",
+    subtitle: "Members, roles, and invitations.",
+    crumbs: ["Settings", "Team"],
+  },
+  {
+    prefix: "/app/settings/integrations",
+    title: "Integrations",
+    subtitle: "Shopify and other connected services.",
+    crumbs: ["Settings", "Integrations"],
+  },
+  {
+    prefix: "/app/settings/locations",
+    title: "Locations",
+    subtitle: "Default warehouse location for the workspace.",
+    crumbs: ["Settings", "Locations"],
+  },
+  {
+    prefix: "/app/settings/invoices",
+    title: "Invoices",
+    subtitle: "Monthly subscription invoices.",
+    crumbs: ["Settings", "Invoices"],
   },
   {
     prefix: "/app/orders/",
