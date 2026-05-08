@@ -14,7 +14,7 @@ export default async function PlanningGatedLayout({
     .from("tenant")
     .select("has_planning_module")
     .eq("id", tenantId)
-    .single();
+    .maybeSingle();
 
   if (!tenant?.has_planning_module) {
     redirect("/app/planning/upgrade");

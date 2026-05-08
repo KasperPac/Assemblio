@@ -14,7 +14,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("tenant_id,role,tenant:tenant_id(id,name)")
+    .select("tenant_id,role,tenant:tenant_id(id,name,has_planning_module)")
     .eq("id", user?.id ?? "")
     .maybeSingle();
 
@@ -54,24 +54,19 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     ? profileTenant
     : accessTenant ?? profileTenant;
 
+  let hasPlanning = (profile?.tenant as any)?.has_planning_module ?? false;
+
   if (!tenant?.name && profile?.tenant_id) {
     const { data: directTenant } = await supabase
       .from("tenant")
-      .select("id,name")
+      .select("id,name,has_planning_module")
       .eq("id", profile.tenant_id)
       .maybeSingle();
     if (directTenant?.name) {
       tenant = directTenant;
+      hasPlanning = directTenant.has_planning_module ?? false;
     }
   }
-
-  const { data: tenantRow } = await supabase
-    .from("tenant")
-    .select("has_planning_module")
-    .eq("id", profile?.tenant_id ?? "")
-    .maybeSingle();
-
-  const hasPlanning = tenantRow?.has_planning_module ?? false;
 
   const userInitial = (user?.email ?? "U").slice(0, 1).toUpperCase();
   const firstName = user?.email?.split("@")[0] ?? "User";
