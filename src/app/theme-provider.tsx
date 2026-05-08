@@ -4,13 +4,13 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 export type ThemeId = "midnight" | "daylight" | "ocean" | "ember";
 
-const STORAGE_KEY = "assemblio-theme";
+const STORAGE_KEY = "manuva-theme";
 
 const ThemeContext = createContext<{
   theme: ThemeId;
   setTheme: (id: ThemeId) => void;
 }>({
-  theme: "midnight",
+  theme: "daylight",
   setTheme: () => {},
 });
 
@@ -19,7 +19,7 @@ export function useTheme() {
 }
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeId>("midnight");
+  const [theme, setThemeState] = useState<ThemeId>("daylight");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
