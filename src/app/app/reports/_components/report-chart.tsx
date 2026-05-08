@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -40,6 +41,11 @@ interface LineProps {
 type Props = BarProps | LineProps;
 
 export function ReportChart(props: Props) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
+  if (!mounted) return <div className={styles.wrapper} style={{ minHeight: 244 }} />;
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.title}>{props.title}</div>
