@@ -1,0 +1,65 @@
+.empty {
+  margin-top: var(--space-6);
+  font-size: var(--fs-body);
+  color: var(--ink-muted);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--space-6);
+}
+
+.thead tr {
+  border-bottom: 1px solid var(--stroke);
+}
+
+.th {
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-semibold);
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+}
+
+.tr {
+  border-bottom: 1px solid var(--stroke);
+}
+
+.tr:last-child {
+  border-bottom: none;
+}
+
+.td {
+  padding: var(--space-3);
+  font-size: var(--fs-body);
+  color: var(--ink-strong);
+  vertical-align: middle;
+}
+
+.paidBadge {
+  font-size: var(--fs-badge);
+  font-weight: var(--fw-medium);
+  color: var(--ok);
+  background: var(--ok-dim);
+  border-radius: var(--radius-pill);
+  padding: 2px var(--space-2);
+}
+
+.downloadLink {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--brand-1);
+  text-decoration: none;
+}
+
+.downloadLink:hover {
+  text-decoration: underline;
+}
+
+.unavailable {
+  font-size: var(--fs-sm);
+  color: var(--ink-faint);
+}
