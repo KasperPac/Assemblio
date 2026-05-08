@@ -55,8 +55,8 @@ export default function CompanyForm({
 
   return (
     <div className={styles.sections}>
-      <section className={styles.section}>
-        <h2 className={styles.heading}>Company details</h2>
+      <div className={styles.card}>
+        <h2 className={styles.cardHeading}>Company details</h2>
         <form action={formAction} className={styles.form}>
           <div className={styles.field}>
             <label className={styles.label} htmlFor="name">
@@ -123,12 +123,10 @@ export default function CompanyForm({
             )}
           </div>
         </form>
-      </section>
+      </div>
 
-      <hr className={styles.divider} />
-
-      <section className={styles.section}>
-        <h2 className={styles.heading}>Logo</h2>
+      <div className={styles.card}>
+        <h2 className={styles.cardHeading}>Logo</h2>
         <p className={styles.description}>
           PNG, JPEG, WebP, or SVG. Max 2 MB. Used in exported reports.
         </p>
@@ -164,12 +162,10 @@ export default function CompanyForm({
             )}
           </div>
         </form>
-      </section>
+      </div>
 
-      <hr className={styles.divider} />
-
-      <section className={styles.section}>
-        <h2 className={styles.heading}>Workspace info</h2>
+      <div className={styles.card}>
+        <h2 className={styles.cardHeading}>Workspace info</h2>
         <div className={styles.infoGrid}>
           <div className={styles.infoField}>
             <span className={styles.label}>Plan</span>
@@ -185,7 +181,7 @@ export default function CompanyForm({
             </span>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

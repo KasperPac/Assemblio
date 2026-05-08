@@ -30,11 +30,12 @@ export default async function TeamPage() {
         description="Members, roles, and invitations."
       />
       <div className={styles.page}>
-        <div className={styles.inviteRow}>
-          <h2 className={styles.heading}>Invite a member</h2>
+        <div className={styles.card}>
+          <h2 className={styles.cardHeading}>Invite a member</h2>
           <InviteForm />
         </div>
 
+        <div className={styles.card}>
         <table className={styles.table}>
           <thead className={styles.thead}>
             <tr>
@@ -79,6 +80,7 @@ export default async function TeamPage() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </>
   );

@@ -37,6 +37,7 @@ export default async function InvoicesPage() {
           Invoices will appear here once your first billing period ends.
         </p>
       ) : (
+        <div className={styles.card}>
         <table className={styles.table}>
           <thead className={styles.thead}>
             <tr>
@@ -76,6 +77,7 @@ export default async function InvoicesPage() {
             ))}
           </tbody>
         </table>
+        </div>
       )}
     </>
   );

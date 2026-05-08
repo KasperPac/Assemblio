@@ -24,8 +24,8 @@ export default function ProfileForm({ fullName, email, role }: Props) {
 
   return (
     <div className={styles.sections}>
-      <section className={styles.section}>
-        <h2 className={styles.heading}>Personal information</h2>
+      <div className={styles.card}>
+        <h2 className={styles.cardHeading}>Personal information</h2>
         <form action={formAction} className={styles.form}>
           <div className={styles.field}>
             <label className={styles.label} htmlFor="full_name">
@@ -65,12 +65,10 @@ export default function ProfileForm({ fullName, email, role }: Props) {
             )}
           </div>
         </form>
-      </section>
+      </div>
 
-      <hr className={styles.divider} />
-
-      <section className={styles.section}>
-        <h2 className={styles.heading}>Password</h2>
+      <div className={styles.card}>
+        <h2 className={styles.cardHeading}>Password</h2>
         <p className={styles.description}>
           We&apos;ll send a reset link to your email address.
         </p>
@@ -91,7 +89,7 @@ export default function ProfileForm({ fullName, email, role }: Props) {
             )}
           </div>
         </form>
-      </section>
+      </div>
     </div>
   );
 }
