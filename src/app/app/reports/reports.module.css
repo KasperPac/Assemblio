@@ -69,7 +69,7 @@
 
 .cardAmber {
   border-color: var(--warning);
-  background: color-mix(in srgb, var(--warning) 10%, var(--bg-card));
+  background: var(--warning-dim);
 }
 
 .cardAmber:hover {
@@ -79,7 +79,7 @@
 
 .cardRed {
   border-color: var(--danger);
-  background: color-mix(in srgb, var(--danger) 10%, var(--bg-card));
+  background: var(--danger-dim);
 }
 
 .cardRed:hover {

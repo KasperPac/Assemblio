@@ -52,10 +52,10 @@
   font-weight: 600;
 }
 
-.badgeGreen { background: color-mix(in srgb, var(--ok) 15%, var(--bg-card)); color: var(--ok); }
-.badgeBlue  { background: color-mix(in srgb, var(--brand-1) 15%, var(--bg-card)); color: var(--brand-1); }
-.badgeAmber { background: color-mix(in srgb, var(--warning) 15%, var(--bg-card)); color: var(--warning); }
-.badgeRed   { background: color-mix(in srgb, var(--danger) 15%, var(--bg-card)); color: var(--danger); }
+.badgeGreen { background: var(--ok-dim); color: var(--ok); }
+.badgeBlue  { background: var(--brand-dim); color: var(--brand-1); }
+.badgeAmber { background: var(--warning-dim); color: var(--warning); }
+.badgeRed   { background: var(--danger-dim); color: var(--danger); }
 .badgeGray  { background: var(--surface-1); color: var(--ink-muted); }
 
 .empty {

@@ -14,17 +14,17 @@
 
 .cardAmber {
   border-color: var(--warning);
-  background: color-mix(in srgb, var(--warning) 10%, var(--bg-card));
+  background: var(--warning-dim);
 }
 
 .cardRed {
   border-color: var(--danger);
-  background: color-mix(in srgb, var(--danger) 10%, var(--bg-card));
+  background: var(--danger-dim);
 }
 
 .cardGreen {
   border-color: var(--ok);
-  background: color-mix(in srgb, var(--ok) 10%, var(--bg-card));
+  background: var(--ok-dim);
 }
 
 .label {
