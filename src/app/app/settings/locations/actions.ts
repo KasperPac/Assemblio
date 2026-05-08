@@ -11,7 +11,16 @@ export async function setDefaultLocation(formData: FormData): Promise<void> {
   }
 
   const locationId = formData.get("location_id") as string;
-  if (!locationId) throw new Error("Location ID required");
+  const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!locationId || !uuidRe.test(locationId)) throw new Error("Invalid location ID");
+
+  // Verify location belongs to this tenant before the destructive clear step.
+  const { data: check } = await ctx.supabase
+    .from("location")
+    .select("id")
+    .eq("id", locationId)
+    .single();
+  if (!check) throw new Error("Location not found");
 
   const { error: clearError } = await ctx.supabase
     .from("location")
