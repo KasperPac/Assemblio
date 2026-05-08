@@ -686,6 +686,8 @@ export async function upsertNotificationTrigger(formData: FormData) {
     return;
   }
 
+  revalidatePath(`/app/products/variants/${variantId}`);
+  revalidatePath("/app/products");
   redirectVariantResult(variantId, { tab: "notifications", notifSuccess: encodeMessage("Notification saved.") });
 }
 
@@ -704,6 +706,10 @@ export async function removeNotificationTrigger(formData: FormData) {
   }
 
   const routingSequence = parseInt(routingSequenceRaw, 10);
+  if (!Number.isFinite(routingSequence)) {
+    redirectVariantResult(variantId, { tab: "notifications", notifError: encodeMessage("Invalid sequence.") });
+    return;
+  }
 
   const { error } = await supabase
     .from("product_notification_trigger")
@@ -717,5 +723,7 @@ export async function removeNotificationTrigger(formData: FormData) {
     return;
   }
 
+  revalidatePath(`/app/products/variants/${variantId}`);
+  revalidatePath("/app/products");
   redirectVariantResult(variantId, { tab: "notifications", notifSuccess: encodeMessage("Notification removed.") });
 }
