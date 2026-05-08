@@ -45,7 +45,7 @@ export default function Topbar({ tenantName, userInitial }: Props) {
         <Link className={styles.topbarLink} href="/app/help">
           Help
         </Link>
-        <Link className={styles.topbarLink} href="/app/settings/theme">
+        <Link className={styles.topbarLink} href="/app/settings/appearance">
           Theme
         </Link>
         <span className={styles.topbarAvatar}>{userInitial}</span>
