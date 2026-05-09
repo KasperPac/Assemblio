@@ -17,7 +17,7 @@ function LoginPageContent() {
   return (
     <div className={styles.page}>
       <div className={styles.card}>
-        <p className={styles.eyebrow}>Assemblio Access</p>
+        <p className={styles.eyebrow}>Manuva</p>
         <h1>Sign in to continue</h1>
         <p>
           Use Supabase email/password auth to get started. You can add OAuth
@@ -66,10 +66,7 @@ function LoginPageContent() {
           </button>
         </form>
 
-        <div className={styles.meta}>
-          <span>Tenant routing is enforced server-side.</span>
-          <span>Inventory is ledger-backed.</span>
-        </div>
+        <p className={styles.meta}>Manufacturing operations by Manuva.</p>
       </div>
     </div>
   );
