@@ -30,7 +30,7 @@ export function UnstartedPanel({ lines }: Props) {
           border: "1px solid color-mix(in srgb, var(--stroke) 60%, transparent)",
           borderRadius: 18,
           padding: "14px 16px",
-          background: "color-mix(in srgb, var(--surface-raised) 80%, transparent)",
+          background: "color-mix(in srgb, var(--surface-1) 80%, transparent)",
           display: "flex",
           flexDirection: "column",
           gap: 12,

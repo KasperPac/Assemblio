@@ -27,7 +27,7 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   padding: 3px 10px;
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   margin-bottom: 12px;
 }
 
@@ -54,7 +54,7 @@
 
 .card {
   border: 1px solid var(--stroke);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   padding: 16px;
   background: var(--bg-card);
   cursor: pointer;
@@ -69,7 +69,7 @@
 
 .cardAmber {
   border-color: var(--warning);
-  background: color-mix(in srgb, var(--warning) 10%, var(--bg-card));
+  background: var(--warning-dim);
 }
 
 .cardAmber:hover {
@@ -79,7 +79,7 @@
 
 .cardRed {
   border-color: var(--danger);
-  background: color-mix(in srgb, var(--danger) 10%, var(--bg-card));
+  background: var(--danger-dim);
 }
 
 .cardRed:hover {

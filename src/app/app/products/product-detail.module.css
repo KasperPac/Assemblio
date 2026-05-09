@@ -16,7 +16,7 @@
   flex-shrink: 0;
   width: 120px;
   height: 120px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   object-fit: cover;
   border: 1px solid var(--stroke-card);
 }
@@ -40,7 +40,7 @@
 .coverageCard {
   background: var(--bg-card);
   border: 1px solid var(--stroke-card);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   padding: 16px 20px;
   display: flex;
   flex-direction: column;
@@ -62,7 +62,7 @@
 .amberBadge {
   display: inline-block;
   padding: 2px 9px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   font-size: 11px;
   font-weight: 700;
   background: var(--warning-dim);
@@ -89,7 +89,7 @@
 .tableCard {
   background: var(--bg-card);
   border: 1px solid var(--stroke-card);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   overflow: hidden;
 }
 
@@ -142,11 +142,10 @@
 
 .rowNoBom td {
   background: var(--warning-dim);
-  background: color-mix(in srgb, var(--warning-dim) 20%, transparent);
 }
 
 .rowNoBom:hover td {
-  background: color-mix(in srgb, var(--warning-dim) 35%, transparent);
+  background: var(--warning-dim);
 }
 
 /* ── Cell content ───────────────────────────── */
@@ -200,7 +199,7 @@
 .badgeGrey {
   display: inline-block;
   padding: 2px 8px;
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.3px;
@@ -252,7 +251,7 @@
   align-items: center;
   justify-content: center;
   padding: 5px 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 12px;
   font-weight: 700;
   text-decoration: none;
@@ -320,7 +319,7 @@
   justify-content: center;
   min-height: 40px;
   padding: 0 14px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   font-size: 13px;
   font-weight: 700;
   text-decoration: none;

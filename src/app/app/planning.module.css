@@ -32,8 +32,8 @@
   gap: 8px;
   padding: 7px 12px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--brand-2) 16%, transparent);
-  color: color-mix(in srgb, var(--brand-2) 72%, white);
+  background: var(--brand-dim);
+  color: var(--brand-2);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -55,14 +55,13 @@
 
 .primary {
   border: none;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--brand-2) 72%, #142131), color-mix(in srgb, var(--brand-1) 88%, #0e1624));
+  background: linear-gradient(135deg, var(--brand-2), var(--brand-1));
   color: #f8fbff;
 }
 
 .secondary {
-  border: 1px solid color-mix(in srgb, var(--stroke-strong) 72%, transparent);
-  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+  border: 1px solid var(--stroke-strong);
+  background: var(--surface-1);
   color: var(--ink-strong);
 }
 
@@ -78,11 +77,10 @@
 .callout,
 .listCard,
 .stackRow {
-  border: 1px solid color-mix(in srgb, var(--stroke-strong) 70%, transparent);
-  border-radius: 22px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--surface-raised) 92%, transparent), color-mix(in srgb, var(--surface) 94%, transparent));
-  box-shadow: 0 18px 38px rgba(5, 8, 15, 0.2);
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-xl);
+  background: var(--surface-1);
+  box-shadow: var(--shadow-card);
 }
 
 .card,
@@ -124,7 +122,7 @@
 
 .inlineLinks a,
 .secondaryLink {
-  color: color-mix(in srgb, var(--brand-2) 72%, white);
+  color: var(--brand-2);
   text-decoration: none;
   font-size: 0.84rem;
   font-weight: 700;
@@ -136,9 +134,9 @@
 
 .metric {
   padding: 16px;
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--surface) 82%, transparent);
-  border: 1px solid color-mix(in srgb, var(--stroke) 66%, transparent);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
+  border: 1px solid var(--stroke);
 }
 
 .metric span {
@@ -199,10 +197,10 @@
 .field textarea {
   width: 100%;
   min-height: 44px;
-  border: 1px solid color-mix(in srgb, var(--stroke) 78%, transparent);
-  border-radius: 14px;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
   padding: 10px 14px;
-  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  background: var(--surface-1);
   color: var(--ink-strong);
   font: inherit;
 }
@@ -241,9 +239,9 @@
   grid-template-columns: minmax(0, 1.3fr) repeat(2, minmax(110px, 1fr));
   gap: 12px;
   padding: 14px 16px;
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--surface) 82%, transparent);
-  border: 1px solid color-mix(in srgb, var(--stroke) 66%, transparent);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
+  border: 1px solid var(--stroke);
   align-items: center;
 }
 
@@ -257,7 +255,7 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: color-mix(in srgb, var(--brand-2) 74%, #20344c);
+  background: var(--brand-2);
   color: #ffffff;
   font-size: 12px;
   font-weight: 700;
@@ -281,8 +279,8 @@
   width: fit-content;
   padding: 6px 10px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--brand-2) 14%, transparent);
-  color: color-mix(in srgb, var(--brand-2) 72%, white);
+  background: var(--brand-dim);
+  color: var(--brand-2);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -290,8 +288,8 @@
 }
 
 .warning {
-  background: rgba(255, 148, 114, 0.14);
-  color: #ff9472;
+  background: var(--warning-dim);
+  color: var(--warning);
 }
 
 @media (max-width: 900px) {

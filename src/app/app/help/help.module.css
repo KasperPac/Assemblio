@@ -23,9 +23,9 @@
   flex-direction: column;
   gap: 8px;
   padding: 18px;
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--surface) 82%, transparent);
-  border: 1px solid color-mix(in srgb, var(--stroke) 66%, transparent);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
+  border: 1px solid var(--stroke);
   text-decoration: none;
   color: inherit;
 }
@@ -47,11 +47,11 @@
   display: inline-block;
   width: fit-content;
   padding: 8px 10px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid color-mix(in srgb, var(--stroke) 78%, transparent);
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+  border: 1px solid var(--stroke);
   font-size: 0.84rem;
-  color: color-mix(in srgb, var(--brand-2) 72%, white);
+  color: var(--brand-2);
 }
 
 @media (max-width: 900px) {

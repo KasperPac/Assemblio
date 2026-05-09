@@ -1,56 +1,102 @@
-/* ── Theme: Midnight (default) ─────────── */
+/* ── Theme: Daylight (default) ───────── */
 :root,
-[data-theme="midnight"] {
-  --bg-page: #0b0f19;
-  --bg-sidebar: #0f1420;
-  --bg-card: #141a2a;
-  --bg-card-alt: #111827;
-  --bg-input: #1a2236;
-  --ink-strong: #f0f2f5;
-  --ink-muted: #6b7a8d;
-  --ink-faint: #4a5568;
-  --stroke: rgba(255, 255, 255, 0.08);
-  --stroke-card: rgba(255, 255, 255, 0.06);
-  --surface-0: #141a2a;
-  --surface-1: #1a2236;
-  --brand-1: #4ade80;
-  --brand-2: #22c55e;
-  --brand-dim: rgba(74, 222, 128, 0.12);
-  --ok: #4ade80;
-  --danger: #ef4444;
-  --warning: #f59e0b;
-  --focus-ring: rgba(74, 222, 128, 0.22);
-  --focus-border: rgba(74, 222, 128, 0.4);
-  --scrollbar-thumb: rgba(255, 255, 255, 0.1);
-  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.18);
-  --logo-filter: brightness(0) invert(1);
+[data-theme="daylight"] {
+  --bg-page:     #F8F7F5;
+  --bg-sidebar:  #F0EEE9;
+  --bg-card:     #FFFFFF;
+  --bg-card-2:   #ECEAE6;
+  --bg-card-alt: #F3F2EF;
+  --bg-input:    #F3F2EF;
+
+  --ink-strong:    #1A1814;
+  --ink-muted:     #6B6560;
+  --ink-faint:     #9B9590;
+  --ink-on-brand:  #FFFFFF;
+
+  --stroke:        rgba(0, 0, 0, 0.08);
+  --stroke-card:   rgba(0, 0, 0, 0.07);
+  --stroke-strong: rgba(0, 0, 0, 0.14);
+
+  --surface-0:     #FFFFFF;
+  --surface-1:     #F3F2EF;
+  --surface-hover: rgba(0, 0, 0, 0.04);
+
+  --brand-1:    #6366F1;
+  --brand-2:    #4F46E5;
+  --brand-dim:  rgba(99, 102, 241, 0.10);
+  --brand-dark: #4338CA;
+
+  --ok:          #16A34A;
+  --ok-dim:      rgba(22, 163, 74, 0.10);
+  --danger:      #DC2626;
+  --danger-dim:  rgba(220, 38, 38, 0.08);
+  --warning:     #D97706;
+  --warning-dim: rgba(217, 119, 6, 0.10);
+  --info:        var(--brand-1);
+  --info-dim:    var(--brand-dim);
+
+  --focus-ring:   rgba(99, 102, 241, 0.16);
+  --focus-border: rgba(99, 102, 241, 0.50);
+
+  --shadow-sm:    0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-card:  0 1px 3px rgba(0, 0, 0, 0.07), 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-md:    0 4px 16px rgba(0, 0, 0, 0.10);
+  --shadow-lg:    0 12px 32px rgba(0, 0, 0, 0.14);
+  --shadow-focus: 0 0 0 3px rgba(99, 102, 241, 0.16);
+
+  --scrollbar-thumb:       rgba(0, 0, 0, 0.14);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.24);
+  --logo-filter: none;
 }
 
-/* ── Theme: Daylight ──────────────────── */
-[data-theme="daylight"] {
-  --bg-page: #f4f5f7;
-  --bg-sidebar: #ffffff;
-  --bg-card: #ffffff;
-  --bg-card-alt: #f0f1f3;
-  --bg-input: #f4f5f7;
-  --ink-strong: #1a1d23;
-  --ink-muted: #6b7280;
-  --ink-faint: #9ca3af;
-  --stroke: rgba(0, 0, 0, 0.1);
-  --stroke-card: rgba(0, 0, 0, 0.07);
-  --surface-0: #ffffff;
-  --surface-1: #f4f5f7;
-  --brand-1: #16a34a;
-  --brand-2: #15803d;
-  --brand-dim: rgba(22, 163, 74, 0.1);
-  --ok: #16a34a;
-  --danger: #dc2626;
-  --warning: #d97706;
-  --focus-ring: rgba(22, 163, 74, 0.22);
-  --focus-border: rgba(22, 163, 74, 0.4);
-  --scrollbar-thumb: rgba(0, 0, 0, 0.12);
-  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.22);
-  --logo-filter: none;
+/* ── Theme: Midnight ─────────────────── */
+[data-theme="midnight"] {
+  --bg-page:     #0D1117;
+  --bg-sidebar:  #10161F;
+  --bg-card:     #161D2D;
+  --bg-card-2:   #1C253A;
+  --bg-card-alt: #131929;
+  --bg-input:    #1C253A;
+
+  --ink-strong:    #E8ECF0;
+  --ink-muted:     #8496AA;
+  --ink-faint:     #6E7E94;
+  --ink-on-brand:  #FFFFFF;
+
+  --stroke:        rgba(255, 255, 255, 0.09);
+  --stroke-card:   rgba(255, 255, 255, 0.07);
+  --stroke-strong: rgba(255, 255, 255, 0.16);
+
+  --surface-0:     #161D2D;
+  --surface-1:     #1C253A;
+  --surface-hover: rgba(255, 255, 255, 0.05);
+
+  --brand-1:    #818CF8;
+  --brand-2:    #A5B4FC;
+  --brand-dim:  rgba(129, 140, 248, 0.14);
+  --brand-dark: #6366F1;
+
+  --ok:          #34D399;
+  --ok-dim:      rgba(52, 211, 153, 0.14);
+  --danger:      #F87171;
+  --danger-dim:  rgba(248, 113, 113, 0.14);
+  --warning:     #FBBF24;
+  --warning-dim: rgba(251, 191, 36, 0.13);
+  --info:        var(--brand-1);
+  --info-dim:    var(--brand-dim);
+
+  --focus-ring:   rgba(129, 140, 248, 0.25);
+  --focus-border: rgba(129, 140, 248, 0.50);
+
+  --shadow-sm:    0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-card:  0 1px 3px rgba(0, 0, 0, 0.40), 0 4px 12px rgba(0, 0, 0, 0.30);
+  --shadow-md:    0 4px 16px rgba(0, 0, 0, 0.45);
+  --shadow-lg:    0 12px 36px rgba(0, 0, 0, 0.55);
+  --shadow-focus: 0 0 0 3px rgba(129, 140, 248, 0.25);
+
+  --scrollbar-thumb:       rgba(255, 255, 255, 0.10);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.18);
+  --logo-filter: brightness(0) invert(1);
 }
 
 /* ── Theme: Ocean ─────────────────────── */
@@ -107,6 +153,62 @@
   --logo-filter: brightness(0) invert(1);
 }
 
+/* ── Global design tokens ──────────────── */
+:root {
+  --font-body: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  --ls-tight:  -0.015em;
+  --ls-normal: 0;
+  --ls-caps:   0.08em;
+
+  /* Radius scale */
+  --radius-xs:   4px;
+  --radius-sm:   6px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-pill: 999px;
+
+  /* Spacing (4px base) */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Type scale */
+  --fs-xs:   11px;
+  --fs-sm:   12px;
+  --fs-base: 13px;
+  --fs-md:   14px;
+  --fs-lg:   16px;
+  --fs-xl:   20px;
+  --fs-2xl:  26px;
+
+  /* Font weights */
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  /* Line heights */
+  --lh-tight:  1.2;
+  --lh-snug:   1.4;
+  --lh-normal: 1.6;
+
+  /* Motion */
+  --dur-fast:   120ms;
+  --dur-base:   180ms;
+  --dur-slow:   280ms;
+  --ease-out:   cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-inout: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 *,
 *::before,
 *::after {
@@ -124,7 +226,7 @@ body {
   margin: 0;
   color: var(--ink-strong);
   background: var(--bg-page);
-  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -182,7 +284,7 @@ textarea:focus {
   border-color: var(--focus-border);
 }
 
-/* Scrollbar styling for dark theme */
+/* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

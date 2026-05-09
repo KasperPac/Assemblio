@@ -1,25 +1,25 @@
 .notice {
   padding: 12px 18px;
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   font-size: 0.9rem;
 }
 
 .noticeSuccess {
-  background: color-mix(in srgb, #4caf87 12%, transparent);
-  border: 1px solid color-mix(in srgb, #4caf87 30%, transparent);
-  color: #4caf87;
+  background: var(--ok-dim);
+  border: 1px solid var(--ok-dim);
+  color: var(--ok);
 }
 
 .noticeError {
-  background: color-mix(in srgb, #e05c5c 12%, transparent);
-  border: 1px solid color-mix(in srgb, #e05c5c 30%, transparent);
-  color: #e05c5c;
+  background: var(--danger-dim);
+  border: 1px solid var(--danger-dim);
+  color: var(--danger);
 }
 
 .deptCard {
-  border: 1px solid color-mix(in srgb, var(--stroke) 60%, transparent);
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--surface-raised) 60%, transparent);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
   padding: 18px 20px 16px;
   display: flex;
   flex-direction: column;
@@ -48,8 +48,8 @@
 .codeBadge {
   padding: 3px 9px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--brand-1) 14%, transparent);
-  color: color-mix(in srgb, var(--brand-2) 80%, white);
+  background: var(--brand-dim);
+  color: var(--brand-2);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -68,7 +68,7 @@
 
 .divider {
   height: 1px;
-  background: color-mix(in srgb, var(--stroke) 50%, transparent);
+  background: var(--stroke);
   margin: 0 -20px;
 }
 

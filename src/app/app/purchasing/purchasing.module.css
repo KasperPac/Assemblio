@@ -9,8 +9,7 @@
   border-radius: 999px;
   min-height: 42px;
   padding: 0 18px;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--brand-2) 72%, #142131), color-mix(in srgb, var(--brand-1) 88%, #0e1624));
+  background: linear-gradient(135deg, var(--brand-2), var(--brand-1));
   color: #f8fbff;
   font-size: 0.9rem;
   font-weight: 700;
@@ -18,11 +17,10 @@
 }
 
 .formCard {
-  border: 1px solid color-mix(in srgb, var(--stroke-strong) 70%, transparent);
-  border-radius: 22px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--surface-raised) 92%, transparent), color-mix(in srgb, var(--surface) 94%, transparent));
-  box-shadow: 0 18px 38px rgba(5, 8, 15, 0.2);
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-xl);
+  background: var(--surface-1);
+  box-shadow: var(--shadow-card);
   padding: 18px;
   display: grid;
   gap: 10px;
@@ -58,11 +56,11 @@
 .formRowWide input,
 .inlineForm select,
 .inlineForm input {
-  border: 1px solid color-mix(in srgb, var(--stroke) 78%, transparent);
-  border-radius: 12px;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
   min-height: 42px;
   padding: 0 12px;
-  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  background: var(--surface-1);
   color: var(--ink-strong);
 }
 
@@ -99,8 +97,8 @@
 }
 
 .inlineForm button {
-  border: 1px solid color-mix(in srgb, var(--stroke-strong) 72%, transparent);
-  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+  border: 1px solid var(--stroke-strong);
+  background: var(--surface-1);
   border-radius: 999px;
   min-height: 38px;
   padding: 0 14px;

@@ -81,7 +81,7 @@ export function StartJobModal({ orderLineId, orderNumber, productTitle, onClose 
                   padding: "8px 12px",
                   borderRadius: 10,
                   border: "1px solid color-mix(in srgb, var(--stroke) 60%, transparent)",
-                  background: "var(--surface-raised)",
+                  background: "var(--surface-1)",
                   color: "var(--ink-strong)",
                   fontSize: "0.88rem",
                 }}

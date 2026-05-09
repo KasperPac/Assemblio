@@ -5,7 +5,7 @@
 
 .warehouseBlock {
   border: 1px solid var(--stroke-card);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   overflow: hidden;
   background: var(--bg-card);
 }
@@ -33,7 +33,7 @@
 
 /* Aisles + bays sit inside this container; the left border is the hierarchy connector */
 .slChildren {
-  border-left: 2px solid color-mix(in srgb, var(--stroke) 50%, transparent);
+  border-left: 2px solid var(--stroke);
   margin-left: 32px;
 }
 
@@ -90,27 +90,27 @@
   letter-spacing: 0.06em;
   font-weight: 700;
   padding: 2px 7px;
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
   flex-shrink: 0;
 }
 
 .levelTagWh {
-  background: color-mix(in srgb, var(--brand-1) 15%, transparent);
+  background: var(--brand-dim);
   color: var(--brand-1);
 }
 
 .levelTagSl {
-  background: color-mix(in srgb, var(--brand-2) 15%, transparent);
+  background: var(--brand-dim);
   color: var(--brand-2);
 }
 
 .levelTagAisle {
-  background: color-mix(in srgb, var(--ok) 15%, transparent);
+  background: var(--ok-dim);
   color: var(--ok);
 }
 
 .levelTagBay {
-  background: color-mix(in srgb, var(--ink-muted) 18%, transparent);
+  background: var(--surface-1);
   color: var(--ink-muted);
 }
 
@@ -135,7 +135,7 @@
   background: var(--brand-dim);
   color: var(--brand-1);
   padding: 2px 8px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-weight: 600;
 }
 
@@ -171,7 +171,7 @@
 .addWarehouseRow {
   padding: 12px 16px;
   border: 1px dashed var(--stroke);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -186,7 +186,7 @@
   font-size: 12px;
   padding: 4px 10px;
   border: 1px solid var(--stroke);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: transparent;
   color: var(--ink-muted);
   cursor: pointer;
@@ -194,31 +194,31 @@
 }
 
 .btnIcon:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface-1);
   color: var(--ink-strong);
-  border-color: var(--stroke-card);
+  border-color: var(--stroke-strong);
 }
 
 .btnDelete {
   font-size: 12px;
   padding: 4px 10px;
-  border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
-  border-radius: 8px;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-md);
   background: transparent;
   color: var(--danger);
   cursor: pointer;
 }
 
 .btnDelete:hover {
-  background: color-mix(in srgb, var(--danger) 10%, transparent);
+  background: var(--danger-dim);
 }
 
 .btnSave {
   font-size: 12px;
   padding: 4px 14px;
   border: none;
-  border-radius: 8px;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--brand-2) 72%, #142131), color-mix(in srgb, var(--brand-1) 88%, #0e1624));
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--brand-2), var(--brand-1));
   color: #f8fbff;
   font-weight: 700;
   cursor: pointer;
@@ -228,7 +228,7 @@
   font-size: 12px;
   padding: 4px 10px;
   border: 1px solid var(--stroke);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: transparent;
   color: var(--ink-muted);
   cursor: pointer;
@@ -246,7 +246,7 @@
 }
 
 .btnAddWarehouse:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface-1);
 }
 
 /* ── Inline forms ─── */
@@ -257,7 +257,7 @@
   font-size: 13px;
   padding: 5px 10px;
   border: 1px solid var(--stroke);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--bg-input);
   color: var(--ink-strong);
   flex: 1;
@@ -268,7 +268,7 @@
   font-size: 13px;
   padding: 5px 10px;
   border: 1px solid var(--stroke);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--bg-input);
   color: var(--ink-strong);
 }
@@ -291,12 +291,12 @@
 .modal {
   background: var(--bg-card);
   border: 1px solid var(--stroke-card);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   padding: 28px 32px;
   min-width: 320px;
   max-width: 420px;
   position: relative;
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-card);
 }
 
 .modalClose {
@@ -339,7 +339,7 @@
   text-align: center;
   background: #fff;
   border: 1px solid var(--stroke-card);
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   padding: 16px;
   margin-bottom: 16px;
 }

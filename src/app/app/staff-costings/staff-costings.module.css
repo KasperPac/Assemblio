@@ -24,7 +24,7 @@
 
 .addButton {
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   padding: 9px 16px;
   background: var(--brand-1);
   color: #0b0f19;
@@ -46,7 +46,7 @@
 .summaryCard {
   background: var(--bg-card);
   border: 1px solid var(--stroke-card);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   padding: 14px 16px;
   display: flex;
   flex-direction: column;
@@ -73,7 +73,7 @@
 .table {
   background: var(--bg-card);
   border: 1px solid var(--stroke-card);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
 }
 
@@ -88,7 +88,7 @@
 }
 
 .tableHeader {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-card-alt);
   color: var(--ink-faint);
   font-weight: 700;
   text-transform: uppercase;
@@ -102,7 +102,7 @@
 }
 
 .tableRow:hover {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--bg-card-alt);
 }
 
 .deptName {
@@ -130,7 +130,7 @@
 
 .rateDisplay {
   border: 1px solid transparent;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   padding: 4px 8px;
   background: transparent;
   color: var(--brand-1);
@@ -154,7 +154,7 @@
 .rateInput {
   width: 80px;
   border: 1px solid var(--stroke);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   padding: 4px 8px;
   background: var(--bg-input);
   color: var(--ink-strong);
@@ -163,7 +163,7 @@
 
 .rateSave {
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   padding: 4px 10px;
   background: var(--brand-1);
   color: #0b0f19;
@@ -190,13 +190,13 @@
   font-size: 11px;
   cursor: pointer;
   padding: 4px 8px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   transition: color 0.12s, background 0.12s;
 }
 
 .removeBtn:hover {
   color: var(--danger);
-  background: rgba(239, 68, 68, 0.08);
+  background: var(--danger-dim);
 }
 
 /* ── Hint ─────────────────────────────── */
@@ -211,10 +211,10 @@
 
 .dialog {
   border: none;
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   background: var(--bg-card);
   color: var(--ink-strong);
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-card);
   padding: 0;
   max-width: 420px;
   width: 92vw;
@@ -273,7 +273,7 @@
 
 .field input {
   border: 1px solid var(--stroke);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 9px 11px;
   background: var(--bg-input);
   color: var(--ink-strong);
@@ -289,7 +289,7 @@
 .btnCancel {
   flex: 1;
   border: 1px solid var(--stroke);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 9px 14px;
   background: var(--bg-card);
   color: var(--ink-strong);
@@ -301,7 +301,7 @@
 .btnSubmit {
   flex: 1;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 9px 14px;
   background: var(--brand-1);
   color: #0b0f19;

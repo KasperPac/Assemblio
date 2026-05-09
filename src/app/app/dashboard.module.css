@@ -53,13 +53,10 @@
 .heroAside,
 .card,
 .actionCard {
-  border: 1px solid color-mix(in srgb, var(--stroke-card) 100%, transparent);
-  border-radius: 24px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--surface-1) 88%, var(--bg-card)), color-mix(in srgb, var(--surface-0) 94%, var(--bg-card)));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 18px 40px rgba(5, 8, 15, 0.28);
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
 }
 
 .heroMain {
@@ -67,9 +64,6 @@
   flex-direction: column;
   gap: 24px;
   padding: 28px;
-  background:
-    radial-gradient(circle at top left, color-mix(in srgb, var(--brand-2) 18%, transparent), transparent 42%),
-    linear-gradient(180deg, color-mix(in srgb, var(--surface-1) 92%, var(--bg-card)), color-mix(in srgb, var(--surface-0) 98%, var(--bg-card)));
 }
 
 .heroCopy {
@@ -133,10 +127,9 @@
   flex-direction: column;
   gap: 8px;
   padding: 18px;
-  border-radius: 20px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--surface-1) 72%, var(--bg-card)), color-mix(in srgb, var(--surface-0) 96%, var(--bg-card)));
-  border: 1px solid color-mix(in srgb, var(--stroke-card) 100%, transparent);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
+  border: 1px solid var(--stroke-card);
 }
 
 .metricCard span,
@@ -189,10 +182,9 @@
   justify-content: space-between;
   gap: 14px;
   padding: 14px 16px;
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--surface-1) 78%, var(--bg-card));
-  border: 1px solid color-mix(in srgb, var(--stroke-card) 100%, transparent);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
+  border: 1px solid var(--stroke-card);
 }
 
 .alertItem p,
@@ -266,10 +258,9 @@
   flex-direction: column;
   gap: 6px;
   padding: 18px;
-  border-radius: 18px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--surface-1) 68%, var(--bg-card)), color-mix(in srgb, var(--surface-0) 96%, var(--bg-card)));
-  border: 1px solid color-mix(in srgb, var(--stroke-card) 100%, transparent);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
+  border: 1px solid var(--stroke-card);
 }
 
 .legend {
@@ -301,7 +292,7 @@
   flex: 0 0 auto;
   width: 10px;
   height: 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 }
 
 .legendDot::before {
@@ -317,25 +308,24 @@
   align-items: center;
   text-decoration: none;
   transition:
-    transform 160ms ease,
-    border-color 160ms ease,
-    background 160ms ease;
+    border-color var(--dur-base) var(--ease-out),
+    background var(--dur-base) var(--ease-out);
 }
 
-.orderRow:hover,
-.actionCard:hover,
-.cardHeader a:hover {
-  transform: translateY(-1px);
+.orderRow:hover {
+  border-color: var(--stroke-strong);
 }
 
 .heroMain:hover,
 .heroAside:hover,
 .card:hover,
 .actionCard:hover {
-  border-color: color-mix(in srgb, var(--ink-strong) 12%, var(--stroke-card));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 24px 52px rgba(5, 8, 15, 0.34);
+  border-color: var(--stroke-strong);
+  box-shadow: var(--shadow-md);
+}
+
+.cardHeader a:hover {
+  color: var(--ink-strong);
 }
 
 .orderRow strong,
@@ -365,9 +355,8 @@
   padding: 20px;
   text-decoration: none;
   transition:
-    transform 160ms ease,
-    border-color 160ms ease,
-    background 160ms ease;
+    border-color var(--dur-base) var(--ease-out),
+    background var(--dur-base) var(--ease-out);
 }
 
 .actionIcon {
@@ -376,9 +365,9 @@
   justify-content: center;
   width: 42px;
   height: 42px;
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--brand-2) 16%, transparent);
-  color: color-mix(in srgb, var(--brand-2) 70%, white);
+  border-radius: var(--radius-md);
+  background: var(--brand-dim);
+  color: var(--brand-1);
 }
 
 .actionCard p {
@@ -412,7 +401,7 @@
   .heroAside,
   .card,
   .actionCard {
-    border-radius: 20px;
+    border-radius: var(--radius-lg);
   }
 
   .heroMain,
