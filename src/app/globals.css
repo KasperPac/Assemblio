@@ -155,6 +155,7 @@
 
 /* ── Global design tokens ──────────────── */
 :root {
+  --font-head: var(--font-space-grotesk), var(--font-inter), system-ui, sans-serif;
   --font-body: var(--font-inter), system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
 
@@ -240,6 +241,10 @@ ul,
 li {
   margin: 0;
   padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-head);
 }
 
 a {

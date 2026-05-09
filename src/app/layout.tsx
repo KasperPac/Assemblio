@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Inter } from "next/font/google";
+import { IBM_Plex_Mono, Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "./theme-provider";
 
 const inter = Inter({
   variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
@@ -37,7 +44,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.variable} ${plexMono.variable}`}>
+      <body className={`${inter.variable} ${spaceGrotesk.variable} ${plexMono.variable}`}>
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
