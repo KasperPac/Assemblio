@@ -19,14 +19,14 @@
   margin: 0;
   padding-bottom: var(--space-3);
   border-bottom: 1px solid var(--stroke-card);
-  font-size: var(--fs-body);
+  font-size: var(--fs-base);
   font-weight: var(--fw-semibold);
   color: var(--ink-strong);
 }
 
 .heading {
   margin: 0;
-  font-size: var(--fs-body);
+  font-size: var(--fs-base);
   font-weight: var(--fw-semibold);
   color: var(--ink-strong);
 }
@@ -46,7 +46,7 @@
 
 .inviteInput {
   font-family: var(--font-body);
-  font-size: var(--fs-body);
+  font-size: var(--fs-base);
   color: var(--ink-strong);
   background: var(--bg-input);
   border: 1px solid var(--stroke-card);
@@ -73,7 +73,7 @@
 .th {
   padding: var(--space-2) var(--space-3);
   text-align: left;
-  font-size: var(--fs-label);
+  font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   color: var(--ink-faint);
   text-transform: uppercase;
@@ -90,7 +90,7 @@
 
 .td {
   padding: var(--space-3);
-  font-size: var(--fs-body);
+  font-size: var(--fs-base);
   color: var(--ink-strong);
   vertical-align: middle;
 }

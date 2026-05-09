@@ -20,7 +20,7 @@
 .sidebarGroup {
   margin: 0;
   padding: var(--space-4) var(--space-6) var(--space-2);
-  font-size: var(--fs-label);
+  font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   letter-spacing: var(--ls-caps);
   text-transform: uppercase;
@@ -36,7 +36,7 @@
 .navLink {
   display: block;
   padding: var(--space-2) var(--space-6);
-  font-size: var(--fs-body);
+  font-size: var(--fs-base);
   color: var(--ink-muted);
   text-decoration: none;
   border-left: 2px solid transparent;

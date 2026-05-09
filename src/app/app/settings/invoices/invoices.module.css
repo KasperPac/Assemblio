@@ -1,6 +1,6 @@
 .empty {
   margin-top: var(--space-6);
-  font-size: var(--fs-body);
+  font-size: var(--fs-base);
   color: var(--ink-muted);
 }
 
@@ -24,7 +24,7 @@
 .th {
   padding: var(--space-3) var(--space-4);
   text-align: left;
-  font-size: var(--fs-label);
+  font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   color: var(--ink-faint);
   text-transform: uppercase;
@@ -41,7 +41,7 @@
 
 .td {
   padding: var(--space-3) var(--space-4);
-  font-size: var(--fs-body);
+  font-size: var(--fs-base);
   color: var(--ink-strong);
   vertical-align: middle;
 }

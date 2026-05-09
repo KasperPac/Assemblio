@@ -19,7 +19,7 @@
   margin: 0;
   padding-bottom: var(--space-3);
   border-bottom: 1px solid var(--stroke-card);
-  font-size: var(--fs-body);
+  font-size: var(--fs-base);
   font-weight: var(--fw-semibold);
   color: var(--ink-strong);
 }
@@ -49,14 +49,14 @@
 }
 
 .readOnly {
-  font-size: var(--fs-body);
+  font-size: var(--fs-base);
   color: var(--ink-strong);
   padding: var(--space-1) 0;
 }
 
 .input {
   font-family: var(--font-body);
-  font-size: var(--fs-body);
+  font-size: var(--fs-base);
   color: var(--ink-strong);
   background: var(--bg-input);
   border: 1px solid var(--stroke-card);

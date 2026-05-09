@@ -27,7 +27,7 @@
 }
 
 .name {
-  font-size: var(--fs-body);
+  font-size: var(--fs-base);
   font-weight: var(--fw-medium);
   color: var(--ink-strong);
 }
@@ -62,7 +62,7 @@
 }
 
 .empty {
-  font-size: var(--fs-body);
+  font-size: var(--fs-base);
   color: var(--ink-muted);
   margin: 0;
 }

@@ -36,7 +36,7 @@
 
 .cardDesc {
   margin: 0;
-  font-size: var(--fs-body);
+  font-size: var(--fs-base);
   color: var(--ink-muted);
 }
 
@@ -167,7 +167,7 @@
   flex: 1;
   min-width: 240px;
   font-family: var(--font-body);
-  font-size: var(--fs-body);
+  font-size: var(--fs-base);
   color: var(--ink-strong);
   background: var(--bg-input);
   border: 1px solid var(--stroke-card);
