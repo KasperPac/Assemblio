@@ -19,10 +19,7 @@ function LoginPageContent() {
       <div className={styles.card}>
         <p className={styles.eyebrow}>Manuva</p>
         <h1>Sign in to continue</h1>
-        <p>
-          Use Supabase email/password auth to get started. You can add OAuth
-          providers later in Supabase.
-        </p>
+        <p>Sign in with your workspace email and password.</p>
 
         <form className={styles.form} action={signInAction}>
           <input type="hidden" name="redirect" value={redirectTo} />
