@@ -20,7 +20,13 @@ type TopProductsChartProps = {
   data: ProductPoint[];
 };
 
-const PIE_COLORS = ["#4ade80", "#fbbf24", "#60a5fa", "#a78bfa", "#f472b6"];
+const PIE_COLORS = [
+  "var(--brand-1)",
+  "var(--ok)",
+  "var(--warning)",
+  "var(--danger)",
+  "var(--info)",
+];
 
 export function OrderTrendChart({ data }: OrderTrendChartProps) {
   const width = 760;
@@ -53,7 +59,7 @@ export function OrderTrendChart({ data }: OrderTrendChartProps) {
               y1={y}
               x2={width - margin.right}
               y2={y}
-              stroke="rgba(255,255,255,0.06)"
+              style={{ stroke: "var(--stroke)" }}
               strokeWidth="1"
             />
           );
@@ -68,9 +74,8 @@ export function OrderTrendChart({ data }: OrderTrendChartProps) {
               x={x}
               y={height - 4}
               textAnchor="middle"
-              fill="#6b7a8d"
+              style={{ fill: "var(--ink-faint)", fontFamily: "inherit" }}
               fontSize="10"
-              fontFamily="inherit"
             >
               {row.label}
             </text>
@@ -80,9 +85,8 @@ export function OrderTrendChart({ data }: OrderTrendChartProps) {
           x={width / 2}
           y={margin.top + innerHeight / 2}
           textAnchor="middle"
-          fill="#6b7a8d"
+          style={{ fill: "var(--ink-faint)", fontFamily: "inherit" }}
           fontSize="12"
-          fontFamily="inherit"
         >
           No fulfilled orders in this window yet
         </text>
@@ -140,8 +144,8 @@ export function OrderTrendChart({ data }: OrderTrendChartProps) {
     >
       <defs>
         <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#4ade80" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="#4ade80" stopOpacity="0.02" />
+          <stop offset="0%" style={{ stopColor: "var(--ok)", stopOpacity: 0.25 }} />
+          <stop offset="100%" style={{ stopColor: "var(--ok)", stopOpacity: 0.02 }} />
         </linearGradient>
       </defs>
 
@@ -155,7 +159,7 @@ export function OrderTrendChart({ data }: OrderTrendChartProps) {
             y1={y}
             x2={width - margin.right}
             y2={y}
-            stroke="rgba(255,255,255,0.06)"
+            style={{ stroke: "var(--stroke)" }}
             strokeWidth="1"
           />
         );
@@ -165,7 +169,13 @@ export function OrderTrendChart({ data }: OrderTrendChartProps) {
       <path d={fulfilledArea} fill="url(#areaGrad)" />
 
       {/* Line */}
-      <path d={fulfilledPath} fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" />
+      <path
+        d={fulfilledPath}
+        fill="none"
+        style={{ stroke: "var(--ok)" }}
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
 
       {/* Dots */}
       {data.map((row, index) => {
@@ -179,8 +189,7 @@ export function OrderTrendChart({ data }: OrderTrendChartProps) {
             cx={x}
             cy={y}
             r="3"
-            fill="#4ade80"
-            stroke="#141a2a"
+            style={{ fill: "var(--ok)", stroke: "var(--bg-card)" }}
             strokeWidth="2"
           />
         );
@@ -197,9 +206,8 @@ export function OrderTrendChart({ data }: OrderTrendChartProps) {
             x={x}
             y={height - 4}
             textAnchor="middle"
-            fill="#6b7a8d"
+            style={{ fill: "var(--ink-faint)", fontFamily: "inherit" }}
             fontSize="10"
-            fontFamily="inherit"
           >
             {row.label}
           </text>
@@ -224,16 +232,15 @@ export function TopProductsChart({ data }: TopProductsChartProps) {
           cy="110"
           r="64"
           fill="none"
-          stroke="rgba(255,255,255,0.08)"
+          style={{ stroke: "var(--stroke)" }}
           strokeWidth="24"
         />
         <text
           x="110"
           y="116"
           textAnchor="middle"
-          fill="#6b7a8d"
+          style={{ fill: "var(--ink-faint)", fontFamily: "inherit" }}
           fontSize="11"
-          fontFamily="inherit"
         >
           No data yet
         </text>
@@ -276,7 +283,7 @@ export function TopProductsChart({ data }: TopProductsChartProps) {
           cy="110"
           r="64"
           fill="none"
-          stroke={segment.color}
+          style={{ stroke: segment.color }}
           strokeWidth="24"
           strokeDasharray={`${Math.max((segment.end - segment.start) * 402 - 3, 0)} 402`}
           strokeDashoffset={-segment.start * 402}
@@ -287,12 +294,25 @@ export function TopProductsChart({ data }: TopProductsChartProps) {
         </circle>
       ))}
       {/* Center bg */}
-      <circle cx="110" cy="110" r="48" fill="#141a2a" />
+      <circle cx="110" cy="110" r="48" style={{ fill: "var(--bg-card)" }} />
       {/* Center text */}
-      <text x="110" y="105" textAnchor="middle" fill="#f0f2f5" fontSize="22" fontWeight="800" fontFamily="inherit">
+      <text
+        x="110"
+        y="105"
+        textAnchor="middle"
+        style={{ fill: "var(--ink-strong)", fontFamily: "inherit" }}
+        fontSize="22"
+        fontWeight="800"
+      >
         {topCount > 999 ? `${(topCount / 1000).toFixed(1)}k` : topCount}
       </text>
-      <text x="110" y="124" textAnchor="middle" fill="#6b7a8d" fontSize="10" fontFamily="inherit">
+      <text
+        x="110"
+        y="124"
+        textAnchor="middle"
+        style={{ fill: "var(--ink-faint)", fontFamily: "inherit" }}
+        fontSize="10"
+      >
         Top Product
       </text>
     </svg>
