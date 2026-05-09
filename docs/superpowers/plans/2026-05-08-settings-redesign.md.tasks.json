@@ -4,13 +4,13 @@
     {
       "id": 9,
       "subject": "Task 1: Database patch — settings schema",
-      "status": "pending",
+      "status": "completed",
       "description": "**Goal:** Add new columns to `tenant` and `profiles`, create `tenant_invoices` table, add auth trigger for invited users.\n\n**Files:**\n- Create: `supabase/patches/settings_redesign_schema.sql`\n\n**Acceptance Criteria:**\n- [ ] `tenant` table has `logo_url`, `timezone`, `currency` columns\n- [ ] `profiles` table has `full_name` and `status` columns\n- [ ] `tenant_invoices` table exists with RLS\n- [ ] Auth trigger for invited users\n- [ ] Storage buckets `tenant-logos` and `tenant-invoices` created\n\n**Verify:** Apply patch via Supabase MCP.\n\n```json:metadata\n{\"files\": [\"supabase/patches/settings_redesign_schema.sql\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"tenant columns added\", \"profiles columns added\", \"tenant_invoices table with RLS\", \"invite trigger\"]}\n```"
     },
     {
       "id": 10,
       "subject": "Task 2: Settings layout with sidebar navigation",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [9],
       "description": "**Goal:** Two-column settings layout with sidebar nav, root redirect by role.\n\n**Files:**\n- Create: `src/app/app/settings/layout.tsx`\n- Create: `src/app/app/settings/settings-sidebar.tsx`\n- Create: `src/app/app/settings/settings-layout.module.css`\n- Modify: `src/app/app/settings/page.tsx`\n- Modify: `src/app/app/route-meta.ts`\n\n**Verify:** `npx tsc --noEmit` → zero errors.\n\n```json:metadata\n{\"files\": [\"src/app/app/settings/layout.tsx\", \"src/app/app/settings/settings-sidebar.tsx\", \"src/app/app/settings/settings-layout.module.css\", \"src/app/app/settings/page.tsx\", \"src/app/app/route-meta.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Root redirects by role\", \"Sidebar groups correct\", \"Active link styled\"]}\n```"
     },
@@ -66,10 +66,10 @@
     {
       "id": 18,
       "subject": "Task 10: Cleanup",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [11, 12, 13, 14, 15, 16, 17],
       "description": "**Goal:** Delete settings.module.css and verify no orphaned files.\n\n**Files:**\n- Delete: `src/app/app/settings/settings.module.css`\n\n**Verify:** `grep -r \"settings.module.css\" src/` → no output. All 8 routes render.\n\n```json:metadata\n{\"files\": [\"src/app/app/settings/settings.module.css\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"settings.module.css deleted\", \"No remaining imports\", \"All routes render\"]}\n```"
     }
   ],
-  "lastUpdated": "2026-05-08T00:00:00.000Z"
+  "lastUpdated": "2026-05-09T00:00:00.000Z"
 }
