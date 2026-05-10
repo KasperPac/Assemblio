@@ -1,0 +1,33 @@
+{
+  "planPath": "docs/superpowers/plans/2026-05-10-shopify-install-pipeline.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 0: Pending install cookie helpers",
+      "status": "pending",
+      "description": "**Goal:** Create `signPendingInstall` and `verifyPendingInstall` — pure HMAC-signed cookie helpers.\n\n**Files:**\n- Create: `src/lib/shopify/pending-install.ts`\n- Create: `src/lib/shopify/pending-install.test.ts`\n\n**Acceptance Criteria:**\n- [ ] Round-trip works\n- [ ] Tampered cookie returns null\n- [ ] Expired cookie returns null\n- [ ] All 5 tests pass\n\n```json:metadata\n{\"files\": [\"src/lib/shopify/pending-install.ts\", \"src/lib/shopify/pending-install.test.ts\"], \"verifyCommand\": \"npm test -- pending-install\", \"acceptanceCriteria\": [\"round-trip works\", \"tampered cookie returns null\", \"expired cookie returns null\"]}\n```"
+    },
+    {
+      "id": 1,
+      "subject": "Task 1: Install route — Shopify App Store entry point",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Create `GET /api/shopify/install` — the URL Shopify hits when a merchant clicks Install.\n\n**Files:**\n- Create: `src/app/api/shopify/install/route.ts`\n\n**Acceptance Criteria:**\n- [ ] Returns 503 if env vars missing\n- [ ] Returns 403 if hmac present but invalid\n- [ ] Returns 400 for bad shop domain\n- [ ] Sets OAuth state cookie with tenantId:null when not logged in\n- [ ] Redirects to Shopify OAuth URL\n\n```json:metadata\n{\"files\": [\"src/app/api/shopify/install/route.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"validates HMAC\", \"handles logged-in and unauthenticated\", \"sets OAuth state cookie\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: Callback — add null-tenantId pending install path",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Modify callback/route.ts to handle tenantId:null.\n\n**Files:**\n- Modify: `src/app/api/shopify/callback/route.ts`\n\n**Acceptance Criteria:**\n- [ ] Existing tenantId-present path unchanged\n- [ ] null path: completes inline if user is now logged in\n- [ ] null path: signs pending cookie and redirects to shopify-connect\n\n```json:metadata\n{\"files\": [\"src/app/api/shopify/callback/route.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"existing path unchanged\", \"null-tenantId sets pending cookie\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: shopify-connect page and actions",
+      "status": "pending",
+      "blockedBy": [0, 2],
+      "description": "**Goal:** Create the page a merchant lands on after an unauthenticated install.\n\n**Files:**\n- Create: `src/app/app/shopify-connect/page.tsx`\n- Create: `src/app/app/shopify-connect/shopify-connect-content.tsx`\n- Create: `src/app/app/shopify-connect/actions.ts`\n- Create: `src/app/app/shopify-connect/shopify-connect.module.css`\n\n**Acceptance Criteria:**\n- [ ] Page redirects if no valid pending cookie\n- [ ] Sign-in links existing tenant\n- [ ] Sign-up creates new tenant + user + links store\n- [ ] Both actions redirect to https://<shop>/admin\n\n```json:metadata\n{\"files\": [\"src/app/app/shopify-connect/page.tsx\", \"src/app/app/shopify-connect/shopify-connect-content.tsx\", \"src/app/app/shopify-connect/actions.ts\", \"src/app/app/shopify-connect/shopify-connect.module.css\"], \"verifyCommand\": \"npx tsc --noEmit && npm test\", \"acceptanceCriteria\": [\"page redirects on missing cookie\", \"sign-in links tenant\", \"sign-up creates tenant and links\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-05-10T00:00:00.000Z"
+}
