@@ -84,6 +84,7 @@ export default function Home() {
           <a href="#how">How it works</a>
           <a href="#gallery">Screens</a>
           <a href="#stack">Stack</a>
+          <a href="/pricing">Pricing</a>
         </nav>
         <div className={styles.headerCtas}>
           <a className={styles.ghost} href="/app/help">
