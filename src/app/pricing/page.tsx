@@ -35,14 +35,16 @@ export default function PricingPage() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <a href="/" className={styles.logoLink}>Manuva</a>
-        <a href="/login?redirect=/app" className={styles.loginLink}>Sign in</a>
+        <nav aria-label="Site" className={styles.siteNav}>
+          <a href="/" className={styles.logoLink}>Manuva</a>
+          <a href="/login?redirect=/app" className={styles.loginLink}>Sign in</a>
+        </nav>
       </header>
 
       <main>
-        <section className={styles.hero}>
+        <section className={styles.hero} aria-labelledby="hero-heading">
           <p className={styles.eyebrow}>Pricing</p>
-          <h1 className={styles.headline}>Simple pricing for manufacturing teams</h1>
+          <h1 id="hero-heading" className={styles.headline}>Simple pricing for manufacturing teams</h1>
           <p className={styles.subhead}>
             One price per tier. No per-seat fees. No usage meters.
             Start free for 14 days — no credit card required.
@@ -53,8 +55,8 @@ export default function PricingPage() {
 
         <FeatureMatrix />
 
-        <section className={styles.faq}>
-          <h2 className={styles.faqHeading}>Frequently asked questions</h2>
+        <section className={styles.faq} aria-labelledby="faq-heading">
+          <h2 id="faq-heading" className={styles.faqHeading}>Frequently asked questions</h2>
           <dl className={styles.faqList}>
             {FAQ_ITEMS.map((item) => (
               <div key={item.q} className={styles.faqItem}>
