@@ -46,7 +46,7 @@
 .toggleThumb {
   width: 18px;
   height: 18px;
-  background: white;
+  background: var(--surface-0);
   border-radius: var(--radius-pill);
   transition: transform 0.15s;
   transform: translateX(0);

@@ -38,18 +38,17 @@ const ENTERPRISE_FEATURES = [
   "SLA + uptime guarantee",
 ];
 
-const TIER_FEATURES: Record<string, string[]> = {
+const TIER_FEATURES: Record<Tier["id"], string[]> = {
   starter: STARTER_FEATURES,
   growth: GROWTH_FEATURES,
   pro: PRO_FEATURES,
   enterprise: ENTERPRISE_FEATURES,
 };
 
-function getPrice(tier: Tier, period: BillingPeriod): string {
-  if (tier.annualMonthly === null) return "Custom";
+function formatPaidPrice(tier: Tier, period: BillingPeriod): string {
   return period === "annual"
-    ? `$${tier.annualMonthly}`
-    : `$${tier.monthlyMonthly}`;
+    ? `$${tier.annualMonthly!}`
+    : `$${tier.monthlyMonthly!}`;
 }
 
 function getBillingNote(tier: Tier, period: BillingPeriod): string {
@@ -95,8 +94,8 @@ export default function PricingCards() {
       {/* Tier cards */}
       <div className={styles.grid}>
         {TIERS.map((tier) => {
-          const price = getPrice(tier, period);
           const isCustom = tier.annualMonthly === null;
+          const price = !isCustom ? formatPaidPrice(tier, period) : "Custom";
           const ctaClass = tier.featured
             ? styles.ctaPrimary
             : tier.id === "enterprise"
