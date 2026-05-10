@@ -23,12 +23,14 @@ export async function GET(request: NextRequest) {
     return new NextResponse("Shopify app is not configured.", { status: 503 });
   }
 
-  // Shopify sends hmac on install requests — same algorithm as callbacks.
-  // If present, it must be valid. If absent (e.g. manual testing), allow through.
-  if (
-    request.nextUrl.searchParams.has("hmac") &&
-    !verifyShopifyCallbackHmac(request.nextUrl)
-  ) {
+  // Shopify always sends hmac on legitimate App Store install requests.
+  // SHOPIFY_SKIP_HMAC_CHECK=true bypasses this for local dev (never set in production).
+  const skipHmac = process.env.SHOPIFY_SKIP_HMAC_CHECK === "true";
+  const hmacPresent = request.nextUrl.searchParams.has("hmac");
+  if (!skipHmac && (!hmacPresent || !verifyShopifyCallbackHmac(request.nextUrl))) {
+    return new NextResponse("Invalid HMAC.", { status: 403 });
+  }
+  if (skipHmac && hmacPresent && !verifyShopifyCallbackHmac(request.nextUrl)) {
     return new NextResponse("Invalid HMAC.", { status: 403 });
   }
 
