@@ -74,9 +74,11 @@ export default function PricingCards() {
           Monthly
         </span>
         <button
+          role="switch"
+          aria-checked={period === "annual"}
           className={`${styles.toggleTrack} ${period === "annual" ? styles.annual : ""}`}
           onClick={() => setPeriod((p) => (p === "annual" ? "monthly" : "annual"))}
-          aria-label={`Switch to ${period === "annual" ? "monthly" : "annual"} billing`}
+          aria-label="Toggle billing period"
           type="button"
         >
           <div className={styles.toggleThumb} />
@@ -101,7 +103,7 @@ export default function PricingCards() {
             : tier.id === "enterprise"
             ? styles.ctaDark
             : styles.ctaOutline;
-          const ctaHref = tier.id === "enterprise" ? "#contact" : "#trial";
+          const ctaHref = tier.id === "enterprise" ? "/contact" : "/login";
 
           return (
             <div

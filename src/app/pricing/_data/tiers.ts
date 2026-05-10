@@ -74,7 +74,7 @@ export const TIERS: Tier[] = [
     annualYearly: null,
     cta: "Contact sales",
     featured: false,
-    limits: { locations: "Unlimited", users: "Unlimited" },
+    limits: { locations: "Unlimited locations", users: "Unlimited users" },
   },
 ];
 

@@ -27,7 +27,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Do you offer discounts for annual billing?",
-    a: "Yes. Annual billing saves approximately 17% compared to paying month-to-month. The toggle on this page shows you both options.",
+    a: "Annual billing saves you around 20% compared to paying month-to-month. The toggle above shows you both options.",
   },
 ];
 
