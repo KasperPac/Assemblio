@@ -142,9 +142,11 @@ export async function GET(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) {
-      return NextResponse.redirect(
+      const loginResponse = NextResponse.redirect(
         new URL("/login?redirect=/app/settings", request.url)
       );
+      clearStateCookie(loginResponse);
+      return loginResponse;
     }
 
     const { data: profile } = await supabase
@@ -186,8 +188,9 @@ export async function GET(request: NextRequest) {
       tokenData.scope ?? ""
     );
     if (result !== "ok") {
+      const shopifyParam = result === "conflict" ? "tenant-store-conflict" : result;
       const response = NextResponse.redirect(
-        new URL(`/app/settings?shopify=${result}`, request.url)
+        new URL(`/app/settings?shopify=${shopifyParam}`, request.url)
       );
       clearStateCookie(response);
       return response;
@@ -216,7 +219,7 @@ export async function GET(request: NextRequest) {
   });
   if (!tokenResponse.ok) {
     const response = NextResponse.redirect(
-      new URL("/app/shopify-connect?shopify=token-failed", request.url)
+      new URL("/app/settings?shopify=token-failed", request.url)
     );
     clearStateCookie(response);
     return response;
