@@ -1,3 +1,4 @@
+import React from "react";
 import { TIERS, FEATURE_MODULES, type FeatureCell } from "../_data/tiers";
 import styles from "./feature-matrix.module.css";
 
@@ -29,9 +30,9 @@ export default function FeatureMatrix() {
           </thead>
           <tbody>
             {FEATURE_MODULES.map((mod) => (
-              <>
-                <tr key={mod.name} className={styles.moduleRow}>
-                  <td colSpan={5}>{mod.name}</td>
+              <React.Fragment key={mod.name}>
+                <tr className={styles.moduleRow}>
+                  <td colSpan={TIERS.length + 1}>{mod.name}</td>
                 </tr>
                 {mod.features.map((row) => (
                   <tr key={row.name} className={styles.featureRow}>
@@ -43,7 +44,7 @@ export default function FeatureMatrix() {
                     ))}
                   </tr>
                 ))}
-              </>
+              </React.Fragment>
             ))}
           </tbody>
         </table>
