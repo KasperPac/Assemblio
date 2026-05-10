@@ -9,13 +9,64 @@ import {
   verifySignedPayload,
 } from "@/lib/shopify/auth";
 import { registerRequiredWebhooks } from "@/lib/shopify/client";
+import { signPendingInstall } from "@/lib/shopify/pending-install";
 
 type OAuthState = {
   nonce: string;
   shop: string;
-  tenantId: string;
+  tenantId: string | null;
   exp: number;
 };
+
+function clearStateCookie(response: NextResponse) {
+  response.cookies.set("shopify_oauth_state", "", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0,
+  });
+}
+
+async function upsertStoreAndToken(
+  admin: ReturnType<typeof createSupabaseAdminClient>,
+  tenantId: string,
+  shop: string,
+  accessToken: string,
+  scopes: string
+): Promise<"ok" | "conflict" | "store-save-failed" | "token-save-failed"> {
+  const { data: conflict } = await admin
+    .from("shopify_store")
+    .select("id,tenant_id")
+    .eq("store_domain", shop)
+    .neq("tenant_id", tenantId)
+    .limit(1);
+  if ((conflict ?? []).length > 0) return "conflict";
+
+  const { data: store, error: storeError } = await admin
+    .from("shopify_store")
+    .upsert(
+      { tenant_id: tenantId, store_domain: shop, status: "active" },
+      { onConflict: "tenant_id,store_domain" }
+    )
+    .select("id")
+    .single();
+  if (storeError || !store) return "store-save-failed";
+
+  const { error: tokenError } = await admin.from("shopify_install_tokens").upsert(
+    {
+      tenant_id: tenantId,
+      shopify_store_id: store.id,
+      access_token: accessToken,
+      scopes,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "shopify_store_id" }
+  );
+  if (tokenError) return "token-save-failed";
+
+  return "ok";
+}
 
 export async function GET(request: NextRequest) {
   const oauthConfig = getShopifyOAuthConfig();
@@ -31,15 +82,27 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const shop = normalizeShopDomain(request.nextUrl.searchParams.get("shop") ?? "");
+  const shop = normalizeShopDomain(
+    request.nextUrl.searchParams.get("shop") ?? ""
+  );
   const code = request.nextUrl.searchParams.get("code") ?? "";
   const state = request.nextUrl.searchParams.get("state") ?? "";
   if (!isValidShopDomain(shop) || !code || !state) {
-    return NextResponse.redirect(new URL("/app/settings?shopify=invalid-callback", request.url));
+    return NextResponse.redirect(
+      new URL("/app/settings?shopify=invalid-callback", request.url)
+    );
   }
 
+  // Verify and decode the state cookie.
   const signedCookie = request.cookies.get("shopify_oauth_state")?.value ?? "";
-  const [encoded, sig] = signedCookie.split(".");
+  const dotIndex = signedCookie.lastIndexOf(".");
+  if (dotIndex === -1) {
+    return NextResponse.redirect(
+      new URL("/app/settings?shopify=state-missing", request.url)
+    );
+  }
+  const encoded = signedCookie.slice(0, dotIndex);
+  const sig = signedCookie.slice(dotIndex + 1);
   if (!encoded || !sig || !verifySignedPayload(encoded, sig)) {
     return NextResponse.redirect(
       new URL("/app/settings?shopify=state-missing", request.url)
@@ -69,120 +132,152 @@ export async function GET(request: NextRequest) {
     mismatchUrl.searchParams.set("shopify", "state-shop-mismatch");
     mismatchUrl.searchParams.set("expected_shop", parsed.shop);
     mismatchUrl.searchParams.set("returned_shop", shop);
-    return NextResponse.redirect(
-      mismatchUrl
-    );
+    return NextResponse.redirect(mismatchUrl);
   }
 
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.redirect(
-      new URL("/login?redirect=/app/settings", request.url)
+  // ── PATH A: tenantId was embedded at install time (user was logged in) ──────
+  if (parsed.tenantId !== null) {
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.redirect(
+        new URL("/login?redirect=/app/settings", request.url)
+      );
+    }
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("tenant_id")
+      .eq("id", user.id)
+      .maybeSingle();
+    if (!profile?.tenant_id || profile.tenant_id !== parsed.tenantId) {
+      return NextResponse.redirect(
+        new URL("/app/settings?shopify=tenant-mismatch", request.url)
+      );
+    }
+
+    const { apiKey, apiSecret } = oauthConfig;
+    const tokenResponse = await fetch(
+      `https://${shop}/admin/oauth/access_token`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ client_id: apiKey, client_secret: apiSecret, code }),
+      }
     );
+    if (!tokenResponse.ok) {
+      return NextResponse.redirect(
+        new URL("/app/settings?shopify=token-failed", request.url)
+      );
+    }
+    const tokenData = (await tokenResponse.json()) as {
+      access_token: string;
+      scope?: string;
+    };
+
+    const admin = createSupabaseAdminClient();
+    const result = await upsertStoreAndToken(
+      admin,
+      parsed.tenantId,
+      shop,
+      tokenData.access_token,
+      tokenData.scope ?? ""
+    );
+    if (result !== "ok") {
+      const response = NextResponse.redirect(
+        new URL(`/app/settings?shopify=${result}`, request.url)
+      );
+      clearStateCookie(response);
+      return response;
+    }
+
+    let status = "connected";
+    try {
+      await registerRequiredWebhooks(shop, tokenData.access_token);
+    } catch {
+      status = "connected-webhooks-failed";
+    }
+
+    const response = NextResponse.redirect(
+      new URL(`/app/settings?shopify=${status}`, request.url)
+    );
+    clearStateCookie(response);
+    return response;
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("tenant_id")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  if (!profile?.tenant_id || profile.tenant_id !== parsed.tenantId) {
-    return NextResponse.redirect(
-      new URL("/app/settings?shopify=tenant-mismatch", request.url)
-    );
-  }
-
+  // ── PATH B: tenantId was null — merchant was not logged in at install time ──
   const { apiKey, apiSecret } = oauthConfig;
   const tokenResponse = await fetch(`https://${shop}/admin/oauth/access_token`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      client_id: apiKey,
-      client_secret: apiSecret,
-      code,
-    }),
+    body: JSON.stringify({ client_id: apiKey, client_secret: apiSecret, code }),
   });
-
   if (!tokenResponse.ok) {
-    return NextResponse.redirect(
-      new URL("/app/settings?shopify=token-failed", request.url)
+    const response = NextResponse.redirect(
+      new URL("/app/shopify-connect?shopify=token-failed", request.url)
     );
+    clearStateCookie(response);
+    return response;
   }
-
   const tokenData = (await tokenResponse.json()) as {
     access_token: string;
     scope?: string;
   };
-  const admin = createSupabaseAdminClient();
 
-  const { data: conflictingStores } = await admin
-    .from("shopify_store")
-    .select("id,tenant_id")
-    .eq("store_domain", shop)
-    .neq("tenant_id", parsed.tenantId)
-    .limit(1);
-  if ((conflictingStores ?? []).length > 0) {
-    return NextResponse.redirect(
-      new URL("/app/settings?shopify=tenant-store-conflict", request.url)
-    );
+  // Check if the merchant signed into Manuva between starting OAuth and completing it.
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("tenant_id")
+      .eq("id", user.id)
+      .maybeSingle();
+    if (profile?.tenant_id) {
+      const admin = createSupabaseAdminClient();
+      const result = await upsertStoreAndToken(
+        admin,
+        profile.tenant_id,
+        shop,
+        tokenData.access_token,
+        tokenData.scope ?? ""
+      );
+      let status = result === "ok" ? "connected" : result;
+      if (result === "ok") {
+        try {
+          await registerRequiredWebhooks(shop, tokenData.access_token);
+        } catch {
+          status = "connected-webhooks-failed";
+        }
+      }
+      const response = NextResponse.redirect(
+        new URL(`/app/settings?shopify=${status}`, request.url)
+      );
+      clearStateCookie(response);
+      return response;
+    }
   }
 
-  const { data: store, error: storeError } = await admin
-    .from("shopify_store")
-    .upsert(
-      {
-        tenant_id: parsed.tenantId,
-        store_domain: shop,
-        status: "active",
-      },
-      { onConflict: "tenant_id,store_domain" }
-    )
-    .select("id")
-    .single();
-
-  if (storeError || !store) {
-    return NextResponse.redirect(
-      new URL("/app/settings?shopify=store-save-failed", request.url)
-    );
-  }
-
-  const { error: tokenError } = await admin.from("shopify_install_tokens").upsert(
-    {
-      tenant_id: parsed.tenantId,
-      shopify_store_id: store.id,
-      access_token: tokenData.access_token,
-      scopes: tokenData.scope ?? "",
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: "shopify_store_id" }
+  // Not logged in — store token in signed pending cookie, send to shopify-connect.
+  const pendingCookie = signPendingInstall(
+    shop,
+    tokenData.access_token,
+    tokenData.scope ?? ""
   );
-
-  if (tokenError) {
-    return NextResponse.redirect(
-      new URL("/app/settings?shopify=token-save-failed", request.url)
-    );
-  }
-
-  let status = "connected";
-  try {
-    await registerRequiredWebhooks(shop, tokenData.access_token);
-  } catch {
-    status = "connected-webhooks-failed";
-  }
-
-  const response = NextResponse.redirect(
-    new URL(`/app/settings?shopify=${status}`, request.url)
-  );
-  response.cookies.set("shopify_oauth_state", "", {
+  const connectUrl = new URL("/app/shopify-connect", request.url);
+  connectUrl.searchParams.set("shop", shop);
+  const response = NextResponse.redirect(connectUrl);
+  clearStateCookie(response);
+  response.cookies.set("shopify_pending_install", pendingCookie, {
     httpOnly: true,
     secure: true,
     sameSite: "lax",
     path: "/",
-    maxAge: 0,
+    maxAge: 10 * 60,
   });
   return response;
 }
