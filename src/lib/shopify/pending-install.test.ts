@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeAll } from "vitest";
+import { describe, expect, it, beforeAll, vi } from "vitest";
 import { signPendingInstall, verifyPendingInstall } from "./pending-install";
 
 beforeAll(() => {
@@ -28,10 +28,10 @@ describe("signPendingInstall / verifyPendingInstall", () => {
 
   it("returns null for an expired cookie", () => {
     const cookie = signPendingInstall("mystore.myshopify.com", "tok_abc", "");
-    const realNow = Date.now;
-    Date.now = () => realNow() + 11 * 60 * 1000;
+    const realNow = Date.now();
+    vi.spyOn(Date, "now").mockReturnValue(realNow + 11 * 60 * 1000);
     const result = verifyPendingInstall(cookie);
-    Date.now = realNow;
+    vi.restoreAllMocks();
     expect(result).toBeNull();
   });
 
