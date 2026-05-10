@@ -215,9 +215,10 @@ These are clear, universal, and match industry convention. Alternatives consider
 
 ---
 
-## 8. Open Questions
+## 8. Decisions
 
-- **Free trial access level:** Full Pro access during trial is recommended to maximise perceived value, but needs confirmation.
-- **Shopify app store listing:** If Manuva is distributed via the Shopify App Store, pricing tiers need to be replicated in the Shopify billing API — flat subscription charges per tier.
-- **Grandfathering:** No legacy pricing currently exists. When prices change, existing customers should be grandfathered for a defined period (typically 12 months).
-- **Tier names:** Starter/Growth/Pro is the default recommendation. Final decision deferred to brand review.
+- **Free trial access level:** Full Pro access for all trials. 14 days, no credit card required. Downgrades to the tier the customer selected at sign-up when the trial ends.
+- **Billing:** Managed directly (not via Shopify App Store billing API). Use Stripe or equivalent — Manuva controls subscription lifecycle, invoicing, and plan enforcement.
+- **Tier names:** Starter / Growth / Pro / Enterprise — confirmed.
+
+- **Grandfathering policy:** When prices increase, existing customers keep their current rate for 3 months from the date of the price change announcement, with notice given at least 30 days in advance.
