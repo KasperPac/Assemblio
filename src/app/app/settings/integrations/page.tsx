@@ -3,12 +3,15 @@ import { getServerTenantContext } from "@/lib/tenant/context";
 import PageHeader from "../../_ui/page-header";
 import StatusBadge from "../../_ui/status-badge";
 import ShopifyManage from "./shopify-manage";
+import StatusBanner from "./status-banner";
 import styles from "./integrations.module.css";
 
 type Props = {
   searchParams?: Promise<{
     shopify?: string;
     sync_error?: string;
+    products?: string;
+    orders?: string;
   }>;
 };
 
@@ -38,6 +41,14 @@ export default async function IntegrationsPage({ searchParams }: Props) {
         title="Integrations"
         description="Connect external services to sync catalog, orders, and inventory."
       />
+      {params.shopify && (
+        <StatusBanner
+          status={params.shopify}
+          detail={params.sync_error}
+          products={params.products}
+          orders={params.orders}
+        />
+      )}
       <div className={styles.grid}>
         <div className={styles.card}>
           <div className={styles.cardHeader}>
@@ -51,11 +62,7 @@ export default async function IntegrationsPage({ searchParams }: Props) {
               Sync products, variants, and orders from your Shopify store.
             </p>
           </div>
-          <ShopifyManage
-            stores={stores ?? []}
-            shopifyStatus={params.shopify}
-            syncError={params.sync_error}
-          />
+          <ShopifyManage stores={stores ?? []} />
         </div>
       </div>
     </>

@@ -150,12 +150,6 @@
   color: var(--ink-muted);
 }
 
-.notice {
-  margin: 0;
-  font-size: var(--fs-sm);
-  color: var(--ok);
-  line-height: var(--lh-normal);
-}
 
 .shopifyForm {
   display: flex;
@@ -311,4 +305,56 @@
 .syncMetaChipValue {
   color: var(--ink-strong);
   font-weight: var(--fw-semibold);
+}
+
+/* status-banner.tsx */
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  border: 1px solid;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+  margin-top: var(--space-6);
+}
+
+.banner--success {
+  color: var(--ok);
+  border-color: color-mix(in srgb, var(--ok) 30%, transparent);
+  background: color-mix(in srgb, var(--ok) 8%, transparent);
+}
+
+.banner--warning {
+  color: var(--warning);
+  border-color: color-mix(in srgb, var(--warning) 30%, transparent);
+  background: color-mix(in srgb, var(--warning) 8%, transparent);
+}
+
+.banner--error {
+  color: var(--danger);
+  border-color: color-mix(in srgb, var(--danger) 30%, transparent);
+  background: color-mix(in srgb, var(--danger) 8%, transparent);
+}
+
+.bannerText {
+  flex: 1;
+}
+
+.bannerDismiss {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.6;
+  padding: 0 2px;
+}
+
+.bannerDismiss:hover {
+  opacity: 1;
 }

@@ -16,7 +16,7 @@ export default function SyncSubmitForm({ storeId, buttonClassName, buttonLabel }
     <>
       <form
         method="post"
-        action="/api/shopify/sync"
+        action="/api/shopify/sync?return_to=/app/settings/integrations"
         onSubmit={() => setIsSubmitting(true)}
       >
         {storeId ? <input type="hidden" name="store_id" value={storeId} /> : null}

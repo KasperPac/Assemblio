@@ -18,15 +18,9 @@ type Store = {
 
 type Props = {
   stores: Store[];
-  shopifyStatus?: string;
-  syncError?: string;
 };
 
-export default function ShopifyManage({
-  stores,
-  shopifyStatus,
-  syncError,
-}: Props) {
+export default function ShopifyManage({ stores }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -41,7 +35,7 @@ export default function ShopifyManage({
 
       {open && (
         <div className={styles.manageContent}>
-          <ShopifyConnect status={shopifyStatus} detail={syncError} />
+          <ShopifyConnect />
 
           {stores.length > 0 && (
             <div className={styles.storeList}>
