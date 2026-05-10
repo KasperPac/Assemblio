@@ -143,17 +143,35 @@ export async function signUpAndLink(
     };
   }
 
+  // Track created resources for rollback on partial failure.
+  let createdTenantId: string | null = null;
+  let createdAuthUserId: string | null = null;
+
+  async function rollback() {
+    if (createdAuthUserId) {
+      try { await admin.auth.admin.deleteUser(createdAuthUserId); } catch { /* ignore */ }
+    }
+    if (createdTenantId) {
+      try { await admin.from("tenant_domain").delete().eq("tenant_id", createdTenantId); } catch { /* ignore */ }
+      try { await admin.from("tenant").delete().eq("id", createdTenantId); } catch { /* ignore */ }
+    }
+  }
+
   const { data: tenant, error: tenantError } = await admin
     .from("tenant")
     .insert({ name: company })
     .select("id")
     .single();
   if (tenantError || !tenant) return { error: "Failed to create workspace." };
+  createdTenantId = tenant.id;
 
   const { error: domainError } = await admin
     .from("tenant_domain")
     .insert({ tenant_id: tenant.id, domain });
-  if (domainError) return { error: "Failed to register email domain." };
+  if (domainError) {
+    await rollback();
+    return { error: "Failed to register email domain." };
+  }
 
   const { data: authData, error: authError } = await admin.auth.admin.createUser({
     email,
@@ -161,8 +179,10 @@ export async function signUpAndLink(
     email_confirm: true,
   });
   if (authError || !authData.user) {
+    await rollback();
     return { error: authError?.message ?? "Failed to create user." };
   }
+  createdAuthUserId = authData.user.id;
 
   const { error: profileError } = await admin.from("profiles").insert({
     id: authData.user.id,
@@ -170,7 +190,10 @@ export async function signUpAndLink(
     role: "admin",
     status: "active",
   });
-  if (profileError) return { error: "Failed to create user profile." };
+  if (profileError) {
+    await rollback();
+    return { error: "Failed to create user profile." };
+  }
 
   const { error: accessError } = await admin
     .from("profile_tenant_access")
@@ -179,7 +202,10 @@ export async function signUpAndLink(
       tenant_id: tenant.id,
       role: "admin",
     });
-  if (accessError) return { error: "Failed to set up workspace access." };
+  if (accessError) {
+    await rollback();
+    return { error: "Failed to set up workspace access." };
+  }
 
   const supabase = await createSupabaseServerClient();
   const { error: signInError } = await supabase.auth.signInWithPassword({

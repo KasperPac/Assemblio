@@ -271,7 +271,7 @@ export async function GET(request: NextRequest) {
     tokenData.access_token,
     tokenData.scope ?? ""
   );
-  const connectUrl = new URL("/app/shopify-connect", request.url);
+  const connectUrl = new URL("/shopify-connect", request.url);
   connectUrl.searchParams.set("shop", shop);
   const response = NextResponse.redirect(connectUrl);
   clearStateCookie(response);

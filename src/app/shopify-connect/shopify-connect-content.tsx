@@ -22,7 +22,7 @@ export default function ShopifyConnectContent({
   );
 
   return (
-    <div className={styles.overlay}>
+    <div className={styles.page}>
       <div className={styles.card}>
         <div>
           <p className={styles.eyebrow}>Manuva</p>
