@@ -337,16 +337,6 @@ Add `StatusBanner` import and render it above `.grid` when `shopifyStatus` is pr
 
 ```typescript
 import StatusBanner from "./status-banner";
-
-// In the JSX, above <div className={styles.grid}>:
-{params.shopify && (
-  <StatusBanner
-    status={params.shopify}
-    detail={params.sync_error}
-    products={(await searchParams).products}
-    orders={(await searchParams).orders}
-  />
-)}
 ```
 
 Update the `Props` type to include `products` and `orders`:
@@ -360,6 +350,19 @@ type Props = {
     orders?: string;
   }>;
 };
+```
+
+`searchParams` is already awaited once into `params` — just add `products` and `orders` to the existing destructure. Then in JSX, above `<div className={styles.grid}>`:
+
+```tsx
+{params.shopify && (
+  <StatusBanner
+    status={params.shopify}
+    detail={params.sync_error}
+    products={params.products}
+    orders={params.orders}
+  />
+)}
 ```
 
 - [ ] **Step 4: Remove status props from `ShopifyManage`**
