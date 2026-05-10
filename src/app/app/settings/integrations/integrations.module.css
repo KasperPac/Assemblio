@@ -318,7 +318,7 @@
   border: 1px solid;
   font-size: var(--fs-sm);
   line-height: var(--lh-normal);
-  margin-top: var(--space-6);
+  margin-bottom: var(--space-4);
 }
 
 .banner--success {

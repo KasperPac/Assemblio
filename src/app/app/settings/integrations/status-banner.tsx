@@ -85,7 +85,7 @@ export default function StatusBanner({ status, detail, products, orders }: Props
       : styles["banner--error"];
 
   return (
-    <div className={`${styles.banner} ${variantClass}`} role="status">
+    <div className={`${styles.banner} ${variantClass}`} role={variant === "success" ? "status" : "alert"}>
       <span className={styles.bannerText}>{text}</span>
       <button
         type="button"
