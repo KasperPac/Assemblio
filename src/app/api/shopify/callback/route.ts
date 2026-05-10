@@ -72,13 +72,13 @@ export async function GET(request: NextRequest) {
   const oauthConfig = getShopifyOAuthConfig();
   if (!oauthConfig.ok) {
     return NextResponse.redirect(
-      new URL("/app/settings?shopify=config-missing", request.url)
+      new URL("/app/settings/integrations?shopify=config-missing", request.url)
     );
   }
 
   if (!verifyShopifyCallbackHmac(request.nextUrl)) {
     return NextResponse.redirect(
-      new URL("/app/settings?shopify=invalid-hmac", request.url)
+      new URL("/app/settings/integrations?shopify=invalid-hmac", request.url)
     );
   }
 
@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
   const state = request.nextUrl.searchParams.get("state") ?? "";
   if (!isValidShopDomain(shop) || !code || !state) {
     return NextResponse.redirect(
-      new URL("/app/settings?shopify=invalid-callback", request.url)
+      new URL("/app/settings/integrations?shopify=invalid-callback", request.url)
     );
   }
 
@@ -98,14 +98,14 @@ export async function GET(request: NextRequest) {
   const dotIndex = signedCookie.lastIndexOf(".");
   if (dotIndex === -1) {
     return NextResponse.redirect(
-      new URL("/app/settings?shopify=state-missing", request.url)
+      new URL("/app/settings/integrations?shopify=state-missing", request.url)
     );
   }
   const encoded = signedCookie.slice(0, dotIndex);
   const sig = signedCookie.slice(dotIndex + 1);
   if (!encoded || !sig || !verifySignedPayload(encoded, sig)) {
     return NextResponse.redirect(
-      new URL("/app/settings?shopify=state-missing", request.url)
+      new URL("/app/settings/integrations?shopify=state-missing", request.url)
     );
   }
 
@@ -114,21 +114,21 @@ export async function GET(request: NextRequest) {
     parsed = JSON.parse(Buffer.from(encoded, "base64url").toString("utf8"));
   } catch {
     return NextResponse.redirect(
-      new URL("/app/settings?shopify=state-invalid", request.url)
+      new URL("/app/settings/integrations?shopify=state-invalid", request.url)
     );
   }
   if (parsed.exp < Date.now()) {
     return NextResponse.redirect(
-      new URL("/app/settings?shopify=state-expired", request.url)
+      new URL("/app/settings/integrations?shopify=state-expired", request.url)
     );
   }
   if (parsed.nonce !== state) {
     return NextResponse.redirect(
-      new URL("/app/settings?shopify=state-nonce-mismatch", request.url)
+      new URL("/app/settings/integrations?shopify=state-nonce-mismatch", request.url)
     );
   }
   if (parsed.shop !== shop) {
-    const mismatchUrl = new URL("/app/settings", request.url);
+    const mismatchUrl = new URL("/app/settings/integrations", request.url);
     mismatchUrl.searchParams.set("shopify", "state-shop-mismatch");
     mismatchUrl.searchParams.set("expected_shop", parsed.shop);
     mismatchUrl.searchParams.set("returned_shop", shop);
@@ -143,7 +143,7 @@ export async function GET(request: NextRequest) {
     } = await supabase.auth.getUser();
     if (!user) {
       const loginResponse = NextResponse.redirect(
-        new URL("/login?redirect=/app/settings", request.url)
+        new URL("/login?redirect=/app/settings/integrations", request.url)
       );
       clearStateCookie(loginResponse);
       return loginResponse;
@@ -156,7 +156,7 @@ export async function GET(request: NextRequest) {
       .maybeSingle();
     if (!profile?.tenant_id || profile.tenant_id !== parsed.tenantId) {
       return NextResponse.redirect(
-        new URL("/app/settings?shopify=tenant-mismatch", request.url)
+        new URL("/app/settings/integrations?shopify=tenant-mismatch", request.url)
       );
     }
 
@@ -171,7 +171,7 @@ export async function GET(request: NextRequest) {
     );
     if (!tokenResponse.ok) {
       return NextResponse.redirect(
-        new URL("/app/settings?shopify=token-failed", request.url)
+        new URL("/app/settings/integrations?shopify=token-failed", request.url)
       );
     }
     const tokenData = (await tokenResponse.json()) as {
@@ -190,7 +190,7 @@ export async function GET(request: NextRequest) {
     if (result !== "ok") {
       const shopifyParam = result === "conflict" ? "tenant-store-conflict" : result;
       const response = NextResponse.redirect(
-        new URL(`/app/settings?shopify=${shopifyParam}`, request.url)
+        new URL(`/app/settings/integrations?shopify=${shopifyParam}`, request.url)
       );
       clearStateCookie(response);
       return response;
@@ -204,7 +204,7 @@ export async function GET(request: NextRequest) {
     }
 
     const response = NextResponse.redirect(
-      new URL(`/app/settings?shopify=${status}`, request.url)
+      new URL(`/app/settings/integrations?shopify=${status}`, request.url)
     );
     clearStateCookie(response);
     return response;
@@ -219,7 +219,7 @@ export async function GET(request: NextRequest) {
   });
   if (!tokenResponse.ok) {
     const response = NextResponse.redirect(
-      new URL("/app/settings?shopify=token-failed", request.url)
+      new URL("/app/settings/integrations?shopify=token-failed", request.url)
     );
     clearStateCookie(response);
     return response;
@@ -258,7 +258,7 @@ export async function GET(request: NextRequest) {
         }
       }
       const response = NextResponse.redirect(
-        new URL(`/app/settings?shopify=${status}`, request.url)
+        new URL(`/app/settings/integrations?shopify=${status}`, request.url)
       );
       clearStateCookie(response);
       return response;

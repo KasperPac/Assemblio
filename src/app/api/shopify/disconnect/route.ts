@@ -3,7 +3,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 function buildFailedUrl(request: NextRequest, detail: string) {
-  const failedUrl = new URL("/app/settings", request.url);
+  const failedUrl = new URL("/app/settings/integrations", request.url);
   failedUrl.searchParams.set("shopify", "disconnect-failed");
   failedUrl.searchParams.set("sync_error", detail.slice(0, 180));
   return failedUrl;
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    return NextResponse.redirect(new URL("/login?redirect=/app/settings", request.url));
+    return NextResponse.redirect(new URL("/login?redirect=/app/settings/integrations", request.url));
   }
 
   const { data: profile } = await supabase
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     .single();
   if (!profile?.tenant_id) {
     return NextResponse.redirect(
-      new URL("/app/settings?shopify=missing-tenant", request.url)
+      new URL("/app/settings/integrations?shopify=missing-tenant", request.url)
     );
   }
 
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
 
   if (!store) {
     return NextResponse.redirect(
-      new URL("/app/settings?shopify=no-store", request.url)
+      new URL("/app/settings/integrations?shopify=no-store", request.url)
     );
   }
 
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
       .eq("id", store.id);
     if (!statusOnlyUpdateError) {
       return NextResponse.redirect(
-        new URL("/app/settings?shopify=disconnected", request.url)
+        new URL("/app/settings/integrations?shopify=disconnected", request.url)
       );
     }
     return NextResponse.redirect(
@@ -96,6 +96,6 @@ export async function POST(request: NextRequest) {
   }
 
   return NextResponse.redirect(
-    new URL("/app/settings?shopify=disconnected", request.url)
+    new URL("/app/settings/integrations?shopify=disconnected", request.url)
   );
 }

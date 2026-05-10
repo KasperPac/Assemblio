@@ -9,7 +9,7 @@ export default async function ShopifyConnectPage() {
   const pending = verifyPendingInstall(raw);
 
   if (!pending) {
-    redirect("/app/settings?shopify=install-expired");
+    redirect("/app/settings/integrations?shopify=install-expired");
   }
 
   return <ShopifyConnectContent shopDomain={pending.shop} />;

@@ -23,13 +23,13 @@ export async function GET(request: NextRequest) {
 
   if (!oauthConfig.ok) {
     return NextResponse.redirect(
-      new URL("/app/settings?shopify=config-missing", request.url)
+      new URL("/app/settings/integrations?shopify=config-missing", request.url)
     );
   }
 
   if (!isValidShopDomain(shop)) {
     return NextResponse.redirect(
-      new URL("/app/settings?shopify=invalid-shop", request.url)
+      new URL("/app/settings/integrations?shopify=invalid-shop", request.url)
     );
   }
 
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    return NextResponse.redirect(new URL("/login?redirect=/app/settings", request.url));
+    return NextResponse.redirect(new URL("/login?redirect=/app/settings/integrations", request.url));
   }
 
   const { data: profile } = await supabase
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
     .single();
   if (!profile?.tenant_id) {
     return NextResponse.redirect(
-      new URL("/app/settings?shopify=missing-tenant", request.url)
+      new URL("/app/settings/integrations?shopify=missing-tenant", request.url)
     );
   }
 
