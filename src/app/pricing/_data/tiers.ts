@@ -12,11 +12,7 @@ export type FeatureCell =
 
 export type FeatureRow = {
   name: string;
-  starter: FeatureCell;
-  growth: FeatureCell;
-  pro: FeatureCell;
-  enterprise: FeatureCell;
-};
+} & Record<Tier["id"], FeatureCell>;
 
 export type FeatureModule = {
   name: string;
@@ -27,9 +23,9 @@ export type Tier = {
   id: "starter" | "growth" | "pro" | "enterprise";
   name: string;
   tagline: string;
-  annualMonthly: number | null;
-  monthlyMonthly: number | null;
-  annualYearly: number | null;
+  annualMonthly: number | null;   // per-month price when billed annually
+  monthlyMonthly: number | null;  // per-month price when billed monthly
+  annualYearly: number | null;    // total upfront charge for annual billing
   cta: string;
   featured: boolean;
   limits: TierLimit;

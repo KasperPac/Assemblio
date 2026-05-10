@@ -61,4 +61,19 @@ describe("FEATURE_MODULES", () => {
       }
     }
   });
+
+  it("all feature cell values are boolean or non-empty string", () => {
+    for (const mod of FEATURE_MODULES) {
+      for (const feature of mod.features) {
+        for (const key of ["starter", "growth", "pro", "enterprise"] as const) {
+          const val = feature[key];
+          const valid =
+            val === true ||
+            val === false ||
+            (typeof val === "string" && val.trim().length > 0);
+          expect(valid, `${mod.name} > ${feature.name} > ${key}`).toBe(true);
+        }
+      }
+    }
+  });
 });
