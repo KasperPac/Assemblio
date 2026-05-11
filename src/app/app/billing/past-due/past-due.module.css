@@ -1,0 +1,84 @@
+.page {
+  min-height: 100vh;
+  background: var(--bg-page);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+}
+
+.card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-xl);
+  padding: 40px 36px;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+}
+
+.icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--warn, #d97706) 14%, transparent);
+  color: var(--warn, #d97706);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.title {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink-strong);
+  margin: 0 0 12px;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: var(--fs-md);
+  color: var(--ink-muted);
+  margin: 0 0 24px;
+  line-height: 1.55;
+}
+
+.actions {
+  margin: 0 0 16px;
+}
+
+.primary {
+  display: inline-block;
+  width: 100%;
+  padding: 12px 18px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--brand-1);
+  color: var(--ink-on-brand);
+  font-size: var(--fs-md);
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+
+.primary:hover {
+  opacity: 0.88;
+}
+
+.primary:focus-visible {
+  outline: 2px solid var(--brand-1);
+  outline-offset: 2px;
+}
+
+.footnote {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--ink-faint);
+}
