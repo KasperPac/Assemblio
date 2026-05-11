@@ -15,7 +15,7 @@
 }
 
 .leftInner {
-  width: min(420px, 100%);
+  width: min(440px, 100%);
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -38,41 +38,6 @@
   color: var(--ink-muted);
 }
 
-/* ── Tabs ──────────────────────────────────────────── */
-.tabs {
-  display: inline-flex;
-  align-self: flex-start;
-  padding: 4px;
-  border-radius: var(--radius-sm);
-  background: var(--bg-card-2);
-  border: 1px solid var(--stroke);
-}
-
-.tab {
-  appearance: none;
-  border: none;
-  background: transparent;
-  color: var(--ink-muted);
-  font-size: 13px;
-  font-weight: 600;
-  padding: 8px 16px;
-  border-radius: var(--radius-xs);
-  cursor: pointer;
-  transition: color var(--dur-fast) var(--ease-out),
-              background var(--dur-fast) var(--ease-out);
-}
-
-.tab:hover {
-  color: var(--ink-strong);
-}
-
-.tabActive,
-.tabActive:hover {
-  background: var(--bg-card);
-  color: var(--ink-strong);
-  box-shadow: var(--shadow-sm);
-}
-
 /* ── Form ──────────────────────────────────────────── */
 .form {
   display: flex;
@@ -80,7 +45,7 @@
   gap: 14px;
 }
 
-.form label {
+.form > label {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -89,7 +54,9 @@
   color: var(--ink-strong);
 }
 
-.form input {
+.form input[type="text"],
+.form input[type="email"],
+.form input[type="password"] {
   border: 1px solid var(--stroke-card);
   background: var(--bg-input);
   border-radius: var(--radius-sm);
@@ -100,11 +67,15 @@
               box-shadow var(--dur-fast) var(--ease-out);
 }
 
-.form input::placeholder {
+.form input[type="text"]::placeholder,
+.form input[type="email"]::placeholder,
+.form input[type="password"]::placeholder {
   color: var(--ink-faint);
 }
 
-.form input:focus {
+.form input[type="text"]:focus,
+.form input[type="email"]:focus,
+.form input[type="password"]:focus {
   outline: none;
   border-color: #0B2847;
   box-shadow: 0 0 0 3px rgba(11, 40, 71, 0.22);
@@ -141,27 +112,116 @@
   border-color: #1F4880;
 }
 
-.meta {
+.signinLink {
   margin: 8px 0 0;
-  font-size: 12px;
-  color: var(--ink-faint);
-}
-
-.signupLink {
-  margin: 4px 0 0;
   font-size: 13px;
   color: var(--ink-muted);
   text-align: center;
 }
 
-.signupLink a {
+.signinLink a {
   color: var(--ink-strong);
   font-weight: 600;
   text-decoration: none;
 }
 
-.signupLink a:hover {
+.signinLink a:hover {
   text-decoration: underline;
+}
+
+/* ── Plan selector ─────────────────────────────────── */
+.planSelector {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.planSelector legend {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-strong);
+  padding: 0;
+  margin-bottom: 2px;
+}
+
+.planChips {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.planChip {
+  appearance: none;
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  border: 1px solid var(--stroke);
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out);
+}
+
+.planChip:hover {
+  background: var(--surface-hover);
+}
+
+.planChipActive,
+.planChipActive:hover {
+  background: var(--brand-1);
+  color: var(--ink-on-brand);
+  border-color: var(--brand-1);
+}
+
+.billingToggle {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--ink-muted);
+  margin-top: 4px;
+}
+
+.billingOption {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.billingOption input[type="radio"] {
+  margin: 0;
+  accent-color: var(--brand-1);
+}
+
+/* ── Limits preview ────────────────────────────────── */
+.limitsPreview {
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
+  padding: 12px 14px;
+  border-radius: 10px;
+}
+
+.limitsPreview strong {
+  display: block;
+  color: var(--ink-strong);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.limitsPreview p {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 /* ── Right: brand panel ────────────────────────────── */
@@ -217,28 +277,6 @@
   line-height: 1.55;
   color: rgba(255, 255, 255, 0.78);
   max-width: 38ch;
-}
-
-.quote {
-  margin-top: 24px;
-  padding: 20px 22px;
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.quote p {
-  margin: 0 0 10px;
-  font-size: 14px;
-  line-height: 1.55;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.quoteAttribution {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.6);
 }
 
 /* ── Responsive ────────────────────────────────────── */
