@@ -307,6 +307,90 @@
   font-weight: var(--fw-semibold);
 }
 
+/* xero-manage.tsx */
+.connectButton {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  background: var(--brand-1);
+  color: var(--ink-on-brand);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.connectButton:hover {
+  background: var(--brand-2);
+}
+
+.integrationSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.integrationRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.integrationInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.integrationName {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--ink-strong);
+}
+
+.integrationDesc {
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+}
+
+.integrationConnected {
+  font-size: var(--fs-sm);
+  color: var(--ok);
+}
+
+.syncTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+}
+
+.syncTable th {
+  text-align: left;
+  font-weight: var(--fw-semibold);
+  color: var(--ink-faint);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  padding: var(--space-1) var(--space-2) var(--space-2) 0;
+  border-bottom: 1px solid var(--stroke);
+}
+
+.syncTable td {
+  padding: var(--space-2) var(--space-2) var(--space-2) 0;
+  border-bottom: 1px solid var(--stroke);
+  vertical-align: top;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* status-banner.tsx */
 .banner {
   display: flex;

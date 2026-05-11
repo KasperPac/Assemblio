@@ -4,6 +4,7 @@ import PageHeader from "../../_ui/page-header";
 import StatusBadge from "../../_ui/status-badge";
 import ShopifyManage from "./shopify-manage";
 import StatusBanner from "./status-banner";
+import XeroManage from "./xero-manage";
 import styles from "./integrations.module.css";
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
     sync_error?: string;
     products?: string;
     orders?: string;
+    xero?: string;
   }>;
 };
 
@@ -23,8 +25,9 @@ export default async function IntegrationsPage({ searchParams }: Props) {
   }
 
   const params = (await searchParams) ?? {};
+  const { supabase, tenantId } = ctx;
 
-  const { data: stores } = await ctx.supabase
+  const { data: stores } = await supabase
     .from("shopify_store")
     .select(
       "id,store_domain,status,created_at,last_synced_at,last_sync_status,last_sync_meta"
@@ -33,6 +36,24 @@ export default async function IntegrationsPage({ searchParams }: Props) {
     .limit(10);
 
   const connected = (stores ?? []).some((s) => s.status === "active");
+
+  const { data: xeroConnection } = await supabase
+    .from("accounting_connection")
+    .select("id, account_name, is_active")
+    .eq("tenant_id", tenantId)
+    .eq("provider", "xero")
+    .eq("is_active", true)
+    .maybeSingle();
+
+  const { data: xeroSyncs } = xeroConnection
+    ? await supabase
+        .from("accounting_sync_event")
+        .select("id, status, error, synced_at, external_id")
+        .eq("tenant_id", tenantId)
+        .eq("connection_id", xeroConnection.id)
+        .order("synced_at", { ascending: false })
+        .limit(5)
+    : { data: [] };
 
   return (
     <>
@@ -63,6 +84,29 @@ export default async function IntegrationsPage({ searchParams }: Props) {
             </p>
           </div>
           <ShopifyManage stores={stores ?? []} />
+        </div>
+
+        <div className={styles.card}>
+          <div className={styles.cardHeader}>
+            <div className={styles.cardTitleRow}>
+              <span className={styles.cardName}>Xero</span>
+              <StatusBadge variant={xeroConnection ? "success" : "warning"}>
+                {xeroConnection ? "Connected" : "Not connected"}
+              </StatusBadge>
+            </div>
+          </div>
+          <XeroManage
+            connected={!!xeroConnection}
+            accountName={xeroConnection?.account_name ?? undefined}
+            recentSyncs={(xeroSyncs ?? []) as Array<{
+              id: string;
+              status: "synced" | "failed";
+              error: string | null;
+              synced_at: string;
+              external_id: string | null;
+            }>}
+            xeroParam={params.xero}
+          />
         </div>
       </div>
     </>
