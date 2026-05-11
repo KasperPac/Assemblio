@@ -148,7 +148,6 @@ export default async function ActualTimePage({ searchParams }: Props) {
       <div className={styles.header}>
         <div>
           <span className={styles.eyebrow}>Actuals</span>
-          <h1>Actual Time</h1>
           <p>
             Post manual hours against live jobs now, then evolve into
             staff-level clock on and clock off later.

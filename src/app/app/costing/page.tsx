@@ -124,7 +124,6 @@ export default async function CostingPage({ searchParams }: Props) {
       <div className={styles.header}>
         <div>
           <span className={styles.eyebrow}>Profitability Engine</span>
-          <h1>Costing</h1>
           <p>
             Planned and actual job costing with frozen cost snapshots and
             margin visibility.

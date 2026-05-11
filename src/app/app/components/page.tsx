@@ -86,8 +86,6 @@ export default async function ComponentsPage({ searchParams }: Props) {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Components"
-        title="Component catalog"
         description={`${filtered.length} of ${allComponents.length} components in the current catalog.`}
         actions={<ComponentCreateForm action={createComponent} lookups={lookups} />}
       />

@@ -67,8 +67,6 @@ export default async function TemplatesPage() {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="BOM templates"
-        title="Reusable material packs"
         description={`${typedTemplates.length} template${typedTemplates.length !== 1 ? "s" : ""} available for repeatable BOM composition.`}
         actions={<CreateTemplateButton />}
       />

@@ -74,8 +74,6 @@ export default async function StocktakePage() {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Stocktake"
-        title="Inventory counts"
         description="Manage physical counts and reconcile inventory discrepancies."
         actions={
           <button className={styles.primary} popoverTarget="new-stocktake-dialog">

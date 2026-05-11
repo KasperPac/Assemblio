@@ -10,7 +10,7 @@ type Breadcrumb = {
 type Props = {
   breadcrumbs?: Breadcrumb[];
   eyebrow?: string;
-  title: string;
+  title?: string;
   description?: string;
   actions?: ReactNode;
 };
@@ -36,7 +36,7 @@ export default function PageHeader({
           </div>
         ) : null}
         {eyebrow ? <span className={styles.eyebrow}>{eyebrow}</span> : null}
-        <h1 className={styles.title}>{title}</h1>
+        {title ? <h1 className={styles.title}>{title}</h1> : null}
         {description ? <p className={styles.description}>{description}</p> : null}
       </div>
       {actions ? <div className={styles.actions}>{actions}</div> : null}

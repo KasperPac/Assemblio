@@ -78,8 +78,6 @@ export default function HelpPage() {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Help"
-        title="Operator runbooks"
         description="Quick links, common procedures, and the core commands used to operate and troubleshoot Assemblio."
       />
 

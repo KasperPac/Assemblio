@@ -172,7 +172,6 @@ export default async function ReportsHubPage() {
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.pageTitle}>Reports</h1>
       <p className={styles.pageDesc}>
         Live data across inventory, purchasing, and system health.
       </p>

@@ -26,7 +26,6 @@ export default async function TeamPage() {
     <>
       <PageHeader
         eyebrow="Workspace"
-        title="Team"
         description="Members, roles, and invitations."
       />
       <div className={styles.page}>

@@ -176,7 +176,6 @@ export default async function ProductsPage({ searchParams }: Props) {
     <div className={styles.page}>
       <div className={styles.header}>
         <div>
-          <h1>Products</h1>
           <p>
             {filteredProducts.length} of {products.length} Products
           </p>

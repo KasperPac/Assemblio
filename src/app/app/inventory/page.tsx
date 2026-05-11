@@ -76,8 +76,6 @@ export default async function InventoryPage() {
     return (
       <section className={styles.page}>
         <PageHeader
-          eyebrow="Inventory"
-          title="Inventory operations"
           description="Record movements and monitor live component availability across locations."
         />
         <div className={styles.errorPanel}>
@@ -121,8 +119,6 @@ export default async function InventoryPage() {
   return (
     <section className={styles.page}>
       <PageHeader
-        eyebrow="Inventory"
-        title="Inventory operations"
         description="Record movements, monitor component availability, and inspect the latest ledger activity without leaving the operator flow."
         actions={
           <a className={styles.export} href="/app/inventory/export">

@@ -67,7 +67,6 @@ export default async function DepartmentsPage({ searchParams }: Props) {
     <div className={styles.page}>
       <div className={styles.header}>
         <div>
-          <h1>Departments</h1>
           <p>Work centres for the planning floor board. Each department gets its own queue column.</p>
         </div>
         {activeCount > 0 && (

@@ -28,7 +28,6 @@ export default async function InvoicesPage() {
     <>
       <PageHeader
         eyebrow="Workspace"
-        title="Invoices"
         description="Monthly subscription invoices for your workspace."
       />
 

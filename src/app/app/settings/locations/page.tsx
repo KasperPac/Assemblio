@@ -20,7 +20,6 @@ export default async function LocationsPage() {
     <>
       <PageHeader
         eyebrow="Workspace"
-        title="Locations"
         description="Set the default warehouse location used across the workspace."
       />
       <div className={styles.list}>

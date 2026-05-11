@@ -74,8 +74,6 @@ export default async function SuppliersPage({
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Suppliers"
-        title="Supplier directory"
         description="Manage suppliers used throughout purchasing and inbound stock workflows."
         actions={<SupplierCreateForm action={createSupplier} />}
       />

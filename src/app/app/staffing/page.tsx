@@ -178,7 +178,6 @@ export default async function StaffingPage({ searchParams }: Props) {
       <div className={styles.header}>
         <div>
           <span className={styles.eyebrow}>Labor Model</span>
-          <h1>Staffing</h1>
           <p>
             Rates, contracted hours, and weekly availability that feed costing
             and capacity calculations.

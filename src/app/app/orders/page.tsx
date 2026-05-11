@@ -119,8 +119,6 @@ export default async function OrdersPage({ searchParams }: Props) {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Orders"
-        title="Order queue"
         description="Orders sync and allocate automatically. Re-run allocation from the order detail if BOMs change."
         actions={
           <form method="post" action="/api/shopify/sync?return_to=/app/orders">

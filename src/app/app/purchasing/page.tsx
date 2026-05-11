@@ -71,8 +71,6 @@ export default async function PurchasingPage() {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Purchasing"
-        title="Purchase flow"
         description="Create inbound purchase orders, manage status changes, and keep received quantities aligned with component demand."
       />
 

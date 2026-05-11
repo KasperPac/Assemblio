@@ -74,8 +74,6 @@ export default async function BomPage() {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="BOM"
-        title="BOM management"
         description="Maintain versioned bills of materials per Shopify variant and keep component quantities editable in one place."
       />
 

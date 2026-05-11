@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-import { getRouteMeta } from "./route-meta";
+import { getRouteMeta, getDynamicBreadcrumbs } from "./route-meta";
 import { signOut, switchActiveTenant } from "./actions";
 import styles from "./shell.module.css";
 
@@ -17,7 +17,8 @@ type Props = {
 export default function Topbar({ userInitial, selectableTenants, currentTenantId, tenantName }: Props) {
   const pathname = usePathname();
   const meta = getRouteMeta(pathname);
-  const showBreadcrumb = meta.crumbs.length > 1;
+  const crumbs = getDynamicBreadcrumbs(pathname);
+  const showBreadcrumb = crumbs.length > 0;
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -34,15 +35,18 @@ export default function Topbar({ userInitial, selectableTenants, currentTenantId
       <div className={styles.topbarIntro}>
         {showBreadcrumb && (
           <div className={styles.breadcrumb}>
-            {meta.crumbs.map((crumb, index) => (
-              <span
-                key={`${crumb}-${index}`}
-                className={index === meta.crumbs.length - 1 ? styles.breadcrumbCurrent : styles.breadcrumbMuted}
-              >
+            {crumbs.map((crumb, index) => (
+              <span key={`${crumb.href}-${index}`} className={styles.breadcrumbMuted}>
                 {index > 0 && <span className={styles.breadcrumbSep}>/</span>}
-                {crumb}
+                <Link href={crumb.href} className={styles.breadcrumbLink}>
+                  {crumb.label}
+                </Link>
               </span>
             ))}
+            <span className={styles.breadcrumbCurrent}>
+              <span className={styles.breadcrumbSep}>/</span>
+              {meta.title}
+            </span>
           </div>
         )}
         <div className={styles.topbarHeading}>

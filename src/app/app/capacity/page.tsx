@@ -90,7 +90,6 @@ export default async function CapacityPage({ searchParams }: Props) {
       <div className={styles.header}>
         <div>
           <span className={styles.eyebrow}>Weekly Planner</span>
-          <h1>Capacity Planner</h1>
           <p>
             Weekly department loading based on labor BOM demand versus available
             staffing capacity.

@@ -251,3 +251,31 @@ const ROUTES: RouteDefinition[] = [
 export function getRouteMeta(pathname: string | null | undefined): AppRouteMeta {
   return ROUTES.find((candidate) => pathname?.startsWith(candidate.prefix)) ?? ROUTES[ROUTES.length - 1];
 }
+
+export type DynamicCrumb = { label: string; href: string };
+
+/**
+ * Walk up the path and build a crumb trail from the parent route segments.
+ * Detail routes (route-meta prefixes ending with "/") are skipped so that
+ * /app/products/variants/abc only yields `Products`, not `Product Detail`.
+ * The current page (last segment) is not included — that's the topbar title.
+ */
+export function getDynamicBreadcrumbs(pathname: string | null | undefined): DynamicCrumb[] {
+  if (!pathname) return [];
+  const segments = pathname.split("/").filter(Boolean);
+  if (segments.length <= 2) return []; // "/app" or "/app/x" have no parent crumbs
+
+  const crumbs: DynamicCrumb[] = [];
+  const seen = new Set<string>();
+  for (let i = segments.length - 1; i > 1; i--) {
+    const parentPath = "/" + segments.slice(0, i).join("/");
+    const match = ROUTES.find(
+      (r) => parentPath.startsWith(r.prefix) && !r.prefix.endsWith("/"),
+    );
+    if (match && !seen.has(match.prefix)) {
+      seen.add(match.prefix);
+      crumbs.unshift({ label: match.title, href: match.prefix });
+    }
+  }
+  return crumbs;
+}
