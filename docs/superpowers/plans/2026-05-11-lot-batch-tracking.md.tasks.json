@@ -1,0 +1,40 @@
+{
+  "planPath": "docs/superpowers/plans/2026-05-11-lot-batch-tracking.md",
+  "tasks": [
+    {
+      "id": 13,
+      "subject": "Lots Task 1: DB schema — inventory_lot + delivery_receipt_line columns",
+      "status": "pending",
+      "description": "**Goal:** Add lot_number and expiry_date to delivery_receipt_line; create inventory_lot table.\n\n**Files:**\n- Create: `supabase/patches/lot_tracking.sql`\n\n**Acceptance Criteria:**\n- [ ] delivery_receipt_line has nullable lot_number and expiry_date columns\n- [ ] inventory_lot table exists with all columns\n- [ ] RLS enabled with current_tenant_id() policy\n- [ ] Unique constraint on (tenant_id, component_id, lot_number)\n\n**Verify:** Run patch → information_schema.columns shows lot_number and expiry_date on delivery_receipt_line.\n\n```json:metadata\n{\"files\": [\"supabase/patches/lot_tracking.sql\"], \"verifyCommand\": \"supabase sql editor\", \"acceptanceCriteria\": [\"lot_number column exists\", \"expiry_date column exists\", \"inventory_lot table exists\", \"unique constraint on lot number\"]}\n```"
+    },
+    {
+      "id": 14,
+      "subject": "Lots Task 2: Lot lib — createLots and getLotsByComponent",
+      "status": "pending",
+      "blockedBy": [13],
+      "description": "**Goal:** createLots (upsert, ignores duplicates) and getLotsByComponent (ordered by expiry ASC nulls last).\n\n**Files:**\n- Create: `src/lib/inventory/lots.ts`\n\n**Acceptance Criteria:**\n- [ ] createLots skips lines with empty lot_number\n- [ ] createLots uses upsert with ignoreDuplicates=true\n- [ ] getLotsByComponent orders by expiry_date ASC nulls last\n\n**Verify:** Call from app → insert lot → fetch it back.\n\n```json:metadata\n{\"files\": [\"src/lib/inventory/lots.ts\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"createLots inserts lots\", \"createLots is idempotent\", \"getLotsByComponent returns ordered lots\"]}\n```"
+    },
+    {
+      "id": 15,
+      "subject": "Lots Task 3: Update goods-inwards action — accept and persist lot data",
+      "status": "pending",
+      "blockedBy": [13, 14],
+      "description": "**Goal:** Extend DeliveryReceiptLineInput with lot fields and create inventory_lot records after the RPC.\n\n**Files:**\n- Modify: `src/app/app/goods-inwards/actions.ts`\n\n**Acceptance Criteria:**\n- [ ] DeliveryReceiptLineInput has lot_number and expiry_date fields\n- [ ] createLots called after receive_delivery_receipt RPC succeeds\n- [ ] Lot creation failure is non-fatal\n- [ ] activity_log metadata includes lots_count\n\n**Verify:** Create delivery receipt with lot number → Supabase inventory_lot has new row.\n\n```json:metadata\n{\"files\": [\"src/app/app/goods-inwards/actions.ts\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"DeliveryReceiptLineInput has lot fields\", \"inventory_lot rows created\", \"lot failure non-fatal\"]}\n```"
+    },
+    {
+      "id": 16,
+      "subject": "Lots Task 4: Update goods-inwards new receipt UI — lot and expiry fields",
+      "status": "pending",
+      "blockedBy": [15],
+      "description": "**Goal:** Add optional lot number and expiry date inputs to each receipt line in the new delivery receipt form.\n\n**Files:**\n- Modify: `src/app/app/goods-inwards/new/page.tsx`\n\n**Acceptance Criteria:**\n- [ ] Each line row has a lot number text input (optional)\n- [ ] Expiry date input only shown when lot number is filled\n- [ ] lot_number and expiry_date included in submitted JSON\n- [ ] Empty lot_number submits as null\n\n**Verify:** npm run dev → Goods Inwards → New Receipt → lot fields visible → submit → inventory_lot row created.\n\n```json:metadata\n{\"files\": [\"src/app/app/goods-inwards/new/page.tsx\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"lot number input on each line\", \"expiry date conditional on lot number\", \"fields in form submission\"]}\n```"
+    },
+    {
+      "id": 17,
+      "subject": "Lots Task 5: Component lots view — lot balance tab",
+      "status": "pending",
+      "blockedBy": [13, 14],
+      "description": "**Goal:** Show all lots held for a component on its detail page, ordered by expiry, with warning for lots expiring ≤30 days.\n\n**Files:**\n- Create: `src/app/app/components/[componentId]/lots-tab.tsx`\n- Modify: `src/app/app/components/[componentId]/page.tsx`\n\n**Acceptance Criteria:**\n- [ ] Lots section shows lot number, qty received, expiry date, received date\n- [ ] Lots expiring ≤30 days use var(--warning) colour\n- [ ] Empty state when no lots exist\n\n**Verify:** npm run dev → Components → component with lots → Lots section shows correct data.\n\n```json:metadata\n{\"files\": [\"src/app/app/components/[componentId]/lots-tab.tsx\", \"src/app/app/components/[componentId]/page.tsx\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"lots tab shows lot data\", \"expiry warning colour applied\", \"empty state shown\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-05-11T00:00:00.000Z"
+}

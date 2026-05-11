@@ -1,0 +1,40 @@
+{
+  "planPath": "docs/superpowers/plans/2026-05-11-xero-integration.md",
+  "tasks": [
+    {
+      "id": 8,
+      "subject": "Xero Task 1: DB schema — accounting_connection + accounting_sync_event",
+      "status": "pending",
+      "description": "**Goal:** Create the two tables that store Xero connection credentials and bill sync history per tenant.\n\n**Files:**\n- Create: `supabase/patches/accounting_integration.sql`\n\n**Acceptance Criteria:**\n- [ ] accounting_connection table exists with all columns\n- [ ] accounting_sync_event table exists with all columns\n- [ ] RLS enabled on both with current_tenant_id() policy\n- [ ] Unique partial index on (tenant_id, provider) where is_active\n\n**Verify:** Run patch in Supabase SQL editor → \\d accounting_connection shows all columns.\n\n```json:metadata\n{\"files\": [\"supabase/patches/accounting_integration.sql\"], \"verifyCommand\": \"supabase sql editor\", \"acceptanceCriteria\": [\"accounting_connection table exists\", \"accounting_sync_event table exists\", \"RLS enabled on both\", \"unique partial index\"]}\n```"
+    },
+    {
+      "id": 9,
+      "subject": "Xero Task 2: Xero OAuth lib — xero.ts",
+      "status": "pending",
+      "blockedBy": [8],
+      "description": "**Goal:** Implement buildXeroAuthUrl, exchangeXeroCode, refreshXeroToken, getXeroOrgs, createXeroBill as pure async functions.\n\n**Files:**\n- Create: `src/lib/accounting/xero.ts`\n\n**Acceptance Criteria:**\n- [ ] buildXeroAuthUrl(state) returns valid Xero auth URL\n- [ ] exchangeXeroCode(code) returns XeroTokenSet\n- [ ] refreshXeroToken(refreshToken) returns XeroTokenSet\n- [ ] getXeroOrgs(accessToken) returns XeroOrg[]\n- [ ] createXeroBill returns InvoiceID string\n- [ ] All functions throw on non-2xx responses\n\n**Verify:** `npx tsx -e \"import { buildXeroAuthUrl } from './src/lib/accounting/xero'; console.log(buildXeroAuthUrl('test'))\"` → prints Xero URL.\n\n```json:metadata\n{\"files\": [\"src/lib/accounting/xero.ts\"], \"verifyCommand\": \"npx tsx -e \\\"import { buildXeroAuthUrl } from './src/lib/accounting/xero'; console.log(buildXeroAuthUrl('test'))\\\"\", \"acceptanceCriteria\": [\"buildXeroAuthUrl works\", \"exchangeXeroCode works\", \"createXeroBill works\"]}\n```"
+    },
+    {
+      "id": 10,
+      "subject": "Xero Task 3: OAuth routes — install, callback, disconnect",
+      "status": "pending",
+      "blockedBy": [9],
+      "description": "**Goal:** Three Next.js route handlers for the full Xero OAuth lifecycle.\n\n**Files:**\n- Create: `src/app/api/xero/install/route.ts`\n- Create: `src/app/api/xero/callback/route.ts`\n- Create: `src/app/api/xero/disconnect/route.ts`\n\n**Acceptance Criteria:**\n- [ ] /api/xero/install redirects admin to Xero auth page\n- [ ] /api/xero/callback upserts accounting_connection, redirects to ?xero=connected\n- [ ] /api/xero/disconnect deactivates connection, redirects to ?xero=disconnected\n- [ ] State cookie prevents CSRF\n\n**Verify:** npm run dev → Settings → Integrations → Connect Xero → Xero login opens.\n\n```json:metadata\n{\"files\": [\"src/app/api/xero/install/route.ts\", \"src/app/api/xero/callback/route.ts\", \"src/app/api/xero/disconnect/route.ts\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"install redirects to Xero\", \"callback creates accounting_connection\", \"disconnect deactivates connection\"]}\n```"
+    },
+    {
+      "id": 11,
+      "subject": "Xero Task 4: Push bill lib + goods-inwards trigger",
+      "status": "pending",
+      "blockedBy": [8, 9, 10],
+      "description": "**Goal:** pushBillToAccounting() that creates a Xero bill from a delivery receipt, wired into createDeliveryReceipt.\n\n**Files:**\n- Create: `src/lib/accounting/push-bill.ts`\n- Modify: `src/app/app/goods-inwards/actions.ts`\n\n**Acceptance Criteria:**\n- [ ] No active connection → returns silently\n- [ ] Expired token → refreshed before bill creation\n- [ ] Lines with null cost_per_unit excluded\n- [ ] Result logged to accounting_sync_event\n- [ ] Receipt creation never fails due to push error\n\n**Verify:** Create delivery receipt with costed line → check accounting_sync_event for status='synced'.\n\n```json:metadata\n{\"files\": [\"src/lib/accounting/push-bill.ts\", \"src/app/app/goods-inwards/actions.ts\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"push no-ops when no connection\", \"token refresh works\", \"bill created in Xero\", \"sync event logged\"]}\n```"
+    },
+    {
+      "id": 12,
+      "subject": "Xero Task 5: Settings UI — Xero connect panel",
+      "status": "pending",
+      "blockedBy": [8, 11],
+      "description": "**Goal:** Xero connect/disconnect panel with sync event history in Settings → Integrations.\n\n**Files:**\n- Create: `src/app/app/settings/integrations/xero-manage.tsx`\n- Modify: `src/app/app/settings/integrations/page.tsx`\n\n**Acceptance Criteria:**\n- [ ] Disconnected: shows Connect Xero link\n- [ ] Connected: shows org name, Disconnect button, last 5 sync events\n- [ ] ?xero=connected/disconnected/error shows appropriate banner\n\n**Verify:** npm run dev → Settings → Integrations → Xero section visible and functional.\n\n```json:metadata\n{\"files\": [\"src/app/app/settings/integrations/xero-manage.tsx\", \"src/app/app/settings/integrations/page.tsx\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"Xero section visible\", \"connect/disconnect works\", \"sync events shown\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-05-11T00:00:00.000Z"
+}
