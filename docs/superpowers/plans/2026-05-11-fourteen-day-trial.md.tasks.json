@@ -67,14 +67,14 @@
     {
       "id": 10,
       "subject": "Task 9: Stripe Customer Portal API",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [1, 2],
       "description": "**Goal:** POST /api/billing/portal redirects to Stripe Customer Portal session.\n\n**Files:** src/app/api/billing/portal/route.ts\n\n```json:metadata\n{\"files\":[\"src/app/api/billing/portal/route.ts\"],\"verifyCommand\":\"\",\"acceptanceCriteria\":[\"Unauthed POST → 401\",\"Missing stripe_customer_id → 400\",\"Valid customer → 303 to Portal URL\"]}\n```"
     },
     {
       "id": 11,
       "subject": "Task 10: Stripe webhook handler + idempotency",
-      "status": "pending",
+      "status": "in_progress",
       "blockedBy": [1, 2],
       "description": "**Goal:** POST /api/webhooks/stripe verifies signature (with rotation support), inserts into stripe_event_log for idempotency, dispatches 5 event types.\n\n**Files:** src/app/api/webhooks/stripe/route.ts, src/lib/stripe/webhook-events.ts, webhook-events.test.ts\n\n```json:metadata\n{\"files\":[\"src/app/api/webhooks/stripe/route.ts\",\"src/lib/stripe/webhook-events.ts\",\"src/lib/stripe/webhook-events.test.ts\"],\"verifyCommand\":\"npm test -- src/lib/stripe/webhook-events.test.ts\",\"acceptanceCriteria\":[\"Invalid signature → 400\",\"Duplicate event_id is a no-op\",\"checkout.session.completed → status='active' + sub/tier/interval/period\",\"invoice.payment_failed → past_due\",\"invoice.payment_succeeded (from past_due) → active\",\"customer.subscription.updated re-syncs tier/period\",\"customer.subscription.deleted → canceled\",\"Tries both STRIPE_WEBHOOK_SECRET and _NEXT\"]}\n```"
     },
