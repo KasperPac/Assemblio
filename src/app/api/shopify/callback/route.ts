@@ -197,15 +197,19 @@ export async function GET(request: NextRequest) {
     }
 
     let status = "connected";
+    let webhookErrorMsg: string | null = null;
     try {
       await registerRequiredWebhooks(shop, tokenData.access_token);
-    } catch {
+    } catch (err) {
       status = "connected-webhooks-failed";
+      webhookErrorMsg = err instanceof Error ? err.message : String(err);
+      console.error("[shopify/callback] webhook registration failed (PATH A):", webhookErrorMsg);
     }
 
-    const response = NextResponse.redirect(
-      new URL(`/app/settings/integrations?shopify=${status}`, request.url)
-    );
+    const successUrl = new URL("/app/settings/integrations", request.url);
+    successUrl.searchParams.set("shopify", status);
+    if (webhookErrorMsg) successUrl.searchParams.set("sync_error", webhookErrorMsg);
+    const response = NextResponse.redirect(successUrl);
     clearStateCookie(response);
     return response;
   }
@@ -250,16 +254,20 @@ export async function GET(request: NextRequest) {
         tokenData.scope ?? ""
       );
       let status = result === "ok" ? "connected" : result;
+      let webhookErrorMsg: string | null = null;
       if (result === "ok") {
         try {
           await registerRequiredWebhooks(shop, tokenData.access_token);
-        } catch {
+        } catch (err) {
           status = "connected-webhooks-failed";
+          webhookErrorMsg = err instanceof Error ? err.message : String(err);
+          console.error("[shopify/callback] webhook registration failed (PATH B):", webhookErrorMsg);
         }
       }
-      const response = NextResponse.redirect(
-        new URL(`/app/settings/integrations?shopify=${status}`, request.url)
-      );
+      const pathBUrl = new URL("/app/settings/integrations", request.url);
+      pathBUrl.searchParams.set("shopify", status);
+      if (webhookErrorMsg) pathBUrl.searchParams.set("sync_error", webhookErrorMsg);
+      const response = NextResponse.redirect(pathBUrl);
       clearStateCookie(response);
       return response;
     }
