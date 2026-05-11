@@ -81,14 +81,14 @@
     {
       "id": 12,
       "subject": "Task 11: Email wrapper + four templates",
-      "status": "in_progress",
+      "status": "completed",
       "blockedBy": [1],
       "description": "**Goal:** Resend wrapper + invitation + 3 trial-reminder templates.\n\n**Files:** src/lib/email/send.ts, send.test.ts, templates/invitation.tsx, trial-reminder-3.tsx, trial-reminder-1.tsx, trial-expired.tsx\n\n```json:metadata\n{\"files\":[\"src/lib/email/send.ts\",\"src/lib/email/send.test.ts\",\"src/lib/email/templates/invitation.tsx\",\"src/lib/email/templates/trial-reminder-3.tsx\",\"src/lib/email/templates/trial-reminder-1.tsx\",\"src/lib/email/templates/trial-expired.tsx\"],\"verifyCommand\":\"npm test -- src/lib/email/\",\"acceptanceCriteria\":[\"sendEmail returns {ok:true,id} or {ok:false,error} - never throws\",\"Requires RESEND_API_KEY and RESEND_FROM\",\"Each template renders with interpolated tenantName/inviter/etc.\"]}\n```"
     },
     {
       "id": 13,
       "subject": "Task 12: Trial reminder cron",
-      "status": "pending",
+      "status": "in_progress",
       "blockedBy": [2, 12],
       "description": "**Goal:** Daily Vercel Cron at /api/cron/trial-reminders walks trialing subs, sends correct email once per (tenant, kind).\n\n**Files:** src/app/api/cron/trial-reminders/route.ts, src/lib/subscription/reminders.ts, reminders.test.ts; modify vercel.json.\n\n```json:metadata\n{\"files\":[\"src/app/api/cron/trial-reminders/route.ts\",\"src/lib/subscription/reminders.ts\",\"src/lib/subscription/reminders.test.ts\",\"vercel.json\"],\"verifyCommand\":\"npm test -- src/lib/subscription/reminders.test.ts\",\"acceptanceCriteria\":[\"Bad CRON_SECRET → 401\",\"Correct kind sent based on daysUntilEnd\",\"trial_email_log unique constraint prevents duplicate sends\",\"Tenants with status!=trialing are skipped\",\"vercel.json registers schedule 0 14 * * *\"]}\n```"
     },
