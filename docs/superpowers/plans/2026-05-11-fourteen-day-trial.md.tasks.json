@@ -46,14 +46,14 @@
     {
       "id": 7,
       "subject": "Task 6: Paywall + past-due + success pages",
-      "status": "in_progress",
+      "status": "completed",
       "blockedBy": [6],
       "description": "**Goal:** UI shells for billing state pages. Buttons POST to Stripe routes (wired in T8/T9).\n\n**Files:** src/app/app/billing/paywall/page.tsx + .module.css, past-due/page.tsx + .module.css, success/page.tsx\n\n```json:metadata\n{\"files\":[\"src/app/app/billing/paywall/page.tsx\",\"src/app/app/billing/paywall/paywall.module.css\",\"src/app/app/billing/past-due/page.tsx\",\"src/app/app/billing/past-due/past-due.module.css\",\"src/app/app/billing/success/page.tsx\"],\"verifyCommand\":\"\",\"acceptanceCriteria\":[\"/paywall renders three tier cards with annual/monthly toggle\",\"Pre-selects tenant's selected_tier\",\"Each card POSTs to /api/billing/checkout\",\"/past-due has POST form to /api/billing/portal\",\"/success welcomes user and links to /app\"]}\n```"
     },
     {
       "id": 8,
       "subject": "Task 7: Trial banner + past-due banner",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [6],
       "description": "**Goal:** Two server components rendered at top of app shell content area based on subscription state.\n\n**Files:** src/app/app/_components/trial-banner.tsx + .module.css, past-due-banner.tsx + .module.css; modify src/app/app/layout.tsx.\n\n```json:metadata\n{\"files\":[\"src/app/app/_components/trial-banner.tsx\",\"src/app/app/_components/trial-banner.module.css\",\"src/app/app/_components/past-due-banner.tsx\",\"src/app/app/_components/past-due-banner.module.css\",\"src/app/app/layout.tsx\"],\"verifyCommand\":\"\",\"acceptanceCriteria\":[\"Trial banner shows correct daysLeft + selected_tier when trialing\",\"Upgrade now → /app/billing/paywall\",\"Past-due banner shows during soft-warn window\",\"Banners hidden for status=active\"]}\n```"
     },

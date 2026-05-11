@@ -23,8 +23,8 @@
   height: 56px;
   margin: 0 auto 20px;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--warn, #d97706) 14%, transparent);
-  color: var(--warn, #d97706);
+  background: var(--warning-dim);
+  color: var(--warning);
   display: flex;
   align-items: center;
   justify-content: center;

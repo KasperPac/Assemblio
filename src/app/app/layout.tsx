@@ -7,6 +7,10 @@ import { signOut, switchActiveTenant } from "./actions";
 import SidebarNav from "./sidebar-nav";
 import Topbar from "./topbar";
 import { requireActiveSubscription } from "./_lib/require-active-subscription";
+import { TrialBanner } from "./_components/trial-banner";
+import { PastDueBanner } from "./_components/past-due-banner";
+import { pastDueSoftLocked } from "@/lib/plans";
+import type { AccessResult } from "@/lib/subscription/access";
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const pathname = (await headers()).get("x-pathname") ?? ""; // set by middleware on /app/* only
@@ -79,9 +83,17 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   // Subscription gate: redirects to /app/billing/paywall or /app/billing/past-due
   // when the tenant's subscription state requires it. /app/billing/* routes are
   // already short-circuited above, so this only fires on non-billing routes.
+  let access: AccessResult | null = null;
   if (profile?.tenant_id) {
-    await requireActiveSubscription(supabase, profile.tenant_id);
+    access = await requireActiveSubscription(supabase, profile.tenant_id);
   }
+  const sub = access?.sub ?? null;
+  const trialDaysLeft =
+    sub?.status === "trialing" && typeof access?.daysLeft === "number"
+      ? access.daysLeft
+      : null;
+  const showPastDueBanner =
+    sub?.status === "past_due" && pastDueSoftLocked(sub);
 
   return (
     <div className={styles.shell}>
@@ -107,7 +119,13 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           selectableTenants={selectableTenants}
           currentTenantId={profile?.tenant_id ?? ""}
         />
-        {/* TODO Task 7: render trial banner — re-fetch access here or thread it from requireActiveSubscription */}
+        {trialDaysLeft !== null && sub ? (
+          <TrialBanner
+            daysLeft={trialDaysLeft}
+            selectedTier={sub.selected_tier}
+          />
+        ) : null}
+        {showPastDueBanner ? <PastDueBanner /> : null}
         <section className={styles.content}>{children}</section>
       </div>
     </div>
