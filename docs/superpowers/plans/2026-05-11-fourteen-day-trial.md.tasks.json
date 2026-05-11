@@ -88,14 +88,14 @@
     {
       "id": 13,
       "subject": "Task 12: Trial reminder cron",
-      "status": "in_progress",
+      "status": "completed",
       "blockedBy": [2, 12],
       "description": "**Goal:** Daily Vercel Cron at /api/cron/trial-reminders walks trialing subs, sends correct email once per (tenant, kind).\n\n**Files:** src/app/api/cron/trial-reminders/route.ts, src/lib/subscription/reminders.ts, reminders.test.ts; modify vercel.json.\n\n```json:metadata\n{\"files\":[\"src/app/api/cron/trial-reminders/route.ts\",\"src/lib/subscription/reminders.ts\",\"src/lib/subscription/reminders.test.ts\",\"vercel.json\"],\"verifyCommand\":\"npm test -- src/lib/subscription/reminders.test.ts\",\"acceptanceCriteria\":[\"Bad CRON_SECRET → 401\",\"Correct kind sent based on daysUntilEnd\",\"trial_email_log unique constraint prevents duplicate sends\",\"Tenants with status!=trialing are skipped\",\"vercel.json registers schedule 0 14 * * *\"]}\n```"
     },
     {
       "id": 14,
       "subject": "Task 13: Team invitations — actions, settings UI, accept route",
-      "status": "pending",
+      "status": "in_progress",
       "blockedBy": [3, 12],
       "description": "**Goal:** Admins invite teammates; invitees accept via magic link without starting a new trial.\n\n**Files:** src/lib/invitations/tokens.ts + test, src/lib/invitations/actions.ts + test, src/app/app/settings/team/* , src/app/accept-invite/[token]/* .\n\n```json:metadata\n{\"files\":[\"src/lib/invitations/tokens.ts\",\"src/lib/invitations/tokens.test.ts\",\"src/lib/invitations/actions.ts\",\"src/lib/invitations/actions.test.ts\",\"src/app/app/settings/team/page.tsx\",\"src/app/app/settings/team/team.module.css\",\"src/app/app/settings/team/actions.ts\",\"src/app/accept-invite/[token]/page.tsx\",\"src/app/accept-invite/[token]/accept-invite.module.css\",\"src/app/accept-invite/[token]/actions.ts\"],\"verifyCommand\":\"\",\"acceptanceCriteria\":[\"Admin sees members + pending invites + invite form\",\"inviteTeammate enforces assertWithinLimit('users')\",\"Invite email arrives via Resend\",\"Expired/accepted/missing token → friendly error\",\"Existing user accept = sign-in then link\",\"New user accept = name+password form, no plan/billing\",\"Member-count check runs at both invite and accept\",\"Non-admins blocked at server\"]}\n```"
     },
