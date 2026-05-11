@@ -45,6 +45,15 @@ export async function countTenantUsage(
   return { locations: locations ?? 0, users: users ?? 0 };
 }
 
+/**
+ * Throws LimitExceededError when the tenant's current usage of `kind` is at or
+ * above the limit for their effective tier.
+ *
+ * Note: this only checks plan limits. It does NOT enforce subscription
+ * status — callers should already have gated on `getSubscriptionAccess` upstream.
+ * A `past_due_locked` or `canceled` tenant whose usage is under-limit will
+ * still resolve here; the route guard is responsible for blocking them.
+ */
 export async function assertWithinLimit(
   supabase: SupabaseClient,
   tenantId: string,

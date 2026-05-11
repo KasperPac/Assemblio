@@ -13,16 +13,46 @@ export interface AccessResult {
   daysLeft?: number;
 }
 
+export class MalformedSubscriptionRow extends Error {
+  constructor(public readonly field: string) {
+    super(`tenant_subscription row missing or invalid: ${field}`);
+    this.name = "MalformedSubscriptionRow";
+  }
+}
+
+function parseRequiredDate(
+  value: unknown,
+  field: string
+): Date {
+  const date = new Date(value as string);
+  if (isNaN(date.getTime())) {
+    throw new MalformedSubscriptionRow(field);
+  }
+  return date;
+}
+
 function rowToSub(row: Record<string, unknown>): TenantSubscriptionRow {
+  const trial_started_at = parseRequiredDate(row.trial_started_at, "trial_started_at");
+  const trial_ends_at = parseRequiredDate(row.trial_ends_at, "trial_ends_at");
+  const created_at = parseRequiredDate(row.created_at, "created_at");
+  const updated_at = parseRequiredDate(row.updated_at, "updated_at");
+
+  let current_period_end: Date | null = null;
+  if (row.current_period_end) {
+    const cpe = new Date(row.current_period_end as string);
+    if (isNaN(cpe.getTime())) {
+      throw new MalformedSubscriptionRow("current_period_end");
+    }
+    current_period_end = cpe;
+  }
+
   return {
     ...(row as object),
-    trial_started_at: new Date(row.trial_started_at as string),
-    trial_ends_at: new Date(row.trial_ends_at as string),
-    current_period_end: row.current_period_end
-      ? new Date(row.current_period_end as string)
-      : null,
-    created_at: new Date(row.created_at as string),
-    updated_at: new Date(row.updated_at as string),
+    trial_started_at,
+    trial_ends_at,
+    current_period_end,
+    created_at,
+    updated_at,
   } as TenantSubscriptionRow;
 }
 
@@ -40,7 +70,18 @@ export async function getSubscriptionAccess(
   if (error) throw error;
   if (!data) return { state: "paywall", sub: null };
 
-  const sub = rowToSub(data);
+  let sub: TenantSubscriptionRow;
+  try {
+    sub = rowToSub(data);
+  } catch (err) {
+    if (err instanceof MalformedSubscriptionRow) {
+      console.error(
+        `[subscription/access] malformed tenant_subscription row for tenant ${tenantId}: ${err.message}`
+      );
+      return { state: "paywall", sub: null };
+    }
+    throw err;
+  }
 
   if (paywallRequired(sub, now)) return { state: "paywall", sub };
 
