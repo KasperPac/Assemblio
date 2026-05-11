@@ -102,7 +102,7 @@
     {
       "id": 15,
       "subject": "Task 14: Feature gating helpers + exemplar applications",
-      "status": "in_progress",
+      "status": "completed",
       "blockedBy": [3],
       "description": "**Goal:** hasFeature() helper + apply to bin management and advanced BOM yield % as the gating pattern.\n\n**Files:** src/lib/plans/features.ts, features.test.ts; modify bin-management page and BOM yield % component.\n\n```json:metadata\n{\"files\":[\"src/lib/plans/features.ts\",\"src/lib/plans/features.test.ts\"],\"verifyCommand\":\"npm test -- src/lib/plans/features.test.ts\",\"acceptanceCriteria\":[\"hasFeature(sub,'binManagement') uses effectiveTier\",\"Active starter on bin page sees FeatureUpsell\",\"Trialing tenant sees bin feature normally\",\"Same gating applied to advanced BOM yield %\"]}\n```"
     }

@@ -1,0 +1,66 @@
+.shell {
+  padding: 48px 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.card {
+  width: 100%;
+  max-width: 520px;
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-xl);
+  padding: 36px 32px;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--brand-1);
+  background: var(--brand-dim);
+  border-radius: var(--radius-pill);
+  padding: 3px 12px;
+  margin: 0 0 16px;
+}
+
+.title {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink-strong);
+  margin: 0 0 10px;
+  line-height: 1.25;
+}
+
+.subtitle {
+  font-size: var(--fs-md);
+  color: var(--ink-muted);
+  margin: 0 0 24px;
+  line-height: 1.55;
+}
+
+.cta {
+  display: inline-block;
+  padding: 11px 22px;
+  background: var(--brand-1);
+  color: var(--ink-on-brand);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-md);
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.cta:hover {
+  opacity: 0.88;
+}
+
+.cta:focus-visible {
+  outline: 2px solid var(--brand-1);
+  outline-offset: 2px;
+}

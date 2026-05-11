@@ -57,6 +57,8 @@ type Props = {
   templates: TemplateOption[];
   sourceBoms: SourceBomOption[];
   activeVersion?: number | null;
+  /** When false, the yield % input is rendered as read-only — a Growth+ feature. */
+  canEditYield?: boolean;
 };
 
 function lineCost(qty: number, yieldPct: number, costPerUnit: number | null): number | null {
@@ -78,6 +80,7 @@ export default function BomEditor({
   templates,
   sourceBoms,
   activeVersion,
+  canEditYield = true,
 }: Props) {
   const [localState, setLocalState] = useState(
     () => new Map(bom.lines.map((line) => [line.id, { quantity: line.quantity, yieldPct: line.yield_pct }]))
@@ -339,8 +342,13 @@ export default function BomEditor({
                     )}
                   </td>
                   <td>
-                    {!isDraft ? (
-                      <span className={styles.dimText}>{Math.round(line.yield_pct * 100)}%</span>
+                    {!isDraft || !canEditYield ? (
+                      <span
+                        className={styles.dimText}
+                        title={!canEditYield ? "Yield % editing is a Growth feature — upgrade to enable." : undefined}
+                      >
+                        {Math.round((isDraft ? local.yieldPct : line.yield_pct) * 100)}%
+                      </span>
                     ) : (
                       <>
                         <input

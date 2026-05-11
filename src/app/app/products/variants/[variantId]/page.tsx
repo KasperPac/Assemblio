@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { getSubscriptionAccess } from "@/lib/subscription/access";
+import { hasFeature } from "@/lib/plans/features";
 import styles from "../../variant-detail.module.css";
 import BomSeedPanel from "../../bom-seed-panel";
 import BomEditor from "../../bom-editor";
@@ -163,6 +165,11 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
   const context = await getServerTenantContext();
   if (!context) notFound();
   const { supabase, tenantId } = context;
+
+  const subscriptionAccess = await getSubscriptionAccess(supabase, tenantId);
+  const canEditYield = subscriptionAccess.sub
+    ? hasFeature(subscriptionAccess.sub, "advancedBom")
+    : false;
 
   const [
     { data: variant },
@@ -472,6 +479,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                 templates={templateOptions}
                 sourceBoms={copyOptions}
                 activeVersion={draftBom ? (activeBom?.version ?? null) : null}
+                canEditYield={canEditYield}
               />
             ) : canManageBom ? (
               <BomSeedPanel
