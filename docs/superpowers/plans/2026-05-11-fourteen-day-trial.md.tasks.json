@@ -74,14 +74,14 @@
     {
       "id": 11,
       "subject": "Task 10: Stripe webhook handler + idempotency",
-      "status": "in_progress",
+      "status": "completed",
       "blockedBy": [1, 2],
       "description": "**Goal:** POST /api/webhooks/stripe verifies signature (with rotation support), inserts into stripe_event_log for idempotency, dispatches 5 event types.\n\n**Files:** src/app/api/webhooks/stripe/route.ts, src/lib/stripe/webhook-events.ts, webhook-events.test.ts\n\n```json:metadata\n{\"files\":[\"src/app/api/webhooks/stripe/route.ts\",\"src/lib/stripe/webhook-events.ts\",\"src/lib/stripe/webhook-events.test.ts\"],\"verifyCommand\":\"npm test -- src/lib/stripe/webhook-events.test.ts\",\"acceptanceCriteria\":[\"Invalid signature → 400\",\"Duplicate event_id is a no-op\",\"checkout.session.completed → status='active' + sub/tier/interval/period\",\"invoice.payment_failed → past_due\",\"invoice.payment_succeeded (from past_due) → active\",\"customer.subscription.updated re-syncs tier/period\",\"customer.subscription.deleted → canceled\",\"Tries both STRIPE_WEBHOOK_SECRET and _NEXT\"]}\n```"
     },
     {
       "id": 12,
       "subject": "Task 11: Email wrapper + four templates",
-      "status": "pending",
+      "status": "in_progress",
       "blockedBy": [1],
       "description": "**Goal:** Resend wrapper + invitation + 3 trial-reminder templates.\n\n**Files:** src/lib/email/send.ts, send.test.ts, templates/invitation.tsx, trial-reminder-3.tsx, trial-reminder-1.tsx, trial-expired.tsx\n\n```json:metadata\n{\"files\":[\"src/lib/email/send.ts\",\"src/lib/email/send.test.ts\",\"src/lib/email/templates/invitation.tsx\",\"src/lib/email/templates/trial-reminder-3.tsx\",\"src/lib/email/templates/trial-reminder-1.tsx\",\"src/lib/email/templates/trial-expired.tsx\"],\"verifyCommand\":\"npm test -- src/lib/email/\",\"acceptanceCriteria\":[\"sendEmail returns {ok:true,id} or {ok:false,error} - never throws\",\"Requires RESEND_API_KEY and RESEND_FROM\",\"Each template renders with interpolated tenantName/inviter/etc.\"]}\n```"
     },
