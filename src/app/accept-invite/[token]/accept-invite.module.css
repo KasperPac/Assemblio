@@ -1,0 +1,127 @@
+.page {
+  min-height: 100vh;
+  background: var(--bg-page);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+}
+
+.card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-xl);
+  padding: 40px 36px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink-strong);
+  margin: 0 0 12px;
+  line-height: 1.2;
+}
+
+.tenantName {
+  color: var(--brand-1);
+}
+
+.subtitle {
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+  margin: 0 0 28px;
+  line-height: 1.55;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+  font-weight: 500;
+}
+
+.field input {
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--stroke);
+  background: var(--bg-input);
+  color: var(--ink-strong);
+  font-size: var(--fs-md);
+  font-family: inherit;
+}
+
+.field input:focus-visible {
+  outline: 2px solid var(--brand-1);
+  outline-offset: 1px;
+  border-color: var(--brand-1);
+}
+
+.primary {
+  display: inline-block;
+  width: 100%;
+  padding: 12px 18px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--brand-1);
+  color: var(--ink-on-brand);
+  font-size: var(--fs-md);
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+
+.primary:hover {
+  opacity: 0.88;
+}
+
+.primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.primary:focus-visible {
+  outline: 2px solid var(--brand-1);
+  outline-offset: 2px;
+}
+
+.linkBtn {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: var(--fs-sm);
+  color: var(--brand-1);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.linkBtn:hover {
+  text-decoration: underline;
+}
+
+.note {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+
+.error {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: #dc2626;
+  line-height: 1.5;
+}

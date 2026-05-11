@@ -21,6 +21,15 @@ export default function InviteForm() {
         className={styles.inviteInput}
         required
       />
+      <select
+        name="role"
+        defaultValue="member"
+        className={styles.inviteInput}
+        aria-label="Role"
+      >
+        <option value="member">Member</option>
+        <option value="admin">Admin</option>
+      </select>
       <button
         type="submit"
         className={styles.primaryButton}

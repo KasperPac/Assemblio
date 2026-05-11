@@ -1,8 +1,12 @@
 "use server";
 
 import { getServerTenantContext } from "@/lib/tenant/context";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
+import {
+  inviteTeammate,
+  revokeInvitation,
+  resendInvitation,
+} from "@/lib/invitations/actions";
 
 type State = { error?: string; success?: string } | null;
 
@@ -17,25 +21,55 @@ export async function inviteMember(
   _prev: State,
   formData: FormData
 ): Promise<State> {
+  const email = (formData.get("email") as string)?.trim().toLowerCase();
+  const role = (formData.get("role") as string) === "admin" ? "admin" : "member";
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return { error: "Valid email address required" };
+  }
+
+  const result = await inviteTeammate({ email, role });
+  if (!result.ok) return { error: result.error };
+
+  revalidatePath("/app/settings/team");
+  return { success: `Invitation sent to ${email}` };
+}
+
+export async function revokeInvite(
+  _prev: State,
+  formData: FormData
+): Promise<State> {
   const ctx = await getServerTenantContext();
   if (!ctx) return { error: "Not authenticated" };
   const err = requireAdmin(ctx.role);
   if (err) return err;
 
-  const email = (formData.get("email") as string)?.trim().toLowerCase();
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return { error: "Valid email address required" };
-  }
+  const invitationId = formData.get("invitation_id") as string;
+  if (!invitationId) return { error: "Invalid request" };
 
-  const admin = createSupabaseAdminClient();
-  const { error } = await admin.auth.admin.inviteUserByEmail(email, {
-    data: { invited_tenant_id: ctx.tenantId, invited_role: "member" },
-  });
-
-  if (error) return { error: error.message };
+  const result = await revokeInvitation(invitationId);
+  if (!result.ok) return { error: result.error };
 
   revalidatePath("/app/settings/team");
-  return { success: `Invitation sent to ${email}` };
+  return { success: "Invitation revoked" };
+}
+
+export async function resendInvite(
+  _prev: State,
+  formData: FormData
+): Promise<State> {
+  const ctx = await getServerTenantContext();
+  if (!ctx) return { error: "Not authenticated" };
+  const err = requireAdmin(ctx.role);
+  if (err) return err;
+
+  const invitationId = formData.get("invitation_id") as string;
+  if (!invitationId) return { error: "Invalid request" };
+
+  const result = await resendInvitation(invitationId);
+  if (!result.ok) return { error: result.error };
+
+  revalidatePath("/app/settings/team");
+  return { success: "Invitation resent" };
 }
 
 export async function updateMemberRole(

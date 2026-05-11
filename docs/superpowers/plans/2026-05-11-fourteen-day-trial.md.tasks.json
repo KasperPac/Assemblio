@@ -95,14 +95,14 @@
     {
       "id": 14,
       "subject": "Task 13: Team invitations — actions, settings UI, accept route",
-      "status": "in_progress",
+      "status": "completed",
       "blockedBy": [3, 12],
       "description": "**Goal:** Admins invite teammates; invitees accept via magic link without starting a new trial.\n\n**Files:** src/lib/invitations/tokens.ts + test, src/lib/invitations/actions.ts + test, src/app/app/settings/team/* , src/app/accept-invite/[token]/* .\n\n```json:metadata\n{\"files\":[\"src/lib/invitations/tokens.ts\",\"src/lib/invitations/tokens.test.ts\",\"src/lib/invitations/actions.ts\",\"src/lib/invitations/actions.test.ts\",\"src/app/app/settings/team/page.tsx\",\"src/app/app/settings/team/team.module.css\",\"src/app/app/settings/team/actions.ts\",\"src/app/accept-invite/[token]/page.tsx\",\"src/app/accept-invite/[token]/accept-invite.module.css\",\"src/app/accept-invite/[token]/actions.ts\"],\"verifyCommand\":\"\",\"acceptanceCriteria\":[\"Admin sees members + pending invites + invite form\",\"inviteTeammate enforces assertWithinLimit('users')\",\"Invite email arrives via Resend\",\"Expired/accepted/missing token → friendly error\",\"Existing user accept = sign-in then link\",\"New user accept = name+password form, no plan/billing\",\"Member-count check runs at both invite and accept\",\"Non-admins blocked at server\"]}\n```"
     },
     {
       "id": 15,
       "subject": "Task 14: Feature gating helpers + exemplar applications",
-      "status": "pending",
+      "status": "in_progress",
       "blockedBy": [3],
       "description": "**Goal:** hasFeature() helper + apply to bin management and advanced BOM yield % as the gating pattern.\n\n**Files:** src/lib/plans/features.ts, features.test.ts; modify bin-management page and BOM yield % component.\n\n```json:metadata\n{\"files\":[\"src/lib/plans/features.ts\",\"src/lib/plans/features.test.ts\"],\"verifyCommand\":\"npm test -- src/lib/plans/features.test.ts\",\"acceptanceCriteria\":[\"hasFeature(sub,'binManagement') uses effectiveTier\",\"Active starter on bin page sees FeatureUpsell\",\"Trialing tenant sees bin feature normally\",\"Same gating applied to advanced BOM yield %\"]}\n```"
     }
