@@ -1,5 +1,6 @@
 import styles from "./inventory.module.css";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import MovementForm from "./movement-form";
 import PageHeader from "../_ui/page-header";
 import EmptyState from "../_ui/empty-state";
@@ -38,12 +39,16 @@ function formatSignedValue(value: number) {
 }
 
 export default async function InventoryPage() {
-  const supabase = await createSupabaseServerClient();
+  const context = await getServerTenantContext();
+  if (!context) redirect("/auth/login");
+  const { supabase, tenantId } = context;
+
   const { data, error } = await supabase
     .from("inventory_balance")
     .select(
       "id,on_hand,in_prod,reserved,component:component_id(name,sku,reorder_point),location:location_id(name)"
     )
+    .eq("tenant_id", tenantId)
     .order("on_hand", { ascending: false });
 
   const { data: movements } = await supabase
@@ -51,17 +56,20 @@ export default async function InventoryPage() {
     .select(
       "id,delta_on_hand,delta_in_prod,reason,created_at,component:component_id(name),location:location_id(name)"
     )
+    .eq("tenant_id", tenantId)
     .order("created_at", { ascending: false })
     .limit(8);
 
   const { data: components } = await supabase
     .from("component")
     .select("id,name,sku")
+    .eq("tenant_id", tenantId)
     .order("name");
 
   const { data: locations } = await supabase
     .from("location")
     .select("id,name,is_default")
+    .eq("tenant_id", tenantId)
     .order("name");
 
   if (error) {

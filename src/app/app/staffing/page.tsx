@@ -1,4 +1,5 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "../planning.module.css";
 import Link from "next/link";
 import { getWeekStart } from "@/lib/dates";
@@ -79,7 +80,9 @@ function shiftWeek(weekStart: string, deltaDays: number) {
 }
 
 export default async function StaffingPage({ searchParams }: Props) {
-  const supabase = await createSupabaseServerClient();
+  const context = await getServerTenantContext();
+  if (!context) redirect("/auth/login");
+  const { supabase, tenantId } = context;
   const params = (await searchParams) ?? {};
   const weekStart = resolveWeekStart(params.week);
 
@@ -95,21 +98,25 @@ export default async function StaffingPage({ searchParams }: Props) {
       .select(
         "id,name,department_id,employment_type,annual_salary,hourly_rate,standard_weekly_hours,is_active,department:department_id(name)"
       )
+      .eq("tenant_id", tenantId)
       .order("name"),
     supabase
       .from("staff_availability_week")
       .select(
         "staff_member_id,contracted_hours,leave_hours,training_hours,non_productive_hours,overtime_hours,available_hours_net"
       )
+      .eq("tenant_id", tenantId)
       .eq("week_start", weekStart),
-    supabase.from("department").select("id,name,code").eq("is_active", true).order("name"),
+    supabase.from("department").select("id,name,code").eq("tenant_id", tenantId).eq("is_active", true).order("name"),
     supabase
       .from("department_capacity_week")
       .select("department_id,capacity_hours_total,department:department_id(name)")
+      .eq("tenant_id", tenantId)
       .eq("week_start", weekStart),
     supabase
       .from("department_utilization_week")
       .select("department_id,planned_hours,overload_hours,idle_hours,utilization_pct")
+      .eq("tenant_id", tenantId)
       .eq("week_start", weekStart),
   ]);
 

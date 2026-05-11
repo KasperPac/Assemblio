@@ -20,7 +20,7 @@ const themes: ThemeDef[] = [
   {
     id: "midnight",
     name: "Midnight",
-    description: "Dark theme with green accents. The default Assemblio look.",
+    description: "Dark theme with indigo accents.",
     colors: {
       bg: "#0D1117",
       sidebar: "#10161F",
@@ -34,10 +34,10 @@ const themes: ThemeDef[] = [
     name: "Daylight",
     description: "Clean light theme for bright working environments.",
     colors: {
-      bg: "#F8F7F5",
-      sidebar: "#F0EEE9",
+      bg: "#F8FAFC",
+      sidebar: "#0F172A",
       card: "#FFFFFF",
-      brand: "#6366F1",
+      brand: "#a5b4fc",
       ink: "#1a1d23",
     },
   },

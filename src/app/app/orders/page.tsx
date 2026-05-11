@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import styles from "./orders.module.css";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import PageHeader from "../_ui/page-header";
 import StatusBadge from "../_ui/status-badge";
 import EmptyState from "../_ui/empty-state";
@@ -32,12 +33,15 @@ function getStatusVariant(status: string) {
 }
 
 export default async function OrdersPage({ searchParams }: Props) {
-  const supabase = await createSupabaseServerClient();
+  const context = await getServerTenantContext();
+  if (!context) redirect("/auth/login");
+  const { supabase, tenantId } = context;
   const params = (await searchParams) ?? {};
 
   const { data, error } = await supabase
     .from("orders")
     .select("id,order_number,status,created_at")
+    .eq("tenant_id", tenantId)
     .order("created_at", { ascending: false })
     .limit(50);
 
@@ -61,6 +65,7 @@ export default async function OrdersPage({ searchParams }: Props) {
       ? supabase
           .from("product_bom")
           .select("id,variant_id")
+          .eq("tenant_id", tenantId)
           .eq("is_active", true)
           .in("variant_id", variantIds)
       : Promise.resolve({ data: [] as Array<{ id: string; variant_id: string }> })

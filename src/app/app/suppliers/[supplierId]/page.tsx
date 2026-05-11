@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import SupplierTabs from "./supplier-tabs";
 import styles from "./supplier-tabs.module.css";
@@ -36,10 +35,9 @@ type Props = { params: Promise<{ supplierId: string }> };
 
 export default async function SupplierDetailPage({ params }: Props) {
   const { supplierId } = await params;
-  const supabase = await createSupabaseServerClient();
   const context = await getServerTenantContext();
   if (!context) notFound();
-  const { tenantId } = context;
+  const { supabase, tenantId } = context;
 
   const [
     { data: supplier },

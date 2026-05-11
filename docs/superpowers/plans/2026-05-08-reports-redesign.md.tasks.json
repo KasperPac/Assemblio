@@ -1,0 +1,89 @@
+{
+  "planPath": "docs/superpowers/plans/2026-05-08-reports-redesign.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 0: Shared Infrastructure",
+      "status": "completed",
+      "description": "**Goal:** Install Recharts, create `_lib/date-range.ts`, and build all 10 shared components so every subsequent task can import them without circular dependencies.\n\n**Files:**\n- Modify: `package.json` (recharts install)\n- Create: `src/app/app/reports/_lib/date-range.ts`\n- Create: `src/app/app/reports/_components/date-preset-bar.tsx`\n- Create: `src/app/app/reports/_components/date-preset-bar.module.css`\n- Create: `src/app/app/reports/_components/print-button.tsx`\n- Create: `src/app/app/reports/_components/report-shell.tsx`\n- Create: `src/app/app/reports/_components/report-shell.module.css`\n- Create: `src/app/app/reports/_components/report-stat-cards.tsx`\n- Create: `src/app/app/reports/_components/report-stat-cards.module.css`\n- Create: `src/app/app/reports/_components/report-table.tsx`\n- Create: `src/app/app/reports/_components/report-table.module.css`\n- Create: `src/app/app/reports/_components/report-chart.tsx`\n- Create: `src/app/app/reports/_components/report-chart.module.css`\n\n**Acceptance Criteria:**\n- [ ] `npm run build` passes with no new TS errors\n- [ ] `recharts` appears in `package.json` dependencies\n- [ ] All shared components export their types correctly\n\n**Verify:** `npx tsc --noEmit` → 0 errors\n\n```json:metadata\n{\"files\": [\"src/app/app/reports/_lib/date-range.ts\", \"src/app/app/reports/_components/date-preset-bar.tsx\", \"src/app/app/reports/_components/report-shell.tsx\", \"src/app/app/reports/_components/report-stat-cards.tsx\", \"src/app/app/reports/_components/report-table.tsx\", \"src/app/app/reports/_components/report-chart.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"npm run build passes with no new TS errors\", \"recharts appears in package.json dependencies\", \"All shared components export their types correctly\"]}\n```"
+    },
+    {
+      "id": 1,
+      "subject": "Task 1: Hub Page",
+      "status": "completed",
+      "blockedBy": [0],
+      "description": "**Goal:** Replace the current `/app/reports` page with a live-data hub showing 10 report cards grouped by category, with amber/red highlight for issues.\n\n**Files:**\n- Replace: `src/app/app/reports/page.tsx`\n- Replace: `src/app/app/reports/reports.module.css`\n\n**Acceptance Criteria:**\n- [ ] Hub renders with all 10 report cards grouped into Inventory, Purchasing, System\n- [ ] Dead stock card is amber when count > 0\n- [ ] Lead time accuracy card is red when on-time % < 80\n- [ ] PO overdue count card is red when > 0\n- [ ] Inventory integrity card is red when issues > 0\n- [ ] All cards link to correct sub-routes\n\n**Verify:** `npx tsc --noEmit` → 0 errors; navigate to `/app/reports` — all cards visible\n\n```json:metadata\n{\"files\": [\"src/app/app/reports/page.tsx\", \"src/app/app/reports/reports.module.css\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Hub renders with 10 report cards\", \"Dead stock card amber when count > 0\", \"Lead time accuracy card red when < 80%\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: Stock on Hand Report",
+      "status": "completed",
+      "blockedBy": [0],
+      "description": "**Goal:** Build `/app/reports/stock-on-hand` — stats + table showing all components with on-hand stock, plus CSV export.\n\n**Files:**\n- Create: `src/app/app/reports/stock-on-hand/page.tsx`\n- Create: `src/app/app/reports/stock-on-hand/export/route.ts`\n\n**Acceptance Criteria:**\n- [ ] Stat cards: total components, total value, count below reorder point\n- [ ] Table shows Component, SKU, On hand, Reserved, In production, Value, Status badge\n- [ ] CSV export downloads correct data\n\n**Verify:** Navigate to `/app/reports/stock-on-hand` — table renders; Export CSV downloads file\n\n```json:metadata\n{\"files\": [\"src/app/app/reports/stock-on-hand/page.tsx\", \"src/app/app/reports/stock-on-hand/export/route.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Stat cards render\", \"Table shows all on-hand components\", \"CSV export works\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: Movements Ledger Report",
+      "status": "completed",
+      "blockedBy": [0],
+      "description": "**Goal:** Build `/app/reports/movements` — bar chart of daily in/out + table of every movement in the date range.\n\n**Files:**\n- Create: `src/app/app/reports/movements/page.tsx`\n- Create: `src/app/app/reports/movements/export/route.ts`\n\n**Acceptance Criteria:**\n- [ ] Stat cards: total movements, stock in, stock out\n- [ ] Bar chart shows daily in/out bars\n- [ ] Table shows Date, Component, Type badge, Reference, Qty\n- [ ] Date range filter works\n\n**Verify:** Navigate to `/app/reports/movements` — chart and table render\n\n```json:metadata\n{\"files\": [\"src/app/app/reports/movements/page.tsx\", \"src/app/app/reports/movements/export/route.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Bar chart renders\", \"Table shows movements\", \"Date filter works\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: Inventory Valuation Report",
+      "status": "completed",
+      "blockedBy": [0],
+      "description": "**Goal:** Build `/app/reports/valuation` — current on-hand value by component with stat cards + table + CSV.\n\n**Files:**\n- Create: `src/app/app/reports/valuation/page.tsx`\n- Create: `src/app/app/reports/valuation/export/route.ts`\n\n**Acceptance Criteria:**\n- [ ] Stat cards: total on-hand value, in-production value, reserved value\n- [ ] Table shows Component, SKU, On hand qty, Cost per unit, Total value, % of total\n- [ ] CSV export works\n\n**Verify:** Navigate to `/app/reports/valuation` — stat cards and table visible\n\n```json:metadata\n{\"files\": [\"src/app/app/reports/valuation/page.tsx\", \"src/app/app/reports/valuation/export/route.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Stat cards render with correct values\", \"Table shows % of total column\", \"CSV export works\"]}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 5: Dead Stock Report",
+      "status": "completed",
+      "blockedBy": [0],
+      "description": "**Goal:** Build `/app/reports/dead-stock` — components with stock but no recent movement, sorted by days idle.\n\n**Files:**\n- Create: `src/app/app/reports/dead-stock/page.tsx`\n- Create: `src/app/app/reports/dead-stock/export/route.ts`\n\n**Acceptance Criteria:**\n- [ ] Stat cards: dead count (amber), capital tied up (amber), longest idle (days)\n- [ ] Table shows Component, SKU, On hand, Value, Days idle — sorted descending\n- [ ] Idle threshold filter (?idle=90) works, default 90d\n- [ ] CSV export works\n\n**Verify:** Navigate to `/app/reports/dead-stock` — amber stat cards when dead stock exists\n\n```json:metadata\n{\"files\": [\"src/app/app/reports/dead-stock/page.tsx\", \"src/app/app/reports/dead-stock/export/route.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Amber stat cards when dead stock exists\", \"Sorted by days idle descending\", \"idle threshold param works\"]}\n```"
+    },
+    {
+      "id": 6,
+      "subject": "Task 6: Stocktake History Report",
+      "status": "completed",
+      "blockedBy": [0],
+      "description": "**Goal:** Build `/app/reports/stocktake-history` — bar chart of variance count per stocktake + summary table.\n\n**Files:**\n- Create: `src/app/app/reports/stocktake-history/page.tsx`\n- Create: `src/app/app/reports/stocktake-history/export/route.ts`\n\n**Acceptance Criteria:**\n- [ ] Stat cards: total stocktakes, total variance lines, largest single variance\n- [ ] Bar chart shows variance count per stocktake\n- [ ] Table shows Date, Location, Status, Lines, Variance lines, Total variance qty\n- [ ] CSV export works\n\n**Verify:** Navigate to `/app/reports/stocktake-history` — table renders\n\n```json:metadata\n{\"files\": [\"src/app/app/reports/stocktake-history/page.tsx\", \"src/app/app/reports/stocktake-history/export/route.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Chart renders variance per stocktake\", \"Table has variance columns\", \"CSV export works\"]}\n```"
+    },
+    {
+      "id": 7,
+      "subject": "Task 7: PO Summary Report",
+      "status": "completed",
+      "blockedBy": [0],
+      "description": "**Goal:** Build `/app/reports/po-summary` — open purchase orders with overdue highlighting.\n\n**Files:**\n- Create: `src/app/app/reports/po-summary/page.tsx`\n- Create: `src/app/app/reports/po-summary/export/route.ts`\n\n**Acceptance Criteria:**\n- [ ] Stat cards: open liability ($), POs outstanding, overdue POs (red if > 0)\n- [ ] Table shows PO #, Supplier, Status, Expected date, Total value, Lines\n- [ ] Overdue rows show red expected date\n- [ ] CSV export works\n\n**Verify:** Navigate to `/app/reports/po-summary` — table renders\n\n```json:metadata\n{\"files\": [\"src/app/app/reports/po-summary/page.tsx\", \"src/app/app/reports/po-summary/export/route.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Open liability stat card shows correct value\", \"Overdue POs highlighted red\", \"CSV export works\"]}\n```"
+    },
+    {
+      "id": 8,
+      "subject": "Task 8: Spend by Supplier Report",
+      "status": "completed",
+      "blockedBy": [0],
+      "description": "**Goal:** Build `/app/reports/spend-by-supplier` — horizontal bar chart + table of supplier spend in the period.\n\n**Files:**\n- Create: `src/app/app/reports/spend-by-supplier/page.tsx`\n- Create: `src/app/app/reports/spend-by-supplier/export/route.ts`\n\n**Acceptance Criteria:**\n- [ ] Stat cards: total spend, supplier count, largest supplier spend\n- [ ] Horizontal bar chart shows spend per supplier sorted descending\n- [ ] Table shows Supplier, POs, Total spend, % of total, Avg PO value\n- [ ] CSV export works\n\n**Verify:** Navigate to `/app/reports/spend-by-supplier` — chart and table render\n\n```json:metadata\n{\"files\": [\"src/app/app/reports/spend-by-supplier/page.tsx\", \"src/app/app/reports/spend-by-supplier/export/route.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Horizontal bar chart renders\", \"% of total column sums to 100\", \"CSV export works\"]}\n```"
+    },
+    {
+      "id": 9,
+      "subject": "Task 9: Lead Time Accuracy Report",
+      "status": "completed",
+      "blockedBy": [0],
+      "description": "**Goal:** Build `/app/reports/lead-time-accuracy` — on-time delivery performance per supplier.\n\n**Files:**\n- Create: `src/app/app/reports/lead-time-accuracy/page.tsx`\n- Create: `src/app/app/reports/lead-time-accuracy/export/route.ts`\n\n**Acceptance Criteria:**\n- [ ] Stat cards: overall on-time %, suppliers < 80% (red if > 0), total receipts\n- [ ] Table shows Supplier, POs received, On time, Late, Accuracy %, Avg days late\n- [ ] Red stat card when overall < 80%\n- [ ] CSV export works\n\n**Verify:** Navigate to `/app/reports/lead-time-accuracy` — table renders\n\n```json:metadata\n{\"files\": [\"src/app/app/reports/lead-time-accuracy/page.tsx\", \"src/app/app/reports/lead-time-accuracy/export/route.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Overall on-time % stat card correct\", \"Red card when < 80%\", \"CSV export works\"]}\n```"
+    },
+    {
+      "id": 10,
+      "subject": "Task 10: PO Quantity Variance Report",
+      "status": "completed",
+      "blockedBy": [0],
+      "description": "**Goal:** Build `/app/reports/po-variance` — delivery receipt lines where quantity delivered ≠ expected.\n\n**Files:**\n- Create: `src/app/app/reports/po-variance/page.tsx`\n- Create: `src/app/app/reports/po-variance/export/route.ts`\n\n**Acceptance Criteria:**\n- [ ] Stat cards: variance lines (amber if > 0), over-received qty, under-received qty\n- [ ] Table shows PO #, Supplier, Component, Ordered, Received, Variance, Variance %\n- [ ] CSV export works\n\n**Verify:** Navigate to `/app/reports/po-variance` — amber stat cards when discrepancies exist\n\n```json:metadata\n{\"files\": [\"src/app/app/reports/po-variance/page.tsx\", \"src/app/app/reports/po-variance/export/route.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Amber stat cards for variance lines\", \"Green/red variance column colouring\", \"CSV export works\"]}\n```"
+    },
+    {
+      "id": 11,
+      "subject": "Task 11: Inventory Integrity Report",
+      "status": "completed",
+      "blockedBy": [0],
+      "description": "**Goal:** Migrate the existing integrity audit to its own dedicated `/app/reports/inventory-integrity` page.\n\n**Files:**\n- Create: `src/app/app/reports/inventory-integrity/page.tsx`\n- Create: `src/app/app/reports/inventory-integrity/export/route.ts`\n\n**Acceptance Criteria:**\n- [ ] Stat cards: total issues (red if > 0), invariant issues, reconciliation drifts, PO over-receipts\n- [ ] Table shows all issue rows — Type badge, Component, Description\n- [ ] No date range picker (hideDateRange=true)\n- [ ] CSV export works\n\n**Verify:** Navigate to `/app/reports/inventory-integrity` — no date presets shown\n\n```json:metadata\n{\"files\": [\"src/app/app/reports/inventory-integrity/page.tsx\", \"src/app/app/reports/inventory-integrity/export/route.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"No date preset bar shown\", \"Red stat cards when issues > 0\", \"CSV export works\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-05-08T15:30:00.000Z"
+}

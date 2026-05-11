@@ -4,51 +4,51 @@
     {
       "id": 6,
       "subject": "Task 1: globals.css + ThemeProvider — new palette, default theme",
-      "status": "pending",
+      "status": "completed",
       "description": "**Goal:** Replace cobalt-navy Midnight-default tokens with indigo Daylight-default system; update font token to Inter.\n\n**Files:**\n- Modify: `src/app/globals.css`\n- Modify: `src/app/theme-provider.tsx`\n\n**Acceptance Criteria:**\n- [ ] Daylight is the default theme\n- [ ] Midnight uses indigo #818CF8\n- [ ] --font-body references --font-inter\n- [ ] --shadow-card in both themes\n- [ ] --ls-caps in :root\n- [ ] Storage key is manuva-theme\n\n**Verify:** `npm run dev` → no localStorage → warm off-white background\n\n```json:metadata\n{\"files\": [\"src/app/globals.css\", \"src/app/theme-provider.tsx\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"Daylight is default theme\", \"--font-body references --font-inter\", \"--shadow-card exists in both themes\", \"--ls-caps in :root\", \"storage key is manuva-theme\"]}\n```"
     },
     {
       "id": 7,
       "subject": "Task 2: Swap Space Grotesk for Inter in layout.tsx",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [6],
       "description": "**Goal:** Load Inter via next/font/google, remove Space Grotesk, update title to Manuva.\n\n**Files:**\n- Modify: `src/app/layout.tsx`\n\n**Acceptance Criteria:**\n- [ ] Inter loads with weights 400/500/600/700\n- [ ] --font-inter applied to body\n- [ ] Title is Manuva\n- [ ] Theme-init script uses manuva-theme key\n\n**Verify:** `npm run dev` → body renders Inter\n\n```json:metadata\n{\"files\": [\"src/app/layout.tsx\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"Inter loads via next/font\", \"--font-inter applied to body\", \"title is Manuva\", \"theme key is manuva-theme\"]}\n```"
     },
     {
       "id": 8,
       "subject": "Task 3: Shell layout — sidebar 240px, topbar cleanup",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [6],
       "description": "**Goal:** Reduce sidebar from 280px to 240px, clean up topbar, remove all hardcoded colors.\n\n**Files:**\n- Modify: `src/app/app/shell.module.css`\n\n**Acceptance Criteria:**\n- [ ] Sidebar is 240px\n- [ ] No hardcoded hex or rgba(255,...) values\n- [ ] Topbar padding 16px 28px\n- [ ] No gradient overlays\n\n**Verify:** `npm run dev` → sidebar narrower; switch to Daylight — no artifacts\n\n```json:metadata\n{\"files\": [\"src/app/app/shell.module.css\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"sidebar 240px\", \"no hardcoded rgba values\", \"topbar padding 16px 28px\"]}\n```"
     },
     {
       "id": 9,
       "subject": "Task 4: Shared _ui component CSS",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [6],
       "description": "**Goal:** Fix four shared UI component CSS files to remove dark-only hardcoded values.\n\n**Files:**\n- Modify: `src/app/app/_ui/empty-state.module.css`\n- Modify: `src/app/app/_ui/list-panel.module.css`\n- Modify: `src/app/app/_ui/page-header.module.css`\n- Modify: `src/app/app/_ui/status-badge.module.css`\n\n**Acceptance Criteria:**\n- [ ] No rgba(255,...) values\n- [ ] No color-mix() calls\n- [ ] Both themes render correctly\n\n**Verify:** `npm run dev` → empty state pages → switch themes\n\n```json:metadata\n{\"files\": [\"src/app/app/_ui/empty-state.module.css\", \"src/app/app/_ui/list-panel.module.css\", \"src/app/app/_ui/status-badge.module.css\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"no rgba(255,...)\", \"no color-mix()\", \"theme-safe\"]}\n```"
     },
     {
       "id": 10,
       "subject": "Task 5: Dashboard and widget CSS",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [6, 9],
       "description": "**Goal:** Replace all dark-only CSS patterns in dashboard and widget files.\n\n**Files:**\n- Modify: `src/app/app/dashboard.module.css`\n- Modify: `src/app/app/_dashboard/widget.module.css`\n\n**Acceptance Criteria:**\n- [ ] No color-mix()\n- [ ] No rgba(255,...) highlights\n- [ ] No rgba(5,8,15,...) shadows\n- [ ] No transform on hover\n- [ ] Cards use --shadow-card and --bg-card\n\n**Verify:** `npm run dev` → /app dashboard → switch themes\n\n```json:metadata\n{\"files\": [\"src/app/app/dashboard.module.css\", \"src/app/app/_dashboard/widget.module.css\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"no color-mix()\", \"no rgba highlights\", \"theme-safe cards\"]}\n```"
     },
     {
       "id": 11,
       "subject": "Task 6: Page CSS audit — all remaining module.css files",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [6, 8, 9, 10],
       "description": "**Goal:** Apply token-only fixes across all remaining 30+ page CSS files.\n\n**Acceptance Criteria:**\n- [ ] Zero color-mix() across all files\n- [ ] Zero rgba(255,...) decorative highlights\n- [ ] Zero rgba(5,8,15,...) shadows\n- [ ] Zero transform on hover\n- [ ] All border-radius use var(--radius-*)\n- [ ] appearance.module.css fs tokens fixed\n\n**Verify:** `npm run dev` → all major pages → switch themes\n\n```json:metadata\n{\"files\": [\"src/app/app/**/*.module.css\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"zero color-mix()\", \"zero rgba highlights\", \"zero dark shadows\", \"token-only border-radius\"]}\n```"
     },
     {
       "id": 12,
       "subject": "Task 7: Sync manuva-tokens reference file",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [6, 7, 11],
       "description": "**Goal:** Update external design token reference to match final globals.css.\n\n**Files:**\n- Modify: `C:/dev/manuva-tokens/Manuva Design System/colors_and_type.css`\n\n**Acceptance Criteria:**\n- [ ] Daylight tokens match globals.css\n- [ ] Midnight tokens match globals.css\n- [ ] --font-inter referenced\n- [ ] --shadow-card present\n\n**Verify:** Diff the two files — Daylight and Midnight blocks identical\n\n```json:metadata\n{\"files\": [\"C:/dev/manuva-tokens/Manuva Design System/colors_and_type.css\"], \"verifyCommand\": \"diff\", \"acceptanceCriteria\": [\"Daylight matches globals.css\", \"Midnight matches globals.css\"]}\n```"
     }
   ],
-  "lastUpdated": "2026-05-08T13:34:00Z"
+  "lastUpdated": "2026-05-09T00:00:00.000Z"
 }

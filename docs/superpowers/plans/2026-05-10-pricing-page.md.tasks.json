@@ -4,30 +4,30 @@
     {
       "id": 10,
       "subject": "Task 0: Pricing data constants and types",
-      "status": "pending",
+      "status": "completed",
       "description": "**Goal:** Create the single source of truth for all pricing data — tier definitions, prices, and the full feature matrix — with a data integrity test.\n\n**Files:**\n- Create: `src/app/pricing/_data/tiers.ts`\n- Create: `src/app/pricing/_data/tiers.test.ts`\n\n**Verify:** `npm test -- tiers` → all tests pass\n\n```json:metadata\n{\"files\": [\"src/app/pricing/_data/tiers.ts\", \"src/app/pricing/_data/tiers.test.ts\"], \"verifyCommand\": \"npm test -- tiers\", \"acceptanceCriteria\": [\"TIERS has 4 entries\", \"annual price < monthly price\", \"annualYearly = annualMonthly * 12\", \"FEATURE_MODULES has 9 modules\", \"all tests pass\"]}\n```"
     },
     {
       "id": 11,
       "subject": "Task 1: PricingCards — billing toggle and tier card grid",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [10],
       "description": "**Goal:** Build the \"use client\" component that owns the annual/monthly toggle and renders the four tier cards.\n\n**Files:**\n- Create: `src/app/pricing/_components/pricing-cards.tsx`\n- Create: `src/app/pricing/_components/pricing-cards.module.css`\n\n**Verify:** `npm run dev` → `/pricing` → toggle switches prices\n\n```json:metadata\n{\"files\": [\"src/app/pricing/_components/pricing-cards.tsx\", \"src/app/pricing/_components/pricing-cards.module.css\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"toggle defaults to annual\", \"toggle updates prices\", \"Growth has Most Popular badge\", \"Enterprise shows Custom\"]}\n```"
     },
     {
       "id": 12,
       "subject": "Task 2: FeatureMatrix server component",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [10],
       "description": "**Goal:** Build the static server component that renders the full 9-module feature comparison table.\n\n**Files:**\n- Create: `src/app/pricing/_components/feature-matrix.tsx`\n- Create: `src/app/pricing/_components/feature-matrix.module.css`\n\n**Verify:** `npm run dev` → `/pricing` → scroll to feature matrix → spot-check BOM module rows\n\n```json:metadata\n{\"files\": [\"src/app/pricing/_components/feature-matrix.tsx\", \"src/app/pricing/_components/feature-matrix.module.css\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"all 9 modules render\", \"check/dash/text cells correct\", \"mobile scroll works\"]}\n```"
     },
     {
       "id": 13,
       "subject": "Task 3: Pricing page, FAQ, and nav link",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [11, 12],
       "description": "**Goal:** Compose the full /pricing page — hero, PricingCards, FeatureMatrix, FAQ — and add a Pricing link to the root page nav.\n\n**Files:**\n- Create: `src/app/pricing/page.tsx`\n- Create: `src/app/pricing/pricing.module.css`\n- Modify: `src/app/page.tsx`\n\n**Verify:** `npm run dev` → `http://localhost:3000/pricing` full page visible\n\n```json:metadata\n{\"files\": [\"src/app/pricing/page.tsx\", \"src/app/pricing/pricing.module.css\", \"src/app/page.tsx\"], \"verifyCommand\": \"npm run dev\", \"acceptanceCriteria\": [\"page renders without errors\", \"title is Pricing — Manuva\", \"FAQ has 5 questions\", \"nav has Pricing link\"]}\n```"
     }
   ],
-  "lastUpdated": "2026-05-10T00:00:00.000Z"
+  "lastUpdated": "2026-05-10T08:00:00.000Z"
 }

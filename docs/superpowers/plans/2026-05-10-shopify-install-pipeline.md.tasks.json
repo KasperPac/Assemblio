@@ -24,10 +24,10 @@
     {
       "id": 3,
       "subject": "Task 3: shopify-connect page and actions",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [0, 2],
       "description": "**Goal:** Create the page a merchant lands on after an unauthenticated install.\n\n**Files:**\n- Create: `src/app/app/shopify-connect/page.tsx`\n- Create: `src/app/app/shopify-connect/shopify-connect-content.tsx`\n- Create: `src/app/app/shopify-connect/actions.ts`\n- Create: `src/app/app/shopify-connect/shopify-connect.module.css`\n\n**Acceptance Criteria:**\n- [ ] Page redirects if no valid pending cookie\n- [ ] Sign-in links existing tenant\n- [ ] Sign-up creates new tenant + user + links store\n- [ ] Both actions redirect to https://<shop>/admin\n\n```json:metadata\n{\"files\": [\"src/app/app/shopify-connect/page.tsx\", \"src/app/app/shopify-connect/shopify-connect-content.tsx\", \"src/app/app/shopify-connect/actions.ts\", \"src/app/app/shopify-connect/shopify-connect.module.css\"], \"verifyCommand\": \"npx tsc --noEmit && npm test\", \"acceptanceCriteria\": [\"page redirects on missing cookie\", \"sign-in links tenant\", \"sign-up creates tenant and links\"]}\n```"
     }
   ],
-  "lastUpdated": "2026-05-10T00:00:00.000Z"
+  "lastUpdated": "2026-05-10T09:40:00.000Z"
 }

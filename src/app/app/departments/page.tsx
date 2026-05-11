@@ -1,4 +1,5 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "../planning.module.css";
 import deptStyles from "./departments.module.css";
 import { createDepartment, updateDepartment } from "./actions";
@@ -30,7 +31,9 @@ type Props = {
 };
 
 export default async function DepartmentsPage({ searchParams }: Props) {
-  const supabase = await createSupabaseServerClient();
+  const context = await getServerTenantContext();
+  if (!context) redirect("/auth/login");
+  const { supabase, tenantId } = context;
   const params = (await searchParams) ?? {};
   const today = new Date().toISOString().slice(0, 10);
 
@@ -38,12 +41,14 @@ export default async function DepartmentsPage({ searchParams }: Props) {
     supabase
       .from("department")
       .select("id,name,code,default_efficiency_pct,is_active")
+      .eq("tenant_id", tenantId)
       .order("name"),
     supabase
       .from("cost_rate_schedule")
       .select(
         "id,department_id,effective_from,labor_rate_per_hour,admin_rate_per_hour,electricity_rate_per_kwh,gas_rate_per_unit,overhead_rate_per_hour"
       )
+      .eq("tenant_id", tenantId)
       .is("staff_member_id", null)
       .order("effective_from", { ascending: false }),
   ]);

@@ -1,5 +1,6 @@
 import styles from "./bom.module.css";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import BomCreateForm from "./bom-create-form";
 import BomComponentLineForm from "./bom-component-line-form";
 import {
@@ -46,21 +47,26 @@ function getStatusVariant(status: string) {
 }
 
 export default async function BomPage() {
-  const supabase = await createSupabaseServerClient();
+  const context = await getServerTenantContext();
+  if (!context) redirect("/auth/login");
+  const { supabase, tenantId } = context;
+
   const [{ data, error }, { data: variants }, { data: components }, { data: bomLines }] =
     await Promise.all([
       supabase
         .from("product_bom")
         .select("id,version,status,is_active,variant:variant_id(title,sku)")
+        .eq("tenant_id", tenantId)
         .order("created_at", { ascending: false })
         .limit(12),
-      supabase.from("shopify_variant").select("id,title,sku").order("title"),
-      supabase.from("component").select("id,name,sku").order("name"),
+      supabase.from("shopify_variant").select("id,title,sku").eq("tenant_id", tenantId).order("title"),
+      supabase.from("component").select("id,name,sku").eq("tenant_id", tenantId).order("name"),
       supabase
         .from("product_bom_component")
         .select(
           "id,quantity,product_bom:product_bom_id(id,version),component:component_id(name,sku)"
         )
+        .eq("tenant_id", tenantId)
         .order("created_at", { ascending: false })
         .limit(30),
     ]);

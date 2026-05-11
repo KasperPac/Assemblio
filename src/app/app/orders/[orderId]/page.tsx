@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { allocateOrder, updateJobLaborPlanWeek } from "../actions";
 import { getOrderLineStatus } from "@/lib/orders/order-line-status";
@@ -114,22 +113,24 @@ function getStatusVariant(status: string) {
 export default async function OrderDetailPage({ params, searchParams }: Props) {
   const { orderId } = await params;
   const query = (await searchParams) ?? {};
-  const supabase = await createSupabaseServerClient();
   const context = await getServerTenantContext();
   if (!context) notFound();
+  const { supabase, tenantId } = context;
 
   const [{ data: order }, { data: orderLines }] = await Promise.all([
     supabase
       .from("orders")
       .select("id,shopify_order_id,order_number,status,created_at")
       .eq("id", orderId)
+      .eq("tenant_id", tenantId)
       .maybeSingle(),
     supabase
       .from("order_line")
       .select(
         "id,quantity,unit_sell_price,line_sell_price,variant_id,variant:variant_id(title,sku,shopify_id,product:product_id(title,image_url,shopify_id))"
       )
-      .eq("order_id", orderId),
+      .eq("order_id", orderId)
+      .eq("tenant_id", tenantId),
   ]);
 
   if (!order) notFound();
@@ -142,7 +143,7 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
     quantity: l.quantity,
   }));
 
-  const { tenantId, role } = context;
+  const { role } = context;
   const showCosts = role === "admin" || role === "super_admin";
 
   const [

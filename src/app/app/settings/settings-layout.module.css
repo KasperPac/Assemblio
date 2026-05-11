@@ -7,7 +7,7 @@
 
 .sidebar {
   border-right: 1px solid var(--stroke);
-  background: var(--bg-sidebar);
+  background: transparent;
   padding: var(--space-8) 0;
   min-height: 100%;
 }

@@ -69,7 +69,6 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   }
 
   const userInitial = (user?.email ?? "U").slice(0, 1).toUpperCase();
-  const firstName = user?.email?.split("@")[0] ?? "User";
 
   return (
     <div className={styles.shell}>
@@ -85,71 +84,15 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           />
         </div>
 
-        <div className={styles.userGreeting}>
-          <span className={styles.userGreetingAvatar}>{userInitial}</span>
-          <div className={styles.userGreetingText}>
-            <p className={styles.userGreetingLabel}>Signed in</p>
-            <p>
-              <strong>{firstName}</strong>
-            </p>
-          </div>
-        </div>
-
-        <div className={styles.sidebarCallout}>
-          <p className={styles.sidebarCalloutEyebrow}>Workspace</p>
-          <h2>Operations cockpit</h2>
-          <p>Inventory, BOMs, purchasing, and planning run from one tenant-scoped workspace.</p>
-        </div>
-
         <SidebarNav hasPlanning={hasPlanning} />
-
-        <div className={styles.sidebarFooter}>
-          {selectableTenants.length > 1 ? (
-            <form action={switchActiveTenant} className={styles.tenantSwitchForm}>
-              <label htmlFor="tenant-switch" className={styles.tenantSwitchLabel}>
-                Active tenant
-              </label>
-              <select
-                id="tenant-switch"
-                name="tenant_id"
-                defaultValue={profile?.tenant_id ?? ""}
-                className={styles.tenantSwitchSelect}
-              >
-                {selectableTenants.map((tenantOption) => (
-                  <option key={tenantOption.id} value={tenantOption.id}>
-                    {tenantOption.name}
-                  </option>
-                ))}
-              </select>
-              <button type="submit" className={styles.tenantSwitchButton}>
-                Switch
-              </button>
-            </form>
-          ) : null}
-          <div className={styles.planCard}>
-            <div className={styles.planIcon} />
-            <div>
-              <p className={styles.planName}>{tenant?.name ?? "Tenant"}</p>
-              <p className={styles.planTier}>
-                {isSuperAdmin ? "Super Admin" : "Tenant Member"}
-              </p>
-            </div>
-          </div>
-          <a className={styles.helpLink} href="/app/help">
-            Help & Docs
-          </a>
-          <form action={signOut}>
-            <button className={styles.logout} type="submit">
-              Log Out
-            </button>
-          </form>
-        </div>
       </aside>
 
       <div className={styles.main}>
         <Topbar
           tenantName={tenant?.name ?? "No tenant access"}
           userInitial={userInitial}
+          selectableTenants={selectableTenants}
+          currentTenantId={profile?.tenant_id ?? ""}
         />
         <section className={styles.content}>{children}</section>
       </div>

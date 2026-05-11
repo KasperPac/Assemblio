@@ -1,4 +1,5 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "../planning.module.css";
 import { generateFinancialPlans } from "./actions";
 
@@ -69,7 +70,9 @@ function firstRelation<T>(value: T | T[] | null | undefined): T | null {
 }
 
 export default async function CostingPage({ searchParams }: Props) {
-  const supabase = await createSupabaseServerClient();
+  const context = await getServerTenantContext();
+  if (!context) redirect("/auth/login");
+  const { supabase, tenantId } = context;
   const params = (await searchParams) ?? {};
   const [
     { count: openOrdersCount },
@@ -82,27 +85,33 @@ export default async function CostingPage({ searchParams }: Props) {
     supabase
       .from("orders")
       .select("*", { count: "exact", head: true })
+      .eq("tenant_id", tenantId)
       .not("status", "in", '("fulfilled","cancelled")'),
     supabase
       .from("product_bom")
       .select("*", { count: "exact", head: true })
+      .eq("tenant_id", tenantId)
       .eq("is_active", true),
     supabase
       .from("job_cost_snapshot")
-      .select("*", { count: "exact", head: true }),
+      .select("*", { count: "exact", head: true })
+      .eq("tenant_id", tenantId),
     supabase
       .from("job_cost_actual_rollup")
-      .select("*", { count: "exact", head: true }),
+      .select("*", { count: "exact", head: true })
+      .eq("tenant_id", tenantId),
     supabase
       .from("job_cost_snapshot")
       .select(
         "id,order_line_id,snapshot_status,sell_price,planned_total_cost,planned_margin,planned_margin_pct,created_at,order_line:order_line_id(quantity,variant:variant_id(title,sku))"
       )
+      .eq("tenant_id", tenantId)
       .order("created_at", { ascending: false })
       .limit(10),
     supabase
       .from("job_cost_actual_rollup")
-      .select("order_line_id,actual_total_cost,actual_margin,actual_hours_total"),
+      .select("order_line_id,actual_total_cost,actual_margin,actual_hours_total")
+      .eq("tenant_id", tenantId),
   ]);
 
   const rows = (data ?? []) as SnapshotRow[];

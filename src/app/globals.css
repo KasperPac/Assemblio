@@ -1,16 +1,16 @@
 /* ── Theme: Daylight (default) ───────── */
 :root,
 [data-theme="daylight"] {
-  --bg-page:     #F8F7F5;
-  --bg-sidebar:  #F0EEE9;
+  --bg-page:     #F8FAFC;
+  --bg-sidebar:  #0F172A;
   --bg-card:     #FFFFFF;
-  --bg-card-2:   #ECEAE6;
-  --bg-card-alt: #F3F2EF;
-  --bg-input:    #F3F2EF;
+  --bg-card-2:   #E2E8F0;
+  --bg-card-alt: #F1F5F9;
+  --bg-input:    #F1F5F9;
 
-  --ink-strong:    #1A1814;
-  --ink-muted:     #6B6560;
-  --ink-faint:     #9B9590;
+  --ink-strong:    #0F172A;
+  --ink-muted:     #475569;
+  --ink-faint:     #94A3B8;
   --ink-on-brand:  #FFFFFF;
 
   --stroke:        rgba(0, 0, 0, 0.08);
@@ -155,7 +155,6 @@
 
 /* ── Global design tokens ──────────────── */
 :root {
-  --font-body: var(--font-inter), system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
 
   --ls-tight:  -0.015em;
@@ -222,6 +221,7 @@ body {
 }
 
 body {
+  --font-body: var(--font-inter), system-ui, sans-serif;
   min-height: 100vh;
   margin: 0;
   color: var(--ink-strong);

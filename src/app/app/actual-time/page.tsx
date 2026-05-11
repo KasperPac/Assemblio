@@ -1,4 +1,5 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "../planning.module.css";
 import { createActualTimeEntry } from "./actions";
 
@@ -81,7 +82,9 @@ function formatCurrency(value: number) {
 }
 
 export default async function ActualTimePage({ searchParams }: Props) {
-  const supabase = await createSupabaseServerClient();
+  const context = await getServerTenantContext();
+  if (!context) redirect("/auth/login");
+  const { supabase, tenantId } = context;
   const params = (await searchParams) ?? {};
 
   const [
@@ -94,11 +97,13 @@ export default async function ActualTimePage({ searchParams }: Props) {
     supabase
       .from("department")
       .select("id,name,code")
+      .eq("tenant_id", tenantId)
       .eq("is_active", true)
       .order("name"),
     supabase
       .from("staff_member")
       .select("id,name,department_id")
+      .eq("tenant_id", tenantId)
       .eq("is_active", true)
       .order("name"),
     supabase
@@ -106,6 +111,7 @@ export default async function ActualTimePage({ searchParams }: Props) {
       .select(
         "id,quantity,line_sell_price,orders:order_id(shopify_order_id,status),variant:variant_id(title,sku,product:product_id(title))"
       )
+      .eq("tenant_id", tenantId)
       .order("created_at", { ascending: false })
       .limit(20),
     supabase
@@ -113,6 +119,7 @@ export default async function ActualTimePage({ searchParams }: Props) {
       .select(
         "id,hours,labor_cost_amount,entry_type,created_at,department:department_id(name),staff_member:staff_member_id(name)"
       )
+      .eq("tenant_id", tenantId)
       .order("created_at", { ascending: false })
       .limit(8),
     supabase
@@ -120,6 +127,7 @@ export default async function ActualTimePage({ searchParams }: Props) {
       .select(
         "id,actual_total_cost,actual_margin,actual_hours_total,order_line:order_line_id(line_sell_price,variant:variant_id(title,sku))"
       )
+      .eq("tenant_id", tenantId)
       .order("updated_at", { ascending: false })
       .limit(5),
   ]);

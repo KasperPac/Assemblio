@@ -1,4 +1,5 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "./trash.module.css";
 import {
   emptyTrash,
@@ -55,7 +56,10 @@ function firstOf<T>(value: T | T[] | null | undefined): T | undefined {
 }
 
 export default async function TrashPage() {
-  const supabase = await createSupabaseServerClient();
+  const context = await getServerTenantContext();
+  if (!context) redirect("/auth/login");
+  const { supabase, tenantId } = context;
+
   const [
     { data: stores },
     { data: activity },
@@ -66,28 +70,33 @@ export default async function TrashPage() {
     supabase
       .from("shopify_store")
       .select("id,store_domain,status,last_synced_at")
+      .eq("tenant_id", tenantId)
       .eq("status", "uninstalled")
       .order("created_at", { ascending: false }),
     supabase
       .from("activity_log")
       .select("id,event,created_at,metadata")
+      .eq("tenant_id", tenantId)
       .order("created_at", { ascending: false })
       .limit(50),
     supabase
       .from("purchase_order")
       .select("id,status,created_at,supplier:supplier_id(name)")
+      .eq("tenant_id", tenantId)
       .eq("status", "archived")
       .order("created_at", { ascending: false })
       .limit(15),
     supabase
       .from("stocktake_session")
       .select("id,status,created_at,location:location_id(name)")
+      .eq("tenant_id", tenantId)
       .eq("status", "archived")
       .order("created_at", { ascending: false })
       .limit(15),
     supabase
       .from("product_bom")
       .select("id,version,status,created_at,variant:variant_id(title,sku)")
+      .eq("tenant_id", tenantId)
       .eq("status", "archived")
       .order("created_at", { ascending: false })
       .limit(15),

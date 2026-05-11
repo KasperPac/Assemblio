@@ -1,5 +1,6 @@
 import styles from "./purchasing.module.css";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import PurchaseOrderCreateForm from "./po-create-form";
 import PurchaseOrderLineForm from "./po-line-form";
 import {
@@ -43,21 +44,26 @@ function getStatusVariant(status: string) {
 }
 
 export default async function PurchasingPage() {
-  const supabase = await createSupabaseServerClient();
+  const context = await getServerTenantContext();
+  if (!context) redirect("/auth/login");
+  const { supabase, tenantId } = context;
+
   const [{ data, error }, { data: suppliers }, { data: components }, { data: poLines }] =
     await Promise.all([
       supabase
         .from("purchase_order")
         .select("id,status,created_at,supplier:supplier_id(name)")
+        .eq("tenant_id", tenantId)
         .order("created_at", { ascending: false })
         .limit(12),
-      supabase.from("suppliers").select("id,name").order("name"),
-      supabase.from("component").select("id,name,sku").order("name"),
+      supabase.from("suppliers").select("id,name").eq("tenant_id", tenantId).order("name"),
+      supabase.from("component").select("id,name,sku").eq("tenant_id", tenantId).order("name"),
       supabase
         .from("purchase_order_line")
         .select(
           "id,quantity,quantity_received,purchase_order:purchase_order_id(id),component:component_id(name,sku)"
         )
+        .eq("tenant_id", tenantId)
         .order("created_at", { ascending: false })
         .limit(20),
     ]);

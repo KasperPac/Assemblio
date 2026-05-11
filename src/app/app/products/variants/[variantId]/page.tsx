@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "../../variant-detail.module.css";
 import BomSeedPanel from "../../bom-seed-panel";
 import BomEditor from "../../bom-editor";
@@ -160,7 +160,9 @@ function classForStatus(status: string) {
 export default async function VariantDetailPage({ params, searchParams }: Props) {
   const { variantId } = await params;
   const query = (await searchParams) ?? {};
-  const supabase = await createSupabaseServerClient();
+  const context = await getServerTenantContext();
+  if (!context) notFound();
+  const { supabase, tenantId } = context;
 
   const [
     { data: variant },
@@ -175,27 +177,32 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
       .from("shopify_variant")
       .select("id,title,sku,shopify_id,price,created_at,product:product_id(id,title)")
       .eq("id", variantId)
+      .eq("tenant_id", tenantId)
       .maybeSingle(),
     supabase
       .from("product_bom")
       .select("id,version,status,is_active,created_at")
+      .eq("tenant_id", tenantId)
       .eq("variant_id", variantId)
       .order("version", { ascending: false }),
     supabase
       .from("product_bom")
       .select("id,version,status,variant:variant_id(id,title,sku,product:product_id(title))")
+      .eq("tenant_id", tenantId)
       .order("created_at", { ascending: false })
       .limit(250),
     supabase.from("profiles").select("role").single(),
     supabase
       .from("bom_template")
       .select("id,name,description,bom_template_line(id)")
+      .eq("tenant_id", tenantId)
       .order("name"),
     supabase
       .from("component")
       .select("id,name,sku,unit,cost_per_unit,group:group_id(name)")
+      .eq("tenant_id", tenantId)
       .order("name"),
-    supabase.from("department").select("id,name,code").eq("is_active", true).order("name"),
+    supabase.from("department").select("id,name,code").eq("tenant_id", tenantId).eq("is_active", true).order("name"),
   ]);
 
   if (!variant) {

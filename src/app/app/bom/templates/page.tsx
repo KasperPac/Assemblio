@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import {
   CreateTemplateButton,
   AddLineForm,
@@ -32,16 +33,19 @@ function unwrap<T>(val: T | T[] | null): T | null {
 }
 
 export default async function TemplatesPage() {
-  const supabase = await createSupabaseServerClient();
+  const context = await getServerTenantContext();
+  if (!context) redirect("/auth/login");
+  const { supabase, tenantId } = context;
 
   const [{ data: templates }, { data: templateLines }, { data: components }] =
     await Promise.all([
-      supabase.from("bom_template").select("id,name,description,created_at").order("name"),
+      supabase.from("bom_template").select("id,name,description,created_at").eq("tenant_id", tenantId).order("name"),
       supabase
         .from("bom_template_line")
         .select("id,template_id,quantity,component:component_id(name,sku,unit)")
+        .eq("tenant_id", tenantId)
         .order("created_at", { ascending: true }),
-      supabase.from("component").select("id,name,sku").order("name"),
+      supabase.from("component").select("id,name,sku").eq("tenant_id", tenantId).order("name"),
     ]);
 
   const typedTemplates = (templates ?? []) as Template[];

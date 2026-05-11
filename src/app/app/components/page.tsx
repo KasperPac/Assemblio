@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "./components.module.css";
 import ComponentCreateForm from "./component-create-form";
 import { createComponent } from "./actions";
@@ -29,7 +30,10 @@ type Props = {
 export default async function ComponentsPage({ searchParams }: Props) {
   const params = (await searchParams) ?? {};
   const q = (params.q ?? "").trim().toLowerCase();
-  const supabase = await createSupabaseServerClient();
+
+  const context = await getServerTenantContext();
+  if (!context) redirect("/auth/login");
+  const { supabase, tenantId } = context;
 
   const [
     { data: components, error },
@@ -38,11 +42,11 @@ export default async function ComponentsPage({ searchParams }: Props) {
     { data: locations },
     { data: groups },
   ] = await Promise.all([
-    supabase.from("component").select("id,name,sku,reorder_point").order("name"),
-    supabase.from("inventory_balance").select("component_id,on_hand,reserved"),
-    supabase.from("suppliers").select("id,name").order("name"),
-    supabase.from("location").select("id,name").order("name"),
-    supabase.from("component_group").select("id,name").order("name"),
+    supabase.from("component").select("id,name,sku,reorder_point").eq("tenant_id", tenantId).order("name"),
+    supabase.from("inventory_balance").select("component_id,on_hand,reserved").eq("tenant_id", tenantId),
+    supabase.from("suppliers").select("id,name").eq("tenant_id", tenantId).order("name"),
+    supabase.from("location").select("id,name").eq("tenant_id", tenantId).order("name"),
+    supabase.from("component_group").select("id,name").eq("tenant_id", tenantId).order("name"),
   ]);
 
   const balanceMap = (balances ?? []).reduce<Record<string, BalanceRow>>((acc, row) => {

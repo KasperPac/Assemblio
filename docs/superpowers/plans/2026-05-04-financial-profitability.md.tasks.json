@@ -1,0 +1,48 @@
+{
+  "planPath": "docs/superpowers/plans/2026-05-04-financial-profitability.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 0: Fix Shopify sell price capture",
+      "status": "pending",
+      "blockedBy": [],
+      "description": "**Goal:** `order_line.unit_sell_price` and `line_sell_price` are populated from Shopify when orders sync.\n\n**Files:**\n- Modify: `src/lib/shopify/sync.ts`\n- Create: `src/lib/shopify/sync.test.ts`\n\n**Acceptance Criteria:**\n- [ ] `buildOrderLineRows` is exported from `sync.ts` as a pure function\n- [ ] It maps `discountedUnitPriceSet.shopMoney.amount` → `unit_sell_price` (numeric)\n- [ ] It computes `line_sell_price = unit_sell_price × quantity`\n- [ ] When multiple line items collapse to the same variant, quantities are summed and the first price seen is kept\n- [ ] Null price defaults to 0\n- [ ] All 4 tests pass\n\n**Verify:** `npm test -- src/lib/shopify/sync.test.ts` → 4 tests pass\n\n```json:metadata\n{\"files\": [\"src/lib/shopify/sync.ts\", \"src/lib/shopify/sync.test.ts\"], \"verifyCommand\": \"npm test -- src/lib/shopify/sync.test.ts\", \"acceptanceCriteria\": [\"buildOrderLineRows exported as pure function\", \"maps discountedUnitPriceSet to unit_sell_price\", \"computes line_sell_price = unit_sell_price x quantity\", \"collapses duplicate variants\", \"null price defaults to 0\", \"4 tests pass\"]}\n```"
+    },
+    {
+      "id": 1,
+      "subject": "Task 1: product_profitability database view",
+      "status": "pending",
+      "blockedBy": [],
+      "description": "**Goal:** A Postgres view that aggregates planned and actual margin by variant across all jobs exists in the DB.\n\n**Files:**\n- Create: `supabase/patches/product_profitability_analytics.sql`\n\n**Acceptance Criteria:**\n- [ ] View `public.product_profitability` exists\n- [ ] Has columns: `tenant_id`, `variant_id`, `variant_title`, `product_title`, `job_count`, `total_revenue`, `avg_planned_margin_pct`, `avg_actual_margin_pct`, `total_actual_margin`\n- [ ] `security_invoker = true` so RLS from underlying tables applies\n- [ ] Applied to local Supabase without error\n\n**Verify:** Apply patch and run `select count(*) from product_profitability;` — returns a number without error.\n\n```json:metadata\n{\"files\": [\"supabase/patches/product_profitability_analytics.sql\"], \"verifyCommand\": \"psql postgresql://postgres:postgres@localhost:54322/postgres -c \\\"select count(*) from product_profitability;\\\"\", \"acceptanceCriteria\": [\"View exists with all required columns\", \"security_invoker = true\", \"Applies without error\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: Profitability page shell, nav item, and stub components",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Navigating to `/app/profitability` shows a page with By Job and By Product tabs (empty state). Sidebar shows Profitability link in the Planning section.\n\n**Files:**\n- Modify: `src/app/app/sidebar-nav.tsx`\n- Create: `src/app/app/profitability/page.tsx`\n- Create: `src/app/app/profitability/profitability-tabs.tsx`\n- Create: `src/app/app/profitability/by-job-tab.tsx`\n- Create: `src/app/app/profitability/by-product-tab.tsx`\n- Create: `src/app/app/profitability/profitability.module.css`\n\n**Acceptance Criteria:**\n- [ ] Profitability link appears in the sidebar under Planning, after Costing\n- [ ] `/app/profitability` loads without errors\n- [ ] \"By Job\" and \"By Product\" tabs are visible and switchable\n- [ ] TypeScript compiles without errors\n\n**Verify:** `npx tsc --noEmit` → no output (zero errors)\n\n```json:metadata\n{\"files\": [\"src/app/app/sidebar-nav.tsx\", \"src/app/app/profitability/page.tsx\", \"src/app/app/profitability/profitability-tabs.tsx\", \"src/app/app/profitability/by-job-tab.tsx\", \"src/app/app/profitability/by-product-tab.tsx\", \"src/app/app/profitability/profitability.module.css\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Profitability nav link appears after Costing\", \"Page loads without errors\", \"Both tabs visible and switchable\", \"TypeScript clean\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: By Job tab — full table with cost breakdown",
+      "status": "pending",
+      "blockedBy": [1, 2],
+      "description": "**Goal:** The By Job tab shows every order line that has a cost snapshot, with correct margin data, status badges, and an inline cost breakdown on row expansion.\n\n**Files:**\n- Modify: `src/app/app/profitability/page.tsx` — add data fetching\n- Modify: `src/app/app/profitability/by-job-tab.tsx` — replace stub with full table\n\n**Acceptance Criteria:**\n- [ ] Table displays all rows with Order #, Product, Variant, Qty, Sell Price, Cost, Margin $, Margin %, Status\n- [ ] Green \"Actual\" badge when `actual_total_cost > 0`; grey \"Planned\" badge otherwise\n- [ ] Clicking a row toggles an inline breakdown showing Materials / Labor / Overhead in Planned and (if Actual) Actual columns\n- [ ] Asterisk note on Actual Materials column: \"Actual material tracking coming soon\"\n- [ ] Default sort: lowest margin % first\n- [ ] Variant filter from By Product tab works correctly\n\n**Verify:** `npx tsc --noEmit` → no output\n\n```json:metadata\n{\"files\": [\"src/app/app/profitability/page.tsx\", \"src/app/app/profitability/by-job-tab.tsx\", \"src/app/app/profitability/actions.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Table shows all required columns\", \"Actual/Planned badges correct\", \"Row expansion shows cost breakdown\", \"Asterisk note on actual materials\", \"Default sort lowest margin first\", \"Variant filter works\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: By Product tab — aggregated table with click-through",
+      "status": "pending",
+      "blockedBy": [1, 2],
+      "description": "**Goal:** The By Product tab shows one row per variant with aggregated margin data. Clicking a row switches to By Job filtered to that variant.\n\n**Files:**\n- Modify: `src/app/app/profitability/by-product-tab.tsx` — replace stub with full table\n\n**Acceptance Criteria:**\n- [ ] Table shows Product, Variant, Jobs, Total Revenue, Avg Margin %, Total Margin $\n- [ ] Avg Margin % shows actual if available, else planned (actual takes priority)\n- [ ] Clicking a row calls `onVariantClick(variantId)` which switches tab and filters By Job\n- [ ] Rows with negative margin % are highlighted in warning colour\n- [ ] TypeScript compiles without errors\n\n**Verify:** `npx tsc --noEmit` → no output\n\n```json:metadata\n{\"files\": [\"src/app/app/profitability/by-product-tab.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Table shows all required columns\", \"Avg Margin uses actual if available else planned\", \"Row click switches to By Job with variant filter\", \"Negative margin rows highlighted\", \"TypeScript clean\"]}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 5: Re-sync prices server action",
+      "status": "pending",
+      "blockedBy": [1, 3],
+      "description": "**Goal:** Clicking \"Re-sync prices from Shopify\" on the Profitability page triggers a Shopify sync that patches `unit_sell_price` and `line_sell_price` on existing order lines.\n\n**Files:**\n- Modify: `src/app/app/profitability/actions.ts` — implement `resyncOrderPrices`\n\n**Acceptance Criteria:**\n- [ ] `resyncOrderPrices` calls `syncShopifyStoreData` with the tenant's Shopify credentials\n- [ ] After sync completes the page reloads (redirect back to `/app/profitability`)\n- [ ] TypeScript compiles without errors\n\n**Verify:** `npx tsc --noEmit` → no output; manual test: click button → Shopify sync runs → order_line prices updated\n\n```json:metadata\n{\"files\": [\"src/app/app/profitability/actions.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"resyncOrderPrices calls syncShopifyStoreData\", \"Page redirects after sync\", \"TypeScript clean\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-05-04T00:00:00Z"
+}

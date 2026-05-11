@@ -1,4 +1,5 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "../planning.module.css";
 import { refreshCapacityWeek } from "./actions";
 import { getWeekStart } from "@/lib/dates";
@@ -48,7 +49,9 @@ type Props = {
 };
 
 export default async function CapacityPage({ searchParams }: Props) {
-  const supabase = await createSupabaseServerClient();
+  const context = await getServerTenantContext();
+  if (!context) redirect("/auth/login");
+  const { supabase, tenantId } = context;
   const params = (await searchParams) ?? {};
   const weekStart = resolveWeekStart(params.week);
 
@@ -57,12 +60,14 @@ export default async function CapacityPage({ searchParams }: Props) {
       supabase
         .from("orders")
         .select("*", { count: "exact", head: true })
+        .eq("tenant_id", tenantId)
         .not("status", "in", '("fulfilled","cancelled")'),
       supabase
         .from("department_capacity_week")
         .select(
           "id,department_id,week_start,available_hours,overtime_hours,capacity_hours_total,department:department_id(name)"
         )
+        .eq("tenant_id", tenantId)
         .eq("week_start", weekStart)
         .order("capacity_hours_total", { ascending: false }),
       supabase
@@ -70,6 +75,7 @@ export default async function CapacityPage({ searchParams }: Props) {
         .select(
           "id,department_id,week_start,planned_hours,actual_hours,available_hours,overload_hours,idle_hours,utilization_pct"
         )
+        .eq("tenant_id", tenantId)
         .eq("week_start", weekStart),
     ]);
 
