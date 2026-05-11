@@ -133,8 +133,10 @@ export async function signUpTenant(
     // doesn't stop the others.
     if (tenantId !== null) {
       try {
-        // tenant has on-delete-cascade to profiles, profile_tenant_access,
-        // tenant_subscription, and activity_log via tenant_id FKs.
+        // All four child tables (profiles, profile_tenant_access,
+        // tenant_subscription, activity_log) cascade on tenant_id, so
+        // deleting the tenant cleans them up.
+        // See supabase/patches/tenant_child_cascades.sql.
         await admin.from("tenant").delete().eq("id", tenantId);
       } catch (tenantDeleteErr) {
         console.error(
