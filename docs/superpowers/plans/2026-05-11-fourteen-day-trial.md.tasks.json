@@ -1,0 +1,111 @@
+{
+  "planPath": "docs/superpowers/plans/2026-05-11-fourteen-day-trial.md",
+  "tasks": [
+    {
+      "id": 1,
+      "subject": "Task 0: Foundation — Stripe SDK, env, PLANS constants, helpers",
+      "status": "pending",
+      "blockedBy": [],
+      "description": "**Goal:** Install Stripe Node SDK and define PLANS + effectiveTier/paywallRequired/pastDueSoftLocked helpers.\n\n**Files:** src/lib/plans/index.ts, src/lib/plans/plans.test.ts, src/lib/stripe/client.ts, package.json, .env.example\n\n**Verify:** `npm test -- src/lib/plans/plans.test.ts`\n\n```json:metadata\n{\"files\":[\"src/lib/plans/index.ts\",\"src/lib/plans/plans.test.ts\",\"src/lib/stripe/client.ts\",\"package.json\",\".env.example\"],\"verifyCommand\":\"npm test -- src/lib/plans/plans.test.ts\",\"acceptanceCriteria\":[\"PLANS exports all four tiers with correct limits\",\"effectiveTier returns 'pro' for active trial regardless of selected_tier\",\"paywallRequired true for expired trial and canceled\",\"pastDueSoftLocked true only when status='past_due' AND now-updated_at<3 days\",\"stripeClient() returns memoised Stripe instance\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 1: Database migrations — 4 new tables + RLS",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Add tenant_subscription, tenant_invitation, stripe_event_log, trial_email_log tables with RLS.\n\n**Files:** supabase/patches/tenant_subscription.sql, tenant_invitation.sql, stripe_event_log.sql, trial_email_log.sql\n\n**Verify:** Apply via Supabase MCP; list_tables shows all four with RLS enabled.\n\n```json:metadata\n{\"files\":[\"supabase/patches/tenant_subscription.sql\",\"supabase/patches/tenant_invitation.sql\",\"supabase/patches/stripe_event_log.sql\",\"supabase/patches/trial_email_log.sql\"],\"verifyCommand\":\"\",\"acceptanceCriteria\":[\"All four tables exist with constraints\",\"RLS enabled on all four\",\"members can read tenant_subscription via has_tenant_access\",\"stripe_event_log and trial_email_log are service-role only\",\"tenant_invitation_pending_unique partial index exists\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 2: Subscription access library + limit helpers",
+      "status": "pending",
+      "blockedBy": [1, 2],
+      "description": "**Goal:** getSubscriptionAccess, assertWithinLimit, countTenantUsage, LimitExceededError.\n\n**Files:** src/lib/subscription/access.ts, access.test.ts, limits.ts, limits.test.ts\n\n**Verify:** `npm test -- src/lib/subscription/`\n\n```json:metadata\n{\"files\":[\"src/lib/subscription/access.ts\",\"src/lib/subscription/access.test.ts\",\"src/lib/subscription/limits.ts\",\"src/lib/subscription/limits.test.ts\"],\"verifyCommand\":\"npm test -- src/lib/subscription/\",\"acceptanceCriteria\":[\"getSubscriptionAccess returns state+sub+daysLeft for each (status,time) branch\",\"assertWithinLimit throws LimitExceededError when over limit\",\"countTenantUsage returns correct location and user counts\",\"LimitExceededError carries kind/limit/current/tier\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 3: Self-serve signup page + server action",
+      "status": "pending",
+      "blockedBy": [1, 2],
+      "description": "**Goal:** /signup route creates tenant + profile + access + tenant_subscription in one flow; deletes orphan auth user on rollback.\n\n**Files:** src/app/signup/page.tsx, signup.module.css, actions.ts; modify src/app/login/page.tsx and src/app/login/actions.ts.\n\n**Verify:** Manual smoke at /signup?plan=growth&billing=annual\n\n```json:metadata\n{\"files\":[\"src/app/signup/page.tsx\",\"src/app/signup/signup.module.css\",\"src/app/signup/actions.ts\",\"src/app/login/page.tsx\",\"src/app/login/actions.ts\"],\"verifyCommand\":\"\",\"acceptanceCriteria\":[\"?plan=growth&billing=annual pre-selects Growth + annual\",\"Submitting creates tenant + profiles + profile_tenant_access + tenant_subscription\",\"Trial banner shows ~14 days left after signup\",\"Weak password / invalid plan returns error, no rows created\",\"Rollback deletes orphan auth user\",\"tenant_domain lookup removed from codebase\"]}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 4: Pricing-page CTA wiring",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Pricing tier CTAs link to /signup?plan=<id>&billing=<period>. Enterprise unchanged.\n\n**Files:** src/app/pricing/_components/pricing-cards.tsx\n\n```json:metadata\n{\"files\":[\"src/app/pricing/_components/pricing-cards.tsx\"],\"verifyCommand\":\"\",\"acceptanceCriteria\":[\"Starter CTA → /signup?plan=starter&billing=<current>\",\"Growth CTA → /signup?plan=growth&billing=<current>\",\"Pro CTA → /signup?plan=pro&billing=<current>\",\"Enterprise CTA unchanged\"]}\n```"
+    },
+    {
+      "id": 6,
+      "subject": "Task 5: App shell gating — requireActiveSubscription",
+      "status": "pending",
+      "blockedBy": [3, 4],
+      "description": "**Goal:** Layout calls requireActiveSubscription(); paywall + past-due routes bypass the gate via middleware pathname header.\n\n**Files:** src/app/app/_lib/require-active-subscription.ts, src/app/app/billing/layout.tsx, middleware.ts; modify src/app/app/layout.tsx.\n\n```json:metadata\n{\"files\":[\"src/app/app/_lib/require-active-subscription.ts\",\"src/app/app/layout.tsx\",\"src/app/app/billing/layout.tsx\",\"middleware.ts\"],\"verifyCommand\":\"\",\"acceptanceCriteria\":[\"Expired trial redirects to /app/billing/paywall\",\"past_due_locked redirects to /app/billing/past-due\",\"active passes through\",\"/app/billing/* bypasses gate\",\"middleware sets x-pathname header\"]}\n```"
+    },
+    {
+      "id": 7,
+      "subject": "Task 6: Paywall + past-due + success pages",
+      "status": "pending",
+      "blockedBy": [6],
+      "description": "**Goal:** UI shells for billing state pages. Buttons POST to Stripe routes (wired in T8/T9).\n\n**Files:** src/app/app/billing/paywall/page.tsx + .module.css, past-due/page.tsx + .module.css, success/page.tsx\n\n```json:metadata\n{\"files\":[\"src/app/app/billing/paywall/page.tsx\",\"src/app/app/billing/paywall/paywall.module.css\",\"src/app/app/billing/past-due/page.tsx\",\"src/app/app/billing/past-due/past-due.module.css\",\"src/app/app/billing/success/page.tsx\"],\"verifyCommand\":\"\",\"acceptanceCriteria\":[\"/paywall renders three tier cards with annual/monthly toggle\",\"Pre-selects tenant's selected_tier\",\"Each card POSTs to /api/billing/checkout\",\"/past-due has POST form to /api/billing/portal\",\"/success welcomes user and links to /app\"]}\n```"
+    },
+    {
+      "id": 8,
+      "subject": "Task 7: Trial banner + past-due banner",
+      "status": "pending",
+      "blockedBy": [6],
+      "description": "**Goal:** Two server components rendered at top of app shell content area based on subscription state.\n\n**Files:** src/app/app/_components/trial-banner.tsx + .module.css, past-due-banner.tsx + .module.css; modify src/app/app/layout.tsx.\n\n```json:metadata\n{\"files\":[\"src/app/app/_components/trial-banner.tsx\",\"src/app/app/_components/trial-banner.module.css\",\"src/app/app/_components/past-due-banner.tsx\",\"src/app/app/_components/past-due-banner.module.css\",\"src/app/app/layout.tsx\"],\"verifyCommand\":\"\",\"acceptanceCriteria\":[\"Trial banner shows correct daysLeft + selected_tier when trialing\",\"Upgrade now → /app/billing/paywall\",\"Past-due banner shows during soft-warn window\",\"Banners hidden for status=active\"]}\n```"
+    },
+    {
+      "id": 9,
+      "subject": "Task 8: Stripe Checkout API + over-limit pre-check",
+      "status": "pending",
+      "blockedBy": [3, 4, 7],
+      "description": "**Goal:** POST /api/billing/checkout validates plan, runs over-limit check, lazily creates customer, redirects to Stripe Checkout.\n\n**Files:** src/app/api/billing/checkout/route.ts, src/lib/stripe/price-resolution.ts, price-resolution.test.ts; modify src/lib/tenant/context.ts to include userId.\n\n```json:metadata\n{\"files\":[\"src/app/api/billing/checkout/route.ts\",\"src/lib/stripe/price-resolution.ts\",\"src/lib/stripe/price-resolution.test.ts\",\"src/lib/tenant/context.ts\"],\"verifyCommand\":\"npm test -- src/lib/stripe/price-resolution.test.ts\",\"acceptanceCriteria\":[\"Unauthed POST → 401\",\"Over-limit POST → 400 with descriptive JSON\",\"Valid POST → 303 to Stripe URL\",\"First call writes stripe_customer_id; subsequent calls reuse it\",\"priceIdFor and resolvePriceId map both directions\"]}\n```"
+    },
+    {
+      "id": 10,
+      "subject": "Task 9: Stripe Customer Portal API",
+      "status": "pending",
+      "blockedBy": [1, 2],
+      "description": "**Goal:** POST /api/billing/portal redirects to Stripe Customer Portal session.\n\n**Files:** src/app/api/billing/portal/route.ts\n\n```json:metadata\n{\"files\":[\"src/app/api/billing/portal/route.ts\"],\"verifyCommand\":\"\",\"acceptanceCriteria\":[\"Unauthed POST → 401\",\"Missing stripe_customer_id → 400\",\"Valid customer → 303 to Portal URL\"]}\n```"
+    },
+    {
+      "id": 11,
+      "subject": "Task 10: Stripe webhook handler + idempotency",
+      "status": "pending",
+      "blockedBy": [1, 2],
+      "description": "**Goal:** POST /api/webhooks/stripe verifies signature (with rotation support), inserts into stripe_event_log for idempotency, dispatches 5 event types.\n\n**Files:** src/app/api/webhooks/stripe/route.ts, src/lib/stripe/webhook-events.ts, webhook-events.test.ts\n\n```json:metadata\n{\"files\":[\"src/app/api/webhooks/stripe/route.ts\",\"src/lib/stripe/webhook-events.ts\",\"src/lib/stripe/webhook-events.test.ts\"],\"verifyCommand\":\"npm test -- src/lib/stripe/webhook-events.test.ts\",\"acceptanceCriteria\":[\"Invalid signature → 400\",\"Duplicate event_id is a no-op\",\"checkout.session.completed → status='active' + sub/tier/interval/period\",\"invoice.payment_failed → past_due\",\"invoice.payment_succeeded (from past_due) → active\",\"customer.subscription.updated re-syncs tier/period\",\"customer.subscription.deleted → canceled\",\"Tries both STRIPE_WEBHOOK_SECRET and _NEXT\"]}\n```"
+    },
+    {
+      "id": 12,
+      "subject": "Task 11: Email wrapper + four templates",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Resend wrapper + invitation + 3 trial-reminder templates.\n\n**Files:** src/lib/email/send.ts, send.test.ts, templates/invitation.tsx, trial-reminder-3.tsx, trial-reminder-1.tsx, trial-expired.tsx\n\n```json:metadata\n{\"files\":[\"src/lib/email/send.ts\",\"src/lib/email/send.test.ts\",\"src/lib/email/templates/invitation.tsx\",\"src/lib/email/templates/trial-reminder-3.tsx\",\"src/lib/email/templates/trial-reminder-1.tsx\",\"src/lib/email/templates/trial-expired.tsx\"],\"verifyCommand\":\"npm test -- src/lib/email/\",\"acceptanceCriteria\":[\"sendEmail returns {ok:true,id} or {ok:false,error} - never throws\",\"Requires RESEND_API_KEY and RESEND_FROM\",\"Each template renders with interpolated tenantName/inviter/etc.\"]}\n```"
+    },
+    {
+      "id": 13,
+      "subject": "Task 12: Trial reminder cron",
+      "status": "pending",
+      "blockedBy": [2, 12],
+      "description": "**Goal:** Daily Vercel Cron at /api/cron/trial-reminders walks trialing subs, sends correct email once per (tenant, kind).\n\n**Files:** src/app/api/cron/trial-reminders/route.ts, src/lib/subscription/reminders.ts, reminders.test.ts; modify vercel.json.\n\n```json:metadata\n{\"files\":[\"src/app/api/cron/trial-reminders/route.ts\",\"src/lib/subscription/reminders.ts\",\"src/lib/subscription/reminders.test.ts\",\"vercel.json\"],\"verifyCommand\":\"npm test -- src/lib/subscription/reminders.test.ts\",\"acceptanceCriteria\":[\"Bad CRON_SECRET → 401\",\"Correct kind sent based on daysUntilEnd\",\"trial_email_log unique constraint prevents duplicate sends\",\"Tenants with status!=trialing are skipped\",\"vercel.json registers schedule 0 14 * * *\"]}\n```"
+    },
+    {
+      "id": 14,
+      "subject": "Task 13: Team invitations — actions, settings UI, accept route",
+      "status": "pending",
+      "blockedBy": [3, 12],
+      "description": "**Goal:** Admins invite teammates; invitees accept via magic link without starting a new trial.\n\n**Files:** src/lib/invitations/tokens.ts + test, src/lib/invitations/actions.ts + test, src/app/app/settings/team/* , src/app/accept-invite/[token]/* .\n\n```json:metadata\n{\"files\":[\"src/lib/invitations/tokens.ts\",\"src/lib/invitations/tokens.test.ts\",\"src/lib/invitations/actions.ts\",\"src/lib/invitations/actions.test.ts\",\"src/app/app/settings/team/page.tsx\",\"src/app/app/settings/team/team.module.css\",\"src/app/app/settings/team/actions.ts\",\"src/app/accept-invite/[token]/page.tsx\",\"src/app/accept-invite/[token]/accept-invite.module.css\",\"src/app/accept-invite/[token]/actions.ts\"],\"verifyCommand\":\"\",\"acceptanceCriteria\":[\"Admin sees members + pending invites + invite form\",\"inviteTeammate enforces assertWithinLimit('users')\",\"Invite email arrives via Resend\",\"Expired/accepted/missing token → friendly error\",\"Existing user accept = sign-in then link\",\"New user accept = name+password form, no plan/billing\",\"Member-count check runs at both invite and accept\",\"Non-admins blocked at server\"]}\n```"
+    },
+    {
+      "id": 15,
+      "subject": "Task 14: Feature gating helpers + exemplar applications",
+      "status": "pending",
+      "blockedBy": [3],
+      "description": "**Goal:** hasFeature() helper + apply to bin management and advanced BOM yield % as the gating pattern.\n\n**Files:** src/lib/plans/features.ts, features.test.ts; modify bin-management page and BOM yield % component.\n\n```json:metadata\n{\"files\":[\"src/lib/plans/features.ts\",\"src/lib/plans/features.test.ts\"],\"verifyCommand\":\"npm test -- src/lib/plans/features.test.ts\",\"acceptanceCriteria\":[\"hasFeature(sub,'binManagement') uses effectiveTier\",\"Active starter on bin page sees FeatureUpsell\",\"Trialing tenant sees bin feature normally\",\"Same gating applied to advanced BOM yield %\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-05-11T00:00:00Z"
+}
