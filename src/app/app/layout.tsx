@@ -1,13 +1,18 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
+import { headers } from "next/headers";
 import styles from "./shell.module.css";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { signOut, switchActiveTenant } from "./actions";
 import SidebarNav from "./sidebar-nav";
 import Topbar from "./topbar";
+import { requireActiveSubscription } from "./_lib/require-active-subscription";
+import type { AccessResult } from "@/lib/subscription/access";
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const supabase = await createSupabaseServerClient();
+  const pathname = (await headers()).get("x-pathname") ?? "";
+  const isBillingShell = pathname.startsWith("/app/billing");
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -70,6 +75,21 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
 
   const userInitial = (user?.email ?? "U").slice(0, 1).toUpperCase();
 
+  // Subscription gate: skip entirely for /app/billing/* so the user can
+  // always reach the paywall / past-due pages to pay. Otherwise this
+  // redirects to /app/billing/paywall or /app/billing/past-due when the
+  // tenant's subscription state requires it.
+  let access: AccessResult | null = null;
+  if (!isBillingShell && profile?.tenant_id) {
+    access = await requireActiveSubscription(supabase, profile.tenant_id);
+  }
+
+  // Billing shell bypass: render bare children (no sidebar/topbar) so the
+  // paywall / past-due pages are not wrapped in app chrome.
+  if (isBillingShell) {
+    return <>{children}</>;
+  }
+
   return (
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
@@ -94,6 +114,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           selectableTenants={selectableTenants}
           currentTenantId={profile?.tenant_id ?? ""}
         />
+        {/* TODO Task 7: trial banner here, using `access` */}
         <section className={styles.content}>{children}</section>
       </div>
     </div>
