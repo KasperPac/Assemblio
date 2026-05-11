@@ -60,7 +60,7 @@
     {
       "id": 9,
       "subject": "Task 8: Stripe Checkout API + over-limit pre-check",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [3, 4, 7],
       "description": "**Goal:** POST /api/billing/checkout validates plan, runs over-limit check, lazily creates customer, redirects to Stripe Checkout.\n\n**Files:** src/app/api/billing/checkout/route.ts, src/lib/stripe/price-resolution.ts, price-resolution.test.ts; modify src/lib/tenant/context.ts to include userId.\n\n```json:metadata\n{\"files\":[\"src/app/api/billing/checkout/route.ts\",\"src/lib/stripe/price-resolution.ts\",\"src/lib/stripe/price-resolution.test.ts\",\"src/lib/tenant/context.ts\"],\"verifyCommand\":\"npm test -- src/lib/stripe/price-resolution.test.ts\",\"acceptanceCriteria\":[\"Unauthed POST → 401\",\"Over-limit POST → 400 with descriptive JSON\",\"Valid POST → 303 to Stripe URL\",\"First call writes stripe_customer_id; subsequent calls reuse it\",\"priceIdFor and resolvePriceId map both directions\"]}\n```"
     },

@@ -47,6 +47,7 @@ export async function getServerTenantContext() {
         supabase,
         tenantId: fallbackTenantId,
         role: profile.role as string,
+        userId: user.id,
       };
     }
   }
@@ -55,5 +56,6 @@ export async function getServerTenantContext() {
     supabase,
     tenantId: profile.tenant_id,
     role: profile.role as string,
+    userId: user.id,
   };
 }
