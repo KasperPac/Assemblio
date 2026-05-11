@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   getSubscriptionAccess,
   type AccessResult,
-} from "../../../lib/subscription/access";
+} from "@/lib/subscription/access";
 
 /**
  * Server-component helper. Redirects to the paywall or past-due page when
