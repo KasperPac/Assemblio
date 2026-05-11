@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { computeReceiptStatus } from "./helpers";
+import { pushBillToAccounting } from "@/lib/accounting/push-bill";
 import Anthropic from "@anthropic-ai/sdk";
 
 // ─── Pure helpers (re-exported from helpers.ts for testing) ──────────────────
@@ -134,6 +135,8 @@ export async function createDeliveryReceipt(formData: FormData) {
       purchase_order_id: purchaseOrderId,
     },
   });
+
+  await pushBillToAccounting(tenantId, receipt.id);
 
   revalidatePath("/app/goods-inwards");
   revalidatePath("/app/purchasing");
