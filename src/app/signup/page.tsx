@@ -12,19 +12,23 @@ import { PLANS, type PlanTier, type BillingInterval } from "../../lib/plans";
 const initialState: SignUpState = { error: "", message: "" };
 const PLAN_OPTIONS: PlanTier[] = ["starter", "growth", "pro"];
 
+function parsePlanParam(raw: string | null): PlanTier {
+  if (raw && (PLAN_OPTIONS as readonly string[]).includes(raw)) return raw as PlanTier;
+  return "growth";
+}
+function parseBillingParam(raw: string | null): BillingInterval {
+  return raw === "monthly" ? "monthly" : "annual";
+}
+
 function SignupForm() {
   const search = useSearchParams();
   const [state, action] = useActionState(signUpTenant, initialState);
 
-  const initialPlan = (search.get("plan") as PlanTier) ?? "growth";
-  const initialBilling = (search.get("billing") as BillingInterval) ?? "annual";
+  const initialPlan = parsePlanParam(search.get("plan"));
+  const initialBilling = parseBillingParam(search.get("billing"));
 
-  const [plan, setPlan] = useState<PlanTier>(
-    PLAN_OPTIONS.includes(initialPlan) ? initialPlan : "growth"
-  );
-  const [billing, setBilling] = useState<BillingInterval>(
-    initialBilling === "monthly" ? "monthly" : "annual"
-  );
+  const [plan, setPlan] = useState<PlanTier>(initialPlan);
+  const [billing, setBilling] = useState<BillingInterval>(initialBilling);
 
   const limits = PLANS[plan].limits;
   const locationsCopy =

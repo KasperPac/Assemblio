@@ -20,6 +20,21 @@ function parseInterval(raw: string | null | undefined): BillingInterval {
   return "annual";
 }
 
+/**
+ * Self-serve signup that creates a tenant + 14-day trial atomically (best-effort).
+ *
+ * Operational requirement: the linked Supabase Auth project MUST have email
+ * confirmation DISABLED. The trial spec ("clock starts at signup") depends on
+ * `supabase.auth.signUp` returning a populated `data.user` so we can attach
+ * a tenant immediately. If confirmation is on, `data.user` is null and the
+ * user is left without a tenant — they would sign in later and hit the
+ * no-tenant fallback in getServerTenantContext.
+ *
+ * If confirmation must be on (compliance, abuse mitigation), persist
+ * companyName/plan/billing into auth.users.user_metadata at signUp time and
+ * provision the tenant via a post-confirmation trigger or first-sign-in
+ * bootstrap. Out of scope for v1.
+ */
 export async function signUpTenant(
   _prev: SignUpState,
   formData: FormData
@@ -58,6 +73,8 @@ export async function signUpTenant(
     };
   }
 
+  let tenantId: string | null = null;
+
   try {
     // Step 2: insert tenant row.
     const { data: tenantRow, error: tenantError } = await admin
@@ -68,13 +85,15 @@ export async function signUpTenant(
     if (tenantError || !tenantRow) {
       throw tenantError ?? new Error("tenant insert failed");
     }
-    const tenantId = tenantRow.id as string;
+    tenantId = tenantRow.id as string;
 
     const now = new Date();
     const trialEnds = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
 
     // Step 3: child rows in parallel.
-    const results = await Promise.all([
+    // allSettled so we wait for every in-flight insert before rolling back —
+    // prevents an insert from landing after the catch deletes the tenant.
+    const results = await Promise.allSettled([
       admin.from("profiles").insert({
         id: authUser.id,
         tenant_id: tenantId,
@@ -95,16 +114,37 @@ export async function signUpTenant(
       }),
       admin.from("activity_log").insert({
         tenant_id: tenantId,
-        event: "tenant.created",
+        actor_id: authUser.id,
+        event: "tenant_created",
         metadata: { plan, billing },
       }),
     ]);
 
     for (const r of results) {
-      if (r.error) throw r.error;
+      if (r.status === "rejected") {
+        throw r.reason;
+      }
+      if (r.value.error) {
+        throw r.value.error;
+      }
     }
   } catch (err) {
-    // Rollback: delete the orphaned auth user.
+    // Rollback in three best-effort steps. Each is wrapped so one failure
+    // doesn't stop the others.
+    if (tenantId !== null) {
+      try {
+        // tenant has on-delete-cascade to profiles, profile_tenant_access,
+        // tenant_subscription, and activity_log via tenant_id FKs.
+        await admin.from("tenant").delete().eq("id", tenantId);
+      } catch (tenantDeleteErr) {
+        console.error(
+          "signup.orphan_tenant",
+          { tenantId, originalError: String(err) },
+          tenantDeleteErr
+        );
+      }
+    }
+
     try {
       await admin.auth.admin.deleteUser(authUser.id);
     } catch (deleteErr) {
@@ -114,6 +154,7 @@ export async function signUpTenant(
         deleteErr
       );
     }
+
     return { error: err instanceof Error ? err.message : "Signup failed." };
   }
 
