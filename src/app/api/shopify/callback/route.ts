@@ -166,7 +166,7 @@ export async function GET(request: NextRequest) {
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ client_id: apiKey, client_secret: apiSecret, code }),
+        body: JSON.stringify({ client_id: apiKey, client_secret: apiSecret, code, expiring: 1 }),
       }
     );
     if (!tokenResponse.ok) {
@@ -215,7 +215,7 @@ export async function GET(request: NextRequest) {
   const tokenResponse = await fetch(`https://${shop}/admin/oauth/access_token`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ client_id: apiKey, client_secret: apiSecret, code }),
+    body: JSON.stringify({ client_id: apiKey, client_secret: apiSecret, code, expiring: 1 }),
   });
   if (!tokenResponse.ok) {
     const response = NextResponse.redirect(
