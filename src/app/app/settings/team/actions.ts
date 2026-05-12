@@ -1,6 +1,7 @@
 "use server";
 
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 import {
   inviteTeammate,
@@ -90,13 +91,25 @@ export async function updateMemberRole(
     return { error: "Invalid role" };
   }
 
-  const { error } = await ctx.supabase
+  const {
+    data: { user },
+  } = await ctx.supabase.auth.getUser();
+  if (user?.id === profileId) {
+    return { error: "You cannot change your own role" };
+  }
+
+  const admin = createSupabaseAdminClient();
+  const { data: updated, error } = await admin
     .from("profiles")
     .update({ role })
     .eq("id", profileId)
-    .eq("tenant_id", ctx.tenantId);
+    .eq("tenant_id", ctx.tenantId)
+    .select("id");
 
   if (error) return { error: error.message };
+  if (!updated || updated.length === 0) {
+    return { error: "Member not found in this workspace" };
+  }
 
   revalidatePath("/app/settings/team");
   return { success: "Role updated" };
@@ -120,13 +133,18 @@ export async function deactivateMember(
     return { error: "You cannot deactivate yourself" };
   }
 
-  const { error } = await ctx.supabase
+  const admin = createSupabaseAdminClient();
+  const { data: updated, error } = await admin
     .from("profiles")
     .update({ status: "deactivated" })
     .eq("id", profileId)
-    .eq("tenant_id", ctx.tenantId);
+    .eq("tenant_id", ctx.tenantId)
+    .select("id");
 
   if (error) return { error: error.message };
+  if (!updated || updated.length === 0) {
+    return { error: "Member not found in this workspace" };
+  }
 
   revalidatePath("/app/settings/team");
   return { success: "Member deactivated" };

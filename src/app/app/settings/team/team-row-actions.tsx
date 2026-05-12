@@ -42,7 +42,7 @@ export default function TeamRowActions({
             const form = e.currentTarget.form;
             if (form) form.requestSubmit();
           }}
-          disabled={rolePending}
+          disabled={rolePending || isSelf}
         >
           <option value="member">Member</option>
           <option value="admin">Admin</option>
