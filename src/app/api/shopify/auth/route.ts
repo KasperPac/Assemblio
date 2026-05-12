@@ -44,7 +44,8 @@ export async function GET(request: NextRequest) {
   const { data: profile } = await supabase
     .from("profiles")
     .select("tenant_id")
-    .single();
+    .eq("id", user.id)
+    .maybeSingle();
   if (!profile?.tenant_id) {
     return NextResponse.redirect(
       new URL("/app/settings/integrations?shopify=missing-tenant", request.url)

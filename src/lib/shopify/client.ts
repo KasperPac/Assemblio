@@ -82,7 +82,7 @@ export async function registerRequiredWebhooks(shopDomain: string, accessToken: 
     });
 
     const error = data.webhookSubscriptionCreate.userErrors[0]?.message;
-    if (error && !error.toLowerCase().includes("address has already been taken")) {
+    if (error && !error.toLowerCase().includes("already been taken")) {
       throw new Error(`Webhook ${topic} registration failed: ${error}`);
     }
   }
