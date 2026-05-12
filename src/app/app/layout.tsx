@@ -24,7 +24,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("tenant_id,role,tenant:tenant_id(id,name,has_planning_module)")
+    .select("tenant_id,role,avatar_url,tenant:tenant_id(id,name,has_planning_module)")
     .eq("id", user?.id ?? "")
     .maybeSingle();
 
@@ -116,6 +116,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         <Topbar
           tenantName={tenant?.name ?? "No tenant access"}
           userInitial={userInitial}
+          userAvatarUrl={profile?.avatar_url ?? null}
           selectableTenants={selectableTenants}
           currentTenantId={profile?.tenant_id ?? ""}
         />

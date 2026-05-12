@@ -78,9 +78,11 @@ export async function uploadLogo(
     data: { publicUrl },
   } = ctx.supabase.storage.from("tenant-logos").getPublicUrl(path);
 
+  const versioned = `${publicUrl}?v=${Date.now()}`;
+
   const { error: dbError } = await ctx.supabase
     .from("tenant")
-    .update({ logo_url: publicUrl })
+    .update({ logo_url: versioned })
     .eq("id", ctx.tenantId);
 
   if (dbError) return { error: dbError.message };

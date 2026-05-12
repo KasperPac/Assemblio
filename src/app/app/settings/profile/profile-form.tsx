@@ -1,26 +1,33 @@
 "use client";
 
 import { useActionState } from "react";
-import { updateProfile, sendPasswordReset } from "./actions";
+import { updateProfile, sendPasswordReset, uploadAvatar } from "./actions";
 import styles from "./profile.module.css";
 
 type State = { error?: string; success?: string } | null;
 
 type Props = {
   fullName: string | null;
+  avatarUrl: string | null;
   email: string;
   role: string;
 };
 
-export default function ProfileForm({ fullName, email, role }: Props) {
+export default function ProfileForm({ fullName, avatarUrl, email, role }: Props) {
   const [state, formAction, pending] = useActionState<State, FormData>(
     updateProfile,
+    null
+  );
+  const [avatarState, avatarAction, avatarPending] = useActionState<State, FormData>(
+    uploadAvatar,
     null
   );
   const [resetState, resetAction, resetPending] = useActionState<State, FormData>(
     sendPasswordReset,
     null
   );
+
+  const initial = (fullName?.trim()?.[0] ?? email?.[0] ?? "U").toUpperCase();
 
   return (
     <div className={styles.sections}>
@@ -62,6 +69,45 @@ export default function ProfileForm({ fullName, email, role }: Props) {
             )}
             {state?.error && (
               <span className={styles.errorMsg}>{state.error}</span>
+            )}
+          </div>
+        </form>
+      </div>
+
+      <div className={styles.card}>
+        <h2 className={styles.cardHeading}>Avatar</h2>
+        <p className={styles.description}>
+          PNG, JPEG, or WebP. Max 2 MB. Shown in the top bar and member lists.
+        </p>
+        <div className={styles.avatarPreview}>
+          {avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={avatarUrl} alt="Your avatar" className={styles.avatarImage} />
+          ) : (
+            <span className={styles.avatarFallback}>{initial}</span>
+          )}
+        </div>
+        <form action={avatarAction} className={styles.form}>
+          <input
+            name="avatar"
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            className={styles.fileInput}
+            required
+          />
+          <div className={styles.actions}>
+            <button
+              type="submit"
+              className={styles.secondaryButton}
+              disabled={avatarPending}
+            >
+              {avatarPending ? "Uploading…" : "Upload avatar"}
+            </button>
+            {avatarState?.success && (
+              <span className={styles.feedback}>{avatarState.success}</span>
+            )}
+            {avatarState?.error && (
+              <span className={styles.errorMsg}>{avatarState.error}</span>
             )}
           </div>
         </form>

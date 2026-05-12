@@ -9,12 +9,13 @@ import styles from "./shell.module.css";
 
 type Props = {
   userInitial: string;
+  userAvatarUrl: string | null;
   selectableTenants: { id: string; name: string }[];
   currentTenantId: string;
   tenantName: string;
 };
 
-export default function Topbar({ userInitial, selectableTenants, currentTenantId, tenantName }: Props) {
+export default function Topbar({ userInitial, userAvatarUrl, selectableTenants, currentTenantId, tenantName }: Props) {
   const pathname = usePathname();
   const meta = getRouteMeta(pathname);
   const crumbs = getDynamicBreadcrumbs(pathname);
@@ -64,7 +65,16 @@ export default function Topbar({ userInitial, selectableTenants, currentTenantId
             aria-label="User menu"
             aria-expanded={open}
           >
-            {userInitial}
+            {userAvatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={userAvatarUrl}
+                alt=""
+                className={styles.topbarAvatarImage}
+              />
+            ) : (
+              userInitial
+            )}
           </button>
 
           {open && (

@@ -5,6 +5,34 @@
   margin-top: var(--space-6);
 }
 
+.memberCell {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.memberAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--brand-dim);
+  color: var(--brand-1);
+  display: grid;
+  place-items: center;
+  font-weight: var(--fw-semibold);
+  font-size: 12px;
+  border: 1px solid var(--stroke);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.memberAvatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .card {
   background: var(--bg-card);
   border: 1px solid var(--stroke-card);

@@ -14,7 +14,7 @@ export default async function ProfilePage() {
 
   const { data: profile } = await ctx.supabase
     .from("profiles")
-    .select("full_name")
+    .select("full_name, avatar_url")
     .eq("id", user.id)
     .single();
 
@@ -26,6 +26,7 @@ export default async function ProfilePage() {
       />
       <ProfileForm
         fullName={profile?.full_name ?? null}
+        avatarUrl={profile?.avatar_url ?? null}
         email={user.email ?? ""}
         role={ctx.role}
       />

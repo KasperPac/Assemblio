@@ -78,6 +78,36 @@
   align-items: center;
 }
 
+.fileInput {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+}
+
+.avatarPreview {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--brand-dim);
+  color: var(--brand-1);
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--stroke);
+  font-size: 32px;
+  font-weight: var(--fw-semibold);
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarFallback {
+  display: block;
+}
+
 .primaryButton {
   font-family: var(--font-body);
   font-size: var(--fs-sm);

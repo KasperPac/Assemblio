@@ -30,7 +30,7 @@ export default async function TeamPage() {
   const [{ data: members }, { data: pending }] = await Promise.all([
     ctx.supabase
       .from("profiles")
-      .select("id, full_name, role, status")
+      .select("id, full_name, avatar_url, role, status")
       .eq("tenant_id", ctx.tenantId)
       .order("role", { ascending: false }),
     admin
@@ -108,15 +108,33 @@ export default async function TeamPage() {
               </tr>
             </thead>
             <tbody>
-              {(members ?? []).map((member) => (
+              {(members ?? []).map((member) => {
+                const initial = (member.full_name?.trim()?.[0] ?? "?").toUpperCase();
+                return (
                 <tr key={member.id} className={styles.tr}>
                   <td className={styles.td}>
-                    {member.full_name ?? (
-                      <span className={styles.muted}>No name set</span>
-                    )}
-                    {member.id === user?.id && (
-                      <span className={styles.youBadge}> (you)</span>
-                    )}
+                    <span className={styles.memberCell}>
+                      <span className={styles.memberAvatar}>
+                        {member.avatar_url ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={member.avatar_url}
+                            alt=""
+                            className={styles.memberAvatarImage}
+                          />
+                        ) : (
+                          initial
+                        )}
+                      </span>
+                      <span>
+                        {member.full_name ?? (
+                          <span className={styles.muted}>No name set</span>
+                        )}
+                        {member.id === user?.id && (
+                          <span className={styles.youBadge}> (you)</span>
+                        )}
+                      </span>
+                    </span>
                   </td>
                   <td className={styles.td}>{member.role}</td>
                   <td className={styles.td}>
@@ -139,7 +157,8 @@ export default async function TeamPage() {
                     />
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>

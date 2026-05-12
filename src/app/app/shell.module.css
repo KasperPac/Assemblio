@@ -357,6 +357,15 @@
   border: 2px solid var(--stroke);
   cursor: pointer;
   flex-shrink: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+.topbarAvatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .topbarAvatar:hover {
