@@ -42,7 +42,7 @@ function parseMarkdown(markdown: string): string {
 
     // Handle headings
     if (line.match(/^#{1,6} /)) {
-      const level = line.match(/^#+/)[0].length;
+      const level = line.match(/^#+/)![0].length;
       const text = line.replace(/^#+\s+/, '');
       result.push(`<h${level}>${text}</h${level}>`);
       inList = false;
