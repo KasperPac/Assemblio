@@ -1,3 +1,7 @@
+// Daily trial reminder sweep. Scheduled via vercel.json at 0 14 * * * (14:00 UTC).
+// Sends reminder emails for trials ending in 3 days, 1 day, or expired.
+// Idempotency via trial_email_log unique constraint on (tenant_id, kind).
+
 import { NextResponse } from "next/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { sendEmail } from "@/lib/email/send";
