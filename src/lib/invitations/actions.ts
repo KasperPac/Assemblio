@@ -1,5 +1,6 @@
 "use server";
 
+import React from "react";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import {
@@ -8,7 +9,10 @@ import {
 } from "@/lib/subscription/limits";
 import { generateToken } from "./tokens";
 import { sendEmail } from "@/lib/email/send";
-import { InvitationEmail } from "@/lib/email/templates/invitation";
+import {
+  InvitationEmail,
+  type InvitationEmailProps,
+} from "@/lib/email/templates/invitation";
 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 const PG_UNIQUE_VIOLATION = "23505";
@@ -21,32 +25,61 @@ function isAdmin(role: string): boolean {
   return role === "admin" || role === "super_admin";
 }
 
+async function resolveInviterName(args: {
+  admin: ReturnType<typeof createSupabaseAdminClient>;
+  inviterUserId: string;
+}): Promise<string> {
+  const { data: profileRow } = await args.admin
+    .from("profiles")
+    .select("full_name")
+    .eq("id", args.inviterUserId)
+    .maybeSingle();
+
+  if (profileRow?.full_name) return profileRow.full_name;
+
+  const { data: userResult } = await args.admin.auth.admin.getUserById(
+    args.inviterUserId
+  );
+  return userResult?.user?.email ?? "your teammate";
+}
+
 async function dispatchInviteEmail(args: {
   to: string;
   tenantId: string;
-  inviterEmail: string;
+  inviterUserId: string;
+  role: "admin" | "member";
   token: string;
 }) {
   const admin = createSupabaseAdminClient();
+
   const { data: tenantRow } = await admin
     .from("tenant")
     .select("name")
     .eq("id", args.tenantId)
     .maybeSingle();
 
+  const tenantName = tenantRow?.name ?? "your team";
+  const inviterName = await resolveInviterName({
+    admin,
+    inviterUserId: args.inviterUserId,
+  });
+
   const baseUrl =
     process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const acceptUrl = `${baseUrl}/accept-invite/${args.token}`;
-  const tenantName = tenantRow?.name ?? "your team";
+
+  const emailProps: InvitationEmailProps = {
+    inviterName,
+    tenantName,
+    role: args.role,
+    acceptUrl,
+    logoBaseUrl: baseUrl,
+  };
 
   return sendEmail({
     to: args.to,
-    subject: `You're invited to join ${tenantName} on Manuva`,
-    react: InvitationEmail({
-      tenantName,
-      inviterName: args.inviterEmail,
-      acceptUrl,
-    }),
+    subject: `${inviterName} invited you to ${tenantName} on Manuva`,
+    react: React.createElement(InvitationEmail, emailProps),
   });
 }
 
@@ -96,7 +129,6 @@ export async function inviteTeammate(input: {
   if (insertError) {
     const code = (insertError as { code?: string }).code;
     if (code === PG_UNIQUE_VIOLATION) {
-      // Pending invite already exists — refresh the token + expiry.
       const { data: refreshed, error: updateError } = await admin
         .from("tenant_invitation")
         .update({
@@ -121,13 +153,11 @@ export async function inviteTeammate(input: {
     }
   }
 
-  const { data: userResult } = await admin.auth.admin.getUserById(ctx.userId);
-  const inviterEmail = userResult?.user?.email ?? "your teammate";
-
   const sendResult = await dispatchInviteEmail({
     to: email,
     tenantId: ctx.tenantId,
-    inviterEmail,
+    inviterUserId: ctx.userId,
+    role: input.role,
     token: finalToken,
   });
   if (!sendResult.ok) {
@@ -135,7 +165,6 @@ export async function inviteTeammate(input: {
       "[invitations] sendEmail failed for new invite",
       sendResult.error
     );
-    // Invite row exists — the admin can resend from the UI.
     return { ok: false, error: `Couldn't send invite email: ${sendResult.error}` };
   }
 
@@ -169,12 +198,14 @@ export async function resendInvitation(
   const admin = createSupabaseAdminClient();
   const { data: inv } = await admin
     .from("tenant_invitation")
-    .select("email, token, accepted_at")
+    .select("email, token, accepted_at, role")
     .eq("id", invitationId)
     .eq("tenant_id", ctx.tenantId)
     .maybeSingle();
   if (!inv) return { ok: false, error: "Invitation not found." };
   if (inv.accepted_at) return { ok: false, error: "Already accepted." };
+
+  const role = inv.role === "admin" ? "admin" : "member";
 
   const newExpiry = new Date(Date.now() + SEVEN_DAYS_MS).toISOString();
   await admin
@@ -182,13 +213,11 @@ export async function resendInvitation(
     .update({ expires_at: newExpiry })
     .eq("id", invitationId);
 
-  const { data: userResult } = await admin.auth.admin.getUserById(ctx.userId);
-  const inviterEmail = userResult?.user?.email ?? "your teammate";
-
   const sendResult = await dispatchInviteEmail({
     to: inv.email,
     tenantId: ctx.tenantId,
-    inviterEmail,
+    inviterUserId: ctx.userId,
+    role,
     token: inv.token,
   });
   if (!sendResult.ok) {
