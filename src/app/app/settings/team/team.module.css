@@ -178,3 +178,39 @@
 
 .feedback { font-size: var(--fs-sm); color: var(--ok); }
 .errorMsg { font-size: var(--fs-sm); color: var(--danger); }
+
+.inviteRowActions {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.inlineForm {
+  display: inline-flex;
+}
+
+.linkButton,
+.linkButtonDanger {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.linkButton { color: var(--brand-1); }
+.linkButtonDanger { color: var(--danger); }
+
+.linkButton:hover:not(:disabled),
+.linkButtonDanger:hover:not(:disabled) {
+  text-decoration: none;
+}
+
+.linkButton:disabled,
+.linkButtonDanger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

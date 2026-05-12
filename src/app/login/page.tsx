@@ -1,95 +1,50 @@
 "use client";
 
 import Image from "next/image";
-import { Suspense, useState } from "react";
+import Link from "next/link";
+import { Suspense } from "react";
 import { useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 import styles from "./login.module.css";
-import { signIn, signUp } from "./actions";
+import { signIn } from "./actions";
 
 const initialState = { error: "", message: "" };
-type Tab = "signin" | "signup";
 
 function LoginPageContent() {
   const searchParams = useSearchParams();
   const [signInState, signInAction] = useActionState(signIn, initialState);
-  const [signUpState, signUpAction] = useActionState(signUp, initialState);
   const redirectTo = searchParams.get("redirect") ?? "/app";
-  const [tab, setTab] = useState<Tab>("signin");
 
   return (
     <div className={styles.page}>
       <div className={styles.left}>
         <div className={styles.leftInner}>
           <div className={styles.heading}>
-            <h1>{tab === "signin" ? "Welcome back" : "Create your workspace"}</h1>
-            <p>
-              {tab === "signin"
-                ? "Sign in with your workspace email and password."
-                : "Spin up a new Manuva workspace in seconds."}
-            </p>
+            <h1>Welcome back</h1>
+            <p>Sign in with your workspace email and password.</p>
           </div>
 
-          <div className={styles.tabs} role="tablist">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={tab === "signin"}
-              className={`${styles.tab} ${tab === "signin" ? styles.tabActive : ""}`}
-              onClick={() => setTab("signin")}
-            >
+          <form className={styles.form} action={signInAction}>
+            <input type="hidden" name="redirect" value={redirectTo} />
+            <label>
+              Email
+              <input name="email" type="email" placeholder="you@company.com" autoComplete="email" />
+            </label>
+            <label>
+              Password
+              <input name="password" type="password" placeholder="••••••••" autoComplete="current-password" />
+            </label>
+            {signInState.error ? (
+              <p className={styles.error}>{signInState.error}</p>
+            ) : null}
+            <button className={styles.primary} type="submit">
               Sign in
             </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={tab === "signup"}
-              className={`${styles.tab} ${tab === "signup" ? styles.tabActive : ""}`}
-              onClick={() => setTab("signup")}
-            >
-              Sign up
-            </button>
-          </div>
+          </form>
 
-          {tab === "signin" ? (
-            <form className={styles.form} action={signInAction}>
-              <input type="hidden" name="redirect" value={redirectTo} />
-              <label>
-                Email
-                <input name="email" type="email" placeholder="you@company.com" autoComplete="email" />
-              </label>
-              <label>
-                Password
-                <input name="password" type="password" placeholder="••••••••" autoComplete="current-password" />
-              </label>
-              {signInState.error ? (
-                <p className={styles.error}>{signInState.error}</p>
-              ) : null}
-              <button className={styles.primary} type="submit">
-                Sign in
-              </button>
-            </form>
-          ) : (
-            <form className={styles.form} action={signUpAction}>
-              <input type="hidden" name="redirect" value={redirectTo} />
-              <label>
-                Email
-                <input name="email" type="email" placeholder="you@company.com" autoComplete="email" />
-              </label>
-              <label>
-                Password
-                <input name="password" type="password" placeholder="Create a password" autoComplete="new-password" />
-              </label>
-              {signUpState.error ? (
-                <p className={styles.error}>{signUpState.error}</p>
-              ) : signUpState.message ? (
-                <p className={styles.message}>{signUpState.message}</p>
-              ) : null}
-              <button className={styles.primary} type="submit">
-                Create account
-              </button>
-            </form>
-          )}
+          <p className={styles.signupLink}>
+            New here? <Link href="/signup">Start a 14-day free trial →</Link>
+          </p>
 
           <p className={styles.meta}>Manufacturing operations by Manuva</p>
         </div>

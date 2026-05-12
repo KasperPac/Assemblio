@@ -38,41 +38,6 @@
   color: var(--ink-muted);
 }
 
-/* ── Tabs ──────────────────────────────────────────── */
-.tabs {
-  display: inline-flex;
-  align-self: flex-start;
-  padding: 4px;
-  border-radius: var(--radius-sm);
-  background: var(--bg-card-2);
-  border: 1px solid var(--stroke);
-}
-
-.tab {
-  appearance: none;
-  border: none;
-  background: transparent;
-  color: var(--ink-muted);
-  font-size: 13px;
-  font-weight: 600;
-  padding: 8px 16px;
-  border-radius: var(--radius-xs);
-  cursor: pointer;
-  transition: color var(--dur-fast) var(--ease-out),
-              background var(--dur-fast) var(--ease-out);
-}
-
-.tab:hover {
-  color: var(--ink-strong);
-}
-
-.tabActive,
-.tabActive:hover {
-  background: var(--bg-card);
-  color: var(--ink-strong);
-  box-shadow: var(--shadow-sm);
-}
-
 /* ── Form ──────────────────────────────────────────── */
 .form {
   display: flex;
@@ -145,6 +110,23 @@
   margin: 8px 0 0;
   font-size: 12px;
   color: var(--ink-faint);
+}
+
+.signupLink {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--ink-muted);
+  text-align: center;
+}
+
+.signupLink a {
+  color: var(--ink-strong);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.signupLink a:hover {
+  text-decoration: underline;
 }
 
 /* ── Right: brand panel ────────────────────────────── */

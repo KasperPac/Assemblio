@@ -103,7 +103,10 @@ export default function PricingCards() {
             : tier.id === "enterprise"
             ? styles.ctaDark
             : styles.ctaOutline;
-          const ctaHref = tier.id === "enterprise" ? "/contact" : "/login";
+          const ctaHref =
+            tier.id === "enterprise"
+              ? "/contact"
+              : `/signup?plan=${tier.id}&billing=${period}`;
 
           return (
             <div

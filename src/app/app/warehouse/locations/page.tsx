@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { getSubscriptionAccess } from "@/lib/subscription/access";
+import { hasFeature } from "@/lib/plans/features";
 import { LocationsTree, type Warehouse } from "./locations-tree";
+import { FeatureUpsell } from "../../_components/feature-upsell";
 import PageHeader from "../../_ui/page-header";
 import styles from "./page.module.css";
 
@@ -8,6 +11,16 @@ export default async function LocationsPage() {
   const context = await getServerTenantContext();
   if (!context) redirect("/auth/login");
   const { supabase, tenantId } = context;
+
+  const access = await getSubscriptionAccess(supabase, tenantId);
+  if (!access.sub || !hasFeature(access.sub, "binManagement")) {
+    return (
+      <FeatureUpsell
+        feature="Multi-location and bin management"
+        requiredTier="growth"
+      />
+    );
+  }
 
   const { data: warehouses, error } = await supabase
     .from("location")

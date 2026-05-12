@@ -11,6 +11,8 @@ type CookieToSet = {
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
+  response.headers.set("x-pathname", request.nextUrl.pathname);
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
