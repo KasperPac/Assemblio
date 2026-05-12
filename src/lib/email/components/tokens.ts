@@ -21,5 +21,5 @@ export const SIZE = {
   cardMaxWidthPx: 560,
   cardPaddingPx: 32,
   cardRadiusPx: 12,
-  logoWidthPx: 120,
+  logoWidthPx: 200,
 } as const;
