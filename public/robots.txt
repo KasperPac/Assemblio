@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Protect authenticated app routes from indexing
+Disallow: /app/
+Disallow: /accept-invite/
+
+Sitemap: https://manuva.app/sitemap.xml
