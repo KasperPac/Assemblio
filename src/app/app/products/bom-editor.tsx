@@ -47,12 +47,41 @@ type ComponentOption = {
 type TemplateOption = { id: string; name: string; lineCount: number };
 type SourceBomOption = { id: string; label: string };
 
+type PerOperationCost = {
+  id: string;
+  sequence: number;
+  operationName: string;
+  departmentName: string;
+  labour: number;
+  admin: number;
+  electricity: number;
+  gas: number;
+  overhead: number;
+  setupLabour: number;
+  setupOverhead: number;
+  hasRate: boolean;
+};
+
+type RoutingCosts = {
+  labour: number;
+  admin: number;
+  electricity: number;
+  gas: number;
+  overhead: number;
+  setupLabour: number;
+  setupOverhead: number;
+  perOperation: PerOperationCost[];
+  missingRateDepartments: string[];
+};
+
 type Props = {
   bom: BomData;
   variantId: string;
   variantLabel: string;
   sellPrice: number | null;
   labourCost: number | null;
+  overheadCost: number | null;
+  routingCosts: RoutingCosts | null;
   allComponents: ComponentOption[];
   templates: TemplateOption[];
   sourceBoms: SourceBomOption[];
@@ -76,12 +105,15 @@ export default function BomEditor({
   variantLabel,
   sellPrice,
   labourCost,
+  overheadCost,
+  routingCosts,
   allComponents,
   templates,
   sourceBoms,
   activeVersion,
   canEditYield = true,
 }: Props) {
+  const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [localState, setLocalState] = useState(
     () => new Map(bom.lines.map((line) => [line.id, { quantity: line.quantity, yieldPct: line.yield_pct }]))
   );
@@ -138,14 +170,14 @@ export default function BomEditor({
     }
   }
 
-  const totalCost =
-    materialCost !== null && labourCost !== null
-      ? materialCost + labourCost
-      : materialCost !== null
-        ? materialCost
-        : labourCost !== null
-          ? labourCost
-          : null;
+  const totalCost = (() => {
+    const parts: number[] = [];
+    if (materialCost !== null) parts.push(materialCost);
+    if (labourCost !== null) parts.push(labourCost);
+    if (overheadCost !== null) parts.push(overheadCost);
+    if (parts.length === 0) return null;
+    return parts.reduce((sum, value) => sum + value, 0);
+  })();
 
   const grossMargin =
     totalCost !== null && sellPrice !== null && sellPrice > 0
@@ -411,6 +443,15 @@ export default function BomEditor({
             <button type="button" className={styles.routingLink} onClick={handleSwitchToRouting}>
               Add routing →
             </button>
+          ) : (
+            <span className={styles.rollupSub}>per unit, excl. setup</span>
+          )}
+        </div>
+        <div className={styles.rollupCell}>
+          <span className={styles.rollupLabel}>Overhead</span>
+          <span className={styles.rollupValue}>{overheadCost !== null ? fmt(overheadCost) : "—"}</span>
+          {overheadCost !== null ? (
+            <span className={styles.rollupSub}>admin + utilities + overhead</span>
           ) : null}
         </div>
         <div className={styles.rollupCell}>
@@ -434,6 +475,63 @@ export default function BomEditor({
           ) : null}
         </div>
       </div>
+
+      {routingCosts ? (
+        <div className={styles.breakdown}>
+          <button
+            type="button"
+            className={styles.breakdownToggle}
+            onClick={() => setBreakdownOpen((prev) => !prev)}
+            aria-expanded={breakdownOpen}
+          >
+            <span>{breakdownOpen ? "▾" : "▸"} Labour & overhead breakdown</span>
+            {routingCosts.missingRateDepartments.length > 0 ? (
+              <span className={styles.breakdownWarn}>
+                ⚠ no rates for {routingCosts.missingRateDepartments.join(", ")}
+              </span>
+            ) : null}
+          </button>
+          {breakdownOpen ? (
+            <div className={styles.breakdownBody}>
+              <div className={styles.breakdownGrid}>
+                <div className={styles.breakdownRow}>
+                  <span>Labour</span>
+                  <span>{fmt(routingCosts.labour)}</span>
+                </div>
+                <div className={styles.breakdownRow}>
+                  <span>Admin</span>
+                  <span>{fmt(routingCosts.admin)}</span>
+                </div>
+                <div className={styles.breakdownRow}>
+                  <span>Electricity</span>
+                  <span>{fmt(routingCosts.electricity)}</span>
+                </div>
+                <div className={styles.breakdownRow}>
+                  <span>Gas</span>
+                  <span>{fmt(routingCosts.gas)}</span>
+                </div>
+                <div className={styles.breakdownRow}>
+                  <span>Overhead</span>
+                  <span>{fmt(routingCosts.overhead)}</span>
+                </div>
+              </div>
+              {routingCosts.setupLabour + routingCosts.setupOverhead > 0 ? (
+                <p className={styles.breakdownSetup}>
+                  Setup (per batch, not in per-unit total):
+                  {" "}labour {fmt(routingCosts.setupLabour)} + overhead {fmt(routingCosts.setupOverhead)}
+                </p>
+              ) : null}
+              <button
+                type="button"
+                className={styles.routingLink}
+                onClick={handleSwitchToRouting}
+              >
+                See per-operation costs in Routing →
+              </button>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }

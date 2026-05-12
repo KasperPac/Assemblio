@@ -586,3 +586,53 @@
   gap: 4px;
   font-size: 13px;
 }
+
+.costTable {
+  display: grid;
+  gap: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  padding: 8px 0;
+}
+
+.costTableHeader,
+.costTableRow {
+  display: grid;
+  grid-template-columns: 1.6fr repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--ink-strong);
+  align-items: center;
+}
+
+.costTableHeader {
+  font-size: 10px;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  border-bottom: 1px solid var(--stroke);
+}
+
+.costTableRow + .costTableRow {
+  border-top: 1px dashed var(--stroke);
+}
+
+.costTableTotals {
+  background: var(--bg-card-2);
+  border-top: 1px solid var(--stroke);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+@media (max-width: 900px) {
+  .costTableHeader,
+  .costTableRow {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 4px;
+  }
+  .costTableHeader {
+    display: none;
+  }
+}

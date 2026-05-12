@@ -380,7 +380,111 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
     }),
   }));
 
-  const labourCost: number | null = null;
+  const editorBomLaborLines = editorBom ? (laborLinesByBom[editorBom.id] ?? []) : [];
+  const editorDepartmentIds = Array.from(
+    new Set(editorBomLaborLines.map((line) => line.department_id))
+  );
+
+  type RateRow = {
+    department_id: string;
+    labor_rate_per_hour: number;
+    admin_rate_per_hour: number;
+    electricity_rate_per_kwh: number;
+    gas_rate_per_unit: number;
+    overhead_rate_per_hour: number;
+    effective_from: string;
+  };
+  const { data: rateRowsData } =
+    editorDepartmentIds.length === 0
+      ? { data: [] }
+      : await supabase
+          .from("cost_rate_schedule")
+          .select(
+            "department_id,labor_rate_per_hour,admin_rate_per_hour,electricity_rate_per_kwh,gas_rate_per_unit,overhead_rate_per_hour,effective_from,effective_to,staff_member_id"
+          )
+          .eq("tenant_id", tenantId)
+          .is("staff_member_id", null)
+          .in("department_id", editorDepartmentIds)
+          .lte("effective_from", new Date().toISOString().slice(0, 10))
+          .order("effective_from", { ascending: false });
+
+  const today = new Date().toISOString().slice(0, 10);
+  const ratesByDepartment = new Map<string, RateRow>();
+  for (const row of (rateRowsData ?? []) as Array<RateRow & { effective_to: string | null }>) {
+    if (row.effective_to !== null && row.effective_to < today) continue;
+    if (!ratesByDepartment.has(row.department_id)) {
+      ratesByDepartment.set(row.department_id, row);
+    }
+  }
+
+  type PerOperationCost = {
+    id: string;
+    sequence: number;
+    operationName: string;
+    departmentName: string;
+    labour: number;
+    admin: number;
+    electricity: number;
+    gas: number;
+    overhead: number;
+    setupLabour: number;
+    setupOverhead: number;
+    hasRate: boolean;
+  };
+
+  const perOperation: PerOperationCost[] = editorBomLaborLines.map((line) => {
+    const dept = Array.isArray(line.department) ? line.department[0] ?? null : line.department;
+    const rate = ratesByDepartment.get(line.department_id);
+    const labourRate = rate?.labor_rate_per_hour ?? 0;
+    const adminRate = rate?.admin_rate_per_hour ?? 0;
+    const elecRate = rate?.electricity_rate_per_kwh ?? 0;
+    const gasRate = rate?.gas_rate_per_unit ?? 0;
+    const overheadRate = rate?.overhead_rate_per_hour ?? 0;
+    return {
+      id: line.id,
+      sequence: line.sequence,
+      operationName: line.operation_name,
+      departmentName: dept?.name ?? "Unknown",
+      labour: line.run_hours_per_unit * labourRate,
+      admin: line.admin_hours_per_unit * adminRate,
+      electricity: line.electricity_kwh_per_unit * elecRate,
+      gas: line.gas_units_per_unit * gasRate,
+      overhead: line.run_hours_per_unit * overheadRate,
+      setupLabour: line.setup_hours * labourRate,
+      setupOverhead: line.setup_hours * overheadRate,
+      hasRate: rate != null,
+    };
+  });
+
+  const missingRateDepartments = Array.from(
+    new Set(
+      editorBomLaborLines
+        .filter((line) => !ratesByDepartment.has(line.department_id))
+        .map((line) => {
+          const dept = Array.isArray(line.department) ? line.department[0] ?? null : line.department;
+          return dept?.name ?? "Unknown";
+        })
+    )
+  );
+
+  const routingCosts = editorBomLaborLines.length === 0
+    ? null
+    : {
+        labour: perOperation.reduce((sum, op) => sum + op.labour, 0),
+        admin: perOperation.reduce((sum, op) => sum + op.admin, 0),
+        electricity: perOperation.reduce((sum, op) => sum + op.electricity, 0),
+        gas: perOperation.reduce((sum, op) => sum + op.gas, 0),
+        overhead: perOperation.reduce((sum, op) => sum + op.overhead, 0),
+        setupLabour: perOperation.reduce((sum, op) => sum + op.setupLabour, 0),
+        setupOverhead: perOperation.reduce((sum, op) => sum + op.setupOverhead, 0),
+        perOperation,
+        missingRateDepartments,
+      };
+
+  const labourCost: number | null = routingCosts ? routingCosts.labour : null;
+  const overheadCost: number | null = routingCosts
+    ? routingCosts.admin + routingCosts.electricity + routingCosts.gas + routingCosts.overhead
+    : null;
   const sellPrice =
     typedVariant.price !== null && typedVariant.price !== undefined
       ? Number(typedVariant.price)
@@ -475,6 +579,8 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                 variantLabel={variantTitle}
                 sellPrice={sellPrice}
                 labourCost={labourCost}
+                overheadCost={overheadCost}
+                routingCosts={routingCosts}
                 allComponents={typedAllComponents}
                 templates={templateOptions}
                 sourceBoms={copyOptions}
@@ -505,6 +611,14 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                 ) : (
                   typedBoms.map((bom) => {
                     const laborRows = laborLinesByBom[bom.id] ?? [];
+                    const showCostSummary =
+                      routingCosts !== null && editorBom?.id === bom.id;
+                    const fmtAud = (value: number) =>
+                      new Intl.NumberFormat("en-AU", {
+                        style: "currency",
+                        currency: "AUD",
+                        maximumFractionDigits: 2,
+                      }).format(value);
 
                     return (
                       <div key={bom.id} className={styles.lineTable}>
@@ -519,6 +633,86 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                             </div>
                           </div>
                         </div>
+                        {showCostSummary ? (
+                          <div className={styles.routingSection}>
+                            <div className={styles.routingHeader}>
+                              <strong>Cost per unit by operation</strong>
+                              <span className={styles.meta}>
+                                excl. setup · using current dept rates
+                              </span>
+                            </div>
+                            {routingCosts!.missingRateDepartments.length > 0 ? (
+                              <p className={styles.error}>
+                                ⚠ No active cost-rate schedule for:{" "}
+                                {routingCosts!.missingRateDepartments.join(", ")}. Set rates in
+                                Settings · Costs to include them.
+                              </p>
+                            ) : null}
+                            <div className={styles.costTable}>
+                              <div className={styles.costTableHeader}>
+                                <span>Operation</span>
+                                <span>Labour</span>
+                                <span>Admin</span>
+                                <span>Electricity</span>
+                                <span>Gas</span>
+                                <span>Overhead</span>
+                                <span>Total</span>
+                              </div>
+                              {routingCosts!.perOperation.map((op) => {
+                                const total =
+                                  op.labour + op.admin + op.electricity + op.gas + op.overhead;
+                                return (
+                                  <div key={op.id} className={styles.costTableRow}>
+                                    <span>
+                                      {op.sequence}. {op.operationName}
+                                      <span className={styles.meta}> · {op.departmentName}</span>
+                                      {!op.hasRate ? (
+                                        <span className={styles.error}> · no rate</span>
+                                      ) : null}
+                                    </span>
+                                    <span>{fmtAud(op.labour)}</span>
+                                    <span>{fmtAud(op.admin)}</span>
+                                    <span>{fmtAud(op.electricity)}</span>
+                                    <span>{fmtAud(op.gas)}</span>
+                                    <span>{fmtAud(op.overhead)}</span>
+                                    <span>
+                                      <strong>{fmtAud(total)}</strong>
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                              <div className={`${styles.costTableRow} ${styles.costTableTotals}`}>
+                                <span>
+                                  <strong>Total per unit</strong>
+                                </span>
+                                <span>{fmtAud(routingCosts!.labour)}</span>
+                                <span>{fmtAud(routingCosts!.admin)}</span>
+                                <span>{fmtAud(routingCosts!.electricity)}</span>
+                                <span>{fmtAud(routingCosts!.gas)}</span>
+                                <span>{fmtAud(routingCosts!.overhead)}</span>
+                                <span>
+                                  <strong>
+                                    {fmtAud(
+                                      routingCosts!.labour +
+                                        routingCosts!.admin +
+                                        routingCosts!.electricity +
+                                        routingCosts!.gas +
+                                        routingCosts!.overhead
+                                    )}
+                                  </strong>
+                                </span>
+                              </div>
+                            </div>
+                            {routingCosts!.setupLabour + routingCosts!.setupOverhead > 0 ? (
+                              <p className={styles.meta}>
+                                Setup (per batch):
+                                {" "}labour {fmtAud(routingCosts!.setupLabour)} + overhead{" "}
+                                {fmtAud(routingCosts!.setupOverhead)}. Not included in per-unit
+                                totals; amortized over batch size on order snapshots.
+                              </p>
+                            ) : null}
+                          </div>
+                        ) : null}
                         <div className={styles.routingSection}>
                           <div className={styles.routingHeader}>
                             <strong>Labor routing</strong>
