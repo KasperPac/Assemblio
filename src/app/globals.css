@@ -161,6 +161,11 @@
   --ls-normal: 0;
   --ls-caps:   0.08em;
 
+  /* Border width scale */
+  --border-xs: 1px;
+  --border-sm: 2px;
+  --border-md: 4px;
+
   /* Radius scale */
   --radius-xs:   4px;
   --radius-sm:   6px;

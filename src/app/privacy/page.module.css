@@ -35,14 +35,14 @@
   font-size: var(--fs-2xl);
   margin-top: 0;
   margin-bottom: var(--space-6);
-  border-bottom: 2px solid var(--brand-1);
+  border-bottom: var(--border-sm) solid var(--brand-1);
   padding-bottom: var(--space-4);
 }
 
 .markdownBody h2 {
   font-size: var(--fs-xl);
   margin-top: var(--space-10);
-  border-left: 4px solid var(--brand-1);
+  border-left: var(--border-md) solid var(--brand-1);
   padding-left: var(--space-4);
 }
 
@@ -69,7 +69,7 @@
 .markdownBody a {
   color: var(--brand-1);
   text-decoration: none;
-  border-bottom: 1px solid var(--brand-dim);
+  border-bottom: var(--border-xs) solid var(--brand-dim);
   transition: all var(--dur-base) var(--ease-inout);
 }
 
@@ -77,7 +77,7 @@
   color: var(--brand-dark);
   border-bottom-color: var(--brand-1);
   background-color: var(--brand-dim);
-  padding: 2px 4px;
+  padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-xs);
 }
 
@@ -116,7 +116,7 @@
 .markdownBody blockquote {
   margin: var(--space-4) 0;
   padding: var(--space-4) var(--space-5);
-  border-left: 4px solid var(--brand-1);
+  border-left: var(--border-md) solid var(--brand-1);
   background-color: var(--brand-dim);
   border-radius: var(--radius-md);
   color: var(--ink-strong);
@@ -131,7 +131,7 @@
 .markdownBody hr {
   margin: var(--space-8) 0;
   border: none;
-  border-top: 2px solid var(--stroke-strong);
+  border-top: var(--border-sm) solid var(--stroke-strong);
   background: transparent;
   height: 0;
 }
@@ -140,7 +140,7 @@
 .markdownBody code {
   background-color: var(--bg-card-alt);
   color: var(--danger);
-  padding: 2px var(--space-2);
+  padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-sm);
   font-family: var(--font-mono);
   font-size: var(--fs-sm);
@@ -148,7 +148,7 @@
 
 .markdownBody pre {
   background-color: var(--bg-card-alt);
-  border: 1px solid var(--stroke-card);
+  border: var(--border-xs) solid var(--stroke-card);
   border-radius: var(--radius-md);
   padding: var(--space-4);
   overflow-x: auto;
@@ -168,7 +168,7 @@
   width: 100%;
   border-collapse: collapse;
   margin: var(--space-6) 0;
-  border: 1px solid var(--stroke-card);
+  border: var(--border-xs) solid var(--stroke-card);
   border-radius: var(--radius-md);
   overflow: hidden;
   font-size: var(--fs-sm);
@@ -183,12 +183,12 @@
   padding: var(--space-3) var(--space-4);
   text-align: left;
   color: var(--ink-strong);
-  border-bottom: 1px solid var(--stroke-strong);
+  border-bottom: var(--border-xs) solid var(--stroke-strong);
 }
 
 .markdownBody table td {
   padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--stroke-card);
+  border-bottom: var(--border-xs) solid var(--stroke-card);
   color: var(--ink-strong);
 }
 
@@ -341,7 +341,7 @@
 
   .markdownBody table tr {
     display: block;
-    border-bottom: 1px solid var(--stroke-card);
+    border-bottom: var(--border-xs) solid var(--stroke-card);
     margin-bottom: var(--space-2);
   }
 
