@@ -19,12 +19,34 @@ type VariantRow = {
   price: number | null;
 };
 
-type VariantMarginRow = {
-  order_line:
-    | { variant_id: string }
-    | Array<{ variant_id: string }>
+type BomRow = { id: string; variant_id: string };
+type BomComponentRow = {
+  product_bom_id: string;
+  quantity: number;
+  yield_pct: number;
+  component:
+    | { cost_per_unit: number | null }
+    | Array<{ cost_per_unit: number | null }>
     | null;
-  planned_margin_pct: number;
+};
+type BomLaborRow = {
+  product_bom_id: string;
+  department_id: string;
+  setup_hours: number;
+  run_hours_per_unit: number;
+  admin_hours_per_unit: number;
+  electricity_kwh_per_unit: number;
+  gas_units_per_unit: number;
+};
+type RateRow = {
+  department_id: string;
+  labor_rate_per_hour: number;
+  admin_rate_per_hour: number;
+  electricity_rate_per_kwh: number;
+  gas_rate_per_unit: number;
+  overhead_rate_per_hour: number;
+  effective_from: string;
+  effective_to: string | null;
 };
 
 type Props = {
@@ -46,17 +68,11 @@ export default async function ProductsPage({ searchParams }: Props) {
     return <div className={styles.page}>No tenant access.</div>;
   }
 
-  const [detailedVariantsResult, marginResult] = await Promise.all([
-    supabase
-      .from("shopify_variant")
-      .select("id,product_id,title,sku,price")
-      .eq("tenant_id", tenantId)
-      .order("created_at", { ascending: true }),
-    supabase
-      .from("job_cost_snapshot")
-      .select("planned_margin_pct,order_line:order_line_id(variant_id)")
-      .eq("tenant_id", tenantId),
-  ]);
+  const detailedVariantsResult = await supabase
+    .from("shopify_variant")
+    .select("id,product_id,title,sku,price")
+    .eq("tenant_id", tenantId)
+    .order("created_at", { ascending: true });
   const variantsFallbackResult = detailedVariantsResult.error
     ? await supabase.from("shopify_variant").select("id,product_id,title,sku,price")
     : null;
@@ -64,6 +80,111 @@ export default async function ProductsPage({ searchParams }: Props) {
     (detailedVariantsResult.error
       ? variantsFallbackResult?.data
       : detailedVariantsResult.data) ?? [];
+
+  const variantIds = (variants ?? []).map((v) => v.id);
+
+  const [activeBomsResult, ratesResult] = await Promise.all([
+    variantIds.length === 0
+      ? Promise.resolve({ data: [] as BomRow[] })
+      : supabase
+          .from("product_bom")
+          .select("id,variant_id")
+          .eq("tenant_id", tenantId)
+          .eq("is_active", true)
+          .in("variant_id", variantIds),
+    supabase
+      .from("cost_rate_schedule")
+      .select(
+        "department_id,labor_rate_per_hour,admin_rate_per_hour,electricity_rate_per_kwh,gas_rate_per_unit,overhead_rate_per_hour,effective_from,effective_to,staff_member_id"
+      )
+      .eq("tenant_id", tenantId)
+      .is("staff_member_id", null)
+      .lte("effective_from", new Date().toISOString().slice(0, 10))
+      .order("effective_from", { ascending: false }),
+  ]);
+
+  const activeBoms = ((activeBomsResult.data ?? []) as BomRow[]).filter((b) => b.variant_id);
+  const bomIdToVariant = new Map<string, string>(
+    activeBoms.map((b) => [b.id, b.variant_id])
+  );
+  const bomIds = activeBoms.map((b) => b.id);
+
+  const [bomComponentsResult, bomLaborResult] = await Promise.all([
+    bomIds.length === 0
+      ? Promise.resolve({ data: [] as BomComponentRow[] })
+      : supabase
+          .from("product_bom_component")
+          .select("product_bom_id,quantity,yield_pct,component:component_id(cost_per_unit)")
+          .eq("tenant_id", tenantId)
+          .in("product_bom_id", bomIds),
+    bomIds.length === 0
+      ? Promise.resolve({ data: [] as BomLaborRow[] })
+      : supabase
+          .from("product_bom_labor")
+          .select(
+            "product_bom_id,department_id,setup_hours,run_hours_per_unit,admin_hours_per_unit,electricity_kwh_per_unit,gas_units_per_unit"
+          )
+          .eq("tenant_id", tenantId)
+          .in("product_bom_id", bomIds),
+  ]);
+
+  const today = new Date().toISOString().slice(0, 10);
+  const ratesByDepartment = new Map<string, RateRow>();
+  for (const row of (ratesResult.data ?? []) as Array<RateRow & { staff_member_id: string | null }>) {
+    if (row.effective_to !== null && row.effective_to < today) continue;
+    if (!ratesByDepartment.has(row.department_id)) {
+      ratesByDepartment.set(row.department_id, row);
+    }
+  }
+
+  const materialCostByBom = new Map<string, number>();
+  for (const row of (bomComponentsResult.data ?? []) as BomComponentRow[]) {
+    const comp = Array.isArray(row.component) ? row.component[0] ?? null : row.component;
+    const costPerUnit = comp?.cost_per_unit ?? null;
+    if (costPerUnit == null) continue;
+    const yieldPct = row.yield_pct > 0 ? row.yield_pct : 1;
+    const lineCost = (Number(costPerUnit) * Number(row.quantity)) / yieldPct;
+    materialCostByBom.set(
+      row.product_bom_id,
+      (materialCostByBom.get(row.product_bom_id) ?? 0) + lineCost
+    );
+  }
+
+  const labourCostByBom = new Map<string, number>();
+  const overheadCostByBom = new Map<string, number>();
+  for (const row of (bomLaborResult.data ?? []) as BomLaborRow[]) {
+    const rate = ratesByDepartment.get(row.department_id);
+    if (!rate) continue;
+    const labour = Number(row.run_hours_per_unit) * Number(rate.labor_rate_per_hour);
+    const overhead =
+      Number(row.run_hours_per_unit) * Number(rate.overhead_rate_per_hour) +
+      Number(row.admin_hours_per_unit) * Number(rate.admin_rate_per_hour) +
+      Number(row.electricity_kwh_per_unit) * Number(rate.electricity_rate_per_kwh) +
+      Number(row.gas_units_per_unit) * Number(rate.gas_rate_per_unit);
+    labourCostByBom.set(
+      row.product_bom_id,
+      (labourCostByBom.get(row.product_bom_id) ?? 0) + labour
+    );
+    overheadCostByBom.set(
+      row.product_bom_id,
+      (overheadCostByBom.get(row.product_bom_id) ?? 0) + overhead
+    );
+  }
+
+  type VariantGp = { gpPct: number };
+  const gpByVariant = new Map<string, VariantGp>();
+  for (const bom of activeBoms) {
+    const variantId = bomIdToVariant.get(bom.id);
+    if (!variantId) continue;
+    const variant = (variants ?? []).find((v) => v.id === variantId);
+    const sell = variant?.price != null ? Number(variant.price) : 0;
+    if (!sell || sell <= 0) continue;
+    const total =
+      (materialCostByBom.get(bom.id) ?? 0) +
+      (labourCostByBom.get(bom.id) ?? 0) +
+      (overheadCostByBom.get(bom.id) ?? 0);
+    gpByVariant.set(variantId, { gpPct: (sell - total) / sell });
+  }
 
   const detailedProductsResult = await supabase
     .from("shopify_product")
@@ -133,18 +254,6 @@ export default async function ProductsPage({ searchParams }: Props) {
     }
     return acc;
   }, {});
-
-  type GpAccum = { sum: number; count: number };
-  const gpByVariant = ((marginResult.data ?? []) as VariantMarginRow[]).reduce<Record<string, GpAccum>>(
-    (acc, row) => {
-      const orderLine = Array.isArray(row.order_line) ? row.order_line[0] ?? null : row.order_line;
-      if (!orderLine?.variant_id || row.planned_margin_pct == null) return acc;
-      const existing = acc[orderLine.variant_id] ?? { sum: 0, count: 0 };
-      acc[orderLine.variant_id] = { sum: existing.sum + Number(row.planned_margin_pct), count: existing.count + 1 };
-      return acc;
-    },
-    {}
-  );
 
   function formatCurrency(value: number) {
     return new Intl.NumberFormat("en-AU", {
@@ -218,13 +327,12 @@ export default async function ProductsPage({ searchParams }: Props) {
             const productVariants = variantsByProduct[product.id] ?? [];
             const statusLabel = productVariants.length > 0 ? "ACTIVE" : "PENDING";
             const sellPrice = sellPriceByProduct[product.id] ?? null;
-            const variantsWithGp = productVariants.filter((v) => gpByVariant[v.id]);
-            const avgGpPct = variantsWithGp.length > 0
-              ? variantsWithGp.reduce((sum, v) => {
-                  const gp = gpByVariant[v.id]!;
-                  return sum + gp.sum / gp.count;
-                }, 0) / variantsWithGp.length
-              : null;
+            const variantsWithGp = productVariants.filter((v) => gpByVariant.has(v.id));
+            const avgGpPct =
+              variantsWithGp.length > 0
+                ? variantsWithGp.reduce((sum, v) => sum + gpByVariant.get(v.id)!.gpPct, 0) /
+                  variantsWithGp.length
+                : null;
             const gpClass = avgGpPct == null ? "" : avgGpPct >= 0.3 ? styles.gpGood : avgGpPct >= 0.1 ? styles.gpWarn : styles.gpBad;
             return (
               <div key={product.id} className={styles.tableRow}>
