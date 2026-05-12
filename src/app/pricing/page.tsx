@@ -69,7 +69,7 @@ export default function PricingPage() {
       </main>
 
       <footer className={styles.footer}>
-        <p>© 2026 Manuva · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p>
+        <p>© 2026 Manuva · <a href="/privacy">Privacy Policy</a> · <a href="/terms">Terms</a></p>
       </footer>
     </div>
   );
