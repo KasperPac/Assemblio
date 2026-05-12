@@ -82,7 +82,15 @@ export async function registerRequiredWebhooks(shopDomain: string, accessToken: 
     });
 
     const error = data.webhookSubscriptionCreate.userErrors[0]?.message;
-    if (error && !error.toLowerCase().includes("already been taken")) {
+    if (error) {
+      const errorLower = error.toLowerCase();
+      if (errorLower.includes("already been taken")) {
+        continue;
+      }
+      if (errorLower.includes("not approved") || errorLower.includes("protected customer data")) {
+        console.warn(`[shopify] Webhook ${topic} requires approval: ${error}`);
+        continue;
+      }
       throw new Error(`Webhook ${topic} registration failed: ${error}`);
     }
   }
