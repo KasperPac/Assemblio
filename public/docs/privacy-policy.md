@@ -679,11 +679,33 @@ This section defines key terms used throughout this Privacy Policy.
 
 ---
 
-## 11. Policy Version History
+## 11. Compliance Mapping: Australian Privacy Principles
+
+This section maps each Australian Privacy Principle (APP) from the Privacy Act 1988 (Cth) to the relevant sections of this Privacy Policy, demonstrating how Manuva addresses each principle.
+
+| Australian Privacy Principle | How This Policy Addresses It | Policy Sections |
+|---|---|---|
+| **APP 1 - Open & Transparent Management** | Manuva publishes this Privacy Policy and makes it accessible. We explain our privacy practices, data handling procedures, and organizational policies. We provide transparency about how we collect, use, disclose, and manage personal information. | Sections 1, 2, 3, 4, 9 |
+| **APP 2 - Anonymity & Pseudonymity** | While Manuva enables some interactions under pseudonyms, most core features (account creation, order management) require identification. Users must provide their identity to use the Service effectively. We note this in our information collection practices. | Section 2; Section 6.1 (access) |
+| **APP 3 - Collection of Solicited Personal Information** | Manuva collects personal information directly from users and organizations only when solicited (during account signup, form submission, service use). We explain what information is collected and why. We collect only information reasonably necessary to provide the Service. | Section 2 (all subsections) |
+| **APP 4 - Dealing with Unsolicited Personal Information** | When Manuva receives personal information not solicited (e.g., in support emails, error reports), we handle it according to this Privacy Policy. We manage unsolicited information in the same manner as solicited information unless it cannot be held lawfully. | Section 2; Section 3.3 (communication) |
+| **APP 5 - Notification About Personal Information** | Manuva notifies individuals when collecting personal information about why we collect it, how it will be used, and who may access it. This Privacy Policy serves as our primary notification mechanism. We explain data collection purposes in Section 2 and data usage in Section 3. | Sections 2, 3, 5 |
+| **APP 6 - Use or Disclosure** | Manuva uses and discloses personal information only for the primary purpose it was collected or a directly related secondary purpose, or with consent. We specify lawful uses in Section 3 and disclose only to service providers and as legally required. | Sections 3, 4 |
+| **APP 7 - Direct Marketing** | Manuva sends direct marketing communications (newsletters, promotions) only to individuals who have consented or who are existing customers. Individuals can opt out of direct marketing at any time through account settings or by contacting our privacy officer. | Section 6.4 (right to object); Section 3.3 (communication) |
+| **APP 8 - Credit Information** | Not applicable. Manuva does not collect, use, or disclose credit information as defined in the Privacy Act 1988 (Cth). We do not conduct credit assessments or manage credit information. | N/A |
+| **APP 9 - Government-Related Identifiers** | Manuva does not collect, use, or disclose government-related identifiers (e.g., tax file numbers, driver license numbers) except where required by law for tax compliance. We limit use of such identifiers to the specific legal requirement. | Section 3.4 (billing & compliance); Section 5.4 (legal exceptions) |
+| **APP 10 - Quality of Personal Information** | Manuva takes reasonable steps to ensure personal information is accurate, up-to-date, complete, and relevant. We provide individuals with the ability to correct information through their account settings or by requesting correction. We regularly audit data quality. | Section 6.2 (right to correction); Section 7.2 (organizational safeguards) |
+| **APP 11 - Security of Personal Information** | Manuva implements comprehensive technical and organizational security measures to protect personal information from misuse, interference, loss, unauthorized access, modification, or disclosure. We use encryption, access controls, staff training, and vendor management. | Section 7 (all subsections) |
+| **APP 12 - Access and Correction** | Manuva provides individuals with the right to access personal information held about them and to request correction of inaccurate or incomplete information. We respond to access and correction requests within 30 days. | Section 6.1 (access); Section 6.2 (correction) |
+| **APP 13 - Correction and Associated Information** | Manuva provides individuals with the right to request correction of inaccurate or incomplete personal information. If we refuse to correct, we explain our reasoning. Individuals can request addition of a statement of disagreement. | Section 6.2 (right to correction); Section 6.5 (how to exercise rights) |
+
+---
+
+## 12. Policy Version History
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 1.0 | 12 May 2026 | Initial publication of Privacy Policy for MVP release |
+| 1.0 | 12 May 2026 | Initial publication of Privacy Policy for MVP release with compliance mapping |
 
 ---
 
