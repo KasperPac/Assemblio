@@ -45,7 +45,12 @@ export function EmailShell({ logoBaseUrl, children }: EmailShellProps) {
               src={`${logoBaseUrl}/Manuva_svg.svg`}
               alt="Manuva"
               width={SIZE.logoWidthPx}
-              style={{ display: "block", marginBottom: 24 }}
+              style={{
+                display: "block",
+                marginLeft: "auto",
+                marginRight: "auto",
+                marginBottom: 24,
+              }}
             />
             {children}
           </Section>
