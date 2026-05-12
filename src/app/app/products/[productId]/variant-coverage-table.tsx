@@ -27,6 +27,7 @@ export type VariantSummary = {
   price: number | null;
   displayBom: DisplayBom | null;
   margin: number | null;
+  actualMargin: number | null;
 };
 
 // ---------------------------------------------------------------------------
@@ -48,6 +49,7 @@ function fmtPct(n: number): string {
 type Props = {
   summaries: VariantSummary[];
   avgMargin: number | null;
+  avgActualMargin: number | null;
   worstVariant: VariantSummary | null;
 };
 
@@ -55,7 +57,7 @@ type Props = {
 // Client component
 // ---------------------------------------------------------------------------
 
-export function VariantCoverageTable({ summaries, avgMargin, worstVariant }: Props) {
+export function VariantCoverageTable({ summaries, avgMargin, avgActualMargin, worstVariant }: Props) {
   const router = useRouter();
 
   return (
@@ -68,7 +70,8 @@ export function VariantCoverageTable({ summaries, avgMargin, worstVariant }: Pro
             <th>BOM status</th>
             <th>Components</th>
             <th>Mat. cost</th>
-            <th>Margin</th>
+            <th>Material GP %</th>
+            <th>Actual GP %</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -76,6 +79,7 @@ export function VariantCoverageTable({ summaries, avgMargin, worstVariant }: Pro
           {summaries.map((v) => {
             const noBom = v.displayBom === null;
             const lowMargin = v.margin !== null && v.margin < 20;
+            const lowActual = v.actualMargin !== null && v.actualMargin < 20;
             return (
               <tr
                 key={v.id}
@@ -133,6 +137,18 @@ export function VariantCoverageTable({ summaries, avgMargin, worstVariant }: Pro
                     <span className={styles.meta}>—</span>
                   )}
                 </td>
+                <td>
+                  {v.actualMargin !== null ? (
+                    <span className={lowActual ? styles.marginLow : styles.marginOk}>
+                      {fmtPct(v.actualMargin)}
+                      {lowActual && (
+                        <span className={styles.marginWarn}>⚠ low</span>
+                      )}
+                    </span>
+                  ) : (
+                    <span className={styles.meta}>—</span>
+                  )}
+                </td>
                 <td onClick={(e) => e.stopPropagation()}>
                   {v.displayBom ? (
                     <Link
@@ -155,7 +171,7 @@ export function VariantCoverageTable({ summaries, avgMargin, worstVariant }: Pro
           })}
           {summaries.length === 0 && (
             <tr>
-              <td colSpan={7} className={styles.emptyRow}>
+              <td colSpan={8} className={styles.emptyRow}>
                 No variants found for this product.
               </td>
             </tr>
@@ -167,14 +183,18 @@ export function VariantCoverageTable({ summaries, avgMargin, worstVariant }: Pro
       {worstVariant !== null && (
         <div className={styles.tableFooter}>
           <span className={styles.footerStat}>
-            Avg margin:{" "}
+            Avg material GP:{" "}
             <strong>{avgMargin !== null ? fmtPct(avgMargin) : "—"}</strong>
+          </span>
+          <span className={styles.footerStat}>
+            Avg actual GP:{" "}
+            <strong>{avgActualMargin !== null ? fmtPct(avgActualMargin) : "—"}</strong>
           </span>
           <span className={styles.footerStat}>
             Worst:{" "}
             <strong>
               {worstVariant.title ?? "Untitled"} (
-              {fmtPct(worstVariant.margin!)})
+              {fmtPct(worstVariant.actualMargin ?? worstVariant.margin ?? 0)})
             </strong>
           </span>
         </div>

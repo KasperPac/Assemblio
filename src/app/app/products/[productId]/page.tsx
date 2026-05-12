@@ -113,6 +113,26 @@ export default async function ProductDetailPage({ params }: Props) {
   // Fetch all BOMs for these variants
   let boms: BomRow[] = [];
   let bomLines: BomLineRow[] = [];
+  type LaborRow = {
+    product_bom_id: string;
+    department_id: string;
+    run_hours_per_unit: number;
+    admin_hours_per_unit: number;
+    electricity_kwh_per_unit: number;
+    gas_units_per_unit: number;
+  };
+  let laborLines: LaborRow[] = [];
+  type RateRow = {
+    department_id: string;
+    labor_rate_per_hour: number;
+    admin_rate_per_hour: number;
+    electricity_rate_per_kwh: number;
+    gas_rate_per_unit: number;
+    overhead_rate_per_hour: number;
+    effective_from: string;
+    effective_to: string | null;
+  };
+  const ratesByDepartment = new Map<string, RateRow>();
 
   if (variantIds.length > 0) {
     const { data: bomsData } = await supabase
@@ -128,14 +148,60 @@ export default async function ProductDetailPage({ params }: Props) {
     const bomIds = boms.map((b) => b.id);
 
     if (bomIds.length > 0) {
-      const { data: linesData } = await supabase
-        .from("product_bom_component")
-        .select("id,product_bom_id,quantity,yield_pct,component:component_id(cost_per_unit)")
-        .in("product_bom_id", bomIds)
-        .eq("tenant_id", tenantId);
+      const [linesResult, laborResult] = await Promise.all([
+        supabase
+          .from("product_bom_component")
+          .select("id,product_bom_id,quantity,yield_pct,component:component_id(cost_per_unit)")
+          .in("product_bom_id", bomIds)
+          .eq("tenant_id", tenantId),
+        supabase
+          .from("product_bom_labor")
+          .select(
+            "product_bom_id,department_id,run_hours_per_unit,admin_hours_per_unit,electricity_kwh_per_unit,gas_units_per_unit"
+          )
+          .in("product_bom_id", bomIds)
+          .eq("tenant_id", tenantId),
+      ]);
 
-      bomLines = (linesData ?? []) as BomLineRow[];
+      bomLines = (linesResult.data ?? []) as BomLineRow[];
+      laborLines = (laborResult.data ?? []) as LaborRow[];
+
+      const deptIds = Array.from(new Set(laborLines.map((l) => l.department_id)));
+      if (deptIds.length > 0) {
+        const today = new Date().toISOString().slice(0, 10);
+        const { data: rateRowsData } = await supabase
+          .from("cost_rate_schedule")
+          .select(
+            "department_id,labor_rate_per_hour,admin_rate_per_hour,electricity_rate_per_kwh,gas_rate_per_unit,overhead_rate_per_hour,effective_from,effective_to,staff_member_id"
+          )
+          .eq("tenant_id", tenantId)
+          .is("staff_member_id", null)
+          .in("department_id", deptIds)
+          .lte("effective_from", today)
+          .order("effective_from", { ascending: false });
+        for (const row of (rateRowsData ?? []) as Array<RateRow & { staff_member_id: string | null }>) {
+          if (row.effective_to !== null && row.effective_to < today) continue;
+          if (!ratesByDepartment.has(row.department_id)) {
+            ratesByDepartment.set(row.department_id, row);
+          }
+        }
+      }
     }
+  }
+
+  const labourCostByBom = new Map<string, number>();
+  const overheadCostByBom = new Map<string, number>();
+  for (const row of laborLines) {
+    const rate = ratesByDepartment.get(row.department_id);
+    if (!rate) continue;
+    const labour = Number(row.run_hours_per_unit) * Number(rate.labor_rate_per_hour);
+    const overhead =
+      Number(row.run_hours_per_unit) * Number(rate.overhead_rate_per_hour) +
+      Number(row.admin_hours_per_unit) * Number(rate.admin_rate_per_hour) +
+      Number(row.electricity_kwh_per_unit) * Number(rate.electricity_rate_per_kwh) +
+      Number(row.gas_units_per_unit) * Number(rate.gas_rate_per_unit);
+    labourCostByBom.set(row.product_bom_id, (labourCostByBom.get(row.product_bom_id) ?? 0) + labour);
+    overheadCostByBom.set(row.product_bom_id, (overheadCostByBom.get(row.product_bom_id) ?? 0) + overhead);
   }
 
   // Group BOMs and lines by variant/bom
@@ -189,6 +255,14 @@ export default async function ProductDetailPage({ params }: Props) {
       ? calcMargin(displayBom.matCost, v.price)
       : null;
 
+    let actualMargin: number | null = null;
+    if (displayBom?.is_active && displayBom.matCost !== null && v.price !== null && v.price > 0) {
+      const labour = labourCostByBom.get(displayBom.id) ?? 0;
+      const overhead = overheadCostByBom.get(displayBom.id) ?? 0;
+      const total = displayBom.matCost + labour + overhead;
+      actualMargin = ((v.price - total) / v.price) * 100;
+    }
+
     return {
       id: v.id,
       title: v.title,
@@ -196,6 +270,7 @@ export default async function ProductDetailPage({ params }: Props) {
       price: v.price,
       displayBom,
       margin,
+      actualMargin,
     };
   });
 
@@ -214,12 +289,22 @@ export default async function ProductDetailPage({ params }: Props) {
       ? marginsWithValues.reduce((sum, v) => sum + v.margin!, 0) /
         marginsWithValues.length
       : null;
-  const worstVariant =
-    marginsWithValues.length > 0
-      ? marginsWithValues.reduce((worst, v) =>
-          v.margin! < worst.margin! ? v : worst
-        )
+  const actualsWithValues = variantSummaries.filter((v) => v.actualMargin !== null);
+  const avgActualMargin =
+    actualsWithValues.length > 0
+      ? actualsWithValues.reduce((sum, v) => sum + v.actualMargin!, 0) /
+        actualsWithValues.length
       : null;
+  const worstVariant =
+    actualsWithValues.length > 0
+      ? actualsWithValues.reduce((worst, v) =>
+          v.actualMargin! < worst.actualMargin! ? v : worst
+        )
+      : marginsWithValues.length > 0
+        ? marginsWithValues.reduce((worst, v) =>
+            v.margin! < worst.margin! ? v : worst
+          )
+        : null;
 
   // Header meta
   const lastSync = product.created_at;
@@ -275,6 +360,7 @@ export default async function ProductDetailPage({ params }: Props) {
       <VariantCoverageTable
         summaries={variantSummaries}
         avgMargin={avgMargin}
+        avgActualMargin={avgActualMargin}
         worstVariant={worstVariant}
       />
     </div>

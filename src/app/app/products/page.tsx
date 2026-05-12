@@ -171,7 +171,7 @@ export default async function ProductsPage({ searchParams }: Props) {
     );
   }
 
-  type VariantGp = { gpPct: number };
+  type VariantGp = { matGpPct: number; actualGpPct: number };
   const gpByVariant = new Map<string, VariantGp>();
   for (const bom of activeBoms) {
     const variantId = bomIdToVariant.get(bom.id);
@@ -179,11 +179,13 @@ export default async function ProductsPage({ searchParams }: Props) {
     const variant = (variants ?? []).find((v) => v.id === variantId);
     const sell = variant?.price != null ? Number(variant.price) : 0;
     if (!sell || sell <= 0) continue;
-    const total =
-      (materialCostByBom.get(bom.id) ?? 0) +
-      (labourCostByBom.get(bom.id) ?? 0) +
-      (overheadCostByBom.get(bom.id) ?? 0);
-    gpByVariant.set(variantId, { gpPct: (sell - total) / sell });
+    const mat = materialCostByBom.get(bom.id) ?? 0;
+    const labour = labourCostByBom.get(bom.id) ?? 0;
+    const overhead = overheadCostByBom.get(bom.id) ?? 0;
+    gpByVariant.set(variantId, {
+      matGpPct: (sell - mat) / sell,
+      actualGpPct: (sell - mat - labour - overhead) / sell,
+    });
   }
 
   const detailedProductsResult = await supabase
@@ -316,7 +318,8 @@ export default async function ProductsPage({ searchParams }: Props) {
           <span>Variants</span>
           <span>Status</span>
           <span>Sell Price</span>
-          <span>GP %</span>
+          <span>Material GP %</span>
+          <span>Actual GP %</span>
         </div>
         {productsError ? (
           <div className={styles.empty}>Failed to load products: {productsError}</div>
@@ -328,12 +331,18 @@ export default async function ProductsPage({ searchParams }: Props) {
             const statusLabel = productVariants.length > 0 ? "ACTIVE" : "PENDING";
             const sellPrice = sellPriceByProduct[product.id] ?? null;
             const variantsWithGp = productVariants.filter((v) => gpByVariant.has(v.id));
-            const avgGpPct =
+            const avgMatGpPct =
               variantsWithGp.length > 0
-                ? variantsWithGp.reduce((sum, v) => sum + gpByVariant.get(v.id)!.gpPct, 0) /
+                ? variantsWithGp.reduce((sum, v) => sum + gpByVariant.get(v.id)!.matGpPct, 0) /
                   variantsWithGp.length
                 : null;
-            const gpClass = avgGpPct == null ? "" : avgGpPct >= 0.3 ? styles.gpGood : avgGpPct >= 0.1 ? styles.gpWarn : styles.gpBad;
+            const avgActualGpPct =
+              variantsWithGp.length > 0
+                ? variantsWithGp.reduce((sum, v) => sum + gpByVariant.get(v.id)!.actualGpPct, 0) /
+                  variantsWithGp.length
+                : null;
+            const gpClassFor = (value: number | null) =>
+              value == null ? "" : value >= 0.3 ? styles.gpGood : value >= 0.1 ? styles.gpWarn : styles.gpBad;
             return (
               <div key={product.id} className={styles.tableRow}>
                 <Link className={styles.productCell} href={`/app/products/${product.id}`}>
@@ -366,8 +375,12 @@ export default async function ProductsPage({ searchParams }: Props) {
                   {sellPrice != null ? formatCurrency(sellPrice) : "—"}
                 </span>
 
-                <span className={`${styles.gpCell} ${gpClass}`}>
-                  {avgGpPct != null ? `${(avgGpPct * 100).toFixed(0)}%` : "—"}
+                <span className={`${styles.gpCell} ${gpClassFor(avgMatGpPct)}`}>
+                  {avgMatGpPct != null ? `${(avgMatGpPct * 100).toFixed(0)}%` : "—"}
+                </span>
+
+                <span className={`${styles.gpCell} ${gpClassFor(avgActualGpPct)}`}>
+                  {avgActualGpPct != null ? `${(avgActualGpPct * 100).toFixed(0)}%` : "—"}
                 </span>
               </div>
             );
