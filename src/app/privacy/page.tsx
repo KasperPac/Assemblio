@@ -33,7 +33,7 @@ function parseMarkdown(markdown: string): string {
   // Process markdown line by line
   const lines = html.split('\n');
   let result = [];
-  let inList = false;
+  let inList: false | 'ul' | 'ol' = false;
   let inTable = false;
   let tableRows = [];
 
@@ -56,7 +56,7 @@ function parseMarkdown(markdown: string): string {
     else if (line.match(/^-\s+/)) {
       if (!inList) {
         result.push('<ul>');
-        inList = true;
+        inList = 'ul';
       }
       const text = line.replace(/^-\s+/, '');
       result.push(`<li>${text}</li>`);
@@ -65,7 +65,7 @@ function parseMarkdown(markdown: string): string {
     else if (line.match(/^\d+\.\s+/)) {
       if (!inList) {
         result.push('<ol>');
-        inList = true;
+        inList = 'ol';
       }
       const text = line.replace(/^\d+\.\s+/, '');
       result.push(`<li>${text}</li>`);
