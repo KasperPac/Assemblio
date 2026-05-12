@@ -7,8 +7,4 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  test: {
-    pool: "threads",
-    maxWorkers: 1,
-  },
 });
