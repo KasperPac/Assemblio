@@ -194,6 +194,8 @@ We use third-party service providers to process personal information on our beha
 | **Resend** | Transactional and notification email delivery | Email addresses, notification content, user names | Yes - DPA in place |
 | **Xero** | Financial accounting and invoice synchronization | Order totals, invoice data, financial summaries | OAuth-based integration with scope restrictions |
 
+**Data Protection Note:** For services marked "OAuth-based," data is protected through scoped API access and integration restrictions rather than a traditional DPA. Manuva accesses only the specific data categories required for the Service and cannot access data beyond the API scope defined by the third party. This approach provides equivalent protection to formal DPAs by limiting access at the platform level.
+
 **Data Processor vs. Data Controller:**
 
 For different categories of users, Manuva's role differs:
@@ -215,14 +217,14 @@ In each case, we will disclose only the minimum information necessary and will a
 
 ### 4.3 No Sale of Data
 
-**Manuva does NOT sell personal information to third parties.** We do not share data with:
+**Manuva does NOT sell personal information to third parties.** We do not share personal information with:
 
 - Marketing companies or data brokers
 - Advertising networks (except for our own analytics to improve our platform)
 - Competitor organizations
 - Any third party for monetary compensation
 
-We only share data with service providers who help deliver the Service, as required by law, or with your explicit consent.
+We only share personal information with service providers who help deliver the Service, as required by law, or with your explicit consent.
 
 ### 4.4 Sharing Within Your Organization
 
@@ -255,7 +257,7 @@ We retain personal information only as long as necessary to provide the Service,
 - **Retention Period:** 12 months from the date of the activity
 - **Purpose:** Used for security audits, compliance investigations, troubleshooting, and user support
 - **Access:** Limited to Manuva staff with a legitimate business need
-- **Deletion:** Logs are automatically deleted after 12 months unless:
+- **Deletion:** Logs are automatically deleted 12 months after the activity occurs, unless:
   - A legal dispute or investigation requires longer retention
   - A court order mandates preservation
   - An active security incident is being investigated
@@ -575,7 +577,7 @@ Manuva values your privacy and wants to resolve any concerns. We provide a strai
 
 - **Email:** privacy@manuva.app
 - **Mailing Address:** Level 10, 99 Pitt Street, Sydney, NSW 2000, Australia
-- **Phone:** +61 2 8248 8888
+- **Phone:** +61 2 8248 8888 (Business hours: 9am–5pm AEST, Monday–Friday)
 - **Response Commitment:** We acknowledge all inquiries within 10 business days and aim to resolve most issues within 30 days
 
 **What to Include:**
@@ -682,6 +684,8 @@ This section defines key terms used throughout this Privacy Policy.
 ## 11. Compliance Mapping: Australian Privacy Principles
 
 This section maps each Australian Privacy Principle (APP) from the Privacy Act 1988 (Cth) to the relevant sections of this Privacy Policy, demonstrating how Manuva addresses each principle.
+
+**Note on "Not Applicable" Entries:** Some principles marked as "N/A" (such as APP 8 - Credit Information) do not apply to Manuva's business model. We do not engage in credit assessment or collect government identifiers except where legally required. This table indicates which APPs guide our practices and which are not applicable to our operations.
 
 | Australian Privacy Principle | How This Policy Addresses It | Policy Sections |
 |---|---|---|
