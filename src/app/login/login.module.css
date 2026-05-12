@@ -106,6 +106,33 @@
   border-color: #1F4880;
 }
 
+.primary:disabled {
+  cursor: progress;
+  opacity: 0.75;
+  background: #1F4880;
+  border-color: #1F4880;
+}
+
+.buttonInner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #FFFFFF;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 .meta {
   margin: 8px 0 0;
   font-size: 12px;

@@ -12,7 +12,7 @@ const initialState = { error: "", message: "" };
 
 function LoginPageContent() {
   const searchParams = useSearchParams();
-  const [signInState, signInAction] = useActionState(signIn, initialState);
+  const [signInState, signInAction, isPending] = useActionState(signIn, initialState);
   const redirectTo = searchParams.get("redirect") ?? "/app";
 
   return (
@@ -37,8 +37,15 @@ function LoginPageContent() {
             {signInState.error ? (
               <p className={styles.error}>{signInState.error}</p>
             ) : null}
-            <button className={styles.primary} type="submit">
-              Sign in
+            <button className={styles.primary} type="submit" disabled={isPending} aria-busy={isPending}>
+              {isPending ? (
+                <span className={styles.buttonInner}>
+                  <span className={styles.spinner} aria-hidden="true" />
+                  Signing in…
+                </span>
+              ) : (
+                "Sign in"
+              )}
             </button>
           </form>
 
