@@ -64,7 +64,7 @@ export function InvitationEmail({
         BOMs, production, and purchasing in one place.
       </Text>
 
-      <div style={{ margin: "0 0 28px" }}>
+      <div style={{ margin: "0 0 28px", textAlign: "center" }}>
         <BrandButton href={acceptUrl}>Accept invitation →</BrandButton>
       </div>
 
