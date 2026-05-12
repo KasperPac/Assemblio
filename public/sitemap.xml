@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://manuva.app/pricing</loc>
+    <lastmod>2026-05-12</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://manuva.app/privacy</loc>
+    <lastmod>2026-05-12</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://manuva.app/login</loc>
+    <lastmod>2026-05-12</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://manuva.app/signup</loc>
+    <lastmod>2026-05-12</lastmod>
+    <priority>0.9</priority>
+  </url>
+</urlset>
