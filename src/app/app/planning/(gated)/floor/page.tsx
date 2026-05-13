@@ -29,6 +29,7 @@ type StepRow = {
     orders: {
       order_number: string | null;
       customer_email: string | null;
+      created_at: string | null;
     } | null;
   } | null;
 };
@@ -99,7 +100,7 @@ export default async function FloorPage() {
         `id,sequence,blocked_by,status,operation_name,scheduled_start,department_id,order_line_id,
          order_line:order_line_id(
            variant:variant_id(title,product:product_id(title)),
-           orders:order_id(order_number,customer_email)
+           orders:order_id(order_number,customer_email,created_at)
          )`
       )
       .eq("tenant_id", tenantId)
@@ -130,6 +131,7 @@ export default async function FloorPage() {
           id: s.id,
           orderLineId: s.order_line_id,
           orderNumber: order?.order_number ?? null,
+          orderDate: order?.created_at ?? null,
           customerName: order?.customer_email ?? null,
           productTitle,
           operationName: s.operation_name,
@@ -199,9 +201,6 @@ export default async function FloorPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <h1>Floor Board</h1>
-      </div>
       {unstartedLines.length > 0 && (
         <UnstartedPanel lines={unstartedLines} />
       )}

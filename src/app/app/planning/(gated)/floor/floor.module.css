@@ -1,13 +1,72 @@
-.page { display: flex; flex-direction: column; gap: 20px; height: 100%; }
+.page { display: flex; flex-direction: column; gap: 16px; height: 100%; }
 
-.header {
+/* ── Toolbar ─────────────────────────────────────────────── */
+.toolbar {
   display: flex;
-  justify-content: space-between;
+  gap: 12px;
   align-items: center;
+  flex-wrap: wrap;
   flex-shrink: 0;
 }
-.header h1 { margin: 0; font-size: 1.6rem; color: var(--ink-strong); }
 
+.search {
+  flex: 1;
+  min-width: 220px;
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  font-size: 0.9rem;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+.search:hover { border-color: var(--stroke-strong); }
+.search:focus {
+  outline: none;
+  border-color: var(--brand-1);
+  box-shadow: var(--shadow-focus);
+}
+
+.filter {
+  min-height: 40px;
+  padding: 8px 32px 8px 14px;
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.viewToggle {
+  display: inline-flex;
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-lg);
+  padding: 3px;
+  gap: 2px;
+}
+
+.viewBtn,
+.viewActive {
+  border: none;
+  background: transparent;
+  color: var(--ink-muted);
+  padding: 5px 14px;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 140ms ease, color 140ms ease;
+}
+.viewBtn:hover { color: var(--ink-strong); }
+.viewActive {
+  background: var(--brand-dim);
+  color: var(--brand-1);
+}
+
+/* ── Board view ───────────────────────────────────────────── */
 .board {
   display: flex;
   gap: 16px;
@@ -20,42 +79,57 @@
 .column {
   flex-shrink: 0;
   width: 300px;
-  border: 1px solid var(--stroke-strong);
-  border-radius: var(--radius-lg);
-  background: var(--surface-1);
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh - 200px);
+  max-height: calc(100vh - 220px);
+  box-shadow: var(--shadow-card);
 }
 
 .columnHeader {
-  padding: 14px 16px 10px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--stroke);
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
+  background: var(--bg-card-alt);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 }
-.columnName { font-size: 0.85rem; font-weight: 700; color: var(--ink-strong); }
+.columnName {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
 .columnCount {
-  font-size: 0.75rem;
-  color: var(--ink-faint);
-  background: var(--surface-1);
+  font-size: 11px;
+  color: var(--ink-muted);
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
   padding: 2px 8px;
   border-radius: 999px;
+  font-weight: 600;
 }
 
 .columnBody { overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
 
+/* ── Job card ─────────────────────────────────────────────── */
 .card {
-  border: 1px solid var(--stroke);
+  border: 1px solid var(--stroke-card);
   border-radius: var(--radius-lg);
   padding: 12px 14px;
   background: var(--bg-card);
   cursor: pointer;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
-.card:hover { border-color: var(--stroke-strong); }
+.card:hover {
+  border-color: var(--stroke-strong);
+  box-shadow: var(--shadow-sm);
+}
 
 .cardActive {
   border-color: var(--brand-2);
@@ -64,9 +138,14 @@
 .cardBlocked { opacity: 0.55; }
 
 .cardTop { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-.orderNum { font-size: 0.78rem; font-weight: 700; color: var(--ink-strong); }
+.orderNum { font-size: 0.82rem; font-weight: 600; color: var(--ink-strong); }
+.orderDate {
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  margin-top: 2px;
+}
 .statusPip {
-  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 3px;
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px;
 }
 .statusPip[data-status="active"]  { background: var(--ok); }
 .statusPip[data-status="queued"]  { background: var(--brand-2); }
@@ -91,14 +170,50 @@
   text-align: center;
 }
 
-/* Drawer */
+/* ── List view ────────────────────────────────────────────── */
+.listCard {
+  composes: tableCard from "../../../_ui/table.module.css";
+}
+
+.listTable {
+  composes: table from "../../../_ui/table.module.css";
+}
+
+.listRow {
+  cursor: pointer;
+}
+
+.listOrder {
+  font-weight: 600;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.statusBadge[data-status="active"]  { background: var(--ok-dim); color: var(--ok); }
+.statusBadge[data-status="queued"]  { background: var(--brand-dim); color: var(--brand-1); }
+.statusBadge[data-status="blocked"] { background: var(--surface-1); color: var(--ink-muted); }
+
+.emptyList {
+  padding: 40px;
+  text-align: center;
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+}
+
+/* ── Drawer ───────────────────────────────────────────────── */
 .drawerOverlay {
   position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); z-index: 100;
 }
 .drawer {
   position: fixed; top: 0; right: 0; bottom: 0; width: 420px;
-  background: var(--surface-1);
-  border-left: 1px solid var(--stroke-strong);
+  background: var(--bg-card);
+  border-left: 1px solid var(--stroke-card);
   z-index: 101;
   overflow-y: auto;
   padding: 24px;
@@ -111,7 +226,7 @@
   background: none; border: none; color: var(--ink-faint);
   cursor: pointer; font-size: 1.2rem; line-height: 1;
 }
-.drawerTitle { font-size: 1.1rem; font-weight: 700; color: var(--ink-strong); }
+.drawerTitle { font-size: 1rem; font-weight: 600; color: var(--ink-strong); }
 .drawerMeta { font-size: 0.82rem; color: var(--ink-muted); display: flex; flex-direction: column; gap: 4px; }
 
 .timeline { display: flex; flex-direction: column; gap: 0; margin-top: 8px; }

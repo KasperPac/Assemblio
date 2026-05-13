@@ -6,6 +6,7 @@ export type JobCardData = {
   id: string;
   orderLineId: string;
   orderNumber: string | null;
+  orderDate: string | null;
   customerName: string | null;
   productTitle: string;
   operationName: string;
@@ -13,6 +14,14 @@ export type JobCardData = {
   blockedBy: number[];
   scheduledStart: string | null;
 };
+
+function formatOrderDate(iso: string | null): string | null {
+  if (!iso) return null;
+  return new Date(iso).toLocaleDateString("en-AU", {
+    day: "numeric",
+    month: "short",
+  });
+}
 
 type Props = {
   step: JobCardData;
@@ -38,6 +47,9 @@ export function JobCard({ step, onClick }: Props) {
         <span className={styles.orderNum}>{step.orderNumber ?? "—"}</span>
         <span className={styles.statusPip} data-status={step.status} />
       </div>
+      {step.orderDate && (
+        <div className={styles.orderDate}>{formatOrderDate(step.orderDate)}</div>
+      )}
       <div className={styles.cardOp}>{step.operationName}</div>
       <div className={styles.cardOp} style={{ opacity: 0.7 }}>{step.productTitle}</div>
       {step.customerName && (

@@ -60,9 +60,9 @@
 .callout,
 .listCard,
 .stackRow {
-  border: 1px solid var(--stroke-strong);
+  border: 1px solid var(--stroke-card);
   border-radius: var(--radius-xl);
-  background: var(--surface-1);
+  background: var(--bg-card);
   box-shadow: var(--shadow-card);
 }
 
@@ -87,6 +87,8 @@
 .listCard h3 {
   margin: 0 0 10px;
   color: var(--ink-strong);
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .metrics {
@@ -179,13 +181,14 @@
 .field select,
 .field textarea {
   width: 100%;
-  min-height: 44px;
-  border: 1px solid var(--stroke);
+  min-height: 40px;
+  border: 1px solid var(--stroke-card);
   border-radius: var(--radius-lg);
-  padding: 10px 14px;
-  background: var(--surface-1);
+  padding: 8px 12px;
+  background: var(--bg-card);
   color: var(--ink-strong);
-  font: inherit;
+  font-size: 0.9rem;
+  font-family: inherit;
 }
 
 .field textarea {
