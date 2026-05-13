@@ -7,41 +7,16 @@
 }
 
 .table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
+  composes: table from "../../_ui/table.module.css";
 }
 
 .table th {
-  text-align: left;
-  padding: 10px 14px;
-  color: var(--ink-muted);
-  font-weight: 600;
-  font-size: 12px;
-  border-bottom: 1px solid var(--stroke-strong);
   white-space: nowrap;
 }
 
-.table th.right {
-  text-align: right;
-}
-
-.table td {
-  padding: 10px 14px;
-  color: var(--ink-strong);
-  border-bottom: 1px solid var(--stroke-strong);
-}
-
+.table th.right,
 .table td.right {
   text-align: right;
-}
-
-.table tr:last-child td {
-  border-bottom: none;
-}
-
-.table tr:hover td {
-  background: var(--surface-1);
 }
 
 .badge {

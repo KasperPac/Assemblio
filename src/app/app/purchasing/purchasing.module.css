@@ -5,15 +5,7 @@
 }
 
 .primary {
-  border: none;
-  border-radius: 999px;
-  min-height: 42px;
-  padding: 0 18px;
-  background: linear-gradient(135deg, var(--brand-2), var(--brand-1));
-  color: #f8fbff;
-  font-size: 0.9rem;
-  font-weight: 700;
-  cursor: pointer;
+  composes: primary from "../_ui/buttons.module.css";
 }
 
 .formCard {

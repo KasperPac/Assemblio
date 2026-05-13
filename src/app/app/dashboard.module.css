@@ -158,23 +158,22 @@
 .orderList {
   display: flex;
   flex-direction: column;
-  gap: 6px;
 }
 
 .orderRow {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 10px 14px;
-  border-radius: var(--radius-lg);
-  background: var(--surface-1);
-  border: 1px solid transparent;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--stroke-card);
   text-decoration: none;
-  transition: border-color 140ms ease, background 140ms ease;
+  transition: background 140ms ease;
+}
+.orderRow:last-child {
+  border-bottom: none;
 }
 .orderRow:hover {
-  border-color: var(--stroke-card);
-  background: var(--bg-card-alt);
+  background: var(--surface-hover);
 }
 
 .orderRef {
@@ -194,17 +193,17 @@
 .alertList {
   display: flex;
   flex-direction: column;
-  gap: 8px;
 }
 
 .alertRow {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
-  border-radius: var(--radius-lg);
-  background: var(--surface-1);
-  border: 1px solid var(--stroke-card);
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--stroke-card);
+}
+.alertRow:last-child {
+  border-bottom: none;
 }
 
 .alertBody {

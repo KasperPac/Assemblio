@@ -16,16 +16,7 @@
 }
 
 .addButton {
-  border: none;
-  border-radius: 999px;
-  min-height: 42px;
-  padding: 0 18px;
-  background: linear-gradient(135deg, var(--brand-2), var(--brand-1));
-  color: #f8fbff;
-  font-size: 0.9rem;
-  font-weight: 700;
-  cursor: pointer;
-  white-space: nowrap;
+  composes: primary from "../../_ui/buttons.module.css";
 }
 
 .templateCard {
@@ -143,29 +134,16 @@
 }
 
 .btnSmall {
-  border: none;
-  border-radius: 999px;
-  min-height: 42px;
-  padding: 0 16px;
-  background: linear-gradient(135deg, var(--brand-2), var(--brand-1));
-  color: #f8fbff;
+  composes: primary from "../../_ui/buttons.module.css";
   font-size: 0.84rem;
-  font-weight: 700;
-  cursor: pointer;
-  white-space: nowrap;
+  padding: 6px 14px;
 }
 
 .removeBtn,
 .deleteTplBtn {
-  border: 1px solid var(--stroke-strong);
-  border-radius: 999px;
-  min-height: 36px;
-  padding: 0 12px;
-  background: var(--surface-1);
-  color: var(--ink-strong);
+  composes: secondary from "../../_ui/buttons.module.css";
   font-size: 0.82rem;
-  font-weight: 700;
-  cursor: pointer;
+  padding: 6px 12px;
 }
 
 .dialog {
@@ -248,28 +226,14 @@
   padding-top: 4px;
 }
 
-.btnCancel,
-.btnSubmit {
-  flex: 1;
-  border-radius: 999px;
-  min-height: 42px;
-  padding: 0 14px;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
 .btnCancel {
-  border: 1px solid var(--stroke-strong);
-  background: var(--surface-1);
-  color: var(--ink-strong);
-  font-weight: 700;
+  composes: secondary from "../../_ui/buttons.module.css";
+  flex: 1;
 }
 
 .btnSubmit {
-  border: none;
-  background: linear-gradient(135deg, var(--brand-2), var(--brand-1));
-  color: #f8fbff;
-  font-weight: 700;
+  composes: primary from "../../_ui/buttons.module.css";
+  flex: 1;
 }
 
 .error {

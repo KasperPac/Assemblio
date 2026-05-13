@@ -53,12 +53,9 @@
 }
 
 .tableHeader {
-  padding: 0 6px;
-  color: var(--ink-faint);
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-bold);
-  text-transform: uppercase;
-  letter-spacing: var(--ls-caps);
+  composes: headerCells from "./table.module.css";
+  padding: 10px 16px;
+  border-radius: var(--radius-lg);
 }
 
 .body {

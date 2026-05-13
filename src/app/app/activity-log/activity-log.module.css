@@ -55,12 +55,8 @@
 }
 
 .tableHeader {
-  color: var(--ink-faint);
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  background: var(--bg-card-alt);
+  composes: headerCells from "../_ui/table.module.css";
+  padding: 10px 18px;
 }
 
 .tableRow,

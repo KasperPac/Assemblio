@@ -172,28 +172,7 @@
 .tableWrapper { overflow-x: auto; }
 
 .table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-}
-
-.table th {
-  padding: 7px 12px;
-  text-align: left;
-  font-size: 10px;
-  color: var(--ink-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  border-bottom: 1px solid var(--stroke);
-  background: var(--bg-card-2);
-  font-weight: 400;
-}
-
-.table td {
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--stroke);
-  color: var(--ink-strong);
-  vertical-align: middle;
+  composes: table from "../_ui/table.module.css";
 }
 
 .dimText { color: var(--ink-muted); font-size: 12px; }

@@ -5,16 +5,7 @@
 }
 
 .addButton {
-  border: none;
-  border-radius: 999px;
-  min-height: 42px;
-  padding: 0 18px;
-  background: linear-gradient(135deg, var(--brand-2), var(--brand-1));
-  color: #f8fbff;
-  font-size: 0.9rem;
-  font-weight: 700;
-  cursor: pointer;
-  white-space: nowrap;
+  composes: primary from "../_ui/buttons.module.css";
 }
 
 .meta {
@@ -24,43 +15,11 @@
 /* ── Table ─── */
 
 .tableCard {
-  background: var(--bg-card);
-  border: 1px solid var(--stroke-card);
-  border-radius: var(--radius-xl);
-  overflow: hidden;
+  composes: tableCard from "../_ui/table.module.css";
 }
 
 .table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-}
-
-.table th {
-  text-align: left;
-  padding: 10px 16px;
-  color: var(--ink-muted);
-  font-weight: 600;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 1px solid var(--stroke);
-  background: var(--bg-card-alt);
-}
-
-.table td {
-  padding: 11px 16px;
-  border-bottom: 1px solid var(--stroke);
-  color: var(--ink-strong);
-  vertical-align: middle;
-}
-
-.table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.table tbody tr:hover td {
-  background: var(--surface-hover);
+  composes: table from "../_ui/table.module.css";
 }
 
 .empty {
@@ -162,28 +121,14 @@
   padding-top: 6px;
 }
 
-.btnCancel,
-.btnSubmit {
-  flex: 1;
-  border-radius: 999px;
-  min-height: 42px;
-  padding: 0 14px;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
 .btnCancel {
-  border: 1px solid var(--stroke-strong);
-  background: var(--surface-1);
-  color: var(--ink-strong);
-  font-weight: 700;
+  composes: secondary from "../_ui/buttons.module.css";
+  flex: 1;
 }
 
 .btnSubmit {
-  border: none;
-  background: linear-gradient(135deg, var(--brand-2), var(--brand-1));
-  color: #f8fbff;
-  font-weight: 700;
+  composes: primary from "../_ui/buttons.module.css";
+  flex: 1;
 }
 
 .error {
@@ -258,14 +203,23 @@
 
 .search input {
   width: 100%;
-  border: 1px solid var(--stroke);
+  border: 1px solid var(--stroke-card);
   border-radius: var(--radius-lg);
   min-height: 44px;
   padding: 0 14px;
-  background: var(--surface-1);
+  background: var(--bg-card);
   color: var(--ink-strong);
   font-size: 0.95rem;
   box-sizing: border-box;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+.search input:hover {
+  border-color: var(--stroke-strong);
+}
+.search input:focus {
+  outline: none;
+  border-color: var(--brand-1);
+  box-shadow: var(--shadow-focus);
 }
 
 /* ── Stock status indicators ─── */

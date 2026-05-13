@@ -214,14 +214,9 @@
 }
 
 .btnSave {
+  composes: primary from "../../_ui/buttons.module.css";
   font-size: 12px;
   padding: 4px 14px;
-  border: none;
-  border-radius: var(--radius-md);
-  background: linear-gradient(135deg, var(--brand-2), var(--brand-1));
-  color: #f8fbff;
-  font-weight: 700;
-  cursor: pointer;
 }
 
 .btnCancel {

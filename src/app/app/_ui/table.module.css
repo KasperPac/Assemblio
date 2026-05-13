@@ -1,0 +1,55 @@
+/* Canonical table primitives. The Components page is the visual source of truth.
+   Compose from these so headers/cells stay consistent.
+   - For real <table> elements: compose `table` (handles th, td, hover).
+   - For div-grid tables: compose `headerCells` on the header row. */
+
+.tableCard {
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.table th {
+  text-align: left;
+  padding: 10px 16px;
+  color: var(--ink-muted);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--stroke);
+  background: var(--bg-card-alt);
+}
+
+.table td {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--stroke);
+  color: var(--ink-strong);
+  vertical-align: middle;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover td {
+  background: var(--surface-hover);
+}
+
+/* Header-cell typography for div-based grid "tables". */
+.headerCells {
+  color: var(--ink-muted);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--bg-card-alt);
+  border-bottom: 1px solid var(--stroke);
+}

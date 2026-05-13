@@ -49,11 +49,7 @@
 }
 
 .table {
-  background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--stroke-card);
-  box-shadow: var(--shadow-md);
-  overflow: hidden;
+  composes: tableCard from "../_ui/table.module.css";
 }
 
 .tableHeader,
@@ -62,21 +58,23 @@
   grid-template-columns: 1.6fr 0.45fr 0.55fr 0.8fr 0.7fr 0.7fr;
   gap: 12px;
   align-items: center;
-  padding: 12px 14px;
 }
 
 .tableHeader {
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--ink-faint);
-  background: var(--bg-card-2);
-  font-size: 11px;
-  font-weight: 700;
+  composes: headerCells from "../_ui/table.module.css";
+  padding: 10px 16px;
 }
 
 .tableRow {
-  border-top: 1px solid var(--stroke);
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--stroke);
+  font-size: 0.9rem;
+  color: var(--ink-strong);
+  transition: background 140ms ease;
 }
+
+.tableRow:last-child { border-bottom: none; }
+.tableRow:hover { background: var(--surface-hover); }
 
 .productCell {
   display: flex;

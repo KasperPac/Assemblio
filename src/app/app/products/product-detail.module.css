@@ -94,33 +94,11 @@
 }
 
 .table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
+  composes: table from "../_ui/table.module.css";
 }
 
 .table th {
-  text-align: left;
-  padding: 10px 16px;
-  color: var(--ink-muted);
-  font-weight: 600;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 1px solid var(--stroke);
-  background: var(--bg-card-2);
   white-space: nowrap;
-}
-
-.table td {
-  padding: 11px 16px;
-  border-bottom: 1px solid var(--stroke);
-  color: var(--ink-strong);
-  vertical-align: middle;
-}
-
-.table tbody tr:last-child td {
-  border-bottom: none;
 }
 
 /* ── Row variants ──────────────────────────── */
