@@ -124,12 +124,16 @@ export async function acceptInviteNewUser(
 ): Promise<AcceptResult> {
   const fullName = String(formData.get("full_name") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+  const passwordConfirm = String(formData.get("password_confirm") ?? "");
 
   if (!fullName) {
     return { ok: false, error: "Please enter your name." };
   }
   if (password.length < 8) {
     return { ok: false, error: "Password must be at least 8 characters." };
+  }
+  if (password !== passwordConfirm) {
+    return { ok: false, error: "Passwords don't match." };
   }
 
   const inv = await loadPendingInvitation(token);

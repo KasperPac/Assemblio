@@ -90,6 +90,17 @@ function NewUserForm({ token }: { token: string }) {
           required
         />
       </label>
+      <label className={styles.field}>
+        Confirm password
+        <input
+          name="password_confirm"
+          type="password"
+          placeholder="Re-enter password"
+          autoComplete="new-password"
+          minLength={8}
+          required
+        />
+      </label>
       <button type="submit" className={styles.primary} disabled={pending}>
         {pending ? "Creating account…" : "Accept invitation"}
       </button>
