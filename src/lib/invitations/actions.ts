@@ -80,6 +80,7 @@ async function dispatchInviteEmail(args: {
     to: args.to,
     subject: `${inviterName} invited you to ${tenantName} on Manuva`,
     react: React.createElement(InvitationEmail, emailProps),
+    fromName: `${inviterName} @ Manuva`,
   });
 }
 

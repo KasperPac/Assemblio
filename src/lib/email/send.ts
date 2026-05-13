@@ -15,15 +15,29 @@ export interface SendArgs {
   to: string;
   subject: string;
   react: ReactElement;
+  fromName?: string;
 }
 
 export type SendResult =
   | { ok: true; id: string }
   | { ok: false; error: string };
 
+function extractAddress(fromEnv: string): string {
+  const match = fromEnv.match(/<([^>]+)>/);
+  return (match ? match[1] : fromEnv).trim();
+}
+
+function formatDisplayName(name: string): string {
+  const cleaned = name.replace(/[\r\n"<>]/g, "").trim();
+  return `"${cleaned}"`;
+}
+
 export async function sendEmail(args: SendArgs): Promise<SendResult> {
-  const from = process.env.RESEND_FROM;
-  if (!from) return { ok: false, error: "RESEND_FROM not set" };
+  const fromEnv = process.env.RESEND_FROM;
+  if (!fromEnv) return { ok: false, error: "RESEND_FROM not set" };
+  const from = args.fromName
+    ? `${formatDisplayName(args.fromName)} <${extractAddress(fromEnv)}>`
+    : fromEnv;
 
   let resend: Resend;
   try {
