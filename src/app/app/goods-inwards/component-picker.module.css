@@ -1,0 +1,239 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  border: none;
+  background: transparent;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay[open] {
+  display: flex;
+}
+
+.overlay::backdrop {
+  background: transparent;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-overlay);
+  backdrop-filter: blur(4px);
+}
+
+.panel {
+  position: relative;
+  z-index: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  width: min(820px, 95vw);
+  height: 85vh;
+  max-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px 24px 14px;
+  border-bottom: 1px solid var(--stroke-card);
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: 18px;
+  color: var(--ink-strong);
+  margin: 0;
+}
+
+.sub {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+.closeBtn {
+  border: none;
+  background: none;
+  color: var(--ink-muted);
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 4px;
+}
+
+.closeBtn:hover {
+  color: var(--ink-strong);
+}
+
+.searchRow {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--stroke);
+  flex-shrink: 0;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 7px 11px;
+  background: var(--bg-input);
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-sm);
+  color: var(--ink-strong);
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.searchInput::placeholder {
+  color: var(--ink-faint);
+}
+
+.browsePanel {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.categorySidebar {
+  width: 170px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--stroke);
+  overflow-y: auto;
+  padding: 6px 0;
+}
+
+.catBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+  padding: 7px 14px;
+  background: none;
+  border: none;
+  color: var(--ink-muted);
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.catBtn:hover {
+  background: var(--bg-card-2);
+  color: var(--ink-strong);
+}
+
+.catBtnActive {
+  background: var(--brand-dim);
+  color: var(--brand-1);
+}
+
+.catCount {
+  font-size: 10px;
+  color: var(--ink-faint);
+  background: var(--bg-card-2);
+  border-radius: var(--radius-md);
+  padding: 1px 6px;
+  flex-shrink: 0;
+}
+
+.componentList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.componentRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 16px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--stroke);
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--ink-strong);
+}
+
+.componentRow:hover {
+  background: var(--bg-card-2);
+}
+
+.componentInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.componentName {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-strong);
+  font-weight: 500;
+}
+
+.componentSku {
+  font-size: 11px;
+  color: var(--ink-muted);
+  font-family: var(--font-mono), monospace;
+}
+
+.componentUnit {
+  color: var(--ink-muted);
+  font-size: 12px;
+  min-width: 40px;
+  flex-shrink: 0;
+}
+
+.componentCost {
+  color: var(--ink-faint);
+  font-size: 12px;
+  min-width: 64px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.noCost {
+  color: var(--danger);
+  font-size: 10px;
+  background: var(--danger-dim);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+.preferredTag {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--brand-dim);
+  color: var(--brand-1);
+}
+
+.emptyList {
+  padding: 24px 16px;
+  color: var(--ink-muted);
+  font-size: 13px;
+  text-align: center;
+  font-style: italic;
+}

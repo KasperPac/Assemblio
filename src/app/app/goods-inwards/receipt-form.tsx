@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useMemo, useRef, useState, useTransition } from "react";
 import { createDeliveryReceipt, parseReceiptPdf } from "./actions";
 import type { ParsedReceiptLine } from "./actions";
+import ComponentPicker, { type PickerComponent } from "./component-picker";
 import styles from "./goods-inwards.module.css";
 
 type Supplier = { id: string; name: string };
-type Component = { id: string; name: string; sku: string | null };
+type Component = PickerComponent;
 type Location = { id: string; name: string; is_default: boolean };
 
 type LineState = {
@@ -45,10 +46,12 @@ export default function ReceiptForm({
   suppliers,
   components,
   locations,
+  supplierComponentMap,
 }: {
   suppliers: Supplier[];
   components: Component[];
   locations: Location[];
+  supplierComponentMap: Record<string, string[]>;
 }) {
   const defaultLocation = locations.find((l) => l.is_default) ?? locations[0];
 
@@ -58,7 +61,30 @@ export default function ReceiptForm({
   const [lines, setLines] = useState<LineState[]>([blankLine()]);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [pickerLineKey, setPickerLineKey] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+
+  const preferredIds = useMemo<Set<string> | undefined>(() => {
+    if (!supplierId) return undefined;
+    const ids = supplierComponentMap[supplierId];
+    return ids && ids.length > 0 ? new Set(ids) : undefined;
+  }, [supplierId, supplierComponentMap]);
+
+  const sortedComponents = useMemo(() => {
+    if (!preferredIds) return components;
+    const preferred: Component[] = [];
+    const others: Component[] = [];
+    for (const c of components) {
+      if (preferredIds.has(c.id)) preferred.push(c);
+      else others.push(c);
+    }
+    return [...preferred, ...others];
+  }, [components, preferredIds]);
+
+  const supplierName = supplierId
+    ? suppliers.find((s) => s.id === supplierId)?.name
+    : undefined;
+  const preferredCount = preferredIds?.size ?? 0;
 
   const [pdfParsing, setPdfParsing] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
@@ -309,15 +335,52 @@ export default function ReceiptForm({
                       From PDF: {line.extractedName}
                     </div>
                   )}
-                  <select
-                    value={line.component_id}
-                    onChange={(e) => updateLine(line.key, { component_id: e.target.value })}
-                  >
-                    <option value="">Select component…</option>
-                    {components.map((c) => (
-                      <option key={c.id} value={c.id}>{componentLabel(c)}</option>
-                    ))}
-                  </select>
+                  <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                    <select
+                      value={line.component_id}
+                      onChange={(e) => updateLine(line.key, { component_id: e.target.value })}
+                      style={{ flex: 1, minWidth: 0 }}
+                    >
+                      <option value="">Select component…</option>
+                      {preferredIds && preferredCount > 0 ? (
+                        <>
+                          <optgroup label={`From ${supplierName ?? "supplier"}`}>
+                            {sortedComponents
+                              .filter((c) => preferredIds.has(c.id))
+                              .map((c) => (
+                                <option key={c.id} value={c.id}>
+                                  {componentLabel(c)}
+                                </option>
+                              ))}
+                          </optgroup>
+                          <optgroup label="Other components">
+                            {sortedComponents
+                              .filter((c) => !preferredIds.has(c.id))
+                              .map((c) => (
+                                <option key={c.id} value={c.id}>
+                                  {componentLabel(c)}
+                                </option>
+                              ))}
+                          </optgroup>
+                        </>
+                      ) : (
+                        sortedComponents.map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {componentLabel(c)}
+                          </option>
+                        ))
+                      )}
+                    </select>
+                    <button
+                      type="button"
+                      className={styles.secondary}
+                      onClick={() => setPickerLineKey(line.key)}
+                      style={{ padding: "4px 10px", whiteSpace: "nowrap" }}
+                      title="Browse all components"
+                    >
+                      Browse…
+                    </button>
+                  </div>
                 </td>
                 <td>
                   <input
@@ -380,6 +443,19 @@ export default function ReceiptForm({
           {isPending ? "Saving…" : "Save Receipt"}
         </button>
       </div>
+
+      {pickerLineKey && (
+        <ComponentPicker
+          components={components}
+          preferredIds={preferredIds}
+          supplierName={supplierName}
+          onPick={(id) => {
+            updateLine(pickerLineKey, { component_id: id });
+            setPickerLineKey(null);
+          }}
+          onClose={() => setPickerLineKey(null)}
+        />
+      )}
     </form>
   );
 }
