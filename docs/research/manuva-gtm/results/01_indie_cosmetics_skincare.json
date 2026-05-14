@@ -1,0 +1,96 @@
+{
+  "item_id": "01_indie_cosmetics_skincare",
+  "item_name": "Indie cosmetics & skincare brands (AU)",
+  "tier": "A",
+  "market_sizing": {
+    "target_buyer": "Founder / owner-operator (often a solo or 2-person team). Once a part-time ops/production lead joins (4-10 staff stage) buying authority shifts to them, but founder still signs.",
+    "business_count_au": "Estimated 1,500-3,000 active indie skincare/cosmetics SMBs in AU. AICIS holds ~9,000 registered business introducers across all industrial chemicals — skincare/cosmetics is the largest sub-cohort. Mordor places AU skincare products at AU$4.09B in 2026, with indie/niche capturing a growing share of the long tail. [uncertain]",
+    "business_count_secondary": "US: ~25,000-40,000 indie beauty brands (Beauty Independent / Indie Beauty Expo). UK: ~3,000-5,000 (CTPA registrants, indie share). NZ: ~300-600. CA: ~1,500-3,000. [uncertain]",
+    "typical_size": "1-5 employees; AU$80K-$1.2M annual revenue. A second cohort sits at 5-15 staff and AU$1-5M revenue.",
+    "annual_revenue_band_aud": "Most common: AU$250K-$1M. Tier-up cohort sits at AU$1-3M.",
+    "growth_trend": "AU skincare CAGR ~5-6% to 2031 (Mordor: $4.09B 2026 → $5.19B 2031). Indie/native-botanical (Kakadu plum, desert lime, Davidson plum) sub-segment growing faster (~8-10%). E-commerce share rising; Shopify dominant in indie cohort.",
+    "seasonality_intensity": 2
+  },
+  "fit_and_timing": {
+    "manuva_fit_score": 4,
+    "addressable_window": "now",
+    "roadmap_dependency": "Pre-launch lot tracking ships this segment. Xero integration significantly increases close rate (most accountants set up Xero). WooCommerce optional — Shopify is dominant.",
+    "typical_tier": "Growth ($249) for serious brands; Starter ($99) for solo hobby-to-pro transitioners. A few Pro ($499) candidates with wholesale + multi-channel.",
+    "regulatory_burden": "3 — AICIS business registration mandatory if any imported ingredient. Annual declaration by Nov 30. Lighter than TGA but ingredient/labeling rules + GMP voluntary best practice + COA expectations from retailers push lot tracking demand.",
+    "lot_batch_criticality": 4,
+    "time_to_value_days": 7
+  },
+  "economics": {
+    "incumbent_pricing": "Craftybase Indie US$39/mo or Business US$199/mo (250 → 1,000 order-line cliff is the documented pain point). Katana Starter US$179/mo (~AU$270) climbing rapidly per G2 'unusually steep price increases'. Most brands at <AU$500K revenue still on spreadsheets + Shopify reports.",
+    "willingness_to_pay_aud": "AU$99-$299/mo realistic. AU SMB skincare brands benchmark ~75-80% of US WTP. Growth tier at AU$249 is the sweet spot once a brand crosses ~AU$30K/mo revenue.",
+    "estimated_arpu_aud": "AU$210 blended (Starter 40% / Growth 50% / Pro 10%)",
+    "expansion_revenue_potential": "4 — clear path Starter→Growth as SKU count and wholesale grow; Pro tier unlocked by retail wholesale + co-pack. Lot tracking already in tier, so no add-on. Future compliance reporting (AICIS annual declaration helper) could be a paid add-on.",
+    "churn_risk": "3 — solo-founder businesses do fail/pause (esp. hobby-to-pro transitioners). Mitigation: Growth tier brands at AU$30K+/mo revenue rarely churn unless they outgrow to ERP.",
+    "cac_estimate_aud": "Cash CAC AU$50-150 (founder time + low-cost content). Founder-time CAC ~6-10 hours per closed customer × notional AU$150/hr = AU$900-1,500. Total blended: AU$1,000-1,700.",
+    "cash_cac_affordability": 5,
+    "ltv_estimate_aud": "AU$210 ARPU × 28-month avg life × 80% gross margin ≈ AU$4,700",
+    "ltv_cac_ratio": "~3-4:1 on cash CAC; ~2.7-4.7:1 on fully-loaded founder-time CAC. Acceptable.",
+    "typical_seat_count": "1-3 users. Flat-pricing wedge vs Katana per-seat is meaningful only in the 5-10 staff cohort.",
+    "multi_channel_count": "2 (Shopify + wholesale/Faire; some add Amazon or stockists)",
+    "wholesale_b2b_mix": "Roughly 30-50% wholesale for brands above AU$500K revenue (gift stores, salons, boutique retailers). Drives BOM-vs-pricing-tier need."
+  },
+  "where_they_live": {
+    "primary_channels": "Facebook: multiple AU indie beauty groups (e.g. 'Australian Skincare & Beauty Creators', 'Indie Beauty Australia') with combined ~10-20K members [uncertain]. Instagram hashtags: #australianmade #indieskincare #ausbeauty. Reddit: r/IndieBeauty (~60K), r/Skincare_Addiction_AU. LinkedIn: 'Beauty Industry Group' AU. Strong Circle community on Skincare Business Foundations (Jennifer Rudd).",
+    "directories_communities": "Skincare Business Foundations (Jennifer Rudd, Brisbane) — Label Launchpad + Beauty Brand Bootcamp + Circle community. Australian Made directory. Beauty Independent (US-led but AU coverage). Cosmetic Executive Women AU chapter. Professional Beauty AU. Cosmetic Manufacturer's Co-operative (CMC). Mecca M-Power (retail accelerator).",
+    "industry_facebook_group_size": "~15,000-25,000 combined members across active AU indie beauty / skincare maker FB groups [uncertain]",
+    "podcasts_voices": "1) Skincare Anarchy (US but global indie audience). 2) The Beauty Brains podcast. 3) Jennifer Rudd (Skincare Business Foundations) — Instagram + email list. 4) Hannah English (AU beauty journalist/influencer). 5) Cosmetics Design Asia newsletter.",
+    "events_trade_shows": "Beauty Expo Australia (Sydney, August, ~12,000 attendees, exhibitor packages from AU$5-15K). Cosmoprof Asia (Hong Kong, Nov, AU brands attend). Indie Beauty Expo (US/UK). Naturally Good Expo (Sydney, June, ~8,000 attendees). Pro Beauty Solutions trade days (regional).",
+    "search_keywords": "'BOM software for skincare', 'inventory software for cosmetics Australia', 'Craftybase alternative', 'Katana alternative Australia', 'skincare manufacturing software', 'lot tracking cosmetics AU', 'cosmetics batch software', 'how to track skincare ingredients Shopify', 'cosmetic formulation software AU', 'small batch skincare inventory'",
+    "community_density": 4,
+    "founder_persona_homogeneity": 4
+  },
+  "outreach_fit": {
+    "cold_outbound_feasibility": "3 — Instagram DMs to indie brand founders are socially acceptable and high-response if personalised. Cold email harder (founder email often hidden behind hello@ aliases). LinkedIn outbound moderate. Apollo/Clay enrichment from Shopify-store-detection scrapers (e.g. StoreLeads) makes scaled outbound feasible. Most reachable: brands at ~AU$200K-1M revenue stage.",
+    "inbound_content_fit": "5 — segment heavily consumes how-to content (regulation, formulation, business operations). SEO for 'AICIS guide for indie brands', 'How to track lot codes for skincare retail launches', 'Spreadsheet to MRP transition for skincare' has clear search demand. Case studies + Loom walkthroughs convert. Jennifer Rudd's audience is a perfect partner co-promotion target.",
+    "founder_market_fit_proxy": "3 — buyer trusts operators more than salespeople. Founder being an outsider is OK because the buyer is also new to operations software (not chemistry). Avoid claiming formulation expertise. Anchor on 'I help Shopify cosmetics brands stop reconciling BOMs in spreadsheets'.",
+    "case_study_acquisition_cost": "Moderate — offer 6mo free + monthly Loom feedback loop to 5 founders. Realistic to land 5 design partners in 60-90 days via Jennifer Rudd co-promotion + targeted Instagram DM outreach.",
+    "case_study_appeal": 5
+  },
+  "foot_in_door_fit": {
+    "design_partner_appeal": 5,
+    "paid_pilot_fit": 3,
+    "free_trial_extension_fit": 4,
+    "trial_to_paid_benchmark": "ChartMogul 2025 benchmarks apply. Expect: opt-in trial 10-12% (slightly above benchmark — high-intent searchers); CC-required 28-32%; design partner 6-month → ~50-65% conversion when scoped tightly. Loom-led onboarding lifts conversion meaningfully.",
+    "reference_value": 5,
+    "recommended_foot_in_door_motion": "Phase 1: Design partner program — 5-8 indie cosmetics/skincare brands, 6 months free + monthly 30-min feedback Loom, in exchange for case study + permission to quote. Recruit via (a) Skincare Business Foundations co-promotion, (b) targeted Instagram DM to AU brands at AU$200K-1M revenue stage, (c) AU indie beauty FB group posts. After design partners convert, shift to 14-day free trial (no CC) + founder-led demo for inbound, with Loom + email nurture. Avoid paid pilot — segment underestimates ops cost and design-partner trust is the higher-value asset.",
+    "rollout_phase": "Phase 1 (months 0-3) — top-3 segment to lead with"
+  },
+  "competitive_context": {
+    "current_dominant_tool": "Spreadsheets (60-70%) + Shopify reports for inventory. Of those using a tool: Craftybase ~50% share (Indie tier), Katana ~25% (mid-size with Shopify), Cin7/DEAR ~10% (wholesale-heavy brands), Unleashed/MRPeasy ~5%, custom Notion/Airtable ~10%. No single tool >35% of the addressable market.",
+    "switching_pain": "3 — BOMs are typically <50 SKUs and can be rebuilt in 1-2 weeks. Bigger pain is re-entering ingredient catalogs, supplier lead times, and historical lot data. Craftybase users have semi-portable CSV exports.",
+    "competitor_gaps_for_this_segment": "Craftybase: no BOM versioning, no production-order workflow (just 'manufactures'), weak wholesale pricing tiers, hard order-line ceilings at 250/1,000/5,000. Katana: per-seat pricing crushes 4+ staff brands, weak AU accounting integration (only Xero via 3rd-party), 523% price increase pattern. Cin7: too heavy, weak BOM versioning, post-DEAR price hikes. Spreadsheets: no lot tracking, no allocation, no audit trail for AICIS/retailer COA requests.",
+    "user_satisfaction_signals": "Craftybase Capterra: 4.5+ stars but 'order-line ceiling' shows up in 3-star reviews. Katana G2: 'unusually steep price increases', 'feature gatekeeping behind higher-tier plans', '523% price hikes reported' (specific reviewer). Reddit r/Skincare_Addiction has multiple 'how do you track batches when you graduate from spreadsheets' threads each quarter.",
+    "competitor_concentration": "Fragmented — HHI low. Craftybase is the closest to a default but only ~50% of those who buy anything.",
+    "integration_dependency_list": "Must-have: Shopify (shipped), Xero (roadmap — important), Klaviyo (optional), Australia Post / Sendle (Shippit covers many). Faire (wholesale) — nice-to-have. ShipStation rare in AU. Stripe via Shopify."
+  },
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": 4,
+    "shopify_app_store_acquisition_fit": 4,
+    "shopify_plus_partner_potential": 2,
+    "tpl_3pl_referral_potential": 2,
+    "industry_association_sponsorship": "Skincare Business Foundations (Jennifer Rudd) — partnership/affiliate co-promotion is the highest-leverage AU lever; estimate AU$1-3K/mo affiliate or rev-share. Beauty Industry Group AU — LinkedIn newsletter sponsorship ~AU$1-3K. Beauty Expo Australia — booth ~AU$5-15K (probably defer to year 2). Naturally Good Expo — speaker slot free if accepted. Cosmetic Manufacturer's Co-operative.",
+    "partner_channel_potential": 4
+  },
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "20-35 paying customers by month 12 (5-8 design partners converting + 15-25 inbound/founder-led closes). Conservative case: 15. Optimistic: 40.",
+    "realistic_12mo_mrr_contribution_aud": "AU$4,200-7,400 MRR by end of month 12 at AU$210 blended ARPU (25 customers midpoint)",
+    "path_to_first_3k_5k_mrr_aud": "Month 0-3: land 5-8 design partners (free 6mo, signed case-study commitment) via Skincare Business Foundations co-promotion + targeted Instagram DM (~150 DMs → 25 conversations → 6 design partners). Month 3-6: publish 5 detailed case studies + 10 SEO articles ('AICIS for indie brands', 'Craftybase ceiling escape plan', 'Lot tracking for skincare retailers'). Month 6-9: design partners begin converting at AU$249, plus 8-12 inbound/founder-led closes. Month 9-12: AU$249 × 20-25 paying = AU$5,000-6,200 MRR from this segment alone, hitting the AU$3-5K target without other segments.",
+    "customers_needed_for_1m_arr_aud": "~400 customers at AU$210 ARPU. With Pro-tier wholesale brands lifting blended to AU$280 → ~300 customers.",
+    "solo_founder_bandwidth_fit": "4 — onboarding ~3-4 hours/customer; segment is forgiving of light-touch async support; Loom + Notion docs absorb 70% of questions. Ceiling: ~60-80 active customers before support becomes the bottleneck.",
+    "break_even_contribution_months": "5-8 months (cash CAC ~AU$100, fully-loaded ~AU$1,000-1,500 against AU$168 gross-margin contribution)",
+    "gross_margin_sensitivity": "Low — segment doesn't carry heavy compliance hand-holding once lot tracking is shipped. AICIS questions push toward Jennifer Rudd not Manuva. Maintains ~80% gross margin.",
+    "priority_ranking": "1 — Strongest single Phase-1 segment. Visual case-study appeal, Phase-1 addressable, founder-fit-tolerant (not credentialed), Jennifer Rudd partner-channel leverage, lot tracking shipped, healthy ARPU.",
+    "risks_and_notes": "Risks: (1) Craftybase ships BOM versioning or order-line ceiling lift — neutralises wedge. Monitor Craftybase changelog quarterly. (2) Jennifer Rudd partnership not landed — segment still works but slower. Approach early. (3) Some 'indie brand' founders are pre-revenue hobbyists — qualify on Shopify revenue band before granting design-partner slot. (4) AICIS annual declaration is the obvious paid add-on but verify Manuva data model captures imported-ingredient tracking. (5) Brands that outsource to AU contract manufacturers won't need Manuva — qualify on 'do you blend in-house?'",
+    "uncertain_notes": "Business count and FB group totals are estimated; AICIS does not publish a public breakdown by cosmetics. Recommend verifying via AICIS registered-business public list and 1-2 manual FB group counts before sizing campaigns."
+  },
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "industry_facebook_group_size"
+  ]
+}

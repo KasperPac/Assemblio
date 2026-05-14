@@ -1,0 +1,92 @@
+{
+  "item_id": "27_paid_pilot_pricing_vs_free_trial",
+  "item_name": "Paid-pilot pricing vs free-for-X-months",
+  "tier": "D",
+  "type": "strategy_tactic",
+  "market_sizing": {
+    "target_buyer": "Founder/COO of a $300K-$3M AU SMB manufacturer deciding whether to spend $99-$499/mo on Manuva. Buyer is price-sensitive but values commitment signals from both sides.",
+    "business_count_au": "Tactic precedent. SMB SaaS market: nearly all sub-$500/mo B2B SaaS use either 14-day free trial (opt-in) or freemium. Paid pilots are common at >$1K/mo ACV (enterprise) but rare below — Manuva at $99-$499 sits at the inflection where the choice is non-obvious.",
+    "business_count_secondary": "Global SaaS sub-$500/mo segment: ~80% use opt-in free trial, ~15% use CC-required trial, <5% use paid pilot. Above $1K/mo ACV, paid pilots dominate.",
+    "typical_size": "n/a — tactic study",
+    "annual_revenue_band_aud": "n/a — applies to AU SMB buyers across all Manuva target verticals",
+    "growth_trend": "CC-required trials growing post-2023 (better conversion economics). Paid pilots growing post-2024 in vertical SaaS where implementation complexity justifies fee. Free 30-day trials are losing favor — too long, too low conversion.",
+    "seasonality_intensity": 1
+  },
+  "fit_and_timing": {
+    "manuva_fit_score": 5,
+    "addressable_window": "now — pick the model before public launch",
+    "roadmap_dependency": "None",
+    "typical_tier": "Pilot anchored at Growth tier ($249) — high enough to signal seriousness, low enough that AU SMB will swallow it",
+    "regulatory_burden": 1,
+    "lot_batch_criticality": 1,
+    "time_to_value_days": "Free trial assumes <14 day TTV; paid pilot accommodates 30-90 day TTV which matches Manuva's setup complexity (BOM build, channel sync, lot config)"
+  },
+  "economics": {
+    "incumbent_pricing": "Industry benchmarks: opt-in trial converts 8.9% (ChartMogul 2025/2026, 200 products); CC-required trial converts 31.4%; paid pilots convert 40-60% (SaaStr, Forrester, BCG data). SMB SaaS specifically: 3-10% free-to-paid. Recommended paid-pilot pricing: 10-30% of annual contract value, 100% credited to first-year contract on conversion. Snowflake example: $25K-$50K pilot fully credited.",
+    "willingness_to_pay_aud": "AU SMB will pay AU$249 for a paid pilot if (a) it's credited on conversion, (b) onboarding hours are included, (c) success criteria are defined. Above AU$500 for pilot fee, AU SMB resists. Below AU$99, signal is too weak.",
+    "estimated_arpu_aud": "Pilot fee AU$249/mo × 3 months = AU$747 pilot revenue. Post-conversion ARPU AU$249-$499.",
+    "expansion_revenue_potential": "4 — paid pilots self-select for high-intent buyers, who expand into higher tiers and add-ons faster than free-trial converters",
+    "churn_risk": "1 — paid-pilot customers churn at 30-50% lower rates than free-trial converters because they had skin in the game from day 1",
+    "cac_estimate_aud": "Cash CAC: net AU$200-$400 per customer (pilot fee partially offsets founder time). Founder-time CAC: 6-12 hours per pilot vs 1-3 hours per free trial (paid pilots get more support but also fewer tire-kickers).",
+    "cash_cac_affordability": 5,
+    "ltv_estimate_aud": "AU$249 ARPU × 30mo retention × 80% margin = AU$5,976 LTV (mid-tier estimate)",
+    "ltv_cac_ratio": "5-7 : 1 with paid pilot vs 2-3 : 1 with free trial (CAC efficiency from self-selection)",
+    "typical_seat_count": "n/a",
+    "multi_channel_count": "n/a",
+    "wholesale_b2b_mix": "n/a"
+  },
+  "where_they_live": {
+    "primary_channels": "Where Manuva would test/measure this tactic: Manuva pricing page A/B test, founder LinkedIn posts comparing offers, segment-specific landing pages with different offers per traffic source, post-demo email follow-up testing pilot-fee vs free-trial close",
+    "directories_communities": "Benchmark sources: ChartMogul Insights, OpenView SaaS Pricing reports, SaaStr posts (Jason Lemkin), Tomasz Tunguz blog, ProfitWell / Paddle pricing research, Userpilot benchmarks, First Page Sage SaaS trial reports",
+    "industry_facebook_group_size": "n/a",
+    "podcasts_voices": "Patrick Campbell (ProfitWell/Paddle), Jason Lemkin (SaaStr), Tomasz Tunguz (Theory Ventures), Kyle Poyar (OpenView/Tremont), Lenny Rachitsky, Pricing I/O podcast",
+    "events_trade_shows": "SaaStr Annual (US, expensive), pricing-focused operator newsletters",
+    "search_keywords": "paid pilot SaaS, free trial vs paid pilot SMB, CC-required trial conversion, ChartMogul trial benchmark, design partner vs pilot vs trial",
+    "community_density": 4,
+    "founder_persona_homogeneity": 3
+  },
+  "outreach_fit": {
+    "cold_outbound_feasibility": "n/a (tactic; choice affects every outreach motion)",
+    "inbound_content_fit": "5 — paid pilots strongly favored on inbound because high-intent leads convert better than trial-only leads",
+    "founder_market_fit_proxy": "5 — paid pilots actually help an outsider founder: payment is a commitment signal that masks lack of industry tenure",
+    "case_study_acquisition_cost": "Lower with paid pilots — paying customers are more invested and more willing to provide case studies",
+    "case_study_appeal": 4
+  },
+  "foot_in_door_fit": {
+    "design_partner_appeal": 3,
+    "paid_pilot_fit": 5,
+    "free_trial_extension_fit": 2,
+    "trial_to_paid_benchmark": "Verified industry benchmarks: opt-in free trial 8.9% (ChartMogul 2025/2026), CC-required trial 31.4%, paid pilots 40-60% (multiple sources). SMB specifically: free trial 3-10%. Manuva paid-pilot expected conversion: 35-50% given moderate setup complexity.",
+    "reference_value": 4,
+    "recommended_foot_in_door_motion": "RECOMMENDED MANUVA TACTIC: Default to PAID PILOT for direct founder-sold customers; CC-REQUIRED 14-day trial for self-serve inbound; FREE 6-month for the 5 Charter Design Partners ONLY. Specifically: (1) Paid Pilot — AU$249/mo × 3 months at Growth tier, 100% credited to first 3 months of annual contract on conversion; includes 4 hours of founder onboarding; success criteria defined in writing at kickoff (e.g. 'first 10 BOMs built, first stocktake run, first PO received'). Expected 40-50% conversion. (2) For self-serve trials (after Manuva has self-serve onboarding by month 6-9): 14-day CC-required trial, NOT opt-in, NOT 30-day. Expected 25-35% conversion. (3) For 5 Charter Partners only: free Pro 6 months + 50% off 24mo post (see item 26). REJECT 'free for 3 months then half-price' — at $99-$499 ARPU this just attracts tire-kickers and creates churn cliffs at the free-end date.",
+    "rollout_phase": "Phase 1 (months 0-6) — paid pilot for founder-sold; Phase 2 (months 6-9) — add CC-required trial once self-serve onboarding ships"
+  },
+  "competitive_context": {
+    "current_dominant_tool": "Current best-practice playbook for sub-$500/mo SaaS: 14-day opt-in free trial (the default, lowest-friction, lowest-conversion). 2024-2026 trend is moving toward CC-required trials and paid pilots in vertical SaaS. Katana uses 14-day free trial; Cin7 uses demo-then-quote (no trial); Craftybase uses 14-day free trial; MRPeasy uses 14-day free trial. None of Manuva's direct competitors run paid pilots. Manuva differentiating with paid pilot is a defensible position.",
+    "switching_pain": "n/a",
+    "competitor_gaps_for_this_segment": "All MRP incumbents run 14-day free trial, getting 5-10% conversion and high support cost from tire-kickers. Manuva running a paid pilot (or CC-required) at the same ARPU will convert 3-5x better and waste less founder time on non-buyers. Gap: AU SMB market is undertrained on paid-pilot concept; needs messaging investment.",
+    "user_satisfaction_signals": "ChartMogul 2025/2026: opt-in 8.9% vs CC-required 31.4%. SaaStr/Forrester: paid pilots 40-60% conversion. BCG: aligned pilot pricing increases conversion 35%. Snowflake case: $25-50K paid pilots fully credited drive enterprise adoption.",
+    "competitor_concentration": "Tactic landscape is fragmented; no dominant artefact (vs item 26 where Common Paper template dominates)",
+    "integration_dependency_list": "Stripe for pilot billing, contract automation (PandaDoc or DocuSign), Linear/Notion for documented success criteria"
+  },
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": 3,
+    "shopify_app_store_acquisition_fit": 2,
+    "shopify_plus_partner_potential": 3,
+    "tpl_3pl_referral_potential": 3,
+    "industry_association_sponsorship": "n/a (tactic, not segment)",
+    "partner_channel_potential": 3
+  },
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "Tactic enables ~25-50 paid customers in year 1 across all segments (compounding effect; not counted standalone)",
+    "realistic_12mo_mrr_contribution_aud": "Indirect — paid pilot tactic is a multiplier on every other segment, expected to roughly 3-5x conversion vs free trial. If free trial would have produced AU$1,500 MRR by mo 12, paid pilot produces AU$4,000-$6,000.",
+    "path_to_first_3k_5k_mrr_aud": "Paid pilot is the conversion-rate multiplier on the path. Free-trial path requires 10x more leads to hit AU$5K MRR than paid-pilot path. For a solo founder with limited lead volume, paid pilot is the only viable choice. Sequence: months 0-3 default offer is AU$249/mo × 3mo paid pilot, credited on conversion. Track conversion weekly. By month 4, you'll have enough data to dial pilot length (3 vs 4mo) and tier ($249 vs $499).",
+    "customers_needed_for_1m_arr_aud": "Tactic enables higher-LTV-per-CAC, so fewer customers needed to reach $1M ARR at any blended ARPU",
+    "solo_founder_bandwidth_fit": "5 — paid pilot is the most solo-founder-friendly tactic available; it pre-filters out tire-kickers who would consume founder time",
+    "break_even_contribution_months": "2-3 months (pilot fee + first month subscription covers CAC immediately)",
+    "gross_margin_sensitivity": "Improves gross margin — paid-pilot customers consume support hours but their pilot fees partially offset",
+    "priority_ranking": "1 — set this default before launch. Highest leverage tactic decision the founder makes.",
+    "risks_and_notes": "RECOMMENDED MANUVA-SPECIFIC TACTIC PARAGRAPH: Default to PAID PILOT at AU$249/mo × 3 months, 100% credit on conversion to an annual contract. Include 4 hours of founder onboarding. Define success criteria in writing at kickoff. Use this as the primary offer in founder-led outbound and demo flows. Reserve the free 6mo offer ONLY for the 5 named Charter Design Partners (item 26). Once Manuva has self-serve onboarding (by month 6-9), add a CC-REQUIRED 14-day trial as a secondary self-serve path — NOT opt-in, NOT 30-day. Track conversion weekly; expect 40-50% on paid pilots and 25-35% on CC trials. REJECT free-for-X-months-then-half-price — at sub-$500 ARPU it attracts tire-kickers and creates a churn cliff at the discount end-date. Risks: (1) AU SMB market is unfamiliar with paid pilots — needs clear landing-page messaging ('Try Manuva for 90 days for $249/mo. Convert to annual and we'll credit every dollar back.'); (2) credit-on-conversion mechanic needs clean Stripe + contract handling — invest 1 day in PandaDoc + Stripe Coupon code automation; (3) tier choice matters — Growth tier ($249) is the sweet spot, NOT Starter ($99 too low signal) and NOT Pro ($499 too high friction); (4) verify with first 5-10 pilots whether 3 months is right or 4-6 is needed for full TTV given setup complexity."
+  },
+  "uncertain": []
+}

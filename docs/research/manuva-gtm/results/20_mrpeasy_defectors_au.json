@@ -1,0 +1,109 @@
+{
+  "_source_file": "20_mrpeasy_defectors_au",
+  "item_id": "20_mrpeasy_defectors_au",
+  "item_name": "MRPeasy users wanting better Shopify + AU accounting integration",
+  "tier": "B",
+  "hypothesis": "Per-seat ($49/user) painful at 10+ team size. Weak on AU connectors. Pro-tier flat pricing wedge.",
+
+  "market_sizing": {
+    "target_buyer": "Founder, COO, or production manager at a 5-30 person AU manufacturer who originally chose MRPeasy for its ERP-lite feature breadth and is now feeling per-seat pricing drag as production/warehouse headcount grows.",
+    "business_count_au": "~300-600 AU SMBs. MRPeasy claims ~3,000-5,000 global customers; AU footprint is meaningful but secondary to US/EU. AU-specific count inferred from MRPeasy AU case studies, LinkedIn 'used by' signals, and Capterra AU reviews. Conservative: 300-600 active paying AU accounts [uncertain].",
+    "business_count_secondary": "US ~1,200-1,800 (largest market); UK ~400-700; NZ ~80-150; CA ~200-400; EU (combined) ~1,000+. Numbers approximate from MRPeasy public materials and regional case studies [uncertain].",
+    "typical_size": "5-30 FTE, AU$500K-AU$10M revenue. Skews larger than Craftybase customers and more 'manufacturing-shaped' (work centres, routings, capacity) than Unleashed's distribution-leaning base.",
+    "annual_revenue_band_aud": "$1M-$5M most common; $250K-$1M tail; $5M+ minority. Growth ($249) and Pro ($499) tier candidates; some Starter ($99) for the smallest.",
+    "growth_trend": "MRPeasy is growing globally (10-15% YoY estimated) but its per-seat pricing has been a long-running G2/Capterra complaint. Defection cohort is steady rather than acute. AU-specific pain has intensified post-2024 as Xero/MYOB-native alternatives matured.",
+    "seasonality_intensity": "2 — defection events follow seat-count growth thresholds (hitting 10+ users) and quarterly budget reviews. No strong calendar pattern."
+  },
+
+  "fit_and_timing": {
+    "manuva_fit_score": "4 — MRPeasy's core (BOMs with routings, work orders, POs, inventory, lot tracking) maps cleanly to Manuva. Gaps: Manuva lacks MRPeasy's routings/work-centres/capacity planning depth (multi-stage shop-floor scheduling). Fine for 'assembly + light routing' shops; weak for true job-shop production with 4+ work centres. Best fit: brands using MRPeasy for BOMs + inventory + POs but not deep shop-floor scheduling.",
+    "addressable_window": "now for the inventory/BOM/PO use-case; gated on Xero/MYOB integration for AU defectors specifically. Without AU accounting connectors, the 'better AU integration' wedge doesn't exist yet.",
+    "roadmap_dependency": ["Xero integration (the #1 reason these customers want to switch — MRPeasy's Xero connector exists but is feature-thin)", "MYOB integration (secondary, ~15-20% overlap)", "Shopify integration (already shipped — strengthens wedge)", "Optional: lightweight work-centre / routing support for the production-floor slice; if missing, segment the cohort to inventory-led MRPeasy users only"],
+    "typical_tier": "Growth ($249) for inventory/BOM users; Pro ($499) for multi-channel + larger seat-count escapees.",
+    "regulatory_burden": "2 — MRPeasy installed base is mixed: light manufacturing, electronics, hardware, food/bev subset. Compliance burden varies. Lot tracking required for the food/cosmetics/supplements slice (~25-30%).",
+    "lot_batch_criticality": "3 — required for ~30% of the cohort (food/bev/cosmetics in MRPeasy), nice-to-have for the rest. Manuva's pre-launch lot tracking covers must-haves.",
+    "time_to_value_days": "12-25 days. Migration similar to Unleashed: BOM rebuild, supplier import, opening stock. Marginally harder if customer uses MRPeasy routings (need to flatten to BOM only)."
+  },
+
+  "economics": {
+    "incumbent_pricing": "MRPeasy 2025-2026 published plans (USD): Starter US$49/user/mo, Professional US$69/user/mo, Enterprise US$99/user/mo, Unlimited US$149/user/mo. AU equivalents at ~1.5x FX: AU$74-225/user/mo. A 10-user shop on Professional pays US$690/mo (~AU$1,035) — 4x Manuva Pro flat. At 20 users on Enterprise: US$1,980/mo (~AU$2,970). Per-seat compounding is the dominant defection trigger.",
+    "willingness_to_pay_aud": "AU$249-499/mo at Manuva flat. Even at AU$499 Pro, 10-user shops save 50-70% versus current MRPeasy spend. WTP is high once seat-pain is felt.",
+    "estimated_arpu_aud": "$370 blended (mix ~50% Growth, 50% Pro; skewed Pro because seat-count escapees tend to need multi-channel + advanced features).",
+    "expansion_revenue_potential": "4 — Strong. Many MRPeasy escapees are at the point of needing multi-channel reconciliation, wholesale tiers, capacity planning. Manuva can land on Growth and expand to Pro + future capacity-planning module. NRR potential 115-125%.",
+    "churn_risk": "3 — Higher than Unleashed defectors because some MRPeasy users genuinely need shop-floor routings/work-centres that Manuva doesn't have. Risk of buyer's remorse 60-90 days post-migration when production-scheduling gap surfaces. Mitigation: tight pre-sale gap audit, segment to inventory-led users only.",
+    "cac_estimate_aud": "Cash CAC: AU$100-200 (intent search + LinkedIn outbound). Founder-time CAC: 10-18 hours/close (migration + gap-audit + onboarding) × AU$150 notional = AU$1,500-2,700. Blended notional CAC AU$1,600-2,900. Cash out-of-pocket AU$100-200 + ~12 hours.",
+    "cash_cac_affordability": "4 — Slightly higher cash CAC than Unleashed because intent volume is lower (smaller AU base, less concentrated 'price-pain' messaging — MRPeasy users complain about seats, not FX, which is harder to SEO-target). Still very affordable for solo founder. No paid budget required.",
+    "ltv_estimate_aud": "AU$370 ARPU × 80% margin × ~32 months retention ≈ AU$9,500 LTV. Slightly lower retention than Unleashed segment (higher buyer's-remorse risk) but higher ARPU offsets.",
+    "ltv_cac_ratio": "~4-6:1 blended; >25:1 cash-only.",
+    "typical_seat_count": "8-20 users typical at the defection moment (the seat-count trigger). Switching pain from per-seat is acute — single biggest sales talking-point.",
+    "multi_channel_count": "2-3 typical (Shopify + wholesale; some + Amazon). Higher than Unleashed segment because MRPeasy serves more 'maker brand' shapes alongside light industrial.",
+    "wholesale_b2b_mix": "30-50% wholesale. Mix of D2C maker brands and B2B-focused light manufacturers."
+  },
+
+  "where_they_live": {
+    "primary_channels": "Reddit: r/manufacturing, r/smallbusinessAU, r/inventorymanagement, r/Shopify (multi-channel overlap). LinkedIn: 'Australian Manufacturers', 'Manufacturing Australia' (~25-50k combined). G2 + Capterra 'MRPeasy' review pages — defectors flag per-seat pain in named reviews. Reddit r/manufacturing has recurring 'MRPeasy alternative no per-seat' threads. [uncertain] member counts approximate.",
+    "directories_communities": "Australian Made directory, AiGroup member list, Manufacturing Australia member companies, Shopify AU partner ecosystem, Xero App Marketplace inventory category, Capterra/G2 MRP comparison pages. MRPeasy doesn't have a strong owned community — defection signals are scattered across third-party review platforms.",
+    "industry_facebook_group_size": "~10-25k across cross-vertical AU manufacturer/maker groups. Smaller than Unleashed-relevant audience because MRPeasy skews more 'industrial' than 'consumer brand' [uncertain].",
+    "podcasts_voices": "Manufacturers' Monthly (industry mag), Smart Business Tribe, Inside Small Business, The Business of Manufacturing AU, Lean Business Australia podcast. MRPeasy itself publishes a thin content marketing stream — defectors don't have an obvious dedicated voice [uncertain].",
+    "events_trade_shows": "AUSPACK (~10k attendees, Sydney/Melbourne biennial), National Manufacturing Week (~10k, Melbourne), Foodpro (biennial, Sydney), AiGroup events. Sponsorship <AU$10k available at regional manufacturing forums. Xerocon AU (~3,500 attendees, Sept) is highest-ROI given accounting-integration wedge.",
+    "search_keywords": "'MRPeasy alternative Australia', 'MRPeasy pricing per user', 'MRPeasy vs Katana', 'MRPeasy Xero integration', 'manufacturing software Australia flat pricing', 'BOM software no per seat', 'MRPeasy review 2025', 'cheap MRPeasy alternative', 'MRPeasy Shopify integration', 'manufacturing ERP small business AU'.",
+    "community_density": "2 — Lower density than Unleashed. MRPeasy doesn't have a strong owned community, defectors are scattered across Reddit/G2/Capterra. Harder to surface en masse but each contact is high-intent.",
+    "founder_persona_homogeneity": "2 — Heterogeneous (electronics assembly, food, light industrial, hardware, contract manufacturing). Common thread is 'production-mindset operator with 10+ team'. Messaging must target the seat-pain not the vertical."
+  },
+
+  "outreach_fit": {
+    "cold_outbound_feasibility": "4 — Defectors self-identify on G2/Capterra (~25-40 named AU reviewers across both platforms [uncertain]). LinkedIn enrichment to find ops managers is straightforward via Apollo/Clay. MRPeasy doesn't expose a public customer list, but case studies + LinkedIn 'works at + uses' signals identify ~50-100 AU accounts. Cold outbound at scale is feasible if focused.",
+    "inbound_content_fit": "4 — 'MRPeasy alternative no per-seat AU', 'How much does MRPeasy actually cost at 15 users', side-by-side comparison pages all rank cheaply. Slightly lower fit than Unleashed because intent volume is lower in AU, but content compounds and serves global MRPeasy escapees too (US/UK/CA can land later via Stripe AUD billing).",
+    "founder_market_fit_proxy": "4 — Same as Unleashed segment — commercial buyers, no industry-credential gate. Kasper's PAC Tech ops/SaaS background is a positive signal. Production-floor depth may be questioned by routing-heavy users — pre-qualify them out.",
+    "case_study_acquisition_cost": "Moderate-high — getting first 5 reference logos requires careful pre-qualification (avoid routing-heavy users), then 12-18 hours/customer migration support. Realistic to land 3-5 case studies by month 6.",
+    "case_study_appeal": "3 — Similar to Unleashed: B2B/manufacturing logos are less visually viral than candles/cosmetics but the 'saved $X/month leaving MRPeasy' headline travels well in ops-focused LinkedIn and ProAdvisor channels."
+  },
+
+  "foot_in_door_fit": {
+    "design_partner_appeal": "2 — Same as Unleashed: defectors want a working product, not a co-design relationship. Niche exception: a multi-channel MRPeasy escapee might co-design Manuva's wholesale-pricing or capacity-planning module — useful for 1-2 strategic logos.",
+    "paid_pilot_fit": "5 — Highest-fit motion. 3-month paid pilot at Growth ($249) or Pro ($499) with white-glove migration, credit to annual on conversion. Buyer already pays AU$700-1,500/mo to MRPeasy — $499 is a saving, not new spend.",
+    "free_trial_extension_fit": "2 — Same reasoning as Unleashed: free-for-X devalues the migration and signals 'unproven'. Skip.",
+    "trial_to_paid_benchmark": "Paid-pilot 40-60% (ChartMogul); CC-required 14-day trial 20-30% for this cohort. Lower than Unleashed segment because routing-need ambiguity creates 5-10% washout in pilot month 1.",
+    "reference_value": "3 — Solid but slightly lower than Unleashed. MRPeasy escapee logos validate the 'flat-pricing escape from per-seat' narrative but don't compound via accounting-ecosystem chatter as cleanly as Unleashed (which is fully embedded in Xero).",
+    "recommended_foot_in_door_motion": "Paid pilot (3 months at Growth $249 or Pro $499, credited to annual) preceded by a 30-min 'gap audit' discovery call to confirm Manuva covers the customer's specific workflow (especially routings/work-centres). Outbound channel: LinkedIn DM + email to named G2/Capterra reviewers + Apollo-enriched ops managers at AU MRPeasy accounts. Inbound: 'MRPeasy alternative Australia' SEO page + 'True cost of MRPeasy at 15 users' calculator + 'Switching from MRPeasy' migration guide. Convert via discovery call → paid pilot start within 7-10 days.",
+    "rollout_phase": "Phase 2 (months 3-6). Gated on Xero shipping (the wedge requires AU accounting depth). Phase 1 prep work: build comparison content + identify named defectors. Active outbound + pilot conversion in months 3-9."
+  },
+
+  "competitive_context": {
+    "current_dominant_tool": "MRPeasy. 100% of this defection cohort by definition. Adjacent stack: Xero (~60%) or QuickBooks (~25%) or MYOB (~10%), Shopify (~50%), HubSpot/Pipedrive CRM, Shippit/Australia Post.",
+    "switching_pain": "4 — Higher than Unleashed because MRPeasy users with routings/work-centres have built more process around the tool. BOM re-entry + opening stock + supplier import similar effort. Routing-flattening adds 5-10 hours if applicable. Total migration: 12-25 founder-supported hours.",
+    "competitor_gaps_for_this_segment": "(1) Per-seat pricing compounds painfully at 10+ users — Manuva flat-priced is the single biggest wedge; (2) AU accounting integration is generic (no MYOB native, Xero connector is feature-thin) — Manuva can be deeply AU-native; (3) Shopify integration is functional but not best-in-class — Manuva's Shopify-first DNA is a wedge; (4) UI feels dated to maker-brand buyers used to Shopify/Klaviyo aesthetics; (5) Support is async-email — Manuva founder-led support is a wedge for the first 50 customers; (6) MRPeasy roadmap velocity is steady but unsurprising — design-partner spots for niche features are an upsell hook.",
+    "user_satisfaction_signals": "G2/Capterra MRPeasy reviews show recurring themes: 'great features but pricing scales hard with team size', 'support response slow', 'Xero integration could be better', 'UI shows its age'. Reddit r/manufacturing 2024-2025 threads asking 'cheaper MRPeasy alternative for growing team'. AU-specific complaint volume is moderate, not loud — defection is slow-burn, not acute. Specific quotes [uncertain] without live re-query.",
+    "competitor_concentration": "Within this cohort: MRPeasy 100%. In the broader AU MRP-lite market: MRPeasy competes with Katana, Unleashed, Cin7, Fishbowl — fragmented, no single dominant tool below $500/mo flat tier.",
+    "integration_dependency_list": "Xero (must-have ~60%), QuickBooks (~25%), MYOB (~10%), Shopify (~50%), Shippit / Australia Post (fulfilment), Amazon SP-API (multi-channel slice ~20%), Klaviyo (D2C subset), Stripe. Optional but desired: capacity-planning module, B2B wholesale portal."
+  },
+
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": "4 — Strong but slightly lower than Unleashed because MRPeasy users are less uniformly Xero-anchored (~60% Xero vs ~85% for Unleashed). ProAdvisor referrals are the highest-leverage channel post-Xero-ship. QuickBooks ProAdvisor adds incremental reach for the ~25% QB slice.",
+    "shopify_app_store_acquisition_fit": "3 — Better than Unleashed because MRPeasy users skew more multi-channel/Shopify-native. App Store browse + 'connect to Shopify' search terms surface Manuva.",
+    "shopify_plus_partner_potential": "3 — Modest. A subset of MRPeasy users are on Shopify Plus; Shopify Plus Tech Partner referrals add a small co-sell channel.",
+    "tpl_3pl_referral_potential": "3 — 3PLs see MRPeasy customers regularly and field stack-change conversations. Worth seeding eStore Logistics + Shippit relationships.",
+    "industry_association_sponsorship": "AiGroup newsletter/event slots ~AU$3-8k; Manufacturing Australia member events ~AU$2-6k; Xerocon AU side-sponsorship AU$8-15k. Highest-ROI: a Manuva-hosted webinar 'Surviving the per-seat trap: when to switch off MRPeasy' co-marketed with a Xero ProAdvisor firm. ~AU$1-3k cost.",
+    "partner_channel_potential": "4 — Strong accounting + Shopify channel mix; weak third-party community (no MRPeasy-specific user group)."
+  },
+
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "5-9 paying customers in months 0-12. Gated on Xero shipping (no meaningful close-rate before that). Realistic landing: 7 customers by month 12, concentrated in months 4-12. Bandwidth constraint: 12-18 hrs/customer migration.",
+    "realistic_12mo_mrr_contribution_aud": "AU$2,200-3,500 MRR by month 12 (7 customers × $370 blended ARPU = $2,590; upside to $3,500 with 2 Pro expansions).",
+    "path_to_first_3k_5k_mrr_aud": "Standalone contribution to AU$3-5K MRR target: AU$2,200-3,500. Sequence: Months 0-3 (pre-Xero): build 'MRPeasy alternative AU' comparison page + per-seat cost calculator + named-defector outreach list. Months 3-6 (Xero shipped): outbound to 25-30 named defectors + 3 Xero ProAdvisor firms. Land 2-3 paid pilots by month 6. Months 6-9: convert pilots, layer in inbound, sign 3-4 more. Months 9-12: ProAdvisor + Shopify referrals add 1-2. Best as a complement to Unleashed segment (which delivers more MRR cheaper) — together they hit $5K MRR confidently.",
+    "customers_needed_for_1m_arr_aud": "225 customers at $370 ARPU. Realistic 3-year ramp from this segment alone: 50-80 customers (~10-15% of est. AU MRPeasy base). Solid contributor leg, not the whole path.",
+    "solo_founder_bandwidth_fit": "3 — Higher than Unleashed because migration is harder (routings, work-centres) and gap-audit pre-qualification adds founder time. Manageable at 7 customers/year; doesn't scale to 20+ without tooling investment (BOM importer, gap-audit checklist).",
+    "break_even_contribution_months": "1-2 months. $370 ARPU × 80% margin = $296 contribution/mo, recovering $100-200 cash CAC + ~12 founder hours within month 1-2.",
+    "gross_margin_sensitivity": "Higher than Unleashed segment. Migration support absorbs 12-18 hours one-off; some customers (routing-heavy) generate ongoing 'workaround support' load. Steady-state gross margin ~80% (vs ~85% for Unleashed). Pre-qualify routing-heavy users out to protect margin.",
+    "priority_ranking": "3 — Strong Tier B segment but ranked below Unleashed (segment 19) due to lower intent volume, harder migration, and routing-gap risk. Solid Phase-2 layer. Run after Unleashed motion is live and Xero has shipped.",
+    "risks_and_notes": "(1) Verify current MRPeasy pricing — they restructured plans in 2023-2024 and may again; (2) Xero integration must ship before serious outbound — without it, the AU-accounting wedge is empty; (3) Routing/work-centre gap is the #1 churn risk — build a 5-question gap-audit checklist and pre-qualify ruthlessly; (4) MRPeasy may counter with seat-cap promotions or annual discounts — be ready with switching guarantee (free first month if migration overruns); (5) Build BOM-import tooling from MRPeasy CSV export — high-ROI engineering; (6) Don't promise routing/work-centre features Manuva won't ship in 12 months — segment the cohort to inventory-led MRPeasy users only; (7) Verify MRPeasy's published Shopify and Xero integration depth before public comparison content; (8) Consider a single shared 'flat-pricing AU MRP' landing page covering both Unleashed AND MRPeasy escapees — saves content effort and addresses the underlying wedge (flat vs per-seat / NZD vs AUD)."
+  },
+
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "industry_facebook_group_size",
+    "podcasts_voices",
+    "user_satisfaction_signals"
+  ]
+}

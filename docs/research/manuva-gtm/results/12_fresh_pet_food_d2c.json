@@ -1,0 +1,108 @@
+{
+  "item_id": "12_fresh_pet_food_d2c",
+  "name": "Fresh / raw / frozen pet food D2C",
+  "tier": "A",
+
+  "market_sizing": {
+    "target_buyer": "Founder (early stage <AU$1M revenue) -> Head of Operations / Supply-Chain Lead (mid stage AU$1-10M). Lyka/Scratch-scale brands have dedicated production planners.",
+    "business_count_au": "Approx. 20-50 AU brands at meaningful scale. Visible cohort: Lyka, Scratch, Raw and Fresh, Happy Healthy Dog, Big Dog Pet Foods (frozen), Petzyo, Frontier Pets (frozen/raw), The Dog Bakery, Vet's All Natural, Prime100 (rolls), ProudiUSA, Pure Pet Food, Bonza, Pet Food Australia. Long tail of micro raw-pet-food makers selling locally. [uncertain]",
+    "business_count_secondary": "US: ~150-300 (Farmer's Dog, Ollie, Nom Nom, We Feed Raw, Open Farm, etc.). UK: ~50-100 (Butternut Box, Tails.com, ProDog Raw). NZ: ~10-20. CA: ~30-60. [uncertain]",
+    "typical_size": "5-200 employees (huge range — Lyka is ~150 staff and AU$200M ARR; micro raw makers 2-3 staff at AU$300K). Most addressable cohort: 5-30 employees, AU$1-15M revenue.",
+    "annual_revenue_band_aud": "500K-5M most common in addressable cohort. Top end (Lyka, Scratch) is post-product-market-fit and on custom/NetSuite stacks.",
+    "growth_trend": "Fastest-growing AU pet sub-segment. Scratch +40% YoY at AU$20M+ ARR. Lyka AU$200M ARR with 100K+ active dogs. APAC pet food e-commerce 8.8% CAGR 2025-2033. Subscription pet food market ~AU$300M and rapidly expanding. Tailwind: humanisation + cold-chain logistics maturing.",
+    "seasonality_intensity": 2
+  },
+
+  "fit_and_timing": {
+    "manuva_fit_score": "4 — strong on multi-level BOMs (recipe + portion-pack + insulated mailer), lot tracking + expiry (critical), allocation engine (subscription forecasting). Gap: no native cold-chain temperature logging, no batch expiry-driven allocation rules, no subscription-billing-aware production planning.",
+    "addressable_window": "now (for new entrants/SMBs); top brands already on custom stacks.",
+    "roadmap_dependency": "None gating for SMB cohort. Lot tracking ships pre-launch — critical. Xero/MYOB integration helps. Recharge / Bold subscription integration via Shopify already covered. Cold-chain temperature integrations (Sensitech, Roambee) would be nice-to-have.",
+    "typical_tier": "Growth (AU$249) for AU$500K-AU$2M brands; Pro (AU$499) for AU$2M+ multi-location + multi-channel. Starter rare — lot + expiry tracking essential from day one.",
+    "regulatory_burden": "3 — AS5812 voluntary (most fresh-pet brands self-classify outside PFIAA); state-level food premises licensing for human-grade-quality products; APVMA / pet meat regulations for raw. Less burdened than human food but expiry tracking is a hard requirement.",
+    "lot_batch_criticality": 5,
+    "time_to_value_days": 14
+  },
+
+  "economics": {
+    "incumbent_pricing": "Cin7 Core AU$349-549/mo (mid-market default). Unleashed NZ$319-399/mo. NetSuite AU$3-10K/mo (Lyka-scale). Katana US$199-399/mo (a few). Custom internal tools at fastest-scaling brands. Spreadsheets at the micro end.",
+    "willingness_to_pay_aud": "AU$249-499 in range. Brands at AU$1M+ subscription revenue value lot+expiry tracking heavily (one expired batch = subscription cancellations + complaints).",
+    "estimated_arpu_aud": "AU$320-380 blended (skew Growth, ~30% Pro).",
+    "expansion_revenue_potential": "4 — clear path Starter -> Growth -> Pro as brand scales subscription base + adds locations + diversifies SKUs. Add-on appetite for cold-chain temp integration.",
+    "churn_risk": "2 — addressable SMB cohort has higher survival rate than dry-treat segment (VC-backed survivors + niche raw-meat operators with strong local moats). Risk: brand outgrows Manuva to NetSuite at AU$10M+ revenue (natural ceiling).",
+    "cac_estimate_aud": "Cash CAC AU$300-700 (LinkedIn outbound + Pet Industry News + content + 1-2 cold-chain conference attendances). Founder-time CAC: ~10-15 hrs per close x AU$100/hr = AU$1,000-1,500.",
+    "cash_cac_affordability": 3,
+    "ltv_estimate_aud": "AU$350 ARPU x 30mo (natural ceiling at scale-out) x 78% GM = AU$8,190.",
+    "ltv_cac_ratio": "~12-15:1 on cash CAC; ~5-6:1 fully loaded.",
+    "typical_seat_count": "5-30 (production, ops, supply chain, customer service, marketing). Per-seat MRP painful — clear flat-pricing wedge for the AU$1-5M cohort.",
+    "multi_channel_count": "1-3 (mostly Shopify subscription + occasional Amazon + occasional wholesale to vet clinics / pet stores). D2C subscription-heavy, lower multi-channel than dry pet food.",
+    "wholesale_b2b_mix": "10-25% wholesale (vet clinics, premium pet stores, select Petbarn lines). Mostly D2C subscription."
+  },
+
+  "where_they_live": {
+    "primary_channels": "LinkedIn: 'Australian Pet Industry Network', 'Pet Food Australia', subscription commerce groups. Reddit: r/AusEcomm, r/subscriptionboxes. Instagram: #freshdogfood, #rawfeedingaustralia (~50K posts), #lykadog. FB groups: 'Raw Feeding Australia' (consumer, large ~30-50K but founders lurk), 'Aussie Pet Food Founders' (small ~500-1K). Slack: SubSummit / subscription-commerce groups.",
+    "directories_communities": "PIAA (Pet Industry Association of Australia). PFIAA (rarely fresh-pet brands are members). Australian Veterinary Association (AVA) — adjacent influencer body. Subscription Trade Association (US, AU brands follow). Local raw-feeding cooperatives in major cities. SubSummit (US event, AU attendees).",
+    "industry_facebook_group_size": "~30,000-60,000 across raw-feeding consumer groups + adjacent founder groups [uncertain]",
+    "podcasts_voices": "Lyka's Anna Podolsky (LinkedIn voice + occasional podcast guest), The Subscription Show, Pet Industry News podcast, Pet Insurance Australia. Voices: Anna Podolsky (Lyka), Mike Halligan (Scratch), local raw-feeding vets. [uncertain on top-3 ranking]",
+    "events_trade_shows": "PETS Conference (PIAA, ~600-1,000 attendees, sponsor AU$3-15K). SubSummit (US, AU brands send 1-2 people). PaceTechHub events. AusPack (Mar, packaging show). Global Pet Expo (US). [uncertain on AU-specific subscription commerce events]",
+    "search_keywords": "['inventory software fresh pet food', 'cold chain inventory software Australia', 'subscription production planning software', 'pet food expiry tracking software', 'Cin7 alternative fresh pet brand', 'frozen pet food batch tracking', 'subscription pet food ops software', 'Shopify subscription inventory sync', 'raw pet food traceability software AU', 'pet food cold chain software']",
+    "community_density": 3,
+    "founder_persona_homogeneity": 4
+  },
+
+  "outreach_fit": {
+    "cold_outbound_feasibility": "4 — segment is small enough to mapt exhaustively (20-50 brands). LinkedIn outbound to founders + ops leads viable. Email findable. Cold phone calls acceptable.",
+    "inbound_content_fit": "4 — 'expiry-driven allocation for fresh pet brands', 'cold-chain ops cookbook', 'how Scratch manages 40% YoY growth in production' converts. Long-form authority + subscription-commerce SEO.",
+    "founder_market_fit_proxy": "3 — moderate. Subscription-commerce founders are tech-savvy and pragmatic; outsider-founder OK if framed as 'ops software built for subscription brands'. Don't claim pet expertise; claim ops competence.",
+    "case_study_acquisition_cost": "Medium — 8-12 weeks per case study; brands are PR-cooperative (helps subscription growth).",
+    "case_study_appeal": 5
+  },
+
+  "foot_in_door_fit": {
+    "design_partner_appeal": "4 — strong. Subscription-pet brands love being on the bleeding edge of ops tooling. 'Build the subscription-MRP for fresh pet brands' framing is compelling.",
+    "paid_pilot_fit": "4 — viable. AU$249 x 3 months credit-on-conversion fits well-funded subscription brands.",
+    "free_trial_extension_fit": "2 — counterproductive at this WTP. Subscription founders expect serious tools and balk at 'free' framing.",
+    "trial_to_paid_benchmark": "Estimated 35-45% CC-required trial -> paid (above ChartMogul baseline — small, qualified TAM). Paid pilot 55-65%.",
+    "reference_value": 5,
+    "recommended_foot_in_door_motion": "Map all 20-50 AU brands explicitly. Founder-led LinkedIn outbound + 'I built this because subscription production planning is broken' pitch. Open with 1-2 design partners (target brands at AU$500K-AU$2M revenue, pre-Series-A — Lyka/Scratch are too large + custom-stacked). Free 6mo + roadmap input + co-built cold-chain integration. After 3 design partners, switch to paid pilot AU$249 x 3 months. SubSummit attendance year 2.",
+    "rollout_phase": "Phase 2 (months 3-6) — addressable today, but case studies from broader pet segment (item 08) accelerate credibility. By month 6, push hard on this segment using item-08 logos as proof points."
+  },
+
+  "competitive_context": {
+    "current_dominant_tool": "Fragmented. Cin7 Core ~30% (mid-market). Custom internal tooling ~20% (fast-scalers). NetSuite ~10% at top end. Unleashed ~10%. Katana ~10%. Spreadsheets ~15% at the micro end. No dominant subscription-aware MRP exists — that's the wedge.",
+    "switching_pain": 3,
+    "competitor_gaps_for_this_segment": "Cin7 gaps: no subscription-billing-aware production planning, weak expiry-driven allocation, post-acquisition pricing. Katana: per-seat at 10+ users painful. NetSuite: overkill cost. Custom internal tools: maintenance burden. Manuva closes: multi-level BOMs (recipe + portion + mailer), lot + expiry tracking, allocation engine (forecasting subscription demand), flat AU$ pricing, Shopify subscription-app depth. Gap to close: cold-chain temp integration (roadmap nice-to-have).",
+    "user_satisfaction_signals": "LinkedIn posts from subscription-pet ops leads: 'we built our own production planner in Airtable + Notion'; 'Cin7 doesn't understand subscription demand'. Subscription commerce communities echo this widely (extends beyond pet food to fresh food humans, beauty subscriptions).",
+    "competitor_concentration": 2,
+    "integration_dependency_list": "Must: Shopify subscription apps (Recharge, Bold, Loop, Stay), Xero (roadmap). Important: Amazon (some brands), 3PL APIs (cold-chain specialists). Nice: cold-chain temp loggers (Sensitech, Roambee), GS1 barcodes, Klaviyo, ShipStation."
+  },
+
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": "3 — most subscription-pet brands at AU$1M+ use Xero. ProAdvisor referrals work post-integration but accountants rarely advise MRP for cold-chain.",
+    "shopify_app_store_acquisition_fit": "3 — listing helps; subscription founders search 'subscription production planning' more than App Store category browsing.",
+    "shopify_plus_partner_potential": "4 — Lyka + Scratch + most growing brands are Shopify Plus. Tech Partner program is high-value channel.",
+    "tpl_3pl_referral_potential": "4 — cold-chain 3PLs (Australian Cold Chain Logistics, Linfox, James + James cold) are natural co-sell partners.",
+    "industry_association_sponsorship": "PIAA membership AU$1-5K [uncertain]. PETS Conference sponsor AU$3-15K [uncertain]. SubSummit (US, AU$10-30K equivalent for travel + sponsor). Subscription Trade Association membership ~AU$2K.",
+    "partner_channel_potential": 4
+  },
+
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "4-8 paying customers in 12 months. Smallest addressable segment but highest WTP and longest LTV. Funnel: 30-50 mapped brands -> 12-15 sales convos -> 4-8 paid.",
+    "realistic_12mo_mrr_contribution_aud": "AU$1,500-3,200 MRR at month 12 (5-7 customers x AU$350-400).",
+    "path_to_first_3k_5k_mrr_aud": "Sequence: (1) months 0-2: map all 30-50 AU fresh-pet brands; identify 5-8 in the AU$500K-AU$2M addressable band; (2) months 3-5: founder-led LinkedIn outreach + offer 2 design-partner slots; (3) months 4-6: ship 'subscription production planning cookbook' + 'how to manage expiry-driven allocation' content; (4) months 6-9: convert first 2 design partners + 2 paid pilots; (5) months 9-12: 5-7 paid customers, AU$2-3K MRR. Insufficient alone for AU$3-5K MRR floor — combine with broader pet (item 08) and food (item 11). Strong AU$1M ARR contributor.",
+    "customers_needed_for_1m_arr_aud": "~285 customers at AU$350 ARPU — exceeds the AU addressable pool. Realistic contribution: ~20-40 customers (~AU$80-150K ARR). Small-but-prestigious segment; the case-study leverage matters more than revenue contribution.",
+    "solo_founder_bandwidth_fit": "3 — onboarding moderate-high (12-18 hours per customer: recipe BOMs + lot/expiry + subscription forecasting + 3PL integration). Support load moderate (cold-chain edge cases). Manageable at 8-10 customers; constraining beyond.",
+    "break_even_contribution_months": "3-5 months on cash CAC; 5-8 months fully loaded.",
+    "gross_margin_sensitivity": "Moderate-high — subscription production planning edge cases need custom support. GM ~72-78% without product investment in subscription-aware allocation; ~78-82% with roadmap investment.",
+    "priority_ranking": "3 — highest design-partner appeal of any Tier A segment + extreme case-study value (subscription-pet is hot category for PR). But tiny addressable pool, can't drive volume or AU$1M ARR alone. Pursue as case-study generator for adjacent segments (subscription-beauty, subscription-food).",
+    "risks_and_notes": "Risks: (1) Lyka + Scratch are unreachable on custom stacks — focus AU$500K-AU$2M cohort; (2) brands that succeed graduate to NetSuite at AU$10M+ — natural revenue ceiling per logo; (3) cold-chain integration could become a deal-breaker — scope cold-chain temp logging roadmap by month 6; (4) Lyka's manufacturing in-house = mostly internal tools so Manuva fits the smaller in-house-production cohort, not the asset-heavy giants; (5) subscription-billing-aware production planning is a meaningful product investment — not just 'inventory'. Things to verify: actual count of AU brands in the AU$500K-AU$2M band; willingness of Lyka/Scratch alumni to advise/refer; whether subscription-MRP is feature-positioned or product-positioned."
+  },
+
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "industry_facebook_group_size",
+    "podcasts_voices",
+    "events_trade_shows",
+    "industry_association_sponsorship"
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "item_id": "10_supplements_nutraceuticals",
+  "name": "Supplements / nutraceutical brands",
+  "tier": "A",
+
+  "market_sizing": {
+    "target_buyer": "Founder (early stage) or Quality/Regulatory Manager + Head of Operations (mid stage). Decision often involves 2-3 people due to TGA compliance stakes. CFO involved at AU$3M+ revenue.",
+    "business_count_au": "Approx. 250-500 SMB AU brands (sponsors of AUST L listed medicines + non-listed nutraceuticals selling supplement-adjacent products). CMA reports ~16,000 industry employees. Industry forecast AU$6.3B in 2025 (Complementary Medicines Australia 2025 Snapshot). Top ~30 brands (Swisse, Blackmores, Nature's Way, Caruso's, Bioglan, Vitex, Musashi, Nutra-Life, Healtheries, Aussie Bodies, ATP Science, Switch Nutrition, etc.) hold most revenue; long tail of indie brands selling via Shopify + iHerb + Chemist Warehouse + Healthy Life. [uncertain]",
+    "business_count_secondary": "US: ~5,000-8,000 indie supplement brands (massive D2C cohort). UK: ~600-1,000. NZ: ~80-150. CA: ~400-800. [uncertain]",
+    "typical_size": "3-25 employees, AU$500K-AU$20M annual revenue. Strong bimodal distribution: early indie at AU$200-800K, scaling brands at AU$2-10M.",
+    "annual_revenue_band_aud": "500K-2M most common in SMB cohort. Larger Growth/Pro tier candidates at AU$2-10M.",
+    "growth_trend": "AU industry AU$6.3B forecast 2025 (CMA). 74% of Australians use complementary medicines. Sector growing ~5-8% YoY (CMA Snapshot). Online D2C and export channels are growth engines. Strong export pillar to China + SE Asia.",
+    "seasonality_intensity": 3
+  },
+
+  "fit_and_timing": {
+    "manuva_fit_score": "4 — strong fit on multi-level BOMs (formulation + capsule/tab/bottle/label), lot tracking (essential for TGA recall + ARTG compliance), allocation engine. Gap: no native COA (Certificate of Analysis) workflow, no GMP audit-pack export, no batch-record sign-off chain.",
+    "addressable_window": "now",
+    "roadmap_dependency": "Lot tracking ships pre-launch (good). Xero/MYOB integration improves close rate significantly (brands at AU$1M+ are bookkeeper-led). Amazon FBA connector important for brands selling US via FBA.",
+    "typical_tier": "Growth (AU$249) for AU$1-3M brands; Pro (AU$499) for AU$3M+ multi-channel + export brands. Starter rare — even hobby supplement brands need lot tracking from day one.",
+    "regulatory_burden": "5 — TGA ARTG listing (AUD$26-115K registration costs at the high end), GMP for manufacturing, AUST L compliance, post-market surveillance, recall capability requirements. SME Assist program exists but compliance burden is severe.",
+    "lot_batch_criticality": 5,
+    "time_to_value_days": 21
+  },
+
+  "economics": {
+    "incumbent_pricing": "Cin7 Core AU$349-549/mo (very common at AU$1-5M brands). Unleashed NZ$319-399/mo. NetSuite AU$3-10K/mo at top end (Swisse, Blackmores). SAP B1 (mid-market). Katana minor presence. MasterControl + TrackWise for QMS-heavy brands (AU$1K+/mo). Spreadsheets at the indie bottom.",
+    "willingness_to_pay_aud": "AU$249-499 well within range. Recall scenarios drive WTP — one bad batch costs AU$50K+ in recall logistics. Compliance-adjacent tools score Pro tier.",
+    "estimated_arpu_aud": "AU$350-420 blended (skew Growth, ~40% Pro).",
+    "expansion_revenue_potential": "4 — strong path Starter -> Growth -> Pro as brand scales + adds export channels + multi-location. Add-on potential for QMS-lite features.",
+    "churn_risk": "2 — high regulatory switching cost (re-validating batch records on a new system is painful), so once integrated, low churn. Risk is failed onboarding rather than gradual churn.",
+    "cac_estimate_aud": "Cash CAC AU$500-1,500 (high — long sales cycle, need to demonstrate compliance support, often involves trial + reference checks + procurement approval). Founder-time CAC: ~15-25 hrs per close x AU$100/hr = AU$1,500-2,500.",
+    "cash_cac_affordability": "2 — supplements is one of the most cash-CAC-intensive segments. Solo founder needs to ration sales-cycle time carefully.",
+    "ltv_estimate_aud": "AU$400 ARPU x 42mo x 75% GM (compliance support overhead) = AU$12,600.",
+    "ltv_cac_ratio": "~10-12:1 on cash CAC; ~5-6:1 fully loaded.",
+    "typical_seat_count": "6-20 (ops + QA + warehouse + procurement + marketing + customer service). Per-seat MRP becomes painful — flat-pricing wedge clear.",
+    "multi_channel_count": "4-6 (Shopify + Amazon + iHerb + Chemist Warehouse / pharmacy distribution + export distributors + occasional wholesale).",
+    "wholesale_b2b_mix": "30-60% B2B (pharmacy wholesale, iHerb, export distributors). Pure D2C rare; multi-channel norm."
+  },
+
+  "where_they_live": {
+    "primary_channels": "LinkedIn: 'Complementary Medicines Australia' group (~3-5K) [uncertain], 'Australian Nutraceuticals Network'. CMA member events. Industry trade pubs: NutraIngredients-Asia, Pharmacy Daily, Nutrition Industry Executive. FB: 'Australian Health & Wellness Founders'. Reddit: r/supplements (consumer, not founder), r/DigitalMarketing (D2C tactics).",
+    "directories_communities": "Complementary Medicines Australia (CMA) — peak body, member directory. ASMI (Australian Self-Medication Industry) — adjacent OTC body. AUST L sponsor directory at TGA. Pharmacy Guild of Australia (for retail-distributed brands). CMA Conference + CMA Educator hub.",
+    "industry_facebook_group_size": "~3,000-8,000 across CMA-aligned founder/exec groups [uncertain]",
+    "podcasts_voices": "The Wellness Couch (AU), CMA podcast/webinars, Functional Medicine Radio (US-influenced AU), NutraIngredients podcast, Mind Body Soul Australia. Influencer voices: Dr Vincent Candrawinata, Carla Oates (Beauty Chef), Nat Kringoudis. [uncertain on top-3 ranking]",
+    "events_trade_shows": "CMA Conference (annual, ~400-600 attendees, sponsor AU$5-20K [uncertain]). Vitafoods Asia (Singapore, AU brands attend, ~10K attendees). Naturally Good Expo (Jun, Sydney, ~5K attendees, sponsor AU$8-20K). APPS (Australian Pharmacy Professional show). Vitamin Expo (consumer, smaller).",
+    "search_keywords": "['inventory software supplement brand Australia', 'TGA lot tracking software', 'AUST L batch record software', 'COA management software supplement', 'Cin7 alternative nutraceutical', 'GMP-friendly inventory software', 'supplement BOM software Australia', 'TGA recall software', 'pharmacy wholesale inventory sync', 'iHerb Amazon inventory sync supplement']",
+    "community_density": 3,
+    "founder_persona_homogeneity": 3
+  },
+
+  "outreach_fit": {
+    "cold_outbound_feasibility": "3 — LinkedIn outbound works for ops/QA managers. Email moderate. CMA member directory provides high-quality lead list. Cold outreach requires careful credibility framing — 'I'm not a TGA expert but I built MRP software designed for compliance-heavy brands'.",
+    "inbound_content_fit": "4 — 'TGA batch record checklist', 'AUST L recall readiness in 10 steps', 'Cin7 vs Manuva for supplement brands' converts. Content has high regulatory authority bar — must be accurate or it actively damages trust.",
+    "founder_market_fit_proxy": "2 — LOWEST of the Tier A segments. Supplement buyers expect insider credibility (former Blackmores ops lead, ex-Swisse QA). Solo outsider founder is a credibility disadvantage. Mitigation paths: (a) recruit a CMA advisor / fractional QA consultant to lend credibility; (b) lead with software competence, not regulatory expertise ('we handle the data — you handle the chemistry'); (c) start with the indie/early-stage cohort where insider creds matter less.",
+    "case_study_acquisition_cost": "High — 10-14 weeks per case study. Brands cautious about publicising operational details due to TGA visibility.",
+    "case_study_appeal": 3
+  },
+
+  "foot_in_door_fit": {
+    "design_partner_appeal": "3 — moderate. Innovator brands (indie nootropics, gut-health, mushroom adaptogens) appreciate co-design. Established brands won't risk MVP software for compliance-critical workflows. Target only the indie/early end.",
+    "paid_pilot_fit": "4 — strong fit. AU$249 x 3 months paid pilot signals seriousness and aligns with how supplement brands evaluate B2B SaaS. Procurement-friendly.",
+    "free_trial_extension_fit": "2 — counterproductive. 'Free for 6 months' undermines credibility ('what kind of compliance-grade tool gives itself away?'). Use 14-day card-required trial only after a sales conversation, not as primary funnel.",
+    "trial_to_paid_benchmark": "Estimated 30-40% CC-required trial -> paid (above ChartMogul 31.4% — buyer is highly qualified). Paid pilot 45-55%.",
+    "reference_value": 5,
+    "recommended_foot_in_door_motion": "Paid pilot AU$249/mo x 3 months credit-on-conversion. Founder-led + CMA member directory outbound. CRITICAL: pair with a freelance/fractional TGA consultant advisor (lend their credibility on sales calls + technical webinars). Open with the indie/early-stage cohort (AU$500K-AU$2M revenue) — they're underserved by Cin7 and tolerant of outsider founders. Build 2-3 case studies before approaching CMA-member established brands.",
+    "rollout_phase": "Phase 2 (months 3-6) — lot tracking is the prereq (ships pre-launch) but case-study credibility from cosmetics/SPF must come first. Approaching CMA brands without 3-5 logo references is premature."
+  },
+
+  "competitive_context": {
+    "current_dominant_tool": "Cin7 Core ~30-35% share at AU$1-5M brands. NetSuite ~20% at top end. Unleashed ~15%. Spreadsheets + Shopify ~15% at indie end. Katana ~5%. MasterControl/TrackWise for QMS layer (sits alongside, not instead of MRP) at heavy-compliance brands.",
+    "switching_pain": 4,
+    "competitor_gaps_for_this_segment": "Cin7 gaps: post-acquisition pricing rage, weak batch record workflow, no native COA management, no TGA-aligned export pack. Unleashed: similar weaknesses + NZD billing pain. Spreadsheets: total compliance risk. Manuva closes: multi-level BOMs with versioning (formulation + capsule + bottle), lot tracking with full genealogy, allocation engine, flat AU$ pricing. Gap to close on roadmap: COA upload+linking, batch sign-off chain, GMP audit export.",
+    "user_satisfaction_signals": "Cin7 G2 complaints: 'pricing doubled after acquisition', 'no nutraceutical-specific features'. r/Nutraceutical (small) + LinkedIn ops-lead posts: 'we run COA tracking in a separate Airtable', 'recall drill = manual hell'. CMA member surveys cite digital transformation as a top-5 concern.",
+    "competitor_concentration": 3,
+    "integration_dependency_list": "Must: Shopify (have), Xero/MYOB (roadmap). Important: Amazon FBA (roadmap), iHerb seller portal (gap), Chemist Warehouse EDI (gap, hard), TGA SME Assist data export (gap). Nice: Klaviyo, ShipStation, supplement-specific COA storage (Dropbox + LIMS)."
+  },
+
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": "4 — supplement brands at AU$1M+ have external accountant + bookkeeper. ProAdvisor referrals are the strongest acquisition channel once Xero/MYOB integrations ship.",
+    "shopify_app_store_acquisition_fit": "3 — supplement brands browse Shopify App Store but compliance buyer also wants validation outside the store. Listing helps but isn't decisive.",
+    "shopify_plus_partner_potential": "3 — many AU$3M+ supplement brands are on Shopify Plus. Tech Partner program useful.",
+    "tpl_3pl_referral_potential": "3 — 3PLs (eStore Logistics, Australia Post, Pack & Send) handle supplement fulfilment widely. Co-sell potential moderate.",
+    "industry_association_sponsorship": "CMA membership AU$2-8K/yr depending on tier [uncertain]; CMA Conference sponsor AU$5-20K [uncertain]; CMA newsletter slot AU$1-3K [uncertain]. Naturally Good Expo AU$8-20K. ASMI membership AU$5-15K.",
+    "partner_channel_potential": 4
+  },
+
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "6-12 paying customers in 12 months. Long sales cycle + credibility climb + paid pilot phase caps volume. Funnel: 100-150 qualified leads (CMA member outreach + content inbound) -> 25-35 pilots -> 6-12 paid.",
+    "realistic_12mo_mrr_contribution_aud": "AU$2,200-4,800 MRR at month 12 (8-12 customers x AU$350-400 blended).",
+    "path_to_first_3k_5k_mrr_aud": "Sequence: (1) months 0-2: enrol 1 fractional TGA/QA advisor for credibility (equity or retainer); (2) months 3-5: land 2 indie supplement design partners (early-stage, <AU$1M revenue, founder-led, less credentialing pressure); (3) months 4-6: publish 'AUST L lot tracking checklist' + 'recall in 7 days, not 7 weeks' cornerstone content; (4) months 6-9: shift to paid pilots; CMA newsletter ad; (5) months 9-12: 4-6 paid customers, target AU$2-4K MRR contribution. This segment unlikely to hit AU$3-5K MRR floor alone — combine with ceramics + cosmetics for cumulative floor. But ARPU + LTV mean this is critical to AU$1M ARR aspirational.",
+    "customers_needed_for_1m_arr_aud": "~210 customers at AU$400 ARPU. In aspirational mix, this segment contributes ~80-120 customers (~AU$380-575K ARR) — likely the #1 revenue contributor if Manuva can solve the credibility climb. Highest LTV / lowest churn of any Tier A segment once landed.",
+    "solo_founder_bandwidth_fit": "2 — heavy onboarding (20-30 hours per customer: BOM setup + lot config + COA workflow + compliance Q&A). Support load high (regulatory escalations). Solo founder caps at ~10-12 active supplement customers before quality degrades.",
+    "break_even_contribution_months": "4-7 months on cash CAC; 6-10 months fully loaded.",
+    "gross_margin_sensitivity": "High — compliance support burns hours. Without product investments in COA + batch-sign-off + audit export, GM erodes to ~65-70%. Roadmap investment needed to bring GM to 75-80%.",
+    "priority_ranking": "2 — highest ARPU + LTV of Tier A, low churn once landed, defensible wedge if compliance-grade. But credibility climb and bandwidth constraints make it a Phase-2 segment, not Phase-1. Top priority for the AU$1M ARR aspirational path; not for the 12-month MRR floor.",
+    "risks_and_notes": "Risks: (1) credibility — outsider founder hits a real wall without a TGA-credentialed advisor; (2) feature gap (COA + batch sign-off + GMP export) requires roadmap investment before Manuva can credibly claim 'compliance-ready'; (3) one botched recall scenario on a Manuva customer is existential PR risk — must over-engineer the lot tracking workflow before scaling; (4) NetSuite + MasterControl are stickier than Cin7 — focus on the AU$500K-AU$3M revenue band, not Swisse-scale. Things to verify: actual addressable count (TGA ARTG sponsor count for AUST L excluding multi-product enterprise sponsors); willingness of CMA to allow software-vendor membership tier; whether iHerb seller portal API exists."
+  },
+
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "industry_facebook_group_size",
+    "podcasts_voices",
+    "events_trade_shows",
+    "industry_association_sponsorship"
+  ]
+}

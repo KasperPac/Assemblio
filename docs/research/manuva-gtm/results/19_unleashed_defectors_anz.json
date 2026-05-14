@@ -1,0 +1,109 @@
+{
+  "_source_file": "19_unleashed_defectors_anz",
+  "item_id": "19_unleashed_defectors_anz",
+  "item_name": "Unleashed users squeezed by NZD-billed plans",
+  "tier": "B",
+  "hypothesis": "ANZ MRP incumbent at NZ$319-399/mo. AU customers paying FX-inflated NZD pricing. Sits above Manuva Growth, below Pro — clean undercut.",
+
+  "market_sizing": {
+    "target_buyer": "Operations manager or founder-COO at a 5-25 person AU/NZ manufacturer or distributor; the person who originally signed the Unleashed contract and now reviews the monthly invoice in NZD.",
+    "business_count_au": "~1,000-1,500 AU SMBs estimated. Unleashed (now part of The Access Group since 2021) reports ~10,000 customers globally; ANZ is its home and largest region. Public reviews/case studies skew AU/NZ manufacturers + wholesalers. Conservative AU active-paying base: 1,000-1,500 [uncertain].",
+    "business_count_secondary": "NZ ~600-900 (home market, highest density per capita); UK ~1,500-2,500 (Access Group's HQ market, post-acquisition expansion); US <500 (weak presence); CA negligible. Totals are inferred from Access Group disclosures + LinkedIn/case-study density [uncertain].",
+    "typical_size": "5-25 FTE, AU$1M-AU$8M annual revenue. Manufacturers, food/bev, light industrial, B2B distributors. Larger than Craftybase ICP, smaller than NetSuite ICP.",
+    "annual_revenue_band_aud": "$1M-$5M most common; tail to $8M. Growth ($249) and Pro ($499) tier candidates.",
+    "growth_trend": "Unleashed itself is post-acquisition (Access Group, 2021) — product velocity has slowed by user accounts on G2/Capterra/Reddit, while pricing has been steadily raised. Defection pool is growing in 2024-2026 as renewals price-shock AU customers; Access Group is known across its portfolio for steady price escalation. No segment CAGR — this is a defection cohort, not a vertical.",
+    "seasonality_intensity": "2 — defection events follow renewal anniversaries (rolling 12-month) and FX-driven invoice shocks. Slight Q1/Q3 bunching when budgets reset."
+  },
+
+  "fit_and_timing": {
+    "manuva_fit_score": "4 — Unleashed's core data model (BOMs, assemblies, POs, stock-on-hand, multi-location, lot/batch) overlaps Manuva's directly. The gap is depth: Unleashed has stronger reporting, B2B portal, and 10+ years of edge-case features. Manuva matches 70-80% of the daily workflow at half the price.",
+    "addressable_window": "now (for AU customers); some accounts gated on Xero/MYOB integration timing (Unleashed's #1 stickiness lever).",
+    "roadmap_dependency": ["Xero integration (critical — Unleashed's flagship integration)", "MYOB integration (secondary)", "B2B wholesale pricing tiers (nice-to-have for Unleashed's wholesale-heavy users)", "Multi-currency reporting (not required for AU-only customers but blocks NZ defectors)"],
+    "typical_tier": "Growth ($249) for most; Pro ($499) for multi-channel or wholesale-heavy accounts.",
+    "regulatory_burden": "2 — Unleashed's installed base is mixed; many are light-industrial / distribution with low compliance. Sub-segments in food/bev or supplements carry higher burden (3-4) but those are the minority. Lot tracking is required by ~30% of the base.",
+    "lot_batch_criticality": "3 — required for the food/bev/cosmetic slice; nice-to-have for pure assembly/distribution. Manuva's pre-launch lot tracking covers the must-have cases.",
+    "time_to_value_days": "10-20 days. Migration is the bottleneck: BOM rebuild + opening stock + supplier import. A solo founder running a guided migration in week 1 can hit first PO/first BOM run by day 10."
+  },
+
+  "economics": {
+    "incumbent_pricing": "Unleashed published plans (2025-2026): Medium NZ$349/mo (~AU$320), Large NZ$499/mo (~AU$460), Large Plus NZ$849/mo (~AU$780), Enterprise custom. Most AU SMB customers sit on Medium or Large. Add-ons (B2B portal, advanced reporting, extra users) push effective ARPU 20-40% higher. Invoiced in NZD — AU customers absorb FX + GST friction.",
+    "willingness_to_pay_aud": "Migration target ARPU AU$249-499/mo. The wedge: Manuva Growth ($249) is ~AU$70-80 cheaper than Unleashed Medium after FX; Pro ($499) is ~AU$280 cheaper than Unleashed Large Plus. Even a $249 → $499 upgrade still saves money vs current Unleashed bill.",
+    "estimated_arpu_aud": "$320 blended (mix ~60% Growth, 40% Pro).",
+    "expansion_revenue_potential": "4 — Strong path: many Unleashed users are on Medium but actually need Pro-tier features (multi-location, wholesale tiers, advanced reporting). Manuva can land on Growth and expand to Pro as the lot-tracking / capacity-planning / wholesale modules mature. NRR potential 110-120%.",
+    "churn_risk": "2 — These are established businesses (5-25 FTE), 3-7 year operating history. Once they migrate, switching cost works in Manuva's favour. Risk concentration: post-migration buyer's remorse in months 2-3 if feature gaps surface (B2B portal, advanced reports). Mitigation: pre-sale gap audit.",
+    "cac_estimate_aud": "Cash CAC: AU$80-150 (search ads on 'Unleashed alternative' + targeted LinkedIn). Founder-time CAC: 8-15 hours per close at notional AU$150/hr = AU$1,200-2,250. Blended notional CAC AU$1,300-2,400. Realistic out-of-pocket for solo founder: AU$100-200/customer + ~10 hours of time.",
+    "cash_cac_affordability": "5 — Lowest-cost segment to acquire. Intent search ('Unleashed alternative', 'Unleashed pricing increase') is cheap (low CPC, low volume), defectors self-identify in G2/Capterra/Reddit threads, and warm-outbound to specific dissatisfied reviewers is free. No paid budget required.",
+    "ltv_estimate_aud": "AU$320 ARPU × 80% gross margin × ~36 months retention (sticky once migrated) ≈ AU$9,200 LTV.",
+    "ltv_cac_ratio": "~5-7:1 against blended CAC; >40:1 against cash-only CAC. Best LTV:CAC in the entire Tier B set.",
+    "typical_seat_count": "3-8 users typical. Unleashed charges per user above included seats — switching pain from per-seat is moderate (not as acute as MRPeasy or Katana).",
+    "multi_channel_count": "2-3 channels typical (Shopify + wholesale; some + Amazon or Faire). Unleashed wholesale customers may have only 1 (B2B-only).",
+    "wholesale_b2b_mix": "40-60% wholesale on average. Higher than Shopify-native segments — wholesale tiers and B2B invoicing matter more here than for indie cosmetics."
+  },
+
+  "where_they_live": {
+    "primary_channels": "Reddit: r/manufacturing (~165k), r/smallbusinessAU (~110k), r/inventorymanagement (~25k), r/ECommerceSEO when discussing stack. LinkedIn: 'Australian Manufacturers' (~25k), 'ANZ Operations & Supply Chain' groups. G2 + Capterra 'Unleashed' review pages are the highest-intent surfaces — defectors literally tag themselves there. Trustpilot Unleashed page (mid-3-star, lots of pricing complaints). [uncertain] member counts approximate.",
+    "directories_communities": "Australian Made directory; Food & Grocery Council AU members; Australian Industry Group (AiGroup) member list; SmartCompany Best Manufacturers lists; The Access Group user community forum (Unleashed migrated into Access community 2022-2023, has degraded engagement and is itself a defection signal). Xero App Marketplace 'Inventory' category reviews — defectors comment on Unleashed there.",
+    "industry_facebook_group_size": "~15-30k across 'Australian Manufacturers', 'Small Business Owners Australia', 'Shopify Australia' (where Unleashed users overlap with multi-channel brands). Cross-vertical, not a single dominant group [uncertain].",
+    "podcasts_voices": "Smart Business Tribe (AU SMB ops), The Business of Manufacturing AU, Inside Small Business podcast, AmpliPhi (operations-focused), Manufacturers' Monthly (industry mag + LinkedIn). Cliff Obrecht / Canva and Atlassian alumni voices indirectly through Aussie SaaS podcasts. None are Unleashed-specific [uncertain].",
+    "events_trade_shows": "AUSPACK (annual, ~10k attendees, ICC Sydney/Melbourne); Foodpro (biennial, Sydney, ~10k); National Manufacturing Week (Melbourne, ~10k); Australian Made Week activations. Sponsorship spots <AU$10k available at smaller regional manufacturing forums and Xerocon side events. Xerocon AU (Sept, ~3,500 attendees) is the single highest-ROI event for this segment.",
+    "search_keywords": "'Unleashed alternative', 'Unleashed software pricing', 'Unleashed vs Cin7', 'Unleashed AU cost NZD', 'Xero compatible inventory software', 'cheap Unleashed alternative AU', 'Unleashed software review', 'manufacturing software Australia', 'BOM software Australia', 'Unleashed login slow' (negative-experience tail terms).",
+    "community_density": "3 — Not a single dense community (cross-vertical) but findable via G2/Capterra/Reddit defection threads and Xero ecosystem.",
+    "founder_persona_homogeneity": "2 — Buyer is heterogenous across food/bev, distribution, light industrial, hardware. Common thread is 'Xero-native ops manager at a 5-25 person business'. Messaging must speak ops-pain (price, FX, feature gaps) not vertical-pain."
+  },
+
+  "outreach_fit": {
+    "cold_outbound_feasibility": "4 — Defectors self-identify on G2/Capterra (named reviewers). Apollo/Lusha/Clay can find ops-manager emails at AU manufacturers using Unleashed (BuiltWith doesn't show Unleashed but case-study lists do). Warm outbound to specific complaint authors is highly feasible. Cold-call risk is low — these are commercial buyers used to vendor outreach.",
+    "inbound_content_fit": "5 — Highest-fit segment for inbound content. 'Unleashed alternative for AU manufacturers', 'Why your Unleashed invoice keeps going up', migration guides, FX cost-comparison calculators all rank cheaply because volume is moderate and competition is thin. Defection-comparison SEO is Manuva's single highest-ROI content investment.",
+    "founder_market_fit_proxy": "4 — This buyer doesn't require industry-insider credentials. They want a credible ops/SaaS founder who understands accounting integration, BOM/MRP basics, and AU SMB pain. Kasper's PAC Tech background is a net positive (ops + AU + technical). Far easier sell than cosmetic chemistry or supplements.",
+    "case_study_acquisition_cost": "Moderate — getting the first 5 reference logos requires high-touch migration support (10-15 founder hours each) but conversion rate from qualified defector trial is high (40-60% per ChartMogul paid-pilot benchmark). 5 logos in months 0-4 is realistic.",
+    "case_study_appeal": "3 — B2B/manufacturing case studies are less visually shareable than candles or cosmetics, but the comparison-table narrative ('saved $3,600/year switching from Unleashed') is highly persuasive to other Unleashed users and travels well on LinkedIn and Xero/MYOB ecosystem content."
+  },
+
+  "foot_in_door_fit": {
+    "design_partner_appeal": "2 — Defectors want a working product they can switch to today, not a co-design relationship. Save 'design partner' framing for greenfield segments. A couple of larger Unleashed accounts (multi-warehouse) may take a co-design seat for a specific module (B2B portal) — niche only.",
+    "paid_pilot_fit": "5 — Highest-fit motion. Offer: 3-month paid pilot at Growth ($249) with white-glove migration, credit toward annual on conversion. Aligns with ChartMogul 40-60% paid-pilot conversion. Buyer is already paying $320+ to Unleashed so $249 is not new spend, it's a swap.",
+    "free_trial_extension_fit": "2 — Free-for-X-months is counterproductive here. Defectors are already paying; price isn't the trial blocker, switching risk is. Free trial signals 'unproven' and devalues white-glove migration. Use paid pilot or CC-required 14-day trial only.",
+    "trial_to_paid_benchmark": "Paid-pilot benchmark 40-60% (ChartMogul 2025); CC-required 14-day trial 25-35% for this defection cohort given high purchase intent. Opt-in free trial would underperform at <10%.",
+    "reference_value": "4 — Each Unleashed defector logo unlocks 3-5 more defectors via direct comparison content, ecosystem chatter, and ProAdvisor referrals. Compounds well via SEO ('We saved $X switching from Unleashed to Manuva').",
+    "recommended_foot_in_door_motion": "Paid pilot ($249/mo Growth tier for 3 months, fully credited to annual conversion) bundled with founder-led migration (data import + first BOM/PO setup). Outbound channel: LinkedIn DM + email to ops managers identified via G2/Capterra reviewer attribution + Apollo enrichment. Inbound channel: SEO-optimised 'Unleashed alternative for AU manufacturers' comparison page, FX cost-savings calculator, and a 'Switching from Unleashed' migration guide. Convert via a 30-min discovery call → paid pilot start within 7 days.",
+    "rollout_phase": "Phase 1 (months 0-3). One of the two highest-leverage Phase-1 segments alongside indie cosmetics — same Phase-1 motion but cheaper to acquire and more straightforward to convert."
+  },
+
+  "competitive_context": {
+    "current_dominant_tool": "Unleashed Software (Access Group). 100% of this segment by definition. Most accounts are 2-7 years tenured. Common adjacent stack: Xero (~85%), Shopify (~50%), MYOB (~15%), HubSpot/Pipedrive CRM, Shippit/Australia Post for fulfilment.",
+    "switching_pain": "3 — BOM rebuild is the biggest pain (Unleashed has nested assemblies that need manual re-entry). Opening stock takes a stocktake cycle. Supplier and PO history is mostly read-only after switch. Xero re-connection is straightforward. Total migration: 10-25 founder-supported hours for the customer.",
+    "competitor_gaps_for_this_segment": "(1) NZD billing + FX drift creating monthly invoice variance for AU customers; (2) Steady post-acquisition price increases under Access Group ownership; (3) Slow product velocity since 2022 — major feature requests in Unleashed community sit unaddressed; (4) Per-user pricing in addons creates seat-count drag; (5) Reporting requires upgrade to higher tier; (6) Support quality decline reported on G2 since 2023; (7) No native AU-flavoured Shopify+Xero workflow tuning — Manuva can be more opinionated.",
+    "user_satisfaction_signals": "G2: Unleashed average ~4.2 but trending down 2023-2026, with recent reviews citing 'price hike with no new features', 'support worse since Access acquisition', 'NZD billing confusing for AU customers'. Capterra: similar pattern, recurring 'expensive for what you get' theme. Reddit r/manufacturing has multiple 2024-2025 threads asking 'Unleashed alternative for AU SMB'. Xero App Marketplace reviews show defector commentary. Specific quotes [uncertain] without re-querying live sources but the pattern is well-documented in known_findings.",
+    "competitor_concentration": "Concentrated within this defection pool by definition (Unleashed = 100%). In the broader ANZ MRP market, Unleashed competes with Cin7/DEAR, Katana, MRPeasy — but this item targets the Unleashed cohort specifically.",
+    "integration_dependency_list": "Xero (must-have, near-100% overlap), MYOB (must-have for ~15-20%), Shopify (~50% overlap), Shippit / Australia Post (fulfilment), Stripe (subset), QuickBooks (~5% AU overlap). Optional but high-value: B2B wholesale portal (Faire-like), Klaviyo for D2C subset, Amazon SP-API for multi-channel."
+  },
+
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": "5 — Highest-fit channel. ~85% of Unleashed AU customers use Xero. Xero ProAdvisors already field 'is there a cheaper Unleashed alternative?' questions. A Manuva listing in Xero App Marketplace with 'Migration from Unleashed' framing plus 3-5 ProAdvisor relationships seeded via Xerocon is the single most leveraged Phase-1 GTM move for this segment.",
+    "shopify_app_store_acquisition_fit": "2 — Shopify App Store discovery is a low-fit channel here because these buyers aren't 'shopping for inventory apps' — they already have Unleashed and are looking for an alternative. They'll find Manuva via Google + Xero ecosystem, not App Store browse.",
+    "shopify_plus_partner_potential": "2 — Most Unleashed customers are on standard Shopify or are wholesale-heavy without Plus. Marginal channel.",
+    "tpl_3pl_referral_potential": "3 — 3PLs (eStore Logistics, Shippit, James and James) work with Unleashed-using brands and field stack-change conversations. Worth seeding but second-tier vs accounting channel.",
+    "industry_association_sponsorship": "AiGroup (Australian Industry Group) newsletter/event slots ~AU$3-8k; Food & Grocery Council (for the food/bev slice) ~AU$5-15k; Australian Made promotional partnerships <AU$5k for content collabs. Xerocon side-sponsorship (booth + co-marketing) AU$8-15k is highest-ROI for this segment.",
+    "partner_channel_potential": "4 — Accounting channel (Xero/MYOB) is exceptional; everything else is secondary. Composite pulled down only because non-accounting channels are weak."
+  },
+
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "8-14 paying customers in months 0-12. Constraint is migration bandwidth, not demand. Each customer takes 10-15 founder hours for migration + onboarding. At ~120 hours/month spread across this segment (40% of founder ops time), throughput is ~1 new customer per 6 weeks once content/SEO seeded by month 3. Realistic landing: 10 customers by month 12.",
+    "realistic_12mo_mrr_contribution_aud": "AU$2,800-4,500 MRR by month 12 (10 customers × $320 blended ARPU = $3,200; range reflects tier-mix variance and 1-2 Pro expansions).",
+    "path_to_first_3k_5k_mrr_aud": "Standalone, this segment delivers the AU$3-5k MRR target by itself. Sequence: Month 0-1: build 'Unleashed alternative' comparison page + FX savings calculator + 'Switching from Unleashed' migration guide. Month 1-2: outbound to 30 named G2/Capterra reviewers + 5 Xero ProAdvisors. Land 2-3 paid pilots by end of month 3 (at $249 × 3 = $747 MRR running but credited). Month 3-6: convert pilots to annual, layer in inbound SEO traffic, sign 4-5 more customers. Month 6-12: 5-6 additional customers via ProAdvisor referrals + organic search. Hits ~$3,200 MRR with conservative assumptions; $4,500 with 2 Pro-tier upgrades.",
+    "customers_needed_for_1m_arr_aud": "260 customers at $320 ARPU blended. Realistic 3-year ramp from this segment alone: ~80-120 customers (3-5% of est. AU Unleashed base) — meaningful contributor to $1M ARR but not the whole path. Best as one leg of a 3-4 segment portfolio.",
+    "solo_founder_bandwidth_fit": "4 — Migration burden is moderate (10-15 hrs/customer) but customers are commercially mature and don't need hand-holding on basic SaaS. Content/SEO compounds and lowers per-customer founder time over the year. Bottleneck is the migration not sales.",
+    "break_even_contribution_months": "1-2 months. At AU$320 ARPU × 80% margin = $256 contribution/mo, recovering $100-200 cash CAC + ~10 founder hours within month 1-2.",
+    "gross_margin_sensitivity": "Migration support absorbs gross margin in month 1 only (10-15 hours one-off). Steady-state gross margin returns to ~85% by month 3. Net of migration, this segment is gross-margin-accretive vs greenfield Starter customers who need more product education.",
+    "priority_ranking": "1 — Highest-priority Tier B segment and a top-3 overall Phase-1 target. Lowest cash CAC, highest inbound-content leverage, strongest accounting-channel fit, sticky LTV. Best risk-adjusted path to first AU$3-5k MRR.",
+    "risks_and_notes": "(1) Verify current Unleashed published pricing and add-on costs — pricing pages change; (2) Access Group may bundle Unleashed into a wider ANZ promo or freeze pricing pre-emptively; (3) Xero integration must ship before serious outbound — without it, defectors won't switch (Xero is 85% overlap); (4) Migration tooling (BOM importer from Unleashed export, opening-stock importer) is high-ROI engineering investment — build before scaling outbound; (5) NZ slice of the segment is gated on NZ GST + NZD support if pursued; default to AU-only for Phase 1; (6) Watch for Access Group price freeze or counter-offer to retain defectors — be ready to lead with 'switch in 14 days, white-glove migration included'; (7) Capture 1-2 named-logo case studies in months 3-6 to compound SEO/social proof; (8) Confirm Unleashed's published plan names and NZD prices via live web check before publishing public comparison content."
+  },
+
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "industry_facebook_group_size",
+    "podcasts_voices",
+    "user_satisfaction_signals"
+  ]
+}

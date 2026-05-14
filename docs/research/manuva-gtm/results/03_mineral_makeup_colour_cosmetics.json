@@ -1,0 +1,95 @@
+{
+  "item_id": "03_mineral_makeup_colour_cosmetics",
+  "item_name": "Mineral makeup & colour cosmetics",
+  "tier": "A",
+  "market_sizing": {
+    "target_buyer": "Founder. Often female solo founders with cosmetology / make-up artistry background. Ops manager only at AU$2M+ revenue.",
+    "business_count_au": "Estimated 60-120 active AU-headquartered mineral makeup / colour cosmetic brands. Long tail of <AU$200K hobbyist sellers on Etsy excluded. Named brands include Adorn Cosmetics, Lust Minerals, MP Cosmetics, Runway Room, Rageism Beauty, SCOUT Active Beauty, Inika Organic, Ere Perez, ZIIP. [uncertain]",
+    "business_count_secondary": "US: ~300-500 indie colour cosmetic brands. UK: ~100-200. NZ: ~15-30. CA: ~80-150. [uncertain]",
+    "typical_size": "1-8 employees. Revenue AU$80K-$3M. Highly bimodal: solo hobby-to-pro at AU$80-300K and scaling brands at AU$1-3M.",
+    "annual_revenue_band_aud": "Most common: AU$250K-$1M",
+    "growth_trend": "AU mineral / clean colour cosmetics growing 4-6% (sub-segment of skin-care market). Refillable/sustainable packaging niche (Adorn) growing faster (~8-10%). Late-2020s consumer shift away from synthetic dyes toward mineral pigment continues. Smaller segment than skincare.",
+    "seasonality_intensity": 2
+  },
+  "fit_and_timing": {
+    "manuva_fit_score": 5,
+    "addressable_window": "now",
+    "roadmap_dependency": "Lot tracking (shipped). Xero (roadmap, important). Sub-vertical-specific need: pigment-blending BOMs with yield % which Manuva supports natively.",
+    "typical_tier": "Growth ($249) primary; Starter ($99) for hobby-to-pro; some Pro ($499) for wholesale-heavy brands like Adorn.",
+    "regulatory_burden": "3 — same AICIS regime as skincare. Pigment-source documentation matters for 'natural / clean' positioning claims.",
+    "lot_batch_criticality": 4,
+    "time_to_value_days": 10
+  },
+  "economics": {
+    "incumbent_pricing": "Craftybase Indie US$39-Business US$199 dominant for solo / small. Katana Starter US$179+ for scaling. Cin7 for wholesale-heavy. Spreadsheets for sub-AU$200K. Brands frequently outgrow Craftybase's order-line ceiling when wholesale picks up.",
+    "willingness_to_pay_aud": "AU$99-$299/mo. Growth tier hits at ~AU$30K/mo revenue, similar to skincare cohort.",
+    "estimated_arpu_aud": "AU$215 blended (Starter 35% / Growth 55% / Pro 10%)",
+    "expansion_revenue_potential": "4 — Pro upgrade as wholesale / retail expansion; pigment recipe versioning is a natural Pro-tier feature anchor.",
+    "churn_risk": "3 — smaller TAM means losing a brand to acquisition or pivot has bigger impact. Solo-founder businesses do pause/fail.",
+    "cac_estimate_aud": "Cash CAC AU$50-150. Founder-time CAC ~6-10 hours × AU$150 = AU$900-1,500. Total ~AU$1,000-1,650.",
+    "cash_cac_affordability": 5,
+    "ltv_estimate_aud": "AU$215 × 28mo × 80% = AU$4,816",
+    "ltv_cac_ratio": "~3-4.5:1 fully loaded. Healthy.",
+    "typical_seat_count": "1-3 users",
+    "multi_channel_count": "2-3 (Shopify + wholesale + occasionally Amazon / Faire)",
+    "wholesale_b2b_mix": "20-40% wholesale (lower than skincare; D2C-heavier because mineral makeup buyers are subscription-style repeat purchasers)"
+  },
+  "where_they_live": {
+    "primary_channels": "Instagram is dominant — colour cosmetics is the most visual sub-vertical. #mineralmakeupaustralia #australianmade #cleanbeautyau. YouTube tutorials by makeup artists. Facebook: shared cohort with skincare maker groups (~15-25K combined). Reddit: r/MUAontheCheap, r/IndieBeauty, r/SkincareAddictionAU. TikTok creator cohort is large but not the buyer surface.",
+    "directories_communities": "Skincare Business Foundations (Jennifer Rudd) — shared platform with skincare. Australian Made. Cosmetic Manufacturer's Co-operative. Beauty Independent (US-led). Adorn Cosmetics + Lust Minerals founder networks (LinkedIn). Cosmetic Executive Women AU. Mecca M-Power.",
+    "industry_facebook_group_size": "~10,000-20,000 shared with broader indie beauty maker cohort [uncertain]",
+    "podcasts_voices": "1) Hannah English. 2) Jennifer Rudd. 3) Beauty Independent newsletter. 4) Adorn Cosmetics founder Karen Ashford interviews. 5) Cosmetics Design Asia.",
+    "events_trade_shows": "Beauty Expo Australia (Sydney, Aug). IMATS Sydney (makeup artistry trade show, ~6-8K attendees, sponsorship AU$3-8K). Mecca M-Power events. Naturally Good Expo. Indie Beauty Expo (US/UK, AU brands attend).",
+    "search_keywords": "'inventory software mineral makeup', 'BOM software for colour cosmetics', 'Craftybase alternative pigment', 'pigment recipe tracking Australia', 'lot tracking makeup AU', 'small batch makeup software', 'refillable cosmetics inventory', 'mineral powder manufacturing software'",
+    "community_density": 3,
+    "founder_persona_homogeneity": 4
+  },
+  "outreach_fit": {
+    "cold_outbound_feasibility": "3 — Instagram DM works well for this cohort (visual-first founders); LinkedIn moderate; cold email weak (most founders use generic hello@ aliases).",
+    "inbound_content_fit": "4 — segment consumes how-to content but less compliance-driven than SPF; case studies + visual screenshots convert.",
+    "founder_market_fit_proxy": "3 — same as skincare; buyer is operations-pain-driven not chemistry-driven.",
+    "case_study_acquisition_cost": "Moderate — bundle with skincare case studies (shared buyer profile). 2-3 standalone mineral-makeup case studies in 90 days achievable.",
+    "case_study_appeal": 5
+  },
+  "foot_in_door_fit": {
+    "design_partner_appeal": 4,
+    "paid_pilot_fit": 3,
+    "free_trial_extension_fit": 4,
+    "trial_to_paid_benchmark": "Similar to skincare: opt-in ~10-12%, CC-required 28-32%, design partner 50-65%.",
+    "reference_value": 5,
+    "recommended_foot_in_door_motion": "Phase 1-2: Bundle with the skincare design-partner program — 2-3 mineral makeup brands as part of a 5-8 brand 'indie beauty' design cohort. Don't run a separate playbook; the segment overlaps with skincare on FB groups, Jennifer Rudd's audience, and Skincare Business Foundations. Visual case studies (pigment swatch + production board) are the highest-leverage marketing asset.",
+    "rollout_phase": "Phase 1 (months 0-3) — co-runs with indie skincare"
+  },
+  "competitive_context": {
+    "current_dominant_tool": "Spreadsheets ~55%, Craftybase ~25%, Katana ~10%, Cin7 ~5%, Notion/Airtable ~5%. Cosmetics has slightly lower MRP adoption than skincare because pigment recipes feel like 'art' not 'production'.",
+    "switching_pain": "3 — small SKU counts (typically 20-80 SKUs) mean rebuild is fast. Pigment recipe re-entry is the main friction.",
+    "competitor_gaps_for_this_segment": "Same as skincare cohort: Craftybase ceiling + no BOM versioning, Katana per-seat + price hikes, no AU-native flat-priced option with pigment-recipe yield %. Manuva multi-level BOM with yield % is a strong fit for pigment-base + final-product chain.",
+    "user_satisfaction_signals": "Same Craftybase / Katana signal pattern as skincare. Specific: mineral-makeup founders complain on Reddit about Craftybase not supporting 'I made 50g pigment base and used it across 12 SKUs' easily.",
+    "competitor_concentration": "Fragmented, leaning Craftybase.",
+    "integration_dependency_list": "Must-have: Shopify, Xero (roadmap). Klaviyo. Faire (wholesale). Amazon (roadmap — important for US-export Adorn-style brands)."
+  },
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": 4,
+    "shopify_app_store_acquisition_fit": 4,
+    "shopify_plus_partner_potential": 2,
+    "tpl_3pl_referral_potential": 2,
+    "industry_association_sponsorship": "Skincare Business Foundations (shared with skincare). Cosmetic Manufacturer's Co-operative. IMATS Sydney (AU$3-8K). Beauty Industry Group LinkedIn newsletter. No mineral-makeup-only association of meaningful size.",
+    "partner_channel_potential": 3
+  },
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "8-15 paying customers by month 12 (smaller TAM than skincare, bundled motion). Conservative: 5. Optimistic: 20.",
+    "realistic_12mo_mrr_contribution_aud": "AU$1,700-3,200 MRR at AU$215 ARPU (~12 customers midpoint)",
+    "path_to_first_3k_5k_mrr_aud": "Bundle with skincare segment under one 'AU indie beauty' GTM motion. Don't allocate independent founder time. Achieve ~30% of skincare-segment results via shared channels (Jennifer Rudd, Skincare Business Foundations, FB groups, Instagram DM). Standalone path: 12 customers × AU$215 = AU$2,580 MRR in 12mo.",
+    "customers_needed_for_1m_arr_aud": "~390 customers at AU$215 ARPU",
+    "solo_founder_bandwidth_fit": "4 — same onboarding profile as skincare.",
+    "break_even_contribution_months": "5-8 months",
+    "gross_margin_sensitivity": "Low — same as skincare.",
+    "priority_ranking": "3 — Strong fit but smaller TAM than skincare; bundle with skincare rather than running separately. Worth a dedicated landing page ('pigment-recipe inventory for AU mineral makeup') for SEO.",
+    "risks_and_notes": "Risks: (1) TAM caps potential at ~AU$3-4K MRR even with high penetration. Don't over-invest dedicated time. (2) Some 'mineral makeup' brands actually outsource to contract manufacturers (Adorn does in part) — qualify on 'do you blend in-house?' (3) Pigment yield % math must be exposed clearly in BOM UI for the wedge to land — verify Manuva BOM editor handles 'use 12g of Base X across 24 units of finished SKU' cleanly."
+  },
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "industry_facebook_group_size"
+  ]
+}

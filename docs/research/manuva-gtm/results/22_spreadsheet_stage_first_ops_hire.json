@@ -1,0 +1,109 @@
+{
+  "_source_file": "22_spreadsheet_stage_first_ops_hire",
+  "item_id": "22_spreadsheet_stage_first_ops_hire",
+  "item_name": "Spreadsheet-stage shops (just hired first ops/warehouse person)",
+  "tier": "B",
+  "hypothesis": "Buying trigger from the brief. First-time MRP buyers, cross-vertical. Most price-sensitive but biggest greenfield. Starter tier candidates.",
+
+  "market_sizing": {
+    "target_buyer": "Founder of a 3-12 person AU maker/brand who just hired their first ops/warehouse/production coordinator. The new hire is the catalyst — they walk in, see the spreadsheet chaos, and within 30-90 days advocate for 'real' software. Decision sign-off stays with the founder but evaluation is done by the new ops hire.",
+    "business_count_au": "~3,000-6,000 AU SMBs cross all verticals. AU manufacturing SMB base grew +7% YoY to June 2025 (ABS) to a record high; ~15-20% of small manufacturers/makers hit the 'first ops hire' moment annually, generating a renewable buying-trigger pool of ~3,000-6,000 active at any given time [uncertain].",
+    "business_count_secondary": "US ~50,000-80,000 (largest by far); UK ~10,000-15,000; NZ ~600-1,200; CA ~5,000-9,000. Inferred from comparable SMB-manufacturing population sizes [uncertain].",
+    "typical_size": "3-12 FTE (just crossed the 'need an ops person' threshold), AU$300K-AU$2M revenue. Smaller than Plus segment, larger than indie cosmetics solo-founders.",
+    "annual_revenue_band_aud": "$500K-$1.5M most common, with $250K-$500K tail and $1.5M-$3M head. Starter ($99) and Growth ($249) candidates predominantly.",
+    "growth_trend": "Renewable trigger pool — ABS data shows AU small manufacturer count +7% YoY 2024-2025. As long as AU SMB manufacturing grows, this segment refills. Trigger event (first ops hire) is durable across economic cycles though slows in recessions.",
+    "seasonality_intensity": "3 — First ops hires cluster post-EOFY (July-September) when founders restructure for next FY, and Jan-March when post-holiday demand validates the need for a real team. Two clear annual buying windows."
+  },
+
+  "fit_and_timing": {
+    "manuva_fit_score": "4 — Strong fit for the basic-to-mid use-case (BOMs, inventory, POs, locations, lot tracking). The new ops hire wants 'a system' to replace spreadsheets; Manuva is the right shape and right price. Risk: founders may push back on $99-249 if they previously paid $0, treating spreadsheets as 'free' (anchor bias).",
+    "addressable_window": "now for D2C-only shops; gated on Xero/MYOB integration for ~70% who already use those (the new ops hire will demand accounting integration on day 1).",
+    "roadmap_dependency": ["Xero integration (must-have, ~60-70% overlap)", "MYOB integration (~20-25% — older AU SMB tilt)", "QuickBooks integration (~10-15%)", "Shopify (shipped, fits ~60%)", "Manual entry / CSV import workflows polished — first-time MRP buyers are heavily reliant on importer UX"],
+    "typical_tier": "Starter ($99) for ~50%; Growth ($249) for ~40%; Pro ($499) for ~10% (multi-channel subset).",
+    "regulatory_burden": "2 — Cross-vertical. Average is low (homewares, hardware, basic apparel, soap/candle, coffee) with pockets of higher burden (food/bev, supplements minority).",
+    "lot_batch_criticality": "2 — Low for the cross-vertical average; higher for the food/cosmetic slice. Manuva's pre-launch lot tracking covers must-haves but most Starter/Growth customers in this segment won't use it on day 1.",
+    "time_to_value_days": "5-12 days. No incumbent to migrate from — fastest TTV of any segment. The new ops hire is motivated, available, and rewarded for showing fast wins. First BOM run within 1 week is realistic."
+  },
+
+  "economics": {
+    "incumbent_pricing": "Spreadsheets ($0) for ~85% of segment. Other 15% use Cliq / Notion / Airtable / basic inventory apps ($20-80/mo). The 'price wall' is from $0 to $99 — psychologically significant for cash-light founders even though objectively a rounding error. Most have just signed up for Xero/MYOB ($30-60/mo) so SaaS familiarity exists.",
+    "willingness_to_pay_aud": "$99 Starter is the natural landing tier; $249 Growth is reachable with the new-ops-hire as internal advocate selling ROI to founder. WTP is real but founder-side price-anchoring is the biggest sales obstacle.",
+    "estimated_arpu_aud": "$160 blended (mix ~50% Starter $99, 40% Growth $249, 10% Pro $499).",
+    "expansion_revenue_potential": "4 — Strong long-term. These businesses are at the start of a multi-year growth curve. NRR potential 130-150% over 2-3 years as Starter → Growth → Pro upgrades follow business growth. Highest expansion potential per starting ARPU.",
+    "churn_risk": "4 — Highest churn risk in Tier B. Reasons: (a) new ops hire may leave within 12 months (small AU shops have high ops-role turnover), (b) founder may decide 'we don't really need this' if value isn't visible by month 3, (c) business itself may pivot/contract (small-business mortality). Mitigation: lock in annual via discount, founder-led onboarding emphasising 'time saved' ROI within 30 days.",
+    "cac_estimate_aud": "Cash CAC: AU$50-150 (content/SEO + organic social + cheap LinkedIn boost). Founder-time CAC: 6-12 hours/close × AU$150 = AU$900-1,800. Blended notional CAC AU$1,000-1,950. Cash out-of-pocket AU$50-150 + ~8 founder hours.",
+    "cash_cac_affordability": "5 — Highest cash-CAC affordability of any segment alongside Unleashed defectors. Pure content/SEO + community-led + accountant-referral motion. No paid budget required.",
+    "ltv_estimate_aud": "$160 ARPU × 80% margin × ~22 months retention (higher churn) × 1.3 NRR ≈ AU$3,700 LTV. Lowest LTV in Tier B due to lower ARPU and higher churn.",
+    "ltv_cac_ratio": "~3:1 blended; ~25:1 cash-only. Borderline on blended — needs disciplined founder-time management to stay profitable.",
+    "typical_seat_count": "2-4 users typical. Per-seat incumbents aren't competition here (no incumbent at all).",
+    "multi_channel_count": "1-2 typical (Shopify or wholesale only; subset have both). Multi-channel comes later as the business grows.",
+    "wholesale_b2b_mix": "30-50% wholesale on average. AU SMB makers often have early wholesale traction via stockists before D2C scales."
+  },
+
+  "where_they_live": {
+    "primary_channels": "Reddit r/smallbusinessAU (~110k), r/Entrepreneur (~3M), r/Etsy (~250k), r/Shopify (~150k); Facebook groups 'Australian Small Business Owners' (~80k), 'Aussie Mums in Business' (~50k), 'Female Entrepreneurs Australia' (~30k), 'Small Business Network Australia' (~25k); LinkedIn: 'Small Business Owners Australia', 'Australian Manufacturing'. Niche maker FB groups (candle, soap, ceramics, coffee) overlap with this trigger pool. [uncertain] sizes approximate.",
+    "directories_communities": "Australian Made directory, Australian Small Business and Family Enterprise Ombudsman list, regional manufacturing centres (Manufacturing Hub Victoria, Advanced Manufacturing Growth Centre), Etsy AU seller community, BAS (Business Australia membership), local chambers of commerce. Vertical-specific maker associations (Australian Beauty Industry Group, AU Coffee Roasters association, etc.) all overlap.",
+    "industry_facebook_group_size": "~100-200k cross-membership across 'Small Business Owners Australia', 'Aussie Mums in Business', maker-specific groups. Largest community pool of any Tier B segment — but lower per-member intent. [uncertain].",
+    "podcasts_voices": "Inside Small Business (AU SMB ops), Smart Business Tribe (AU SMB ops), Small Business Big Marketing (Tim Reid), My Business Podcast (My Business AU), Add To Cart (Nathan Bush, e-comm overlap), Female Startup Club (Doone Roisin, AU maker founder slant). YouTube: Gary Vee adjacent, AU 'six-figure side hustle' creators.",
+    "events_trade_shows": "Reed Gift Fairs (Sydney/Melbourne/Brisbane, ~3 per year, ~6-12k attendees combined — biggest single AU maker-buyer convergence); Life Instyle (Sydney/Melb, ~3k each); Finders Keepers Markets (multiple cities); Australian Small Business Expo (Sydney/Melb/Brisbane, ~10k); regional craft markets. Sponsorship <AU$10k at all of these. Reed Gift Fairs is the single highest-density 'small AU maker' venue.",
+    "search_keywords": "'inventory software for small business AU', 'BOM software for makers', 'spreadsheet replacement small business', 'manufacturing software cheap', 'how to track inventory small shop', 'first inventory system small business', 'best inventory app Xero AU', 'small batch manufacturing software', 'cheap MRP for makers', 'inventory management for handmade business'.",
+    "community_density": "4 — High community density but low per-community intent. Lots of places to reach this audience but conversion-per-impression is lower than for defection segments.",
+    "founder_persona_homogeneity": "3 — Cross-vertical but persona-rhyming: 30-45 year old founder, post-side-hustle, growing past solo, just hired first 'real' team member. Message of 'you've outgrown spreadsheets — here's the next step' lands across verticals."
+  },
+
+  "outreach_fit": {
+    "cold_outbound_feasibility": "2 — Lowest of Tier B. Hard to identify the trigger event externally — 'just hired first ops person' is invisible until they post on LinkedIn or update their team page. Outbound at scale requires a proxy signal (job postings, business growth indicators, accountant referrals). Cold-call socially less acceptable for tiny businesses.",
+    "inbound_content_fit": "5 — Highest of Tier B. Bottom-of-funnel keywords are cheap and high-intent ('first inventory system', 'spreadsheet replacement small business'). Long tail compounds. SEO is the dominant motion for this segment.",
+    "founder_market_fit_proxy": "4 — Buyer doesn't need vertical credentials. They want a friendly, accessible founder who 'gets small business pain'. Kasper's PAC Tech + Manuva story (built it for myself) plays well. Possible advantage: solo founder speaking to solo-or-near-solo founders.",
+    "case_study_acquisition_cost": "Low — these customers are eager to share their 'we hired our first ops person and switched off spreadsheets' story. Founder community sharing instinct + new-hire pride combine. 5 reference logos in months 0-6 is realistic.",
+    "case_study_appeal": "4 — Smaller logos but story-rich and emotionally resonant ('we finally have a system'). Compounds well in SMB-founder communities and FB groups."
+  },
+
+  "foot_in_door_fit": {
+    "design_partner_appeal": "2 — Low. These buyers want a working product they can use Monday morning; co-design is too abstract. Their bandwidth is consumed by running a small business with a brand-new hire.",
+    "paid_pilot_fit": "3 — Mid. $99-249 isn't large enough to warrant pilot framing — the 'pilot' is basically a normal trial. CC-required 14-day trial is more natural than explicit paid-pilot structure.",
+    "free_trial_extension_fit": "4 — Highest fit in Tier B. 'Free for 30 days, no card required' works because the price-anchoring obstacle is real and proof-of-value matters more than commitment. ChartMogul opt-in 8.9% is concerning but absolute volume can be high. Better variant: 'free until you create your 10th BOM' or 'free until your first PO is received' — value-anchored gating outperforms time-based.",
+    "trial_to_paid_benchmark": "Opt-in trial 8-12%; CC-required 14-day trial 28-35% (per ChartMogul, slightly above segment average because trigger-event customers are highly motivated); value-gated trial 35-45% (best-in-class for SMB SaaS). Founder-led 1:1 demo + trial converts 50-60%.",
+    "reference_value": "3 — Each logo is small but quantity compounds. 20 small references > 2 Plus brand references for SEO and FB-group social proof.",
+    "recommended_foot_in_door_motion": "Inbound-led: SEO-optimised content ('first inventory system for AU makers', 'spreadsheet replacement small business', 'how to set up BOMs in 1 hour') drives 14-day CC-required trial OR value-gated free trial. Founder-led 30-min onboarding demo offered to every trialist (limited by founder bandwidth — cap at 5/week). Accountant-channel layer: bookkeepers and Xero ProAdvisors flag clients hitting growth thresholds. Outbound is secondary and trigger-driven (LinkedIn 'new ops hire' signals via Sales Navigator). Avoid heavy founder-time per customer at this ARPU — automate onboarding via in-app guidance + Loom-based setup videos.",
+    "rollout_phase": "Phase 2 (months 3-6, post-Xero) — gated on Xero/MYOB shipping. Phase 1 prep: SEO content build, accountant-channel relationship seeding. Active acquisition months 4-12."
+  },
+
+  "competitive_context": {
+    "current_dominant_tool": "Spreadsheets (~85% of segment). Other 15%: Sortly, Stock Sync, Notion+Airtable, Sumtracker, Craftybase Indie tier ($29). Craftybase is the closest 'real' competitor but its $29 Indie tier targets smaller (pre-first-hire) businesses; the price-jump to Business ($199) creates a moment where Manuva Starter ($99) or Growth ($249) is competitive.",
+    "switching_pain": "1 — Lowest of any segment. No incumbent. New ops hire wants to build the system 'right' from day 1. Migration is 'set up from scratch with current data import' — 4-10 founder/ops-hire hours.",
+    "competitor_gaps_for_this_segment": "(1) Spreadsheets break the moment a second person needs to edit; (2) Craftybase Indie tier outgrows quickly (250 order-lines/mo cap); (3) Notion/Airtable lack allocation logic, PO state machine, lot tracking; (4) Most 'cheap' inventory apps lack BOMs entirely (Sortly, Stock Sync); (5) Nothing else offers $99 BOMs + POs + Xero in one tool for AU SMB. Clean wedge.",
+    "user_satisfaction_signals": "FB groups regularly surface 'what do you use for inventory once you outgrow spreadsheets?' — answers are highly fragmented (Craftybase, Katana, 'still using spreadsheets, hate it'). Reddit r/smallbusinessAU 2024-2025 has multiple threads asking same question with no consensus answer. No competitor has captured this segment. Specific quotes/threads [uncertain] without live re-query.",
+    "competitor_concentration": "Fully fragmented (spreadsheets aside, no single tool above 5% share). Highest greenfield in entire Tier B.",
+    "integration_dependency_list": "Xero (must-have, ~60-70%), MYOB (~20-25%), QuickBooks (~10-15%), Shopify (~60%), basic accounting + e-commerce stack — that's it. Lower integration burden than other Tier B segments. Stripe for sub billing assumed."
+  },
+
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": "5 — Highest leverage channel. Xero ProAdvisors + MYOB Partners + QuickBooks ProAdvisors directly advise small AU businesses on stack additions as they grow. ProAdvisor app-marketplace recommendations carry enormous weight at this scale. The new ops hire often asks the bookkeeper for a recommendation first.",
+    "shopify_app_store_acquisition_fit": "3 — Moderate. Shopify-using subset (~60%) will browse the App Store but Plus-style stack-hunting behaviour is less common — these are smaller stores with simpler stack mindsets.",
+    "shopify_plus_partner_potential": "1 — Not relevant. These businesses are below Plus threshold.",
+    "tpl_3pl_referral_potential": "2 — Low. Most are below 3PL-outsourcing scale (still ship from a garage or small warehouse).",
+    "industry_association_sponsorship": "Reed Gift Fairs sponsorship AU$5-15k (high ROI — single highest-density 'first ops hire' buyer pool); Life Instyle AU$3-8k; Etsy AU seller community sponsorships AU$1-3k; AU Small Business Expo AU$3-8k. Highest-ROI tactic: a free 'spreadsheet to system in 1 hour' workshop at Reed Gift Fairs.",
+    "partner_channel_potential": "4 — Strong on accounting channel + event channel; weak on 3PL/agency channels."
+  },
+
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "15-25 paying customers in months 0-12. Highest customer count of any Tier B segment due to volume + low switching pain, but lowest ARPU. Bandwidth: 6-10 hrs/customer onboarding (lighter than other segments because no migration). Realistic landing: 20 customers by month 12.",
+    "realistic_12mo_mrr_contribution_aud": "AU$2,500-4,500 MRR by month 12 (20 customers × $160 blended ARPU = $3,200; range reflects tier-mix variance and Starter-to-Growth upgrades).",
+    "path_to_first_3k_5k_mrr_aud": "Contributor leg. Sequence: Months 0-3 (pre-Xero): build cornerstone SEO content ('first inventory system AU', 'spreadsheet replacement small business'), seed 5-10 Xero ProAdvisor relationships. Months 3-6 (Xero shipped): launch 14-day CC-required trial + Reed Gift Fairs presence, sign 4-6 customers. Months 6-9: SEO traffic ramps, ProAdvisor referrals start landing, sign 6-8 more. Months 9-12: 6-8 more via inbound + community. End-month-12 MRR ~$3,000-3,500. Best paired with Unleashed defectors (item 19) for stable mid-segment MRR + this segment for compounding-volume tail.",
+    "customers_needed_for_1m_arr_aud": "521 customers at $160 ARPU. Highest customer count required = highest bandwidth strain. Realistic 3-year ramp from this segment alone: 200-300 customers (~5-7% of est. AU trigger pool/year). Best as the 'volume tail' below higher-ARPU anchor segments rather than the path-to-$1M alone.",
+    "solo_founder_bandwidth_fit": "3 — Lower onboarding per customer (6-10 hrs) but higher customer count strains founder bandwidth in aggregate. Sustainable only with strong in-app onboarding + Loom video library. Cannot scale to 50+ customers/year without automation investment.",
+    "break_even_contribution_months": "1 month. $160 ARPU × 80% margin = $128 contribution/mo, recovering $50-150 cash CAC within month 1; founder hours absorbed via low per-customer onboarding time.",
+    "gross_margin_sensitivity": "Lowest margin sensitivity if onboarding is automated. Risk: founder-led demo-per-trialist destroys margin at scale. Must hold the line on automated onboarding (in-app + Loom + community) and offer founder demos selectively (e.g. only Growth/Pro tier signups).",
+    "priority_ranking": "4 — Important contributor segment but ranked behind Unleashed defectors (19), Shopify Plus (21), and MRPeasy defectors (20) due to lower ARPU, higher churn, harder outbound, and bandwidth strain at scale. Run as Phase-2 inbound machine, not Phase-1 founder-led motion.",
+    "risks_and_notes": "(1) Highest churn segment — annual prepay discount + onboarding success milestones are critical; (2) Founder must NOT do 1:1 onboarding for every trialist — will destroy bandwidth and margin; build in-app onboarding + Loom video library before scaling; (3) Trigger-event identification is hard — invest in proxy signals (Xero ProAdvisor referrals + new-hire LinkedIn announcements via Sales Navigator); (4) Price-anchoring from $0 spreadsheets is real — lead with ROI ('1 hour/week saved = $100/mo of your time'); (5) Don't promise Pro-tier features Manuva won't ship in 18 months — keep Starter/Growth narrative tight; (6) ProAdvisor channel is the single biggest unlock — invest in app-marketplace listing quality + ProAdvisor onboarding kit; (7) Annual plan discount (10-15% off) reduces month-3 buyer's-remorse churn; (8) Build a free 'BOM-readiness audit' lead magnet for SEO + ProAdvisor distribution — converts info-shoppers into trial signups; (9) Verify ABS small-manufacturer growth and trigger-pool sizing before publishing TAM claims; (10) Test pricing carefully — $99 Starter may need a $49 'Solo' anchor below to make $99 feel mid-range; out of scope for this research but flag."
+  },
+
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "primary_channels",
+    "industry_facebook_group_size",
+    "user_satisfaction_signals"
+  ]
+}

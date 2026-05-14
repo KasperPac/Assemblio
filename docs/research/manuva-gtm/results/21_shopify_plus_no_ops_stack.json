@@ -1,0 +1,109 @@
+{
+  "_source_file": "21_shopify_plus_no_ops_stack",
+  "item_id": "21_shopify_plus_no_ops_stack",
+  "item_name": "Shopify Plus brands without a dedicated ops stack",
+  "tier": "B",
+  "hypothesis": "Shopify Plus stores install 2.6x more apps than standard but >80% have no manufacturing/ops tool. 'Run on spreadsheets + Klaviyo' pattern. Clean wedge.",
+
+  "market_sizing": {
+    "target_buyer": "Founder, COO, or Head of Ops at a Shopify Plus brand. Decision is often made jointly with the agency or fractional COO. The brand has hit a complexity threshold (BOM/kit complexity, supplier coordination, expansion to wholesale or 3PL) where spreadsheets are visibly breaking.",
+    "business_count_au": "~700-1,100 AU Shopify Plus stores total (BuiltWith + Shopify Plus AU partner directory signals). Estimated 60-75% have no dedicated manufacturing/ops tool = ~450-800 in-segment AU [uncertain].",
+    "business_count_secondary": "US ~22,000-28,000 Plus stores (largest market by far, ~70-80% no-ops-stack); UK ~4,500-6,000; NZ ~200-300; CA ~1,500-2,200. AU is small in absolute terms but well-suited to founder-led motion. [uncertain] — based on BuiltWith and Shopify public claims.",
+    "typical_size": "10-50 FTE, AU$3M-AU$30M revenue (Plus threshold is ~AU$1M GMV but most Plus brands sit above $3M). Larger than Tier A indie segments and Tier B defection cohorts.",
+    "annual_revenue_band_aud": "$3M-$20M most common, with $30M+ tail. Pro ($499) tier candidates almost exclusively.",
+    "growth_trend": "Shopify Plus AU base growing 12-18% YoY (Shopify public statements + AU partner ecosystem expansion). The 'no-ops-stack' subset is structurally durable — Plus brands often consciously avoid bloated MRP systems and rely on spreadsheets + Klaviyo + 3PL portal. Manuva-shaped flat-priced ops layer is a new affordable wedge that didn't exist 3 years ago.",
+    "seasonality_intensity": "3 — Plus brands hit ops-pain right after peak seasons (Q1 after holiday Q4, mid-Q3 after EOFY stocktake). Buying windows: late Jan/early Feb and late July."
+  },
+
+  "fit_and_timing": {
+    "manuva_fit_score": "4 — Manuva's data model (BOMs/kits, allocation, POs, locations, lot tracking, Shopify integration) maps cleanly to the typical Plus brand running spreadsheets. The fit gap is depth in capacity planning, demand forecasting, and channel reconciliation — most no-ops-stack Plus brands don't need those yet but will within 12 months. Phase 1 sweet spot: brands at the spreadsheet-breaking moment.",
+    "addressable_window": "now for Shopify-only Plus brands; gated on Amazon/Woo connectors for multi-channel Plus brands (~30% of segment); gated on Xero/MYOB for accounting-tight buyers.",
+    "roadmap_dependency": ["Xero integration (strongly desired by ~70%)", "Amazon connector (required for ~25% who're Shopify+Amazon)", "WooCommerce connector (rare for Plus brands, <5%)", "Wholesale pricing tiers (B2B-heavy Plus brands ~30%)", "Klaviyo data sync (not blocking but expected as part of stack)"],
+    "typical_tier": "Pro ($499) for ~70% of segment; Growth ($249) for the smaller end (sub-$5M revenue Plus brands).",
+    "regulatory_burden": "2 — Plus brands span all verticals (apparel, beauty, food, supplements, homewares). Compliance burden is vertical-driven not segment-driven. Average is modest.",
+    "lot_batch_criticality": "3 — Required for ~35-40% (beauty, supplements, food, candle Plus brands); nice-to-have for the rest. Manuva's pre-launch lot tracking covers must-haves.",
+    "time_to_value_days": "7-14 days. No incumbent to migrate from (spreadsheet is the 'incumbent') — faster TTV than defection segments. Bottleneck: BOM/kit setup + opening stock import."
+  },
+
+  "economics": {
+    "incumbent_pricing": "Stack today: Shopify Plus base US$2,300/mo (~AU$3,500), Klaviyo US$150-600/mo (~AU$230-920), Gorgias / Zendesk US$60-300/mo (~AU$90-460), 3PL portal included. Manufacturing/ops layer: $0 (spreadsheets) for ~60-75% of the segment; the remainder use Stock Sync / Sumtracker / Katana ($99-$199/mo). Total ops-stack spend below MRP layer: AU$300-800/mo. The wedge: Manuva at AU$499 fits cleanly inside existing stack budgets.",
+    "willingness_to_pay_aud": "$499/mo Pro tier is well within budget — Plus brands routinely add apps at $200-400/mo. WTP is high; price is not the barrier. The barrier is 'why now / why this app'.",
+    "estimated_arpu_aud": "$430 blended (mix ~70% Pro $499, 30% Growth $249).",
+    "expansion_revenue_potential": "5 — Highest expansion potential of any segment. Plus brands grow fast and add complexity (wholesale, retail, Amazon, multi-warehouse) — Manuva can land at Pro and grow via add-on modules (capacity planning, lot-tracking deep, wholesale portal). NRR potential 120-140%.",
+    "churn_risk": "3 — Plus brands churn faster than B2B distributors (founder turnover, acquisition events, agency-driven stack consolidation). Counterweight: switching cost grows quickly once BOMs and POs are in.",
+    "cac_estimate_aud": "Cash CAC: AU$200-500 (LinkedIn ads to ops/COO titles, retargeting Shopify-Plus content). Founder-time CAC: 15-25 hours/close (longer discovery cycles, agency intros, COO meeting cycles) × AU$150 = AU$2,250-3,750. Blended notional CAC AU$2,500-4,200. Cash out-of-pocket AU$200-500 + ~18 founder hours.",
+    "cash_cac_affordability": "3 — Higher cash CAC than defection segments because intent search volume is lower and outbound to busy COOs is slower. Affordable but not 'free' — needs ~AU$200-500/customer in retargeting / agency-event sponsorship. Within solo-founder budget but tighter.",
+    "ltv_estimate_aud": "AU$430 ARPU × 80% margin × ~30 months × 1.25 NRR ≈ AU$12,900 LTV (boosted by expansion). Highest LTV in Tier B.",
+    "ltv_cac_ratio": "~4-5:1 blended; ~25:1 cash-only.",
+    "typical_seat_count": "5-15 users typical. Not the primary buying lever (Manuva flat-priced) but Plus brands appreciate not adding seat-counting overhead.",
+    "multi_channel_count": "2-4 typical (Shopify + wholesale + Amazon + retail). Highest multi-channel mix of any segment.",
+    "wholesale_b2b_mix": "20-50% wholesale (segment-bimodal — pure D2C Plus brands ~20%, hybrid D2C+wholesale ~50%)."
+  },
+
+  "where_they_live": {
+    "primary_channels": "LinkedIn: 'Shopify Plus' / 'DTC Operators' / 'Ecommerce Australia' groups (~30-60k cross-membership); Slack/Discord: '2PM' DTC community, 'Operators Guild' (~1,500 members), 'Shopify Plus Operators' (~800 members); Twitter/X DTC ecosystem (Eli Weiss, Nik Sharma, Daniel Murray, Aussie voices like Kate Morris, Mark Capps); Reddit r/Shopify (~150k), r/ecommerce (~200k). [uncertain] member counts.",
+    "directories_communities": "Shopify Plus Partner Directory (AU agencies: Convert Digital, eStar, Pixc, Magia Digital, etc.); BuiltWith Shopify Plus filter; 'AU Shopify Plus' lists curated by agencies; The Lumery / Power Retail brand lists; Practical Ecommerce + Modern Retail reader bases; Klaviyo customer directory (overlaps ~80%).",
+    "industry_facebook_group_size": "~10-20k across 'Shopify Australia', 'Australian E-commerce', 'DTC Founders AU' [uncertain]. Less active than LinkedIn/Slack for this cohort — FB skews smaller brands.",
+    "podcasts_voices": "DTC Pod (Eli Weiss, Ramon Berrios), 2PM newsletter (Web Smith), The Modern Retail Podcast, Lenny's Newsletter (B2B-shifted but ops content lands), AU: Add To Cart podcast (Nathan Bush), Power Retail's 'eCommerce News' weekly. YouTube: Aaron Orendorff, Brett Curry. Twitter: Eli Weiss, Nik Sharma, Daniel Murray.",
+    "events_trade_shows": "Shopify Editions (online, free, AU watch-party clusters); Shopify Unite (annual, US, AU sends 50-100 attendees); Online Retailer (Sydney, ~6k attendees, June); Retail Global (Gold Coast, ~3k, May); Add To Cart Live (Melb/Sydney, ~500-800); Klaviyo:BOS (AU-relevant via livestream). Sponsorship <AU$10k: Add To Cart Live, Retail Global side-events. Shopify Plus AU agency events (Convert Digital, eStar) are highest-leverage at AU$1-3k.",
+    "search_keywords": "'Shopify Plus inventory app', 'Shopify Plus manufacturing app', 'Shopify Plus ops stack', 'BOM app for Shopify', 'Shopify kit / bundle inventory', 'Shopify Plus 3PL integration', 'spreadsheet inventory Shopify', 'Shopify B2B wholesale inventory', 'Shopify Plus warehouse management', 'manufacturing app Shopify Plus AU'.",
+    "community_density": "4 — High. LinkedIn + Slack/Discord DTC operator communities are dense, English-speaking, and warm to founder-led outreach. Easier to find than scattered MRPeasy defectors.",
+    "founder_persona_homogeneity": "4 — Strong persona homogeneity: 30-45 year old e-commerce native, hired or first-hire COO, agency-connected, KPI-driven (LTV/CAC/contribution margin). Messaging compounds across the segment."
+  },
+
+  "outreach_fit": {
+    "cold_outbound_feasibility": "4 — High. BuiltWith + Shopify Plus partner directory + LinkedIn Sales Navigator gives clean targeting. AU Plus base is finite (~700-1,100 stores), so a full TAM walk in 6 months is feasible. Cold-call is less acceptable; LinkedIn DM + email is standard. Agency intros are warmer.",
+    "inbound_content_fit": "4 — Good but not exceptional. 'Shopify Plus ops stack', 'Spreadsheet replacement Shopify', 'When to add manufacturing to Shopify Plus' content ranks reasonably. Competition from Shopify itself + DTC newsletters is heavier than for defection segments. Best paired with operator-community content (Slack/LinkedIn long-form).",
+    "founder_market_fit_proxy": "4 — DTC operators don't need vertical credentials but they do scrutinise tooling closely. Kasper's PAC Tech + Manuva ops/tech background plays well. Need 1-2 named-logo case studies before this segment will move at scale — chicken-and-egg solved by landing 1-2 Plus brands early via warm intros.",
+    "case_study_acquisition_cost": "High — Plus brands are picky about lending their logo. First 2-3 logos require equity-like effort (deep involvement, founder-attentive support, possibly discounted year). Subsequent logos compound much faster.",
+    "case_study_appeal": "5 — Plus-brand logos carry huge reference value across Tier A and Tier B alike. A single recognisable AU Plus brand case study (e.g. an indie skincare or candle brand on Plus) doubles inbound across all segments."
+  },
+
+  "foot_in_door_fit": {
+    "design_partner_appeal": "4 — Stronger than defection segments. Plus brands are early-tech adopters and will trade roadmap input for founder access + discounted year. 'Design partner' framing fits 2-3 strategic logos especially around wholesale-pricing module, Amazon connector co-design, or capacity-planning preview.",
+    "paid_pilot_fit": "4 — Paid pilot at Pro $499 × 3-6 months credited works for the spreadsheet-replacement use-case. Plus brands have budget and prefer commitment over free.",
+    "free_trial_extension_fit": "2 — Free-for-X is counterproductive at Plus tier — signals 'not ready for our scale'. Skip.",
+    "trial_to_paid_benchmark": "Paid pilot 40-60% (ChartMogul); CC-required 14-day trial 25-35%; agency-referred trial 50-70% (warm intros convert higher). Design-partner conversion 70-85% (highly self-selected).",
+    "reference_value": "5 — Highest reference value of any segment. Plus-brand logos punch above their weight in PR, ecosystem chatter, and agency channel.",
+    "recommended_foot_in_door_motion": "Two-track motion. Track A (strategic, 2-3 logos in months 0-6): Design-partner program — 6 months free Pro + roadmap input + co-marketing + case study on launch. Target 2-3 named AU Plus brands via warm intro through Shopify Plus AU agency partners (Convert Digital, eStar, Pixc). Track B (volume, months 3-12): Paid pilot at Pro $499 × 3 months credited, sourced via LinkedIn outbound + agency referrals + Shopify Plus AU partner events. Convert via 45-min discovery → pilot start within 10-14 days. Anchor inbound: 'How [Plus brand] replaced 5 spreadsheets with Manuva' long-form case study.",
+    "rollout_phase": "Phase 1 (months 0-3) for design-partner track; Phase 2 (months 3-9) for paid-pilot volume; expansion into multi-channel Plus brands in Phase 3 (months 6-12) post-Amazon connector."
+  },
+
+  "competitive_context": {
+    "current_dominant_tool": "Spreadsheets (Google Sheets / Excel) — 60-75% of segment. Other 25-40% split across Stock Sync, Sumtracker, Katana (light usage), Cin7 (heavier usage), and custom Airtable bases. Plus's native multi-location inventory covers basics — the gap is BOM/manufacturing/PO discipline.",
+    "switching_pain": "2 — Lower than any defection segment because spreadsheets are the incumbent. Migration is 'consolidate 3-5 spreadsheets into Manuva' — 8-15 founder hours. Lower switching cost cuts both ways: cheaper to land, easier to churn back to spreadsheets if value isn't visible by month 2.",
+    "competitor_gaps_for_this_segment": "(1) Spreadsheets break at BOM versioning + multi-location + audit trail; (2) Shopify-native ops apps (Stock Sync, Sumtracker) lack manufacturing/BOM depth; (3) Katana per-seat doesn't fit Plus team sizes; (4) Cin7 is too heavy and expensive for 'just need BOMs + POs'; (5) Custom Airtable bases don't have allocation engines or PO logic; (6) Nothing in the segment offers Shopify-Plus-native + flat-priced + Xero-integrated ops layer.",
+    "user_satisfaction_signals": "DTC operator Slacks (2PM, Operators Guild) regularly surface 'what are people using for BOMs / manufacturing on Plus?' with no consensus answer. LinkedIn posts from AU COOs lament spreadsheet fragility post-Black Friday. No single competitor has captured this segment — confirming the 'no-ops-stack' wedge is real. Specific quotes/threads [uncertain] without live re-query.",
+    "competitor_concentration": "Fragmented — no incumbent above 20% share within this segment. Highest opportunity-to-concentration ratio of any Tier B segment.",
+    "integration_dependency_list": "Shopify (must-have, shipped), Klaviyo (must-have for the brand-data overlap — not blocking but expected), Xero (~70%), Shippit / 3PL (eStore Logistics, James and James — high overlap), Amazon SP-API (~25%), Faire (~20%), Stripe, Gorgias/Zendesk (CS), Triple Whale / Northbeam (attribution — out of Manuva scope but stack-adjacent), Recharge (subscription Plus brands)."
+  },
+
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": "4 — Strong (~70% Xero overlap). Less of a primary acquisition channel than for defection segments because Plus brands' primary advisors are agencies + Klaviyo email partners, not bookkeepers. ProAdvisor referrals add a secondary stream.",
+    "shopify_app_store_acquisition_fit": "4 — Good. Plus brands install 2.6x more apps and actively browse the store for stack additions. Listing in 'Inventory & orders' / 'Manufacturing' / 'Stock management' categories surfaces Manuva to engaged buyers. Plus-tier brands prioritise apps with Shopify Plus Tech Partner badge.",
+    "shopify_plus_partner_potential": "5 — Highest-fit channel. Shopify Plus Tech Partner program (free to join with technical bar) opens managed-referral pipe via Shopify Plus Merchant Success Managers. Plus agencies (Convert Digital, eStar, Pixc, Magia Digital) field 'what ops/manufacturing app should we use?' from clients weekly. Strategic partnership with 2-3 AU Plus agencies is the single highest-leverage GTM move for this segment.",
+    "tpl_3pl_referral_potential": "4 — eStore Logistics, James and James, Shippit, Locad are common Plus-brand 3PL partners. Co-marketing webinar + referral fee structure works well. Higher fit than for defection segments.",
+    "industry_association_sponsorship": "Add To Cart Live (Melb/Sydney, AU$3-6k); Online Retailer (Sydney, $8-15k booth + content); Power Retail Australian E-commerce Awards sponsorship $5-15k; Shopify Plus AU partner events $1-3k. Klaviyo:BOS Sydney roadshow side-sponsorship $3-8k. Total budget for Phase 1-2 events: AU$15-30k if pursued; not strictly required but high-ROI for case-study acquisition and agency intros.",
+    "partner_channel_potential": "5 — Best partner-channel composite of any segment. Shopify Plus Tech Partner + agency referrals + 3PL co-sell + Xero ProAdvisor + Klaviyo ecosystem all stack."
+  },
+
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "4-8 paying customers in months 0-12 (lower count than defection segments due to longer sales cycle + higher onboarding bar but higher ARPU). Realistic landing: 6 customers, including 2 design partners + 4 paid pilots. Bandwidth: 20-30 hrs/customer onboarding (deeper than defection migration).",
+    "realistic_12mo_mrr_contribution_aud": "AU$2,400-4,000 MRR by month 12 (6 customers × $430 blended ARPU = $2,580; upside to $4,000 with NRR expansion + 1-2 multi-channel Pro upsells).",
+    "path_to_first_3k_5k_mrr_aud": "Strong contributor. Sequence: Months 0-3: warm-intro to 5-10 AU Plus agencies, sign 1 design-partner Plus brand at $0/mo (3-month free Pro, becomes $499/mo from month 4); build long-form case study for launch month 3-4. Months 3-6: 2nd design partner + 2 paid pilots ($499 × 3 mo credited). Months 6-9: case-study-led inbound starts ranking, sign 2 more paid pilots, convert previous pilots to annual. Months 9-12: agency-channel referrals add 1-2 more. End-month-12 MRR ~$2,400-3,000 from this segment + halo effect on indie cosmetics and other Tier A segments via reference logos. Combined with Unleashed defectors (item 19), comfortably clears AU$5K MRR by month 12.",
+    "customers_needed_for_1m_arr_aud": "194 customers at $430 ARPU. Realistic 3-year ramp: 60-90 customers (~12-18% of est. AU Plus no-ops segment). Strong contributor leg, anchored by agency channel.",
+    "solo_founder_bandwidth_fit": "3 — Onboarding is deeper than defection segments (20-30 hrs vs 10-15 hrs) and sales cycle longer (30-60 days vs 14-30). Manageable at 6-8 customers/year. Design-partner track absorbs disproportionate founder time but pays back in case-study leverage.",
+    "break_even_contribution_months": "2-3 months. $430 ARPU × 80% margin = $344 contribution/mo, recovering $200-500 cash CAC + ~20 founder hours within 2-3 months.",
+    "gross_margin_sensitivity": "Moderate — Plus brand onboarding is heavier but plus-tier brands are operationally mature and don't need ongoing hand-holding. Steady-state gross margin ~80%. Design partners depress year-1 margin (3 months free) but compound case-study value.",
+    "priority_ranking": "2 — Top-3 overall priority and second within Tier B (behind Unleashed defectors on cash-CAC efficiency, ahead on LTV and reference value). Two-track motion (design partner + paid pilot) maximises both reference value and revenue. Anchor segment for the $1M ARR path.",
+    "risks_and_notes": "(1) Shopify Plus Tech Partner application takes 2-4 weeks and requires technical review — submit in Phase 0; (2) Agency channel needs commission structure agreed upfront (typically 15-25% rev-share for year 1 or flat referral fee AU$500-1,500); (3) Design-partner program needs explicit terms (3-6 month free, roadmap input rights, case-study commitment, exclusivity carve-outs) — write a 1-page partner agreement; (4) Klaviyo data sync expectations may surface — confirm what 'integration' actually means before promising; (5) Some Plus brands genuinely don't need MRP (pure D2C with simple SKU lists) — pre-qualify on BOM complexity, multi-channel count, wholesale presence; (6) 3PL referrals create 'who owns the customer' tension with 3PL portals — clarify positioning as 'upstream of fulfilment' not competing; (7) Watch for Shopify itself adding inventory/manufacturing depth — Shopify Components / Linkpop / B2B native moves could compress the wedge; (8) Multi-channel Plus brands gated on Amazon connector — segment them out of Phase 1 motion; (9) Capture the first AU Plus design-partner logo by month 3 — single most important Phase-1 milestone; (10) Verify current Shopify Plus AU store count via BuiltWith + Shopify Plus partner directory before publishing TAM-derived claims."
+  },
+
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "primary_channels",
+    "industry_facebook_group_size",
+    "user_satisfaction_signals"
+  ]
+}

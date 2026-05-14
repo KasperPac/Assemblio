@@ -1,0 +1,228 @@
+topic: Manuva GTM — who to target and how to land them profitably
+description: >
+  Market research to guide Manuva's first-1000-customer go-to-market. Three coupled
+  questions: (1) which customer segments to target first and in what sequence,
+  (2) what foot-in-the-door motion lands them — design partner, paid pilot, free-then-discount,
+  founder-led outbound, partner channels — and (3) what mix of segment × tactic × ARPU
+  makes the business profitable. Manuva is currently shipping Xero/MYOB/QuickBooks
+  integrations, lot/batch tracking, and WooCommerce + Amazon connectors over the
+  next ~6 months, which expands the addressable segments materially. AU-first,
+  secondary US/UK/NZ/CA.
+
+context:
+  product: Manuva (Next.js 15 + Supabase + Shopify) — manufacturing operations SaaS
+  team: Solo founder (1 person). No insider industry connections in any vertical — outsider in every segment. Treat trust-based / credentialed segments (cosmetic chemistry, regulated foods, supplements) with that weighting.
+  pricing:
+    starter_monthly_aud: 99
+    growth_monthly_aud: 249
+    pro_monthly_aud: 499
+    model: flat-per-account (no per-seat)
+  shipped_pre_launch:
+    - Shopify integration
+    - Multi-level BOMs with versioning + yield %
+    - Allocation engine
+    - Stocktake
+    - Purchasing + receiving
+    - Lot / batch tracking  # confirmed pre-launch ship — no longer a gating roadmap item
+  roadmap_unlocks_post_launch:
+    - Xero integration
+    - MYOB integration
+    - QuickBooks integration
+    - WooCommerce connector
+    - Amazon connector
+  geography:
+    primary: Australia
+    secondary: [US, UK, NZ, CA]
+  goals:
+    near_term_12mo_mrr_aud: "AU$3,000 – $5,000 (few thousand MRR — solo founder, sustainable)"
+    long_term_aspirational_arr_aud: "AU$1,000,000 ARR"
+    cac_constraint: Solo founder has minimal paid-acquisition budget. Founder-led + partner channels + content/SEO are the only viable motions early. Score CAC affordability accordingly.
+  research_questions:
+    - Who are the 3-5 highest-ROI customer segments to target first as a solo founder?
+    - Which segments are addressable right now vs gated on Xero/MYOB/QuickBooks vs Woo/Amazon?
+    - Should the "foot-in-door" be free-for-X-months, paid pilot, or design partner — per segment, given a solo-founder constraint?
+    - What is the realistic 12-month customer count and the path to AU$3-5K MRR? What does the AU$1M ARR long-term path look like?
+    - Which partner channels (Xero ProAdvisor, Shopify Plus, 3PLs, accountants) are highest-leverage for a solo founder?
+
+execution:
+  batch_size: 5            # 5 parallel deep-research agents
+  items_per_agent: 6       # 6 items × 5 agents = 30 items total
+  output_dir: ./results
+
+items:
+  # ─── Tier A — Verticals addressable today (no roadmap dependency) ───
+  - id: 01_indie_cosmetics_skincare
+    name: Indie cosmetics & skincare brands (AU)
+    tier: A
+    hypothesis: AICIS-regulated but lighter than TGA. Active community via AU Beauty Industry Group + Etsy graduates. Multi-component BOMs (ingredients + packaging + labels). Visual case-study appeal. Strongest single design-partner segment.
+
+  - id: 02_suncare_spf
+    name: Sun-care / SPF brands (AU)
+    tier: A
+    hypothesis: AU is the global leader in indie SPF (Naked Sundays, Ultra Violette). TGA listed-good registration drives heavy lot/batch needs. High AOV → can afford Growth/Pro tier. Lot tracking unlock makes them ready.
+
+  - id: 03_mineral_makeup_colour_cosmetics
+    name: Mineral makeup & colour cosmetics
+    tier: A
+    hypothesis: Sub-vertical with distinct BOM complexity (pigment blending) and tight AU Beauty Industry Group community. Different ICP from skincare.
+
+  - id: 04_candle_soap_homefragrance
+    name: Candle, soap & home-fragrance makers
+    tier: A
+    hypothesis: Most AU candle SMBs sell B2B wholesale to gift stores in addition to D2C — multi-channel BOM + wholesale pricing tiers. High visual appeal for case studies. Currently dominated by Craftybase + spreadsheets.
+
+  - id: 05_coffee_roasters_tea
+    name: Specialty coffee roasters & tea blenders
+    tier: A
+    hypothesis: 914 mapped AU coffee roasters (91.7% single-owner). Dense, addressable, community-led. Tea blenders adjacent but distinct BOM (loose-leaf recipes, sachet co-pack). Strong AU community.
+
+  - id: 06_apparel_cutsew
+    name: Apparel — cut-and-sew, screen-print, embroidery
+    tier: A
+    hypothesis: Printavo is US-centric/dated; AU reach weak. Cut-and-sew shops need real BOMs (fabric + trims + labels). Print-on-demand explicitly OUT of scope (no MRP need).
+
+  - id: 07_homewares_ceramics_hardware
+    name: Homewares, ceramics & small-batch hardware
+    tier: A
+    hypothesis: Common Shopify/Instagram-native AU segment. Kiln-batch production runs map naturally to BOMs/lots. Lower ARPU but very high reference value (visual case studies).
+
+  - id: 08_pet_treats_dry
+    name: Pet treats & dry pet food brands
+    tier: A
+    hypothesis: AU pet market = 200+ brands, top 5 hold only 30% share, online channels growing 6.4% CAGR. Treats sub-segment growing 6.1% CAGR. Fragmented, D2C-friendly.
+
+  - id: 09_sustainable_refill_packaging
+    name: Sustainable / refill packaging brands
+    tier: A
+    hypothesis: Zero Co et al. Unique reverse-logistics BOMs. AU has national leader cohort. Strong PR/case-study appeal.
+
+  # ─── Tier A (continued) — Compliance-driven verticals (now in-play; lot tracking ships pre-launch) ───
+  - id: 10_supplements_nutraceuticals
+    name: Supplements / nutraceutical brands
+    tier: A
+    hypothesis: TGA listed-medicine compliance + COA tracking = high willingness to pay. Heavy regulatory burden — but solo founder must clear higher trust bar (no insider credentials). Likely Growth/Pro tier ARPU.
+
+  - id: 11_packaged_foods_sauces_condiments
+    name: Packaged foods, sauces, condiments
+    tier: A
+    hypothesis: FSANZ + HACCP requirements. Highly fragmented AU market. Co-packer adjacency. Compliance reporting differentiator vs Craftybase.
+
+  - id: 12_fresh_pet_food_d2c
+    name: Fresh / raw / frozen pet food D2C
+    tier: A
+    hypothesis: Fastest-growing AU pet sub-segment. Subscription-led, cold-chain BOM. Distinct from dry treats — needs lot + expiry tracking. Now fully addressable.
+
+  - id: 13_hard_kombucha_lownoalc_beverages
+    name: Hard kombucha & low/no-alc craft beverages
+    tier: A
+    hypothesis: AU kombucha 15% CAGR through 2033 ($218M → $766M). Multi-channel (D2C + retail + on-premise). High WTP. Excise reporting is a Manuva gap to check.
+
+  - id: 14_functional_ferment_brands
+    name: Functional / gut-health ferment brands
+    tier: A
+    hypothesis: Sauerkraut, kimchi, kefir, yoghurt. Shopify/farmer's market hybrid. Fragmented and growing. FSANZ pressure.
+
+  - id: 15_contract_food_copackers
+    name: Contract food manufacturers / co-packers
+    tier: A
+    hypothesis: A-tier adjacent per existing saas-market-gaps research (~70-80% Manuva data-model reuse). Mid-market between Craftybase (too light) and Nulogy (too heavy). FSANZ + FSMA 204 forcing function. Trust-based buyer — solo-founder credibility check needed.
+
+  # ─── Tier B — Cross-vertical intent-defined segments ───
+  - id: 16_katana_defectors
+    name: Katana defectors
+    tier: B
+    hypothesis: 523% price hikes reported. Pricing rewritten 4 times (users → SO lines → SOs → GMV). Per-seat + add-on stack pain. Largest single defection pool. Cross-vertical.
+
+  - id: 17_craftybase_graduates
+    name: Craftybase graduates (outgrowing Indie or Business tier)
+    tier: B
+    hypothesis: Hard ceilings at 250 / 1,000 / 5,000 order-lines/mo. Indie→Business cliff at $89→$199. Natural Manuva poaching moment, especially for soap/skincare/candle hobby-to-pro transitioners.
+
+  - id: 18_cin7_dear_defectors
+    name: Cin7 / DEAR defectors post-acquisition price hikes
+    tier: B
+    hypothesis: Well-documented G2/Capterra complaints about Cin7 price increases post-DEAR acquisition. Live defection pool. Often multi-channel brands → Pro tier candidates.
+
+  - id: 19_unleashed_defectors_anz
+    name: Unleashed users squeezed by NZD-billed plans
+    tier: B
+    hypothesis: ANZ MRP incumbent at NZ$319-399/mo. AU customers paying FX-inflated NZD pricing. Sits above Manuva Growth, below Pro — clean undercut.
+
+  - id: 20_mrpeasy_defectors_au
+    name: MRPeasy users wanting better Shopify + AU accounting integration
+    tier: B
+    hypothesis: Per-seat ($49/user) painful at 10+ team size. Weak on AU connectors. Pro-tier flat pricing wedge.
+
+  - id: 21_shopify_plus_no_ops_stack
+    name: Shopify Plus brands without a dedicated ops stack
+    tier: B
+    hypothesis: Shopify Plus stores install 2.6x more apps than standard but >80% have no manufacturing/ops tool. "Run on spreadsheets + Klaviyo" pattern. Clean wedge.
+
+  - id: 22_spreadsheet_stage_first_ops_hire
+    name: Spreadsheet-stage shops (just hired first ops/warehouse person)
+    tier: B
+    hypothesis: Buying trigger from the brief. First-time MRP buyers, cross-vertical. Most price-sensitive but biggest greenfield. Starter tier candidates.
+
+  # ─── Tier C — Newly addressable once WooCommerce + Amazon connectors ship (post-launch) ───
+  - id: 23_woocommerce_native_au_uk
+    name: WooCommerce-native AU/UK SMB manufacturers
+    tier: C
+    hypothesis: Previously explicitly out-of-market. Woo is large in UK and growing in AU. Different connector + different community (WordPress/WooCommerce meetups, not Shopify Plus).
+
+  - id: 24_amazon_native_fba
+    name: Amazon-native / FBA-driven private-label makers
+    tier: C
+    hypothesis: Different buyer than Shopify-natives. FBA inbound-shipment planning is the killer feature. Higher SKU count, less branded community, more "operator" mindset. Many will be supplements/cosmetics/pet/homewares.
+
+  - id: 25_multichannel_shopify_amazon_woo_retail
+    name: Multi-channel brands (Shopify + Amazon + Woo + retail)
+    tier: C
+    hypothesis: Distinct buyer with channel-reconciliation pain. Pro-tier candidates ($499). Highest LTV. Need all roadmap connectors before they will buy.
+
+  # ─── Tier D — Strategy / tactic precedents to study ───
+  - id: 26_design_partner_programs
+    name: Design-partner / "shape the app" pilot programs in vertical SaaS
+    tier: D
+    hypothesis: Zenoti's "6-8 month design partner with the largest player in a category" playbook is repeatable. Study structure, exclusivity terms, equity vs discount, conversion rate.
+
+  - id: 27_paid_pilot_pricing_vs_free_trial
+    name: Paid-pilot pricing (10-30% of ACV, credited on conversion) vs free-for-X-months
+    tier: D
+    hypothesis: Critical for the user's "free for X months" question. ChartMogul 2025: opt-in trials convert at 8.9%; CC-required 31.4%; paid pilots 40-60%. Free-for-X is likely the wrong model for sub-$5M AU SMB SaaS.
+
+  - id: 28_xero_myob_quickbooks_partner_channels
+    name: Xero / MYOB / QuickBooks ProAdvisor partner-channel playbook
+    tier: D
+    hypothesis: Xero has 3.9M global subs and dominates AU/NZ. ProAdvisor Bronze→Platinum tiers refer aggressively. With all three accounting integrations shipping, this becomes the #1 AU distribution channel for a solo founder. Study commission structures, certification paths, app-store placement economics.
+
+  - id: 29_shopify_plus_tech_partner_and_3pl
+    name: Shopify Plus Tech Partner + 3PL referral programs
+    tier: D
+    hypothesis: Shopify Plus Tech Partner program (separate from App Store) for managed referrals into multi-channel brands. AU 3PL ecosystem (eStore Logistics, Shippit, etc.) is natural complement to MRP. Study referral economics, co-marketing terms.
+
+  - id: 30_unit_economics_solo_founder_vsaas
+    name: Bottom-up unit economics for $99-$499 AU SMB vertical SaaS — solo-founder constraint
+    tier: D
+    hypothesis: SMB SaaS CAC typically $200-300, healthy LTV:CAC ≥ 3:1 (median 3.2:1), SMB churn 8.2× enterprise. At $249 ARPU × 24mo × 80% gross margin ≈ $4,780 LTV → supports ~$1,500 CAC. **Solo founder = near-zero paid budget; CAC must come from founder-led + partner + content time, not cash.** Model two scenarios: realistic 12-month path to AU$3-5K MRR, and aspirational 3-year path to AU$1M ARR.
+
+# ─── Known findings (pre-deep-research, from web-search supplement step) ───
+known_findings:
+  - "AU manufacturing SMB count grew +7.0% YoY to June 2025 — record high (ABS)"
+  - "Katana pricing rewritten 4 times; one reviewer reports 523% increase since signup (G2)"
+  - "Craftybase: hard ceilings at order-line bands; Indie→Business cliff at $89→$199"
+  - "Cin7/DEAR: well-documented post-acquisition price-hike complaints"
+  - "Trial-to-paid: opt-in 8.9% / CC-required 31.4% / paid pilots 40-60% (ChartMogul 2025)"
+  - "Xero ProAdvisor + MYOB Partner + QuickBooks ProAdvisor = primary AU SMB SaaS distribution channel"
+  - "AU coffee roasters: 914 total, 91.7% single-owner"
+  - "AU pet food: 200+ brands, top 5 hold only 30% share, 6.4% online CAGR"
+  - "AU kombucha: 15% CAGR through 2033 ($218M → $766M)"
+  - "Xero/MYOB have no BOMs, no production orders, no WIP — clean wedge for $99-$499 MRP layer"
+  - "Unleashed entry NZ$319-399/mo sits between Manuva Growth ($249) and Pro ($499)"
+
+deferred_or_dropped:
+  - id: cbd_cannabis_adjacent
+    reason: AU OTC CBD rules still narrow; too regulated for SaaS-only entry today
+  - id: print_on_demand_apparel
+    reason: POD shops don't need MRP — no BOM, no inventory, no production orders
+  - id: woocommerce_other_geographies
+    reason: Beyond AU/UK, Woo presence is too fragmented for first-1000 motion

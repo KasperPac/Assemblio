@@ -1,0 +1,107 @@
+{
+  "item_id": "07_homewares_ceramics_hardware",
+  "name": "Homewares, ceramics & small-batch hardware",
+  "tier": "A",
+
+  "market_sizing": {
+    "target_buyer": "Founder / maker-owner (90%+ solo or 2-5 staff). Decision-maker is the maker themselves; partner/spouse often handles ops.",
+    "business_count_au": "Approx. 3,000-6,000 active AU homewares / ceramics / small-batch hardware businesses with a Shopify or Etsy storefront. Australian Ceramics Open Studios 2025 had ~170 participating studios (TACA), the visible-pro tip of a much wider hobby-to-pro funnel. Make It Collective marketplace lists thousands of AU makers across homewares/ceramics/textiles. [uncertain]",
+    "business_count_secondary": "US: ~30,000-50,000 (largest Etsy/Shopify ceramics+homewares cohort globally). UK: ~5,000-8,000. NZ: ~500-1,000. CA: ~3,000-5,000. [uncertain]",
+    "typical_size": "1-3 employees, AU$50K-AU$400K annual revenue. Long tail of hobby-stage <AU$50K plus a thinner pro layer at AU$500K-AU$2M (e.g. Robert Gordon, Mud Australia outliers).",
+    "annual_revenue_band_aud": "100K-500K most common (Starter/Growth tier territory). A small cohort at 1M-2M+ (Pro tier).",
+    "growth_trend": "AU homewares retail market projected USD 37.2B (2025) to USD 58.9B (2031), ~7.9% CAGR (Mobility Foresights). Household-goods retail up 2.3% MoM in June 2025 ABS final release. Indie/handmade growth driven by Instagram + Shopify D2C and a continued post-2020 'shop local / handmade' tailwind.",
+    "seasonality_intensity": 4
+  },
+
+  "fit_and_timing": {
+    "manuva_fit_score": 4,
+    "addressable_window": "now",
+    "roadmap_dependency": "None gating. Xero integration would materially improve close rate (most AU makers use Xero). WooCommerce useful for the ~15% on WordPress.",
+    "typical_tier": "Starter (AU$99) for solo makers, Growth (AU$249) for shops with staff + wholesale.",
+    "regulatory_burden": "1 — no FSANZ/TGA/AICIS. ACCC consumer-safety basics only (labels, country of origin). This is the lowest-compliance Tier A segment.",
+    "lot_batch_criticality": 2,
+    "time_to_value_days": 7
+  },
+
+  "economics": {
+    "incumbent_pricing": "Craftybase Studio AU$30-49/mo, Maker AU$89/mo, Business AU$199/mo. Katana from US$199/mo (per-seat). Many on spreadsheets + Shopify only. Some at high end use Cin7 Core (~AU$349+/mo).",
+    "willingness_to_pay_aud": "AU$99-249/mo is the natural band. Ceramics makers price-sensitive at the bottom; multi-product homewares brands (cushions, candles, ceramics blended SKUs) will pay Growth. Pro tier rare unless they also do wholesale + multi-channel.",
+    "estimated_arpu_aud": "AU$140-170 blended (skewed Starter with ~30% Growth).",
+    "expansion_revenue_potential": "3 — natural path Starter -> Growth when they hire a part-time studio assistant or expand to wholesale. Pro upgrade rare without multi-channel.",
+    "churn_risk": "4 — single-founder businesses, seasonal cashflow, kiln-failure / studio-closure events. Hobby-stage makers churn fastest. Mitigated by annual billing.",
+    "cac_estimate_aud": "Cash CAC AU$50-150 (Shopify App Store + Instagram organic + Australian Ceramics Forum FB presence). Founder-time CAC: ~3-5 hours per closed customer at notional AU$100/hr = AU$300-500.",
+    "cash_cac_affordability": 5,
+    "ltv_estimate_aud": "AU$150 ARPU x 18mo retention x 80% GM = ~AU$2,160. Higher churn drags this lower than supplements/SPF.",
+    "ltv_cac_ratio": "~10:1 on cash CAC; ~4-5:1 once founder-time is internalised. Healthy.",
+    "typical_seat_count": "1-2 (owner + occasional studio assistant). Per-seat incumbents not painful here; flat-price is a soft wedge.",
+    "multi_channel_count": "2-3 (Shopify + Etsy + Faire/wholesale + occasional markets).",
+    "wholesale_b2b_mix": "20-40% wholesale (Faire, gift stores, design retailers) for established homewares brands; <10% for pure ceramicists."
+  },
+
+  "where_they_live": {
+    "primary_channels": "FB groups: 'Australian Ceramics Forum' (~5-10K members [uncertain]); 'Aussie Makers & Creators'; 'Handmade Sellers Australia'. Instagram hashtags: #australianceramics, #handmadeinaustralia, #ausmade, #ceramicsofinstagram. Reddit: r/Pottery (global), r/AusEcomm. The Make It Collective marketplace + community.",
+    "directories_communities": "The Australian Ceramics Association (TACA) — 60+ year-old peak body, publishes The Journal of Australian Ceramics, runs Open Studios (~170 studios in 2025). Potters Online directory (pottersonline.com.au). Make It Collective (themakeitcollective.com.au). Australian Made directory. Craft + Design Canberra. Canberra Potters. Australian Ceramics Community (australianceramicscommunity.com).",
+    "industry_facebook_group_size": "~15,000-30,000 across active AU ceramics/homewares maker groups combined [uncertain]",
+    "podcasts_voices": "Clay Cast (US but AU listenership), The Maker's Yearbook, The Handmade Business Podcast, The Wholesale Formula (for Faire-bound brands), Robert Gordon Australia (brand voice). Local IG voices: @mudaustralia, @robertgordonaustralia, @takeawei. [uncertain on exact ranking]",
+    "events_trade_shows": "Life Instyle (Feb/Aug, Sydney + Melbourne, ~10,000 attendees, sponsorship AU$8-30K) — primary wholesale trade show. Reed Gift Fairs (Feb/Aug, ~15,000 attendees). Australian Ceramics Open Studios (Nov, free, national). Finders Keepers Markets (~50,000 attendees/yr across cities). Magnolia Markets, Bowerbird Markets.",
+    "search_keywords": "['inventory software for ceramicists', 'Craftybase alternative Australia', 'small batch production software Australia', 'pottery studio inventory tracking', 'homewares wholesale inventory software', 'Shopify inventory app handmade Australia', 'COGS tracking for makers', 'BOM software for craft business', 'Faire wholesale inventory sync', 'Etsy Shopify inventory sync Australia']",
+    "community_density": 4,
+    "founder_persona_homogeneity": 4
+  },
+
+  "outreach_fit": {
+    "cold_outbound_feasibility": "3 — Instagram DMs are socially acceptable (norm in this community). Emails findable on most Shopify storefronts. Cold phone calls inappropriate. Best mode: thoughtful IG DM after engaging with content, or comment-then-DM.",
+    "inbound_content_fit": "4 — strong fit. Search-led ('Craftybase alternative', 'inventory for potters') + YouTube tutorial videos showing kiln-batch -> BOM workflow + Instagram reels showing dashboard with their familiar SKU types. Visual case studies convert well.",
+    "founder_market_fit_proxy": "4 — homewares makers do NOT require an insider-credentialed seller. They respond to 'I built this because spreadsheets were eating my Sundays' framing. Outsider-founder narrative is fine, even an asset, if positioned as 'maker-friendly software for makers'. Stronger fit than cosmetics/supplements.",
+    "case_study_acquisition_cost": "Low — likely 3-6 weeks per case study, mix of free-extended-trial + co-marketing on Instagram. Founders here LOVE behind-the-scenes content and will participate readily.",
+    "case_study_appeal": 5
+  },
+
+  "foot_in_door_fit": {
+    "design_partner_appeal": "3 — moderate. Makers want a finished product, not to 'shape an MVP'. But the first 3-5 will accept design-partner framing for free 6 months + roadmap input, especially if a recognisable name is offered as anchor.",
+    "paid_pilot_fit": "2 — low. AU$249 x 3 months upfront is a hard ask for AU$50-200K revenue makers. Paid pilot model is misfit here vs cosmetics/SPF.",
+    "free_trial_extension_fit": "4 — strong fit. '60 days free, then 50% off for 6 months' or '30-day trial, no card' converts well. Cash-light makers respond to no-friction trial. CC-required gating will hurt conversion in this segment specifically — recommend opt-in trial for this vertical despite lower benchmark conversion.",
+    "trial_to_paid_benchmark": "Estimated 6-12% opt-in trial -> paid for this segment (slightly below ChartMogul 8.9% baseline due to hobby-stage tire-kickers, but absolute volume high). CC-required would push to ~25% but suppress signups by ~70%.",
+    "reference_value": 5,
+    "recommended_foot_in_door_motion": "Phase 1: Founder-led outreach + 30-day no-card trial + 50% off for 6 months for first 25 customers. Bait the funnel with 'Craftybase alternative for AU makers' SEO content + 3 visual case studies (Instagram-native ceramic studios). Offer 'Design partner' framing only to first 3 logos — and only ones with >10K IG followers (reference asset). After 25 customers, switch to standard 14-day trial + paid annual incentive.",
+    "rollout_phase": "Phase 1 (months 0-3) — addressable today, lowest friction, highest case-study yield. Use as the volume engine while building higher-WTP segments (cosmetics, SPF, supplements) in parallel."
+  },
+
+  "competitive_context": {
+    "current_dominant_tool": "Craftybase is the dominant SaaS at ~30-40% share among ceramics/homewares makers who use any software. Spreadsheets + Shopify-only at ~50%+ of the segment. Katana minor presence (price + complexity wall). Cin7/Unleashed/MRPeasy near-zero presence here.",
+    "switching_pain": 2,
+    "competitor_gaps_for_this_segment": "Craftybase gaps: hard ceilings at 250/1,000/5,000 order-lines/mo; no real multi-level BOM versioning; no production-order concept (single-step recipe only); weak wholesale pricing tiers; Xero integration exists but limited; no kiln-batch / production-run grouping. Manuva closes: multi-level BOMs with versioning + yield %, production orders, allocation engine, lot/batch (overkill here but future-proof), Shopify-first depth. Spreadsheet users gain: no manual COGS, no manual stock decrement.",
+    "user_satisfaction_signals": "Craftybase scores 4.6/5 on GetApp/SoftwareAdvice. Complaints cluster on: 'Indie -> Business cliff at $89 -> $199 when I hit 250 orders' (Capterra); 'wish it had real production scheduling'; 'reports are basic'. Reddit r/Pottery threads show many ceramicists still on Google Sheets, citing Craftybase as 'overkill' or 'expensive'. AU customers note USD billing as friction.",
+    "competitor_concentration": "Fragmented — Craftybase leads SaaS but >50% of segment uses no MRP tool at all. Low concentration = easier wedge.",
+    "integration_dependency_list": "Must-have: Shopify (have), Xero (roadmap), Etsy (gap — recommend adding), Faire (gap — important for wholesale-bound brands), Australia Post / Sendle / Shippit (gap, but Shopify covers most). Nice-to-have: Klaviyo, Square POS (markets-heavy), Stripe."
+  },
+
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": "3 — Xero ProAdvisor referrals work but accountants rarely advise on MRP specifically for hobby-makers. Better leverage with bookkeepers serving creative SMBs (e.g. Bench-style firms). Improves to 4 once Xero integration ships.",
+    "shopify_app_store_acquisition_fit": 4,
+    "shopify_plus_partner_potential": 1,
+    "tpl_3pl_referral_potential": 2,
+    "industry_association_sponsorship": "TACA (Australian Ceramics Association) — Journal of Australian Ceramics ad slot ~AU$500-1,500; ACOS event sponsor tier ~AU$2-5K [uncertain]. Make It Collective newsletter sponsorship ~AU$300-800/issue [uncertain]. Australian Made directory listing ~AU$300-1,200/yr.",
+    "partner_channel_potential": 3
+  },
+
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "15-30 paying customers in 12 months for a solo founder running Phase-1 motion. Funnel: ~600 trial signups (organic + IG + content), ~10% trial-to-paid = 60... but solo onboarding cap is ~3 onboardings/week active = ~30-40 max served well in year 1.",
+    "realistic_12mo_mrr_contribution_aud": "AU$2,500-4,500 MRR at month 12 (20-25 customers x AU$140 blended ARPU after intro discount expires).",
+    "path_to_first_3k_5k_mrr_aud": "This segment alone can deliver the AU$3-5K MRR floor IF: (1) ship 3 visual case studies by month 3 (Instagram-native ceramic studio + multi-product homewares brand + Faire-wholesale brand), (2) publish 8-10 long-form 'Craftybase alternative AU' + 'inventory for ceramicists' posts by month 4, (3) get on Shopify App Store with maker-focused listing by month 2, (4) sponsor 1-2 TACA newsletter/event slots in Phase 1, (5) IG content cadence 3x/week showing software-meets-studio. Expect ramp: months 1-3 = 0-5 customers (design-partner phase), months 4-6 = 8-15 cumulative, months 7-12 = 20-30 cumulative. Combined with cosmetics (item 01) and SPF (item 02), 12-month MRR floor of AU$3-5K is achievable; this segment provides volume + reference-marketing fuel for higher-WTP segments.",
+    "customers_needed_for_1m_arr_aud": "~500 customers at AU$140 blended ARPU. Too volume-heavy to be the sole path to AU$1M ARR (would saturate solo bandwidth and consume the entire addressable AU pool). Should be ~150-200 customers (~AU$300K ARR contribution) in the AU$1M aspirational mix — i.e. the reference/volume tier, not the revenue tier.",
+    "solo_founder_bandwidth_fit": "4 — onboarding is light (no compliance, simple BOMs), support load moderate (basic 'how do I' questions), no integration heroics required. The risk is volume itself — 30+ active conversations in IG DMs eats founder time.",
+    "break_even_contribution_months": "1-2 months on cash CAC (AU$50-150 / AU$140 ARPU x 80% GM ≈ 0.5-1.3 months). 4-6 months once founder-time is internalised.",
+    "gross_margin_sensitivity": "Low overhead in delivery — no certifications, no audits, no validation packets. Support questions skew 'I don't understand BOMs' rather than 'compliance edge case'. Self-serve docs + 1 Loom video per common question keeps GM near 80%.",
+    "priority_ranking": "3 — solid Phase-1 volume + reference segment, but NOT the revenue engine. Use to manufacture case studies and SEO-velocity that recruit higher-WTP cosmetics/SPF/supplements buyers. Prioritise above co-packers, below cosmetics+SPF.",
+    "risks_and_notes": "Risks: (1) hobby-stage churn — must filter signups to >AU$50K annual revenue or charge enough early to deter tire-kickers; (2) Craftybase is well-loved at the bottom — wedge must lead with 'BOM versioning + production orders + AU-native' not 'cheaper Craftybase'; (3) solo IG-DM management will burn out around 50+ active conversations — need a templates + Loom library by month 4; (4) Etsy + Faire integrations are missing and will be the #1 churn driver if not on roadmap by month 9; (5) marketplace seasonality (Q4 + Mother's Day) means signup pulse, not steady — staff onboarding accordingly. Things to verify before going hard: actual AU SMB count via Make It Collective + TACA member directories; whether Craftybase users would migrate or only spreadsheet users; whether Faire integration is feasible (API access)."
+  },
+
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "industry_facebook_group_size",
+    "podcasts_voices",
+    "industry_association_sponsorship"
+  ]
+}

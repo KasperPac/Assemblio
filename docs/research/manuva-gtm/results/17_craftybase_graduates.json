@@ -1,0 +1,97 @@
+{
+  "item_id": "17_craftybase_graduates",
+  "name": "Craftybase graduates (outgrowing Indie or Business tier)",
+  "tier": "B",
+  "market_sizing": {
+    "target_buyer": "Founder. Almost universally owner-operator in this segment — that's the entire reason they ended up on Craftybase originally.",
+    "business_count_au": "Estimated 200-500 active Craftybase customers in AU (extrapolated from Craftybase's ~10,000 global customer base × ~5% AU share given Etsy/Shopify density). Of those, roughly 80-200 are at or near a tier-cliff at any given quarter — the addressable defector pool. [uncertain]",
+    "business_count_secondary": "US: ~6,000-7,500 (Craftybase's core market). UK: ~800-1500. NZ: ~50-150. CA: ~400-800. Global graduate pool ~1,500-3,000/yr. [uncertain] — based on Craftybase's published 'handcrafted by makers worldwide' positioning and Etsy seller-base distribution.",
+    "typical_size": "1-5 employees, AU$80K-$1M revenue. Graduates specifically are at AU$400K-$1.5M — the band where 1,000-5,000 order lines/mo becomes restrictive.",
+    "annual_revenue_band_aud": "Graduate band: AU$400K-$1.5M. Above $1.5M they've usually already left for Katana / Unleashed / Cin7.",
+    "growth_trend": "Craftybase has restructured pricing 2-3 times; current tiers (Studio $20-49, Pro, Indie $89, Business $199, Growth $349) create progressively steeper cliffs. The Indie→Business cliff at $89→$199 (a 2.2x jump) is the loudest complaint. Capterra reviews specifically flag features (auto-manufacture, material lot tracking, BIN tracking) being locked behind upgrades as 'obvious money grabs'. Generates a steady ~10-20% annual graduate trickle.",
+    "seasonality_intensity": 3
+  },
+  "fit_and_timing": {
+    "manuva_fit_score": 5,
+    "addressable_window": "Now. This is the cleanest 'addressable today' Tier-B segment. Lot tracking ships pre-launch, Shopify integration ships pre-launch, BOMs ship pre-launch. The whole Craftybase value prop is reproducible in Manuva at the Growth tier.",
+    "roadmap_dependency": "Etsy integration is a soft gap (many Craftybase users sell on Etsy, currently no roadmap). Xero integration (post-launch) closes the AU accounting story. Etsy connector is more important for this segment than for Katana defectors.",
+    "typical_tier": "Growth ($249) is the natural landing tier — a clear upgrade from Craftybase Indie ($89) / Business ($199) with no tier cliff. Starter ($99) is competitive with Craftybase Studio/Indie for very small graduates.",
+    "regulatory_burden": "Cross-vertical, mostly cosmetics/candle/soap/jewellery/food. Average 2. Heavier for the soap/cosmetic graduates (AICIS), lighter for jewellery/candle.",
+    "lot_batch_criticality": "4 — Most Craftybase graduates already do material lot tracking (it's a paid Craftybase feature on Indie+). Manuva matches and includes it in Growth.",
+    "time_to_value_days": "5-10 days. Craftybase data exports cleanly (CSV); BOM concepts map 1:1; users already understand material/lot/batch concepts so onboarding is fastest of any segment."
+  },
+  "economics": {
+    "incumbent_pricing": "Craftybase: Studio $20-49/mo (250 order lines), Pro $19/mo (lowest tier), Indie $89/mo (1,000 order lines), Business $199/mo (5,000 order lines), Growth $349/mo (high volume). Annual billing saves 2 months. Auto-manufacture and BIN tracking gated behind higher tiers. USD-billed.",
+    "willingness_to_pay_aud": "AU$199-299/mo. Graduates have already accepted that ops software is a real line item — they're shopping for value, not the cheapest option. Manuva Growth at AU$249 is positioned between Craftybase Business (US$199 ≈ AU$300) and Growth (US$349 ≈ AU$525).",
+    "estimated_arpu_aud": "AU$235/mo blended (mostly Growth, some Starter for the lighter graduates).",
+    "expansion_revenue_potential": "3 — Tier upgrade to Pro for multi-channel and multi-location. Modest add-on potential. Most expansion comes from organic business growth (more order lines, more SKUs).",
+    "churn_risk": "2 — Graduates who pay for ops software are committed operators. Churn driven mostly by business closure or by graduating to enterprise ERP at AU$3M+ revenue (low single-digit % annual). Lower churn than the broader Tier-B set.",
+    "cac_estimate_aud": "Cash CAC AU$60-150 (SEO + content + selective paid). Founder-time CAC ~3-6 hours per close (light onboarding) at $150/hr = $450-900. Blended AU$500-1050.",
+    "cash_cac_affordability": 5,
+    "ltv_estimate_aud": "AU$235 × 32mo × 0.8 GM = AU$6,016.",
+    "ltv_cac_ratio": "~6-10:1 founder-time loaded; very healthy.",
+    "typical_seat_count": "1-3 (Craftybase has no per-seat fees so seat count is not a switching driver — order-line cliff is).",
+    "multi_channel_count": "2-3 — Shopify + Etsy + occasional Faire/wholesale. Etsy is the distinguishing channel vs Katana defectors.",
+    "wholesale_b2b_mix": "20-50% — graduates have typically just opened wholesale channels (Faire) at the time they hit the order-line cliff."
+  },
+  "where_they_live": {
+    "primary_channels": "Reddit r/Etsy (~370K), r/soapmaking (~70K), r/candlemaking (~50K), r/jewelrymaking (~80K), r/shopify (~250K). Facebook groups: 'Australian Candle Makers Network' (~10-20K), 'Australian Soap Makers' (~5-15K), 'Etsy Sellers Australia' (~30-50K), 'Indie Beauty Australia'. Instagram tags #etsyseller, #ausmade, #handmadeAustralia. Craftybase's own community forum and blog comment sections (high commercial intent). [uncertain] on exact group sizes.",
+    "directories_communities": "Australian Made directory, Etsy Maker meetups, Bluethumb (art/maker marketplace), Handmade Canberra/Melbourne/Sydney markets, Indie Beauty Australia, Australian Candle Makers Network, Australian Soap Makers Guild, Craftybase community forum (closed-ish but readable), Faire AU marketplace, MakersHQ communities.",
+    "industry_facebook_group_size": "Approx 50-100K aggregate across AU Etsy / maker / handmade FB groups. Very strong AU FB community presence.",
+    "podcasts_voices": "Etsy Conversations Podcast (Cindy Lou); Soap Hustle podcast; Candle Confidence podcast; The Etsy Coach; The Maker Mindset (AU); Bench Talk for Jewelry Makers. Craftybase's own blog has high SEO authority for the segment and acts as a voice.",
+    "events_trade_shows": "The Finders Keepers Market (multiple AU cities, ~50,000 visitors/yr). Handmade Canberra. Etsy Made Local events. Melbourne/Sydney/Brisbane Pop-Up markets. Bowerbird Design Markets. NICE Festival. AU Soap Makers Guild conference (small but targeted). Most of this segment is reachable via online channels, not events.",
+    "search_keywords": "'Craftybase alternative', 'Craftybase too expensive', 'leaving Craftybase', 'Craftybase Indie vs Business', 'Craftybase outgrowing', 'soap inventory software', 'candle inventory software Australia', 'handmade inventory management', 'Etsy COGS automation', 'BOM software for makers'",
+    "community_density": 5,
+    "founder_persona_homogeneity": 4
+  },
+  "outreach_fit": {
+    "cold_outbound_feasibility": "3 — Etsy shops expose founder + email publicly. Faire AU member directory accessible. Cold DM on Instagram tolerated and often effective for this aesthetic-driven cohort. Cold-call unwelcome.",
+    "inbound_content_fit": "5 — 'Craftybase alternative AU', 'Outgrowing Craftybase Indie tier? Here's what to do', 'How to migrate from Craftybase in a weekend' are all clean SEO targets. Craftybase's own blog has trained the audience to search for this content.",
+    "founder_market_fit_proxy": "4 — Maker community is welcoming to outside founders if the tool is genuinely better and the messaging respects craft values. Solo founder can build credibility through one or two case-study videos.",
+    "case_study_acquisition_cost": "Low — first 5 references reachable in 3-5 weeks via direct outreach to known graduates + 'free migration assist + 3 months free' offer.",
+    "case_study_appeal": 5
+  },
+  "foot_in_door_fit": {
+    "design_partner_appeal": 3,
+    "paid_pilot_fit": 2,
+    "free_trial_extension_fit": 5,
+    "trial_to_paid_benchmark": "CC-required 14-day trial likely 30-40%. Free-3-months-then-half-price-12 likely 45-55%. Graduates are highly motivated and decision-ready. [uncertain]",
+    "reference_value": 5,
+    "recommended_foot_in_door_motion": "Inbound-led + 14-day CC-required trial + 'Craftybase Switcher Pack' (free migration assist, free first month, half-price months 2-3). Pair with 1-2 in-depth comparison blog posts ('Craftybase Business vs Manuva Growth: real cost over 12 months') and a tier-cliff calculator. Active engagement in r/Etsy / r/soapmaking / r/candlemaking with genuine helpful answers (not spam) builds organic discovery.",
+    "rollout_phase": "Phase 1 (months 0-3). Same priority as Katana defectors. Cleanest immediate-revenue Tier-B segment with lowest founder bandwidth cost."
+  },
+  "competitive_context": {
+    "current_dominant_tool": "Craftybase IS the segment definition. Defectors typically arrive at Craftybase from spreadsheets + Etsy. Their alternatives in AU consideration set when graduating: Katana, MRPeasy, Unleashed, sometimes back to spreadsheets in frustration, Inflow Inventory, Zoho Inventory. Manuva is positioned as 'Craftybase but with no order-line cliff and AU accounting included'.",
+    "switching_pain": "2 — Lowest switching pain in this study. Craftybase exports BOMs, materials, recipes cleanly to CSV. Most graduates have <100 SKUs and <30 BOMs. Re-doing Shopify/Etsy integrations is the main time cost.",
+    "competitor_gaps_for_this_segment": "Craftybase: hard order-line ceilings (250/1000/5000) create artificial cliffs unrelated to user value, feature-gating (auto-manufacture, BIN tracking) at higher tiers, USD-billed FX hits AU users, no native Xero/MYOB AU integration, Etsy integration sometimes unreliable per Capterra reviews. Manuva closes: no order-line ceilings, flat AU pricing, all material/lot features included in Growth, native AU accounting (post-launch).",
+    "user_satisfaction_signals": "Capterra: 'blocking the auto-manufacture feature in lower tiers as an obvious money grab', 'price is outrageous compared to other options on the market', 'haven't had good luck with Etsy sales platform integration'. G2: 'steep learning curve and limited integrations'. Reddit r/soapmaking and r/candlemaking carry periodic 'is Craftybase worth the upgrade' threads. Positive feedback exists too — customer support is praised — so messaging must respect that the tool has fans, not trash it.",
+    "competitor_concentration": "Craftybase dominates the sub-AU$1.5M handmade-maker segment globally (~30-50% share). For this Tier-B intent-defined segment, Craftybase IS 100% of the definition.",
+    "integration_dependency_list": "Shopify (table-stakes), Etsy (critical gap for Manuva), Xero/MYOB (post-launch), Faire AU, Square POS for markets, Klaviyo, Australia Post / Sendle, Pirate Ship (US export), Stripe, QuickBooks for US graduates."
+  },
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": 4,
+    "shopify_app_store_acquisition_fit": 5,
+    "shopify_plus_partner_potential": 2,
+    "tpl_3pl_referral_potential": 2,
+    "industry_association_sponsorship": "Etsy seller-group sponsorships (informal, ~AU$200-1500/post). Indie Beauty Australia partnerships ~AU$1-3K/yr. Australian Soap Makers Guild conference sponsorship ~AU$500-3K. Finders Keepers Market booth ~AU$500-2K. Faire AU partner program (free). Most spend should go to G2/Capterra category sponsorship for 'inventory management for small business' (~AU$500-1500/mo). [uncertain] on 2026 rates.",
+    "partner_channel_potential": 4
+  },
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "15-25 paying customers in 12 months. Highest close-rate Tier-B segment due to lowest switching pain + highest community density + sharpest tier-cliff trigger.",
+    "realistic_12mo_mrr_contribution_aud": "AU$3,500-5,800/mo at end of month 12.",
+    "path_to_first_3k_5k_mrr_aud": "This segment can land AU$3-5K MRR ALONE inside 12 months. Path: (1) ship 'Craftybase alternative AU' landing page + tier-cliff calculator, month 0-2; (2) build CSV import wizard for Craftybase exports, month 1-2; (3) seed 3-5 case studies from AU candle/soap/cosmetic graduates via 'free 3 months + migration assist' offer, months 2-5; (4) Reddit-native presence (r/soapmaking, r/candlemaking, r/Etsy) — answer questions, do not spam; (5) AU FB group co-marketing (Australian Candle Makers Network, Australian Soap Makers); (6) by month 12: 18-22 customers × AU$235 = AU$4,200-5,200 MRR. Pairs naturally with indie cosmetics (01) and candle/soap (04) segment plays — same buyer cohort.",
+    "customers_needed_for_1m_arr_aud": "~355 customers at AU$235 blended ARPU. Reachable if Manuva captures 5-10% of Craftybase's annual graduate flow over 3 years.",
+    "solo_founder_bandwidth_fit": "5 — Best bandwidth fit in this study. Workflows are simple, support load is light, customers are self-serve-capable. Solo founder can support 40-60 active customers from this segment.",
+    "break_even_contribution_months": "3-4 months on cash CAC; 5-7 months with loaded founder time.",
+    "gross_margin_sensitivity": "Low — graduates self-serve, support tickets are predictable, no compliance hand-holding. Effective GM 80-85%.",
+    "priority_ranking": "1 — Tied with Katana defectors (16) as highest-priority single segment. Lowest bandwidth cost, highest close-rate, fastest payback, and perfect overlap with the Phase-1 vertical plays (cosmetics 01, candle/soap 04).",
+    "risks_and_notes": "Risks: (1) Craftybase could remove its order-line cliffs in response (low probability — cliffs are core to the pricing model). (2) Etsy connector is a real gap — without it, 30-40% of graduates will hesitate. Prioritise Etsy connector or partner with an Etsy-Shopify sync tool. (3) Some Craftybase reviewers love the tool — messaging must respect that and lead with 'Manuva is where Craftybase customers go when they outgrow the order-line ceiling', not trash-talk. (4) Re-engaging Craftybase community-forum users may violate community guidelines — be careful. Verify before going hard: actual Etsy connector cost / build effort vs partner integration; whether r/soapmaking and r/candlemaking moderators tolerate vendor presence (some subreddits hostile to it); current Craftybase Indie→Business graduate volume in AU (could try to estimate via Faire AU shop signups crossed with Craftybase blog backlinks). EXECUTION DEPENDENCY: Craftybase CSV import wizard must ship in month 1-2 — it's the single largest reduction in switching friction."
+  },
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "trial_to_paid_benchmark",
+    "primary_channels",
+    "industry_association_sponsorship"
+  ]
+}

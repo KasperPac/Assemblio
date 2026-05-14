@@ -1,0 +1,102 @@
+{
+  "item_id": "13_hard_kombucha_lownoalc_beverages",
+  "name": "Hard kombucha & low/no-alc craft beverages",
+  "tier": "A",
+  "market_sizing": {
+    "target_buyer": "Founder / head brewer / production manager. In AU 1-10 person craft beverage companies the founder is almost always the buyer; in 20+ headcount producers the production manager or COO signs.",
+    "business_count_au": "Estimated 40-80 active hard kombucha / low-no-alc craft beverage producers in AU. Independent kombucha scene has thinned post-Coke-Mojo and Lion-Remedy consolidation, but a long tail of <$2M revenue producers persists alongside no/low-alc startups (Lyre's, Naked Life, Heaps Normal adjacent). No published producer census; estimate derived from IBA + Independent Brewers Association overlap + SmartCompany 'independents not dead yet' coverage. [uncertain]",
+    "business_count_secondary": "US: 200-400 hard kombucha brands per Brewers Association adjacent data and Bucha30 customer base. UK: 30-50 (Jarr, LA Brewery, Real Kombucha). NZ: 15-25 (Daily Organics, Good Buzz). CA: 30-60 (RISE, Tonica). All [uncertain] — no single authoritative census exists.",
+    "typical_size": "1-15 employees, AU$200K-$3M annual revenue. Founder-led with 1-3 production staff and 1-2 sales/marketing.",
+    "annual_revenue_band_aud": "Most common band: AU$500K-$2M. Pre-revenue/sub-$250K tail exists but unlikely to buy MRP.",
+    "growth_trend": "AU kombucha overall ~15% CAGR through 2033 (per outline). Hard kombucha specifically forecast at 18.6% CAGR globally (Grand View Research). No/low-alc RTD growing 10-15% CAGR to 2028 (IWSR / Drinks Trade). 31% of AU consumers now buy no-alcohol products.",
+    "seasonality_intensity": 3
+  },
+  "fit_and_timing": {
+    "manuva_fit_score": 3,
+    "addressable_window": "Partially now; fully after excise-reporting capability is built. Lot tracking ships pre-launch which covers the FSANZ-side compliance, but ATO excise reporting for hard kombucha (>1.15% ABV) is a gap.",
+    "roadmap_dependency": "Excise-duty calculation / ATO reporting export is a hard gap for hard-kombucha producers. Tank/fermenter management (not a stock-location concept) is a soft gap. Xero integration is highly desired (AU brewing accountants run on Xero).",
+    "typical_tier": "Growth ($249) for early-stage producers; Pro ($499) once they hit retail distribution and multi-channel reconciliation.",
+    "regulatory_burden": "4 — FSANZ food-safety + ATO excise on alcoholic variants + AQIS for export + state-by-state liquor licensing. Heavier than non-alc beverages and most food categories.",
+    "lot_batch_criticality": 5,
+    "time_to_value_days": "14-21 days. First useful output = batch-level COGS + lot-traceable inventory; longer than cosmetics because brewers expect tank/fermenter abstractions Manuva does not natively model."
+  },
+  "economics": {
+    "incumbent_pricing": "Ekos ~US$300-600/mo (most common in AU craft beverage). Beer30 ~US$250-500/mo. Breww (UK, AU-aware) ~£150-400/mo. Bucha30 kombucha-specific ~US$300-500/mo. Crafted ERP $1K+/mo (enterprise). Spreadsheets + Xero is still the default sub-$1M segment.",
+    "willingness_to_pay_aud": "AU$200-450/mo range realistic. WTP is anchored by Ekos which is the category default and lands ~AU$450-900/mo. Manuva Growth ($249) is a clean undercut; Pro ($499) competes head-on but loses on excise/tank features. [uncertain]",
+    "estimated_arpu_aud": "AU$280/mo blended (mostly Growth with some Pro upgrades after retail-distribution unlock).",
+    "expansion_revenue_potential": "3 — Tier upgrade as producers add retail and export channels. Lot tracking is table-stakes here so cannot be an upsell. Capacity planning and multi-location bonded-warehouse support could drive Pro upgrades. Excise add-on (if built) would be a clear paid module.",
+    "churn_risk": "3 — Hard-kombucha specifically has consolidation churn (acquisition by big beverage) and category-fatigue churn (producers pivot to other RTDs or fold). Mid-life producers (year 2-4) are most stable. Founder burnout is meaningful.",
+    "cac_estimate_aud": "Cash CAC AU$80-150 (founder-led + community); founder-time CAC ~6-10 hours per closed deal (discovery + onboarding hand-holding for batch concepts) at notional $150/hr = AU$900-1500. Blended effective CAC AU$1000-1600.",
+    "cash_cac_affordability": 4,
+    "ltv_estimate_aud": "AU$280 × 24mo × 0.75 GM = AU$5,040.",
+    "ltv_cac_ratio": "~3.2:1 if founder-time is fully loaded; ~30:1 on cash-only CAC. Healthy.",
+    "typical_seat_count": "2-5 users (founder + head brewer + bookkeeper + warehouse). Strong wedge vs per-seat tools (Katana, MRPeasy) at 4+ seats.",
+    "multi_channel_count": "3 — D2C web + wholesale to bottle-shops / cafes + on-premise (taprooms, events). Some also retail (Dan Murphy's, Coles Liquor for the bigger names).",
+    "wholesale_b2b_mix": "60-80% wholesale, 20-40% D2C for established brands; inverse for early-stage. Wholesale invoicing and pricing tiers are a must-have."
+  },
+  "where_they_live": {
+    "primary_channels": "Independent Brewers Association of Australia (IBA) member forums and Slack; 'Booch News (boochnews.com) global kombucha trade media; Australian Hotels Association distributor events; Drinks Trade and Convenience & Impulse Retailing trade press. Reddit r/kombucha (~140K members, global but active AU sub-thread). Facebook groups: 'Australian Craft Beer & Brewing Industry' (~8-15K), 'Kombucha Brewers Australia' (~2-5K). [uncertain] on exact group sizes.",
+    "directories_communities": "Independent Brewers Association of Australia (IBA), Australian Beverages Council, Kombucha Brewers International (KBI — global trade body with ~600 members), Australian Distillers Association (for those expanding into spirit-based RTDs), DrinkWise Australia. Brewers Association of Australia. State craft beverage associations (Brewers Guild of WA, etc.).",
+    "industry_facebook_group_size": "Approx 15-25K aggregate across AU craft brewing / kombucha / craft beverage FB groups. [uncertain]",
+    "podcasts_voices": "Brews News (Matt Kirkegaard) — dominant AU craft brewing podcast and newsletter; 'Booch News; Radio Brews News; Beer is a Conversation (AU); Drinks Trade newsletter. KBI's KombuchaKon talks (US but globally viewed). The 5th Ingredient blog (vendor content but well-read).",
+    "events_trade_shows": "BrewCon (IBA's annual conference, Melbourne/Brisbane, ~1,500 attendees, sponsorship from AU$3-15K). Good Food & Wine Show (multi-city, ~70K attendees). FoodService Australia. Naturally Good Expo (Sydney, ~9,000 attendees, strong for no/low-alc). KombuchaKon (US, virtual options). Fine Food Australia.",
+    "search_keywords": "'brewery inventory software Australia', 'kombucha production software', 'Ekos alternative', 'Beer30 Australia pricing', 'ATO excise software brewery', 'batch tracking craft beverage', 'Xero brewery integration', 'BOM software brewery Australia', 'hard kombucha production tracking', 'low alcohol RTD inventory management'",
+    "community_density": 4,
+    "founder_persona_homogeneity": 3
+  },
+  "outreach_fit": {
+    "cold_outbound_feasibility": "3 — Brand websites and IBA member listings expose founder names and contact emails. LinkedIn is well-populated. Cold email is tolerated if specific (mention their tap list, last release). Cold-calling unwelcome. [uncertain]",
+    "inbound_content_fit": "4 — 'Excise duty calculator for hard kombucha producers', 'Batch traceability for FSANZ audits', 'Ekos vs Manuva for sub-$2M kombucha brewers' are all clean SEO targets. Brews News and 'Booch News may accept guest articles.",
+    "founder_market_fit_proxy": "3 — Brewers value technical credibility (recipe / yield / efficiency conversation) more than industry insider status. Solo founder can build credibility quickly by spending 2-3 weeks shadowing a producer. Lower trust bar than supplements or co-packing.",
+    "case_study_acquisition_cost": "Moderate — first 5 reference customers likely require 3-6 month design-partner motion + on-site visits. Founders are time-poor but proud of their craft so will give logo permission readily.",
+    "case_study_appeal": 4
+  },
+  "foot_in_door_fit": {
+    "design_partner_appeal": 4,
+    "paid_pilot_fit": 3,
+    "free_trial_extension_fit": 3,
+    "trial_to_paid_benchmark": "Estimated 15-25% for CC-required trial in this segment given complexity of switching from Ekos / spreadsheets. Paid pilot ($249/mo × 3 mo, credited) likely 35-50%. [uncertain] — no segment-specific benchmark available.",
+    "reference_value": 4,
+    "recommended_foot_in_door_motion": "Design partner (free 6mo + roadmap input on excise reporting + tank/fermenter abstraction) for the first 2-3 logos, then transition to paid pilot ($249/mo, 3 months, credited on conversion) once excise module ships. Founder-led outbound to IBA members + 'Booch News mentions. Co-marketing with Xero ProAdvisors who specialize in brewery accounting (small but identifiable cohort).",
+    "rollout_phase": "Phase 2 (months 3-6, after lot tracking is battle-tested and Xero integration is live). Hard-kombucha specifically gated on excise module — Phase 3 unless that ships sooner."
+  },
+  "competitive_context": {
+    "current_dominant_tool": "Ekos is the dominant craft-beverage ERP in AU breweries (probably 25-40% of >$1M producers). Spreadsheets + Xero is the default for <$1M producers (40-60%). Breww is gaining UK/AU share with its AU-specific excise module. Beer30, Bucha30, Crafted ERP, and BrewPlanner all have presence. Katana and Unleashed pick up cross-vertical share where founders came from another industry. [uncertain] on exact share splits.",
+    "switching_pain": "4 — Recipe / batch history migration is painful; ATO excise records must be preserved; integration with point-of-sale (taproom) and Xero must not break. Multi-month migration window typical.",
+    "competitor_gaps_for_this_segment": "Ekos: USD-billed, expensive at AU$ FX (~AU$600/mo), no native Xero AU integration, weak on multi-channel D2C ecommerce. Bucha30: kombucha-specific but small vendor, US-centric, no AU excise. Spreadsheets: no lot traceability, no FSANZ audit trail. Katana: per-seat, no excise, weak on batch concepts. Manuva gaps to close before competing seriously: excise duty reporting, tank/fermenter modelling, taproom POS integration.",
+    "user_satisfaction_signals": "Ekos G2/Capterra: complaints about price increases, slow support, US-centric features. Reddit r/kombucha and r/craftbeer: recurring threads on 'cheapest brewery software' and 'spreadsheet alternatives'. Brews News forum: periodic vendor comparison threads. [uncertain] on direct quotes — would require dedicated forum scrape.",
+    "competitor_concentration": "Fragmented — no single tool >35%. Ekos leads but Breww, Bucha30, Beer30, Crafted ERP, Katana, and spreadsheets all hold meaningful share.",
+    "integration_dependency_list": "Xero (critical AU), MYOB (some), POS for taprooms (Square, Lightspeed, Vend), Shopify (D2C), Untappd / Brews News brewery profile, ATO excise XML export, Faire (some wholesale), Australia Post / Sendle / Shippit, EFTPOS distributor invoicing."
+  },
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": 4,
+    "shopify_app_store_acquisition_fit": 2,
+    "shopify_plus_partner_potential": 2,
+    "tpl_3pl_referral_potential": 2,
+    "industry_association_sponsorship": "IBA (Independent Brewers Association of Australia) — BrewCon sponsorship tiers AU$3K-25K; newsletter slots ~AU$500-1500. Australian Beverages Council membership ~AU$2-5K/yr. Kombucha Brewers International global membership ~US$500/yr. Brews News newsletter sponsorship ~AU$500-2000/issue. [uncertain] on exact 2026 rates.",
+    "partner_channel_potential": 3
+  },
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "3-6 paying customers in 12 months. Excise gap + niche size + onboarding complexity caps faster acquisition. Most likely path: 2 design partners (months 3-6), 2-4 paid pilots converting (months 6-12).",
+    "realistic_12mo_mrr_contribution_aud": "AU$700-1700/mo at end of month 12.",
+    "path_to_first_3k_5k_mrr_aud": "This segment alone will NOT hit AU$3-5K MRR in 12 months. It contributes 15-30% of the target. Path: (1) close 2 design partners via direct outreach at BrewCon + IBA member list, free 6 months in exchange for excise-feature input and logo; (2) ship excise-reporting MVP in months 4-6; (3) convert design partners to Growth tier; (4) inbound from 'Ekos alternative AU' SEO + Brews News article; (5) 4 customers × AU$249 = AU$1,000 MRR by month 12. Pair with the higher-volume segments (indie cosmetics, candle, coffee) to reach the AU$3-5K target.",
+    "customers_needed_for_1m_arr_aud": "~300 customers at AU$280/mo blended ARPU. Achievable only if hard-kombucha is bundled with the broader craft-beverage (cider, RTD, non-alc) category and excise tooling becomes a competitive moat.",
+    "solo_founder_bandwidth_fit": "2 — Onboarding requires understanding of batch / tank / excise workflows. Each design-partner deployment likely 30-50 hours of founder time. Support load high until excise module is automated.",
+    "break_even_contribution_months": "5-7 months at AU$249 Growth + 75% GM (cash CAC only); 12-18 months if founder-time is loaded.",
+    "gross_margin_sensitivity": "Material erosion — excise compliance support is question-heavy, batch concepts confuse onboarding, and brewers expect responsive support during stocktake / month-end. Effective GM 65-75% rather than 80%+.",
+    "priority_ranking": "3 — Solid economics and high case-study appeal, but excise gap + niche size + heavy onboarding push it behind indie cosmetics (01), candle/soap (04), and coffee roasters (05) in the GTM sequence. Worth 1-2 design-partner slots for visual brand and to validate adjacency into broader craft beverage.",
+    "risks_and_notes": "Risks: (1) Excise-reporting gap means hard-kombucha producers cannot self-serve onto Manuva today — must be roadmapped or de-prioritised. (2) Ekos is entrenched in producers >$2M revenue and will be hard to displace; sweet spot is sub-$1M brewers still on spreadsheets. (3) Coca-Cola / Lion / Bega consolidation has thinned the AU independent pool to a small number of high-quality logos. (4) Hard-kombucha specifically is a fashion-cycle category — non-alc and low-alc adjacent (Heaps Normal, Lyre's-style) is a safer bet long-term. Verify before going hard: actual AU IBA brewery member count by revenue band; whether Breww's AU excise module is now sufficient (would close the gap directly); whether one design partner can co-fund excise module via paid pilot."
+  },
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "willingness_to_pay_aud",
+    "primary_channels",
+    "industry_facebook_group_size",
+    "cold_outbound_feasibility",
+    "trial_to_paid_benchmark",
+    "current_dominant_tool",
+    "user_satisfaction_signals",
+    "industry_association_sponsorship"
+  ]
+}

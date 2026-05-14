@@ -1,0 +1,96 @@
+{
+  "item_id": "28_xero_myob_quickbooks_partner_channels",
+  "item_name": "Xero / MYOB / QuickBooks ProAdvisor partner-channel playbook",
+  "tier": "D",
+  "type": "strategy_tactic",
+  "market_sizing": {
+    "target_buyer": "Two-tier buyer model: (1) the accountant/bookkeeper partner who refers Manuva to their SMB client; (2) the SMB manufacturer who is the end-customer. Channel decision-maker is the accountant — Manuva must win them first.",
+    "business_count_au": "Xero AU: ~250,000+ accountants/bookkeepers globally use Xero, with AU representing the largest concentration; ~30,000-50,000 AU practitioners [uncertain]. MYOB partner program: tens of thousands of AU/NZ practices. AU Tax & BAS Agent register ~30,000+ registered practitioners. AU has the densest accountant-channel for SMB SaaS in the world.",
+    "business_count_secondary": "Xero global: 250,000+ accountants across NZ/UK/US/CA — same playbook portable. QuickBooks ProAdvisor: ~250,000+ globally (US-heavy). MYOB: AU/NZ only.",
+    "typical_size": "Partner firms: 1-50 staff. Sweet spot for Manuva: 3-15 staff bookkeeping/CFO-for-hire practices that focus on ecommerce/manufacturing clients (specialist segment within the channel).",
+    "annual_revenue_band_aud": "Partner firms AU$300K-$5M revenue. Their SMB clients = Manuva's target market.",
+    "growth_trend": "Xero added net ~30,000 AU subs in FY25 [uncertain]; accountant channel growing 3-5% per year. App-marketplace revenue share is the fastest growing distribution channel for AU SMB SaaS.",
+    "seasonality_intensity": 3
+  },
+  "fit_and_timing": {
+    "manuva_fit_score": 5,
+    "addressable_window": "after Xero+MYOB+QuickBooks ship (months 3-9). Xero first (largest AU share). MYOB second (AU/NZ). QuickBooks third (mostly US/UK, but Intuit Business Affiliate program in AU is functional).",
+    "roadmap_dependency": "Xero integration (must), MYOB integration (must for AU SMB), QuickBooks integration (nice-to-have AU, must for US/UK). Xero App Store certification (3 active customers minimum during review window).",
+    "typical_tier": "Channel refers across all tiers; Growth ($249) is most common landing tier for accountant-referred SMBs",
+    "regulatory_burden": 1,
+    "lot_batch_criticality": 1,
+    "time_to_value_days": "Accountant partner needs <30 days from first conversation to first client referral to feel the channel works"
+  },
+  "economics": {
+    "incumbent_pricing": "Xero App Store referral economics (2026): Xero pays 85% of revenue to app partner on Xero-billed subscriptions, OR 15% commission to Xero on commercial-billing referrals. Xero ProAdvisor tier benefits: Partner→Bronze→Silver→Gold→Platinum points-based, no direct cash commission to advisor on app referrals but unlocks software discounts and directory listing. MYOB Partner Program: commission paid for first 5 years of referred subscription (rate not public, ~10-20% typical); +5 points per MYOB Business referral, +1 point per managed client file. QuickBooks Business Affiliate Program (AU): 50% off 6 months promo to customers + cash bonus per confirmed sub (amount confidential after acceptance). QuickBooks ProAdvisor: training/recognition program, no direct referral cash.",
+    "willingness_to_pay_aud": "Accountant partners do NOT pay for tools — they expect free practitioner accounts for evaluation, and they expect 10-25% revenue share or annual cash bonus per client referred. Manuva budget: 15-20% revenue share for first 24 months feels right.",
+    "estimated_arpu_aud": "Manuva-referred client ARPU AU$249-$499; Manuva pays partner ~AU$40-$100/mo per active referral (15-20% rev share, capped at 24 months)",
+    "expansion_revenue_potential": "5 — accountant channel produces multi-client referrals. A single 'evangelist' bookkeeper specialising in ecommerce/manufacturing can refer 10-30 clients in year 1.",
+    "churn_risk": "1 — accountant-referred customers churn 30-50% less than direct customers (they have a trusted advisor enforcing usage)",
+    "cac_estimate_aud": "Cash CAC: AU$200-$600 (15-20% rev share × 24mo ≈ AU$1,200-$2,400 over LTV, but small monthly bites). Founder-time CAC: 60-120 hours upfront to recruit 10-20 partner accountants; then ~2 hours/month maintenance per active partner. Effective CAC per end-customer AU$200-$500 once channel is warm.",
+    "cash_cac_affordability": 5,
+    "ltv_estimate_aud": "AU$249 ARPU × 36mo retention × 80% margin = AU$7,200 LTV; net AU$5,500 after channel commission",
+    "ltv_cac_ratio": "11-27 : 1 once channel is warm (highest of any motion)",
+    "typical_seat_count": "n/a",
+    "multi_channel_count": "n/a",
+    "wholesale_b2b_mix": "n/a"
+  },
+  "where_they_live": {
+    "primary_channels": "Where Manuva sources partner accountants: Xero Advisor Directory (search by 'inventory', 'manufacturing', 'ecommerce' specialism), MYOB Partner directory, LinkedIn ('Xero bookkeeper Australia ecommerce' search), Bookkeepers Hub Australia FB group (~5-10K), Australian Bookkeepers Network (ABN), Institute of Certified Bookkeepers (ICB) AU directory (~10,000 members), Xerocon AU attendee list, AccountTech AU community.",
+    "directories_communities": "Xero Advisor Directory, MYOB Partner Directory, QuickBooks Find a ProAdvisor, ICB Australia member directory, CPA Australia (~170,000 members), CA ANZ (~135,000 members), ATMA (Association of Taxation and Management Accountants), Tax Practitioners Board register (~30,000+ registered)",
+    "industry_facebook_group_size": "[uncertain] ~20,000-40,000 active members across AU bookkeeper/accountant FB groups",
+    "podcasts_voices": "From the Trenches (Heather Smith — Xero/MYOB expert), Cloud Accounting Podcast, AU Bookkeeper Podcast, Two Drunk Accountants, Xero blog + Xero TV, Heather Smith's Anise Consulting content",
+    "events_trade_shows": "Xerocon AU (Sydney/Melbourne, ~3,000+ attendees, sponsorship AU$15-100K — out of solo founder reach but free attendance ~AU$1,500 ticket), MYOB Partner Connect, ICB Conference AU, Accountech Live, AccountantsDaily events. Free leverage: present at local Xero User Group meetups (free + warm audience).",
+    "search_keywords": "Xero inventory app, MYOB inventory app, manufacturing inventory Xero integration, BOM software Xero, ecommerce bookkeeper Australia, Xero app marketplace",
+    "community_density": 5,
+    "founder_persona_homogeneity": 4
+  },
+  "outreach_fit": {
+    "cold_outbound_feasibility": "4 — accountants are responsive to specialist outreach ('I'm building an MRP that plugs into Xero for ecommerce manufacturers'); 8-15% response rate when targeting Xero specialists, vs 1% generic.",
+    "inbound_content_fit": "5 — 'How to set up Xero + manufacturing for a $1M ecommerce brand' content + Xero/MYOB integration tutorials are gold for inbound. Heather Smith and similar voices distribute well.",
+    "founder_market_fit_proxy": "4 — accountants are the most fact-driven buyer in the funnel. Engineering background is actually respected. Outsider status is fine if Manuva demonstrates Xero integration quality.",
+    "case_study_acquisition_cost": "Medium-high — needs 3-6 months of warming a partner relationship before first referral lands",
+    "case_study_appeal": 3
+  },
+  "foot_in_door_fit": {
+    "design_partner_appeal": 3,
+    "paid_pilot_fit": 3,
+    "free_trial_extension_fit": 4,
+    "trial_to_paid_benchmark": "Accountant-referred end-customers: free trial works here BECAUSE the advisor is shepherding the decision. Expect 35-50% trial-to-paid for accountant-referred trials (vs 8.9% cold opt-in).",
+    "reference_value": 4,
+    "recommended_foot_in_door_motion": "RECOMMENDED MANUVA PARTNER-CHANNEL TACTIC: Two-stage motion. STAGE 1 (months 3-9 as Xero/MYOB integrations ship): Apply for Xero App Store listing (need 3 paying customers using the integration first — use Charter Partner customers from item 26 to satisfy this). Build free Xero/MYOB Practitioner Plans for partner accountants. Recruit 10-15 specialist accountants who focus on ecommerce/manufacturing SMBs — find them via Xero Advisor Directory search and LinkedIn. Offer 20% lifetime rev-share on referred clients capped at 24 months, free Manuva Pro for the practice itself, and quarterly 'Manuva insider' Zoom on roadmap. STAGE 2 (months 9-18): publish co-branded case studies with active partner accountants; sponsor 1-2 Xero User Group local meetups (~AU$500-1,500 each); pitch a talk at Xerocon AU. By month 18, target 30-50 active partner accountants producing 50%+ of new MRR.",
+    "rollout_phase": "Phase 2 (months 3-9, as accounting connectors ship) ramp; Phase 3 (months 9-18) scale"
+  },
+  "competitive_context": {
+    "current_dominant_tool": "Current best-practice partner playbook in AU SMB SaaS: Xero App Store listing + ProAdvisor relationship-building is the #1 distribution channel. Practical Accounting + Hubdoc + Practice Ignition + Karbon all built early scale this way. Inventory peers: Unleashed, Cin7, DEAR, MRPeasy all have Xero listings. Manuva's MRP layer is differentiated because Xero/MYOB have no BOMs and no WIP — clear wedge.",
+    "switching_pain": "n/a",
+    "competitor_gaps_for_this_segment": "Most MRP incumbents treat Xero integration as a checkbox, not a channel. Manuva opportunity: invest in genuine accountant-led GTM (rev share, practitioner training, co-marketing) that no current MRP competitor runs well in AU. Unleashed has the strongest AU accountant channel currently.",
+    "user_satisfaction_signals": "Xero App Store reviews of MRP apps cluster around: 'sync broke and lost my COGS', 'no support', 'too expensive for SMB clients'. Accountant podcast complaints: MRP apps that don't handle multi-currency or AU GST cleanly.",
+    "competitor_concentration": "Xero ~60% AU online accounting; MYOB ~20-25%; QuickBooks small but growing in AU",
+    "integration_dependency_list": "Xero OAuth2 + Practice Manager API + multi-org support; MYOB AccountRight + MYOB Business APIs; QuickBooks Online API; AU GST handling; multi-currency; bank-feed reconciliation"
+  },
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": 5,
+    "shopify_app_store_acquisition_fit": 3,
+    "shopify_plus_partner_potential": 3,
+    "tpl_3pl_referral_potential": 3,
+    "industry_association_sponsorship": "ICB AU (~AU$2-10K newsletter slots), CPA Australia industry-specific newsletters (AU$5-20K), Accountants Daily sponsored content (AU$2-8K), local Xero User Group meetups (often free or AU$200-500), Xerocon sponsorship (AU$15-100K — out of solo budget)",
+    "partner_channel_potential": 5
+  },
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "10-25 customers in months 6-12 (channel takes 3-6 months to warm; first referrals land month 6-9; compound month 9-12). 5-8 active partner accountants by month 12.",
+    "realistic_12mo_mrr_contribution_aud": "AU$2,500-$6,000 net (10-25 customers × $249 × 80% net after rev share)",
+    "path_to_first_3k_5k_mrr_aud": "Accountant channel is THE primary path to AU$3-5K MRR for a solo founder, given Manuva's near-zero ad budget. Sequence: (1) Months -3 to 3 sign 3 Charter Partners to satisfy Xero App Store '3 active customers' bar; (2) Month 3-6 submit Xero App Store listing + start recruiting 10-15 specialist Xero advisors; (3) Month 6-9 first accountant referrals land + ship MYOB integration; (4) Month 9-12 30-50% of new MRR comes from channel. End of year 1: AU$3-6K MRR with 30-60% channel-attributed.",
+    "customers_needed_for_1m_arr_aud": "~350 customers at AU$249 blended ARPU. Channel can plausibly drive 60-70% of this over 3 years (200-250 customers) via 30-50 active partner accountants × 5-8 referrals each.",
+    "solo_founder_bandwidth_fit": "4 — channel partners are higher-leverage than direct customers (each partner is 5-10x the impact). Bandwidth challenge: warming 10-15 accountants requires 60-120 hours upfront, then maintenance is light. Best fit for solo founder who is willing to invest in 1-1 partner education in months 3-9.",
+    "break_even_contribution_months": "4-6 months (CAC AU$300-500 ÷ AU$200 net contribution/mo)",
+    "gross_margin_sensitivity": "Channel revenue share (15-20%) reduces gross margin from 80% to ~64-68%; offset by lower direct CAC and lower churn. Net economics better than direct in the long run.",
+    "priority_ranking": "1 — single highest-leverage GTM tactic for a solo AU founder. Pair this with item 26 (design partners) as the two core motions. Items 25/29/27 are layers on top.",
+    "risks_and_notes": "RECOMMENDED MANUVA-SPECIFIC TACTIC PARAGRAPH: Lock the Xero App Store path as the #1 distribution motion. Pre-launch: build clean Xero OAuth + COGS/inventory sync (Xero has no BOMs/WIP — Manuva fills the manufacturing gap above Xero). Months 3-6: ship the integration, submit App Store listing (Manuva needs 3 active integration customers — use Charter Partners), begin recruiting 10-15 specialist Xero advisors focused on ecommerce/manufacturing via Xero Advisor Directory + LinkedIn. Offer 20% rev share for 24 months + free Manuva Pro for the practice + quarterly insider Zoom. Months 6-9 ship MYOB integration; add MYOB partner program enrollment. Defer QuickBooks ProAdvisor work to year 2 (AU value low; AU customers don't run QuickBooks much). Target by month 12: 5-8 active partner accountants producing 30-50% of new MRR. Risks: (1) Xero App Store certification can take 3-6 months — start now; (2) 'Cloud Accounting Burnout' — accountants are pitched 5-10 apps weekly, Manuva needs sharp 'we do BOMs and WIP that Xero can't' messaging; (3) rev-share economics need testing — 20% may be too high once channel scales; commit to 12-month review; (4) MYOB AccountRight desktop legacy is painful integration territory — verify scope before promising MYOB customers; (5) lifetime free Manuva Pro for partner accountants can erode value if a partner has 0 referrals — add a 6-month activity threshold."
+  },
+  "uncertain": [
+    "market_sizing.business_count_au",
+    "market_sizing.growth_trend",
+    "where_they_live.industry_facebook_group_size"
+  ]
+}

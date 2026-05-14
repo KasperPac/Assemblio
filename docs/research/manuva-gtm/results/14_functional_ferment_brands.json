@@ -1,0 +1,100 @@
+{
+  "item_id": "14_functional_ferment_brands",
+  "name": "Functional / gut-health ferment brands",
+  "tier": "A",
+  "market_sizing": {
+    "target_buyer": "Founder. Almost universally owner-operated in AU until $1M+ revenue, where a head of production sometimes joins.",
+    "business_count_au": "Estimated 150-300 commercial fermented-food producers in AU (sauerkraut, kimchi, kefir, yoghurt, miso, water kefir, vinegars). No central census. Visible brands: Kehoe's Kitchen (QLD), Gutsy Ferments (QLD), The Fermentary (VIC), Guty Kefir, Bird Tree Farm (Bottled Culture), Peace Love & Vegetables, Buchi, Eumarrah, Phamish, Gut Feeling Ferments. Long tail of farmer's-market sellers (200-500 add'l) below MRP threshold. [uncertain]",
+    "business_count_secondary": "US: 800-1500 (Wildbrine, Cleveland Kraut, Farmhouse Culture, Hosoo, Lacto Pickling). UK: 100-200 (Vadasz, The Cultured Collective, Loving Foods, Mother Foods). NZ: 30-60 (Be Nourished, Pickled Pink). CA: 80-150 (Pyramid Ferments, Karthein's). All [uncertain].",
+    "typical_size": "1-8 employees, AU$100K-$1.5M annual revenue. Median ~AU$300K. Cottage-industry tail under AU$100K is large but unlikely to buy MRP.",
+    "annual_revenue_band_aud": "Most common: AU$250K-$750K.",
+    "growth_trend": "AU fermented food & beverage market 7.10% CAGR 2025-2033 (IMARC). AU prebiotic/probiotic foods 15.80% CAGR 2025-2033 to USD 9.9B (IMARC). 70%+ of probiotics share goes to dairy/fermented foods. Functional gut-health is one of the fastest-growing AU food sub-categories. Independent ferment brands are gaining shelf space at IGA, Harris Farm, Drakes, and woolies independents.",
+    "seasonality_intensity": 2
+  },
+  "fit_and_timing": {
+    "manuva_fit_score": 4,
+    "addressable_window": "Now. Lot tracking ships pre-launch which is the only hard gate. No excise like alcoholic ferments.",
+    "roadmap_dependency": "None hard. Xero integration strongly desired (almost universal in AU food SMB). Wholesale invoicing + price-tier support useful. Cold-chain expiry tracking is helpful — Manuva's lot+expiry already covers this.",
+    "typical_tier": "Starter ($99) for sub-AU$300K producers; Growth ($249) is the natural home; Pro ($499) only for those with national distribution.",
+    "regulatory_burden": "3 — FSANZ Standard 1.2 labelling, state food-business licence + council registration, batch traceability for recalls, allergen management. Lighter than supplements/TGA, heavier than candles/cosmetics.",
+    "lot_batch_criticality": 5,
+    "time_to_value_days": "10-14 days. Workflow is simple — ingredient + jar/lid/label BOM, batch yield, lot tracking through fermentation cycle, wholesale pricing."
+  },
+  "economics": {
+    "incumbent_pricing": "Spreadsheets + Xero is the default for 70-85% of the segment. Craftybase $59-199/mo for hobby graduates. Katana $199-359/mo for the larger end. Unleashed NZ$319-399. Cin7 Core $349+. Ekos is too brewery-flavoured for vegetable ferments and rarely seen. Kehoe's-tier producers (top 5%) run MYOB Exo or NetSuite.",
+    "willingness_to_pay_aud": "AU$99-249/mo realistic. Sub-AU$500K producers anchor heavily on Craftybase pricing. AU$249 Growth tier is justifiable once wholesale + lot tracking + Xero are all needed.",
+    "estimated_arpu_aud": "AU$170/mo blended (mix of Starter and Growth).",
+    "expansion_revenue_potential": "3 — Tier expansion as producers add national-distribution wholesale. Add-on for FSANZ recall-drill reports could be a Pro upgrade. Multi-location expansion (commercial kitchen + co-pack site) drives Pro tier.",
+    "churn_risk": "3 — Farmer's-market-stage businesses fold often; once a brand is in 50+ independent grocers, retention is strong (typical food-SMB 3-5% monthly churn). Founder burnout meaningful in cottage segment.",
+    "cac_estimate_aud": "Cash CAC AU$40-100; founder-time CAC ~3-5 hours per close (light onboarding once template BOMs exist) at $150/hr = $450-750. Blended AU$500-850.",
+    "cash_cac_affordability": 5,
+    "ltv_estimate_aud": "AU$170 × 22mo × 0.78 GM = AU$2,920.",
+    "ltv_cac_ratio": "~3.7:1 with founder-time loaded; very healthy.",
+    "typical_seat_count": "1-3 (founder + part-time helper + bookkeeper).",
+    "multi_channel_count": "2-3 — farmer's markets + D2C web + wholesale to independent grocers. Some add Faire (now in AU).",
+    "wholesale_b2b_mix": "50-75% wholesale once past hobby stage."
+  },
+  "where_they_live": {
+    "primary_channels": "Australian Farmers' Markets Association (AFMA) network (~165 markets nationally); Facebook groups: 'Australian Fermenters' (~10-20K members [uncertain]), 'Fermenting Australia', 'Sourdough & Fermenting Tasmania', 'Kombucha Brewers Australia'. Instagram tags #fermentedfoods, #ausferments, #gutsyferments. Reddit r/fermentation (~430K global). LinkedIn AU Food Innovation Centres groups.",
+    "directories_communities": "Australian Farmers' Markets Association (AFMA), Sustainable Table, Australian Food & Grocery Council (AFGC), Slow Food Australia, Open Food Network Australia, Organic Federation of Australia (OFA), Foodbank/Foodprint directories, Naturally Good Expo exhibitor list, Fine Food Australia exhibitor list, Cert IV Artisan Fermented Products (TAFE FBP40621) alumni networks.",
+    "industry_facebook_group_size": "Approx 25-50K aggregate across AU fermenting / artisan food / farmer-market FB groups. [uncertain]",
+    "podcasts_voices": "Sandor Katz (global voice — books and Substack); The Whole Story Podcast (AU artisan food); Eat Drink Farm (AU); Slow Food Melbourne newsletters; Sustainable Table podcast; Sharon Flynn (The Fermentary) talks and workshops; Holly Davis (Ferment for Good) author.",
+    "events_trade_shows": "Naturally Good Expo (Sydney, ~9,000 attendees, sponsorship AU$3-12K); Fine Food Australia (Melbourne/Sydney rotating, ~25,000 attendees, AU$5-25K booths); local farmer's market days (free attendance); Slow Food Australia gatherings; Eat Drink Adelaide; The Real Food Festival; Sustainable Table dinners; AFMA conference.",
+    "search_keywords": "'fermented food production software', 'sauerkraut batch tracking Australia', 'kimchi inventory management', 'food production software for farmers market', 'FSANZ batch traceability software', 'Craftybase for food', 'food business inventory Australia', 'small batch food manufacturing software', 'cold-chain lot tracking AU', 'wholesale invoicing fermented foods'",
+    "community_density": 4,
+    "founder_persona_homogeneity": 4
+  },
+  "outreach_fit": {
+    "cold_outbound_feasibility": "4 — Brands are tiny, websites list founder + email, Instagram DMs are well-received. AFMA member lists publicly available. LinkedIn coverage is partial but improving.",
+    "inbound_content_fit": "5 — 'How to build FSANZ-ready batch records for a fermented-foods business', 'Sauerkraut BOM template for Australian producers', 'Craftybase vs Manuva for ferments' are all clean SEO targets with low competition.",
+    "founder_market_fit_proxy": "4 — Ferment-segment founders trust outsiders more readily than supplement/cosmetic chemists. Process is craft-based but not credential-gated. Solo founder can land logos with a working BOM template and a Xero integration story.",
+    "case_study_acquisition_cost": "Low — first 5 references reachable within 4-6 weeks via direct outreach to known indie brands + AFMA newsletter. Visual case-study material (glass jars, ferment cellars) is plentiful.",
+    "case_study_appeal": 4
+  },
+  "foot_in_door_fit": {
+    "design_partner_appeal": 4,
+    "paid_pilot_fit": 3,
+    "free_trial_extension_fit": 4,
+    "trial_to_paid_benchmark": "Estimate 20-30% for CC-required 14-day trial. Free-for-3-months extension to half-price-for-12 likely converts 35-45% if Xero integration is included. [uncertain]",
+    "reference_value": 4,
+    "recommended_foot_in_door_motion": "Founder-led outbound + 14-day CC-required trial. 2-3 early design partners (free 3 months in exchange for FSANZ recall-drill feedback + logo). Co-marketing with AFMA newsletter and Sustainable Table. Inbound funnel through 'Craftybase alternative for ferments' + 'FSANZ batch traceability' SEO. Faire/Open Food Network adjacency is a partner-channel angle worth testing.",
+    "rollout_phase": "Phase 1 (months 0-3). Fully addressable today; low founder-credibility bar; good case-study material; high overlap with adjacent food segments (packaged foods 11, kombucha 13)."
+  },
+  "competitive_context": {
+    "current_dominant_tool": "Spreadsheets + Xero (70-85% of segment). Craftybase (5-15% — Indie tier graduates). Katana (3-7% — those who came from a cross-vertical referral). Unleashed (2-5%). Cin7 Core (rare, only at Kehoe's scale). No dominant vertical-specific tool exists for fermented foods. [uncertain] on splits.",
+    "switching_pain": "2 — Migrating from spreadsheets to Manuva is straightforward; recipe count is low (typically 5-25 SKUs); main pain is wholesale customer + pricing-tier setup.",
+    "competitor_gaps_for_this_segment": "Craftybase: low order-line ceiling at $89 Indie tier, weak wholesale invoicing, no lot expiry. Katana: per-seat painful, no native Xero AU, weak on cold-chain expiry. Spreadsheets: no audit trail, no recall-drill reports. Manuva's full lot+expiry+wholesale tier-pricing combination at AU$249 is a clean wedge that nothing else offers at this price point in AU.",
+    "user_satisfaction_signals": "Reddit r/fermentation and AU artisan-food FB groups carry frequent 'spreadsheet alternative' posts. Craftybase Indie-tier complaints about order-line cliff ($89→$199) appear in user threads. No major Capterra/G2 dataset for fermented-foods specifically — too niche. [uncertain] on direct quotes.",
+    "competitor_concentration": "Highly fragmented — no tool above 15% share.",
+    "integration_dependency_list": "Xero (critical), Shopify (D2C), Faire AU, Open Food Network, Australia Post / Sendle (cold-pack shipping), Klaviyo, Square / Tyro (farmer's market POS), Stripe."
+  },
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": 5,
+    "shopify_app_store_acquisition_fit": 3,
+    "shopify_plus_partner_potential": 1,
+    "tpl_3pl_referral_potential": 2,
+    "industry_association_sponsorship": "AFMA newsletter ~AU$200-800/issue; AFMA conference sponsorship AU$1-5K. Slow Food Australia partnerships ~AU$1-3K. Sustainable Table newsletter ~AU$300-1000. Naturally Good Expo small-stand AU$3-7K. AFGC membership ~AU$5K/yr (large for solo founder). [uncertain] on exact 2026 rates.",
+    "partner_channel_potential": 4
+  },
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "8-15 paying customers in 12 months. Low onboarding friction + addressable today + warm community channels make this one of the better solo-founder bets.",
+    "realistic_12mo_mrr_contribution_aud": "AU$1,500-2,800/mo at end of month 12.",
+    "path_to_first_3k_5k_mrr_aud": "Pair with indie cosmetics (01) and candle/soap (04) to make the AU$3-5K target. Path: (1) direct outreach to 30 visible brands in months 0-2 → land 3 design partners free for 3 months; (2) ship Xero integration and ferment BOM template; (3) AFMA newsletter feature + Sustainable Table guest article months 3-4 → 4-6 inbound trials; (4) convert 2-3 of design partners + 4-6 inbound to paid Growth tier; (5) by month 12: 10 customers × AU$170 ARPU = AU$1,700 MRR from this segment alone.",
+    "customers_needed_for_1m_arr_aud": "~490 customers at AU$170 blended ARPU. Plausible if Manuva becomes the default 'Craftybase replacement for fermented foods' in AU/UK/NZ over 3 years.",
+    "solo_founder_bandwidth_fit": "4 — Onboarding is light (template BOMs do most of the work). Support load mostly Xero-mapping questions and wholesale pricing-tier setup. Solo founder can serve 15-25 active customers in this segment without strain.",
+    "break_even_contribution_months": "4-6 months (cash CAC only); 7-9 months with loaded founder time.",
+    "gross_margin_sensitivity": "Low — workflows are simple, support questions are predictable, and founders are accustomed to figuring things out from documentation. Effective GM 78-82%.",
+    "priority_ranking": "2 — Strong Phase-1 candidate. Lower ARPU than cosmetics or coffee but higher close-rate and lower bandwidth cost. Earned-community channel (AFMA + Slow Food) is solo-founder friendly.",
+    "risks_and_notes": "Risks: (1) ARPU ceiling — many brands genuinely belong on Starter $99 long-term, capping segment MRR. (2) Cottage-industry churn — sub-$200K-revenue brands fold or pivot 12-18 months in. (3) Faire AU adoption could deflate need for wholesale-tier features. (4) Craftybase could ship its own AU pricing fix and close the wedge. Verify before going hard: AFMA actual newsletter pricing for 2026; Faire AU connector demand; whether Open Food Network producers (~1500 AU farms+makers) are a partner-channel inroad; specific Craftybase Indie→Business defection volume in AU."
+  },
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "trial_to_paid_benchmark",
+    "primary_channels",
+    "industry_facebook_group_size",
+    "current_dominant_tool",
+    "user_satisfaction_signals",
+    "industry_association_sponsorship"
+  ]
+}

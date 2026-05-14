@@ -1,0 +1,108 @@
+{
+  "item_id": "09_sustainable_refill_packaging",
+  "name": "Sustainable / refill packaging brands",
+  "tier": "A",
+
+  "market_sizing": {
+    "target_buyer": "Founder + head of operations / supply-chain lead. Often a sustainability-credentialed founder (ex-design, ex-consultant). For mid-size brands a dedicated COO.",
+    "business_count_au": "Narrow segment — approx. 30-80 AU brands operating an explicit refill / closed-loop / reusable-packaging model at SMB scale. Leaders: Zero Co, Skipper, Thankyou, Single Use Ain't Sexy, Resparkle, Ethique (NZ), Dirt Company, Who Gives A Crap (adjacent — paper, not refill). Long tail of micro indie refill brands sold via Biome / Source Bulk Foods / Flora & Fauna. [uncertain]",
+    "business_count_secondary": "US: ~200-400 (Blueland, Plaine Products, Grove Collaborative, Branch Basics, etc.). UK: ~100-200 (Smol, Splosh, Ecover refill). NZ: ~20-40. CA: ~50-100. [uncertain]",
+    "typical_size": "5-30 employees, AU$500K-AU$15M annual revenue. The segment skews larger than other Tier-A segments because refill economics require scale.",
+    "annual_revenue_band_aud": "1M-5M most common. Zero Co outlier at AU$20M+. Long tail at 100K-500K.",
+    "growth_trend": "Global zero-waste refill packaging USD 2.6B -> USD 8.5B by 2035 (12.6% CAGR, Future Market Insights). Reusable & refillable packaging USD 28.2B -> USD 35.4B by 2029 (+4.6% CAGR). AU 2025 national packaging targets create regulatory tailwind (all packaging recyclable/compostable/reusable by 2025 — APCO). High-growth but small.",
+    "seasonality_intensity": 2
+  },
+
+  "fit_and_timing": {
+    "manuva_fit_score": "4 — strong on BOM + lot tracking + multi-location, but Manuva does NOT natively model reverse-logistics returns flow (used containers coming back, refurb, refill). Workarounds via location transfers + adjusted-receipts are clunky.",
+    "addressable_window": "now (with caveats)",
+    "roadmap_dependency": "Functional today but a true reverse-logistics module would 2x fit. Xero integration improves close rate. WooCommerce (~10% on WordPress, e.g. eco-niche). Subscription billing integration (Recharge, Bold) is important and probably already covered via Shopify.",
+    "typical_tier": "Growth (AU$249) for AU$1-3M brands; Pro (AU$499) for AU$3M+ brands with multi-location.",
+    "regulatory_burden": "2 — APCO reporting + product-stewardship obligations for some categories. Not as heavy as TGA/FSANZ. Personal-care refill brands inherit AICIS overhead (overlaps with item 01).",
+    "lot_batch_criticality": "3 — depends on category: cleaning products = low, personal care = medium-high (AICIS), food refill (e.g. Source Bulk) = high.",
+    "time_to_value_days": 14
+  },
+
+  "economics": {
+    "incumbent_pricing": "Cin7 Core AU$349-549/mo (most mid-size sustainable brands use Cin7 or Unleashed). Unleashed NZ$319-399/mo. Katana US$199-399/mo. NetSuite at top end (Zero Co likely on NetSuite or custom). Spreadsheets rare here — these brands have ops headcount.",
+    "willingness_to_pay_aud": "AU$249-499/mo solid. Sustainability brands willing to pay for tools that align with their values (lower waste = lower SKU churn = better forecasting). Procurement-led — sceptical of small vendors.",
+    "estimated_arpu_aud": "AU$320-380 blended (skew Growth, ~30% Pro).",
+    "expansion_revenue_potential": "3 — moderate. Pro tier upgrade likely once brand hits AU$3M. Add-on appetite for capacity-planning module high.",
+    "churn_risk": "2 — well-funded brands churn less. PR-sensitive — bad onboarding = public LinkedIn complaint. Reverse-logistics workflow gaps could drive churn.",
+    "cac_estimate_aud": "Cash CAC AU$300-700 (LinkedIn outbound + B Corp newsletter + sustainability newsletter sponsorships + 1-2 conference attendances). Founder-time CAC: ~10-15 hrs per close x AU$100/hr = AU$1,000-1,500. Longer sales cycle (2-3 months).",
+    "cash_cac_affordability": 3,
+    "ltv_estimate_aud": "AU$350 ARPU x 36mo x 80% GM = AU$10,080.",
+    "ltv_cac_ratio": "~10-15:1 on cash CAC; ~6-7:1 fully loaded.",
+    "typical_seat_count": "5-15 (ops + warehouse + procurement + marketing). Per-seat MRP painful — clear flat-pricing wedge.",
+    "multi_channel_count": "3-4 (Shopify + Amazon + select retail like Biome / Flora & Fauna / Coles + wholesale).",
+    "wholesale_b2b_mix": "30-50% wholesale (eco-retailers, B-Corp-aligned grocers, hospitality). D2C subscription is the growth engine."
+  },
+
+  "where_they_live": {
+    "primary_channels": "LinkedIn: 'B Corp Australia & New Zealand' (~10-15K) [uncertain], 'Australian Sustainable Business' groups. Slack: B Corp ANZ community. Instagram: #refillrevolution, #zerowasteaustralia, #sustainableau. FB: 'Sustainable Living Australia' (~50K [uncertain]), 'Plastic Free Australia' (~30K [uncertain]). Reddit: r/ZeroWaste (global), r/AusEcomm.",
+    "directories_communities": "B Corporation Australia & New Zealand (B Lab AU&NZ) — directory of 600+ certified B Corps. APCO (Australian Packaging Covenant Organisation) — member directory. Sustainable Business Australia. Planet Ark Business Recycling. Boomerang Alliance. The 1% for the Planet AU members. Source Bulk Foods supplier network.",
+    "industry_facebook_group_size": "~80,000-120,000 across overlapping sustainability/zero-waste FB groups [uncertain]",
+    "podcasts_voices": "The Founder's Journey (Zero Co's Mike Smith), B The Change podcast, Australian Business Review sustainability segment, How I Built This (US), War on Waste alumni voices, Mary Oliver (sustainability advisor). [uncertain on AU-specific top podcasts]",
+    "events_trade_shows": "Sustainable Brands Australia (annual, ~500 attendees, sponsor AU$5-20K [uncertain]). APCO Annual Awards (Nov, ~600 attendees). B Corp Champions Retreat (free for members, networking). AusPack (Mar). Naturally Good Expo (Jun, Sydney — natural products, large refill cohort).",
+    "search_keywords": "['inventory software sustainable brand Australia', 'refill packaging operations software', 'B Corp inventory management', 'circular packaging ERP', 'reverse logistics software Shopify', 'sustainable brand BOM software', 'closed-loop inventory tracking', 'APCO reporting software', 'Cin7 alternative refill brand', 'eco brand operations stack']",
+    "community_density": 4,
+    "founder_persona_homogeneity": 3
+  },
+
+  "outreach_fit": {
+    "cold_outbound_feasibility": "3 — LinkedIn outbound feasible but slow; founders often busy / press-hounded. B Corp community is warmer than cold. Cold email moderate (high domain authority on filtering). Best path: warm intros via B Corp ANZ Slack.",
+    "inbound_content_fit": "4 — 'how to track reverse-logistics in Shopify', 'APCO reporting for SMB brands', 'circular ops case study' content converts. Long-form SEO + LinkedIn thought leadership work.",
+    "founder_market_fit_proxy": "3 — sustainability founders are values-aligned buyers. Manuva must not greenwash but doesn't need sustainability credentials per se — operational competence + 'we get circular' framing suffices. Solo-founder narrative resonates ('built by a maker for makers').",
+    "case_study_acquisition_cost": "Medium-high — sustainability brands are PR-savvy but want polished case studies; 8-12 weeks per case study. Worth it: each case study unlocks B Corp network referrals.",
+    "case_study_appeal": 5
+  },
+
+  "foot_in_door_fit": {
+    "design_partner_appeal": "4 — strong. Sustainability founders love being early adopters and shaping tools. 'Help us build the first MRP for refill brands' framing converts.",
+    "paid_pilot_fit": "4 — viable. AU$249 x 3 months credit-on-conversion fits AU$1M+ brands. Procurement-friendly.",
+    "free_trial_extension_fit": "2 — free-for-X-months feels misaligned with these brands' premium positioning. They expect to pay for quality tools.",
+    "trial_to_paid_benchmark": "Estimated 30-40% CC-required trial -> paid (above ChartMogul baseline due to high WTP + clear ROI). Paid pilot 50-60%.",
+    "reference_value": 5,
+    "recommended_foot_in_door_motion": "Founder-led + warm-intro motion via B Corp ANZ network. Open with 1-2 design-partner offers to recognisable mid-size refill brands (free 6mo + roadmap input on reverse-logistics module + co-built case study). Then shift to paid pilot AU$249/mo x 3 months. Sponsor 1 Naturally Good Expo + 1 B Corp event in year 1. Long-form 'circular operations' content as inbound engine.",
+    "rollout_phase": "Phase 2 (months 3-6) — segment is small (~30-80 AU brands), so first push case studies via Phase-1 verticals (cosmetics, homewares) before approaching this premium cohort. Targeting after 3-5 Phase-1 case studies are live increases credibility."
+  },
+
+  "competitive_context": {
+    "current_dominant_tool": "Fragmented. Cin7 Core ~25%, Unleashed ~15%, NetSuite at top end ~10%, Katana ~10%, custom/internal tools ~15%, spreadsheets ~25%. No dominant solution for the refill-specific workflow — that's the wedge.",
+    "switching_pain": 3,
+    "competitor_gaps_for_this_segment": "All incumbents lack: reverse-logistics flow (empties returning + cleaning + refill), refill-vs-new SKU pairing, APCO reporting hooks, B-Corp-friendly impact metrics. Cin7 post-acquisition pricing complaints. Manuva closes: multi-level BOMs (refill formulation + container BOM separately), location-based inventory (empties-in-transit, empties-at-cleaner, refilled-ready-to-ship), lot tracking (cleaning compliance for personal care), Shopify subscription depth.",
+    "user_satisfaction_signals": "LinkedIn posts from refill-brand ops leads: 'we built our own reverse-logistics tracker in Airtable because nothing fits'; 'Cin7 forces us to treat empties as a separate SKU which breaks reporting'. Reddit r/sustainability + r/smallbusiness threads echo this.",
+    "competitor_concentration": 2,
+    "integration_dependency_list": "Must: Shopify subscription apps (Recharge, Bold, Loop), Xero (roadmap). Important: APCO reporting export, Klaviyo, Australia Post returns label API, 3PL APIs (eStore, Shippit). Nice: Faire, Amazon."
+  },
+
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": "3 — mid-size sustainability brands use Xero or QuickBooks. ProAdvisor referrals work post-integration.",
+    "shopify_app_store_acquisition_fit": 3,
+    "shopify_plus_partner_potential": "4 — many refill brands are Shopify Plus (Zero Co, Thankyou, Who Gives A Crap). Tech Partner program valuable.",
+    "tpl_3pl_referral_potential": "4 — strong. AU 3PLs handling refill brands (eStore Logistics, Pack & Send) are co-sell candidates. Cleaning-partner / refill-fulfilment specialists rarer.",
+    "industry_association_sponsorship": "B Corp ANZ (member events / Slack visibility ~AU$1-3K [uncertain]). APCO membership (AU$1-5K depending on category [uncertain]). Sustainable Business Australia. Naturally Good Expo sponsor ~AU$10-25K [uncertain].",
+    "partner_channel_potential": 4
+  },
+
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "5-10 paying customers in 12 months. Smaller segment, longer sales cycle (2-3 months), higher per-customer effort.",
+    "realistic_12mo_mrr_contribution_aud": "AU$1,800-3,500 MRR at month 12 (6-8 customers x AU$350).",
+    "path_to_first_3k_5k_mrr_aud": "Cannot hit AU$3-5K MRR on this segment alone in 12 months. Sequence: (1) months 3-4: get warm intros via 1-2 advisor relationships in B Corp ANZ (cold-start risk = high without warmth); (2) months 4-6: land 2 design partners (one personal-care refill, one cleaning/home refill); (3) months 6-9: publish reverse-logistics case study + 'circular ops cookbook' content; (4) months 9-12: convert 4-6 paid customers. Treat as supplementary revenue + high-PR-value logos that boost credibility for Phase-3 multi-channel segment.",
+    "customers_needed_for_1m_arr_aud": "~280 customers at AU$350 ARPU — exceeds the entire AU addressable pool. In aspirational AU$1M ARR mix, this segment contributes ~30-50 customers (~AU$130-180K ARR) as a high-prestige reference tier, not volume.",
+    "solo_founder_bandwidth_fit": "3 — high-touch onboarding for refill workflow (currently mapped via location-transfers — clunky). Each customer eats 8-12 founder hours initially. Manageable at 10 customers; constraining at 20+.",
+    "break_even_contribution_months": "3-5 months on cash CAC; 5-8 months fully loaded.",
+    "gross_margin_sensitivity": "Moderate-high — reverse-logistics edge cases require custom support and likely build-on-demand features. Until a proper reverse-logistics module ships, GM erodes to ~70-75%.",
+    "priority_ranking": "4 — high-prestige but low-volume, narrow ICP, and Manuva isn't perfectly fit for the unique reverse-logistics workflow. Pursue selectively for case-study leverage, not as a volume play. Lower priority than cosmetics, SPF, pet, ceramics.",
+    "risks_and_notes": "Risks: (1) reverse-logistics gap in Manuva means buyer disappointment risk — must be explicit in sales conversations; (2) segment is small enough that 5-10 logos = market saturation; (3) B Corp brands are PR-active — one bad story damages broader brand. Things to verify: actual count of AU refill/closed-loop brands at >AU$500K revenue; whether top brands (Zero Co, Thankyou) are on NetSuite (unreachable) or salvageable; whether a true reverse-logistics module is roadmap-worthy or whether workarounds suffice."
+  },
+
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "industry_facebook_group_size",
+    "podcasts_voices",
+    "events_trade_shows",
+    "industry_association_sponsorship"
+  ]
+}

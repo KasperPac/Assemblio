@@ -1,0 +1,92 @@
+{
+  "item_id": "30_unit_economics_solo_founder_vsaas",
+  "item_name": "Bottom-up unit economics for $99-$499 AU SMB vertical SaaS — solo-founder constraint",
+  "tier": "D",
+  "type": "strategy_tactic",
+  "market_sizing": {
+    "target_buyer": "Manuva customer at AU$99-$499/mo. Buyer is founder/COO of a $300K-$5M revenue AU SMB manufacturer. Manuva-the-business decision-maker is Kasper (solo founder).",
+    "business_count_au": "Solo-founder bootstrapped vertical SaaS at AU$5M ARR run-rate: ~hundreds globally; AU specifically a handful (e.g. Tanda's early years, Practice Ignition pre-funding, several niche AU SaaS founders). Pattern is well-precedented but not crowded.",
+    "business_count_secondary": "Global: Indie Hackers community has ~thousands of bootstrapped SaaS founders at $5K-$100K MRR. Vertical SaaS at sub-$1M ARR solo: ~hundreds.",
+    "typical_size": "Solo founder, 1 FTE (Kasper). Year 1 target AU$36K-$60K ARR (AU$3-5K MRR). Year 3 aspirational AU$1M ARR.",
+    "annual_revenue_band_aud": "Year 1: AU$36-60K ARR. Year 3 aspirational: AU$1M ARR.",
+    "growth_trend": "Bootstrapped vertical SaaS is one of the strongest categories of 2024-2026, driven by AI lowering build cost. Median LTV:CAC 3.6:1 across SaaS (Benchmarkit 2024). SMB CAC AU$300-$900 typical; payback period median 15-18 months.",
+    "seasonality_intensity": 2
+  },
+  "fit_and_timing": {
+    "manuva_fit_score": 5,
+    "addressable_window": "now — model the business at launch",
+    "roadmap_dependency": "Modeling exercise; outputs guide which roadmap items are funded first",
+    "typical_tier": "Blended ARPU model assumes 20% Starter $99 / 60% Growth $249 / 20% Pro $499 = AU$249 blended",
+    "regulatory_burden": 1,
+    "lot_batch_criticality": 1,
+    "time_to_value_days": "n/a"
+  },
+  "economics": {
+    "incumbent_pricing": "Comparable solo-founder vertical SaaS economics: typical successful path is 6-18 months to AU$5K MRR, 2-3 years to AU$30K MRR, 3-5 years to AU$1M ARR. ChartMogul/Benchmarkit benchmarks: SMB churn 8.2x enterprise; SMB CAC $300-$900 USD; LTV $15K-$40K USD; LTV:CAC median 3.2-3.6 : 1; CAC payback median 15-18 months. Hosting: Supabase Pro $25/mo + Vercel Pro $20/mo + Stripe (% revenue) + Resend/Postmark $10-30/mo = ~AU$100-200/mo fixed infrastructure at sub-1000-customer scale. Top-performer gross margins exceed 80%.",
+    "willingness_to_pay_aud": "AU SMB WTP for MRP: $99 entry, $249 mainstream, $499 advanced. AU benchmark is typically 70-85% of US peer pricing for SMB SaaS. Manuva's flat pricing (no per-seat) is a strong WTP lever vs Katana/MRPeasy.",
+    "estimated_arpu_aud": "Blended AU$249 (20/60/20 tier mix). If channel mix shifts to higher Pro ratio (multi-channel customers, accountant-referred), blended ARPU climbs to AU$300-$350.",
+    "expansion_revenue_potential": "3 — flat pricing limits per-seat expansion. Upside levers: (a) tier upgrades Starter→Growth→Pro 20-30% of customers/yr; (b) future add-ons (capacity planning, advanced lot/CoA, B2B portal) at AU$49-$149/mo; (c) annual prepayment at 15% discount lifts cash collection.",
+    "churn_risk": "3 — SMB churn 8.2x enterprise. AU SMB manufacturer churn: ~2-3%/mo gross (24-36% annual gross). Net retention 90-100% if expansion is moderate. Vertical SaaS NDR target 100-110%.",
+    "cac_estimate_aud": "Solo-founder model is fundamentally DIFFERENT from funded SaaS. Solo founder has near-zero cash budget for paid acquisition. Effective CAC structure: Cash CAC AU$50-$300 per customer (Stripe fees, partner rev share, occasional small ad spend, content tools). Founder-time CAC: 3-15 hours per customer in year 1 (demos, onboarding, support). At a notional AU$150/hr value, founder-time CAC AU$450-$2,250. TRUE blended CAC for year-1 solo motion: AU$500-$2,000. Year 2+ as content/partner channels mature: AU$200-$600.",
+    "cash_cac_affordability": 5,
+    "ltv_estimate_aud": "At blended AU$249 ARPU × 30mo retention (SMB-adjusted) × 75% gross margin (year 1 support-heavy) = AU$5,600 LTV. As gross margin improves to 80% by year 2 and retention to 36mo: AU$7,180 LTV. Pro tier customer LTV AU$499 × 42mo × 78% = AU$16,400.",
+    "ltv_cac_ratio": "Year 1 cash-only CAC: AU$5,600 / AU$200 = 28:1 (looks great because founder time isn't priced). Year 1 fully-loaded CAC: AU$5,600 / AU$1,200 = 4.7:1 (healthy). Year 2+ steady state: 5-10:1.",
+    "typical_seat_count": "n/a (flat pricing)",
+    "multi_channel_count": "n/a",
+    "wholesale_b2b_mix": "n/a"
+  },
+  "where_they_live": {
+    "primary_channels": "Benchmark sources for ongoing unit-economics tracking: ChartMogul Insights dashboard (free public tier), Benchmarkit annual report, OpenView SaaS Benchmarks, Tomasz Tunguz blog, Patrick Campbell (ProfitWell/Paddle), MicroConf community, Indie Hackers, Bootstrappers community, Founder Calls (Calm Company Fund)",
+    "directories_communities": "MicroConf, Indie Hackers, Bootstrappers AU FB group, SaaS founders Slack/Discord communities, Calm Company Fund portfolio, Tiny Capital portfolio",
+    "industry_facebook_group_size": "n/a",
+    "podcasts_voices": "Indie Hackers podcast (Courtland Allen), Startups for the Rest of Us (Rob Walling), Default Alive (Calm Fund), Tomasz Tunguz podcast, Lenny's Podcast, MicroConf",
+    "events_trade_shows": "MicroConf Europe/Americas (AU$1-3K travel), Indie Hackers meetups (free), local bootstrapper meetups",
+    "search_keywords": "SaaS unit economics solo founder, bootstrap SaaS CAC LTV, AU SMB SaaS benchmarks, SaaS gross margin SMB, founder-led sales unit economics",
+    "community_density": 4,
+    "founder_persona_homogeneity": 3
+  },
+  "outreach_fit": {
+    "cold_outbound_feasibility": "n/a (modeling exercise)",
+    "inbound_content_fit": "n/a",
+    "founder_market_fit_proxy": "5 — solo bootstrapped vertical SaaS is a category Kasper fits well (engineering background, AU-based, low burn)",
+    "case_study_acquisition_cost": "n/a",
+    "case_study_appeal": 3
+  },
+  "foot_in_door_fit": {
+    "design_partner_appeal": "n/a — modeling supports the choice of foot-in-door tactic across items 26/27/28/29",
+    "paid_pilot_fit": 5,
+    "free_trial_extension_fit": 2,
+    "trial_to_paid_benchmark": "The unit-economics math STRONGLY favors paid pilot (40-60% conversion) over free trial (8.9% opt-in / 31.4% CC) at Manuva's ARPU and solo-founder time-constraint",
+    "reference_value": "n/a",
+    "recommended_foot_in_door_motion": "Unit economics support PRIMARY motion: paid pilot at $249/mo × 3 months, credited on conversion (item 27). SECONDARY: 5-partner free design-partner program (item 26). TERTIARY: Xero/MYOB accountant channel (item 28). NOT: free 30-day trial (CAC payback would push beyond 24 months at the 8.9% conversion rate).",
+    "rollout_phase": "n/a — modeling underlies all phases"
+  },
+  "competitive_context": {
+    "current_dominant_tool": "Comparable solo/small-team bootstrapped vertical SaaS economics in public: Beth at Craftybase (sub-$5M ARR estimate), Tanda's early years, Reginald Hatcher posts, Tropical MBA podcast SaaS interviews, Indie Hackers public revenue dashboards. Best-practice playbook: focus on 1 segment, 1 channel, 1 ARPU tier until $10K MRR, then expand.",
+    "switching_pain": "n/a",
+    "competitor_gaps_for_this_segment": "Most public benchmarks (ChartMogul, Benchmarkit, OpenView) are biased toward VC-funded SaaS with paid acquisition. Solo-founder model is undermodeled. Manuva's edge in the math: low burn (single founder ~AU$8-15K/mo total opex including hosting, tools, contracted help), no equity dilution, time-CAC instead of cash-CAC means $0-1K MRR is survivable for 6-12 months while paid SaaS would die.",
+    "user_satisfaction_signals": "MicroConf community 2024-2025 consensus: solo SaaS at $3-10K MRR is achievable in 12-18 months with sharp niche + founder-led; $10-30K MRR in 24-36 months requires partner channel or content compounding; $100K MRR almost always needs hiring (sales or marketing).",
+    "competitor_concentration": "n/a",
+    "integration_dependency_list": "n/a"
+  },
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": 5,
+    "shopify_app_store_acquisition_fit": 4,
+    "shopify_plus_partner_potential": 3,
+    "tpl_3pl_referral_potential": 4,
+    "industry_association_sponsorship": "n/a — unit-economics layer",
+    "partner_channel_potential": 5
+  },
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "Scenario A — REALISTIC 12-MONTH PATH TO AU$3-5K MRR: 14-22 paying customers by month 12. Mix: 4 Charter Partners (free pilot → 50% off = AU$125 ARPU = AU$500 MRR), 6-10 founder-led-outbound vertical customers @ blended $249 = AU$1,500-$2,500 MRR, 4-8 accountant-channel-referred customers @ $249 = AU$1,000-$2,000 MRR. Total month-12 MRR AU$3,000-$5,000 from 14-22 customers.",
+    "realistic_12mo_mrr_contribution_aud": "AU$3,000-$5,000 MRR by month 12 (matches target). Year 1 ARR: AU$36-60K. Cumulative collected revenue year 1: AU$15-30K (lower because customers ramp in over the year).",
+    "path_to_first_3k_5k_mrr_aud": "Sequenced model. Months 0-3: recruit 5 Charter Partners (item 26) on free 6mo + 50%-off-24mo terms. Cost: 100% founder time, $0 cash. MRR mo 3: $0. Months 3-6: ship Xero/MYOB integrations, submit Xero App Store listing, begin recruiting 5-10 specialist Xero advisors (item 28). MRR mo 6: $500-1,000 (Charter Partners start paying at month 6 at 50% off). Months 6-9: ship lot tracking improvements, Amazon connector. Founder-led outbound (paid pilot, item 27) to vertical segments closes 4-8 customers @ $249. MRR mo 9: $2,000-3,000. Months 9-12: accountant channel produces first referrals (3-5 customers @ $249). Charter Partners graduate to discounted Pro. MRR mo 12: $3,000-5,000. Cash cost: ~AU$1,500-3,000 cumulative (Stripe, hosting, contractors, occasional ads). Founder time: ~2,000-2,200 hours across year 1 (heavy).",
+    "customers_needed_for_1m_arr_aud": "At AU$249 blended ARPU: 335 customers. At AU$300 blended ARPU (shifting toward Pro tier): 278 customers. Aspirational 3-year path requires customer base grow ~15x from month 12 (14-22 customers) to month 36 (280-330 customers) — implies 13-20 net new customers/month sustained — requires hiring (1-2 FTE) or paid channel investment by month 18-24. Reasonable but not solo-founder-only.",
+    "solo_founder_bandwidth_fit": "3 — solo bandwidth supports 14-22 customers added in year 1 (~1-2/month). Beyond ~50-70 active customers, support burden alone consumes >50% of founder time; first hire (customer success/operations) needed at AU$10-15K MRR (~40-60 customers).",
+    "break_even_contribution_months": "Manuva-business break-even (revenue covers founder living + opex): assume founder needs AU$5-8K/mo personal + AU$1-2K/mo opex = AU$6-10K/mo break-even. At AU$249 ARPU × 75% margin = AU$187 net per customer. Break-even at ~35-55 customers. Achievable month 14-20.",
+    "gross_margin_sensitivity": "Year 1 gross margin starts ~65-70% (heavy founder support time charged to COGS). Year 2 margin climbs to 75-80% as self-serve onboarding ships and support load decreases per customer. Year 3 target 80-85%. Multi-channel customers (item 25) and accountant-referred customers (item 28) are lowest-support; design partners and Charter customers (item 26) are highest-support but acquire reference halo.",
+    "priority_ranking": "1 — this model anchors all GTM decisions. Without it, the founder over-invests in expensive channels too early.",
+    "risks_and_notes": "FULL UNIT-ECONOMICS MODEL FOR MANUVA SOLO-FOUNDER GTM:\n\nINPUTS:\n- Pricing tiers: Starter AU$99, Growth AU$249, Pro AU$499\n- Tier mix assumption (year 1): 20% / 60% / 20% → blended ARPU AU$249\n- Hosting opex: AU$200/mo (Supabase Pro + Vercel Pro + Stripe + Resend + tools)\n- Founder living cost: AU$6-8K/mo\n- Founder time available: ~40-50 hr/wk × 50 wk = 2,000-2,500 hr/yr\n- Stripe fees: 1.7% + AU$0.30 → ~2-3% revenue\n- Year-1 cash CAC per customer: AU$50-300 (low — no paid ads)\n- Year-1 founder-time CAC per customer: 5-15 hr → AU$750-2,250 at AU$150/hr notional\n- Year-1 gross margin: 65-70% (support-heavy)\n- Year-1 SMB churn: 2-3%/mo gross, 1-2%/mo net with modest expansion\n\nYEAR-1 SCENARIO (REALISTIC, AU$3-5K MRR):\n- 14-22 paying customers at month 12\n- Blended ARPU AU$200-$250 (Charter Partner discount drags it down)\n- Month-12 MRR AU$3,000-$5,000\n- Year-1 ARR run-rate AU$36-60K\n- Year-1 cash collected ~AU$15-30K\n- Year-1 cash burn (founder living minus revenue) AU$50-70K — funded from savings/runway\n- LTV AU$5,600 / blended fully-loaded CAC AU$1,200 = 4.7:1 (healthy)\n- CAC payback at AU$249 × 75% margin = AU$187/mo → payback 6-13 months (good)\n\nYEAR-3 ASPIRATIONAL (AU$1M ARR):\n- 280-330 paying customers at month 36 (blended ARPU AU$250-$300)\n- Requires 13-20 net new customers/month sustained in year 3\n- Solo founder caps out at ~50-70 customers self-onboarded; needs 1 customer-success FTE by month 18-24 and 1 SDR/growth FTE by month 24-30\n- Channel mix at $1M ARR: ~40% accountant-channel (item 28), ~20% design-partner-halo (item 26), ~20% multi-channel/3PL (items 25/29), ~20% direct inbound/founder-led\n- Year-3 net revenue retention target 105-110% (compensates for ~24% gross churn)\n- Year-3 gross margin target 78-82%\n- Total year 1-3 cash investment: AU$150-250K (founder living minus revenue) — must be self-funded or revenue-funded\n\nCRITICAL CONSTRAINTS / RISKS:\n1. Solo onboarding bandwidth: hard cap ~50-70 active customers. Self-serve onboarding flows must ship by month 6-9 to break through this ceiling.\n2. CAC must stay ≤AU$1,200 fully-loaded — paid ads are off-limits in year 1; founder time and partner channels only.\n3. Pricing floor at AU$99 is dangerous: Starter customers consume same support as Growth but generate 40% the revenue. Either remove Starter, or auto-route Starter to self-serve only with no founder time.\n4. Year-2 break-even (revenue ≥ founder living + opex) requires 35-55 active customers — achievable month 14-20 if year-1 ramp holds.\n5. Hiring trigger: AU$15-20K MRR = first FTE hire (customer success or junior eng). Without hiring, growth plateaus around AU$25-30K MRR.\n6. The math kills free-30-day-trial as primary motion: at 8.9% opt-in conversion + 5-15 founder hours per customer, founder runs out of time before MRR catches up.\n7. The math validates paid-pilot motion: at 40-50% conversion + 6-12 founder hours per customer pre-paying, CAC payback is sub-12 months.\n8. Aspirational $1M ARR path is achievable but requires hiring + sustained channel investment from month 18+. Pure-solo cap is realistically AU$300-500K ARR (~100-180 customers) before founder burnout.\n9. Verify before going hard: actual support-hours-per-customer in months 0-3 of pilot; this single variable determines true gross margin and the solo bandwidth ceiling.\n\nRECOMMENDED MANUVA-SPECIFIC TACTIC PARAGRAPH: Build the business on a clear unit-economics target of LTV ≥AU$5,000 / fully-loaded CAC ≤AU$1,200, with CAC payback ≤12 months. Year 1 will be founder-time-heavy and cash-light. Target 14-22 paying customers and AU$3-5K MRR at month 12 via three layered motions: (a) 5 Charter Design Partners (item 26), (b) Xero/MYOB accountant channel (item 28), (c) founder-led paid-pilot outbound (item 27) into 2-3 vertical segments. Defer multi-channel + Shopify Plus + 3PL channels (items 25/29) until Pro-tier readiness in months 9-15. First hire (customer success or product) at AU$15-20K MRR, expected month 15-20. $1M ARR is a 3-year path requiring 1-3 hires and sustained channel compounding — NOT achievable purely solo. Track weekly: paid-pilot conversion %, accountant referrals signed, founder hours/customer, gross margin, churn. Recompute LTV/CAC quarterly. If gross margin drops below 65% or CAC payback rises above 18 months, slow down acquisition and fix the leak."
+  },
+  "uncertain": []
+}
