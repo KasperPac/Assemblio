@@ -69,12 +69,12 @@ export default async function ProductsPage({ searchParams }: Props) {
   }
 
   const detailedVariantsResult = await supabase
-    .from("shopify_variant")
+    .from("product_variant")
     .select("id,product_id,title,sku,price")
     .eq("tenant_id", tenantId)
     .order("created_at", { ascending: true });
   const variantsFallbackResult = detailedVariantsResult.error
-    ? await supabase.from("shopify_variant").select("id,product_id,title,sku,price")
+    ? await supabase.from("product_variant").select("id,product_id,title,sku,price")
     : null;
   const variants =
     (detailedVariantsResult.error
@@ -189,7 +189,7 @@ export default async function ProductsPage({ searchParams }: Props) {
   }
 
   const detailedProductsResult = await supabase
-    .from("shopify_product")
+    .from("product")
     .select("id,title,description,created_at,image_url")
     .eq("tenant_id", tenantId)
     .order("created_at", { ascending: false });
@@ -199,7 +199,7 @@ export default async function ProductsPage({ searchParams }: Props) {
 
   if (detailedProductsResult.error) {
     const fallbackWithDescription = await supabase
-      .from("shopify_product")
+      .from("product")
       .select("id,title,description,image_url")
       .eq("tenant_id", tenantId);
     if (!fallbackWithDescription.error) {
@@ -209,7 +209,7 @@ export default async function ProductsPage({ searchParams }: Props) {
       }));
     } else {
       const fallbackMinimalWithCreatedAt = await supabase
-        .from("shopify_product")
+        .from("product")
         .select("id,title,created_at")
         .eq("tenant_id", tenantId)
         .order("created_at", { ascending: false });
@@ -221,7 +221,7 @@ export default async function ProductsPage({ searchParams }: Props) {
         }));
       } else {
         const fallbackMinimal = await supabase
-          .from("shopify_product")
+          .from("product")
           .select("id,title")
           .eq("tenant_id", tenantId);
         if (fallbackMinimal.error) {

@@ -181,7 +181,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
     { data: departments },
   ] = await Promise.all([
     supabase
-      .from("shopify_variant")
+      .from("product_variant")
       .select("id,title,sku,shopify_id,price,created_at,product:product_id(id,title)")
       .eq("id", variantId)
       .eq("tenant_id", tenantId)

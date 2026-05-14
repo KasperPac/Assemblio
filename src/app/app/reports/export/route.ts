@@ -71,7 +71,7 @@ export async function GET() {
       .eq("tenant_id", tenantId)
       .eq("is_active", true),
     supabase
-      .from("shopify_variant")
+      .from("product_variant")
       .select("*", { count: "exact", head: true })
       .eq("tenant_id", tenantId),
     supabase
