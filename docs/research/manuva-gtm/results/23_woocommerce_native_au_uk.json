@@ -1,0 +1,109 @@
+{
+  "_source_file": "23_woocommerce_native_au_uk",
+  "item_id": "23_woocommerce_native_au_uk",
+  "item_name": "WooCommerce-native AU/UK SMB manufacturers",
+  "tier": "C",
+  "hypothesis": "Previously explicitly out-of-market. Woo is large in UK and growing in AU. Different connector + different community (WordPress/WooCommerce meetups, not Shopify Plus).",
+
+  "market_sizing": {
+    "target_buyer": "Founder or ops-lead at a 3-20 person AU/UK manufacturer running their D2C on WooCommerce. Often a WordPress-native operator who picked Woo for cost / customisation / no-transaction-fee reasons; values control and flat costs.",
+    "business_count_au": "~3,000-5,000 AU WooCommerce stores meeting 'SMB manufacturer/maker' shape (filtered from BuiltWith WooCommerce AU population of ~70-90k stores; ~5-7% are maker/manufacturer ICP) [uncertain].",
+    "business_count_secondary": "UK ~15,000-25,000 (Woo is dominant in UK SMB e-commerce — BuiltWith reports ~400k+ UK Woo stores, ~5% maker-shape); US ~50,000-80,000 (largest but Shopify-dominated for makers); NZ ~500-900; CA ~5,000-8,000. UK is the highest-density secondary market — possibly higher density than AU [uncertain].",
+    "typical_size": "3-20 FTE, AU$300K-AU$5M revenue. Spans the spreadsheet-stage and growth-stage zones — broader range than Shopify Plus segment but skewed smaller.",
+    "annual_revenue_band_aud": "$500K-$3M most common. Starter ($99) and Growth ($249) candidates dominate; Pro ($499) for the larger/multi-channel slice.",
+    "growth_trend": "WooCommerce AU growth is steady (~8-12% YoY estimated, slower than Shopify); UK Woo base is mature and slightly contracting at high end as Plus-tier brands migrate to Shopify Plus / BigCommerce but expanding at SMB end. WordPress/Woo holds ~15-20% AU SMB e-comm share. Segment is durable.",
+    "seasonality_intensity": "3 — Similar Q1 + post-EOFY buying windows as other SMB segments; UK retail-tied (post-Boxing-Day, Sept back-to-school)."
+  },
+
+  "fit_and_timing": {
+    "manuva_fit_score": "4 — Manuva's data model fits Woo merchants identically to Shopify merchants. The only meaningful gap is the connector itself (post-launch roadmap item) plus a few Woo-specific edge-cases (variable products with complex attribute mapping, dynamic pricing plugins, subscription plugins). Once the connector ships, fit is structurally similar to Shopify ICP.",
+    "addressable_window": "after WooCommerce — fully gated on Woo connector shipping. Pre-connector, Manuva cannot meaningfully serve this segment (no inventory sync, no order ingestion). Not addressable in Phase 1 or Phase 2.",
+    "roadmap_dependency": ["WooCommerce connector (must-have, gating)", "Xero integration (~50-60% overlap)", "MYOB integration (~25% — older AU SMB tilt is higher in Woo than in Shopify)", "QuickBooks integration (~10-15%, higher for UK ~30%)", "WooCommerce variable-product / variation-handling polish", "Optional: WooCommerce Subscriptions sync (~10% of Woo brands), Bookings integration (rare)"],
+    "typical_tier": "Starter ($99) ~30%, Growth ($249) ~50%, Pro ($499) ~20%. Lower average tier than Plus segment because Woo skews smaller.",
+    "regulatory_burden": "2 — Cross-vertical like other Woo segments. UK food/cosmetics carry UKCA / FSA / MHRA compliance (slightly different from AU TGA/AICIS but similar weight).",
+    "lot_batch_criticality": "3 — Required for the food/cosmetics/supplements slice of Woo merchants (~25-30%); nice-to-have otherwise. Manuva's lot tracking covers must-haves.",
+    "time_to_value_days": "10-18 days. Similar to Shopify-native onboarding once the connector exists. Slightly more variable due to WordPress plugin combinations creating edge-cases."
+  },
+
+  "economics": {
+    "incumbent_pricing": "Spreadsheets ($0) for ~60% of segment. Other 40% across: WooCommerce native stock management (free), ATUM Inventory plugin ($79-149/yr), Megaventory ($150-300/mo USD), Katana ($199+/mo USD), MRPeasy ($49+/user/mo USD), Cin7/DEAR ($349+/mo USD), Stock Sync plugin ($30-60/mo). Most are partial-fit; nothing dominates. The Woo ecosystem has more native WordPress plugins than the Shopify ecosystem has third-party MRP tools.",
+    "willingness_to_pay_aud": "$99-249 Starter/Growth is the natural landing for most; $499 Pro for multi-channel + wholesale-heavy. WTP is slightly lower than Shopify segments because Woo selection signals 'cost-conscious operator' (avoiding Shopify transaction fees / monthly costs).",
+    "estimated_arpu_aud": "$240 blended (mix ~30% Starter $99, 50% Growth $249, 20% Pro $499).",
+    "expansion_revenue_potential": "3 — Moderate. Woo merchants are less likely to expand to higher tiers than Shopify merchants because the underlying brand-growth velocity is lower (Woo skews more cost-conscious + slower-growth). NRR potential 105-115%.",
+    "churn_risk": "3 — Moderate. Woo merchants have lower SaaS-stack appetite than Shopify-natives (philosophical 'use WordPress to avoid SaaS' tendency in part of the base). Counterweight: once integrated, switching cost is real.",
+    "cac_estimate_aud": "Cash CAC: AU$150-350 (WordPress-ecosystem content + Woo-keyword search + WooCommerce community sponsorship). Founder-time CAC: 10-15 hrs/close × AU$150 = AU$1,500-2,250. Blended notional CAC AU$1,700-2,600.",
+    "cash_cac_affordability": "3 — Higher cash CAC than defection segments because intent volume is lower per buyer and Woo-specific keywords are less competitive but also less voluminous. Affordable for solo founder but requires ~AU$150-350/customer commitment.",
+    "ltv_estimate_aud": "$240 ARPU × 80% margin × ~26 months × 1.1 NRR ≈ AU$5,500 LTV.",
+    "ltv_cac_ratio": "~2-3:1 blended; ~15-30:1 cash-only. Borderline — needs disciplined CAC management to clear the 3:1 target.",
+    "typical_seat_count": "2-6 users typical. Per-seat incumbents (Katana/MRPeasy) are competition where they overlap.",
+    "multi_channel_count": "1-2 typical (Woo only or Woo + wholesale). Less multi-channel than Shopify Plus segment.",
+    "wholesale_b2b_mix": "30-50% wholesale (similar to other AU SMB maker segments)."
+  },
+
+  "where_they_live": {
+    "primary_channels": "WordPress / WooCommerce community: WooCommerce community forum, r/woocommerce (~30k), r/Wordpress (~150k), 'Advanced WooCommerce' FB group (~30k), 'WordPress Australia' FB group (~10k), 'WooCommerce UK' FB group (~5k). Reddit r/smallbusinessAU and r/smallbusinessuk overlap. WordCamp regional chapters. [uncertain] sizes.",
+    "directories_communities": "WooCommerce showcase + customer directory, WordPress.org plugin community, WooExperts directory (Woo certified partners), Codeable freelance directory, WP Engine + Kinsta + SiteGround customer ecosystems (hosting overlaps), WooCommerce-themed Slack / Discord communities, BuiltWith WooCommerce filter. UK: WooCommerce London meetup, WordCamp London/Brighton/Manchester. AU: WordCamp Sydney/Melbourne/Brisbane.",
+    "industry_facebook_group_size": "~50-80k cross-membership across WordPress/Woo FB groups (AU+UK+global), with maker-overlap subsets [uncertain].",
+    "podcasts_voices": "Do The Woo podcast (Bob Dunn — the WooCommerce community voice), WP Builds (UK), WordPress Tavern, WP Tavern podcast, Post Status podcast. AU: WP The Podcast, occasional WordCamp speakers. UK influencers: Mark Westguard, Iain Poulson. Less ops-focused than DTC podcasts but Woo-community-trusted.",
+    "events_trade_shows": "WordCamp AU (annual, Sydney/Melbourne, ~500-1,000 attendees, ~AU$1-3k sponsorship); WordCamp Europe (annual, ~3,000 attendees, EUR sponsorship); WordCamp US (~2,000); WooSesh (online, free); regional WordPress meetups (free to attend, sponsorship $500-1,500). Total event-cost budget for AU+UK presence: AU$10-25k for meaningful Phase-3 visibility.",
+    "search_keywords": "'WooCommerce inventory plugin', 'WooCommerce manufacturing app', 'WooCommerce BOM software', 'WooCommerce MRP', 'WooCommerce Xero integration manufacturer', 'inventory management WooCommerce small business', 'WooCommerce alternative to ATUM', 'manufacturing software WordPress', 'WooCommerce wholesale B2B inventory', 'WooCommerce stock sync manufacturer'.",
+    "community_density": "4 — High (community of WordPress fans). Different cultural shape from Shopify ecosystem — more developer-tinged, less marketer-tinged.",
+    "founder_persona_homogeneity": "3 — Cross-vertical but bound by 'cost-conscious WordPress-native operator' shared identity. Messaging emphasising 'flat-priced, no per-seat, no transaction fees on top' resonates with the Woo cultural mindset."
+  },
+
+  "outreach_fit": {
+    "cold_outbound_feasibility": "3 — BuiltWith WooCommerce + maker-vertical filter identifies the TAM. Outbound is feasible but Woo community has stronger 'don't sell to me' culture than Shopify ecosystem. Better to lead with content + community presence than cold outbound.",
+    "inbound_content_fit": "5 — Excellent. WordPress/Woo ecosystem is heavily content-driven; SEO + how-to articles + plugin-directory placement compound aggressively. 'WooCommerce inventory plugin for manufacturers' is a winnable long-tail.",
+    "founder_market_fit_proxy": "3 — Woo community values 'one of us' WordPress credentials. Kasper as a Next.js/Supabase founder is structurally different (modern JS stack) — possible cultural friction. Mitigation: framing Manuva as 'WordPress-friendly outsider tool that respects flat pricing and customisation' rather than positioning as WP-native.",
+    "case_study_acquisition_cost": "Moderate — Woo merchants love sharing 'how we set up our stack' stories on blogs and Do The Woo podcast. 5 case studies in months 6-12 (post-connector) is realistic.",
+    "case_study_appeal": "3 — Visual appeal varies by vertical. Logo recognition lower than Shopify Plus brands but compounds well within WordPress community."
+  },
+
+  "foot_in_door_fit": {
+    "design_partner_appeal": "3 — Moderate. Woo merchants like influencing tooling but are skeptical of SaaS lock-in. A 'design partner with full data ownership / export guarantee' framing fits Woo cultural values. 1-2 design partners feasible to refine the WooCommerce connector itself.",
+    "paid_pilot_fit": "3 — Mid. Woo merchants' cost-consciousness makes them prefer 'free trial' over 'paid pilot'. Paid pilot works for higher-tier Pro candidates only.",
+    "free_trial_extension_fit": "4 — Strongest fit in Tier B-and-C for free-trial motion. 'Free for 30-60 days, no card required' aligns with Woo cultural expectation (most Woo plugins offer free tiers or 30-day trials). ChartMogul 8.9% opt-in conversion is the realistic benchmark.",
+    "trial_to_paid_benchmark": "Opt-in free trial 8-12%; CC-required 14-day trial 25-30%; value-gated free trial 30-40%; design-partner conversion 60-80%.",
+    "reference_value": "3 — Reference logos compound within WordPress/Woo community but don't transfer cleanly to Shopify or defection segments. Good for SEO/inbound; modest for cross-segment leverage.",
+    "recommended_foot_in_door_motion": "Phase-3-only motion (gated on Woo connector). Inbound-led: SEO content stack ('WooCommerce inventory plugin for manufacturers AU/UK', 'WooCommerce + Xero manufacturing stack', 'Switch from ATUM to Manuva'), WordPress.org plugin directory listing for the Woo connector, Do The Woo podcast sponsorship + interview. Conversion via 30-day free trial (CC-required) + optional founder-led 30-min demo. Layer accountant channel (Xero/MYOB/QuickBooks ProAdvisor referrals — slightly higher QB share for UK customers). Design-partner track: sign 1-2 named AU/UK Woo manufacturers in months 5-6 (pre-connector launch) to co-design connector UX, launch case study month 7. Outbound is secondary — use BuiltWith + LinkedIn to identify named accounts but lead with content invite, not cold pitch.",
+    "rollout_phase": "Phase 3 (months 6-12, post-Woo/Amazon). No earlier — connector dependency is absolute."
+  },
+
+  "competitive_context": {
+    "current_dominant_tool": "Fragmented. ATUM Inventory plugin (~15-20% of inventory-tooled Woo merchants, $79-149/yr — strong free tier), Megaventory (~5%), Katana (~5%), Cin7/DEAR (~5%), MRPeasy (~3%), spreadsheets (~50-60%), custom WordPress builds (~5-10%). No dominant tool above 25% share. Highest fragmentation of any segment.",
+    "switching_pain": "2 — Low. Spreadsheets are the majority incumbent (zero switching cost). For the 20% on ATUM/Megaventory/etc., switching cost is moderate (BOM rebuild, supplier re-import) — 8-15 founder hours.",
+    "competitor_gaps_for_this_segment": "(1) ATUM is the closest competitor but is plugin-based, limited reporting, single-store-locked, weak BOM versioning; (2) Katana/MRPeasy per-seat pricing conflicts with Woo cost-consciousness; (3) Cin7/DEAR is too heavy and expensive; (4) No incumbent offers 'WooCommerce-native + flat-priced + AU accounting + BOM versioning + lot tracking' in one tool. Clean wedge.",
+    "user_satisfaction_signals": "WooCommerce community forums and r/woocommerce regularly surface 'what's the best inventory/manufacturing setup for Woo?' threads with no consensus. ATUM has solid satisfaction but is critiqued for plugin-only architecture. Cin7/DEAR price hikes hit Woo merchants too. Specific quotes [uncertain] without live re-query.",
+    "competitor_concentration": "Fully fragmented (no tool >25% share). Manuva can credibly become a top-3 named tool in this segment within 18 months via connector quality + community presence.",
+    "integration_dependency_list": "WooCommerce (must-have, gating), Xero (~50-60%), MYOB (~20-25%), QuickBooks (~10-15% AU / ~25-30% UK), Stripe / Square / GoCardless (payment), Australia Post / Royal Mail / Sendle (UK/AU fulfilment), Mailchimp/MailerLite/Klaviyo (email — Klaviyo Woo plugin matured 2023-2024), WooCommerce Subscriptions (~10% — needs validation), Faire/Ankorstore (wholesale)."
+  },
+
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": "4 — Strong. AU and UK both have mature Xero ecosystems. UK has stronger QuickBooks share. ProAdvisor channel works but Woo customers' bookkeepers are less consistently SaaS-recommending than Shopify-customer bookkeepers (Woo bookkeepers often custom-WordPress-themselves).",
+    "shopify_app_store_acquisition_fit": "1 — Not relevant (different ecosystem).",
+    "shopify_plus_partner_potential": "1 — Not relevant.",
+    "tpl_3pl_referral_potential": "3 — Moderate. AU 3PLs (eStore Logistics, Shippit) and UK 3PLs (James and James, Huboo) serve Woo merchants too — co-marketing works but is secondary.",
+    "industry_association_sponsorship": "WordCamp AU sponsorship AU$1-3k; WordCamp Europe EUR 3-8k; WordCamp US USD 3-8k; Do The Woo podcast sponsorship USD 1-3k/episode; WooSesh online event sponsorship USD 5-15k; Post Status sponsorship USD 1-3k. UK: WooCommerce London meetup sponsorship GBP 500-1,500. Full Phase-3 event/sponsorship budget AU$15-30k for serious presence.",
+    "partner_channel_potential": "3 — Decent accounting + community-event channels; weak agency channel (Woo has freelance/Codeable ecosystem rather than concentrated agency partners like Shopify Plus)."
+  },
+
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "5-12 paying customers in months 0-12 BUT all back-loaded into months 7-12 due to Phase-3 gating on Woo connector. Realistic landing: 8 customers by month 12, concentrated in months 8-12. Bandwidth: 10-15 hrs/customer onboarding.",
+    "realistic_12mo_mrr_contribution_aud": "AU$1,500-2,500 MRR by month 12 (8 customers × $240 blended ARPU = $1,920; bound by late-cohort timing — only ~6 months of acquisition possible in year 1).",
+    "path_to_first_3k_5k_mrr_aud": "Minor contributor in year 1. Sequence: Months 0-6 (pre-connector): build SEO foundation, sign 1-2 design partners to co-design connector. Month 6-7: connector ships, launch on WordPress.org plugin directory + Do The Woo interview + 'Switching from ATUM' SEO. Months 7-9: 2-3 paid customers from design-partner case studies. Months 9-12: 3-5 more via inbound + WordCamp AU presence. Year-1 contribution insufficient to drive $3-5K MRR alone — best as a year-2 anchor leg that compounds against the year-1 Tier A and Tier B foundation.",
+    "customers_needed_for_1m_arr_aud": "347 customers at $240 ARPU. Realistic 3-year ramp: 80-150 customers (Year 1: 8, Year 2: 40-60, Year 3: 80-100). UK volume can equal or exceed AU volume by year 3 — a significant unlock for the $1M ARR path.",
+    "solo_founder_bandwidth_fit": "3 — Manageable at 8 customers/year. Sales cycle is moderate, onboarding moderate. UK time-zone overlap with AU is workable (UK morning = AU evening) — solo founder can handle UK and AU simultaneously with care.",
+    "break_even_contribution_months": "2-3 months. $240 ARPU × 80% margin = $192/mo contribution, recovering $150-350 CAC + ~12 founder hours within 2-3 months.",
+    "gross_margin_sensitivity": "Moderate. WordPress edge-case support (plugin conflicts, custom themes) can absorb founder time post-onboarding. Steady-state gross margin ~78-82%.",
+    "priority_ranking": "5 — Lowest priority of the 6 items in this batch — but only because of Phase-3 gating. Long-term strategic value is high (especially UK as the largest accessible Woo market). Treat as 'reserved seat at Year-2 table' rather than skip.",
+    "risks_and_notes": "(1) Connector quality is the single biggest determinant of segment success — invest in robust variable-product handling, stock-sync edge cases, and order-state mapping; (2) UK market opportunity may exceed AU — consider UK-specific positioning + UK pricing in GBP from Phase-3 launch; (3) WordPress community sells to itself — invest in genuine community participation (Do The Woo guest spots, WordCamp talks) over paid promotion; (4) Watch ATUM development — they could add the missing features and close the wedge; (5) Don't promise a multi-store / WooCommerce-Network connector in v1 — scope carefully; (6) UK GDPR + UK GST/VAT handling needs validation if pursued seriously; (7) Plugin-directory listing has its own SEO/discovery value separate from web SEO — invest in the WordPress.org listing assets; (8) Woo community is suspicious of VC-backed SaaS — lean into 'solo founder, flat-priced, no per-seat, exportable data' positioning; (9) Phase-3 priority means decisions can be revisited at month 6 based on Phase-1/2 traction in Unleashed + Plus + Spreadsheet segments; (10) UK pursuit may require local accountant-channel relationships (Xero UK ProAdvisor + QuickBooks UK ProAdvisor) which adds time-zone management cost — flag for Year-2 planning."
+  },
+
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "primary_channels",
+    "industry_facebook_group_size",
+    "user_satisfaction_signals"
+  ]
+}

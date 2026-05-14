@@ -1,0 +1,95 @@
+{
+  "item_id": "02_suncare_spf",
+  "item_name": "Sun-care / SPF brands (AU)",
+  "tier": "A",
+  "market_sizing": {
+    "target_buyer": "Founder + Head of Ops/Production. SPF brands at scale (>AU$2M revenue) often have a dedicated regulatory/quality lead who co-signs. Sub-AU$1M is founder-only.",
+    "business_count_au": "Estimated 80-150 AU-headquartered SPF/sun-care brands selling through retail or D2C. TGA ARTG search returns ~600 'sunscreen — primary' ARTG entries but most are owned by ~80-150 distinct sponsors. Recent CHOICE 2025 investigation tested 20 mainstream brands; long tail of indie probably 60-100 more. [uncertain]",
+    "business_count_secondary": "US: ~200-400 indie SPF brands (Beauty Independent). UK: ~80-150. NZ: ~20-40. CA: ~50-100. [uncertain]",
+    "typical_size": "3-15 employees once funded. Pre-revenue founder-only at the start. Revenue range: AU$500K-AU$20M for the brands actually in retail; AU$50K-$500K for pre-launch indies.",
+    "annual_revenue_band_aud": "Most common (paying-customer cohort): AU$1M-$5M. Higher than other beauty segments because retail/wholesale presence drives revenue.",
+    "growth_trend": "AU sun-care 5.7-6.6% CAGR to 2030/2033 (IMARC, Markets&Data: AU$280M-$332M → AU$460-486M). AU is the global indie SPF leader (Naked Sundays, Ultra Violette, MECCA Cosmetica, Mecca-To-Save-Face). 2025 CHOICE/TGA SPF-failure scandal has materially raised demand for lot/batch traceability and supplier QC reports.",
+    "seasonality_intensity": 3
+  },
+  "fit_and_timing": {
+    "manuva_fit_score": 4,
+    "addressable_window": "now",
+    "roadmap_dependency": "Pre-launch lot tracking is the critical unlock — already shipped. Xero integration meaningfully improves close (most retail-bound brands use Xero for invoicing). FBA connector valuable for the US-export cohort.",
+    "typical_tier": "Growth ($249) or Pro ($499). Most paying brands sit in Growth. Pro for the 5-15-staff cohort with wholesale + multiple retail accounts.",
+    "regulatory_burden": "5 — TGA listed-medicine (AUST L) registration. Sponsor obligations cover GMP-grade manufacturer, batch-by-batch SPF testing, ARTG annual reporting, COA retention. Post-2025 CHOICE investigation, retailers (Priceline, MECCA, Adore) now demand batch-level QC docs.",
+    "lot_batch_criticality": 5,
+    "time_to_value_days": 14
+  },
+  "economics": {
+    "incumbent_pricing": "Most AU SPF brands run on a hybrid stack: Cin7 Core (~AU$500/mo) or Unleashed (NZ$319-399 ≈ AU$300-370/mo) for the wholesale-heavy ones; Katana ($179-799 USD) for Shopify-first; spreadsheets + a contract manufacturer's QC system for early-stage. None of these handle TGA/ARTG batch traceability well — brands usually maintain a parallel Excel batch log.",
+    "willingness_to_pay_aud": "AU$249-$499/mo realistic. Regulatory pain + retail compliance pressure + high AOV cushion the price tolerance. Brands above AU$2M revenue often pay AU$500-1,000/mo across stacked tools.",
+    "estimated_arpu_aud": "AU$340 blended (Growth 60% / Pro 30% / Starter 10%)",
+    "expansion_revenue_potential": "4 — clear Pro-tier upgrade path as wholesale grows; multi-channel connector (Woo/Amazon) unlocks US export brands; potential paid add-on for TGA ARTG batch reporting / GMP audit log if Manuva builds it.",
+    "churn_risk": "2 — brands at AU$1M+ revenue rarely churn unless acquired or moving to ERP. TGA-compliance lock-in is strong once batch history is captured.",
+    "cac_estimate_aud": "Cash CAC AU$200-500 (more outbound, possible AU$500-2K event presence). Founder-time CAC ~10-15 hours × AU$150 = AU$1,500-2,250. Total: AU$1,700-2,750.",
+    "cash_cac_affordability": 3,
+    "ltv_estimate_aud": "AU$340 ARPU × 36-month avg life × 80% gross margin ≈ AU$9,800",
+    "ltv_cac_ratio": "~4-5:1 on fully-loaded CAC. Strong unit economics.",
+    "typical_seat_count": "2-6 users (founder + ops + production + sometimes regulatory)",
+    "multi_channel_count": "3-4 (Shopify + Amazon + retail wholesale + Faire/wholesale platform)",
+    "wholesale_b2b_mix": "40-70% wholesale once in MECCA/Priceline/Adore. D2C-only brands rarer at scale."
+  },
+  "where_they_live": {
+    "primary_channels": "Beauty Industry Group LinkedIn (~5K AU). Instagram: #australiansunscreen #spfaustralia (high creator + brand density). LinkedIn networking with Ava Matthews / Bec Jefferd (Ultra Violette) network. Reddit: r/AusSkincare (~30K), r/Skincare_Addiction_AU. Limited dedicated SPF FB groups but high overlap with skincare maker groups. Cosmetic Manufacturer's Co-operative.",
+    "directories_communities": "TGA Australian Register of Therapeutic Goods (ARTG) — public search returns sponsors. Accord Australasia (cosmetics + personal care industry body). Cosmetic Manufacturer's Co-operative (CMC). Australian Society of Cosmetic Chemists (ASCC) — credentialed audience, founder won't fit; better to partner. Cosmetic Executive Women AU. Wild Child Laboratories + other AU contract manufacturers (suppliers to most indies).",
+    "industry_facebook_group_size": "~5,000-10,000 overlapping with skincare maker groups; no dedicated SPF FB group of meaningful size [uncertain]",
+    "podcasts_voices": "1) Hannah English (AU beauty journalist, ex-pharma). 2) The Beauty Brains (US, regulatory). 3) Cosmetics Design Asia (newsletter). 4) Ultra Violette's founders' interviews. 5) ASCC newsletter. 6) Mecca M-Power program (retail accelerator network).",
+    "events_trade_shows": "Beauty Expo Australia (Sydney, Aug, ~12K attendees, booth AU$5-15K). Cosmoprof Asia (HK, Nov). ASCC annual conference (~300-500 attendees, AU$2-5K sponsorship slot). In-Cosmetics Asia. Accord Australasia annual conference. Naturally Good Expo (Sydney, June).",
+    "search_keywords": "'TGA listed sunscreen batch tracking', 'sunscreen batch software Australia', 'ARTG batch record software', 'lot tracking for cosmetics', 'sunscreen manufacturing software AU', 'Cin7 alternative cosmetics', 'Unleashed alternative skincare', 'sponsor batch record TGA', 'GMP batch software small business', 'sunscreen contract manufacturer QC software'",
+    "community_density": 3,
+    "founder_persona_homogeneity": 3
+  },
+  "outreach_fit": {
+    "cold_outbound_feasibility": "3 — TGA ARTG sponsor list is public + scrapable → high-quality enrichment possible. LinkedIn outbound to ops/regulatory leads acceptable. Cold email to sponsor address moderately responsive. Phone uncommon.",
+    "inbound_content_fit": "5 — 'How to build a TGA batch record without ERP', 'CHOICE 2025 SPF failures: what indie brands should do now', 'ARTG sponsor compliance checklist' all have clear search demand and high regulatory urgency post-CHOICE scandal.",
+    "founder_market_fit_proxy": "2 — buyer expects regulatory-savvy seller. Solo founder without TGA/cosmetic-chemistry credentials needs to partner (Accord, ASCC, an ex-TGA consultant) or hire a fractional regulatory advisor to lend credibility. Software-first positioning ('we don't write your SOPs, we capture your batches') sidesteps the credential gap but still needs one cosmetic-chemistry advisor on the website.",
+    "case_study_acquisition_cost": "Hard. Will likely require a 1-on-1 regulatory advisor + free 12-month pilot for the first 2-3 reference brands. Realistic to land 2-3 in 6 months, not 5.",
+    "case_study_appeal": 5
+  },
+  "foot_in_door_fit": {
+    "design_partner_appeal": 4,
+    "paid_pilot_fit": 4,
+    "free_trial_extension_fit": 3,
+    "trial_to_paid_benchmark": "Likely 25-35% CC-required, 45-55% on paid pilot. Lower opt-in conversion (5-8%) because regulatory buyers don't self-onboard well — they need a demo and trust-building call before trialling.",
+    "reference_value": 5,
+    "recommended_foot_in_door_motion": "Phase 2 (months 3-6): Founder-led sales + paid pilot (AU$249/mo × 3-6 months, credited on annual conversion) anchored by a partnership with one credentialed AU cosmetic-regulatory advisor or ex-TGA consultant who co-presents demos. Recruit 2-3 design partners from the Wild Child Laboratories / Australian Made manufacturer network where brands cluster. Avoid free trial without demo — segment doesn't self-serve. Reference customer = unlock for retail-facing brands (MECCA / Priceline buyers see the same logos).",
+    "rollout_phase": "Phase 2 (months 3-6, post-credibility partnership in place)"
+  },
+  "competitive_context": {
+    "current_dominant_tool": "Hybrid: Cin7 Core ~30%, Unleashed ~20%, Katana ~15%, contract-manufacturer-supplied QC system ~15%, spreadsheets ~20%. No tool >35% share. ARTG batch records almost always tracked in a parallel Excel file regardless of MRP — this is the biggest gap.",
+    "switching_pain": "4 — wholesale pricing tiers + retail customer hierarchies + ARTG batch history make migration sticky. Need a strong import/CSV workflow.",
+    "competitor_gaps_for_this_segment": "Cin7: post-DEAR price hikes, weak BOM versioning, no native TGA batch fields. Unleashed: NZD-billed FX squeeze, weak Shopify multi-currency, no compliance reporting. Katana: per-seat, weak AU integrations, no lot/batch (or limited). All three: no purpose-built TGA ARTG batch record / sponsor reporting helper. Manuva wedge = lot tracking already shipped + flat AU-priced + future ARTG reporting add-on.",
+    "user_satisfaction_signals": "G2: Cin7 'pricing increased 40% in 18 months', 'lost features that used to be included'. Unleashed: 'NZD FX makes pricing unpredictable for AU customers', 'reports feel dated'. Indie founder podcasts and Hannah English coverage post-CHOICE 2025 reflect industry-wide anxiety about batch traceability.",
+    "competitor_concentration": "Fragmented, leaning toward Cin7+Unleashed in the wholesale-heavy cohort.",
+    "integration_dependency_list": "Must-have: Shopify (shipped), Xero (roadmap — critical), Amazon (roadmap — important for US-export cohort). Klaviyo (optional). Faire (wholesale). MECCA / Priceline B2B portals don't have public APIs but PO upload helps. Aus Post / Shippit for D2C."
+  },
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": 4,
+    "shopify_app_store_acquisition_fit": 3,
+    "shopify_plus_partner_potential": 3,
+    "tpl_3pl_referral_potential": 3,
+    "industry_association_sponsorship": "Accord Australasia (industry body for cosmetics/personal care/sun-care) — annual conference + newsletter sponsorship ~AU$3-8K. ASCC annual conference ~AU$2-5K. Cosmetic Manufacturer's Co-operative — partnership with CMs (Wild Child, AKCBio, others) is the single highest-leverage move because they refer brand customers. Beauty Industry Group LinkedIn AU ~AU$1-3K newsletter slot.",
+    "partner_channel_potential": 4
+  },
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "8-15 paying customers by month 12. Longer sales cycle (45-90 days), more high-touch onboarding, but higher ARPU compensates. Conservative: 6. Optimistic: 18.",
+    "realistic_12mo_mrr_contribution_aud": "AU$2,700-5,100 MRR at AU$340 blended ARPU (12 customers midpoint)",
+    "path_to_first_3k_5k_mrr_aud": "Month 0-3: secure 1 credentialed AU cosmetic-regulatory advisor as fractional partner; build 'TGA batch record without ERP' SEO pillar + 3 supporting articles; scrape ARTG sponsor list (~600 active) + filter to <50-employee sponsors (~150). Month 3-6: land 2-3 design partners via direct outreach to AU contract manufacturers (Wild Child, AKCBio) + Accord introductions; paid pilot AU$249 × 3 = AU$747 commitment. Month 6-9: case-study publish + retail co-marketing; founder-led sales calls converting at 35-45%. Month 9-12: 10-15 paying at AU$340 = AU$3,400-5,100 MRR from this segment alone.",
+    "customers_needed_for_1m_arr_aud": "~245 customers at AU$340 ARPU",
+    "solo_founder_bandwidth_fit": "3 — onboarding takes 4-6 hours/customer (lot/batch + supplier setup + Xero); regulatory questions inbound 1-2/week; need a regulatory partner to absorb the credibility load. Ceiling ~40-50 customers before support breaks.",
+    "break_even_contribution_months": "8-10 months at fully-loaded CAC; 4-6 at cash CAC only",
+    "gross_margin_sensitivity": "Medium — segment carries onboarding overhead (lot setup, supplier CoA import) that erodes margin to ~70-75% in year 1. Improves to ~80% once Manuva ships ARTG report templates.",
+    "priority_ranking": "3 — High ARPU, high reference value, but credibility-gated and slower close. Run in Phase 2 with a regulatory partner; don't lead with this.",
+    "risks_and_notes": "Risks: (1) Founder lacks TGA/cosmetic-chemistry credibility — MUST land a fractional regulatory advisor before going public on this segment. (2) Post-CHOICE 2025 scandal could push brands either toward Manuva (more traceability needed) or away (regulatory paralysis, no new software adoption). Monitor sentiment. (3) Contract-manufacturer relationships are the unlock — they refer 3-5 brand customers each. Target Wild Child, AKCBio, Sunfresh Brands first. (4) Verify Manuva BOM/lot data model can capture TGA ARTG fields (sponsor ID, AUST L number, batch SPF test cert link, manufacturer ID). If not, scoping needed."
+  },
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "industry_facebook_group_size"
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "item_id": "29_shopify_plus_tech_partner_and_3pl",
+  "item_name": "Shopify Plus Tech Partner + 3PL referral programs",
+  "tier": "D",
+  "type": "strategy_tactic",
+  "market_sizing": {
+    "target_buyer": "Two-tier buyer model: (1) Shopify Plus partner managers + 3PL business-development reps who refer Manuva; (2) the multi-channel SMB brand who is the end-customer. Win the partner first, then they co-sell into their book.",
+    "business_count_au": "Shopify Plus AU merchants: ~1,500-3,000 [uncertain]. AU 3PLs serving DTC/ecommerce: ~30-60 mid-market 3PLs (eStore Logistics, Mr Fulfilment, Efill, Pickpackers, Salmat, Australia Post fulfilment, Bonds3PL, etc.). 3PL business-development reps Manuva needs to know: ~50-100 individuals across the top 20 AU 3PLs.",
+    "business_count_secondary": "Shopify Plus globally: ~50,000+ merchants; Shopify Certified Technology Partners: ~hundreds. US/UK 3PL ecosystem: hundreds of mid-market 3PLs (ShipBob, Deliverr/Walmart, ShipMonk, ShipHero — many already partner with MRP/IMS tools).",
+    "typical_size": "Shopify Plus brand: AU$2M-$50M+ revenue, 15-100 staff. 3PL: AU$5M-$100M revenue, often family-owned mid-market AU operators.",
+    "annual_revenue_band_aud": "End-customer brands AU$2M-$10M most common landing zone for Manuva via this channel",
+    "growth_trend": "Shopify Plus AU growing 20%+ YoY [uncertain]. 3PL outsourcing trend strong as brands hit ceiling of self-pick. Shopify Plus Tech Partner program restructured Dec 2025 (Tech Track sunset → Service Track tiers); Shopify continues to invest in co-sell.",
+    "seasonality_intensity": 3
+  },
+  "fit_and_timing": {
+    "manuva_fit_score": 4,
+    "addressable_window": "after Xero+MYOB and after Amazon/Woo (months 6-12). Shopify Plus Tech Partner application requires production-quality Shopify integration + customer references first.",
+    "roadmap_dependency": "Shopify integration (shipped pre-launch — good). Amazon connector (for multi-channel Plus brands). Shippit + Australia Post eParcel integrations for 3PL workflow. Wholesale/B2B module for Plus brands selling B2B.",
+    "typical_tier": "Pro ($499) — these are bigger brands than vertical SMB",
+    "regulatory_burden": 1,
+    "lot_batch_criticality": 2,
+    "time_to_value_days": "30-60 days end-customer onboarding (Shopify Plus complexity)"
+  },
+  "economics": {
+    "incumbent_pricing": "Shopify Plus Tech Partner referral economics: 20% recurring commission on referred Plus merchant's base platform fee (~AU$460/mo per Plus merchant). Plus referral bonus: $2,500 USD per Plus plan merchant in APAC (Manuva refers TO Shopify Plus, gets paid). For inventory/MRP apps recommended BY Shopify Plus: no formal cash commission to the app, but inclusion in 'recommended apps' list + Strategic Partner Manager support drives 3-5x lead volume. 3PL referral programs in AU: mostly informal — 3PLs refer brands to SaaS tools they integrate with; commissions where they exist are typically AU$200-$1,000 per converted referral or 10-15% rev share for 12 months.",
+    "willingness_to_pay_aud": "Shopify Plus + 3PL partners want: free Manuva access for their internal team, co-marketing budget, dedicated partner Slack, occasional MDF (market development funds) for joint webinars. Cash commissions are secondary to integration quality and reliable co-sell motion.",
+    "estimated_arpu_aud": "AU$499/mo ARPU on referred customers (almost all Pro tier)",
+    "expansion_revenue_potential": "5 — Plus brands grow into multi-channel + add-on usage rapidly",
+    "churn_risk": "1 — Plus + 3PL referred customers churn very low (deep integration; partner relationships enforce stickiness)",
+    "cac_estimate_aud": "Cash CAC: AU$300-$800 (referral bonus or rev share). Founder-time CAC: 150-300 hours over 6-12 months to bootstrap Shopify Plus Tech Partner status + 3-5 active 3PL partnerships. Effective per-customer CAC AU$500-$1,500 once channel is producing.",
+    "cash_cac_affordability": 4,
+    "ltv_estimate_aud": "AU$499 × 42mo retention × 78% margin = AU$16,300 LTV",
+    "ltv_cac_ratio": "11-32 : 1 once channel matures",
+    "typical_seat_count": "10-30",
+    "multi_channel_count": "3-5",
+    "wholesale_b2b_mix": "30-50%"
+  },
+  "where_they_live": {
+    "primary_channels": "Where Manuva learns/sources this tactic: Shopify Partners blog and forum, Shopify Plus Partner directory, Shopify Unite (event), 3PL Australia LinkedIn community, eStore Logistics partner page, Shippit integration partners list, Aus Post eParcel developer hub, 3PL Operations FB group (~3-5K AU)",
+    "directories_communities": "Shopify Plus Partner directory, Shopify Certified Technology Partner directory, Shopify App Store (Inventory category), 3PL Central / Extensiv partner directory, eStore Logistics integrations page, Shippit app marketplace, Manhattan Associates / Easyship partner programs, Logistics & Materials Handling magazine community",
+    "industry_facebook_group_size": "[uncertain] ~10,000-20,000 across AU Shopify Plus operator + 3PL operations FB groups",
+    "podcasts_voices": "Operators (Sean Frank/Cody Plofker), 2X eCommerce, Add to Cart AU (Nathan Bush — speaks to AU 3PLs frequently), Inside Retail podcast, Shopify Masters, Shopify Plus customer stories, Future Commerce. AU voices: Mark Baartse (CommerceLab), Power Retail editorial.",
+    "events_trade_shows": "Shopify Unite (annual, US, AU$5-15K travel), Online Retailer Sydney (~AU$15-50K sponsorship), MEGA event (Maverick eCommerce Growth Australia), Logistics Australia Connect, Inside Retail Live, eStore Logistics open days (free), Shopify Plus AU happy hours (free if invited)",
+    "search_keywords": "Shopify Plus inventory app, Shopify Plus tech partner program, 3PL inventory sync Shopify, eStore Logistics integration, Shopify Plus Australia inventory",
+    "community_density": 4,
+    "founder_persona_homogeneity": 4
+  },
+  "outreach_fit": {
+    "cold_outbound_feasibility": "3 — Shopify Plus partner managers are inundated; need warm intro or strong demo. 3PL BD reps respond to demo offers, especially if Manuva can show 'we'll be your inventory layer above your customers' Shopify'.",
+    "inbound_content_fit": "4 — operator content + 3PL integration case studies perform well; Shopify Plus blog accepts guest posts from Certified Partners",
+    "founder_market_fit_proxy": "4 — Plus + 3PL partners care about technical reliability and integration quality more than industry tenure",
+    "case_study_acquisition_cost": "Medium — 3-6 months of relationship-building per partner before first co-sold customer; high LTV when it lands",
+    "case_study_appeal": 4
+  },
+  "foot_in_door_fit": {
+    "design_partner_appeal": 2,
+    "paid_pilot_fit": 4,
+    "free_trial_extension_fit": 3,
+    "trial_to_paid_benchmark": "Partner-referred end-customers: 40-55% conversion (high because partner pre-qualifies and shepherds onboarding)",
+    "reference_value": 5,
+    "recommended_foot_in_door_motion": "RECOMMENDED MANUVA SHOPIFY PLUS + 3PL TACTIC: Two-track motion. TRACK A (Shopify Plus): defer formal Shopify Certified Technology Partner application until Manuva has 5+ paying Plus customers (likely month 12-15). Until then, build the relationship: list on Shopify App Store (free), submit to Plus app showcase, engage with AU Shopify Plus partner managers via LinkedIn + Sydney/Melbourne happy hours. Focus initial Plus motion on direct outbound to multi-channel Plus brands (see item 25). TRACK B (3PL — the higher-leverage track in year 1): pick 2-3 strategic AU 3PLs (eStore Logistics, one Sydney 3PL, one Melbourne 3PL) and build deep integration partnerships. Offer: free Manuva for 3PL internal use, co-branded landing page, 15% rev share on referred customers for 24 months, joint case study with first 3 mutual customers. 3PLs WANT MRP layers because they don't want to be inventory-system-of-record. Approach 3PL BD reps with 'we're the inventory layer above your customers' Shopify; we make your onboarding easier'. Target 3-5 active 3PL partnerships by month 12; expect each to refer 2-5 customers/year.",
+    "rollout_phase": "Phase 2-3 (months 6-18) — 3PL relationships start month 6; Shopify Plus Tech Partner formal status year 2"
+  },
+  "competitive_context": {
+    "current_dominant_tool": "Current best-practice playbook in inventory/MRP SaaS: file Shopify App Store listing + court Shopify Plus partner managers + integrate with top 3-5 AU 3PLs. Cin7 has done this best in AU (deep eStore Logistics + Shippit integrations + Shopify Plus Tech Partner status). Linnworks invested in 3PL channel heavily. Katana's Shopify Plus partnership is loose.",
+    "switching_pain": "n/a",
+    "competitor_gaps_for_this_segment": "Cin7 owns the AU 3PL+Shopify Plus channel but is expensive and complex. Manuva opportunity: become the easier, cheaper, AU-native MRP that 3PLs actually like onboarding their customers onto (faster TTV = less 3PL support burden). 3PL partners would prefer recommending a tool whose AU$249-$499 fits their SMB customers vs Cin7 at AU$1K+.",
+    "user_satisfaction_signals": "Shopify Plus forum: 'we need a real BOM/inventory layer above Shopify Plus' threads; 3PL ops engineers complain about Cin7 onboarding time; eStore Logistics public roadmap mentions partner integrations as priority. Shopify Q4 2025 Tech Partner reshuffle (Tech Track sunset) creates opening for new entrants.",
+    "competitor_concentration": "Cin7 dominant in AU 3PL channel; opportunity for #2 position",
+    "integration_dependency_list": "Shopify Plus Admin API, Shopify Flow, Shopify Functions (for B2B/wholesale), Shippit API, Aus Post eParcel API, eStore Logistics 3PL Central / proprietary API, Mr Fulfilment / Efill APIs, Klaviyo (Plus brands all run Klaviyo)"
+  },
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": 3,
+    "shopify_app_store_acquisition_fit": 5,
+    "shopify_plus_partner_potential": 5,
+    "tpl_3pl_referral_potential": 5,
+    "industry_association_sponsorship": "Online Retailer Sydney sponsorship (AU$15-50K — out of solo budget); cheaper: Power Retail / Inside Retail content (AU$2-8K), MEGA event sidecar (AU$1-5K), eStore Logistics open-day co-sponsor (relationship-based, often free)",
+    "partner_channel_potential": 5
+  },
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "3-8 customers via 3PL channel in months 9-12; Shopify Plus Tech Partner formal status not realistic in year 1 but informal Plus referrals can yield 2-4 customers in months 9-12",
+    "realistic_12mo_mrr_contribution_aud": "AU$2,500-$6,000 (5-12 customers × AU$499)",
+    "path_to_first_3k_5k_mrr_aud": "Not the PRIMARY path to AU$3-5K (that's items 26 + 28 — design partners + Xero/MYOB). This is the path BEYOND $5K toward $10K+ MRR. Sequence: (1) Months 0-6 focus on Charter Partners + Xero accountant channel; (2) Months 6-9 ship Amazon/Woo; (3) Months 6-12 initiate 3-5 3PL relationships in parallel (low daily time investment); (4) Months 9-15 first 3PL-referred customers land; (5) Year 2 apply for Shopify Certified Technology Partner status with 5+ Plus customer references in hand.",
+    "customers_needed_for_1m_arr_aud": "~165 customers at AU$499. Channel can deliver 50-80 over 3 years.",
+    "solo_founder_bandwidth_fit": "3 — 3PL partner relationships are high-leverage but slow (3-6 months to first referral). Shopify Plus formal status is too time-expensive in year 1 for a solo founder. Pick 3PL track + informal Shopify Plus presence.",
+    "break_even_contribution_months": "4-7 months",
+    "gross_margin_sensitivity": "Slight erosion from 15% rev share to 3PL partner; offset by higher ARPU + lower churn",
+    "priority_ranking": "3 — important year-2 motion; in year 1 limit to lightweight 3PL relationships only. Lower priority than design partners (item 26) and accountant channel (item 28) for a solo founder.",
+    "risks_and_notes": "RECOMMENDED MANUVA-SPECIFIC TACTIC PARAGRAPH: In year 1, defer formal Shopify Plus Tech Partner certification (requires 5+ Plus customers and meaningful integration investment) and instead pursue 3 strategic AU 3PL partnerships. Sequence: month 6 outreach to BD reps at eStore Logistics, one Sydney mid-market 3PL, one Melbourne mid-market 3PL; offer free Manuva for 3PL internal use + 15% rev share for 24 months + joint case studies. By month 12 aim for 3-5 active 3PL partnerships referring 5-12 customers/year. In parallel, build informal Shopify Plus presence: list on Shopify App Store free tier, attend AU Plus partner happy hours, engage AU partner managers via LinkedIn. Apply for Shopify Certified Technology Partner status in year 2 with 5+ Plus customer references. Risks: (1) Shopify Plus Tech Partner has 0% rev share until $1M earnings, 15% above — favorable economics but listing-quality bar is high; verify current 2026 requirements with Shopify partner team before investing; (2) 3PL relationships are slow — expect 3-6mo to first referral; (3) AU 3PL market is consolidating (eStore Logistics dominant); spreading bets across 3 prevents over-dependence; (4) 3PL integrations are technically expensive; pick one (eStore Logistics) and ship best-in-class first, then expand; (5) defer Shippit-specific work until 3PL channel proves value (Shippit is shipping-software, not 3PL — different lever)."
+  },
+  "uncertain": [
+    "market_sizing.business_count_au",
+    "market_sizing.growth_trend",
+    "where_they_live.industry_facebook_group_size"
+  ]
+}

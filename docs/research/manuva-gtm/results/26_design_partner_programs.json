@@ -1,0 +1,94 @@
+{
+  "item_id": "26_design_partner_programs",
+  "item_name": "Design-partner / 'shape the app' pilot programs in vertical SaaS",
+  "tier": "D",
+  "type": "strategy_tactic",
+  "market_sizing": {
+    "target_buyer": "Founder/operator at an innovator-segment SMB who is articulate, opinionated, and wants to influence the tool they will use for 5 years. Typically the founder of an indie cosmetics/SPF/coffee/candle brand at AU$300K-$2M revenue who has hit the ceiling of their current tool.",
+    "business_count_au": "Tactic-precedent count, not segment count. Common Paper data: ~hundreds of US vertical-SaaS companies run formal design-partner programs at any time. AU vertical SaaS running design-partner programs: [uncertain] estimate 30-80 active programs across all verticals. ~50% of YC-style early-stage B2B SaaS use the pattern.",
+    "business_count_secondary": "US: hundreds (Common Paper standardised the template); UK: dozens; high precedent in vertical SaaS (Zenoti, Toast, ServiceTitan, Procore all started this way).",
+    "typical_size": "Design partners themselves: 5-25 FTE brands at AU$500K-$3M revenue — large enough to have real workflow but small enough that the founder can make a buying decision in one meeting.",
+    "annual_revenue_band_aud": "Design partners typically AU$500K-$3M revenue (sweet spot: enough complexity to stress the product, small enough to commit to a 3-6mo program)",
+    "growth_trend": "Pattern is becoming standardised. Common Paper's free template (2023) and OpenView writing made it the default vertical-SaaS early motion. Growing usage post-2024 as AI lowers build cost and vertical specificity wins.",
+    "seasonality_intensity": 1
+  },
+  "fit_and_timing": {
+    "manuva_fit_score": 5,
+    "addressable_window": "now — Manuva is at the perfect stage (pre-launch with core shipped, lot tracking landing, accounting + Woo + Amazon connectors as roadmap items design partners can shape)",
+    "roadmap_dependency": "None blocking. Design partner motion works best BEFORE roadmap is fully shipped, because partners shape the priority order. Manuva should commit design partners NOW for Xero/MYOB connector quality, lot tracking field-test, and Woo/Amazon prioritisation.",
+    "typical_tier": "Free during pilot (3-6mo), then Growth $249 or Pro $499 at 30-50% discount for 12-24 months post-conversion",
+    "regulatory_burden": 1,
+    "lot_batch_criticality": 3,
+    "time_to_value_days": "30-60 days to first real production run on the tool; 90-180 days to full reference-quality case study"
+  },
+  "economics": {
+    "incumbent_pricing": "Best-practice playbook (current): Common Paper free template with 3-6mo term, 43% include future discount, 49% are 3 or 6 months. Equity offered in rare cases (0.25-1%). Most common AU vertical-SaaS structure: 100% free for 3-6mo, then 30-50% off list for 12-24 months, in exchange for feedback + case study + reference call rights.",
+    "willingness_to_pay_aud": "Design partners pay $0 during the partnership; their value is reference logo, product feedback, and case study harvest. Post-conversion ACV expected AU$2,400-$5,000/year per partner.",
+    "estimated_arpu_aud": "0 during pilot; AU$150-$350 effective ARPU post-conversion at 30-50% discount on Growth/Pro",
+    "expansion_revenue_potential": "3 — discount unwinds at month 12-24, returning customer to full list; modest expansion from add-ons.",
+    "churn_risk": "2 — design partners who shaped the product are the stickiest customers in vertical SaaS. Once they have invested 3-6 months and have BOMs/inventory inside, switching cost is enormous. But high concentration risk: if 1 of 5 partners churns, you lose 20% of cohort.",
+    "cac_estimate_aud": "Cash CAC near-zero; founder-time CAC very high: ~40-80 hours per partner across 3-6 months (weekly calls, custom feature scoping, hand-holding onboarding). At AU$150/hr notional = AU$6,000-$12,000 in founder time per design partner.",
+    "cash_cac_affordability": 5,
+    "ltv_estimate_aud": "Per-partner LTV understated by direct math (AU$3,000/yr × 4yr × 70% margin = AU$8,400). True LTV multiplied by reference value: each strong design-partner case study unlocks 5-15 downstream customers. Effective LTV per partner including reference halo: AU$30,000-$80,000.",
+    "ltv_cac_ratio": "3-7 : 1 once reference halo is counted; 1:1 to 1.4:1 if counted naively",
+    "typical_seat_count": "n/a — Manuva is flat-priced",
+    "multi_channel_count": "1-3 channels typical (most early design partners are Shopify-only at this stage)",
+    "wholesale_b2b_mix": "Mixed — pick partners that span the D2C/wholesale axis to validate both flows"
+  },
+  "where_they_live": {
+    "primary_channels": "Where Manuva sources design partners (not where the tactic lives): Indie Beauty Industry Group AU FB (~5K), AU Coffee Roasters FB groups (~2-3K), AU Candle & Soap Makers FB (~15-20K), r/coffee, r/skincareformulators, LinkedIn (warm intros to founders in target vertical), Craftybase forum exits, Katana defectors posting on G2 and Reddit.",
+    "directories_communities": "Common Paper design-partner template repository (commonpaper.com), SaaStr design-partner playbook posts, OpenView's vertical-SaaS resources, Tidemark VSKP (Vertical SaaS Knowledge Project), Y Combinator design-partner essays.",
+    "industry_facebook_group_size": "Source pool: ~50,000 total members across AU indie-maker FB groups Manuva can mine for design partners",
+    "podcasts_voices": "Lenny Rachitsky (product/design-partner episodes), This Week in Startups, SaaStr (Jason Lemkin on early customers), Tidemark Vertical SaaS Knowledge Project podcast, Dave Yuan interviews",
+    "events_trade_shows": "Naturals & Organics Australia, Cosmetics & Personal Care Trade Show (NCIA), Melbourne Coffee Expo, Sydney Coffee Festival — these are where Manuva would meet potential design partners in person. Sponsorship $2-8K range, or attend as a non-sponsor founder for $200-500.",
+    "search_keywords": "design partner agreement, design partner program SaaS, early customer pilot SaaS, founding customer program, charter customer program",
+    "community_density": 4,
+    "founder_persona_homogeneity": 3
+  },
+  "outreach_fit": {
+    "cold_outbound_feasibility": "4 — founders explicitly looking to influence tooling are responsive to a personal 'I'm building X for brands like yours; want to shape it with 4 others?' DM/email. 5-15% response rate is typical, vs 1-2% for cold sales pitch.",
+    "inbound_content_fit": "5 — 'Looking for 5 design partners' LinkedIn post with concrete ICP and offer terms is a viral motion in vertical SaaS. Tom Tunguz / Tidemark / SaaStr have written this playbook many times.",
+    "founder_market_fit_proxy": "3 — outsider founder is actually fine here BECAUSE design partner motion is explicitly 'I don't know your industry, teach me'. Reframe outsiderness as a feature: 'Outsider engineer, not yet-another-consultant, who will build exactly what you ask for.'",
+    "case_study_acquisition_cost": "Built-in to the motion — every design partner is contractually agreeing to be a case study reference",
+    "case_study_appeal": 5
+  },
+  "foot_in_door_fit": {
+    "design_partner_appeal": 5,
+    "paid_pilot_fit": 2,
+    "free_trial_extension_fit": 1,
+    "trial_to_paid_benchmark": "Design partner conversion to paid: industry typical 60-80% (much higher than 14-day free trial). Sample sizes are small but Common Paper / SaaStr report 70%+ conversion when program is well-scoped. For Manuva: target 4 of 5 partners convert.",
+    "reference_value": 5,
+    "recommended_foot_in_door_motion": "RECOMMENDED MANUVA DESIGN-PARTNER PROGRAM: Charter Partner Program. Recruit 5 partners total across 3 verticals (2 cosmetics/skincare, 2 candle/soap/homewares, 1 coffee roaster). 6-month term. Terms: (a) Free Manuva Pro tier for 6 months; (b) 50% off list ($249 Pro pricing) for 24 months post-conversion; (c) bi-weekly 30-min founder call + Slack channel for direct feedback; (d) commit to one written case study + one reference call to prospective customers per quarter; (e) named in launch press as a Charter Partner; (f) priority feature request lane (not exclusivity, but priority); (g) no equity offered — Manuva is bootstrapped and equity at pre-revenue is too speculative for SMB founder. Use Common Paper free template as base. Start recruitment now (months -3 to 0). Goal: 5 signed, 4 converting, 4 case studies by month 9. Reference halo unlocks 15-30 downstream customers by month 12.",
+    "rollout_phase": "Phase 1 (months -3 to 6) — recruit and run before public launch"
+  },
+  "competitive_context": {
+    "current_dominant_tool": "Best-practice playbook today is Common Paper's free Design Partner Agreement template — has standardised the contract layer of the tactic. Most successful vertical SaaS (Zenoti, Toast, ServiceTitan, Procore, Vertical SaaS unicorns profiled by Tidemark) ran some version of this motion at $0-$1M ARR. SaaStr / OpenView / Tidemark publish the playbooks.",
+    "switching_pain": "n/a (tactic study)",
+    "competitor_gaps_for_this_segment": "Most playbooks assume well-funded founder with VC-backed scarcity to dangle. Solo bootstrapped founder must lean harder on 'shape the product' and 'priority roadmap' instead of equity or aggressive discounts. Gap in published playbooks: solo-founder version of design-partner motion at sub-$5K MRR scale.",
+    "user_satisfaction_signals": "Common Paper data: 49% of agreements 3-6mo term, 43% include future discount. SaaStr: 'most under-utilised early-stage motion'. Tidemark: vertical SaaS that does NOT do this loses to peers that do.",
+    "competitor_concentration": "n/a (tactic study; Common Paper template is dominant contract artefact)",
+    "integration_dependency_list": "n/a — design partner motion is contract + cadence + product, not integrations"
+  },
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": 2,
+    "shopify_app_store_acquisition_fit": 2,
+    "shopify_plus_partner_potential": 2,
+    "tpl_3pl_referral_potential": 2,
+    "industry_association_sponsorship": "Industry FB groups + LinkedIn warm intro are the right channels for design partner recruitment, not sponsorships",
+    "partner_channel_potential": 2
+  },
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "5 design partners signed; 4 convert to paid by month 9. Reference halo: 10-20 additional paying customers by month 12 attributable to design partner case studies and references.",
+    "realistic_12mo_mrr_contribution_aud": "Direct: ~AU$1,000/mo (4 partners × $249 Growth-equivalent at 50% off). Halo-attributable: AU$2,500-$5,000/mo (10-20 customers × $150-$250 ARPU).",
+    "path_to_first_3k_5k_mrr_aud": "Design partner motion is the FOUNDATION of the path to AU$3-5K MRR, not the bulk of revenue. Sequence: months -3 to 0 recruit 5 partners; months 0-6 run program + ship lot tracking + accounting connectors that partners help spec; months 6-9 harvest 4 case studies; months 9-12 use case studies + reference calls to close 15-30 additional vertical customers via founder-led outbound. Compounding effect: $3-5K MRR by month 12 is mostly halo-driven, not partner-driven directly.",
+    "customers_needed_for_1m_arr_aud": "Design partners are catalyst, not bulk. 5 design partners → ~150-300 downstream customers across 24 months gets you to $1M ARR at blended $250-$300 ARPU.",
+    "solo_founder_bandwidth_fit": "3 — 5 partners × 6 months × ~8 hours/month = 240 hours of founder time across pilot phase. Demanding but bounded. More than 5 partners and quality drops; fewer than 3 and reference halo is weak.",
+    "break_even_contribution_months": "Months 9-12 — pilot is unprofitable directly; reference halo turns the unit economics positive by month 9-12",
+    "gross_margin_sensitivity": "Initial gross margin is negative-to-near-zero because of founder-time investment. But this is acquisition cost, not COGS — properly accounted as CAC, not gross margin.",
+    "priority_ranking": "1 — this is the highest-priority tactic for Manuva months -3 to 6. The solo founder's biggest constraint is credibility, and design partners are the cheapest credibility purchase available. Skip this and Manuva loses 12 months.",
+    "risks_and_notes": "RECOMMENDED MANUVA-SPECIFIC TACTIC PARAGRAPH: Run a 5-partner Charter Program across cosmetics (2), candles/soap (2), and coffee (1), each on a 6-month free Pro tier + 50% off 24 months post-conversion, in exchange for case study + reference rights + bi-weekly feedback. Source partners via Indie Beauty Industry Group AU, Craftybase exits, and Katana defection threads on G2. Use Common Paper's free template as the contract base. Avoid equity (premature; signals desperation to AU SMB founders). Cap at 5 partners — beyond that, solo founder cannot maintain quality. Risks: (1) selection risk — picking partners whose feedback skews product toward niche; counter by spreading across 3 verticals; (2) conversion fail — if discounted Pro at $249 is still too expensive at month 6, partners churn and you have nothing; mitigate by getting WTP confirmation in writing during pilot; (3) timeline drift — 6 months can become 12 if scope creeps; commit to a fixed end date and a 'graduation moment' contract clause; (4) IP/feature contamination — use Common Paper template's IP clauses verbatim, do NOT promise partners feature exclusivity (it kills future sales); (5) over-investment in one partner — cap founder hours at 8/month per partner."
+  },
+  "uncertain": [
+    "market_sizing.business_count_au"
+  ]
+}

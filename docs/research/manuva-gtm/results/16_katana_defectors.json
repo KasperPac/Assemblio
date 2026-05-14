@@ -1,0 +1,97 @@
+{
+  "item_id": "16_katana_defectors",
+  "name": "Katana defectors (cross-vertical)",
+  "tier": "B",
+  "market_sizing": {
+    "target_buyer": "Founder or ops manager. Most Katana customers are <50-person manufacturers; the founder usually signs personally but the ops/production manager drives the evaluation.",
+    "business_count_au": "Estimated 800-1500 active Katana subscribers in AU (extrapolated from Katana's ~10,000 global customer base × ~10-15% AU/NZ share given Shopify density and English-speaking concentration). Likely 200-500 actively dissatisfied / shopping per public review and pricing-hike commentary. [uncertain] — Katana does not publish AU customer numbers.",
+    "business_count_secondary": "US: ~4,000-5,500 (largest single market). UK: ~800-1500. NZ: ~150-300. CA: ~400-700. All [uncertain] and derived from Katana's global ~10K + market-share by GDP/Shopify-density proxies.",
+    "typical_size": "3-30 employees, AU$300K-$10M revenue. Skews to AU$500K-$3M Shopify-native makers.",
+    "annual_revenue_band_aud": "Most addressable defector band: AU$500K-$3M (the ones priced out by Core $299 + add-ons and 1-month notice cancellation).",
+    "growth_trend": "Defection volume is rising — Katana has restructured pricing 4 times (users → SO lines → SOs → GMV → modular add-ons), with reviewers citing a 523% personal-bill increase. Add-on stack (traceability $249 + manufacturing $199 + warehouse $149) pushes real cost to US$747-1095/mo per Brahmin Solutions analysis. Cross-vertical (cosmetics, food, apparel, electronics).",
+    "seasonality_intensity": 2
+  },
+  "fit_and_timing": {
+    "manuva_fit_score": 4,
+    "addressable_window": "Now for ~60% of defectors. Fully addressable after Xero + MYOB ship (post-launch). WooCommerce / Amazon connectors close the remaining gap.",
+    "roadmap_dependency": "Xero / MYOB / QuickBooks for AU/NZ users (currently a real friction for AU Katana refugees — Katana's AU accounting story is thin). WooCommerce / Amazon for those with multi-channel beyond Shopify. Lot tracking (already shipping pre-launch) — Katana puts traceability behind a $249 add-on, which is one of the loudest complaints.",
+    "typical_tier": "Growth ($249) is the natural landing tier for most Katana defectors — explicitly cheaper than Katana Core $299 + add-ons. Pro ($499) for multi-location / multi-channel.",
+    "regulatory_burden": "Cross-vertical so varies — average 2. Cosmetics defectors carry AICIS, food defectors carry FSANZ, most Katana customers in apparel / homewares / electronics carry minimal regulatory burden.",
+    "lot_batch_criticality": "3 — Cross-vertical average. Critical for food/cosmetic/supplement defectors; nice-to-have for apparel/homewares. But this is the #1 Katana gap (locked behind $249 add-on) so Manuva's included-in-Growth lot tracking is the single sharpest wedge.",
+    "time_to_value_days": "7-14 days. Most Katana defectors already have BOMs and recipes documented in Katana's format — Manuva can offer guided CSV import + 'BOM migration assist' as a paid service."
+  },
+  "economics": {
+    "incumbent_pricing": "Katana Core $299/mo + add-ons (traceability $249, manufacturing $199, warehouse $149 = real cost $747-1095/mo USD ≈ AU$1100-1650). Standard $359/mo, Professional $799/mo, Professional Plus $1,799/mo (yearly-billed). Mandatory onboarding fees on higher tiers (~US$1-3K). 1-month cancellation notice fee for monthly subs.",
+    "willingness_to_pay_aud": "AU$199-349/mo. Defectors are explicitly price-shopping — Manuva Growth at AU$249 is positioned as 'half the Katana real-cost with lot tracking included'.",
+    "estimated_arpu_aud": "AU$245/mo blended (mostly Growth, some Pro for multi-channel).",
+    "expansion_revenue_potential": "3 — Tier upgrade via multi-channel + multi-location. Limited add-on revenue because the whole pitch is 'no nickel-and-diming'.",
+    "churn_risk": "3 — Defectors carry serial-switcher risk (they left once, may leave again). Mitigated by Manuva's flat pricing — there's no rate-hike to trigger re-defection. Vertical-specific churn applies.",
+    "cac_estimate_aud": "Cash CAC AU$80-200 (SEO + paid Google for 'Katana alternative AU'); founder-time CAC ~4-8 hours per close (discovery + import-assist) at $150/hr = $600-1200. Blended AU$700-1400.",
+    "cash_cac_affordability": 4,
+    "ltv_estimate_aud": "AU$245 × 26mo × 0.78 GM = AU$4,970.",
+    "ltv_cac_ratio": "~3.5-7:1 founder-time loaded; highly healthy on cash-only.",
+    "typical_seat_count": "3-15 (Katana removed per-user fees in latest pricing, but customers still bear seat-related team-size pain through SO-line and GMV brackets). Manuva flat-per-account is a clean wedge for 5+ seat shops.",
+    "multi_channel_count": "2-4 — Shopify + Amazon + sometimes Woo + occasional wholesale. Higher than average.",
+    "wholesale_b2b_mix": "30-50% wholesale on average across the cross-vertical mix."
+  },
+  "where_they_live": {
+    "primary_channels": "Reddit r/manufacturing (~280K), r/smallbusiness (~2M), r/shopify (~250K), r/Entrepreneur (~4M) — all carry recurring 'Katana alternative' threads. Facebook groups: 'Shopify Australia' (~30-50K), 'Shopify Entrepreneurs' (~700K global), 'Indie Cosmetics Australia', 'Australian Candle Makers', 'Australian Soap Makers'. LinkedIn 'Manufacturing Operations Professionals' groups. G2 / Capterra review pages themselves (deal-stage intent).",
+    "directories_communities": "Shopify App Store reviews on Katana's listing (G2/Capterra adjacent). Software-comparison sites: G2, Capterra, GetApp, Software Advice, SoftwareConnect, Tekpon, ITQlick. Brahmin Solutions blog (Katana competitor — high SEO authority on Katana criticism). Craftybase comparison pages (active Katana-criticism content). MRPeasy comparison pages. r/Entrepreneur weekly threads. Shopify Plus partner communities.",
+    "industry_facebook_group_size": "Approx 100K+ aggregate across AU Shopify maker / manufacturing FB groups (cross-vertical sum). [uncertain]",
+    "podcasts_voices": "Shopify Masters podcast; 2X eCommerce podcast (Kunle Campbell); Brendan Sinclair / 'The Ecommerce Coffee Break'; G2 review-stream voices; Glenn Schmelzle (manufacturing software commentary). LinkedIn voices: Kris Ruby, Stephen Wessels (manufacturing-software reviewers).",
+    "events_trade_shows": "Shopify Editions / Shopify Unite (virtual, free). Shoptalk Australia (~2,500, AU$3-15K booths). Online Retailer Sydney (~5,000, AU$5-25K). Smart Industry Expo. APAC eCommerce Summit. Most Katana defectors are reachable via paid search and content, not events.",
+    "search_keywords": "'Katana MRP alternative', 'Katana MRP price increase', 'Katana add-on cost', 'cheap Katana alternative', 'Katana vs Manuva', 'Katana Australia pricing', 'Katana lot tracking add-on', 'leaving Katana', 'Katana 523% price hike', 'flat-rate MRP no per-seat', 'Katana cancellation fee'",
+    "community_density": 4,
+    "founder_persona_homogeneity": 2
+  },
+  "outreach_fit": {
+    "cold_outbound_feasibility": "3 — Defector identification is the bottleneck. Direct outbound feasible via G2/Capterra negative-review scraping + LinkedIn match, but takes manual effort. Cold email tolerated if the pitch is specific ('saw you reviewed Katana on Capterra').",
+    "inbound_content_fit": "5 — Highest inbound fit of any segment. 'Katana alternative AU 2026', 'Katana add-on calculator', 'Katana vs Manuva: real-cost comparison', 'How to migrate from Katana in a weekend' are all clean SEO wins with high commercial intent. Brahmin Solutions has demonstrated this works.",
+    "founder_market_fit_proxy": "4 — Defectors don't care about industry credibility — they care about flat pricing, lot tracking included, and ease of migration. Solo outsider founder is fine here.",
+    "case_study_acquisition_cost": "Low — first 5 references reachable in 4-8 weeks via review-mining + inbound from 'Katana alternative' SEO.",
+    "case_study_appeal": 3
+  },
+  "foot_in_door_fit": {
+    "design_partner_appeal": 2,
+    "paid_pilot_fit": 3,
+    "free_trial_extension_fit": 5,
+    "trial_to_paid_benchmark": "CC-required 14-day trial likely 25-35% — defectors arrive with high purchase intent and a clear comparison frame. Free-for-3-months 'switch from Katana' offer (with import assist) likely 40-50%. [uncertain] but ChartMogul-cohort logic supports the higher end given strong commercial intent.",
+    "reference_value": 4,
+    "recommended_foot_in_door_motion": "Founder-led inbound funnel + 14-day CC-required trial PLUS a paid 'Katana Switcher' import-assist service (AU$199 one-time, waived if Growth annual). Inbound powered by 'Katana alternative AU' SEO, side-by-side cost comparison calculator on the Manuva site, and 1-2 deep-dive blog posts ('We migrated 5 Katana customers — here's what we learned'). Re-engage Capterra/G2 negative reviewers with personalised LinkedIn / email.",
+    "rollout_phase": "Phase 1 (months 0-3) for cosmetics/candle/soap Shopify-native defectors. Phase 2 (months 3-6, post-Xero) for AU accounting-dependent defectors. Phase 3 (months 6-12, post-Woo/Amazon) for multi-channel defectors."
+  },
+  "competitive_context": {
+    "current_dominant_tool": "Katana itself IS the segment definition. Defectors typically came to Katana from spreadsheets + Xero/MYOB. Their alternatives in the AU consideration set: MRPeasy ($49/user), Unleashed (NZ$319-399), Craftybase ($49-199), Cin7 Core ($349+), Fishbowl (enterprise on-prem), Odoo (open-source ERP). Manuva's positioning vs each is clearer than for any other segment.",
+    "switching_pain": "3 — Lower than co-packers because Katana is itself a cloud SaaS with CSV export. BOM and product lists migrate cleanly. Manufacturing orders and historical inventory snapshots are messier. Re-doing integrations (Shopify, accounting, shipping) is the main time-sink.",
+    "competitor_gaps_for_this_segment": "Katana: pricing-rewrite fatigue, add-on stack (traceability $249, manufacturing $199, warehouse $149) pushes real cost to $747-1095/mo, 1-month notice cancellation fee, support only at AU-unfriendly hours (2am AEDT per a Capterra reviewer), removal of features unless upgrading. Manuva closes all of these: flat pricing, lot tracking included in Growth, no cancellation fees, AU-timezone support.",
+    "user_satisfaction_signals": "Capterra: '523% price increase since I started using the service' (verified reviewer). 'Customer service will only meet you at 2am Australian time'. '1 month notice cancellation fee for a month-to-month subscription'. G2: 'frequent and unpredictable price changes', 'features being reclassified into higher tiers or add-on packages, effectively raising their bill'. Reddit r/manufacturing and r/shopify: recurring 'leaving Katana' threads quarterly. Brahmin Solutions blog quantifies real-cost as US$747-1095/mo all-in.",
+    "competitor_concentration": "Katana is dominant in the Shopify-native sub-AU$10M maker segment globally (probably 20-30% share by GMV-density). For this Tier-B intent-defined segment, Katana IS 100% of the definition.",
+    "integration_dependency_list": "Shopify (table-stakes — Manuva already has), Xero/MYOB/QuickBooks (gating for AU), WooCommerce (some), Amazon (some), Klaviyo, ShipStation/Shippit/Sendle, Stripe, Faire, Etsy (for some makers), HubSpot/Pipedrive."
+  },
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": 4,
+    "shopify_app_store_acquisition_fit": 5,
+    "shopify_plus_partner_potential": 3,
+    "tpl_3pl_referral_potential": 3,
+    "industry_association_sponsorship": "Not applicable in the conventional sense — this is an intent-defined segment, not an industry vertical. Spend instead on: Shopify App Store category placement (Manufacturing & Inventory), G2/Capterra paid reviews + comparison ad slots (~AU$500-2000/mo), Brahmin Solutions / Craftybase comparison-content backlinks, Google Ads for 'Katana alternative' (~AU$3-6 CPC, monthly budget AU$1-3K viable). [uncertain] on G2/Capterra exact 2026 rates.",
+    "partner_channel_potential": 4
+  },
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "12-25 paying customers in 12 months. Highest-volume Tier-B segment because the inbound SEO funnel scales without proportional founder time once the 'Katana alternative AU' page ranks.",
+    "realistic_12mo_mrr_contribution_aud": "AU$2,900-6,100/mo at end of month 12.",
+    "path_to_first_3k_5k_mrr_aud": "This segment can land AU$3-5K MRR ALONE inside 12 months if SEO + side-by-side cost calculator ship in months 0-3. Path: (1) ship 'Katana alternative AU' landing page + cost calculator + import wizard, month 0-2; (2) seed 3-5 case studies from review-mined defectors via 'free 3 months + import assist' offer, months 2-5; (3) acquire backlinks from Brahmin Solutions, Craftybase comparison pages, Shopify community, Reddit r/shopify mentions, months 3-6; (4) run AU$1.5K/mo Google Ads on 'Katana alternative' + 'Katana price' clusters, months 4-12; (5) by month 12: 20 customers × AU$245 = AU$4,900 MRR. THIS IS THE SINGLE MOST PROMISING LEVER for the AU$3-5K target.",
+    "customers_needed_for_1m_arr_aud": "~340 customers at AU$245 blended ARPU. Reachable if Manuva captures even 1-2% of the global Katana installed base over 3 years.",
+    "solo_founder_bandwidth_fit": "4 — Inbound-funnel-driven, so per-customer founder time is bounded. Cross-vertical means template playbooks (BOM migration, lot-tracking onboarding) work across logos. Solo founder can support 30-40 active customers from this segment without strain.",
+    "break_even_contribution_months": "3-5 months on cash CAC; 5-7 months with loaded founder time.",
+    "gross_margin_sensitivity": "Low — defectors arrive with realistic expectations and self-serve onboarding. Import-assist service has its own margin. Effective GM 78-82%.",
+    "priority_ranking": "1 — Highest-priority single segment in this study. Best combination of: inbound-discoverable demand, sharp pricing wedge, low founder-credibility bar, cross-vertical applicability, fastest path to AU$3-5K MRR, and lowest bandwidth cost per closed customer.",
+    "risks_and_notes": "Risks: (1) Katana could simplify pricing and close the wedge (low probability given 4 prior reshuffles). (2) SEO ranking for 'Katana alternative' is contested by MRPeasy, Craftybase, Unleashed, Ordoro — content needs to be 10x better, not just present. (3) Defector serial-switcher risk — emphasise retention-by-flat-pricing messaging. (4) Re-engaging G2/Capterra reviewers may violate platform TOS if done at scale — verify outreach mechanics. Verify before going hard: actual CPC for 'Katana alternative AU' keywords; whether Brahmin Solutions / Craftybase will accept guest content with Manuva backlinks; whether a Shopify App Store listing accelerates discovery vs Katana's own listing dominance; whether 'free 3 months + import assist' converts at the assumed 40-50%. KEY EXECUTION DEPENDENCY: the cost calculator + comparison page must ship in month 1 — without it, the inbound thesis does not work."
+  },
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "trial_to_paid_benchmark",
+    "industry_facebook_group_size",
+    "industry_association_sponsorship"
+  ]
+}

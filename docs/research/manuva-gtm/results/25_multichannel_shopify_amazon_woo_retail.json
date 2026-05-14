@@ -1,0 +1,96 @@
+{
+  "item_id": "25_multichannel_shopify_amazon_woo_retail",
+  "item_name": "Multi-channel brands (Shopify + Amazon + Woo + retail)",
+  "tier": "C",
+  "market_sizing": {
+    "target_buyer": "Founder/COO or Head of Operations at a $1M-$10M revenue brand with 5-25 staff. Often a non-technical operator who has hit the ceiling of spreadsheet + native channel apps.",
+    "business_count_au": "[uncertain] ~3,000-6,000 AU brands selling on 3+ channels (Shopify + Amazon AU + retail/wholesale). Derived from ~10,000 AU Amazon vendors (2025) intersected with Shopify's claim of powering 25% of AU commerce; only a fraction of these also do their own manufacturing/assembly (Manuva's wedge).",
+    "business_count_secondary": "US ~80,000-120,000 [uncertain]; UK ~15,000-25,000 [uncertain]; NZ ~1,000-2,000; CA ~8,000-12,000. Multi-channel branded sellers with manufacturing operations are a small but high-LTV slice of the broader ecommerce population.",
+    "typical_size": "10-25 FTE, AU$1M-$8M annual revenue",
+    "annual_revenue_band_aud": "1M-5M most common; tail extends to 10M+",
+    "growth_trend": "AU ecommerce growing 12% CAGR to 2031 (Mordor). Amazon AU is Amazon's fastest-growing marketplace globally. Multi-channel as a strategy is becoming standard rather than optional — Shopify multichannel commerce growth 4% in-store / 10% online uplift vs single-channel.",
+    "seasonality_intensity": 3
+  },
+  "fit_and_timing": {
+    "manuva_fit_score": 5,
+    "addressable_window": "after Xero+MYOB+QuickBooks + after WooCommerce + after Amazon (Phase 3, months 6-12)",
+    "roadmap_dependency": "Amazon connector (critical — FBA inbound shipment planning), WooCommerce connector, Xero/MYOB/QuickBooks for channel-revenue reconciliation, multi-channel inventory allocation logic, channel-priority stock reservation",
+    "typical_tier": "Pro ($499) — these brands need all connectors and channel-level reporting",
+    "regulatory_burden": 2,
+    "lot_batch_criticality": 3,
+    "time_to_value_days": "14-30 days (multi-channel sync setup, BOM rebuild, historical reconciliation)"
+  },
+  "economics": {
+    "incumbent_pricing": "Cin7 Core Standard $349 USD/mo (AU$540) to Pro $599 USD (AU$925); Cin7 Omni $999+ USD; Extensiv brand plans $500-$2,000+ USD/mo; Katana Pro+addons typically $399+ USD; Linnworks $300-$600 USD/mo. Most multi-channel brands pay AU$500-$1,500/mo for ops stack.",
+    "willingness_to_pay_aud": "AU$499-$799/mo realistic. These brands already pay AU$500-$1,500 for incumbents and view ops software as essential infrastructure. Pro tier ($499) is the natural anchor; a future Pro+Channel add-on at AU$699-$799 is defensible.",
+    "estimated_arpu_aud": "AU$499 blended (close to 100% Pro tier)",
+    "expansion_revenue_potential": "4 — add-ons for channel-level COGS reporting, multi-warehouse, advanced wholesale pricing tiers, B2B portal, demand forecasting. Realistic 20-30% net-revenue retention upside.",
+    "churn_risk": "2 — once multi-channel sync is wired and historical data is migrated, switching cost is very high. Churn drivers are mainly business failure or acquisition/upmarket move to NetSuite.",
+    "cac_estimate_aud": "Cash CAC AU$300-$800 (longer sales cycle, 2-4 demo calls). Founder-time CAC ~12-25 hours @ notional AU$150/hr = AU$1,800-$3,750 time cost. Blended effective CAC AU$2,000-$4,000 in year 1; drops sharply once partner channels (Shopify Plus Tech Partner, 3PLs) refer.",
+    "cash_cac_affordability": 4,
+    "ltv_estimate_aud": "AU$499 × 36 months × 75% gross margin = AU$13,500 LTV (lower margin reflects support overhead of multi-channel customers).",
+    "ltv_cac_ratio": "3.4-6.8 : 1",
+    "typical_seat_count": "5-15 (multi-channel ops, customer service, warehouse — Manuva's flat pricing destroys per-seat incumbents here)",
+    "multi_channel_count": "3-5 channels (Shopify + Amazon + Woo OR retail + wholesale via Faire/EDI)",
+    "wholesale_b2b_mix": "30-50% wholesale, 50-70% D2C is typical for the segment"
+  },
+  "where_they_live": {
+    "primary_channels": "r/ecommerce (~370K), r/AmazonSeller (~250K), r/FulfillmentByAmazon (~200K), r/shopify (~340K), Facebook 'Shopify Entrepreneurs' (~250K), 'Amazon FBA Seller Australia' (~10-15K), LinkedIn ecommerce-operator groups, Twitter/X DTC-ops circle (#dtcops), 'AU Ecommerce Operators' Slack/Discord communities [uncertain on exact sizes]",
+    "directories_communities": "Shopify Plus partner directory, Amazon SPN (Service Provider Network), Online Retailer Australia attendee list, Power Retail's Top 100, Inside Retail's Top 500 Online, eCommerce Pulse community, OperatorOS communities, Practical Ecommerce, Modern Retail",
+    "industry_facebook_group_size": "[uncertain] ~50,000-80,000 across the relevant AU/global FB groups for Shopify/Amazon multi-channel operators",
+    "podcasts_voices": "Operators (Sean Frank/Cody Plofker), DTC Pod (Blaine Bolus), 2X eCommerce (Kunle Campbell), Add to Cart (Australia — Nathan Bush), Pixelated by Avenue 9, eCommerce Fastlane (Steve Hutt)",
+    "events_trade_shows": "Online Retailer Sydney (July, ~5,000 attendees, sponsorship AU$15-50K — likely above founder budget), Retail Fest AU, Shoptalk Australia, eCommerce Sydney/Melbourne meetups (free-cheap), Reload Conference (sponsorship AU$3-10K)",
+    "search_keywords": "Cin7 alternative Australia, Katana alternative multi-channel, Shopify Amazon inventory sync, multi-channel inventory management Australia, ecommerce ops software Australia, brand operations software, channel reconciliation software, Linnworks alternative",
+    "community_density": 4,
+    "founder_persona_homogeneity": 4
+  },
+  "outreach_fit": {
+    "cold_outbound_feasibility": "3 — emails findable via Apollo/Clay enriched from Shopify storefronts + Amazon brand registry. But these are sophisticated buyers; cold outbound conversion is 1-2%. Better: warm intro from Shopify Plus tech partner or 3PL.",
+    "inbound_content_fit": "5 — operator-content market. 'How we cut channel reconciliation from 6h to 30min', SKU-level channel-profitability tutorials, FBA inbound BOM walkthroughs perform very well on LinkedIn and operator newsletters.",
+    "founder_market_fit_proxy": "4 — these buyers care about tool quality and outcomes, not founder credentials. Ex-PAC Tech engineering background is actually a plus here (operator buyers respect builders).",
+    "case_study_acquisition_cost": "Hard — needs 6-10 weeks of paid pilot work to harvest a great case study. But once landed, each case study is worth 5-10x more than a vertical case study because the buyer count is higher.",
+    "case_study_appeal": 4
+  },
+  "foot_in_door_fit": {
+    "design_partner_appeal": 3,
+    "paid_pilot_fit": 5,
+    "free_trial_extension_fit": 2,
+    "trial_to_paid_benchmark": "Paid pilot at this ARPU expected 40-55% conversion (ChartMogul 2025 paid-pilot benchmark 40-60%, slightly lower here for complex integrations). Free trials underperform here because sophisticated buyers want commitment signals from a vendor and want a paid implementation engagement.",
+    "reference_value": 5,
+    "recommended_foot_in_door_motion": "Paid pilot: AU$499/mo × 3 months, 50% credited toward year-one Pro plan if they convert. Bundled with founder-led onboarding (8-12 hours) to migrate one channel at a time. After 5-10 reference customers land via direct founder outbound, transition to partner-channel sourced leads (Shopify Plus Tech Partner + 3PLs) with same paid-pilot motion. Avoid free-trial; signals lack of seriousness for $499 ARPU buyer.",
+    "rollout_phase": "Phase 3 (months 6-12, post-Woo/Amazon)"
+  },
+  "competitive_context": {
+    "current_dominant_tool": "Fragmented: Cin7 Core/Omni is the most common AU mid-market choice; Linnworks (UK/AU); Extensiv (US-heavy); Katana increasingly; many brands are still on a stack of Shopify native + Amazon Seller Central + spreadsheets + Xero. ~30-40% of multi-channel brands have NO dedicated ops tool above their channel apps.",
+    "switching_pain": 4,
+    "competitor_gaps_for_this_segment": "Cin7: post-DEAR acquisition price hikes, weak BOM versioning, no clean WIP, complex onboarding (4-8 weeks), per-user/per-order caps. Katana: per-seat pricing punishes ops teams, FBA still limited, BOM yield % weak. Linnworks: weak on manufacturing/BOMs (it's an OMS, not MRP). Extensiv: priced for $5M+ brands, overkill for AU SMB. Manuva wedge = flat pricing + real BOMs + real lot tracking + all AU connectors at one Pro price.",
+    "user_satisfaction_signals": "G2/Capterra: Cin7 post-DEAR 'price went up 3x with no new features' threads; Reddit r/AmazonSeller: 'spent $X on Cin7 onboarding, still not live after 3 months'; Katana: '523% increase since signup' (G2). Operator newsletters frequently feature 'we built our own dashboard because our ops tool can't do channel-level COGS' posts.",
+    "competitor_concentration": "HHI ~0.18 (fragmented; no single tool >25% share)",
+    "integration_dependency_list": "Klaviyo, Shippit (AU), Australia Post eParcel, ShipStation, Faire, Amazon FBA inbound API, EDI for retail (Coles/Woolworths), Stripe, AfterPay, Recharge, ReturnGo"
+  },
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": 4,
+    "shopify_app_store_acquisition_fit": 4,
+    "shopify_plus_partner_potential": 5,
+    "tpl_3pl_referral_potential": 5,
+    "industry_association_sponsorship": "Australian Retailers Association (sponsorship $5-25K), Power Retail community sponsorship $3-10K, Inside Retail content sponsorships $2-8K. Free or cheap leverage: Online Retailer Sydney sidecar events, ARA's online retail SIG.",
+    "partner_channel_potential": 5
+  },
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "3-6 customers in months 9-12 (segment only addressable post-Woo/Amazon ship, mo 6-9). Onboarding load is heavy: 8-12 hours per customer for a solo founder.",
+    "realistic_12mo_mrr_contribution_aud": "AU$1,500-$3,000 (3-6 customers × $499)",
+    "path_to_first_3k_5k_mrr_aud": "Not the segment that gets you TO AU$3-5K — it's the segment that gets you BEYOND it. Sequence: (1) months 0-6 land Tier A vertical case studies at $99-$249 to hit base $3K MRR; (2) months 6-9 ship Woo/Amazon + lock 1-2 Shopify Plus Tech Partner referral relationships; (3) months 9-12 close 3-6 multi-channel Pro customers via paid-pilot motion, adding $1,500-$3,000 MRR. Drives MRR from $3K → $5-7K and proves the Pro tier.",
+    "customers_needed_for_1m_arr_aud": "~165 customers at AU$499 ARPU. Realistically 100-130 Pro multi-channel + 200-300 Starter/Growth verticals = mixed path to $1M ARR.",
+    "solo_founder_bandwidth_fit": "2 — onboarding complexity is the constraint. A solo founder can sustainably onboard 1-2 multi-channel customers per month at this depth. Either invest in onboarding automation/templates by month 6 or cap segment volume.",
+    "break_even_contribution_months": "5-8 months (CAC AU$2,000-$4,000 ÷ AU$499 × 75% margin ≈ AU$374 contribution/mo)",
+    "gross_margin_sensitivity": "Below SaaS norm initially. Multi-channel customers consume 3-5x support hours of vertical customers in the first 90 days (channel sync issues, edge cases, reconciliation training). Gross margin starts at ~60-65% and improves to 80%+ by month 6 once self-serve playbooks and channel-specific runbooks exist.",
+    "priority_ranking": "3 — highest LTV and proves Pro tier, but gated on roadmap (Woo + Amazon + accounting connectors) AND on solo-founder onboarding bandwidth. Right segment, wrong time for months 0-6.",
+    "risks_and_notes": "Risks: (1) Amazon connector quality is make-or-break — FBA inbound is the killer feature and is hard to build correctly; (2) channel-reconciliation customers expect tight Xero/MYOB sync, so accounting integration quality matters more here than in any vertical; (3) Cin7 incumbent has 700+ integrations; Manuva must pick the 10 that matter (Klaviyo, Shippit, Faire, AusPost, ShipStation, EDI bridge); (4) onboarding complexity = solo-founder time bomb — invest in self-serve setup wizards before opening this segment; (5) verify Shopify Plus Tech Partner application criteria + co-sell GTM motion before banking on it as primary acquisition channel."
+  },
+  "uncertain": [
+    "market_sizing.business_count_au",
+    "market_sizing.business_count_secondary",
+    "where_they_live.primary_channels",
+    "where_they_live.industry_facebook_group_size"
+  ]
+}

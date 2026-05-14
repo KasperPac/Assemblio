@@ -1,0 +1,94 @@
+{
+  "item_id": "05_coffee_roasters_tea",
+  "item_name": "Specialty coffee roasters & tea blenders",
+  "tier": "A",
+  "market_sizing": {
+    "target_buyer": "Founder / head roaster — almost always the same person at sub-AU$1M revenue. Ops/wholesale lead joins at AU$1-2M (wholesale-heavy roasters) and signs co-decisions.",
+    "business_count_au": "914 coffee roasters in AU (RenTech Digital, Oct 2025), 838 (91.7%) single-owner. Tea blenders: ~150-300 additional (no equivalent census; T2-style scale rare, mostly indie blenders). Total addressable: ~1,000-1,200 AU SMBs.",
+    "business_count_secondary": "US: ~4,000-5,500 specialty roasters (SCA). UK: ~600-900. NZ: ~200-300. CA: ~600-900. [uncertain]",
+    "typical_size": "1-8 employees (often 2-4). Revenue AU$200K-$5M. Wholesale-heavy roasters skew larger.",
+    "annual_revenue_band_aud": "Most common: AU$500K-$2M",
+    "growth_trend": "AU specialty coffee market ~4-6% CAGR; specialty roaster cohort growing faster than mainstream. Tea blenders flat-to-+3%. Cafe-attached roasters expanding wholesale to other cafes is the main growth motion. Post-2024 green coffee price spike has pushed roasters to demand tighter inventory tracking.",
+    "seasonality_intensity": 2
+  },
+  "fit_and_timing": {
+    "manuva_fit_score": 3,
+    "addressable_window": "now",
+    "roadmap_dependency": "Lot/batch tracking (shipped) handles green coffee lots. Xero (roadmap) critical for the wholesale-heavy cohort. BUT: roasters have a domain-specific tool (Cropster) that Manuva does NOT replace — roast profile capture, machine integration, cup-scoring. Manuva is complementary, not substitute, for Cropster users.",
+    "typical_tier": "Growth ($249) primary; Pro ($499) for wholesale-heavy multi-cafe-account roasters.",
+    "regulatory_burden": "2 — FSANZ general food safety; HACCP if supplying retail; organic cert if claimed. Lighter than alcohol/supplements.",
+    "lot_batch_criticality": 4,
+    "time_to_value_days": 10
+  },
+  "economics": {
+    "incumbent_pricing": "Cropster Roast: foundation US$79/mo (~AU$120) base + volume fees above 250kg/mo + espresso-machine fees. Real spend usually AU$200-500/mo for active roasters. Many roasters ALSO use Unleashed (NZ$319-399 ≈ AU$300-370/mo) or Xero alone for wholesale. Smaller roasters on spreadsheets + Square POS. RoasterTools, Beanconqueror at low end.",
+    "willingness_to_pay_aud": "AU$99-$249/mo IF positioned as 'wholesale + BOM + blends + Xero, NOT a roast-profile replacement'. Trying to replace Cropster is a losing position; complementing it is the play.",
+    "estimated_arpu_aud": "AU$235 blended (Growth 65% / Pro 25% / Starter 10%) — assumes roaster keeps Cropster and uses Manuva for wholesale/finance/blend BOMs.",
+    "expansion_revenue_potential": "3 — clear Pro upgrade for wholesale-heavy roasters; less upside than skincare/SPF because Cropster takes the production-tracking spend.",
+    "churn_risk": "2 — roasters at AU$500K+ revenue rarely churn; tea blenders churn higher due to smaller margins.",
+    "cac_estimate_aud": "Cash CAC AU$100-300 (community-driven via SCA AU + cafe trade pubs). Founder-time CAC ~8-12 hours × AU$150 = AU$1,200-1,800. Total ~AU$1,300-2,100.",
+    "cash_cac_affordability": 4,
+    "ltv_estimate_aud": "AU$235 × 30mo × 80% = AU$5,640",
+    "ltv_cac_ratio": "~3-4:1 fully loaded",
+    "typical_seat_count": "2-5 users",
+    "multi_channel_count": "3-4 (Shopify D2C + wholesale + cafe accounts + occasionally subscription)",
+    "wholesale_b2b_mix": "60-80% wholesale (cafes, restaurants, offices). Highest wholesale mix of any Tier-A segment."
+  },
+  "where_they_live": {
+    "primary_channels": "Specialty Coffee Association of Australia (SCA AU). FB groups: 'Australian Coffee Roasters' (~5-10K [uncertain]), 'Cafe Owners Network Australia' (~15K [uncertain]). Reddit r/coffee (~3M global), r/roasting (~80K). Instagram #specialtycoffeeaustralia. BeanScene magazine (industry trade pub). Daily Coffee News (US-led but read globally). Perfect Daily Grind.",
+    "directories_communities": "Specialty Coffee Association (SCA) AU chapter. Australian Specialty Coffee Association. BeanScene Magazine (AU). MICE — Melbourne International Coffee Expo (major annual). Five Senses Coffee, Seven Miles, Padre Coffee — alumni network. Coffee Roasters Australia directory. Beanfinder.coffee.",
+    "industry_facebook_group_size": "~20,000-35,000 combined across AU coffee FB groups [uncertain]",
+    "podcasts_voices": "1) BeanScene Magazine (AU trade pub). 2) MICE conference content. 3) Perfect Daily Grind. 4) Sprudge. 5) Cafe Culture International. 6) Roastertools blog. 7) Cropster blog (read by every roaster).",
+    "events_trade_shows": "MICE — Melbourne International Coffee Expo (annual, Melbourne, ~14K attendees, exhibitor AU$5-20K — biggest single AU coffee event). World of Coffee Asia (Bangkok). Sydney Coffee Week. AICA — Australian Internal Coffee Awards. Hospitality industry shows (Foodservice Australia).",
+    "search_keywords": "'coffee roaster wholesale software AU', 'green coffee inventory Australia', 'roastery Xero integration', 'cafe wholesale invoicing software', 'specialty coffee blend BOM', 'Cropster Xero alternative', 'coffee roaster Shopify wholesale', 'tea blender inventory software', 'roastery subscription management', 'green coffee lot tracking'",
+    "community_density": 5,
+    "founder_persona_homogeneity": 4
+  },
+  "outreach_fit": {
+    "cold_outbound_feasibility": "4 — roaster contact details are public (cafe trade directories, Instagram). LinkedIn outbound to founders accepted. FB group posts + MICE conversations highly effective.",
+    "inbound_content_fit": "4 — segment reads BeanScene + Perfect Daily Grind heavily. SEO content around 'wholesale invoicing for roasters', 'Cropster + Xero integration' has demand.",
+    "founder_market_fit_proxy": "4 — coffee community is famously welcoming to outsiders who show up at MICE / SCA events. Founder doesn't need roaster credentials, just needs to acknowledge Cropster's primacy and position as complement.",
+    "case_study_acquisition_cost": "Moderate — first 3-5 reference roasters require attending MICE (AU$2-5K) or one supplier partnership. Achievable in 90 days post-MICE.",
+    "case_study_appeal": 4
+  },
+  "foot_in_door_fit": {
+    "design_partner_appeal": 3,
+    "paid_pilot_fit": 4,
+    "free_trial_extension_fit": 3,
+    "trial_to_paid_benchmark": "Opt-in 8-10%, CC-required 28-32%, paid pilot 45-55%. Roasters are more deliberate buyers than candle makers — less self-serve, more demo-driven.",
+    "reference_value": 4,
+    "recommended_foot_in_door_motion": "Phase 2 (months 3-6): Founder-led sales via MICE attendance + SCA AU chapter co-marketing. Paid pilot (AU$249 × 3 months credited) preferred over free trial because roasters value paid commitments. Position as 'Cropster + Xero glue for wholesale-heavy AU roasters' not as Cropster replacement. Target wholesale-heavy roasters at AU$1-3M revenue (50-100 cafe accounts) where Cropster + spreadsheet wholesale invoicing is the documented pain.",
+    "rollout_phase": "Phase 2 (months 3-6, post-MICE attendance)"
+  },
+  "competitive_context": {
+    "current_dominant_tool": "Cropster ~50-60% of serious roasters (production side). Unleashed ~25% (wholesale side). Xero alone ~15% (smallest roasters). Spreadsheets ~30% of sub-AU$500K cohort. Many roasters stack Cropster + Unleashed + Xero — 3 tools — which is the wedge.",
+    "switching_pain": "4 — green coffee lot history, roast profiles (Cropster lock-in), wholesale customer hierarchies, recurring orders. Roasters are reluctant to migrate the production side. Manuva should NOT try to migrate Cropster; should slot in alongside.",
+    "competitor_gaps_for_this_segment": "Cropster: weak wholesale invoicing, weak Xero integration (CSV only), expensive once volume tier kicks in. Unleashed: NZD FX, weak Shopify multi-currency, no roast-profile capture (forces dual tooling). Xero alone: no BOM, no production, no inventory. Manuva wedge: flat AU pricing, BOM + production layer for the wholesale/finance side, Xero integration, blend recipe versioning. Coexists with Cropster.",
+    "user_satisfaction_signals": "Cropster reviews: 'expensive at scale', 'volume fees stack quickly'. Unleashed: NZD FX, dated UI. Roasters on r/roasting frequently complain about wholesale invoicing being a manual mess. BeanScene 2024-2025 coverage has touched on 'wholesale invoicing pain' for growing roasters.",
+    "competitor_concentration": "Concentrated for production tooling (Cropster), fragmented for wholesale/finance.",
+    "integration_dependency_list": "Must-have: Xero (roadmap — critical), Shopify. Highly desirable: Cropster integration / API (Cropster has an API — should investigate). Square POS (cafe-attached roasters). Stripe (subscriptions). Mailchimp / Klaviyo. Account-based wholesale invoicing is the killer wedge."
+  },
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": 5,
+    "shopify_app_store_acquisition_fit": 3,
+    "shopify_plus_partner_potential": 2,
+    "tpl_3pl_referral_potential": 3,
+    "industry_association_sponsorship": "SCA Australia chapter — sponsorship + newsletter slot AU$2-5K. MICE — booth AU$5-20K (high-value, defer to year 2 OR attend as networking-only year 1 for AU$2-3K travel cost). BeanScene Magazine — advertorial AU$3-8K. Coffee Roasters Australia directory listing. Direct partnerships with AU green coffee importers (Cofi-Com, Bennetts, Five Senses Imports) — they refer downstream roaster customers.",
+    "partner_channel_potential": 4
+  },
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "10-20 paying customers by month 12, post-MICE attendance. Conservative: 6. Optimistic: 25.",
+    "realistic_12mo_mrr_contribution_aud": "AU$2,300-4,700 MRR at AU$235 ARPU (~15 customers midpoint)",
+    "path_to_first_3k_5k_mrr_aud": "Month 0-3: attend MICE (~AU$3K travel + networking pass) → 30-50 first conversations; SEO content on 'Cropster + Xero wholesale glue' + 5 supporting articles. Month 3-6: 2-3 design partner roasters at AU$1-3M revenue (free 6mo + monthly Loom), recruited at MICE follow-ups; investigate Cropster API integration. Month 6-9: case study publish + SCA AU webinar/event slot; paid pilots converting at 45-55%. Month 9-12: 12-18 paying at AU$235 = AU$2,800-4,200 MRR. Slower ramp than candles but stickier customers.",
+    "customers_needed_for_1m_arr_aud": "~355 customers at AU$235 ARPU. Approachable given 1,000+ AU TAM.",
+    "solo_founder_bandwidth_fit": "3 — onboarding includes wholesale customer hierarchy import + Xero mapping (4-6 hours/customer). Coexistence with Cropster adds setup complexity. Ceiling ~40-60 customers before founder support breaks.",
+    "break_even_contribution_months": "6-9 months",
+    "gross_margin_sensitivity": "Medium — onboarding time + Cropster coexistence support drops year-1 gross margin to ~70-75%. Improves to 80% by year 2 once docs + Cropster integration ship.",
+    "priority_ranking": "3 — Strong fit on data model, dense community, high LTV. But Cropster's dominance on the production side means Manuva must be positioned as complement, which is harder to articulate. Run as Phase-2 segment, anchored by MICE attendance and at least exploratory Cropster API talk.",
+    "risks_and_notes": "Risks: (1) Cropster might add a wholesale invoicing module, neutralising the wedge. Monitor changelog. (2) Tea blender sub-segment is much smaller and not worth dedicated focus — bundle with coffee. (3) MICE attendance is the single highest-leverage move; budget for it. (4) Cropster API integration would be a 10x amplifier — pursue partnership talks early. (5) Don't try to replace Cropster's roast profile capture — that's a 5-year build."
+  },
+  "uncertain": [
+    "business_count_secondary",
+    "industry_facebook_group_size"
+  ]
+}

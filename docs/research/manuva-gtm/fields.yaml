@@ -1,0 +1,285 @@
+version: 1
+description: >
+  Field definitions for Manuva GTM research. Each item in outline.yaml is researched
+  against these fields. detail_level controls expected depth (brief = 1–2 lines,
+  moderate = a short paragraph + 2–3 facts, detailed = paragraph with citations).
+  Field groups merge the structure from docs/research/saas-market-gaps/fields.yaml
+  with Manuva-specific GTM fields surfaced in the web-search supplement step.
+
+  SOLO-FOUNDER CONSTRAINT (applies to every field): Manuva is a one-person operation
+  with no insider industry credentials and minimal paid-acquisition budget. When
+  scoring fit / motion / CAC fields, weight against:
+    - Trust-based / credentialed segments (cosmetic chemistry, supplements, regulated foods)
+      where buyers expect industry-insider sellers
+    - High-touch onboarding burdens that don't scale for one person
+    - Paid-channel CAC that requires upfront cash the founder doesn't have
+    - Motions that depend on founder time, partner channels, content/SEO, and earned community
+
+  Targets: realistic 12-month = AU$3,000-$5,000 MRR. Aspirational 3-year = AU$1M ARR.
+
+categories:
+  # ───────────────────────────────────────────────
+  # 1. Market sizing
+  # ───────────────────────────────────────────────
+  market_sizing:
+    description: How many target businesses exist, where they sit, how they're trending
+    fields:
+      - name: target_buyer
+        description: Who signs the contract (founder, COO, ops manager, head of production)
+        detail_level: brief
+      - name: business_count_au
+        description: Estimated number of target businesses in AU. Cite source.
+        detail_level: moderate
+      - name: business_count_secondary
+        description: Estimated counts in US, UK, NZ, CA for the same segment
+        detail_level: moderate
+      - name: typical_size
+        description: Typical employee count and AU$ annual revenue range
+        detail_level: brief
+      - name: annual_revenue_band_aud
+        description: Most common AU$ revenue band (100K / 250K / 500K / 1M / 2M+). Drives ARPU tier mapping.
+        detail_level: brief
+      - name: growth_trend
+        description: Segment growth direction (CAGR, recent industry-report findings)
+        detail_level: moderate
+      - name: seasonality_intensity
+        description: 1-5 — does the segment have a strong buying season? (e.g. candles Oct, supplements Jan)
+        detail_level: brief
+
+  # ───────────────────────────────────────────────
+  # 2. Fit & roadmap timing
+  # ───────────────────────────────────────────────
+  fit_and_timing:
+    description: How cleanly Manuva fits this segment today vs after roadmap unlocks
+    fields:
+      - name: manuva_fit_score
+        description: 1-5 — how cleanly does Manuva's data model (BOM, inventory, locations, POs) map to this segment's workflow
+        detail_level: moderate
+      - name: addressable_window
+        description: When this segment becomes fully addressable — "now" / "after Xero+MYOB+QuickBooks" / "after lot tracking" / "after WooCommerce" / "after Amazon"
+        detail_level: brief
+      - name: roadmap_dependency
+        description: Specific roadmap items required before this segment can be sold to (list)
+        detail_level: brief
+      - name: typical_tier
+        description: Which Manuva tier this segment naturally lands on (Starter $99 / Growth $249 / Pro $499)
+        detail_level: brief
+      - name: regulatory_burden
+        description: 1-5 score for compliance overhead (FSANZ/TGA/AICIS/HACCP/GMP). Drives WTP for lot/batch and tier upgrade.
+        detail_level: moderate
+      - name: lot_batch_criticality
+        description: 1-5 — how critical is lot/batch tracking before the segment will buy
+        detail_level: brief
+      - name: time_to_value_days
+        description: Days from signup to first BOM run / first useful output. Critical for pilots.
+        detail_level: brief
+
+  # ───────────────────────────────────────────────
+  # 3. Economics
+  # ───────────────────────────────────────────────
+  economics:
+    description: Realistic revenue per customer, expansion path, churn, CAC, LTV
+    fields:
+      - name: incumbent_pricing
+        description: What current tools charge this segment (Katana/Craftybase/Cin7/Unleashed/MRPeasy/spreadsheets). Specific $/mo.
+        detail_level: moderate
+      - name: willingness_to_pay_aud
+        description: Realistic ACV at Manuva tiers, adjusted for AU SMB norms (typically 70-85% of US benchmark)
+        detail_level: moderate
+      - name: estimated_arpu_aud
+        description: Expected blended ARPU (AU$) across the segment given tier mix
+        detail_level: brief
+      - name: expansion_revenue_potential
+        description: Can ARPU grow via tier upgrades, capacity-planning module, lot-tracking add-on, Pro tier? 1-5 + notes.
+        detail_level: moderate
+      - name: churn_risk
+        description: Vertical-specific churn drivers (seasonality, project-based, single-founder businesses closing). 1-5 + notes.
+        detail_level: moderate
+      - name: cac_estimate_aud
+        description: Estimated blended CAC for the channel mix proposed for this segment. Split into (a) cash CAC and (b) founder-time CAC (hours × notional rate).
+        detail_level: moderate
+      - name: cash_cac_affordability
+        description: 1-5 — can a solo founder with near-zero ad budget afford the cash CAC needed to acquire this segment? Lower = needs paid channels Manuva can't fund yet.
+        detail_level: moderate
+      - name: ltv_estimate_aud
+        description: Estimated LTV at the segment's expected ARPU, gross margin, and retention
+        detail_level: brief
+      - name: ltv_cac_ratio
+        description: Implied LTV:CAC. Target ≥ 3:1.
+        detail_level: brief
+      - name: typical_seat_count
+        description: Even though Manuva is flat-priced, knowing user count predicts switching pain from per-seat incumbents (Katana, MRPeasy)
+        detail_level: brief
+      - name: multi_channel_count
+        description: Average number of sales channels per customer (Shopify, Amazon, Faire, wholesale, retail)
+        detail_level: brief
+      - name: wholesale_b2b_mix
+        description: "% of revenue from wholesale vs D2C. High wholesale = different needs (pricing tiers, invoicing)."
+        detail_level: brief
+
+  # ───────────────────────────────────────────────
+  # 4. Where they live (acquisition surface)
+  # ───────────────────────────────────────────────
+  where_they_live:
+    description: Findable communities, channels, keywords, voices
+    fields:
+      - name: primary_channels
+        description: Where the segment hangs out (Reddit subs, FB groups, IG hashtags, LinkedIn groups). Name specific ones with member counts.
+        detail_level: detailed
+      - name: directories_communities
+        description: Named directories, associations, marketplaces (Australian Made, Beauty Industry Group AU, Food & Grocery Council, Craftybase forum, etc.)
+        detail_level: detailed
+      - name: industry_facebook_group_size
+        description: Approximate total members across active industry FB groups for this segment — dominant SMB community channel in AU
+        detail_level: brief
+      - name: podcasts_voices
+        description: Top 3-5 podcasts, newsletters, YouTube channels, or influencer voices the buyer follows
+        detail_level: moderate
+      - name: events_trade_shows
+        description: Annual AU events the buyer attends. Sponsorship cost <$10K? List with dates and approx attendance.
+        detail_level: moderate
+      - name: search_keywords
+        description: 5-10 high-intent Google search terms (e.g. "Katana alternative AU", "BOM software for soap makers")
+        detail_level: moderate
+      - name: community_density
+        description: 1-5 — how concentrated/findable is the community
+        detail_level: brief
+      - name: founder_persona_homogeneity
+        description: 1-5 — how similar founders look within the segment. Affects messaging ROI.
+        detail_level: brief
+
+  # ───────────────────────────────────────────────
+  # 5. Outreach fit
+  # ───────────────────────────────────────────────
+  outreach_fit:
+    description: Which outbound/inbound motions actually work for this segment
+    fields:
+      - name: cold_outbound_feasibility
+        description: Can verified emails/phones be found at scale? Is cold email/DM/call socially acceptable? 1-5 + notes.
+        detail_level: moderate
+      - name: inbound_content_fit
+        description: Will the segment respond to SEO content / case studies / YouTube tutorials? 1-5 + notes.
+        detail_level: moderate
+      - name: founder_market_fit_proxy
+        description: Does the buyer trust an outsider (Kasper, ex-PAC Tech) without industry credentials? Cosmetic chemists may not; coffee roasters might.
+        detail_level: moderate
+      - name: case_study_acquisition_cost
+        description: How hard to get the first 5 paying reference customers in this segment
+        detail_level: brief
+      - name: case_study_appeal
+        description: 1-5 — visual/PR-friendliness for reference marketing (candles > supplements > co-packers)
+        detail_level: brief
+
+  # ───────────────────────────────────────────────
+  # 6. Foot-in-door fit (the core of the user's question)
+  # ───────────────────────────────────────────────
+  foot_in_door_fit:
+    description: Which acquisition motion lands this segment — design partner, paid pilot, free trial, founder-led
+    fields:
+      - name: design_partner_appeal
+        description: 1-5 — how attractive is "shape the app with us" to founders in this segment? High for early/innovator segments (cosmetics, fresh pet); lower for established late-majority (apparel cut-and-sew).
+        detail_level: moderate
+      - name: paid_pilot_fit
+        description: 1-5 — viability of a paid pilot ($249/mo × 3-6 months, credit-on-conversion). Higher conversion than free per ChartMogul.
+        detail_level: moderate
+      - name: free_trial_extension_fit
+        description: 1-5 — does "free for X months then half-price for 12" fit this segment, or is it counterproductive? Note CC-required gating effect.
+        detail_level: moderate
+      - name: trial_to_paid_benchmark
+        description: "Segment-typical trial-to-paid conversion (cite if available). ChartMogul 2025: opt-in 8.9%, CC-required 31.4%, paid pilots 40-60%."
+        detail_level: moderate
+      - name: reference_value
+        description: 1-5 — how valuable is a logo from this segment for landing the next 10 customers
+        detail_level: brief
+      - name: recommended_foot_in_door_motion
+        description: Synthesised recommendation per segment — "Design partner (free 6mo + roadmap input)" / "Paid pilot ($249 credited)" / "Founder-led sales + 14-day trial" / "Partner-channel referral + 14-day trial"
+        detail_level: detailed
+      - name: rollout_phase
+        description: When to ramp this segment in the GTM sequence — "Phase 1 (months 0-3)" / "Phase 2 (months 3-6, post-lot)" / "Phase 3 (months 6-12, post-Woo/Amazon)"
+        detail_level: brief
+
+  # ───────────────────────────────────────────────
+  # 7. Competitive context
+  # ───────────────────────────────────────────────
+  competitive_context:
+    description: What incumbents this segment uses and how vulnerable they are
+    fields:
+      - name: current_dominant_tool
+        description: What this segment uses now (Katana, Craftybase, Cin7, Unleashed, MRPeasy, Dear, spreadsheets, custom). 70%+ share if applicable.
+        detail_level: detailed
+      - name: switching_pain
+        description: 1-5 — how hard to migrate off the incumbent (data export, BOM rebuild, training)
+        detail_level: moderate
+      - name: competitor_gaps_for_this_segment
+        description: Specific gaps in the dominant tool that Manuva closes (no BOM versioning, per-seat pricing, no Xero, no lot tracking)
+        detail_level: detailed
+      - name: user_satisfaction_signals
+        description: Reddit / G2 / Capterra / forum complaint patterns. Quote specifics with sources.
+        detail_level: detailed
+      - name: competitor_concentration
+        description: HHI-style score — is one tool dominant (Katana for cosmetics) or fragmented (apparel)?
+        detail_level: brief
+      - name: integration_dependency_list
+        description: Must-have integrations beyond Manuva's roadmap (Klaviyo, Shippit, Australia Post, ShipStation, Faire, Amazon FBA, Stripe). Sharpens roadmap prioritisation.
+        detail_level: moderate
+
+  # ───────────────────────────────────────────────
+  # 8. Partner channels (specific to Manuva GTM)
+  # ───────────────────────────────────────────────
+  partner_channels:
+    description: Leverage from accountants, agencies, 3PLs, app stores
+    fields:
+      - name: xero_myob_partner_channel_fit
+        description: 1-5 — viability of accountant/bookkeeper referrals via Xero ProAdvisor + MYOB Partner + QuickBooks ProAdvisor. Dominant AU SMB SaaS distribution channel.
+        detail_level: moderate
+      - name: shopify_app_store_acquisition_fit
+        description: 1-5 — likelihood the segment discovers tools via Shopify App Store category browsing
+        detail_level: brief
+      - name: shopify_plus_partner_potential
+        description: 1-5 — Shopify Plus Tech Partner program for referrals into multi-channel brands
+        detail_level: brief
+      - name: tpl_3pl_referral_potential
+        description: 1-5 — AU 3PL ecosystem (eStore Logistics, Shippit) as co-sell partners
+        detail_level: brief
+      - name: industry_association_sponsorship
+        description: Named industry associations + estimated sponsorship cost for newsletter/event slots (Australian Made, Beauty Industry Group, Food & Grocery Council, etc.)
+        detail_level: moderate
+      - name: partner_channel_potential
+        description: Composite 1-5 score across all partner-channel options for this segment
+        detail_level: brief
+
+  # ───────────────────────────────────────────────
+  # 9. Profitability math
+  # ───────────────────────────────────────────────
+  profitability_math:
+    description: Whether this segment can profitably contribute to AU$10K MRR / AU$1M ARR
+    fields:
+      - name: realistic_12mo_customer_count_solo
+        description: Realistic # of paying customers in this segment in the first 12 months for a solo founder, given proposed motion and channels. Be conservative — solo bandwidth caps onboarding.
+        detail_level: moderate
+      - name: realistic_12mo_mrr_contribution_aud
+        description: AU$ MRR contribution from this segment at end of month 12 under solo-founder constraints
+        detail_level: brief
+      - name: path_to_first_3k_5k_mrr_aud
+        description: Narrative — how many customers × ARPU × close-rate to hit the AU$3-5K MRR realistic 12-month target. Sequence of moves a solo founder would actually run.
+        detail_level: detailed
+      - name: customers_needed_for_1m_arr_aud
+        description: # of customers needed at this segment's blended ARPU to hit AU$1M ARR (long-term aspirational)
+        detail_level: brief
+      - name: solo_founder_bandwidth_fit
+        description: 1-5 — can a solo founder actually serve this segment at scale? Considers onboarding complexity, support load, integration depth required, sales cycle length.
+        detail_level: moderate
+      - name: break_even_contribution_months
+        description: Months to cover CAC + delivery cost for one customer in this segment
+        detail_level: brief
+      - name: gross_margin_sensitivity
+        description: Does this segment carry support/onboarding overhead that erodes SaaS 80% gross margin? (e.g. complex compliance segments need more hand-holding)
+        detail_level: moderate
+      - name: priority_ranking
+        description: 1-5 final priority rank for this segment relative to the others, with one-sentence rationale
+        detail_level: moderate
+      - name: risks_and_notes
+        description: Key risks, open questions, "things to verify before going hard"
+        detail_level: detailed
+
+uncertain: []  # auto-populated by /research-deep when an agent flags low-confidence fields

@@ -1,0 +1,95 @@
+{
+  "item_id": "04_candle_soap_homefragrance",
+  "item_name": "Candle, soap & home-fragrance makers",
+  "tier": "A",
+  "market_sizing": {
+    "target_buyer": "Founder / owner-operator. Almost always also the maker. Production assistant joins at AU$500K revenue; production lead at AU$1.5M+.",
+    "business_count_au": "Estimated 2,500-5,000 active AU candle / soap / home-fragrance SMBs selling commercially. Long tail of Etsy hobbyists is much larger (probably 10-20K hobby sellers) but most are sub-AU$50K revenue and not Manuva ICP. AU candle market AU$130-294M (Expert Market Research / IMARC); soap/home-fragrance adds AU$200-400M. Concentrated in Byron Bay, Fremantle, Blue Mountains, Mornington Peninsula. [uncertain]",
+    "business_count_secondary": "US: ~25,000-50,000 candle/soap businesses (Soapmaking Forum + handmade marketplaces). UK: ~3,000-6,000. NZ: ~500-1,000. CA: ~2,000-4,000. [uncertain]",
+    "typical_size": "1-3 employees. Revenue AU$80K-$1.5M. Top quartile sits at AU$1-5M (Glasshouse, Circa, Palm Beach, Ecoya are outliers above AU$10M).",
+    "annual_revenue_band_aud": "Most common: AU$150K-$750K",
+    "growth_trend": "AU candle market 4.4-7.8% CAGR (130→200M by 2035 / 294→623M by 2033 depending on source). Home fragrance broader 6.2-10.5% CAGR. Handmade/artisanal candles fastest-growing sub-segment within the market — favours fragmented indie cohort over big players.",
+    "seasonality_intensity": 4
+  },
+  "fit_and_timing": {
+    "manuva_fit_score": 5,
+    "addressable_window": "now",
+    "roadmap_dependency": "Pre-launch lot tracking (shipped) sufficient. Xero integration meaningfully improves wholesale-heavy brands. Faire integration valuable but not blocking.",
+    "typical_tier": "Starter ($99) for solo / hobby-to-pro; Growth ($249) primary; Pro ($499) for wholesale-heavy multi-channel brands like Palm Beach or Circa-tier.",
+    "regulatory_burden": "2 — minor ACCC labelling, ingredient declarations, AS/NZS candle safety standards. No TGA/AICIS unless they make soap with imported ingredients. Lighter than cosmetics.",
+    "lot_batch_criticality": 3,
+    "time_to_value_days": 5
+  },
+  "economics": {
+    "incumbent_pricing": "Craftybase is the DOMINANT tool — soap and candle makers are Craftybase's core ICP. Indie tier US$39, Business US$199. Hard ceilings at 250 / 1,000 / 5,000 order-lines/mo. Brands hitting 1,000+ orders/mo (most AU$500K+ revenue brands) face the painful Indie→Business cliff. Katana ~10%. Spreadsheets ~30-40% of sub-AU$200K cohort.",
+    "willingness_to_pay_aud": "AU$99-$249/mo realistic. WTP slightly lower than skincare because regulatory pain is lighter. Growth tier hits at AU$25K+/mo revenue.",
+    "estimated_arpu_aud": "AU$185 blended (Starter 45% / Growth 45% / Pro 10%) — lowest blended ARPU of the Tier-A beauty/lifestyle segments because Starter share is higher.",
+    "expansion_revenue_potential": "4 — clear path Starter→Growth as wholesale scales; Pro tier unlocked when 3+ channels active. Wholesale pricing tier features are a key upgrade driver.",
+    "churn_risk": "3 — significant solo-founder pause/exit rate (~15-20% annual for sub-AU$200K cohort). Mitigation: prioritise brands at AU$25K+/mo revenue who have crossed the survival threshold.",
+    "cac_estimate_aud": "Cash CAC AU$30-100 (very community-driven; FB group + Etsy graduate funnel is essentially free). Founder-time CAC ~5-8 hours × AU$150 = AU$750-1,200. Total ~AU$800-1,300.",
+    "cash_cac_affordability": 5,
+    "ltv_estimate_aud": "AU$185 × 24mo × 80% = AU$3,552",
+    "ltv_cac_ratio": "~2.7-4.4:1 fully loaded. Acceptable but thinner than skincare/SPF.",
+    "typical_seat_count": "1-3 users",
+    "multi_channel_count": "2-4 (Shopify + wholesale + Faire + occasionally retail consignment)",
+    "wholesale_b2b_mix": "40-65% wholesale — HIGH. Most AU candle SMBs sell B2B to gift stores, florists, boutique hotels, salons. This is the highest-wholesale-mix Tier-A segment."
+  },
+  "where_they_live": {
+    "primary_channels": "'Australian candle makers' FB group (~10-20K members [uncertain]). 'Australian Soapmakers' FB group (~10-15K [uncertain]). 'Candle Makers Resource Group' (~20-40K global). Soapmaking Forum (soapmakingforum.com, global, AU sub-thread active). Reddit r/candlemaking (~150K global), r/soapmaking (~280K). Instagram #australianmade #ausartisan #candlemakeraustralia. Scents and Suds Supplies (AU supplier) community FB group.",
+    "directories_communities": "Aussie Candle Supplies, Candle Supply, Luxury Candle Supplies, Scents and Suds Supplies — all AU suppliers with active communities. Australian Made directory. Faire AU. Australian Soaping and Candle Conference (annual AU event). makesy Facebook groups. Handcrafted Soap and Cosmetic Guild (US-led but has AU members).",
+    "industry_facebook_group_size": "~30,000-60,000 combined AU candle/soap FB group members across 4-6 active groups [uncertain]",
+    "podcasts_voices": "1) The Candle Making Business Podcast (US but global audience). 2) Elly's Everyday (AU soap/candle YouTube + blog). 3) CandleScience newsletter. 4) Lone Star Candle Supply community. 5) Soap Queen (Brambleberry). 6) Australian Soaping and Candle Conference speakers.",
+    "events_trade_shows": "Australian Soaping and Candle Conference (annual, ~200-400 attendees, AU$500-3K sponsor slots). Reed Gift Fairs (Sydney + Melbourne, ~20K attendees, gift-store wholesale buyers, exhibitor AU$5-15K — high-value because target buyers attend). Life Instyle (Sydney/Melbourne, ~15K attendees, AU$5-12K). Naturally Good. Faire Market trade events.",
+    "search_keywords": "'candle making inventory software', 'soap maker inventory Australia', 'Craftybase alternative candle', 'wholesale pricing candle maker', 'soap making batch software', 'inventory software for makers', 'candle business management software', 'Etsy to Shopify inventory candle', 'how to track candle batches', 'Craftybase Indie ceiling'",
+    "community_density": 5,
+    "founder_persona_homogeneity": 4
+  },
+  "outreach_fit": {
+    "cold_outbound_feasibility": "4 — FB group posts, Reddit AMAs, and direct DMs are highly accepted (community norm). Cold email moderate. Easiest cold outbound surface of any Tier-A segment.",
+    "inbound_content_fit": "5 — 'Outgrowing Craftybase: when to switch', 'Wholesale pricing tiers for candle makers', 'Tracking fragrance oil lots' all have clear search volume. Strong YouTube tutorial appetite.",
+    "founder_market_fit_proxy": "4 — buyer trusts an outsider easily because the segment self-identifies as 'business operators' not 'chemists'. Best founder-market-fit of any beauty/lifestyle segment.",
+    "case_study_acquisition_cost": "Easy — 5-8 paying reference customers in 60 days is realistic via FB group + Reddit posts.",
+    "case_study_appeal": 5
+  },
+  "foot_in_door_fit": {
+    "design_partner_appeal": 4,
+    "paid_pilot_fit": 3,
+    "free_trial_extension_fit": 5,
+    "trial_to_paid_benchmark": "Opt-in trial 12-15% (community-driven, high-curiosity); CC-required 32-38%; design partner 60-70%. The free 30-day trial works exceptionally well here because makers self-serve.",
+    "reference_value": 5,
+    "recommended_foot_in_door_motion": "Phase 1 (months 0-3): 14-day free trial (no CC) + 5 design partners from FB group + targeted 'Craftybase graduate' campaign aimed at brands hitting the 1,000-order ceiling. Founder-led posts in 'Australian candle makers' + 'Australian Soapmakers' FB groups offering free 6mo + case study to brands at AU$25K+/mo revenue. Pair with one piece of pillar content ('Outgrowing Craftybase: a guide for AU candle/soap makers'). This is the highest-leverage segment for Phase 1 self-serve motion.",
+    "rollout_phase": "Phase 1 (months 0-3) — top-2 segment, especially for self-serve volume"
+  },
+  "competitive_context": {
+    "current_dominant_tool": "Craftybase ~50-60% share of the make-tool-purchasing cohort (this is their core market). Spreadsheets ~30%. Katana ~5%. Cin7 ~5%. Notion/Airtable ~3%.",
+    "switching_pain": "3 — SKU counts moderate (50-200), but historical batch data + supplier records take 1-2 weeks to migrate. CSV import critical.",
+    "competitor_gaps_for_this_segment": "Craftybase order-line ceiling is the single biggest pain (Indie 250 → Business 1,000 → Premium 5,000, with a Indie→Business price jump from US$39 to US$199). No BOM versioning. Weak production-order workflow (just 'manufactures'). No native Xero integration deeper than CSV. Manuva wedge: flat AU pricing, no order-line ceiling, true production orders, BOM versioning for recipe iteration, Xero integration on roadmap.",
+    "user_satisfaction_signals": "Craftybase Capterra: 4.5+ stars overall but order-line ceiling appears repeatedly in 3-star reviews. Reddit r/candlemaking quarterly thread: 'I just got the Craftybase upgrade prompt and the price tripled — what do you use?' Multiple. Indie→Business cliff at US$89→$199 (or $39→$199 depending on order volume) is the documented pain.",
+    "competitor_concentration": "Concentrated — Craftybase is the single largest incumbent in this segment, the only Tier-A segment where one tool has >50% share.",
+    "integration_dependency_list": "Must-have: Shopify, Xero (roadmap — critical), Faire (wholesale — high-impact), Etsy (most graduates run a residual Etsy store). Klaviyo. Aus Post / Shippit / Sendle for shipping."
+  },
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": 4,
+    "shopify_app_store_acquisition_fit": 5,
+    "shopify_plus_partner_potential": 2,
+    "tpl_3pl_referral_potential": 2,
+    "industry_association_sponsorship": "Australian Soaping and Candle Conference — annual sponsorship AU$500-3K (high-leverage, low-cost). Reed Gift Fairs — booth AU$5-15K (target = gift-store buyers but also brands network there). Aussie Candle Supplies / Candle Supply / Scents and Suds — supplier co-marketing (could be free or affiliate-based; very high leverage). makesy AU community partnership.",
+    "partner_channel_potential": 5
+  },
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "30-60 paying customers by month 12. Highest-volume Tier-A segment because self-serve works and community channels are free. Conservative: 25. Optimistic: 80.",
+    "realistic_12mo_mrr_contribution_aud": "AU$5,500-11,100 MRR at AU$185 ARPU (~40 customers midpoint)",
+    "path_to_first_3k_5k_mrr_aud": "Month 0-2: write 'Outgrowing Craftybase' pillar content + 5 supporting articles; build a Craftybase-import tool (CSV mapper). Month 2-4: post in 'Australian candle makers' + 'Australian Soapmakers' FB groups offering 'free for 6 months + we'll migrate your data' to 8-10 design partners. Month 4-6: case-study publish + Reddit AMA + supplier co-marketing (Aussie Candle Supplies, Scents and Suds). Month 6-12: founder-led + self-serve at AU$185 blended × 35-50 customers = AU$6,500-9,250 MRR from this segment alone. The single highest-MRR-per-month segment for solo bandwidth.",
+    "customers_needed_for_1m_arr_aud": "~450 customers at AU$185 ARPU",
+    "solo_founder_bandwidth_fit": "5 — segment self-serves, low support load, generous community helps each other. Ceiling ~80-120 active customers.",
+    "break_even_contribution_months": "5-7 months",
+    "gross_margin_sensitivity": "Low — minimal hand-holding; community absorbs support load via FB groups.",
+    "priority_ranking": "1 — Co-#1 segment with indie skincare. Highest realistic 12-month customer volume, lowest CAC, best community channels, dominant Craftybase incumbent has a documented switching pain (order-line ceiling) that Manuva removes. Lower ARPU offset by higher volume.",
+    "risks_and_notes": "Risks: (1) Lower ARPU means hitting AU$1M ARR requires high customer counts (450+). (2) Solo-founder churn rate in this cohort is real — bias toward >AU$25K/mo revenue brands. (3) Craftybase has 10+ years of brand affinity; pure 'cheaper' positioning won't win. Lead with 'true production orders + BOM versioning + no order-line ceiling + AU-priced'. (4) Wholesale pricing tier feature must be solid — most candle brands need it. Verify Manuva supports tier-based pricing per customer. (5) Build a one-click Craftybase CSV import — it's the deal-closer."
+  },
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "industry_facebook_group_size"
+  ]
+}

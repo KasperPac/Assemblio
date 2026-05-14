@@ -1,0 +1,98 @@
+{
+  "item_id": "18_cin7_dear_defectors",
+  "name": "Cin7 / DEAR defectors post-acquisition price hikes",
+  "tier": "B",
+  "market_sizing": {
+    "target_buyer": "Founder, ops manager, or CFO. Cin7 customers skew larger than Katana/Craftybase — $1M-$15M revenue with 5-30 staff. Buyer is usually ops manager or COO with founder sign-off.",
+    "business_count_au": "Estimated 1500-3000 active Cin7 Core (formerly DEAR) subscribers in AU/NZ. Cin7 is AU/NZ-founded (NZ origin via DEAR; Cin7 itself founded in Auckland), so AU/NZ penetration is unusually high — likely 25-35% of Cin7's global ~10,000+ customer base. Of those, 300-800 are at any moment actively dissatisfied post-price-hike. [uncertain]",
+    "business_count_secondary": "US: ~3,500-5,000. UK: ~600-1200. NZ: ~600-1200 (home market, dense). CA: ~200-400. All [uncertain].",
+    "typical_size": "5-50 employees, AU$1M-$15M revenue. Multi-channel D2C + wholesale operators.",
+    "annual_revenue_band_aud": "Most addressable defector band: AU$1M-$8M.",
+    "growth_trend": "Active and growing defection pool since the DEAR→Cin7 rebrand and the 2023-2025 price-hike sequence. Documented complaints: 'DEAR started at $249/mo Oct 2021 → $669/mo' (a 169% personal increase over 3.5 years). 'Recent price hike $72/mo = $864/yr extra, no benefits'. 'Non-stop price hikes attributed to system improvements'. 'Zero customer support since Cin7 takeover'.",
+    "seasonality_intensity": 2
+  },
+  "fit_and_timing": {
+    "manuva_fit_score": 3,
+    "addressable_window": "After Xero+MYOB+QuickBooks (post-launch, months 3-6) for sub-$3M defectors. After WooCommerce + Amazon (months 6-12) for multi-channel defectors. The largest defector cohort is multi-channel so the bulk of the addressable window opens in Phase 3.",
+    "roadmap_dependency": "Multi-channel (Shopify + Amazon + Woo) — Manuva ships Shopify; Amazon and Woo are roadmap blockers for ~50-70% of this segment. Xero/MYOB/QuickBooks (all post-launch). 3PL integration desirable. Some Cin7 customers also use Faire / Etsy / eBay — long tail.",
+    "typical_tier": "Pro ($499) is the natural landing tier given multi-channel and 5+ seat norms. Some smaller Cin7 defectors (~$1-2M revenue) land at Growth ($249).",
+    "regulatory_burden": "Cross-vertical, average 2-3. Higher for the food/cosmetic Cin7 customers, lower for hardgoods/apparel.",
+    "lot_batch_criticality": "3 — Cross-vertical average. Critical for the food/cosmetic Cin7 customers.",
+    "time_to_value_days": "21-45 days. Larger Cin7 customers have substantial product catalogues, multi-channel reconciliation, wholesale customer lists, and existing reporting dependencies. Migration is meaningful work."
+  },
+  "economics": {
+    "incumbent_pricing": "Cin7 Core: 3 editions ranging from US$349-999/mo (≈AU$525-1500). Entry plan: 5 users, 2 e-commerce integrations, 6,000 SOs/yr. High-volume: 15 users, 6 e-commerce integrations, 120,000 SOs/yr. Cin7 Omni: custom enterprise pricing (typically US$1,500-5,000/mo). USD-billed for AU customers — FX hit.",
+    "willingness_to_pay_aud": "AU$349-699/mo. Defectors are explicitly trying to reduce their bill but not back to spreadsheets. Manuva Pro at AU$499 is positioned as 'Cin7 Core mid-tier for half the price, flat-priced'.",
+    "estimated_arpu_aud": "AU$425/mo blended (mostly Pro, some Growth).",
+    "expansion_revenue_potential": "4 — Multi-channel + multi-site Pro tier candidates. Lower add-on potential (Manuva's pitch is flat pricing).",
+    "churn_risk": "2 — Once migrated, very sticky (multi-channel + multi-warehouse + wholesale all integrated). Switching cost is high so re-defection is rare.",
+    "cac_estimate_aud": "Cash CAC AU$200-500 (paid LinkedIn + content + paid search for 'Cin7 alternative'). Founder-time CAC ~15-30 hours per close (longer discovery + multi-channel migration scoping) at $150/hr = $2,250-4,500. Blended AU$2,500-5,000.",
+    "cash_cac_affordability": 3,
+    "ltv_estimate_aud": "AU$425 × 36mo × 0.75 GM = AU$11,475.",
+    "ltv_cac_ratio": "~2.3-4.5:1 founder-time loaded; healthy.",
+    "typical_seat_count": "5-15. Cin7's entry plan caps at 5 users; defectors who hit the 5-user ceiling pay extra and consider switching — Manuva flat-priced has zero seat penalty.",
+    "multi_channel_count": "3-5 — Shopify + Amazon + Woo + Faire + retail/wholesale. Highest multi-channel density of any segment in this study.",
+    "wholesale_b2b_mix": "40-70% — Cin7 is strong on wholesale tooling so its customers skew B2B-heavy."
+  },
+  "where_they_live": {
+    "primary_channels": "G2 / Capterra Cin7 review pages (high-intent). LinkedIn Australia 'eCommerce Operations' / 'Shopify Plus AU' groups (~10-30K). Reddit r/shopify (~250K), r/AmazonSeller (~250K), r/ecommerce (~520K). Facebook 'Shopify Australia' (~30-50K), 'Amazon Sellers Australia' (~10-25K). Cin7's own user community forum (semi-public, useful for identifying dissatisfied users). [uncertain] on group sizes.",
+    "directories_communities": "Shopify Plus partner directory; Amazon Seller Central forums; Capterra/G2 inventory category; eStore Logistics partner ecosystem; Shippit partner ecosystem; 3PL ecosystem (Spotlight Reporting / 3PL Central / ShipBob); AusTrade eCommerce cluster; Online Retailer events alumni; AusCommerce community.",
+    "industry_facebook_group_size": "Approx 75-150K aggregate across AU/global Shopify + Amazon + multi-channel ops FB groups. [uncertain]",
+    "podcasts_voices": "Shopify Masters; 2X eCommerce; Add To Cart (AU); eCommerce Masterplan; Inside Retail Australia; Smart Company eCommerce coverage; Online Retailer keynotes. LinkedIn voices: ex-Cin7 customers writing migration stories (good outreach targets), Shopify Plus AU agency leads (Convert Digital, Eastside Co, Soto Group).",
+    "events_trade_shows": "Online Retailer Sydney (~5,000 attendees, AU$5-25K booths). Shoptalk Australia (~2,500). Retail Fest Asia-Pacific. Shopify Editions (virtual, free). Add to Cart Live (Sydney, free-ish). NRF Big Show (US, AU$10-30K all-in). Direct Commerce Summit.",
+    "search_keywords": "'Cin7 alternative', 'DEAR alternative', 'Cin7 price hike', 'Cin7 Core vs Manuva', 'leaving Cin7', 'Cin7 too expensive', 'multi-channel inventory Australia', 'flat-rate inventory software no per-user', 'Cin7 customer support complaints', 'inventory software for Shopify Plus AU'",
+    "community_density": 4,
+    "founder_persona_homogeneity": 3
+  },
+  "outreach_fit": {
+    "cold_outbound_feasibility": "4 — Defectors identifiable via G2/Capterra negative reviews (specifically the ones mentioning DEAR-to-Cin7 transition), LinkedIn 'used Cin7' / 'used DEAR' searches, and Shopify Plus partner-agency referrals. Cold email tolerated with specific reference to their review or LinkedIn post.",
+    "inbound_content_fit": "5 — 'Cin7 alternative Australia 2026', 'DEAR-to-Cin7 price hike: what to do', 'Cin7 Core vs Manuva Pro: 5-year TCO', 'Migrating from Cin7 to a flat-priced alternative' are all clean SEO targets with proven commercial intent.",
+    "founder_market_fit_proxy": "3 — Cin7 buyers are more sophisticated than Katana/Craftybase buyers. They evaluate based on integrations depth, multi-warehouse capability, wholesale tooling. Solo outsider founder needs a credible case study and a technical-depth product demo. Less industry-credibility-gated than co-packers but higher bar than Tier-A cosmetics.",
+    "case_study_acquisition_cost": "Moderate — first 5 references likely require 4-6 months and a 'free migration assist + 2 months free + half-price for 12' package per logo.",
+    "case_study_appeal": 4
+  },
+  "foot_in_door_fit": {
+    "design_partner_appeal": 2,
+    "paid_pilot_fit": 3,
+    "free_trial_extension_fit": 4,
+    "trial_to_paid_benchmark": "CC-required 14-day trial likely 18-28% (lower than Katana/Craftybase defectors because Cin7 migration is heavier — 14 days is too short for full evaluation). Extended pilot (30-60 days free with import assist) likely 35-45%. [uncertain]",
+    "reference_value": 5,
+    "recommended_foot_in_door_motion": "30-60 day extended trial with paid import-assist service (AU$499-999 one-time, fully credited on annual conversion). Founder-led discovery call mandatory — these are higher-touch deals than other defector segments. Pair with 'Cin7 alternative' SEO + case-study content + LinkedIn outbound to G2/Capterra negative-reviewer LinkedIn profiles. Do NOT use free-for-X-months — these buyers are skeptical of free offers from new vendors.",
+    "rollout_phase": "Phase 3 (months 6-12, after WooCommerce + Amazon ship). Multi-channel dependency is the main blocker — most Cin7 defectors run at least Shopify + Amazon. A small Shopify-only sub-cohort is addressable in Phase 2."
+  },
+  "competitive_context": {
+    "current_dominant_tool": "Cin7 (Core for SMB, Omni for enterprise) IS the segment definition. Defectors typically consider: Unleashed (NZ$319-399, ANZ-strong), Katana (cheaper but per-SO-line capped), Zoho Inventory, Brightpearl, Lightspeed Retail, Netsuite (upmarket), SAP Business One (upmarket), Inflow Inventory. Manuva is positioned as 'Cin7 Core feature parity for AU$499 flat, no FX, no add-on stack'.",
+    "switching_pain": "4 — Heavy. Multi-channel integration reconfiguration, wholesale customer migration, BOM/recipe migration, historical reporting preservation, 3PL integration re-setup. Most migrations take 4-12 weeks. Cin7 defectors are the most likely to require professional-services migration help.",
+    "competitor_gaps_for_this_segment": "Cin7: persistent price hikes post-acquisition ('$249→$669 over 3.5 years'), USD-billed creating FX volatility for AU customers, deteriorating customer support ('zero support since Cin7 takeover'), 5-user cap on entry plan, paid add-ons not maintained. Manuva closes: AUD-flat pricing, no per-user caps, founder-as-support promise, no add-on hostage situations. Manuva GAPS that must be closed before going hard: Amazon connector, WooCommerce connector, multi-warehouse depth (3+ locations), advanced wholesale pricing, 3PL EDI.",
+    "user_satisfaction_signals": "Capterra: 'DEAR started Oct 2021 at $249/mo, now $669/mo — staggering jump'. 'Cin7's recent price hike increased fees by $72/mo with no tangible benefits'. 'Since Cin7 took over DEAR Systems, the shift from quality service to maximizing profits has been blatantly obvious'. G2: 'zero customer support since Cin7's takeover, can't maintain their own paid add-ons while continuing to charge customers'. Reddit r/shopify and r/ecommerce: documented quarterly 'leaving Cin7' threads. 77% of Capterra reviews still positive on price/value — so the defector pool is the dissatisfied 23%, not the whole base.",
+    "competitor_concentration": "Cin7 dominates the ANZ multi-channel SMB segment (~30-40% share). For this Tier-B intent-defined segment, Cin7 IS 100% of the definition.",
+    "integration_dependency_list": "Shopify (table-stakes), Amazon (gating), WooCommerce (gating for some), Xero/MYOB/QuickBooks (gating), Faire, Klaviyo, ShipStation/Shippit/eStore Logistics, 3PL Central, Easyship, Australia Post EDI, Stripe, EDI for Coles/Woolworths supplier customers."
+  },
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": 5,
+    "shopify_app_store_acquisition_fit": 4,
+    "shopify_plus_partner_potential": 5,
+    "tpl_3pl_referral_potential": 4,
+    "industry_association_sponsorship": "Not vertical-bound — same intent-defined logic as Katana defectors. Spend on G2/Capterra category sponsorship in 'Inventory Management' and 'Multi-Channel eCommerce' (~AU$1-3K/mo each). Online Retailer Sydney sponsorship (~AU$5-15K). Shopify Plus partner-agency co-marketing — biggest single channel for this segment, with AU agencies like Convert Digital, Eastside Co, Soto Group, Made Different running 50-200 Shopify Plus clients each. [uncertain] on exact 2026 rates.",
+    "partner_channel_potential": 5
+  },
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "4-10 paying customers in 12 months. Limited by: (a) WooCommerce / Amazon roadmap dependency for 50-70% of segment; (b) heavy onboarding consumes founder bandwidth; (c) longer sales cycle than Tier-A or other Tier-B segments.",
+    "realistic_12mo_mrr_contribution_aud": "AU$1,700-4,200/mo at end of month 12.",
+    "path_to_first_3k_5k_mrr_aud": "Contributes 40-80% of the AU$3-5K target if Amazon connector lands by month 8-9. Path: (1) launch 'Cin7 alternative AU' landing page in month 0-2 to start capturing inbound; (2) ship Xero/MYOB integration months 2-4; (3) ship Amazon connector months 6-9 (highest priority within this segment); (4) seed 2-3 case studies via 30-day free + AU$999 import assist, months 4-8; (5) LinkedIn outbound to G2/Capterra negative reviewers, months 4-12; (6) by month 12: 6-8 customers × AU$425 = AU$2,500-3,400 MRR. The highest-LTV defector segment but slowest to mature.",
+    "customers_needed_for_1m_arr_aud": "~196 customers at AU$425 blended ARPU. Strongest aspirational ARR contributor of the three intent-defined segments — highest ARPU, highest LTV, stickiest customers.",
+    "solo_founder_bandwidth_fit": "3 — Heavier than other defector segments. Each onboarding 15-30 hours; ongoing support load moderate (multi-channel reconciliation questions). Solo founder can sustainably support 15-20 active customers from this segment.",
+    "break_even_contribution_months": "6-9 months on cash CAC; 9-14 months with loaded founder time.",
+    "gross_margin_sensitivity": "Moderate — multi-channel onboarding has surface area; wholesale pricing setup is bespoke per customer. Effective GM 70-75% during land+onboard, settling to 78-82% after stable.",
+    "priority_ranking": "2 — Top tier alongside Craftybase (17) and Katana (16) on aspirational ARR contribution, but lower priority on the 12-month-to-AU$3-5K path because of roadmap dependency. Treat as the highest-LTV strategic pool to harvest in Phase 3.",
+    "risks_and_notes": "Risks: (1) Amazon and WooCommerce roadmap delays push the addressable window past month 12, depleting the AU$3-5K plan. (2) Cin7 could stabilise pricing and reduce defection volume (low probability — pricing hikes are a deliberate post-acquisition monetisation strategy). (3) Shopify Plus agency partnerships are slow to formalise — solo founder may struggle to be taken seriously by AU agencies pre-product-validation. (4) Heavy onboarding could erode gross margins if support is the founder alone — may force hiring or partner-channel professional services earlier than planned. Verify before going hard: which Shopify Plus AU agencies have 'we always replace Cin7 with X' patterns; whether Cin7 customer community forum tolerates vendor presence; actual Amazon connector build effort vs partnering with a connector provider (Codisto, ChannelAdvisor, Cin7 itself ironically). KEY EXECUTION DEPENDENCY: Amazon connector must be at least roadmap-credible by month 6 — without it, the AU$3-5K contribution from this segment is capped at ~AU$1.5K."
+  },
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "trial_to_paid_benchmark",
+    "primary_channels",
+    "industry_facebook_group_size",
+    "industry_association_sponsorship"
+  ]
+}

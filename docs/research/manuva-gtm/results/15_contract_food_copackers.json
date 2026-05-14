@@ -1,0 +1,100 @@
+{
+  "item_id": "15_contract_food_copackers",
+  "name": "Contract food manufacturers / co-packers",
+  "tier": "A",
+  "market_sizing": {
+    "target_buyer": "Operations director, plant manager, or owner-CEO. Co-packers >$5M revenue almost always have an ops director. Below that, the owner signs and the QA/production manager evaluates.",
+    "business_count_au": "Estimated 300-500 contract food manufacturers / co-packers in AU. Visible names: Mansfields (QLD), Carewell Group, PakCo, Food Processing Specialists, Maltra Foods, Formulated For You, Wholesale Food Group, OzScientific (consulting + production), Brownes (dairy co-pack). Long tail of co-mans embedded in commercial kitchens (~200+) under $2M revenue. ensun's 'Top 100 Food Manufacturing Companies in Australia (2026)' is the closest census proxy. [uncertain] on exact total.",
+    "business_count_secondary": "US: ~3,000 co-packers (Contract Packaging Association ~600 members + long tail). UK: 400-700. NZ: 50-100. CA: 200-400. All [uncertain].",
+    "typical_size": "10-200 employees, AU$2M-$50M annual revenue. The Manuva sweet-spot is sub-AU$10M (10-50 staff).",
+    "annual_revenue_band_aud": "Most addressable band: AU$2M-$10M.",
+    "growth_trend": "Steady 4-7% segment growth driven by brand-owner outsourcing. FSANZ + FSMA 204 (extended past Jan 2026 by 30 months) is a tailwind for traceability investment. Private-label growth in AU supermarkets (Coles/Woolworths house brands) drives co-packer demand. AU manufacturing SMB count +7.0% YoY to June 2025 (ABS).",
+    "seasonality_intensity": 2
+  },
+  "fit_and_timing": {
+    "manuva_fit_score": 3,
+    "addressable_window": "Now for the bottom of the segment (AU$2-5M revenue, single-site, 1-3 brand customers). After full Xero/MYOB and multi-tenant client-isolation features for the AU$5-15M middle.",
+    "roadmap_dependency": "Brand-owner / client portal (each brand customer needs visibility into their inventory and batches separately). Multi-tenant isolation within a single Manuva tenant. Production scheduling / labour tracking is a soft gap. Xero/MYOB integration. FSMA-204 KDE/CTE export format is a hard requirement for any co-packer exporting to US.",
+    "typical_tier": "Pro ($499) is the natural floor; Pro+addons or a custom Co-Pack tier ($799-1499) is more realistic for the AU$5M+ segment.",
+    "regulatory_burden": "5 — FSANZ + HACCP + state food licence + AQIS for export + FSMA 204 for US exporters + GFSI/SQF/BRCGS certification commonly required by brand-owner clients.",
+    "lot_batch_criticality": 5,
+    "time_to_value_days": "30-60 days. Multi-customer setup, recipe migration, integration with Xero/MYOB, label-printing integration, and a real onboarding session are all required."
+  },
+  "economics": {
+    "incumbent_pricing": "Nulogy is the dominant purpose-built co-pack tool — pricing not public but typically US$2-5K/mo + implementation. SAP Business One ~AU$2-5K/mo. NetSuite ~AU$3-8K/mo. Dynamics 365 BC ~AU$1.5-4K/mo. SYSPRO ~AU$1.5-3K/mo. PEPPOL-ready food ERPs (Sage X3, Aptean Food & Beverage) AU$2-6K/mo. Mid-tier still on MYOB Exo or NetSuite light + paper / Excel for shop floor.",
+    "willingness_to_pay_aud": "AU$500-1500/mo realistic for sub-AU$10M co-packers if Manuva closes the FSMA-204 export + client-portal gaps. Below $500 is non-credible for a co-packer buyer — perceived as too lightweight.",
+    "estimated_arpu_aud": "AU$650/mo blended (Pro tier + likely paid Co-Pack add-on).",
+    "expansion_revenue_potential": "5 — Multi-site fees, per-brand-client fees, FSMA/SQF audit-pack add-on, scheduling module, labour-tracking add-on. Single largest expansion-revenue segment.",
+    "churn_risk": "2 — Co-packers, once embedded, are very sticky. Switching cost is enormous (recipe library, label templates, audit history, brand-owner relationships). 1-2% monthly churn typical for vertical ERPs in this segment.",
+    "cac_estimate_aud": "Cash CAC AU$500-1500 (industry events, content, paid LinkedIn); founder-time CAC ~40-80 hours per close (long discovery + reference visits + pilot scoping) at $150/hr = $6,000-12,000. Blended AU$6,500-13,500.",
+    "cash_cac_affordability": 2,
+    "ltv_estimate_aud": "AU$650 × 48mo × 0.7 GM = AU$21,840.",
+    "ltv_cac_ratio": "~1.6-3.4:1 with founder-time loaded — marginal to healthy. Becomes very healthy (10:1+) once a partner-channel motion (food ERP consultants) lowers founder-time CAC.",
+    "typical_seat_count": "8-30 (operations, QA, warehouse, production planning, sales, finance, brand-owner liaison).",
+    "multi_channel_count": "1-2 channels per co-packer for their own products (most co-packers are services businesses, not brand-owners). 'Channels' for this segment really means 'brand-owner clients' — 5-30 per site.",
+    "wholesale_b2b_mix": "95-100% B2B — the entire revenue model is wholesale to brand-owners."
+  },
+  "where_they_live": {
+    "primary_channels": "Australian Food & Grocery Council (AFGC) — peak body, ~180 member companies including most large co-packers. Food & Beverage Australia trade media. Food Processing magazine. LinkedIn 'Australian Food Manufacturing' group (~10-20K [uncertain]). Contract Packaging Association (global, US-led, AU members). FoodLegal newsletters. Manufacturers' Monthly. Smart Industry Expo attendees.",
+    "directories_communities": "Australian Food & Grocery Council (AFGC), Food South Australia, Foodbank-network co-packers, Manufacturers Australia, AusTrade Food & Beverage Cluster, Contract Packaging Association (CPA US — global membership), SQF Institute certified facilities list, BRCGS certified facilities directory, GS1 Australia member list, Hospitality + Food Service Association (HFSA), state Food Innovation Centres (FIAL, Food Innovation Australia Ltd).",
+    "industry_facebook_group_size": "Approx 5-15K aggregate across food manufacturing AU FB groups. LinkedIn is the dominant channel — FB is weaker for B2B-services audiences. [uncertain]",
+    "podcasts_voices": "Food Magazine podcast (AU); FoodPro / AUSPACK keynotes; AFGC State of the Industry briefings; Catherine Cooper (FoodLegal) writings; FIAL CEO talks; Glenn Wallis (Mansfields) industry commentary; Inside FMCG newsletters; Smart Industry Expo speakers.",
+    "events_trade_shows": "AUSPACK (biennial, Sydney/Melbourne, ~10,000 attendees, sponsorship AU$5-25K). Fine Food Australia (~25,000, AU$5-30K). FoodPro (biennial, ~9,000). FIAL Co-Innovation Forum. SQF International Conference. AFGC Industry Leaders Forum. Smart Industry Expo. Local FoodTech events.",
+    "search_keywords": "'Nulogy alternative Australia', 'co-packer software AU', 'contract food manufacturer ERP', 'FSMA 204 traceability software', 'FSANZ recall drill software', 'co-pack inventory management Australia', 'multi-customer batch tracking', 'SQF audit-pack software', 'private label food manufacturing software', 'food co-packer Xero MYOB'",
+    "community_density": 3,
+    "founder_persona_homogeneity": 3
+  },
+  "outreach_fit": {
+    "cold_outbound_feasibility": "3 — Co-packer ops directors are findable on LinkedIn but gate-kept by gatekeepers (admin, plant secretary). Email open rates lower than SMB. Cold-call to plant works for SMB co-packers (<50 staff). Long sales cycle.",
+    "inbound_content_fit": "4 — 'FSMA 204 compliance for AU co-packers', 'Nulogy alternative comparison', 'SQF audit-ready batch tracking' are high-intent SEO targets. Whitepapers and FoodLegal-style explainers convert this buyer.",
+    "founder_market_fit_proxy": "2 — Lowest founder-market-fit score in the Tier-A set. Co-packer buyers expect deep food-industry credibility: GFSI/SQF familiarity, recall-drill experience, brand-owner relationship language. Solo outsider founder will struggle without a Food-Innovation-Centre champion or an AFGC-member advisor lending credibility.",
+    "case_study_acquisition_cost": "High — first 5 references likely require 6-9 months and at least one paid pilot per logo at AU$5-15K each.",
+    "case_study_appeal": 3
+  },
+  "foot_in_door_fit": {
+    "design_partner_appeal": 3,
+    "paid_pilot_fit": 5,
+    "free_trial_extension_fit": 1,
+    "trial_to_paid_benchmark": "Free trial does not fit this segment — co-packers will not deploy on free trial. Paid pilot (AU$2-5K for 3 months + scoping doc + named SuccessOwner) likely converts 40-60% based on Nulogy / Aptean / Crafted ERP industry norms. [uncertain]",
+    "reference_value": 5,
+    "recommended_foot_in_door_motion": "Paid pilot ONLY — AU$2-5K for 3 months, credited 100% on conversion to annual contract. Pair with a credible AU food-industry advisor (ex-AFGC, ex-FIAL, ex-Mansfields) as fractional GTM partner to clear the credibility bar. Inbound through 'FSMA 204 for AU co-packers' SEO + whitepaper gated downloads. Founder-led discovery sessions but with the advisor on the call. Do not attempt free trial / design partner for this segment without industry-credibility cover.",
+    "rollout_phase": "Phase 3 (months 9-15+). Wait until Manuva has 10+ paying customers in adjacent food segments (11, 14) to demonstrate FSANZ track-record. Co-packers are the highest-ARPU, highest-LTV prize but the worst solo-founder fit early."
+  },
+  "competitive_context": {
+    "current_dominant_tool": "Nulogy is the global purpose-built leader for co-packers (~25-35% of $10M+ co-packers globally; lower in AU where penetration is partial). SAP Business One, NetSuite, Dynamics 365 BC, SYSPRO hold the rest of the AU mid-market. Aptean Food & Beverage and Sage X3 are emerging. AU$2-5M long tail is mostly MYOB Exo + paper / Excel on the shop floor. Crafted ERP is starting to appear in beverage-adjacent co-packers. [uncertain] on exact AU splits.",
+    "switching_pain": "5 — Highest switching pain of any segment in this study. Recipe library, label templates, audit history, integration with brand-owner EDI, SQF/BRCGS document control — all migration-heavy.",
+    "competitor_gaps_for_this_segment": "Nulogy: enterprise pricing locks out sub-AU$10M co-packers, US/UK-centric, no AU FSANZ-native reports. SAP B1 / NetSuite: too generic, weak on multi-customer batch/recipe isolation. MYOB Exo: no shop-floor, no batch traceability, no FSMA 204. Manuva can close: (a) AU$500-1500 price point for sub-AU$10M co-packers, (b) multi-customer batch isolation, (c) FSANZ + FSMA 204 export, (d) Xero/MYOB native AU.",
+    "user_satisfaction_signals": "Nulogy G2/Capterra: complaints about implementation complexity, slow customisation, lack of mid-market pricing. AFGC member feedback (anecdotal) on cost of enterprise food ERPs. Reddit r/foodscience and r/manufacturing occasional 'Nulogy alternative' threads (global). [uncertain] on direct quotes — most public satisfaction data is mixed and segment-anecdotal.",
+    "competitor_concentration": "Fragmented at AU SMB level (no tool >25%); Nulogy + SAP B1 + NetSuite together cover ~55% of the AU$10M+ segment.",
+    "integration_dependency_list": "Xero, MYOB, SAP/NetSuite (for clients with brand-owner integration requirements), GS1 Australia (barcoding/SSCC), Zetes / Videojet label printers, EDI (BPC, Truecommerce), Coles/Woolworths brand-owner portals, Quikspak / SQF Institute audit tools, FSMA 204 KDE/CTE format, freight (Mainfreight, Linfox EDI)."
+  },
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": 3,
+    "shopify_app_store_acquisition_fit": 1,
+    "shopify_plus_partner_potential": 1,
+    "tpl_3pl_referral_potential": 3,
+    "industry_association_sponsorship": "AFGC corporate membership ~AU$15-50K/yr (too high for solo founder); AFGC newsletter slots ~AU$1-3K. FIAL partnership programs ~AU$5-25K. AUSPACK sponsorship AU$5-50K. Fine Food Australia booth AU$10-30K. Manufacturers Australia ~AU$2-5K. Food Innovation Centres (FIC) partnership programs are the best low-cost inroad — most state FICs offer free-or-cheap visibility to vendors that bring real value to members. [uncertain] on exact 2026 rates.",
+    "partner_channel_potential": 3
+  },
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "1-3 paying customers in 12 months under solo-founder constraint. Realistic only if Manuva commits a senior food-industry advisor and a paid-pilot motion in months 6+.",
+    "realistic_12mo_mrr_contribution_aud": "AU$650-2000/mo at end of month 12.",
+    "path_to_first_3k_5k_mrr_aud": "Co-packers alone cannot land AU$3-5K MRR inside 12 months for a solo founder — too long a cycle. Path if attempted: (1) recruit one credible food-industry advisor (ex-AFGC / ex-Mansfields-tier name) as fractional GTM partner in exchange for equity or revenue share, months 0-3; (2) build FSMA 204 + multi-customer batch isolation MVP, months 3-9; (3) ship paid-pilot offer to 10 hand-picked AU$2-5M co-packers, months 6-12; (4) close 1-2 paid pilots at AU$650 + AU$5K pilot fee. Realistic MRR contribution: AU$1-2K by month 12.",
+    "customers_needed_for_1m_arr_aud": "~128 customers at AU$650 blended ARPU. Highest-LTV path — co-packers are the closest segment to the AU$1M ARR aspirational ceiling if Manuva builds the co-pack module out.",
+    "solo_founder_bandwidth_fit": "1 — Worst bandwidth fit in the Tier-A set. Each onboarding consumes 40-80 hours; support burden is heavy; multi-customer isolation features can drag development for months.",
+    "break_even_contribution_months": "10-14 months on cash CAC; 18-28 months with founder-time loaded.",
+    "gross_margin_sensitivity": "High erosion — co-packers expect named SuccessOwners, quarterly business reviews, audit-prep assistance. Effective GM 55-65% rather than 80%+ until product matures.",
+    "priority_ranking": "4 — Defer to Phase 3. Highest ARPU/LTV but worst solo-founder fit and longest path to revenue. Strategic prize once Manuva has 30-50 customers, founder credibility, and one named advisor.",
+    "risks_and_notes": "Risks: (1) Credibility gap is severe — solo founder without food-industry CV will be filtered out at gatekeeper stage. (2) Multi-customer isolation is a non-trivial product investment (~3-6 months engineering) that adds tech-debt and bloat to the broader SMB product. (3) FSMA 204 extension (now ~July 2028) reduces urgency of the export-compliance hook. (4) Nulogy mid-market push could close the wedge before Manuva ships. Verify before going hard: actual AFGC member appetite for a sub-AU$1500/mo co-pack tool; whether a named advisor would partner; whether multi-customer isolation can be served via tenant-per-brand instead of in-tenant isolation. STRONG RECOMMENDATION: Treat this as a Phase 3 strategic option, NOT a Phase 1 acquisition channel. The risk of building a parallel product line for one segment while the SMB book stays small is real."
+  },
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "trial_to_paid_benchmark",
+    "primary_channels",
+    "industry_facebook_group_size",
+    "current_dominant_tool",
+    "user_satisfaction_signals",
+    "industry_association_sponsorship"
+  ]
+}

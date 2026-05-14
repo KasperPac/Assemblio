@@ -1,0 +1,108 @@
+{
+  "item_id": "08_pet_treats_dry",
+  "name": "Pet treats & dry pet food brands",
+  "tier": "A",
+
+  "market_sizing": {
+    "target_buyer": "Founder / head of ops. For brands >AU$1M revenue, often a dedicated production manager or COO.",
+    "business_count_au": "Approx. 200-300 indie/SMB pet treat & dry pet food brands in AU (top 5 hold only ~30% share per outline). PFIAA has ~50-70 manufacturer members covering 97-98% of by-volume production, but the long tail of indie treat brands sits outside PFIAA membership. Active Shopify pet stores in AU: SellerCenter lists top 100. [uncertain]",
+    "business_count_secondary": "US: ~2,500-4,000 indie pet brands (Chewy + a vast D2C long tail). UK: ~400-700. NZ: ~80-150. CA: ~400-700. [uncertain]",
+    "typical_size": "2-15 employees, AU$200K-AU$5M annual revenue. Dry food brands skew larger (need co-pack or in-house extrusion); treat brands skew smaller (often kitchen/commercial-kitchen production).",
+    "annual_revenue_band_aud": "500K-2M most common. Treats sub-segment skews 100K-500K; dry-food skews 1M-5M+.",
+    "growth_trend": "AU pet food market USD 2.8-3.93B (2025), growing 4-6% overall. Treats sub-segment 6.1% CAGR through 2031 (humanisation tailwind). E-commerce pet food APAC growing 8.8% CAGR 2025-2033 (Grand View). Fragmented: top 5 = 30% share; online channels +6.4% CAGR.",
+    "seasonality_intensity": 2
+  },
+
+  "fit_and_timing": {
+    "manuva_fit_score": 5,
+    "addressable_window": "now",
+    "roadmap_dependency": "None gating. Xero integration meaningfully improves close rate. Amazon connector important for treat brands using FBA (Phase 3 unlock).",
+    "typical_tier": "Growth (AU$249) is the centre. Larger dry-food brands with 2+ co-packers and multi-channel = Pro (AU$499). Hobby/startup treat makers = Starter (AU$99).",
+    "regulatory_burden": 3,
+    "lot_batch_criticality": 5,
+    "time_to_value_days": 14
+  },
+
+  "economics": {
+    "incumbent_pricing": "Craftybase Business AU$199/mo (most common at the small end). Cin7 Core AU$349-549/mo (mid-market dry-food brands). Katana US$199-399/mo. Unleashed NZ$319-399/mo. MRPeasy US$49/user. Large dry-food brands at NetSuite / SAP B1 (AU$3-10K/mo). Treat makers often on spreadsheets + Shopify.",
+    "willingness_to_pay_aud": "AU$249-499/mo well within range. Lot tracking + AS5812 compliance reporting is a clear value driver. PFIAA-aligned brands willing to pay Pro tier for audit-ready output.",
+    "estimated_arpu_aud": "AU$280-330 blended (skew Growth, ~25% Pro).",
+    "expansion_revenue_potential": "4 — clear path Starter -> Growth (lot tracking, more SKUs) -> Pro (multi-channel + multi-location + Amazon FBA inbound).",
+    "churn_risk": 2,
+    "cac_estimate_aud": "Cash CAC AU$200-500 (LinkedIn outbound + Pet Industry News sponsorship + content). Founder-time CAC: ~6-10 hrs per close x AU$100/hr = AU$600-1,000. Buyer needs more education than ceramics, less than supplements.",
+    "cash_cac_affordability": 3,
+    "ltv_estimate_aud": "AU$300 ARPU x 30mo x 80% GM = AU$7,200.",
+    "ltv_cac_ratio": "~15-20:1 on cash CAC; ~7-8:1 fully loaded. Strong.",
+    "typical_seat_count": "3-8 (founder, ops, warehouse, marketing). Per-seat incumbents (Katana, MRPeasy) become painful at this size — clean wedge.",
+    "multi_channel_count": "3-5 (Shopify + Amazon + Pet Circle / Petbarn wholesale + retail + sometimes FBA). Multi-channel is the norm.",
+    "wholesale_b2b_mix": "40-70% wholesale (Petbarn, Pet Circle, independent pet stores, vet clinics, Faire). D2C-only brands rarer; cold-chain D2C is item 12, not here."
+  },
+
+  "where_they_live": {
+    "primary_channels": "LinkedIn: pet industry execs in 'Pet Industry Australia' group (~3-5K) [uncertain]. FB groups: 'Australian Pet Industry Network', 'Aussie Pet Business Owners'. Instagram: #australianpetbrand, #madeinaustraliapets. Reddit: r/PetIndustry (small, US-skewed), r/AusEcomm. Pet Industry News (petindustrynews.com.au) — primary trade publication.",
+    "directories_communities": "Pet Industry Association of Australia (PIAA) — trade body, runs PETS conference. PFIAA (Pet Food Industry Association of Australia) — manufacturer body, runs Tick of Approval program. Australian Made directory. Pet Circle B2B marketplace. Petbarn supplier portal.",
+    "industry_facebook_group_size": "~5,000-10,000 across PIAA + adjacent groups [uncertain]",
+    "podcasts_voices": "Pet Industry News podcast, Pet Insurance Australia podcast, The Pet Business Show (US but listened to in AU), Bullish on Pets (US). Voices: Mark Fraser (PIAA), Carole Hicks. [uncertain on AU-specific top podcasts]",
+    "events_trade_shows": "PETS Conference (Pet Industry Association of Australia annual, ~600-1,000 attendees, sponsor slots AU$3-15K). Global Pet Expo (US, AU brands attend). AusPack (Mar, packaging show). [uncertain on exact 2026 dates]",
+    "search_keywords": "['inventory software pet food manufacturer Australia', 'pet treat batch tracking software', 'AS5812 compliance software', 'lot tracking pet food Australia', 'Cin7 alternative pet brand', 'Katana alternative pet food', 'co-packer management pet treats', 'pet food traceability software AU', 'Amazon FBA inventory pet brand Australia', 'BOM software dog treats']",
+    "community_density": 3,
+    "founder_persona_homogeneity": 3
+  },
+
+  "outreach_fit": {
+    "cold_outbound_feasibility": "4 — LinkedIn outbound to ops managers / founders works well. Founders are reachable; many list email on Shopify storefront. PIAA member directory provides high-quality lead list. Cold phone calls acceptable for B2B.",
+    "inbound_content_fit": "4 — 'AS5812 lot tracking checklist', 'how to prepare for a co-packer audit', 'Cin7 vs X for pet brands' converts. YouTube tutorial fits less well than for ceramics.",
+    "founder_market_fit_proxy": "3 — moderate. Pet industry has cliques and PFIAA insider networks, but Manuva is selling 'inventory software', not 'pet expertise'. Outsider-founder OK if pitch leads with 'AS5812 lot tracking + recall readiness' rather than nutritional formulation. First few customers likely come from the indie/treat end where insider-credentials matter less.",
+    "case_study_acquisition_cost": "Medium — 6-10 weeks per case study. Pet brands are PR-savvy and welcome co-marketing.",
+    "case_study_appeal": 4
+  },
+
+  "foot_in_door_fit": {
+    "design_partner_appeal": "4 — strong. Innovator pet treat founders love being on the cutting edge. Recall-readiness + lot-tracking message resonates. 'Help us build the pet-brand ops stack' framing converts.",
+    "paid_pilot_fit": "4 — viable. AU$249 x 3 months credit-on-conversion fits a brand doing AU$500K+ revenue. Higher trust signal than free.",
+    "free_trial_extension_fit": "3 — 14-day card-required trial works; 30-day no-card trial brings tire-kickers. Free-for-X-months not necessary at this WTP.",
+    "trial_to_paid_benchmark": "Estimated 25-35% CC-required trial -> paid (above ChartMogul 31.4% baseline thanks to clear lot-tracking ROI). Paid pilot 45-55%.",
+    "reference_value": 5,
+    "recommended_foot_in_door_motion": "Paid pilot AU$249/mo x 3 months credit-on-conversion + founder-led LinkedIn outbound + 'AS5812 lot tracking made easy' content moat. Target Petbarn/Pet Circle suppliers first (forcing function for traceability). After 5 customers, offer Shopify App Store + PIAA newsletter sponsorship as scale channels. Design-partner framing only for first 3 brands with >AU$1M revenue.",
+    "rollout_phase": "Phase 1 (months 0-3) for treats end; Phase 2 (months 3-6) for dry-food once roadmap-stable. Phase 3 (months 6-12) for Amazon-FBA dry-food brands once connector ships."
+  },
+
+  "competitive_context": {
+    "current_dominant_tool": "Fragmented. Cin7 Core ~25% share at the mid-market end (AU$1M-5M brands). Craftybase ~15% at the indie/treat end. Katana ~10%. Unleashed ~10% (ANZ legacy). Spreadsheets + Shopify ~30%. NetSuite/SAP at top end ~5-10%. No dominant tool.",
+    "switching_pain": 3,
+    "competitor_gaps_for_this_segment": "Cin7 gaps: well-documented post-DEAR price hikes, weak production scheduling, slow lot-tracking workflows. Craftybase gaps: order-line ceilings, no real lot tracking depth, no co-packer workflow, no Pet Circle/Petbarn channel templates. Katana gaps: per-seat at 5+ users gets expensive, no AS5812-aligned reporting templates. Manuva closes: multi-level BOMs with yield % (formulation), lot/batch tracking (recall + AS5812), allocation engine (forward-orders wholesale), Shopify-first depth, flat pricing.",
+    "user_satisfaction_signals": "Cin7 G2 complaints: 'pricing increased 40-60% post-acquisition'. Katana G2: '523% price increase since 2022' (cited in outline). Craftybase Capterra: 'lot tracking too basic for pet food'. r/smallbusiness threads: 'I'm a pet food startup using spreadsheets because everything is too expensive or too enterprise'.",
+    "competitor_concentration": 2,
+    "integration_dependency_list": "Must-have: Shopify (have), Xero (roadmap), Amazon FBA (roadmap), Faire (gap). Important: Pet Circle B2B portal (gap, unlikely public API), Petbarn EDI (gap, hard). Nice: Klaviyo, ShipStation, Australia Post."
+  },
+
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": "4 — pet brands at AU$1M+ revenue have a bookkeeper or external accountant. Xero ProAdvisor referrals work once Xero integration ships. Higher fit than ceramics because accounting is more important at this revenue.",
+    "shopify_app_store_acquisition_fit": 4,
+    "shopify_plus_partner_potential": 3,
+    "tpl_3pl_referral_potential": "4 — pet brands disproportionately use 3PLs (cold-chain not in scope but treat/dry brands use Shippit, eStore Logistics, James + James). Co-sell potential strong.",
+    "industry_association_sponsorship": "PIAA — newsletter ~AU$1-3K/issue; PETS conference sponsor AU$5-15K [uncertain]. PFIAA member access requires manufacturer status (Manuva not eligible to join as member). Pet Industry News ads AU$500-2K [uncertain].",
+    "partner_channel_potential": 4
+  },
+
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "8-15 paying customers in 12 months. Lower volume than ceramics because B2B sales cycles are 4-8 weeks here vs 1-2 weeks for ceramics. Funnel: 60-100 qualified leads -> 30-40 pilots -> 8-15 paid.",
+    "realistic_12mo_mrr_contribution_aud": "AU$2,200-4,500 MRR at month 12 (10 customers x AU$300 + 2 Pro at AU$499 = ~AU$4,000).",
+    "path_to_first_3k_5k_mrr_aud": "Sequence: (1) month 1-2: enroll 3 design partners from treat-end of segment via founder-led LinkedIn + IG outreach (free 6mo + roadmap input); (2) month 3-4: ship first AS5812 lot-tracking case study + write 'pet brand recall readiness' SEO cornerstone; (3) month 4-6: PIAA newsletter slot + 'Cin7 alternative for AU pet brands' content; (4) month 6-9: shift to paid pilots (AU$249 x 3mo) for incoming inbound leads; (5) month 9-12: Shopify App Store + 1-2 PETS conference attendees. This segment alone unlikely to hit AU$3-5K MRR floor in 12 months due to long sales cycle — combine with ceramics (volume) for cumulative target.",
+    "customers_needed_for_1m_arr_aud": "~250-280 customers at AU$300 ARPU. In a healthy 3-year aspirational mix, this segment contributes ~50-80 customers (~AU$200-240K ARR) — a core profitability pillar, not the volume engine.",
+    "solo_founder_bandwidth_fit": "3 — onboarding takes 4-8 hours per customer (BOM setup + lot tracking config + Shopify mapping). Support load moderate (compliance edge cases). Sales cycle eats founder time. Manageable up to ~15 active customers, then needs templates + Loom library + part-time onboarding contractor.",
+    "break_even_contribution_months": "2-4 months on cash CAC; 4-6 months fully loaded.",
+    "gross_margin_sensitivity": "Moderate — AS5812 / recall scenarios occasionally generate support escalations. Co-packer integration custom-work risk. Self-serve docs + a 'pet brand setup' onboarding template keep GM ~75-80%.",
+    "priority_ranking": "2 — strong WTP, defensible wedge (lot tracking + AS5812 reporting), fragmented competition, expansion potential. Should be among top 3 priority segments alongside cosmetics and SPF.",
+    "risks_and_notes": "Risks: (1) PFIAA membership barrier — Manuva can't join as software vendor, so association credibility is harder; mitigate via 1-2 PFIAA-member brand case studies; (2) Pet Circle / Petbarn EDI integration is non-trivial but a deal-breaker for many — scope at month 4-5; (3) AS5812 is voluntary today but SA's proposed Pet Food (Marketing & Labelling) Act 2024 may make it de-facto mandatory — track legislation; (4) larger brands (>AU$5M) may be locked into NetSuite — don't waste cycles. Things to verify before going hard: actual indie/SMB brand count via PIAA membership directory; how many PFIAA members would consider switching from incumbent; whether Pet Circle portal API exists."
+  },
+
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "industry_facebook_group_size",
+    "podcasts_voices",
+    "events_trade_shows",
+    "industry_association_sponsorship"
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "item_id": "11_packaged_foods_sauces_condiments",
+  "name": "Packaged foods, sauces, condiments",
+  "tier": "A",
+
+  "market_sizing": {
+    "target_buyer": "Founder (early stage) -> Operations Manager / Production Manager (mid stage). FSANZ compliance often a part-time consultant or QA contractor at SMB scale. Family-business buyers common — both spouses involved.",
+    "business_count_au": "Approx. 1,500-3,500 SMB AU brands in packaged foods + sauces + condiments + spices + dressings (excluding fresh, dairy, meat). AFGC has ~150 corporate members (top of market). Specialty/artisanal long tail visible at Mindful Foods, Find Us in the Forest, Three Threes, Whisk & Pin, Yo Mama's, Saucy Sauce Co, Black Garlic Australia, Spice Tree Organics, etc. ABS food manufacturing SMB count exceeds 5,000 establishments but includes adjacent categories. [uncertain]",
+    "business_count_secondary": "US: ~20,000-35,000 SMB packaged food brands (Specialty Food Association reports vast market). UK: ~3,000-6,000. NZ: ~400-800. CA: ~2,500-5,000. [uncertain]",
+    "typical_size": "2-25 employees, AU$150K-AU$8M annual revenue. Highly fragmented.",
+    "annual_revenue_band_aud": "250K-1M most common; secondary cohort at 1M-5M (Growth/Pro tier). Top end at 5M-50M (NetSuite territory).",
+    "growth_trend": "AU sauces & condiments AU$2B (Statista 2025), 7.12% CAGR 2025-2030. Total AU food & grocery manufacturing AU$102B (AFGC, 288K employees). Premium/artisanal segment growing faster than overall market (~10% YoY). 'Local + craft' tailwind post-COVID.",
+    "seasonality_intensity": 3
+  },
+
+  "fit_and_timing": {
+    "manuva_fit_score": "5 — strong fit. Multi-level BOMs map naturally to recipes + sub-recipes (sauce base -> finished sauce -> retail SKU). Lot tracking + FSANZ recall = core requirement. Co-packer workflows (~30% use co-packers) addressed by location-based inventory.",
+    "addressable_window": "now",
+    "roadmap_dependency": "None gating. Xero/MYOB integration boosts close rate (most use Xero). FSMA 204 (US) traceability creates export pressure that benefits Manuva's lot tracking. Amazon FBA connector helps the ~20% selling US via FBA.",
+    "typical_tier": "Starter (AU$99) for kitchen/farmers'-market stage; Growth (AU$249) for retail-distributed brands (AU$500K-AU$3M); Pro (AU$499) for multi-channel + export.",
+    "regulatory_burden": "4 — FSANZ Food Standards Code, HACCP for export/wholesale, allergen declaration, country-of-origin labelling, state-level food business licensing. Heavy but manageable; SME brands often use HACCP-lite via co-packer.",
+    "lot_batch_criticality": 5,
+    "time_to_value_days": 14
+  },
+
+  "economics": {
+    "incumbent_pricing": "Craftybase Business AU$199/mo at the artisanal/Etsy end. Cin7 Core AU$349-549/mo at AU$1-5M mid-market. Unleashed NZ$319-399/mo (ANZ legacy). Katana US$199-399/mo. Spreadsheets ~40% of segment at sub-AU$500K revenue. NetSuite at top end (AU$5M+).",
+    "willingness_to_pay_aud": "AU$249-499 in range. Recall scenarios + retailer (Coles, Woolworths) compliance audits drive WTP. Co-packer brands willing to pay Pro for multi-location.",
+    "estimated_arpu_aud": "AU$220-280 blended (skew Starter+Growth; smaller Pro tail).",
+    "expansion_revenue_potential": "4 — strong Starter -> Growth path once a brand moves from farmers' market to retail. Pro upgrade on multi-channel + export.",
+    "churn_risk": "3 — moderate. Food brands fail at higher rates than other CPG (slim margins, retail listings churn). Mitigation: focus on retail-distributed cohort (more stable) over farmers'-market cohort.",
+    "cac_estimate_aud": "Cash CAC AU$200-500 (LinkedIn + Fine Food Australia + Naturally Good Expo + content + 3PL referrals). Founder-time CAC: ~8-12 hrs per close x AU$100/hr = AU$800-1,200.",
+    "cash_cac_affordability": 3,
+    "ltv_estimate_aud": "AU$250 ARPU x 30mo x 78% GM = AU$5,850.",
+    "ltv_cac_ratio": "~12-15:1 on cash CAC; ~5-6:1 fully loaded.",
+    "typical_seat_count": "3-12 (founder, ops, kitchen lead, sales, marketing). Per-seat tools painful at 5+.",
+    "multi_channel_count": "3-5 (Shopify + Coles/Woolworths wholesale + independent grocers + farmers' markets + Amazon + sometimes Faire). High wholesale mix.",
+    "wholesale_b2b_mix": "50-80% wholesale (Coles/Woolies, IGA, independent grocers, food service, Harris Farm, Costco). D2C-pure rare."
+  },
+
+  "where_they_live": {
+    "primary_channels": "FB groups: 'Australian Food Producers' (~5-10K) [uncertain], 'Aussie Foodpreneurs', 'Small Food Business Australia'. LinkedIn: 'Australian Specialty Food Association', AFGC, 'Food Industry Australia'. Instagram: #australianmade, #ausfoodbusiness, #craftfood. Reddit: r/Foodbusiness (US-skewed), r/AusEcomm.",
+    "directories_communities": "Australian Food & Grocery Council (AFGC) — 150 corporate members. Fine Food Australia. Australian Made directory. Specialty Food Association (US, AU brands attend). State-level food industry bodies (FoodSA, Food Innovation Australia Ltd). Slow Food Australia chapters. Sydney Royal Fine Food Show, delicious. Produce Awards. Naturally Good Expo. Foodstarter co-packer marketplace.",
+    "industry_facebook_group_size": "~20,000-40,000 across overlapping AU food founder/specialty groups [uncertain]",
+    "podcasts_voices": "Foodstarter podcast, Eat My Words (Cynthia Stretch), The Food Process Podcast (US, AU-listened), How Brands Are Built, How I Built This. Voices: Adam Liaw, Kate Berry (Lunch Lady), Foodstarter founders. [uncertain on AU-specific top podcasts]",
+    "events_trade_shows": "Fine Food Australia (Sep, Melbourne/Sydney alternating, ~25K attendees, sponsor AU$10-50K — too expensive for full booth but visiting is essential). Naturally Good Expo (Jun, Sydney, ~5K, sponsor AU$8-20K). Foodservice Australia (May/Jun, ~10K). delicious. Produce Awards. Sydney Royal Fine Food Show. ProWein Sydney (adjacent).",
+    "search_keywords": "['inventory software food business Australia', 'FSANZ recall software', 'HACCP lot tracking software', 'sauce recipe BOM software', 'food manufacturer inventory Australia', 'Cin7 alternative food brand', 'co-packer management software', 'small food business inventory tracking', 'Coles Woolworths supplier inventory', 'FSMA 204 traceability software']",
+    "community_density": 3,
+    "founder_persona_homogeneity": 2
+  },
+
+  "outreach_fit": {
+    "cold_outbound_feasibility": "3 — LinkedIn outbound to ops/founders works. Email findable on most brand websites. Cold phone calls acceptable. Trade-show floor walking at Fine Food Australia is high-yield.",
+    "inbound_content_fit": "4 — 'FSANZ-ready in 30 days', 'Coles supplier audit prep checklist', 'sauce co-packer ops cookbook' converts. YouTube video tutorials fit well (kitchen-style explainer).",
+    "founder_market_fit_proxy": "3 — moderate. Outsider founder OK if pitch leads with software competence + co-packer / retail-readiness framing. NOT a tight insider community like supplements; the artisanal food world is more welcoming to outsiders. Family-business buyers respond to founder-led, plain-spoken comms.",
+    "case_study_acquisition_cost": "Medium — 6-10 weeks per case study. Food founders generally enthusiastic about PR (helps retail listings).",
+    "case_study_appeal": 4
+  },
+
+  "foot_in_door_fit": {
+    "design_partner_appeal": "3 — moderate. Innovator condiment/sauce founders are receptive ('our hot sauce brand needs better ops'). Mid-size brands more conservative.",
+    "paid_pilot_fit": "4 — viable. AU$249 x 3 months works for AU$500K+ brands. Pilots align with retail-supplier mindset ('show me ROI in 90 days').",
+    "free_trial_extension_fit": "3 — 30-day no-card trial brings volume from kitchen-stage tire-kickers. CC-required 14-day for mid-market. Hybrid funnel by tier.",
+    "trial_to_paid_benchmark": "Estimated 15-25% blended trial -> paid (mix of opt-in artisanal tire-kickers and CC-required serious mid-market). Paid pilot 40-50%.",
+    "reference_value": 4,
+    "recommended_foot_in_door_motion": "Two-track motion. Track A (kitchen/artisanal AU$150K-$500K): 30-day no-card trial + 'Craftybase alternative AU' content + Shopify App Store + Foodstarter community presence. Track B (retail-distributed AU$500K-$3M): founder-led LinkedIn + paid pilot AU$249 x 3 months + Fine Food Australia attendance (walk floor, no booth) + 'FSANZ recall-readiness' cornerstone content. Two case studies in year 1: one artisanal hot-sauce brand, one Coles-supplier mid-market brand.",
+    "rollout_phase": "Phase 1 (months 0-3) for artisanal track; Phase 2 (months 3-9) for retail-supplier track once first case studies are live."
+  },
+
+  "competitive_context": {
+    "current_dominant_tool": "Fragmented. Spreadsheets + Shopify ~35-40% at artisanal end. Craftybase ~15% at indie/Etsy end. Cin7 Core ~20% mid-market. Unleashed ~10% ANZ legacy. NetSuite top end ~5-10%. Katana ~5%. Custom tools ~5%.",
+    "switching_pain": 3,
+    "competitor_gaps_for_this_segment": "Cin7 gaps: weak recipe/sub-recipe modeling, post-acquisition pricing rage, no FSANZ-aligned recall export. Craftybase: order-line ceilings, no real production order, weak multi-location for co-packers. Manuva closes: multi-level BOMs with versioning (recipe + sub-recipe + retail SKU), lot tracking + recall genealogy, allocation engine, multi-location for co-packer/co-manufacturer, flat AU$ pricing, Shopify-first depth.",
+    "user_satisfaction_signals": "r/Foodbusiness threads: 'we outgrew Craftybase but Cin7 is overkill', 'spreadsheets are killing me but I can't afford NetSuite'. LinkedIn AU food-ops posts: 'recall drill last week revealed our lot tracking is a mess'. Foodstarter community echoes pain points.",
+    "competitor_concentration": 2,
+    "integration_dependency_list": "Must: Shopify (have), Xero/MYOB (roadmap). Important: Coles/Woolworths supplier portals (gap — EDI hard), GS1 barcode generation (gap), HACCP doc storage. Nice: Faire, Amazon FBA, Foodstarter, Australia Post."
+  },
+
+  "partner_channels": {
+    "xero_myob_partner_channel_fit": "4 — most AU food brands at AU$500K+ have a bookkeeper or accountant on Xero/MYOB. ProAdvisor channel strong once integration ships.",
+    "shopify_app_store_acquisition_fit": "4 — artisanal end discoverable via Shopify App Store category browsing.",
+    "shopify_plus_partner_potential": 2,
+    "tpl_3pl_referral_potential": "3 — food-specialised 3PLs (eStore Logistics, Pack & Send food, Aussie Cold Chain) co-sell candidates for chilled/ambient.",
+    "industry_association_sponsorship": "AFGC corporate membership AU$15-50K (too expensive, and Manuva isn't a 'food company'). Foodstarter community membership low cost. Naturally Good Expo AU$8-20K. Australian Specialty Food Association — modest fees. State-level (FoodSA, FIAL) small sponsor slots AU$1-3K [uncertain].",
+    "partner_channel_potential": 3
+  },
+
+  "profitability_math": {
+    "realistic_12mo_customer_count_solo": "10-20 paying customers in 12 months (two-track motion delivers volume from artisanal track + ARPU from retail track). Funnel: ~400 trial signups + 60 sales convos -> 10-20 paid.",
+    "realistic_12mo_mrr_contribution_aud": "AU$2,500-5,200 MRR at month 12 (12-18 customers x AU$220-280 blended).",
+    "path_to_first_3k_5k_mrr_aud": "Sequence: (1) months 0-2: launch artisanal track (Shopify App Store listing + 'Craftybase alternative AU' content + 1 sauce-brand design partner); (2) months 2-4: visit Naturally Good Expo + Fine Food Australia to walk floor and book 20 sales convos; (3) months 4-6: land 1 retail-supplier mid-market customer via paid pilot, ship case study; (4) months 6-9: expand inbound via 'FSANZ recall checklist' cornerstone post + Foodstarter community presence; (5) months 9-12: 12-18 customers. Strong contributor to AU$3-5K MRR floor — pairs well with ceramics for volume and supplements for ARPU.",
+    "customers_needed_for_1m_arr_aud": "~360 customers at AU$280 blended ARPU. In aspirational mix, this segment contributes ~100-150 customers (~AU$280-420K ARR) — likely a top-2 contributor alongside supplements. Largest addressable pool of Tier A segments.",
+    "solo_founder_bandwidth_fit": "3 — onboarding moderate (recipe BOM setup + lot tracking + retailer compliance config = 6-10 hrs/customer). Support load moderate (FSANZ Q&A occasional). Manageable at 15-20 active customers.",
+    "break_even_contribution_months": "2-4 months on cash CAC; 4-6 months fully loaded.",
+    "gross_margin_sensitivity": "Moderate — recipe BOM complexity occasionally needs hand-holding; co-packer multi-location setup non-trivial. GM ~75-80% with good docs.",
+    "priority_ranking": "2 — largest Tier A addressable pool, clear wedge over Craftybase/Cin7, strong reference value (food brands are PR-active), reasonable founder-market fit. Belongs in top 3 alongside cosmetics and pet treats.",
+    "risks_and_notes": "Risks: (1) Coles/Woolworths EDI integration is the eventual deal-breaker — must address by month 9-12; (2) recall scenarios on Manuva are existential PR risk (same as supplements); (3) food founders churn at higher rates than other segments (slim retail margins) — focus on the AU$500K+ cohort; (4) Fine Food Australia booth is too expensive — must master walk-the-floor + LinkedIn-after motion. Things to verify: actual count of AU food SMBs with Shopify storefronts; AFGC member access for software vendors; whether GS1 barcode workflow is in scope."
+  },
+
+  "uncertain": [
+    "business_count_au",
+    "business_count_secondary",
+    "industry_facebook_group_size",
+    "podcasts_voices",
+    "industry_association_sponsorship"
+  ]
+}
