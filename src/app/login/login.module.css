@@ -139,21 +139,56 @@
   color: var(--ink-faint);
 }
 
-.signupLink {
+.applyDivider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin: 4px 0 0;
-  font-size: 13px;
-  color: var(--ink-muted);
-  text-align: center;
+  color: var(--ink-faint);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
-.signupLink a {
-  color: var(--ink-strong);
+.applyDivider::before,
+.applyDivider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--stroke-card);
+}
+
+.applyCta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid #0B2847;
+  background: var(--bg-card);
+  color: #0B2847;
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 14px;
   font-weight: 600;
   text-decoration: none;
+  transition: background var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
 }
 
-.signupLink a:hover {
-  text-decoration: underline;
+.applyCta:hover {
+  background: #0B2847;
+  color: #FFFFFF;
+  border-color: #0B2847;
+}
+
+.applyCta .applyArrow {
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.applyCta:hover .applyArrow {
+  transform: translateX(3px);
 }
 
 /* ── Right: brand panel ────────────────────────────── */
