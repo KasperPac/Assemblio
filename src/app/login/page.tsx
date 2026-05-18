@@ -50,7 +50,7 @@ function LoginPageContent() {
           </form>
 
           <p className={styles.signupLink}>
-            New here? <Link href="/signup">Start a 14-day free trial →</Link>
+            New here? <Link href="/apply">Apply for early access →</Link>
           </p>
 
           <p className={styles.meta}>Manufacturing operations by Manuva</p>
