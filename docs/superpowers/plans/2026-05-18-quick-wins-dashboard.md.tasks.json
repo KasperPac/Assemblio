@@ -1,0 +1,89 @@
+{
+  "planPath": "docs/superpowers/plans/2026-05-18-quick-wins-dashboard.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 1: Project scaffolding + first failing test",
+      "status": "pending",
+      "description": "Create scripts/quick_wins/ and tests/scripts/quick_wins/ packages and write a failing test for the loader module. See plan §Task 1.\n\n```json:metadata\n{\"files\":[\"scripts/quick_wins/__init__.py\",\"tests/__init__.py\",\"tests/scripts/__init__.py\",\"tests/scripts/quick_wins/__init__.py\",\"tests/scripts/quick_wins/test_loaders.py\",\"pytest.ini\"],\"verifyCommand\":\"python -m pytest tests/scripts/quick_wins/test_loaders.py -v\",\"acceptanceCriteria\":[\"test fails with ModuleNotFoundError\",\"package importable\"]}\n```"
+    },
+    {
+      "id": 1,
+      "subject": "Task 2: Implement loaders — JSON + field extraction",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "Implement load_segments(), find_field(), parse_arpu_aud(), parse_mrr_range(), parse_priority(), parse_phase(). See plan §Task 2.\n\n```json:metadata\n{\"files\":[\"scripts/quick_wins/loaders.py\",\"tests/scripts/quick_wins/test_loaders.py\"],\"verifyCommand\":\"python -m pytest tests/scripts/quick_wins/test_loaders.py -v\",\"acceptanceCriteria\":[\"load_segments returns 30 keyed dict\",\"parse_arpu_aud handles ranges\",\"parse_mrr_range returns tuple\",\"parse_priority extracts leading int\",\"parse_phase extracts phase number\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 3: 9-segment filter",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "Filter the 30 segments to the 9 quick wins (Phase 1, priority ≤ 2, addressable now). See plan §Task 3.\n\n```json:metadata\n{\"files\":[\"scripts/quick_wins/filters.py\",\"tests/scripts/quick_wins/test_filters.py\"],\"verifyCommand\":\"python -m pytest tests/scripts/quick_wins/test_filters.py -v\",\"acceptanceCriteria\":[\"returns exactly 9 segments\",\"sorted by priority then MRR desc\",\"matches expected ID set\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 4: 90-day plan parser",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "Parse docs/marketing/90-day-gtm-plan.md into structured tasks plus Day-90 review items. See plan §Task 4.\n\n```json:metadata\n{\"files\":[\"scripts/quick_wins/plan_parser.py\",\"tests/scripts/quick_wins/test_plan_parser.py\"],\"verifyCommand\":\"python -m pytest tests/scripts/quick_wins/test_plan_parser.py -v\",\"acceptanceCriteria\":[\"12 weeks parsed\",\"Week 1 has 5 tasks\",\"Deliverable field extracted\",\"Day-90 review returns ≥5 items\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 5: Workstream + segment mapping tables",
+      "status": "pending",
+      "blockedBy": [3],
+      "description": "Implement classify_workstream() and match_segments() with the verb + keyword tables. See plan §Task 5.\n\n```json:metadata\n{\"files\":[\"scripts/quick_wins/mapping.py\",\"tests/scripts/quick_wins/test_mapping.py\"],\"verifyCommand\":\"python -m pytest tests/scripts/quick_wins/test_mapping.py -v\",\"acceptanceCriteria\":[\"workstream classifier 9 parametric cases\",\"segment keyword matches candle, Katana, Craftybase\",\"empty list when no match\"]}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 6: KPI math",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "Compute the 4 KPI values (total MRR, blended ARPU, founder hours, addressable counts). See plan §Task 6.\n\n```json:metadata\n{\"files\":[\"scripts/quick_wins/kpis.py\",\"tests/scripts/quick_wins/test_kpis.py\"],\"verifyCommand\":\"python -m pytest tests/scripts/quick_wins/test_kpis.py -v\",\"acceptanceCriteria\":[\"MRR upper sum\",\"weighted ARPU\",\"founder hours constant\",\"addressable count filters roadmap blockers\"]}\n```"
+    },
+    {
+      "id": 6,
+      "subject": "Task 7: Chart datasets (bar + scatter + gantt)",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "Build chart payloads. See plan §Task 7.\n\n```json:metadata\n{\"files\":[\"scripts/quick_wins/charts.py\",\"tests/scripts/quick_wins/test_charts.py\"],\"verifyCommand\":\"python -m pytest tests/scripts/quick_wins/test_charts.py -v\",\"acceptanceCriteria\":[\"bar labels short-named\",\"scatter bubble radius clamped\",\"gantt has 4 swimlanes\"]}\n```"
+    },
+    {
+      "id": 7,
+      "subject": "Task 8: Style loader with fallback tokens",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "Load colors_and_type.css when present; fall back to a hard-coded token block. See plan §Task 8.\n\n```json:metadata\n{\"files\":[\"scripts/quick_wins/style_loader.py\",\"tests/scripts/quick_wins/test_style_loader.py\"],\"verifyCommand\":\"python -m pytest tests/scripts/quick_wins/test_style_loader.py -v\",\"acceptanceCriteria\":[\"uses file when present\",\"falls back with warning when missing\",\"fallback contains required tokens\"]}\n```"
+    },
+    {
+      "id": 8,
+      "subject": "Task 9: Jinja2 template — HTML structure",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "Author the Jinja2 template (header, KPI cards, chart canvases, Gantt SVG, segment cards, week checklist, Day-90, Charter slots, filter strip). See plan §Task 9.\n\n```json:metadata\n{\"files\":[\"scripts/quick_wins/templates/quick-wins.html.j2\"],\"verifyCommand\":\"# smoke render with stub context\",\"acceptanceCriteria\":[\"template renders without error\",\"semantic HTML\",\"Chart.js 4.x CDN pinned\"]}\n```"
+    },
+    {
+      "id": 9,
+      "subject": "Task 10: Client-side JS — charts, Gantt, localStorage, filters",
+      "status": "pending",
+      "blockedBy": [8],
+      "description": "Replace JS placeholder with full client-side bundle. See plan §Task 10.\n\n```json:metadata\n{\"files\":[\"scripts/quick_wins/templates/quick-wins.html.j2\"],\"verifyCommand\":\"# manual via Task 12\",\"acceptanceCriteria\":[\"bar+scatter render\",\"SVG Gantt 4 lanes × 12 weeks\",\"localStorage persists ticks and Charter\",\"filter updates URL hash\",\"reset and export buttons work\"]}\n```"
+    },
+    {
+      "id": 10,
+      "subject": "Task 11: CLI entry point + integration test",
+      "status": "pending",
+      "blockedBy": [2, 4, 5, 6, 7, 9],
+      "description": "Wire everything in scripts/build_quick_wins.py and add an integration test. See plan §Task 11.\n\n```json:metadata\n{\"files\":[\"scripts/build_quick_wins.py\",\"tests/scripts/quick_wins/test_build.py\",\"docs/marketing/quick-wins.html\"],\"verifyCommand\":\"python -m pytest tests/scripts/quick_wins/ -v && python scripts/build_quick_wins.py\",\"acceptanceCriteria\":[\"script runs cleanly\",\"HTML contains expected strings\",\"payload JSON parseable\",\"9 bar items, 9 scatter points, 4 gantt lanes\"]}\n```"
+    },
+    {
+      "id": 11,
+      "subject": "Task 12: Manual acceptance against spec §15",
+      "status": "pending",
+      "blockedBy": [10],
+      "description": "Walk every acceptance criterion in spec §15 in Chrome and record deltas. See plan §Task 12.\n\n```json:metadata\n{\"files\":[],\"verifyCommand\":\"start docs/marketing/quick-wins.html\",\"acceptanceCriteria\":[\"AC1-AC12 from spec §15 verified or deltas recorded\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-05-18T00:00:00+10:00"
+}
