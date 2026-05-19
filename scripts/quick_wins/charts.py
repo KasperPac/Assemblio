@@ -15,6 +15,7 @@ DEFAULT_COLOR = "#A0A6B3"
 _NAME_SUFFIX = re.compile(r"\s*[\(\[][^)\]]*[\)\]]\s*$")
 _TTV_RANGE = re.compile(r"(\d+)\s*[-–]\s*(\d+)")
 _TTV_SINGLE = re.compile(r"(\d+)")
+_FIT_LEADING = re.compile(r"(\d+(?:\.\d+)?)")
 
 
 def _short_name(name: str) -> str:
@@ -34,6 +35,16 @@ def _parse_ttv(value: str | None) -> int:
 
 def _clamp(n: int, lo: int, hi: int) -> int:
     return max(lo, min(hi, n))
+
+
+def _parse_fit(value) -> int:
+    """Parse manuva_fit_score which may be '5 — strong fit...' or just 5."""
+    if value is None:
+        return 3
+    if isinstance(value, (int, float)):
+        return int(value)
+    m = _FIT_LEADING.search(str(value))
+    return int(float(m.group(1))) if m else 3
 
 
 def build_bar_dataset(quick_wins: list[dict]) -> dict:
@@ -56,13 +67,13 @@ def build_scatter_dataset(quick_wins: list[dict]) -> list[dict]:
     for seg in quick_wins:
         arpu = parse_arpu_aud(find_field(seg, "estimated_arpu_aud"))
         ttv = _parse_ttv(find_field(seg, "time_to_value_days"))
-        fit = find_field(seg, "manuva_fit_score") or 3
+        fit = _parse_fit(find_field(seg, "manuva_fit_score"))
         if arpu is None:
             continue
         points.append({
             "x": ttv,
             "y": arpu,
-            "r": _clamp(int(fit) * 4, 4, 24),
+            "r": _clamp(fit * 4, 4, 24),
             "label": _short_name(seg.get("name", "")),
             "motion": find_field(seg, "recommended_foot_in_door_motion") or "",
         })

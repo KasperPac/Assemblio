@@ -44,8 +44,8 @@ def find_field(segment: dict, key: str) -> Any:
     return None
 
 
-_NUM_RANGE = re.compile(r"AU?\$?\s*([\d,]+)\s*[-–]\s*([\d,]+)", re.IGNORECASE)
-_NUM_SINGLE = re.compile(r"AU?\$?\s*([\d,]+)")
+_NUM_RANGE = re.compile(r"(?:AU?)?\$\s*([\d,]+)\s*[-–]\s*([\d,]+)", re.IGNORECASE)
+_NUM_SINGLE = re.compile(r"(?:AU?)?\$\s*([\d,]+)")
 _PRIORITY_LEAD = re.compile(r"^\s*(\d+)")
 _PHASE_NUM = re.compile(r"phase\s*(\d+)", re.IGNORECASE)
 
