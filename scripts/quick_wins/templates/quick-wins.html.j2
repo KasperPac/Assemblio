@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Manuva Quick Wins · GTM Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    {{ tokens_css | safe }}
+
+    body { max-width: 1100px; margin: 0 auto; padding: 32px 24px 64px; line-height: 1.45; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    header.top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+    header.top h1 { margin: 0; font-size: 28px; color: var(--ink-strong); }
+    nav.anchors a { margin-right: 16px; color: var(--brand-1); text-decoration: none; font-size: 14px; }
+    nav.anchors a:hover { text-decoration: underline; }
+    .meta { color: var(--ink-muted); font-size: 13px; }
+
+    section { margin-top: 48px; }
+    section > h2 { margin-bottom: 8px; font-size: 20px; color: var(--ink-strong); }
+    section > p.note { color: var(--ink-muted); font-size: 13px; margin-top: 0; }
+
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 16px; }
+    .kpi { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 16px; }
+    .kpi .label { color: var(--ink-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .kpi .value { font-size: 24px; font-weight: 600; margin-top: 4px; color: var(--ink-strong); }
+    .kpi .sub { font-size: 12px; color: var(--ink-muted); margin-top: 4px; }
+    .hour-bar { display: flex; height: 6px; margin-top: 6px; border-radius: 3px; overflow: hidden; }
+    .hour-bar span { display: block; }
+
+    .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px; }
+    .chart-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 16px; }
+    .chart-card h3 { margin: 0 0 8px; font-size: 14px; color: var(--ink-strong); }
+
+    .filter-strip { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+    .filter-strip label { font-size: 12px; color: var(--ink-muted); display: flex; align-items: center; gap: 6px; }
+    .filter-strip select { font-size: 12px; padding: 4px 6px; border: 1px solid var(--border-subtle); border-radius: 4px; }
+    .filter-strip button { font-size: 12px; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-subtle); background: var(--bg-card); cursor: pointer; }
+
+    .segment-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    .segment { background: var(--bg-card); border: 1px solid var(--border-subtle); border-left: 4px solid var(--priority-1, var(--brand-1)); border-radius: 8px; padding: 16px; }
+    .segment[data-priority="2"] { border-left-color: var(--priority-2, #5B8DEF); }
+    .segment h3 { margin: 0; font-size: 16px; display: flex; justify-content: space-between; align-items: baseline; }
+    .segment .priority-tag { font-size: 12px; color: var(--brand-1); }
+    .segment .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 12px 0; font-size: 13px; }
+    .segment .metric .k { color: var(--ink-muted); font-size: 11px; text-transform: uppercase; }
+    .segment .metric .v { color: var(--ink-strong); font-weight: 500; }
+    .segment .motion { font-size: 13px; padding: 6px 8px; background: var(--brand-1-soft, #E6EEFF); color: var(--brand-2, #1B2433); border-radius: 4px; margin: 8px 0; }
+    .segment details { margin-top: 8px; }
+    .segment details summary { font-size: 13px; cursor: pointer; color: var(--brand-1); }
+    .segment ul { margin: 8px 0 0 0; padding-left: 20px; font-size: 13px; }
+    .segment li label { cursor: pointer; }
+    .segment li input[type=checkbox] { margin-right: 6px; }
+    .segment .source { font-size: 12px; color: var(--ink-muted); margin-top: 8px; }
+
+    .gantt-wrap { overflow-x: auto; margin-top: 16px; }
+    svg.gantt { width: 100%; min-width: 800px; height: 330px; display: block; }
+    .gantt .lane-label { font-size: 11px; fill: var(--ink-muted); text-transform: uppercase; }
+    .gantt .week-line { stroke: var(--border-subtle, #E3E7EE); stroke-width: 1; }
+    .gantt .task-block { rx: 3; ry: 3; opacity: 0.85; cursor: pointer; }
+    .gantt .task-block.Build { fill: var(--brand-1, #0E5BFF); }
+    .gantt .task-block.Sell { fill: var(--success, #1AA563); }
+    .gantt .task-block.Support { fill: var(--warning, #F0A91E); }
+    .gantt .task-block.Content { fill: var(--brand-2, #1B2433); }
+
+    .week-list { columns: 2; column-gap: 32px; margin-top: 24px; }
+    .week-list .week { break-inside: avoid; margin-bottom: 16px; }
+    .week-list .week h4 { margin: 0 0 4px; font-size: 13px; color: var(--ink-strong); }
+    .week-list .week ul { padding-left: 20px; margin: 0; font-size: 12px; }
+
+    .charter-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 16px; }
+    .charter-tile { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; font-size: 13px; }
+    .charter-tile h4 { margin: 0 0 8px; font-size: 13px; }
+    .charter-tile select, .charter-tile input { width: 100%; padding: 4px; font-size: 12px; margin-top: 4px; border: 1px solid var(--border-subtle); border-radius: 3px; box-sizing: border-box; }
+
+    .controls { display: flex; gap: 12px; margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
+    .controls button { font-size: 12px; padding: 6px 10px; border-radius: 4px; border: 1px solid var(--border-subtle); background: var(--bg-card); cursor: pointer; }
+    .controls button:hover { background: var(--bg-canvas, #F5F7FB); }
+  </style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <h1>Manuva Quick Wins</h1>
+    <div class="meta">Generated {{ generated_at }} · 9 Phase-1 segments · 12-week plan</div>
+  </div>
+  <nav class="anchors">
+    <a href="#overview">Overview</a>
+    <a href="#segments">Segments</a>
+    <a href="#plan">90-Day Plan</a>
+    <a href="#charter">Charter</a>
+  </nav>
+</header>
+
+<main>
+
+<section id="overview">
+  <h2>Overview</h2>
+  <div class="kpis">
+    <div class="kpi">
+      <div class="label">12-mo MRR if all hit</div>
+      <div class="value">AU${{ "{:,.0f}".format(kpis.total_mrr_upper_aud) }}</div>
+      <div class="sub">Upper bound across 9 segments</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Blended ARPU</div>
+      <div class="value">AU${{ kpis.blended_arpu_aud }}</div>
+      <div class="sub">MRR-weighted across 9</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Founder hours / wk</div>
+      <div class="value">{{ kpis.founder_hours.total }} hr</div>
+      <div class="hour-bar">
+        <span style="background:var(--brand-1,#0E5BFF);width:{{ (kpis.founder_hours.build / kpis.founder_hours.total * 100) | round }}%"></span>
+        <span style="background:var(--success,#1AA563);width:{{ (kpis.founder_hours.sell / kpis.founder_hours.total * 100) | round }}%"></span>
+        <span style="background:var(--warning,#F0A91E);width:{{ (kpis.founder_hours.support / kpis.founder_hours.total * 100) | round }}%"></span>
+        <span style="background:var(--brand-2,#1B2433);width:{{ (kpis.founder_hours.content / kpis.founder_hours.total * 100) | round }}%"></span>
+      </div>
+      <div class="sub">Build {{ kpis.founder_hours.build }} · Sell {{ kpis.founder_hours.sell }} · Support {{ kpis.founder_hours.support }} · Content {{ kpis.founder_hours.content }}</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Addressable today</div>
+      <div class="value">{{ kpis.addressable_today_count }} / 9</div>
+      <div class="sub">+{{ kpis.addressable_after_xero_count }} after Xero ships</div>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-card">
+      <h3>12-mo MRR potential (upper bound, AU$)</h3>
+      <canvas id="bar-mrr" height="200"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>ARPU × Time-to-value (bubble = Manuva fit)</h3>
+      <canvas id="scatter-arpu" height="200"></canvas>
+    </div>
+  </div>
+</section>
+
+<section id="segments">
+  <h2>Segments</h2>
+  <p class="note">Filter to focus. Ticks persist in localStorage.</p>
+  <div class="filter-strip">
+    <label>Motion <select id="filter-motion"><option value="">All motions</option></select></label>
+    <label>ARPU <select id="filter-arpu">
+      <option value="">All ARPU</option>
+      <option value="0-200">&lt;200</option>
+      <option value="200-300">200–300</option>
+      <option value="300-400">300–400</option>
+      <option value="400+">400+</option>
+    </select></label>
+    <button id="clear-filters">Clear filters</button>
+  </div>
+  <div class="segment-grid" id="segment-grid">
+    {% for s in segments %}
+    <article class="segment" data-priority="{{ s.priority }}" data-arpu="{{ s.arpu }}" data-motion="{{ s.motion_short }}">
+      <h3>
+        <span>#{{ s.id_num }} · {{ s.name_short }}</span>
+        <span class="priority-tag">★ P{{ s.priority }}</span>
+      </h3>
+      <div class="metrics">
+        <div class="metric"><div class="k">ARPU</div><div class="v">AU${{ s.arpu }}</div></div>
+        <div class="metric"><div class="k">12-mo MRR</div><div class="v">{{ s.mrr_str }}</div></div>
+        <div class="metric"><div class="k">Time to value</div><div class="v">{{ s.ttv_days }}d</div></div>
+        <div class="metric"><div class="k">Manuva fit</div><div class="v">{{ s.fit }}/5</div></div>
+      </div>
+      <div class="motion"><strong>Motion:</strong> {{ s.motion_short }}</div>
+      {% if s.where_short %}
+      <details>
+        <summary>Where they live ({{ s.where_short | length }})</summary>
+        <ul>{% for w in s.where_short %}<li>{{ w }}</li>{% endfor %}</ul>
+      </details>
+      {% endif %}
+      <details open>
+        <summary>This week ({{ s.this_week | length }})</summary>
+        <ul>
+          {% for t in s.this_week %}
+          <li><label><input type="checkbox" data-task-id="w{{ '%02d' % t.week }}-t{{ '%02d' % t.index }}"> W{{ t.week }} · {{ t.text | truncate(120, true) }}</label></li>
+          {% endfor %}
+        </ul>
+      </details>
+      {% if s.this_month %}
+      <details>
+        <summary>This month ({{ s.this_month | length }})</summary>
+        <ul>
+          {% for t in s.this_month %}
+          <li><label><input type="checkbox" data-task-id="w{{ '%02d' % t.week }}-t{{ '%02d' % t.index }}"> W{{ t.week }} · {{ t.text | truncate(120, true) }}</label></li>
+          {% endfor %}
+        </ul>
+      </details>
+      {% endif %}
+      <div class="source">Source: <code>{{ s.source_file }}</code></div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="plan">
+  <h2>90-Day Plan</h2>
+  <p class="note">Gantt by workstream · Weeks 1–12</p>
+  <div class="gantt-wrap">
+    <svg class="gantt" id="gantt-svg" viewBox="0 0 1100 330" preserveAspectRatio="xMinYMid meet"></svg>
+  </div>
+  <div class="week-list">
+    {% for week in weeks %}
+    <div class="week">
+      <h4>Week {{ week.week }} · Phase {{ week.phase }}</h4>
+      <ul>
+        {% for t in week.tasks %}
+        <li><label><input type="checkbox" data-task-id="w{{ '%02d' % t.week }}-t{{ '%02d' % t.index }}"> {{ t.text | truncate(140, true) }}</label></li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+  </div>
+  <h3 style="margin-top:24px">Day-90 review</h3>
+  <ul>
+    {% for d in day90 %}
+    <li><label><input type="checkbox" data-task-id="d90-{{ loop.index }}"> {{ d }}</label></li>
+    {% endfor %}
+  </ul>
+</section>
+
+<section id="charter">
+  <h2>Charter Program</h2>
+  <p class="note">5 slots · 6mo free Pro then 50% off for 24mo. State persists in localStorage.</p>
+  <div class="charter-grid">
+    {% for slot in charter_slots %}
+    <div class="charter-tile" data-slot="{{ slot.number }}">
+      <h4>Slot {{ slot.number }} · {{ slot.vertical }}</h4>
+      <select data-field="status">
+        {% for opt in ["Open", "Outreach", "In-talks", "Signed", "Withdrawn"] %}
+        <option value="{{ opt }}"{% if opt == slot.status %} selected{% endif %}>{{ opt }}</option>
+        {% endfor %}
+      </select>
+      <input data-field="contact" placeholder="Contact name" value="{{ slot.contact }}">
+      <input data-field="note" placeholder="Note" value="{{ slot.note }}">
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+</main>
+
+<div class="controls">
+  <button id="reset-all">Reset all ticks</button>
+  <button id="export-state">Export state to JSON</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script id="payload" type="application/json">{{ payload_json | safe }}</script>
+<script>
+(() => {
+  const payload = JSON.parse(document.getElementById('payload').textContent);
+  const LS_TASKS   = 'manuva:quick-wins:tasks';
+  const LS_CHARTER = 'manuva:quick-wins:charter';
+
+  // ── Bar chart ────────────────────────────────────────────────────────────
+  const bar = payload.bar;
+  if (bar && document.getElementById('bar-mrr')) {
+    new Chart(document.getElementById('bar-mrr'), {
+      type: 'bar',
+      data: {
+        labels: bar.labels,
+        datasets: [{ data: bar.data, backgroundColor: bar.colors, borderRadius: 4 }],
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { callback: v => 'AU$' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v) } },
+        },
+      },
+    });
+  }
+
+  // ── Scatter / bubble chart ───────────────────────────────────────────────
+  const scatter = payload.scatter;
+  if (scatter && document.getElementById('scatter-arpu')) {
+    new Chart(document.getElementById('scatter-arpu'), {
+      type: 'bubble',
+      data: {
+        datasets: [{
+          data: scatter,
+          backgroundColor: 'rgba(14,91,255,0.35)',
+          borderColor: 'rgba(14,91,255,0.8)',
+          borderWidth: 1,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const p = ctx.raw;
+                return [`${p.label}`, `ARPU AU$${p.y} · TTV ${p.x}d`, p.motion].filter(Boolean);
+              },
+            },
+          },
+        },
+        scales: {
+          x: { title: { display: true, text: 'Time-to-value (days)' } },
+          y: { title: { display: true, text: 'ARPU (AU$/mo)' } },
+        },
+      },
+    });
+  }
+
+  // ── SVG Gantt ────────────────────────────────────────────────────────────
+  const svg = document.getElementById('gantt-svg');
+  if (svg && payload.gantt) {
+    const LANES = ['Build', 'Sell', 'Support', 'Content'];
+    const W = 1100, LH = 68, HEAD = 28, LABEL_W = 80;
+    const CELL = (W - LABEL_W) / 12;
+    const COLORS = { Build: '#0E5BFF', Sell: '#1AA563', Support: '#F0A91E', Content: '#1B2433' };
+
+    // Week header labels + grid lines
+    for (let w = 1; w <= 12; w++) {
+      const x = LABEL_W + (w - 1) * CELL;
+      svg.insertAdjacentHTML('beforeend',
+        `<text x="${x + CELL/2}" y="18" text-anchor="middle" font-size="10" fill="#5A6273">W${w}</text>
+         <line x1="${x}" y1="${HEAD}" x2="${x}" y2="${HEAD + LANES.length * LH}" stroke="#E3E7EE" stroke-width="1"/>`
+      );
+    }
+    // Final grid line
+    svg.insertAdjacentHTML('beforeend',
+      `<line x1="${W}" y1="${HEAD}" x2="${W}" y2="${HEAD + LANES.length * LH}" stroke="#E3E7EE" stroke-width="1"/>`
+    );
+
+    LANES.forEach((lane, i) => {
+      const yBase = HEAD + i * LH;
+      // Lane label
+      svg.insertAdjacentHTML('beforeend',
+        `<text x="4" y="${yBase + LH/2}" dominant-baseline="middle" font-size="10" fill="#5A6273" text-transform="uppercase">${lane}</text>`
+      );
+      // Lane separator
+      if (i > 0) {
+        svg.insertAdjacentHTML('beforeend',
+          `<line x1="0" y1="${yBase}" x2="${W}" y2="${yBase}" stroke="#E3E7EE" stroke-width="1"/>`
+        );
+      }
+      // Task blocks
+      (payload.gantt[lane] || []).forEach(t => {
+        const x = LABEL_W + (t.week - 1) * CELL + 2;
+        const title = `${t.text}\n${t.deliverable}`.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        svg.insertAdjacentHTML('beforeend',
+          `<rect x="${x}" y="${yBase + 10}" width="${CELL - 4}" height="${LH - 20}"
+           rx="3" fill="${COLORS[lane]}" opacity="0.8" class="task-block ${lane}">
+             <title>${title}</title>
+           </rect>`
+        );
+      });
+    });
+  }
+
+  // ── localStorage: task checkboxes ────────────────────────────────────────
+  const taskState = JSON.parse(localStorage.getItem(LS_TASKS) || '{}');
+  document.querySelectorAll('input[type=checkbox][data-task-id]').forEach(cb => {
+    const id = cb.dataset.taskId;
+    if (taskState[id]) cb.checked = true;
+    cb.addEventListener('change', () => {
+      taskState[id] = cb.checked;
+      localStorage.setItem(LS_TASKS, JSON.stringify(taskState));
+    });
+  });
+
+  // ── localStorage: charter tiles ──────────────────────────────────────────
+  const charterState = JSON.parse(localStorage.getItem(LS_CHARTER) || '{}');
+  document.querySelectorAll('.charter-tile').forEach(tile => {
+    const slot = tile.dataset.slot;
+    const saved = charterState[slot] || {};
+    tile.querySelectorAll('[data-field]').forEach(el => {
+      const f = el.dataset.field;
+      if (saved[f] != null) el.value = saved[f];
+      el.addEventListener('change', () => {
+        charterState[slot] = { ...charterState[slot], [f]: el.value };
+        localStorage.setItem(LS_CHARTER, JSON.stringify(charterState));
+      });
+    });
+  });
+
+  // ── Filter strip ─────────────────────────────────────────────────────────
+  const motionSel = document.getElementById('filter-motion');
+  if (motionSel) {
+    const motions = new Set();
+    document.querySelectorAll('.segment[data-motion]').forEach(c => {
+      if (c.dataset.motion) motions.add(c.dataset.motion);
+    });
+    [...motions].sort().forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m; opt.textContent = m;
+      motionSel.appendChild(opt);
+    });
+  }
+
+  function applyFilters() {
+    const m  = document.getElementById('filter-motion').value;
+    const ab = document.getElementById('filter-arpu').value;
+    document.querySelectorAll('.segment').forEach(c => {
+      let show = true;
+      if (m && c.dataset.motion !== m) show = false;
+      if (ab && ab !== '') {
+        const arpu = Number(c.dataset.arpu);
+        if (ab === '400+') { if (arpu < 400) show = false; }
+        else {
+          const [lo, hi] = ab.split('-').map(Number);
+          if (!(arpu >= lo && arpu < hi)) show = false;
+        }
+      }
+      c.style.display = show ? '' : 'none';
+    });
+    const params = new URLSearchParams();
+    if (m)  params.set('motion', m);
+    if (ab) params.set('arpu', ab);
+    history.replaceState(null, '', params.toString() ? '#' + params : location.pathname + location.search);
+  }
+
+  document.getElementById('filter-motion').addEventListener('change', applyFilters);
+  document.getElementById('filter-arpu').addEventListener('change', applyFilters);
+  document.getElementById('clear-filters').addEventListener('click', () => {
+    document.getElementById('filter-motion').value = '';
+    document.getElementById('filter-arpu').value = '';
+    applyFilters();
+  });
+
+  // Restore filters from URL hash on load
+  const initHash = new URLSearchParams(location.hash.replace(/^#/, ''));
+  if (initHash.get('motion')) document.getElementById('filter-motion').value = initHash.get('motion');
+  if (initHash.get('arpu'))   document.getElementById('filter-arpu').value   = initHash.get('arpu');
+  applyFilters();
+
+  // ── Reset + Export ────────────────────────────────────────────────────────
+  document.getElementById('reset-all').addEventListener('click', () => {
+    if (confirm('Reset all ticks and Charter slot status?')) {
+      localStorage.removeItem(LS_TASKS);
+      localStorage.removeItem(LS_CHARTER);
+      location.reload();
+    }
+  });
+
+  document.getElementById('export-state').addEventListener('click', () => {
+    const data = JSON.stringify({
+      tasks:   JSON.parse(localStorage.getItem(LS_TASKS)   || '{}'),
+      charter: JSON.parse(localStorage.getItem(LS_CHARTER) || '{}'),
+    }, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(blob),
+      download: 'manuva-quick-wins-state.json',
+    });
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+})();
+</script>
+
+</body>
+</html>
