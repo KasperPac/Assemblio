@@ -31,3 +31,14 @@ def test_build_produces_html_with_expected_content(tmp_path):
     assert len(payload["bar"]["data"]) == 9
     assert len(payload["scatter"]) == 9
     assert set(payload["gantt"].keys()) == {"Build", "Sell", "Support", "Content"}
+
+
+def test_build_passes_new_context_variables(tmp_path):
+    """Verify build succeeds after new context variables are wired."""
+    out = tmp_path / "quick-wins.html"
+    main(out_path=out)
+    assert out.exists()
+    html = out.read_text(encoding="utf-8")
+    # Existing content still intact
+    assert "Katana defectors" in html
+    assert len(html) > 50_000

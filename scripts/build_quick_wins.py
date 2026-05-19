@@ -33,6 +33,8 @@ from scripts.quick_wins.loaders import (  # noqa: E402
 from scripts.quick_wins.mapping import annotate_tasks  # noqa: E402
 from scripts.quick_wins.plan_parser import parse_day_90_review, parse_plan  # noqa: E402
 from scripts.quick_wins.style_loader import load_tokens  # noqa: E402
+from scripts.quick_wins.integrations import COMPETITOR_MATRIX, INTEGRATIONS  # noqa: E402
+from scripts.quick_wins.gaps import FEATURE_GAPS, MANUVA_ADVANTAGES  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "docs/research/manuva-gtm/results"
@@ -155,6 +157,10 @@ def main(out_path: Path = DEFAULT_OUT) -> None:
         weeks=weeks,
         day90=day90,
         charter_slots=CHARTER_SLOTS,
+        integrations=INTEGRATIONS,
+        competitor_matrix=COMPETITOR_MATRIX,
+        feature_gaps=FEATURE_GAPS,
+        manuva_advantages=MANUVA_ADVANTAGES,
     )
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
