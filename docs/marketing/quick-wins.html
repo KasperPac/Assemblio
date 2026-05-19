@@ -46,6 +46,7 @@ body { color: var(--ink-strong); background: var(--bg-canvas); }
     .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px; }
     .chart-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 16px; }
     .chart-card h3 { margin: 0 0 8px; font-size: 14px; color: var(--ink-strong); }
+    .chart-wrap { position: relative; height: 240px; }
 
     .filter-strip { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
     .filter-strip label { font-size: 12px; color: var(--ink-muted); display: flex; align-items: center; gap: 6px; }
@@ -144,11 +145,11 @@ body { color: var(--ink-strong); background: var(--bg-canvas); }
   <div class="chart-row">
     <div class="chart-card">
       <h3>12-mo MRR potential (upper bound, AU$)</h3>
-      <canvas id="bar-mrr" height="200"></canvas>
+      <div class="chart-wrap"><canvas id="bar-mrr"></canvas></div>
     </div>
     <div class="chart-card">
       <h3>ARPU × Time-to-value (bubble = Manuva fit)</h3>
-      <canvas id="scatter-arpu" height="200"></canvas>
+      <div class="chart-wrap"><canvas id="scatter-arpu"></canvas></div>
     </div>
   </div>
 </section>
@@ -874,6 +875,7 @@ body { color: var(--ink-strong); background: var(--bg-canvas); }
         indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
+
         plugins: { legend: { display: false } },
         scales: {
           x: { ticks: { callback: v => 'AU$' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v) } },
