@@ -75,6 +75,39 @@
     .controls { display: flex; gap: 12px; margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
     .controls button { font-size: 12px; padding: 6px 10px; border-radius: 4px; border: 1px solid var(--border-subtle); background: var(--bg-card); cursor: pointer; }
     .controls button:hover { background: var(--bg-canvas, #F5F7FB); }
+
+    /* ── Section 5: Integrations ─────────────────────────────────────────── */
+    .wave-tracker { display: flex; margin: 16px 0 24px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-subtle); }
+    .wave { flex: 1; padding: 10px 14px; background: var(--bg-card); border-right: 1px solid var(--border-subtle); }
+    .wave:last-child { border-right: none; }
+    .wave-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-muted); }
+    .wave-items { font-size: 13px; color: var(--ink-strong); margin-top: 4px; }
+    .wave.wave-shipped { background: var(--bg-canvas, #F5F7FB); }
+    .wave.wave-progress { background: rgba(14,91,255,0.06); }
+
+    .integrations-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .integ-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px; }
+    .integ-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    .integ-name { font-weight: 600; font-size: 14px; color: var(--ink-strong); }
+    .wave-badge { font-size: 10px; padding: 2px 6px; border-radius: 10px; background: var(--border-subtle); color: var(--ink-muted); font-weight: 600; }
+    .status-pill { font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: 600; text-transform: capitalize; }
+    .status-pill.shipped { background: rgba(26,165,99,0.12); color: #1AA563; }
+    .status-pill.in_progress { background: rgba(240,169,30,0.15); color: #C47D00; }
+    .status-pill.planned { background: rgba(14,91,255,0.1); color: var(--brand-1, #0E5BFF); }
+    .status-pill.partner { background: rgba(0,0,0,0.06); color: var(--ink-muted); }
+    .integ-card .data-flows { margin: 0 0 8px; padding-left: 16px; font-size: 12px; color: var(--ink-base, #2C3444); line-height: 1.6; }
+    .integ-card .gotcha { font-size: 11px; color: var(--ink-muted); border-top: 1px solid var(--border-subtle); padding-top: 8px; margin-top: 8px; }
+
+    .matrix-details summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--brand-1, #0E5BFF); padding: 8px 0; user-select: none; }
+    .matrix-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+    .matrix-table th { background: var(--bg-canvas, #F5F7FB); padding: 6px 10px; text-align: left; font-weight: 600; color: var(--ink-muted); border-bottom: 2px solid var(--border-subtle); }
+    .matrix-table td { padding: 6px 10px; border-bottom: 1px solid var(--border-subtle); color: var(--ink-strong); }
+    .matrix-table tr:last-child td { border-bottom: none; }
+    .cell-native, .cell-shipped { color: #1AA563; font-weight: 600; }
+    .cell-wave-1, .cell-wave-2, .cell-wave-3 { color: var(--brand-1, #0E5BFF); }
+    .cell-partner { color: var(--ink-muted); font-style: italic; }
+    .cell-via-extensiv, .cell-zapier-only { color: #C47D00; }
+    .cell-none { color: var(--border-subtle); }
   </style>
 </head>
 <body>
@@ -89,6 +122,9 @@
     <a href="#segments">Segments</a>
     <a href="#plan">90-Day Plan</a>
     <a href="#charter">Charter</a>
+    <a href="#integrations">Integrations</a>
+    <a href="#gaps">Gaps</a>
+    <a href="#pipeline">Pipeline</a>
   </nav>
 </header>
 
@@ -238,6 +274,69 @@
     </div>
     {% endfor %}
   </div>
+</section>
+
+<section id="integrations">
+  <h2>Integrations Roadmap</h2>
+  <p class="note">10 targets across 4 waves. Data flows show what syncs in each direction. Matrix is collapsible.</p>
+
+  <div class="wave-tracker">
+    <div class="wave wave-shipped">
+      <div class="wave-label">Wave 0 · Shipped</div>
+      <div class="wave-items">Shopify</div>
+    </div>
+    <div class="wave wave-progress">
+      <div class="wave-label">Wave 1 · In Progress</div>
+      <div class="wave-items">Xero</div>
+    </div>
+    <div class="wave">
+      <div class="wave-label">Wave 2 · Planned</div>
+      <div class="wave-items">WooCommerce · Amazon AU · QuickBooks Online</div>
+    </div>
+    <div class="wave">
+      <div class="wave-label">Wave 3 · Planned</div>
+      <div class="wave-items">MyOB · Etsy · eBay AU · Starshipit</div>
+    </div>
+  </div>
+
+  <div class="integrations-grid">
+    {% for integ in integrations %}
+    <div class="integ-card">
+      <div class="integ-header">
+        <span class="integ-name">{{ integ.name }}</span>
+        {% if integ.wave is not none %}<span class="wave-badge">Wave {{ integ.wave }}</span>{% endif %}
+        <span class="status-pill {{ integ.status }}">{{ integ.status | replace('_', ' ') }}</span>
+      </div>
+      <ul class="data-flows">
+        {% for flow in integ.data_flows %}<li>{{ flow }}</li>{% endfor %}
+      </ul>
+      <div class="gotcha">⚠ {{ integ.gotcha }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <details class="matrix-details">
+    <summary>Competitor × Integration matrix</summary>
+    <table class="matrix-table">
+      <thead>
+        <tr>
+          <th>Integration</th>
+          {% for comp in ["Katana", "Cin7 Core", "MRPeasy", "Craftybase", "inFlow", "Manuva"] %}<th>{{ comp }}</th>{% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for integ in integrations %}
+        <tr>
+          <td>{{ integ.name }}</td>
+          {% for comp in ["Katana", "Cin7 Core", "MRPeasy", "Craftybase", "inFlow", "Manuva"] %}
+          {% set cell = competitor_matrix[integ.name][comp] %}
+          <td class="cell-{{ cell | lower | replace(' ', '-') }}">{{ cell }}</td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </details>
 </section>
 
 </main>
