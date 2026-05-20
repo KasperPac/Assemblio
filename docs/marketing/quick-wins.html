@@ -125,6 +125,32 @@ body { color: var(--ink-strong); background: var(--bg-canvas); }
     .cell-partner { color: var(--ink-muted); font-style: italic; }
     .cell-via-extensiv, .cell-zapier-only { color: #C47D00; }
     .cell-none { color: var(--border-subtle); }
+
+    /* ── Section 6: Competitor Gaps ─────────────────────────────────────── */
+    .gap-summary { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+    .sev-pill { font-size: 13px; font-weight: 600; }
+    .gap-progress { font-size: 12px; color: var(--ink-muted); }
+
+    .gaps-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 24px; }
+    .gaps-table th { background: var(--bg-canvas, #F5F7FB); padding: 8px 12px; text-align: left; font-weight: 600; color: var(--ink-muted); border-bottom: 2px solid var(--border-subtle); }
+    .gaps-table td { padding: 8px 12px; border-bottom: 1px solid var(--border-subtle); color: var(--ink-strong); }
+    .gaps-table tr:last-child td { border-bottom: none; }
+
+    .sev-badge { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 10px; text-transform: capitalize; }
+    .sev-badge.critical { background: rgba(220,38,38,0.1); color: #DC2626; }
+    .sev-badge.high { background: rgba(240,169,30,0.15); color: #C47D00; }
+    .sev-badge.medium { background: rgba(14,91,255,0.1); color: var(--brand-1, #0E5BFF); }
+    .sev-badge.low { background: rgba(0,0,0,0.06); color: var(--ink-muted); }
+
+    .status-cycle { font-size: 11px; padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border-subtle); background: var(--bg-card); cursor: pointer; text-transform: capitalize; }
+    .status-cycle[data-status="done"] { background: rgba(26,165,99,0.12); border-color: #1AA563; color: #1AA563; font-weight: 600; }
+    .status-cycle[data-status="in_progress"] { background: rgba(240,169,30,0.15); border-color: #C47D00; color: #C47D00; }
+    .status-cycle[data-status="planned"] { background: rgba(14,91,255,0.1); border-color: var(--brand-1,#0E5BFF); color: var(--brand-1,#0E5BFF); }
+
+    .advantages-panel { background: var(--bg-card); border: 1px solid var(--border-subtle); border-left: 4px solid var(--brand-1, #0E5BFF); border-radius: 8px; padding: 16px 20px; }
+    .advantages-panel h3 { margin: 0 0 10px; font-size: 14px; color: var(--ink-strong); }
+    .advantages-panel ul { margin: 0; padding-left: 18px; }
+    .advantages-panel li { font-size: 13px; color: var(--ink-base, #2C3444); line-height: 1.7; }
   </style>
 </head>
 <body>
@@ -132,7 +158,7 @@ body { color: var(--ink-strong); background: var(--bg-canvas); }
 <header class="top">
   <div>
     <h1>Manuva Quick Wins</h1>
-    <div class="meta">Generated 2026-05-19 · 9 Phase-1 segments · 12-week plan</div>
+    <div class="meta">Generated 2026-05-20 · 9 Phase-1 segments · 12-week plan</div>
   </div>
   <nav class="anchors">
     <a href="#overview">Overview</a>
@@ -1276,6 +1302,217 @@ body { color: var(--ink-strong); background: var(--bg-canvas); }
   </details>
 </section>
 
+<section id="gaps">
+  <h2>Competitor Feature Gaps</h2>
+  <p class="note">13 gaps ranked by sales impact. Click Status to cycle: backlog → planned → in progress → done.</p>
+
+  <div class="gap-summary">
+    <span class="sev-pill">🔴 2 Critical</span>
+    <span class="sev-pill">🟡 3 High</span>
+    <span class="sev-pill">🟠 5 Medium</span>
+    <span class="sev-pill">🟢 3 Low</span>
+    <span class="gap-progress" id="gap-progress-count"></span>
+  </div>
+
+  <table class="gaps-table">
+    <thead>
+      <tr><th>Gap</th><th>Severity</th><th>Competitors with it</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      
+      <tr>
+        <td>Accounting integration (Xero / QuickBooks)</td>
+        <td><span class="sev-badge critical">critical</span></td>
+        <td>6/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="0"
+                  data-default="in_progress"
+                  data-status="in_progress">
+            in progress
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Lot / batch / serial tracking</td>
+        <td><span class="sev-badge critical">critical</span></td>
+        <td>5/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="1"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Multi-channel ecommerce (WooCommerce, Amazon)</td>
+        <td><span class="sev-badge high">high</span></td>
+        <td>6/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="2"
+                  data-default="planned"
+                  data-status="planned">
+            planned
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Reorder points / auto-PO</td>
+        <td><span class="sev-badge high">high</span></td>
+        <td>5/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="3"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Export PDF / CSV on Growth tier</td>
+        <td><span class="sev-badge high">high</span></td>
+        <td>7/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="4"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Multi-currency</td>
+        <td><span class="sev-badge medium">medium</span></td>
+        <td>4/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="5"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Visual production scheduler</td>
+        <td><span class="sev-badge medium">medium</span></td>
+        <td>3/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="6"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Barcode scanning</td>
+        <td><span class="sev-badge medium">medium</span></td>
+        <td>4/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="7"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Mobile app</td>
+        <td><span class="sev-badge medium">medium</span></td>
+        <td>4/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="8"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Batch production tracking</td>
+        <td><span class="sev-badge medium">medium</span></td>
+        <td>4/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="9"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>B2B / wholesale portal</td>
+        <td><span class="sev-badge low">low</span></td>
+        <td>2/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="10"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Subcontracting</td>
+        <td><span class="sev-badge low">low</span></td>
+        <td>1/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="11"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>CRM / customer management</td>
+        <td><span class="sev-badge low">low</span></td>
+        <td>1/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="12"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+    </tbody>
+  </table>
+
+  <div class="advantages-panel">
+    <h3>Where Manuva wins today</h3>
+    <ul>
+      <li>Yield % per BOM line — unique at this price range (Katana has none at any price)</li><li>BOM versioning + templates — exclusive at $249/mo</li><li>Unlimited users flat pricing — Katana hits $807/mo with equivalent add-ons</li><li>Capacity planning + staff costing at Pro — no direct competitor at $499/mo flat</li>
+    </ul>
+  </div>
+</section>
+
 </main>
 
 <div class="controls">
@@ -1493,6 +1730,38 @@ body { color: var(--ink-strong); background: var(--bg-canvas); }
     a.click();
     URL.revokeObjectURL(a.href);
   });
+  // ── Gap status cycling (Section 6) ────────────────────────────────────────
+  const LS_GAPS = 'manuva:quick-wins:gaps';
+  const GAP_STATUSES = ['backlog', 'planned', 'in_progress', 'done'];
+  const gapState = JSON.parse(localStorage.getItem(LS_GAPS) || '{}');
+
+  function updateGapProgress() {
+    const total = document.querySelectorAll('.status-cycle').length;
+    const done  = document.querySelectorAll('.status-cycle[data-status="done"]').length;
+    const prog  = document.querySelectorAll('.status-cycle[data-status="in_progress"]').length;
+    const el = document.getElementById('gap-progress-count');
+    if (el) el.textContent = `${done} done · ${prog} in progress / ${total} total`;
+  }
+
+  document.querySelectorAll('.status-cycle').forEach(btn => {
+    const idx = btn.dataset.gapIdx;
+    const saved = gapState[idx];
+    if (saved) {
+      btn.dataset.status = saved;
+      btn.textContent = saved.replace('_', ' ');
+    }
+    btn.addEventListener('click', () => {
+      const cur  = GAP_STATUSES.indexOf(btn.dataset.status);
+      const next = GAP_STATUSES[(cur + 1) % GAP_STATUSES.length];
+      btn.dataset.status = next;
+      btn.textContent    = next.replace('_', ' ');
+      gapState[idx] = next;
+      localStorage.setItem(LS_GAPS, JSON.stringify(gapState));
+      updateGapProgress();
+    });
+  });
+  updateGapProgress();
+
 })();
 </script>
 
