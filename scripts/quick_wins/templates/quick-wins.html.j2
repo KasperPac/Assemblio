@@ -134,6 +134,30 @@
     .advantages-panel h3 { margin: 0 0 10px; font-size: 14px; color: var(--ink-strong); }
     .advantages-panel ul { margin: 0; padding-left: 18px; }
     .advantages-panel li { font-size: 13px; color: var(--ink-base, #2C3444); line-height: 1.7; }
+
+    /* ── Section 7: Client Pipeline ─────────────────────────────────────────── */
+    .funnel-summary { font-size: 13px; color: var(--ink-muted); margin-bottom: 16px; min-height: 20px; }
+    .funnel-summary strong { color: var(--ink-strong); }
+
+    .kanban { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 32px; }
+    .kanban-col { flex: 0 0 190px; background: var(--bg-canvas, #F5F7FB); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 160px; }
+    .kanban-col.drag-over { outline: 2px dashed var(--brand-1, #0E5BFF); }
+    .col-header { font-size: 11px; font-weight: 700; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.06em; padding: 2px; }
+    .cards-container { flex: 1; display: flex; flex-direction: column; gap: 6px; min-height: 40px; }
+    .pipeline-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; font-size: 12px; cursor: grab; position: relative; }
+    .pipeline-card:active { cursor: grabbing; opacity: 0.7; }
+    .pipeline-card .card-name { font-weight: 600; color: var(--ink-strong); margin-bottom: 4px; outline: none; border: none; background: none; width: 100%; font-size: 12px; padding: 0; }
+    .pipeline-card .card-seg { font-size: 11px; color: var(--brand-1, #0E5BFF); margin: 4px 0; display: block; border: 1px solid var(--border-subtle); border-radius: 4px; padding: 2px 4px; background: var(--bg-card); width: 100%; }
+    .pipeline-card .card-mrr { font-size: 11px; color: var(--ink-muted); margin-top: 4px; border: 1px solid var(--border-subtle); border-radius: 4px; padding: 2px 4px; width: 100%; background: var(--bg-card); }
+    .pipeline-card .card-delete { position: absolute; top: 6px; right: 6px; border: none; background: none; cursor: pointer; color: var(--ink-muted); font-size: 14px; line-height: 1; padding: 0 2px; }
+    .pipeline-card .card-delete:hover { color: #DC2626; }
+    .add-card-btn { font-size: 12px; color: var(--ink-muted); background: none; border: 1px dashed var(--border-subtle); border-radius: 6px; padding: 6px; cursor: pointer; text-align: center; width: 100%; }
+    .add-card-btn:hover { background: var(--bg-card); color: var(--brand-1, #0E5BFF); }
+
+    .channels-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+    .channels-table th { background: var(--bg-canvas, #F5F7FB); padding: 8px 12px; text-align: left; font-weight: 600; color: var(--ink-muted); border-bottom: 2px solid var(--border-subtle); }
+    .channels-table td { padding: 8px 12px; border-bottom: 1px solid var(--border-subtle); color: var(--ink-strong); vertical-align: top; }
+    .channels-table tr:last-child td { border-bottom: none; }
   </style>
 </head>
 <body>
@@ -408,6 +432,41 @@
   </div>
 </section>
 
+<section id="pipeline">
+  <h2>Client Pipeline</h2>
+  <p class="note">Drag cards between columns. State persists in localStorage. Charter slots above are separate.</p>
+
+  <div class="funnel-summary" id="funnel-summary"></div>
+
+  <div class="kanban" id="kanban-board">
+    {% for col_name in ["Prospect", "Discovery Call", "Trial", "Negotiation", "Closed Won"] %}
+    <div class="kanban-col" data-col="{{ loop.index0 }}">
+      <div class="col-header">{{ col_name }}</div>
+      <div class="cards-container" id="col-{{ loop.index0 }}"></div>
+      <button class="add-card-btn" data-col="{{ loop.index0 }}">+ Add</button>
+    </div>
+    {% endfor %}
+  </div>
+
+  <h3 style="font-size:15px;margin:0 0 8px;color:var(--ink-strong)">Acquisition Channels by Segment</h3>
+  <table class="channels-table">
+    <thead>
+      <tr><th>Segment</th><th>Primary channel</th><th>Secondary channel</th><th>Where to find them</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Cosmetics / Skincare</td><td>Instagram DM (beauty founders)</td><td>Beauty Expo AU</td><td>#indiebeauty, AU beauty founder Facebook groups</td></tr>
+      <tr><td>Candle / Soap makers</td><td>Facebook groups</td><td>Etsy seller communities</td><td>"Candle making AU" FB groups, Faire wholesale</td></tr>
+      <tr><td>Coffee Roasters</td><td>Direct outreach</td><td>Specialty coffee events</td><td>ASCA events, AU specialty roaster directories</td></tr>
+      <tr><td>Small-batch Food / Bev</td><td>Industry associations</td><td>State food expos</td><td>AFCA, Fine Food Australia</td></tr>
+      <tr><td>Apparel / Accessories</td><td>Shopify App Store reviews</td><td>Fashion trade shows</td><td>AGHA Gift Fair, rag trade FB groups</td></tr>
+      <tr><td>Supplements / Nutraceuticals</td><td>LinkedIn (founders)</td><td>TGA compliance forums</td><td>Supplement industry associations</td></tr>
+      <tr><td>Pet Food / Treats</td><td>Facebook groups</td><td>Petbarn supplier pathway</td><td>AU pet industry trade shows</td></tr>
+      <tr><td>Craft Beer / Spirits</td><td>Brewing associations</td><td>BrewCon AU</td><td>IBD AU chapter, independent bottle shops</td></tr>
+      <tr><td>Home Goods / Furniture</td><td>Trade shows</td><td>Interior design communities</td><td>AGHA, Decor + Design Melbourne</td></tr>
+    </tbody>
+  </table>
+</section>
+
 </main>
 
 <div class="controls">
@@ -420,8 +479,10 @@
 <script>
 (() => {
   const payload = JSON.parse(document.getElementById('payload').textContent);
-  const LS_TASKS   = 'manuva:quick-wins:tasks';
-  const LS_CHARTER = 'manuva:quick-wins:charter';
+  const LS_TASKS    = 'manuva:quick-wins:tasks';
+  const LS_CHARTER  = 'manuva:quick-wins:charter';
+  const LS_GAPS     = 'manuva:quick-wins:gaps';
+  const LS_PIPELINE = 'manuva:quick-wins:pipeline';
 
   // ── Bar chart ────────────────────────────────────────────────────────────
   const bar = payload.bar;
@@ -605,17 +666,21 @@
 
   // ── Reset + Export ────────────────────────────────────────────────────────
   document.getElementById('reset-all').addEventListener('click', () => {
-    if (confirm('Reset all ticks and Charter slot status?')) {
+    if (confirm('Reset all ticks, Charter slot status, gap statuses, and pipeline cards?')) {
       localStorage.removeItem(LS_TASKS);
       localStorage.removeItem(LS_CHARTER);
+      localStorage.removeItem(LS_GAPS);
+      localStorage.removeItem(LS_PIPELINE);
       location.reload();
     }
   });
 
   document.getElementById('export-state').addEventListener('click', () => {
     const data = JSON.stringify({
-      tasks:   JSON.parse(localStorage.getItem(LS_TASKS)   || '{}'),
-      charter: JSON.parse(localStorage.getItem(LS_CHARTER) || '{}'),
+      tasks:    JSON.parse(localStorage.getItem(LS_TASKS)    || '{}'),
+      charter:  JSON.parse(localStorage.getItem(LS_CHARTER)  || '{}'),
+      gaps:     JSON.parse(localStorage.getItem(LS_GAPS)     || '{}'),
+      pipeline: JSON.parse(localStorage.getItem(LS_PIPELINE) || '[]'),
     }, null, 2);
     const blob = new Blob([data], { type: 'application/json' });
     const a = Object.assign(document.createElement('a'), {
@@ -626,7 +691,6 @@
     URL.revokeObjectURL(a.href);
   });
   // ── Gap status cycling (Section 6) ────────────────────────────────────────
-  const LS_GAPS = 'manuva:quick-wins:gaps';
   const GAP_STATUSES = ['backlog', 'planned', 'in_progress', 'done'];
   const gapState = JSON.parse(localStorage.getItem(LS_GAPS) || '{}');
 
@@ -656,6 +720,109 @@
     });
   });
   updateGapProgress();
+
+  // ── Pipeline Kanban (Section 7) ────────────────────────────────────────────
+  const PIPELINE_SEGS = ['Cosmetics','Candle/Soap','Coffee Roasters','Food/Bev','Apparel','Supplements','Pet Food','Craft Beer','Home Goods'];
+  const PIPELINE_COL_NAMES = ['Prospect','Discovery Call','Trial','Negotiation','Closed Won'];
+  let pipelineCards = JSON.parse(localStorage.getItem(LS_PIPELINE) || '[]');
+  let dragCardId = null;
+
+  function savePipeline() {
+    localStorage.setItem(LS_PIPELINE, JSON.stringify(pipelineCards));
+  }
+
+  function updateFunnelSummary() {
+    const counts = [0, 0, 0, 0, 0];
+    let mrrTotal = 0;
+    pipelineCards.forEach(c => {
+      if (c.col >= 0 && c.col <= 4) counts[c.col]++;
+      if (c.mrr) mrrTotal += Number(c.mrr) || 0;
+    });
+    const el = document.getElementById('funnel-summary');
+    if (!el) return;
+    el.innerHTML = PIPELINE_COL_NAMES.map((n, i) => `<strong>${counts[i]}</strong> ${n}`).join(' · ') +
+      (mrrTotal > 0 ? ` · <strong>AU$${mrrTotal.toLocaleString()}</strong> pipeline MRR` : '');
+  }
+
+  function renderCard(card) {
+    const container = document.getElementById(`col-${card.col}`);
+    if (!container) return;
+    const div = document.createElement('div');
+    div.className = 'pipeline-card';
+    div.draggable = true;
+    div.dataset.cardId = card.id;
+    const segOptions = PIPELINE_SEGS.map(s => `<option${s === card.seg ? ' selected' : ''}>${s}</option>`).join('');
+    div.innerHTML = `
+      <input class="card-name" type="text" value="${(card.name || '').replace(/"/g, '&quot;')}" placeholder="Company name">
+      <select class="card-seg">${segOptions}</select>
+      <input class="card-mrr" type="number" placeholder="Est. MRR (AU$)" value="${card.mrr || ''}" min="0">
+      <button class="card-delete" title="Remove">×</button>`;
+    div.querySelector('.card-name').addEventListener('change', e => {
+      card.name = e.target.value.trim() || 'New prospect';
+      savePipeline();
+    });
+    div.querySelector('.card-seg').addEventListener('change', e => {
+      card.seg = e.target.value; savePipeline();
+    });
+    div.querySelector('.card-mrr').addEventListener('change', e => {
+      card.mrr = e.target.value; savePipeline(); updateFunnelSummary();
+    });
+    div.querySelector('.card-delete').addEventListener('click', () => {
+      pipelineCards = pipelineCards.filter(c => c.id !== card.id);
+      savePipeline();
+      div.remove();
+      updateFunnelSummary();
+    });
+    div.addEventListener('dragstart', e => {
+      dragCardId = card.id;
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    div.addEventListener('dragend', () => {
+      document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
+    });
+    container.appendChild(div);
+  }
+
+  function renderPipeline() {
+    document.querySelectorAll('.cards-container').forEach(c => { c.innerHTML = ''; });
+    pipelineCards.forEach(card => renderCard(card));
+    updateFunnelSummary();
+  }
+
+  function pipelineAddCard(colIdx) {
+    const card = { id: Date.now(), name: 'New prospect', seg: PIPELINE_SEGS[0], mrr: '', col: colIdx };
+    pipelineCards.push(card);
+    savePipeline();
+    renderCard(card);
+    updateFunnelSummary();
+  }
+
+  // Wire column drop targets and add buttons via addEventListener (not inline handlers,
+  // since inline handlers can't reach functions defined inside this IIFE).
+  document.querySelectorAll('#kanban-board .cards-container').forEach(container => {
+    const colIdx = parseInt(container.closest('.kanban-col').dataset.col);
+    container.addEventListener('dragover', e => {
+      e.preventDefault();
+      container.closest('.kanban-col').classList.add('drag-over');
+    });
+    container.addEventListener('dragleave', () => {
+      container.closest('.kanban-col').classList.remove('drag-over');
+    });
+    container.addEventListener('drop', e => {
+      e.preventDefault();
+      container.closest('.kanban-col').classList.remove('drag-over');
+      if (dragCardId === null) return;
+      const card = pipelineCards.find(c => c.id === dragCardId);
+      if (card) { card.col = colIdx; savePipeline(); renderPipeline(); }
+      dragCardId = null;
+    });
+  });
+
+  document.querySelectorAll('#kanban-board .add-card-btn').forEach(btn => {
+    btn.addEventListener('click', () => pipelineAddCard(parseInt(btn.dataset.col)));
+  });
+
+  renderPipeline();
 
 })();
 </script>
