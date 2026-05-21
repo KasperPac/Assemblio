@@ -357,18 +357,21 @@ git commit -m "feat(quick-wins): JSON loaders + field/value parsers"
 
 ## Task 3: 9-segment filter
 
-**Goal:** Filter the 30 segments to the 9 quick wins using `rollout_phase`, `priority_ranking`, and `addressable_window`.
+**Goal:** Filter the 30 segments to the 9 quick wins using `tier`, `rollout_phase`, `priority_ranking`, and `addressable_window`.
 
 **Files:**
 - Create: `scripts/quick_wins/filters.py`
 - Create: `tests/scripts/quick_wins/test_filters.py`
+
+**Filter rule (verified against actual JSON):** `tier in {"A", "B"}` AND `parse_phase(rollout_phase) == 1` AND `parse_priority(priority_ranking) <= 2` AND `addressable_window.lower().startswith("now")`. The tier constraint excludes Tier-C (gated on Woo/Amazon) and Tier-D (strategy/tactic research items 26, 27, 28, 30 — which would otherwise leak into the list). `rollout_phase` lives nested under `foot_in_door_fit` in the JSON; `find_field` handles that.
 
 **Acceptance Criteria:**
 - [ ] `filter_quick_wins(segments)` returns exactly 9 segments
 - [ ] All returned segments have `parse_phase(rollout_phase) == 1`
 - [ ] All returned segments have `parse_priority(priority_ranking) <= 2`
 - [ ] `addressable_window` lower-cased starts with `"now"` for all returned
-- [ ] Returned list contains the expected IDs: `01_indie_cosmetics_skincare`, `04_candle_soap_homefragrance`, `08_pet_treats_dry`, `11_packaged_foods_sauces_condiments`, `14_functional_ferment_brands`, `16_katana_defectors`, `17_craftybase_graduates`, `19_unleashed_defectors_anz`, `21_shopify_plus_no_ops_stack`
+- [ ] All returned segments have `tier in {"A", "B"}`
+- [ ] Returned list contains exactly the expected IDs: `01_indie_cosmetics_skincare`, `04_candle_soap_homefragrance`, `08_pet_treats_dry`, `11_packaged_foods_sauces_condiments`, `14_functional_ferment_brands`, `16_katana_defectors`, `17_craftybase_graduates`, `19_unleashed_defectors_anz`, `21_shopify_plus_no_ops_stack`
 
 **Verify:** `python -m pytest tests/scripts/quick_wins/test_filters.py -v` → all pass
 
@@ -437,10 +440,16 @@ def _is_addressable_now(segment: dict) -> bool:
     return str(aw).strip().lower().startswith("now")
 
 
+QUICK_WIN_TIERS = {"A", "B"}
+
+
 def filter_quick_wins(segments: dict[str, dict]) -> list[dict]:
-    """Return the Phase-1, priority≤2, addressable-now segments, sorted for display."""
+    """Return the Tier-A/B, Phase-1, priority≤2, addressable-now segments, sorted for display."""
     qw: list[dict] = []
     for seg in segments.values():
+        tier = seg.get("tier")
+        if tier not in QUICK_WIN_TIERS:
+            continue
         phase = parse_phase(find_field(seg, "rollout_phase"))
         priority = parse_priority(find_field(seg, "priority_ranking"))
         if phase == 1 and priority is not None and priority <= 2 and _is_addressable_now(seg):
