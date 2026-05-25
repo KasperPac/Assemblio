@@ -1,0 +1,52 @@
+# Shopify CLI configuration for the Manuva app.
+# Deploy with: `shopify app deploy` (after `shopify app config link`)
+# https://shopify.dev/docs/apps/build/cli-for-apps/app-configuration
+
+# Client ID for the Manuva app in dev.shopify.com dashboard (org "Pac Technologies").
+# Source: Apps -> Manuva -> Settings -> Credentials. Keep in sync with SHOPIFY_API_KEY env var.
+client_id = "923db8d97db22d30c0517520f1498933"
+
+name = "Manuva"
+handle = "manuva"
+application_url = "https://app.manuva.app/"
+embedded = true
+
+[access_scopes]
+# Match these to SHOPIFY_SCOPES env var. Read-only by design — Manuva never writes
+# back to Shopify inventory or catalog.
+scopes = "read_products,read_orders"
+
+[auth]
+redirect_urls = [
+  "https://app.manuva.app/api/shopify/callback",
+]
+
+[webhooks]
+api_version = "2026-01"
+
+# Mandatory privacy/GDPR webhooks. Declared as named URLs, not as topics, per modern
+# Shopify CLI schema. Each route handler returns 200 fast and audits via shopify_gdpr_request.
+[webhooks.privacy_compliance]
+customer_data_request_url = "https://app.manuva.app/api/shopify/webhooks/gdpr/customers-data-request"
+customer_deletion_url     = "https://app.manuva.app/api/shopify/webhooks/gdpr/customers-redact"
+shop_deletion_url         = "https://app.manuva.app/api/shopify/webhooks/gdpr/shop-redact"
+
+# Operational webhooks. These are also registered dynamically at install time via
+# src/lib/shopify/client.ts so existing installs keep working; declaring them here
+# means new installs registered via Shopify-managed install pick them up.
+[[webhooks.subscriptions]]
+topics = ["app/uninstalled"]
+uri = "https://app.manuva.app/api/shopify/webhooks"
+
+[[webhooks.subscriptions]]
+topics = ["orders/create", "orders/updated", "orders/cancelled", "orders/fulfilled"]
+uri = "https://app.manuva.app/api/shopify/webhooks"
+
+[[webhooks.subscriptions]]
+topics = ["products/create", "products/update"]
+uri = "https://app.manuva.app/api/shopify/webhooks"
+
+[pos]
+embedded = false
+
+[build]
