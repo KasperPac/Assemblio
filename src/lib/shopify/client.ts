@@ -48,6 +48,13 @@ export async function shopifyGraphqlRequest<T>(
 
 export async function registerRequiredWebhooks(shopDomain: string, accessToken: string) {
   const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "").replace(/\/+$/, "");
+  // Lazy import to avoid a cycle: client.ts <- auth.ts only depends on crypto.
+  const { isAcceptableAppUrl } = await import("./auth");
+  if (!isAcceptableAppUrl(appUrl)) {
+    throw new Error(
+      `Cannot register Shopify webhooks: NEXT_PUBLIC_APP_URL must be HTTPS (got: ${appUrl || "<empty>"}).`
+    );
+  }
   const callbackUrl = `${appUrl}/api/shopify/webhooks`;
 
   const mutation = `
@@ -61,24 +68,30 @@ export async function registerRequiredWebhooks(shopDomain: string, accessToken: 
     }
   `;
 
-  const topics = [
-    "APP_UNINSTALLED",
-    "ORDERS_CREATE",
-    "ORDERS_UPDATED",
-    "ORDERS_CANCELLED",
-    "ORDERS_FULFILLED",
-    "PRODUCTS_CREATE",
-    "PRODUCTS_UPDATE",
+  // Topic -> callback URL. Generic topics share the main /webhooks endpoint;
+  // GDPR mandatory topics get dedicated endpoints so each one can return 200 fast
+  // and is independently auditable.
+  const topicEndpoints: Array<{ topic: string; callbackUrl: string }> = [
+    { topic: "APP_UNINSTALLED", callbackUrl },
+    { topic: "ORDERS_CREATE", callbackUrl },
+    { topic: "ORDERS_UPDATED", callbackUrl },
+    { topic: "ORDERS_CANCELLED", callbackUrl },
+    { topic: "ORDERS_FULFILLED", callbackUrl },
+    { topic: "PRODUCTS_CREATE", callbackUrl },
+    { topic: "PRODUCTS_UPDATE", callbackUrl },
+    { topic: "CUSTOMERS_DATA_REQUEST", callbackUrl: `${appUrl}/api/shopify/webhooks/gdpr/customers-data-request` },
+    { topic: "CUSTOMERS_REDACT", callbackUrl: `${appUrl}/api/shopify/webhooks/gdpr/customers-redact` },
+    { topic: "SHOP_REDACT", callbackUrl: `${appUrl}/api/shopify/webhooks/gdpr/shop-redact` },
   ];
 
-  for (const topic of topics) {
+  for (const { topic, callbackUrl: url } of topicEndpoints) {
     const data = await shopifyGraphqlRequest<{
       webhookSubscriptionCreate: {
         userErrors: Array<{ message: string }>;
       };
     }>(shopDomain, accessToken, mutation, {
       topic,
-      callbackUrl,
+      callbackUrl: url,
     });
 
     const error = data.webhookSubscriptionCreate.userErrors[0]?.message;

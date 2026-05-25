@@ -27,6 +27,27 @@ export function normalizeShopDomain(shop: string) {
   }
 }
 
+/**
+ * Returns true when `appUrl` is acceptable for Shopify use:
+ * - In production: must be https://
+ * - In dev/test: also allow http://localhost or http://127.0.0.1 (for shopify CLI tunnels not yet up)
+ * Shopify itself rejects non-HTTPS callback/webhook URLs, so catching this at config-load
+ * surfaces a clear error instead of an opaque webhook registration failure later.
+ */
+export function isAcceptableAppUrl(appUrl: string): boolean {
+  if (!appUrl) return false;
+  try {
+    const parsed = new URL(appUrl);
+    if (parsed.protocol === "https:") return true;
+    if (parsed.protocol === "http:" && process.env.NODE_ENV !== "production") {
+      return parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1";
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
 export function getShopifyOAuthConfig() {
   const apiKey = process.env.SHOPIFY_API_KEY ?? "";
   const apiSecret = process.env.SHOPIFY_API_SECRET ?? "";
@@ -38,6 +59,17 @@ export function getShopifyOAuthConfig() {
     return {
       ok: false as const,
       error: "missing-config" as const,
+    };
+  }
+
+  if (!isAcceptableAppUrl(appUrl)) {
+    console.error(
+      `[shopify] NEXT_PUBLIC_APP_URL must be HTTPS in production (got: ${appUrl}). ` +
+        `Shopify will reject all webhook and callback URLs that are not HTTPS.`
+    );
+    return {
+      ok: false as const,
+      error: "invalid-app-url" as const,
     };
   }
 

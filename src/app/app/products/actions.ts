@@ -102,7 +102,7 @@ export async function createBomWithComponents(
   const { supabase, tenantId } = context;
 
   const { data: variant } = await supabase
-    .from("shopify_variant")
+    .from("product_variant")
     .select("id")
     .eq("tenant_id", tenantId)
     .eq("id", variantId)
@@ -185,7 +185,7 @@ export async function createDraftBomFromScratch(
   const { supabase, tenantId } = context;
 
   const { data: variant } = await supabase
-    .from("shopify_variant")
+    .from("product_variant")
     .select("id")
     .eq("tenant_id", tenantId)
     .eq("id", variantId)
@@ -235,7 +235,7 @@ export async function copyBomToDraft(
 
   const [{ data: targetVariant }, { data: sourceBom }] = await Promise.all([
     supabase
-      .from("shopify_variant")
+      .from("product_variant")
       .select("id")
       .eq("tenant_id", tenantId)
       .eq("id", targetVariantId)
@@ -336,7 +336,7 @@ export async function createBomFromTemplate(
 
   const [{ data: targetVariant }, { data: template }] = await Promise.all([
     supabase
-      .from("shopify_variant")
+      .from("product_variant")
       .select("id")
       .eq("tenant_id", tenantId)
       .eq("id", targetVariantId)

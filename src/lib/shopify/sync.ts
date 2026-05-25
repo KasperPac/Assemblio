@@ -57,15 +57,7 @@ function assertNoError(
   throw new Error(`${context}: ${error.message ?? "Unknown Supabase error"}`);
 }
 
-function isMissingShopifyProductColumn(error: { message?: string } | null) {
-  const message = (error?.message ?? "").toLowerCase();
-  return (
-    message.includes("shopify_product") &&
-    (message.includes("'description'") || message.includes("'image_url'"))
-  );
-}
-
-async function upsertShopifyProducts(
+async function upsertProducts(
   admin: ReturnType<typeof createSupabaseAdminClient>,
   rows: Array<{
     tenant_id: string;
@@ -75,25 +67,11 @@ async function upsertShopifyProducts(
     image_url: string | null;
   }>
 ) {
+  const sourcedRows = rows.map((row) => ({ ...row, source: "shopify" as const }));
   const { error } = await admin
-    .from("shopify_product")
-    .upsert(rows, { onConflict: "tenant_id,shopify_id" });
-
-  // Backward-compatible fallback for deployments missing newer columns.
-  if (isMissingShopifyProductColumn(error)) {
-    const minimalRows = rows.map((row) => ({
-      tenant_id: row.tenant_id,
-      shopify_id: row.shopify_id,
-      title: row.title,
-    }));
-    const { error: fallbackError } = await admin
-      .from("shopify_product")
-      .upsert(minimalRows, { onConflict: "tenant_id,shopify_id" });
-    assertNoError(fallbackError, "Failed to upsert shopify_product");
-    return;
-  }
-
-  assertNoError(error, "Failed to upsert shopify_product");
+    .from("product")
+    .upsert(sourcedRows, { onConflict: "tenant_id,shopify_id" });
+  assertNoError(error, "Failed to upsert product");
 }
 
 function mapOrderStatus(order: ShopifyOrderNode) {
@@ -197,7 +175,7 @@ export async function syncShopifyStoreData(
   ]);
 
   if (products.length > 0) {
-    await upsertShopifyProducts(
+    await upsertProducts(
       admin,
       products.map((product) => ({
         tenant_id: tenantId,
@@ -213,11 +191,11 @@ export async function syncShopifyStoreData(
   let productMap = new Map<string, string>();
   if (productIds.length > 0) {
     const { data: savedProducts, error } = await admin
-      .from("shopify_product")
+      .from("product")
       .select("id,shopify_id")
       .eq("tenant_id", tenantId)
       .in("shopify_id", productIds);
-    assertNoError(error, "Failed to fetch saved shopify_product rows");
+    assertNoError(error, "Failed to fetch saved product rows");
     productMap = new Map((savedProducts ?? []).map((p) => [p.shopify_id, p.id]));
   }
 
@@ -230,26 +208,27 @@ export async function syncShopifyStoreData(
         title: variant.title ?? "",
         sku: variant.sku,
         price: variant.price ? parseFloat(variant.price) : null,
+        source: "shopify" as const,
       }))
       .filter((variant) => variant.product_id)
   );
 
   if (variantRows.length > 0) {
-    const { error } = await admin.from("shopify_variant").upsert(variantRows, {
+    const { error } = await admin.from("product_variant").upsert(variantRows, {
       onConflict: "tenant_id,shopify_id",
     });
-    assertNoError(error, "Failed to upsert shopify_variant");
+    assertNoError(error, "Failed to upsert product_variant");
   }
 
   const variantShopifyIds = variantRows.map((variant) => variant.shopify_id);
   let variantMap = new Map<string, string>();
   if (variantShopifyIds.length > 0) {
     const { data: savedVariants, error } = await admin
-      .from("shopify_variant")
+      .from("product_variant")
       .select("id,shopify_id")
       .eq("tenant_id", tenantId)
       .in("shopify_id", variantShopifyIds);
-    assertNoError(error, "Failed to fetch saved shopify_variant rows");
+    assertNoError(error, "Failed to fetch saved product_variant rows");
     variantMap = new Map((savedVariants ?? []).map((v) => [v.shopify_id, v.id]));
   }
 

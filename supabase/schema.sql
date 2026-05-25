@@ -200,32 +200,40 @@ create table public.shopify_webhook_event (
 
 alter table public.shopify_webhook_event enable row level security;
 
-create table public.shopify_product (
+create table public.product (
   id uuid primary key default gen_random_uuid(),
   tenant_id uuid not null references public.tenant(id),
-  shopify_id text not null,
+  shopify_id text,
   title text not null,
   description text,
   image_url text,
+  source text not null default 'manual',
   created_at timestamptz not null default now(),
-  unique (tenant_id, shopify_id)
+  unique (tenant_id, shopify_id),
+  constraint product_source_shopify_id_chk
+    check ((source = 'shopify' and shopify_id is not null)
+        or (source <> 'shopify' and shopify_id is null))
 );
 
-create table public.shopify_variant (
+create table public.product_variant (
   id uuid primary key default gen_random_uuid(),
   tenant_id uuid not null references public.tenant(id),
-  product_id uuid not null references public.shopify_product(id),
-  shopify_id text not null,
+  product_id uuid not null references public.product(id),
+  shopify_id text,
   title text,
   sku text,
+  source text not null default 'manual',
   created_at timestamptz not null default now(),
-  unique (tenant_id, shopify_id)
+  unique (tenant_id, shopify_id),
+  constraint product_variant_source_shopify_id_chk
+    check ((source = 'shopify' and shopify_id is not null)
+        or (source <> 'shopify' and shopify_id is null))
 );
 
 create table public.product_bom (
   id uuid primary key default gen_random_uuid(),
   tenant_id uuid not null references public.tenant(id),
-  variant_id uuid not null references public.shopify_variant(id),
+  variant_id uuid not null references public.product_variant(id),
   version integer not null,
   status text not null default 'draft',
   is_active boolean not null default false,
@@ -298,7 +306,7 @@ create table public.order_line (
   id uuid primary key default gen_random_uuid(),
   tenant_id uuid not null references public.tenant(id),
   order_id uuid not null references public.orders(id),
-  variant_id uuid not null references public.shopify_variant(id),
+  variant_id uuid not null references public.product_variant(id),
   quantity numeric not null,
   unit_sell_price numeric not null default 0,
   line_sell_price numeric not null default 0,
@@ -575,8 +583,8 @@ begin
     'location',
     'shopify_store',
     'shopify_install_tokens',
-    'shopify_product',
-    'shopify_variant',
+    'product',
+    'product_variant',
     'product_bom',
     'product_bom_component',
     'inventory_balance',

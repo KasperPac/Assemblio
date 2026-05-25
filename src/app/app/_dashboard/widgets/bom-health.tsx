@@ -11,7 +11,7 @@ function firstOf<T>(v: T | T[] | null | undefined): T | undefined {
 
 export async function BomHealth({ supabase, tenantId }: Props) {
   const [{ data: variants }, { data: activeBoms }, { data: balances }] = await Promise.all([
-    supabase.from("shopify_variant").select("id").eq("tenant_id", tenantId),
+    supabase.from("product_variant").select("id").eq("tenant_id", tenantId),
     supabase.from("product_bom").select("variant_id").eq("tenant_id", tenantId).eq("is_active", true),
     supabase.from("inventory_balance").select("component_id,on_hand,in_prod,reserved,component:component_id(name),location:location_id(name)").eq("tenant_id", tenantId),
   ]);

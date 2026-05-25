@@ -8,6 +8,7 @@ import {
   parseWebhookPayload,
   shouldRunStoreSync,
 } from "@/lib/shopify/webhook";
+import { handleAppUninstalled } from "@/lib/shopify/uninstall";
 
 export async function POST(request: NextRequest) {
   const hmac = request.headers.get("x-shopify-hmac-sha256") ?? "";
@@ -64,12 +65,11 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  if (topic === "app/uninstalled" && store?.id) {
-    await admin
-      .from("shopify_store")
-      .update({ status: "uninstalled" })
-      .eq("tenant_id", store.tenant_id)
-      .eq("id", store.id);
+  if (topic === "app/uninstalled") {
+    await handleAppUninstalled(admin, shop);
+    // Token was just deleted, so the downstream sync branch will short-circuit
+    // via shouldRunStoreSync (no accessToken). Return 200 without further work.
+    return new NextResponse("OK", { status: 200 });
   }
 
   const { data: tokenRow } = store?.id && store?.tenant_id

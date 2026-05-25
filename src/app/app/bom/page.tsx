@@ -59,7 +59,7 @@ export default async function BomPage() {
         .eq("tenant_id", tenantId)
         .order("created_at", { ascending: false })
         .limit(12),
-      supabase.from("shopify_variant").select("id,title,sku").eq("tenant_id", tenantId).order("title"),
+      supabase.from("product_variant").select("id,title,sku").eq("tenant_id", tenantId).order("title"),
       supabase.from("component").select("id,name,sku").eq("tenant_id", tenantId).order("name"),
       supabase
         .from("product_bom_component")

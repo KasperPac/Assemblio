@@ -89,7 +89,7 @@ export default async function ProductDetailPage({ params }: Props) {
 
   // Fetch product
   const { data: productData } = await supabase
-    .from("shopify_product")
+    .from("product")
     .select("id,title,shopify_id,created_at,image_url,description")
     .eq("id", productId)
     .eq("tenant_id", tenantId)
@@ -100,7 +100,7 @@ export default async function ProductDetailPage({ params }: Props) {
 
   // Fetch all variants for this product
   const { data: variantsData } = await supabase
-    .from("shopify_variant")
+    .from("product_variant")
     .select("id,title,sku,price")
     .eq("product_id", productId)
     .eq("tenant_id", tenantId)

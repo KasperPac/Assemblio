@@ -13,6 +13,22 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async headers() {
+    return [
+      {
+        // Shopify embedded surface must be iframe-able from Shopify Admin.
+        // We override Next's default frame protections only on this exact subtree.
+        source: "/shopify/embedded/:path*",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value:
+              "frame-ancestors https://*.myshopify.com https://admin.shopify.com;",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
