@@ -170,7 +170,10 @@ export async function GET(request: NextRequest) {
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ client_id: apiKey, client_secret: apiSecret, code, expiring: 1 }),
+        // Request a long-lived offline access token. Passing `expiring: 1` returns
+    // a 24h token + refresh token, which we don't currently store — so the next
+    // sync after 24h fails with "Invalid API key or access token".
+    body: JSON.stringify({ client_id: apiKey, client_secret: apiSecret, code }),
       }
     );
     if (!tokenResponse.ok) {
@@ -223,7 +226,10 @@ export async function GET(request: NextRequest) {
   const tokenResponse = await fetch(`https://${shop}/admin/oauth/access_token`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ client_id: apiKey, client_secret: apiSecret, code, expiring: 1 }),
+    // Request a long-lived offline access token. Passing `expiring: 1` returns
+    // a 24h token + refresh token, which we don't currently store — so the next
+    // sync after 24h fails with "Invalid API key or access token".
+    body: JSON.stringify({ client_id: apiKey, client_secret: apiSecret, code }),
   });
   if (!tokenResponse.ok) {
     const response = NextResponse.redirect(
