@@ -1,145 +1,110 @@
-"use client";
-
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { Suspense, useState } from "react";
-import { useActionState } from "react";
-import { useSearchParams } from "next/navigation";
+import { createSupabaseAdminClient } from "../../lib/supabase/admin";
+import type { PlanTier, BillingInterval } from "../../lib/plans";
 import styles from "./signup.module.css";
-import { signUpTenant, type SignUpState } from "./actions";
-import { PLANS, type PlanTier, type BillingInterval } from "../../lib/plans";
+import SignupForm from "./signup-form";
 
-const initialState: SignUpState = { error: "", message: "" };
+export const metadata: Metadata = {
+  title: "Sign up — Manuva",
+  description: "Activate your Manuva beta access.",
+};
+
 const PLAN_OPTIONS: PlanTier[] = ["starter", "growth", "pro"];
 
-function parsePlanParam(raw: string | null): PlanTier {
-  if (raw && (PLAN_OPTIONS as readonly string[]).includes(raw)) return raw as PlanTier;
+function parsePlanParam(raw: string | undefined): PlanTier {
+  if (raw && (PLAN_OPTIONS as string[]).includes(raw)) return raw as PlanTier;
   return "growth";
 }
-function parseBillingParam(raw: string | null): BillingInterval {
+
+function parseBillingParam(raw: string | undefined): BillingInterval {
   return raw === "monthly" ? "monthly" : "annual";
 }
 
-function SignupForm() {
-  const search = useSearchParams();
-  const [state, action] = useActionState(signUpTenant, initialState);
+interface BetaApplicationRow {
+  email: string;
+  company_name: string;
+  source_plan: string | null;
+  source_billing: string | null;
+}
 
-  const initialPlan = parsePlanParam(search.get("plan"));
-  const initialBilling = parseBillingParam(search.get("billing"));
+async function lookupApprovedApplication(
+  token: string
+): Promise<BetaApplicationRow | null> {
+  const admin = createSupabaseAdminClient();
+  const { data, error } = await admin
+    .from("beta_applications")
+    .select("email, company_name, source_plan, source_billing")
+    .eq("signup_token", token)
+    .eq("status", "approved")
+    .maybeSingle();
+  if (error) return null;
+  return data as BetaApplicationRow | null;
+}
 
-  const [plan, setPlan] = useState<PlanTier>(initialPlan);
-  const [billing, setBilling] = useState<BillingInterval>(initialBilling);
+interface SignupPageProps {
+  searchParams: Promise<{
+    token?: string;
+    plan?: string;
+    billing?: string;
+  }>;
+}
 
-  const limits = PLANS[plan].limits;
-  const locationsCopy =
-    limits.locations === Infinity
-      ? "Unlimited locations"
-      : `${limits.locations} location${limits.locations === 1 ? "" : "s"}`;
-  const usersCopy =
-    limits.users === Infinity
-      ? "Unlimited team members"
-      : `${limits.users} team member${limits.users === 1 ? "" : "s"}`;
+export default async function SignupPage({ searchParams }: SignupPageProps) {
+  const params = await searchParams;
+  const token = params.token?.trim();
 
+  if (!token) {
+    return <InviteOnlyView />;
+  }
+
+  const app = await lookupApprovedApplication(token);
+  if (!app) {
+    return <InviteOnlyView invalidToken />;
+  }
+
+  const plan = parsePlanParam(app.source_plan ?? params.plan);
+  const billing = parseBillingParam(app.source_billing ?? params.billing);
+
+  return (
+    <SignupForm
+      token={token}
+      prefillEmail={app.email}
+      prefillCompany={app.company_name}
+      initialPlan={plan}
+      initialBilling={billing}
+    />
+  );
+}
+
+function InviteOnlyView({ invalidToken = false }: { invalidToken?: boolean }) {
   return (
     <div className={styles.page}>
       <div className={styles.left}>
         <div className={styles.leftInner}>
           <div className={styles.heading}>
-            <h1>Start your 14-day free trial</h1>
-            <p>Full Pro-level access. No credit card required.</p>
+            <h1>
+              {invalidToken ? "That invite isn't valid" : "Manuva is in private beta"}
+            </h1>
+            <p>
+              {invalidToken
+                ? "Your invite link looks like it's expired or already been used. Apply again and we'll sort it out."
+                : "We're onboarding new teams a few at a time. Apply for early access and we'll be in touch."}
+            </p>
           </div>
 
-          <form className={styles.form} action={action}>
-            <input type="hidden" name="plan" value={plan} />
-            <input type="hidden" name="billing" value={billing} />
+          <Link
+            className={styles.primary}
+            href="/apply"
+            style={{ display: "block", textAlign: "center", textDecoration: "none" }}
+          >
+            Apply for early access
+          </Link>
 
-            <label>
-              Company name
-              <input
-                name="company_name"
-                type="text"
-                placeholder="Acme Manufacturing"
-                autoComplete="organization"
-                required
-              />
-            </label>
-            <label>
-              Work email
-              <input
-                name="email"
-                type="email"
-                placeholder="you@company.com"
-                autoComplete="email"
-                required
-              />
-            </label>
-            <label>
-              Password
-              <input
-                name="password"
-                type="password"
-                placeholder="At least 8 characters"
-                autoComplete="new-password"
-                required
-                minLength={8}
-              />
-            </label>
-
-            <fieldset className={styles.planSelector}>
-              <legend>Plan after trial</legend>
-              <div className={styles.planChips}>
-                {PLAN_OPTIONS.map((p) => (
-                  <button
-                    key={p}
-                    type="button"
-                    className={`${styles.planChip} ${plan === p ? styles.planChipActive : ""}`}
-                    onClick={() => setPlan(p)}
-                    aria-pressed={plan === p}
-                  >
-                    {PLANS[p].name}
-                  </button>
-                ))}
-              </div>
-              <div className={styles.billingToggle}>
-                <label className={styles.billingOption}>
-                  <input
-                    type="radio"
-                    name="billingRadio"
-                    checked={billing === "annual"}
-                    onChange={() => setBilling("annual")}
-                  />
-                  Annual (save ~20%)
-                </label>
-                <label className={styles.billingOption}>
-                  <input
-                    type="radio"
-                    name="billingRadio"
-                    checked={billing === "monthly"}
-                    onChange={() => setBilling("monthly")}
-                  />
-                  Monthly
-                </label>
-              </div>
-            </fieldset>
-
-            <div className={styles.limitsPreview}>
-              <strong>{PLANS[plan].name} — after your trial</strong>
-              <p>
-                {locationsCopy} · {usersCopy}
-              </p>
-            </div>
-
-            {state.error ? <p className={styles.error}>{state.error}</p> : null}
-            {state.message ? <p className={styles.message}>{state.message}</p> : null}
-
-            <button className={styles.primary} type="submit">
-              Start free trial
-            </button>
-
-            <p className={styles.signinLink}>
-              Already have an account? <Link href="/login">Sign in</Link>
-            </p>
-          </form>
+          <p className={styles.signinLink}>
+            Already have an account? <Link href="/login">Sign in</Link>
+          </p>
         </div>
       </div>
 
@@ -159,7 +124,8 @@ function SignupForm() {
             <span className={styles.taglineAccent}>finally simple.</span>
           </h2>
           <p className={styles.lede}>
-            14 days, full Pro access, no credit card.
+            Inventory, BOMs, orders, and production — one workspace, no
+            spreadsheets.
           </p>
         </div>
       </aside>
@@ -167,10 +133,3 @@ function SignupForm() {
   );
 }
 
-export default function SignupPage() {
-  return (
-    <Suspense fallback={<div className={styles.page} />}>
-      <SignupForm />
-    </Suspense>
-  );
-}

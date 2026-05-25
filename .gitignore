@@ -12,6 +12,10 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+.npm-cache/
+
+# supabase cli state
+supabase/.temp/
 
 # testing
 /coverage

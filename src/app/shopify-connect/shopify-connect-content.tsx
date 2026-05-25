@@ -1,8 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useActionState } from "react";
 import styles from "./shopify-connect.module.css";
-import { signInAndLink, signUpAndLink } from "./actions";
+import { signInAndLink } from "./actions";
 
 const initial = { error: undefined };
 
@@ -14,10 +15,6 @@ export default function ShopifyConnectContent({
   const [tab, setTab] = useState<"signin" | "signup">("signin");
   const [signInState, signInAction, signInPending] = useActionState(
     signInAndLink,
-    initial
-  );
-  const [signUpState, signUpAction, signUpPending] = useActionState(
-    signUpAndLink,
     initial
   );
 
@@ -43,7 +40,7 @@ export default function ShopifyConnectContent({
             onClick={() => setTab("signup")}
             type="button"
           >
-            Start free trial
+            New here?
           </button>
         </div>
 
@@ -81,45 +78,20 @@ export default function ShopifyConnectContent({
         )}
 
         {tab === "signup" && (
-          <form className={styles.form} action={signUpAction}>
-            <label>
-              Company name
-              <input
-                name="company"
-                type="text"
-                placeholder="Acme Manufacturing"
-                required
-              />
-            </label>
-            <label>
-              Email
-              <input
-                name="email"
-                type="email"
-                placeholder="you@company.com"
-                required
-              />
-            </label>
-            <label>
-              Password
-              <input
-                name="password"
-                type="password"
-                placeholder="Create a password"
-                required
-              />
-            </label>
-            {signUpState.error && (
-              <p className={styles.error}>{signUpState.error}</p>
-            )}
-            <button
+          <div className={styles.form}>
+            <p style={{ margin: 0, fontSize: 14, lineHeight: 1.55 }}>
+              Manuva is currently in private beta. Apply for early access and
+              we&apos;ll reach out — you can connect your Shopify store as soon
+              as you&apos;re approved.
+            </p>
+            <Link
+              href={`/apply?shop=${encodeURIComponent(shopDomain)}`}
               className={styles.submit}
-              type="submit"
-              disabled={signUpPending}
+              style={{ display: "block", textAlign: "center", textDecoration: "none" }}
             >
-              {signUpPending ? "Creating account…" : "Create account and connect"}
-            </button>
-          </form>
+              Apply for early access
+            </Link>
+          </div>
         )}
       </div>
     </div>

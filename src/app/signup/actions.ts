@@ -44,7 +44,9 @@ export async function signUpTenant(
   const password = formData.get("password")?.toString() ?? "";
   const planRaw = formData.get("plan")?.toString();
   const billingRaw = formData.get("billing")?.toString();
+  const token = formData.get("token")?.toString().trim() ?? "";
 
+  if (!token) return { error: "Signup is invite-only during beta." };
   if (!companyName) return { error: "Company name is required." };
   if (!email) return { error: "Email is required." };
   if (password.length < 8) return { error: "Password must be at least 8 characters." };
@@ -59,6 +61,24 @@ export async function signUpTenant(
 
   const supabase = await createSupabaseServerClient();
   const admin = createSupabaseAdminClient();
+
+  // Step 0: validate the beta token. We re-check here in case the URL was
+  // tampered with between page-render validation and form submission.
+  const { data: betaRow, error: betaError } = await admin
+    .from("beta_applications")
+    .select("id, email, status")
+    .eq("signup_token", token)
+    .maybeSingle();
+  if (betaError) {
+    return { error: "Couldn't validate your invite. Please try again." };
+  }
+  if (!betaRow || betaRow.status !== "approved") {
+    return {
+      error:
+        "This invite is no longer valid. Apply again at /apply and we'll sort it out.",
+    };
+  }
+  const betaApplicationId = betaRow.id as string;
 
   // Step 1: create the auth user.
   const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
@@ -128,6 +148,14 @@ export async function signUpTenant(
         throw r.value.error;
       }
     }
+
+    // Step 4: mark the beta application consumed. Best-effort — failure here
+    // doesn't roll back the tenant; we'd rather have a duplicate-redeem risk
+    // (extremely low at beta volume) than orphan a fresh tenant.
+    await admin
+      .from("beta_applications")
+      .update({ status: "used", used_at: new Date().toISOString() })
+      .eq("id", betaApplicationId);
   } catch (err) {
     // Rollback in three best-effort steps. Each is wrapped so one failure
     // doesn't stop the others.

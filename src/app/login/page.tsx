@@ -49,9 +49,12 @@ function LoginPageContent() {
             </button>
           </form>
 
-          <p className={styles.signupLink}>
-            New here? <Link href="/signup">Start a 14-day free trial →</Link>
-          </p>
+          <div className={styles.applyDivider}>New to Manuva</div>
+
+          <Link href="/apply" className={styles.applyCta}>
+            Apply for early access
+            <span className={styles.applyArrow} aria-hidden="true">→</span>
+          </Link>
 
           <p className={styles.meta}>Manufacturing operations by Manuva</p>
         </div>
