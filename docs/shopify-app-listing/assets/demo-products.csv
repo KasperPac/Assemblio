@@ -1,0 +1,49 @@
+Handle,Title,Body (HTML),Vendor,Product Category,Type,Tags,Published,Option1 Name,Option1 Value,Variant SKU,Variant Grams,Variant Inventory Tracker,Variant Inventory Qty,Variant Inventory Policy,Variant Fulfillment Service,Variant Price,Variant Requires Shipping,Variant Taxable,Status
+lavender-fields-candle,Lavender Fields Candle,"<p>Calming lavender harvested from Provence. Hand-poured in small batches.</p>",Manuva Demo Co,Home & Garden > Decor > Home Fragrances > Candles,Candle,"candle,artisan,demo,lav",TRUE,Size,250g,CANDLE-LAV-250G,250,shopify,40,deny,manual,28.00,TRUE,TRUE,active
+lavender-fields-candle,,,,,,,,Size,400g,CANDLE-LAV-400G,400,shopify,30,deny,manual,38.00,TRUE,TRUE,
+lavender-fields-candle,,,,,,,,Size,800g (Double Wick),CANDLE-LAV-800G,800,shopify,15,deny,manual,58.00,TRUE,TRUE,
+vanilla-bourbon-candle,Vanilla Bourbon Candle,"<p>Warm Madagascar vanilla with a hint of bourbon. Hand-poured in small batches.</p>",Manuva Demo Co,Home & Garden > Decor > Home Fragrances > Candles,Candle,"candle,artisan,demo,van",TRUE,Size,250g,CANDLE-VAN-250G,250,shopify,40,deny,manual,28.00,TRUE,TRUE,active
+vanilla-bourbon-candle,,,,,,,,Size,400g,CANDLE-VAN-400G,400,shopify,30,deny,manual,38.00,TRUE,TRUE,
+vanilla-bourbon-candle,,,,,,,,Size,800g (Double Wick),CANDLE-VAN-800G,800,shopify,15,deny,manual,58.00,TRUE,TRUE,
+eucalyptus-mint-candle,Eucalyptus Mint Candle,"<p>Crisp eucalyptus paired with fresh spearmint. Hand-poured in small batches.</p>",Manuva Demo Co,Home & Garden > Decor > Home Fragrances > Candles,Candle,"candle,artisan,demo,euc",TRUE,Size,250g,CANDLE-EUC-250G,250,shopify,40,deny,manual,28.00,TRUE,TRUE,active
+eucalyptus-mint-candle,,,,,,,,Size,400g,CANDLE-EUC-400G,400,shopify,30,deny,manual,38.00,TRUE,TRUE,
+eucalyptus-mint-candle,,,,,,,,Size,800g (Double Wick),CANDLE-EUC-800G,800,shopify,15,deny,manual,58.00,TRUE,TRUE,
+sandalwood-smoke-candle,Sandalwood Smoke Candle,"<p>Slow-burning sandalwood with smoky undertones. Hand-poured in small batches.</p>",Manuva Demo Co,Home & Garden > Decor > Home Fragrances > Candles,Candle,"candle,artisan,demo,san",TRUE,Size,250g,CANDLE-SAN-250G,250,shopify,40,deny,manual,32.00,TRUE,TRUE,active
+sandalwood-smoke-candle,,,,,,,,Size,400g,CANDLE-SAN-400G,400,shopify,30,deny,manual,42.00,TRUE,TRUE,
+sandalwood-smoke-candle,,,,,,,,Size,800g (Double Wick),CANDLE-SAN-800G,800,shopify,15,deny,manual,62.00,TRUE,TRUE,
+citrus-grove-candle,Citrus Grove Candle,"<p>Bright lemon, bergamot, and yuzu. Hand-poured in small batches.</p>",Manuva Demo Co,Home & Garden > Decor > Home Fragrances > Candles,Candle,"candle,artisan,demo,cit",TRUE,Size,250g,CANDLE-CIT-250G,250,shopify,40,deny,manual,28.00,TRUE,TRUE,active
+citrus-grove-candle,,,,,,,,Size,400g,CANDLE-CIT-400G,400,shopify,30,deny,manual,38.00,TRUE,TRUE,
+citrus-grove-candle,,,,,,,,Size,800g (Double Wick),CANDLE-CIT-800G,800,shopify,15,deny,manual,58.00,TRUE,TRUE,
+rose-garden-candle,Rose Garden Candle,"<p>Bulgarian rose petal with subtle musk. Hand-poured in small batches.</p>",Manuva Demo Co,Home & Garden > Decor > Home Fragrances > Candles,Candle,"candle,artisan,demo,ros",TRUE,Size,250g,CANDLE-ROS-250G,250,shopify,40,deny,manual,32.00,TRUE,TRUE,active
+rose-garden-candle,,,,,,,,Size,400g,CANDLE-ROS-400G,400,shopify,30,deny,manual,42.00,TRUE,TRUE,
+rose-garden-candle,,,,,,,,Size,800g (Double Wick),CANDLE-ROS-800G,800,shopify,15,deny,manual,62.00,TRUE,TRUE,
+jasmine-night-candle,Jasmine Night Candle,"<p>Heady night-blooming jasmine. Hand-poured in small batches.</p>",Manuva Demo Co,Home & Garden > Decor > Home Fragrances > Candles,Candle,"candle,artisan,demo,jas",TRUE,Size,250g,CANDLE-JAS-250G,250,shopify,40,deny,manual,32.00,TRUE,TRUE,active
+jasmine-night-candle,,,,,,,,Size,400g,CANDLE-JAS-400G,400,shopify,30,deny,manual,42.00,TRUE,TRUE,
+jasmine-night-candle,,,,,,,,Size,800g (Double Wick),CANDLE-JAS-800G,800,shopify,15,deny,manual,62.00,TRUE,TRUE,
+pine-forest-candle,Pine Forest Candle,"<p>Crushed pine needles and forest moss. Hand-poured in small batches.</p>",Manuva Demo Co,Home & Garden > Decor > Home Fragrances > Candles,Candle,"candle,artisan,demo,pin",TRUE,Size,250g,CANDLE-PIN-250G,250,shopify,40,deny,manual,28.00,TRUE,TRUE,active
+pine-forest-candle,,,,,,,,Size,400g,CANDLE-PIN-400G,400,shopify,30,deny,manual,38.00,TRUE,TRUE,
+pine-forest-candle,,,,,,,,Size,800g (Double Wick),CANDLE-PIN-800G,800,shopify,15,deny,manual,58.00,TRUE,TRUE,
+patchouli-earth-candle,Patchouli Earth Candle,"<p>Deep earthy patchouli with vetiver. Hand-poured in small batches.</p>",Manuva Demo Co,Home & Garden > Decor > Home Fragrances > Candles,Candle,"candle,artisan,demo,pat",TRUE,Size,250g,CANDLE-PAT-250G,250,shopify,40,deny,manual,32.00,TRUE,TRUE,active
+patchouli-earth-candle,,,,,,,,Size,400g,CANDLE-PAT-400G,400,shopify,30,deny,manual,42.00,TRUE,TRUE,
+patchouli-earth-candle,,,,,,,,Size,800g (Double Wick),CANDLE-PAT-800G,800,shopify,15,deny,manual,62.00,TRUE,TRUE,
+coconut-beach-candle,Coconut Beach Candle,"<p>Sun-warmed coconut and sea salt. Hand-poured in small batches.</p>",Manuva Demo Co,Home & Garden > Decor > Home Fragrances > Candles,Candle,"candle,artisan,demo,coc",TRUE,Size,250g,CANDLE-COC-250G,250,shopify,40,deny,manual,28.00,TRUE,TRUE,active
+coconut-beach-candle,,,,,,,,Size,400g,CANDLE-COC-400G,400,shopify,30,deny,manual,38.00,TRUE,TRUE,
+coconut-beach-candle,,,,,,,,Size,800g (Double Wick),CANDLE-COC-800G,800,shopify,15,deny,manual,58.00,TRUE,TRUE,
+amber-glow-candle,Amber Glow Candle,"<p>Resinous amber with warm vanilla. Hand-poured in small batches.</p>",Manuva Demo Co,Home & Garden > Decor > Home Fragrances > Candles,Candle,"candle,artisan,demo,amb",TRUE,Size,250g,CANDLE-AMB-250G,250,shopify,40,deny,manual,32.00,TRUE,TRUE,active
+amber-glow-candle,,,,,,,,Size,400g,CANDLE-AMB-400G,400,shopify,30,deny,manual,42.00,TRUE,TRUE,
+amber-glow-candle,,,,,,,,Size,800g (Double Wick),CANDLE-AMB-800G,800,shopify,15,deny,manual,62.00,TRUE,TRUE,
+fig-cassis-candle,Fig & Cassis Candle,"<p>Sweet fig with tart blackcurrant. Hand-poured in small batches.</p>",Manuva Demo Co,Home & Garden > Decor > Home Fragrances > Candles,Candle,"candle,artisan,demo,fig",TRUE,Size,250g,CANDLE-FIG-250G,250,shopify,40,deny,manual,32.00,TRUE,TRUE,active
+fig-cassis-candle,,,,,,,,Size,400g,CANDLE-FIG-400G,400,shopify,30,deny,manual,42.00,TRUE,TRUE,
+fig-cassis-candle,,,,,,,,Size,800g (Double Wick),CANDLE-FIG-800G,800,shopify,15,deny,manual,62.00,TRUE,TRUE,
+bergamot-tea-candle,Bergamot Tea Candle,"<p>Earl Grey-inspired bergamot and black tea. Hand-poured in small batches.</p>",Manuva Demo Co,Home & Garden > Decor > Home Fragrances > Candles,Candle,"candle,artisan,demo,ber",TRUE,Size,250g,CANDLE-BER-250G,250,shopify,40,deny,manual,28.00,TRUE,TRUE,active
+bergamot-tea-candle,,,,,,,,Size,400g,CANDLE-BER-400G,400,shopify,30,deny,manual,38.00,TRUE,TRUE,
+bergamot-tea-candle,,,,,,,,Size,800g (Double Wick),CANDLE-BER-800G,800,shopify,15,deny,manual,58.00,TRUE,TRUE,
+oud-saffron-candle,Oud & Saffron Candle,"<p>Luxurious oud wood with saffron spice. Hand-poured in small batches.</p>",Manuva Demo Co,Home & Garden > Decor > Home Fragrances > Candles,Candle,"candle,artisan,demo,oud,premium",TRUE,Size,250g,CANDLE-OUD-250G,250,shopify,20,deny,manual,42.00,TRUE,TRUE,active
+oud-saffron-candle,,,,,,,,Size,400g,CANDLE-OUD-400G,400,shopify,15,deny,manual,58.00,TRUE,TRUE,
+oud-saffron-candle,,,,,,,,Size,800g (Double Wick),CANDLE-OUD-800G,800,shopify,8,deny,manual,82.00,TRUE,TRUE,
+cherry-almond-candle,Cherry Almond Candle,"<p>Sweet cherry with toasted almond. Hand-poured in small batches.</p>",Manuva Demo Co,Home & Garden > Decor > Home Fragrances > Candles,Candle,"candle,artisan,demo,che",TRUE,Size,250g,CANDLE-CHE-250G,250,shopify,40,deny,manual,28.00,TRUE,TRUE,active
+cherry-almond-candle,,,,,,,,Size,400g,CANDLE-CHE-400G,400,shopify,30,deny,manual,38.00,TRUE,TRUE,
+cherry-almond-candle,,,,,,,,Size,800g (Double Wick),CANDLE-CHE-800G,800,shopify,15,deny,manual,58.00,TRUE,TRUE,
+white-tea-pear-candle,White Tea & Pear Candle,"<p>Delicate white tea infused with ripe pear. Hand-poured in small batches.</p>",Manuva Demo Co,Home & Garden > Decor > Home Fragrances > Candles,Candle,"candle,artisan,demo,whi",TRUE,Size,250g,CANDLE-WHI-250G,250,shopify,40,deny,manual,32.00,TRUE,TRUE,active
+white-tea-pear-candle,,,,,,,,Size,400g,CANDLE-WHI-400G,400,shopify,30,deny,manual,42.00,TRUE,TRUE,
+white-tea-pear-candle,,,,,,,,Size,800g (Double Wick),CANDLE-WHI-800G,800,shopify,15,deny,manual,62.00,TRUE,TRUE,
