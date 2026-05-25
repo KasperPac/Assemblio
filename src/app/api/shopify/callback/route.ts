@@ -35,11 +35,15 @@ async function upsertStoreAndToken(
   accessToken: string,
   scopes: string
 ): Promise<"ok" | "conflict" | "store-save-failed" | "token-save-failed"> {
+  // Block cross-tenant install only if there's an ACTIVE install on another tenant.
+  // Disconnected / uninstalled rows are stale and would otherwise permanently block
+  // the store from being connected to a new tenant after a manual disconnect.
   const { data: conflict } = await admin
     .from("shopify_store")
     .select("id,tenant_id")
     .eq("store_domain", shop)
     .neq("tenant_id", tenantId)
+    .not("status", "in", "(disconnected,uninstalled)")
     .limit(1);
   if ((conflict ?? []).length > 0) return "conflict";
 

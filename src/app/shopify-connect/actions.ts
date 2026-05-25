@@ -34,11 +34,14 @@ async function upsertStoreAndToken(
 ): Promise<string | null> {
   const admin = createSupabaseAdminClient();
 
+  // Only block if another tenant has an ACTIVE install. Stale disconnected/uninstalled
+  // rows must not permanently block re-connecting the store from a different tenant.
   const { data: conflict } = await admin
     .from("shopify_store")
     .select("id")
     .eq("store_domain", shop)
     .neq("tenant_id", tenantId)
+    .not("status", "in", "(disconnected,uninstalled)")
     .limit(1);
   if ((conflict ?? []).length > 0)
     return "This Shopify store is already linked to a different Manuva account.";
