@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "Manuva on Shopify",
@@ -11,15 +10,13 @@ export default function EmbeddedLayout({ children }: { children: React.ReactNode
   return (
     <>
       {/*
-        The meta tag plus the app-bridge.js script together initialise App Bridge.
-        Required for the embedded surface to make authenticated calls back to our API.
+        App Bridge MUST be loaded as the first <script> tag with no async/defer/module.
+        React 19 hoists raw <script> tags to <head> and renders them synchronously
+        (no async attribute), which satisfies App Bridge's loader check.
         https://shopify.dev/docs/api/app-bridge-library
       */}
       <meta name="shopify-api-key" content={apiKey} />
-      <Script
-        src="https://cdn.shopify.com/shopifycloud/app-bridge.js"
-        strategy="beforeInteractive"
-      />
+      <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js" />
       {children}
     </>
   );
