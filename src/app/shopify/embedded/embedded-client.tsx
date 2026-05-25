@@ -63,6 +63,17 @@ async function authenticatedFetch(path: string, init?: RequestInit): Promise<Res
   return fetch(path, { ...init, headers });
 }
 
+async function tryTokenExchange(): Promise<{ ok: boolean }> {
+  try {
+    const res = await authenticatedFetch("/api/shopify/embedded/token-exchange", {
+      method: "POST",
+    });
+    return { ok: res.ok };
+  } catch {
+    return { ok: false };
+  }
+}
+
 export default function EmbeddedClient({ shop: _shop }: { shop: string }) {
   const [ui, setUi] = useState<UiState>({ kind: "loading" });
 
@@ -83,6 +94,24 @@ export default function EmbeddedClient({ shop: _shop }: { shop: string }) {
         return;
       }
       const session = (await res.json()) as SessionResponse;
+
+      // If the shop is associated with a tenant but we don't yet have a token
+      // (Shopify-managed install path skips our OAuth callback), exchange the
+      // session token for an offline access token now.
+      if (session.status === "not-installed") {
+        await tryTokenExchange();
+        // Re-fetch session to see updated state. If still not-installed, the
+        // shop has no tenant association and the UI will prompt to sign in.
+        const retryRes = await authenticatedFetch("/api/shopify/embedded/session", {
+          method: "POST",
+        });
+        if (retryRes.ok) {
+          const retrySession = (await retryRes.json()) as SessionResponse;
+          setUi({ kind: "ready", session: retrySession });
+          return;
+        }
+      }
+
       setUi({ kind: "ready", session });
     } catch (err) {
       const message = err instanceof Error ? err.message : "unknown-error";

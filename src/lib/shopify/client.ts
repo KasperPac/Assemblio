@@ -68,9 +68,12 @@ export async function registerRequiredWebhooks(shopDomain: string, accessToken: 
     }
   `;
 
-  // Topic -> callback URL. Generic topics share the main /webhooks endpoint;
-  // GDPR mandatory topics get dedicated endpoints so each one can return 200 fast
-  // and is independently auditable.
+  // Operational webhooks only. GDPR mandatory privacy webhooks
+  // (customers/data_request, customers/redact, shop/redact) cannot be registered
+  // via the webhookSubscriptionCreate GraphQL mutation — they must be declared
+  // in shopify.app.toml under [webhooks.privacy_compliance] and are provisioned
+  // by Shopify-managed install. See:
+  // https://shopify.dev/docs/apps/build/privacy-law-compliance
   const topicEndpoints: Array<{ topic: string; callbackUrl: string }> = [
     { topic: "APP_UNINSTALLED", callbackUrl },
     { topic: "ORDERS_CREATE", callbackUrl },
@@ -79,9 +82,6 @@ export async function registerRequiredWebhooks(shopDomain: string, accessToken: 
     { topic: "ORDERS_FULFILLED", callbackUrl },
     { topic: "PRODUCTS_CREATE", callbackUrl },
     { topic: "PRODUCTS_UPDATE", callbackUrl },
-    { topic: "CUSTOMERS_DATA_REQUEST", callbackUrl: `${appUrl}/api/shopify/webhooks/gdpr/customers-data-request` },
-    { topic: "CUSTOMERS_REDACT", callbackUrl: `${appUrl}/api/shopify/webhooks/gdpr/customers-redact` },
-    { topic: "SHOP_REDACT", callbackUrl: `${appUrl}/api/shopify/webhooks/gdpr/shop-redact` },
   ];
 
   for (const { topic, callbackUrl: url } of topicEndpoints) {

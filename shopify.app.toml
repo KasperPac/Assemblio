@@ -8,7 +8,10 @@ client_id = "923db8d97db22d30c0517520f1498933"
 
 name = "Manuva"
 handle = "manuva"
-application_url = "https://app.manuva.app/"
+# When embedded = true, Shopify iframes application_url with `?shop=...&host=...`
+# query params. Point it at /shopify/embedded so the iframe loads our embedded surface
+# directly instead of bouncing through the marketing root which redirects to /app.
+application_url = "https://app.manuva.app/shopify/embedded"
 embedded = true
 
 [access_scopes]
