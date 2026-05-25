@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
-import { type BinRef, binName } from "../counting-sheet";
+import { type BinRef, binName } from "../bin-utils";
 
 type Props = {
   params: Promise<{ sessionId: string }>;

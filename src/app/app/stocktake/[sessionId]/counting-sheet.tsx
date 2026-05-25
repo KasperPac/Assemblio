@@ -5,8 +5,7 @@ import Link from "next/link";
 import { useState, useMemo, useCallback } from "react";
 import { saveLineCountClient, submitForReview, applyOpeningStock } from "./actions";
 import styles from "./page.module.css";
-
-export type BinRef = { name: string } | Array<{ name: string }> | null;
+import type { BinRef } from "./bin-utils";
 
 type CompData = {
   id: string;
@@ -17,12 +16,6 @@ type CompData = {
   bin_aisle: BinRef;
   bin_bay: BinRef;
 };
-
-export function binName(ref: BinRef): string | null {
-  if (!ref) return null;
-  const obj = Array.isArray(ref) ? ref[0] : ref;
-  return obj?.name ?? null;
-}
 
 export type SheetLine = {
   id: string;

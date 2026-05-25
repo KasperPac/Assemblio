@@ -9,7 +9,8 @@ import {
   sendBackForRecount,
 } from "./actions";
 import { ImportCsvButton } from "./import-csv-button";
-import { CountingSheet, type BinGroup, type SheetLine, binName } from "./counting-sheet";
+import { CountingSheet, type BinGroup, type SheetLine } from "./counting-sheet";
+import { binName } from "./bin-utils";
 
 type Props = {
   params: Promise<{ sessionId: string }>;
