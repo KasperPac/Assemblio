@@ -17,10 +17,11 @@ type SessionRow = {
 };
 
 function statusVariant(s: string) {
-  if (s === "completed") return "success" as const;
-  if (s === "approved" || s === "reconciliation") return "warning" as const;
+  if (s === "completed" || s === "approved") return "success" as const;
+  if (s === "reconciliation") return "danger" as const;
   if (s === "counting") return "warning" as const;
-  return "info" as const;
+  if (s === "open") return "info" as const;
+  return "default" as const; // draft, locked, archived, unknown
 }
 
 function isDone(s: string) {
