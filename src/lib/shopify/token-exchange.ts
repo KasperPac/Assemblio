@@ -13,6 +13,7 @@ export type TokenExchangeResult = {
   accessToken: string;
   scope: string;
   expiresIn?: number;
+  refreshToken?: string;
 };
 
 export type TokenExchangeError = {
@@ -44,6 +45,10 @@ export async function exchangeSessionTokenForOfflineAccessToken(
       subject_token: sessionToken,
       subject_token_type: "urn:ietf:params:oauth:token-type:id_token",
       requested_token_type: "urn:shopify:params:oauth:token-type:offline-access-token",
+      // Shopify defaults to non-expiring tokens, which are deprecated and now
+      // rejected at API time. expiring=1 (literal integer per Shopify docs)
+      // returns an expiring access token + refresh token.
+      expiring: 1,
     }),
     cache: "no-store",
   });
@@ -58,6 +63,7 @@ export async function exchangeSessionTokenForOfflineAccessToken(
     access_token?: string;
     scope?: string;
     expires_in?: number;
+    refresh_token?: string;
   };
 
   if (!data.access_token || !data.scope) {
@@ -68,5 +74,6 @@ export async function exchangeSessionTokenForOfflineAccessToken(
     accessToken: data.access_token,
     scope: data.scope,
     expiresIn: data.expires_in,
+    refreshToken: data.refresh_token,
   };
 }

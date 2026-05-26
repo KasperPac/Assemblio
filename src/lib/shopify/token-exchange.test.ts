@@ -50,6 +50,7 @@ describe("exchangeSessionTokenForOfflineAccessToken", () => {
       subject_token: SESSION_TOKEN,
       subject_token_type: "urn:ietf:params:oauth:token-type:id_token",
       requested_token_type: "urn:shopify:params:oauth:token-type:offline-access-token",
+      expiring: 1,
     });
   });
 

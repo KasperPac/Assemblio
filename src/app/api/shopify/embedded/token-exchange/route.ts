@@ -58,6 +58,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: message }, { status: 500 });
   }
 
+  const expiresAt =
+    exchange.expiresIn && exchange.expiresIn > 0
+      ? new Date(Date.now() + (exchange.expiresIn - 60) * 1000).toISOString()
+      : null;
+
   const { error: upsertError } = await admin
     .from("shopify_install_tokens")
     .upsert(
@@ -65,6 +70,8 @@ export async function POST(request: NextRequest) {
         tenant_id: store.tenant_id,
         shopify_store_id: store.id,
         access_token: exchange.accessToken,
+        refresh_token: exchange.refreshToken ?? null,
+        expires_at: expiresAt,
         scopes: exchange.scope,
         updated_at: new Date().toISOString(),
       },

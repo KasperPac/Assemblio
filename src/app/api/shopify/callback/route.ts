@@ -186,7 +186,7 @@ export async function GET(request: NextRequest) {
           client_id: apiKey,
           client_secret: apiSecret,
           code,
-          expiring: true,
+          expiring: 1,
         }),
       }
     );
