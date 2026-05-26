@@ -33,7 +33,9 @@ async function upsertStoreAndToken(
   tenantId: string,
   shop: string,
   accessToken: string,
-  scopes: string
+  scopes: string,
+  refreshToken: string | null,
+  expiresInSeconds: number | null
 ): Promise<"ok" | "conflict" | "store-save-failed" | "token-save-failed"> {
   // Block cross-tenant install only if there's an ACTIVE install on another tenant.
   // Disconnected / uninstalled rows are stale and would otherwise permanently block
@@ -57,11 +59,18 @@ async function upsertStoreAndToken(
     .single();
   if (storeError || !store) return "store-save-failed";
 
+  const expiresAt =
+    expiresInSeconds && expiresInSeconds > 0
+      ? new Date(Date.now() + (expiresInSeconds - 60) * 1000).toISOString()
+      : null;
+
   const { error: tokenError } = await admin.from("shopify_install_tokens").upsert(
     {
       tenant_id: tenantId,
       shopify_store_id: store.id,
       access_token: accessToken,
+      refresh_token: refreshToken,
+      expires_at: expiresAt,
       scopes,
       updated_at: new Date().toISOString(),
     },
@@ -170,10 +179,15 @@ export async function GET(request: NextRequest) {
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // Request a long-lived offline access token. Passing `expiring: 1` returns
-    // a 24h token + refresh token, which we don't currently store — so the next
-    // sync after 24h fails with "Invalid API key or access token".
-    body: JSON.stringify({ client_id: apiKey, client_secret: apiSecret, code }),
+        // Shopify deprecated non-expiring offline tokens. Request expiring
+        // (~24h) tokens; the refresh_token in the response is used by
+        // getValidAccessToken() to refresh as needed.
+        body: JSON.stringify({
+          client_id: apiKey,
+          client_secret: apiSecret,
+          code,
+          expiring: true,
+        }),
       }
     );
     if (!tokenResponse.ok) {
@@ -183,6 +197,8 @@ export async function GET(request: NextRequest) {
     }
     const tokenData = (await tokenResponse.json()) as {
       access_token: string;
+      refresh_token?: string;
+      expires_in?: number;
       scope?: string;
     };
 
@@ -192,7 +208,9 @@ export async function GET(request: NextRequest) {
       parsed.tenantId,
       shop,
       tokenData.access_token,
-      tokenData.scope ?? ""
+      tokenData.scope ?? "",
+      tokenData.refresh_token ?? null,
+      tokenData.expires_in ?? null
     );
     if (result !== "ok") {
       const shopifyParam = result === "conflict" ? "tenant-store-conflict" : result;
@@ -226,10 +244,13 @@ export async function GET(request: NextRequest) {
   const tokenResponse = await fetch(`https://${shop}/admin/oauth/access_token`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    // Request a long-lived offline access token. Passing `expiring: 1` returns
-    // a 24h token + refresh token, which we don't currently store — so the next
-    // sync after 24h fails with "Invalid API key or access token".
-    body: JSON.stringify({ client_id: apiKey, client_secret: apiSecret, code }),
+    // Shopify deprecated non-expiring offline tokens (see PATH A comment).
+    body: JSON.stringify({
+      client_id: apiKey,
+      client_secret: apiSecret,
+      code,
+      expiring: true,
+    }),
   });
   if (!tokenResponse.ok) {
     const response = NextResponse.redirect(
@@ -240,6 +261,8 @@ export async function GET(request: NextRequest) {
   }
   const tokenData = (await tokenResponse.json()) as {
     access_token: string;
+    refresh_token?: string;
+    expires_in?: number;
     scope?: string;
   };
 
@@ -261,7 +284,9 @@ export async function GET(request: NextRequest) {
         profile.tenant_id,
         shop,
         tokenData.access_token,
-        tokenData.scope ?? ""
+        tokenData.scope ?? "",
+        tokenData.refresh_token ?? null,
+        tokenData.expires_in ?? null
       );
       let status = result === "ok" ? "connected" : result;
       let webhookErrorMsg: string | null = null;
@@ -287,7 +312,9 @@ export async function GET(request: NextRequest) {
   const pendingCookie = signPendingInstall(
     shop,
     tokenData.access_token,
-    tokenData.scope ?? ""
+    tokenData.scope ?? "",
+    tokenData.refresh_token ?? null,
+    tokenData.expires_in ?? null
   );
   const connectUrl = new URL("/shopify-connect", request.url);
   connectUrl.searchParams.set("shop", shop);

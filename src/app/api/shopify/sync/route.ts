@@ -3,6 +3,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { syncShopifyStoreData } from "@/lib/shopify/sync";
 import { getMissingSyncScopes } from "@/lib/shopify/scopes";
+import { getValidAccessToken } from "@/lib/shopify/token-refresh";
 
 export async function POST(request: NextRequest) {
   const raw = request.nextUrl.searchParams.get("return_to") ?? "";
@@ -60,21 +61,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.redirect(dest);
   }
 
-  const { data: tokenRow } = await admin
-    .from("shopify_install_tokens")
-    .select("access_token,scopes")
-    .eq("tenant_id", profile.tenant_id)
-    .eq("shopify_store_id", store.id)
-    .single();
-
-  if (!tokenRow?.access_token) {
+  // Get a valid (non-expired) access token, refreshing automatically if needed.
+  let accessToken: string;
+  let scopes: string | null;
+  try {
+    const tokenSet = await getValidAccessToken(admin, profile.tenant_id, store.store_domain);
+    accessToken = tokenSet.accessToken;
+    scopes = tokenSet.scopes;
+  } catch (err) {
     const dest = new URL(returnTo ?? "/app/settings/integrations", request.url);
     dest.searchParams.set("shopify", "sync-failed");
-    dest.searchParams.set("sync_error", "No access token found. Reconnect the Shopify store in Settings.");
+    dest.searchParams.set(
+      "sync_error",
+      err instanceof Error ? err.message : "Could not load Shopify access token. Reconnect the store in Settings."
+    );
     return NextResponse.redirect(dest);
   }
 
-  const missingScopes = getMissingSyncScopes(tokenRow.scopes);
+  const missingScopes = getMissingSyncScopes(scopes);
   if (missingScopes.length > 0) {
     const dest = new URL(returnTo ?? "/app/settings/integrations", request.url);
     dest.searchParams.set("shopify", "sync-failed");
@@ -86,7 +90,7 @@ export async function POST(request: NextRequest) {
     const result = await syncShopifyStoreData(
       profile.tenant_id,
       store.store_domain,
-      tokenRow.access_token
+      accessToken
     );
 
     await admin

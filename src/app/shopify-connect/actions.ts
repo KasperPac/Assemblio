@@ -30,7 +30,9 @@ async function upsertStoreAndToken(
   tenantId: string,
   shop: string,
   accessToken: string,
-  scopes: string
+  scopes: string,
+  refreshToken: string | null = null,
+  expiresInSeconds: number | null = null
 ): Promise<string | null> {
   const admin = createSupabaseAdminClient();
 
@@ -56,11 +58,18 @@ async function upsertStoreAndToken(
     .single();
   if (storeError || !store) return "Failed to save Shopify store.";
 
+  const expiresAt =
+    expiresInSeconds && expiresInSeconds > 0
+      ? new Date(Date.now() + (expiresInSeconds - 60) * 1000).toISOString()
+      : null;
+
   const { error: tokenError } = await admin.from("shopify_install_tokens").upsert(
     {
       tenant_id: tenantId,
       shopify_store_id: store.id,
       access_token: accessToken,
+      refresh_token: refreshToken,
+      expires_at: expiresAt,
       scopes,
       updated_at: new Date().toISOString(),
     },
@@ -105,7 +114,9 @@ export async function signInAndLink(
     profile.tenant_id,
     pending.shop,
     pending.accessToken,
-    pending.scopes
+    pending.scopes,
+    pending.refreshToken,
+    pending.expiresInSeconds
   );
   if (linkError) return { error: linkError };
 
@@ -225,7 +236,9 @@ export async function signUpAndLink(
     tenant.id,
     pending.shop,
     pending.accessToken,
-    pending.scopes
+    pending.scopes,
+    pending.refreshToken,
+    pending.expiresInSeconds
   );
   if (linkError) return { error: linkError };
 

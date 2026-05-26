@@ -4,12 +4,27 @@ export type PendingInstall = {
   shop: string;
   accessToken: string;
   scopes: string;
+  refreshToken: string | null;
+  expiresInSeconds: number | null;
 };
 
 const TTL_MS = 10 * 60 * 1000;
 
-export function signPendingInstall(shop: string, accessToken: string, scopes: string): string {
-  const payload = { shop, accessToken, scopes, exp: Date.now() + TTL_MS };
+export function signPendingInstall(
+  shop: string,
+  accessToken: string,
+  scopes: string,
+  refreshToken: string | null = null,
+  expiresInSeconds: number | null = null
+): string {
+  const payload = {
+    shop,
+    accessToken,
+    scopes,
+    refreshToken,
+    expiresInSeconds,
+    exp: Date.now() + TTL_MS,
+  };
   const encoded = Buffer.from(JSON.stringify(payload)).toString("base64url");
   const secret = process.env.SHOPIFY_API_SECRET ?? "";
   const sig = createHmac("sha256", secret).update(encoded).digest("hex");
@@ -32,7 +47,14 @@ export function verifyPendingInstall(cookie: string): PendingInstall | null {
   if (a.length !== b.length) return null;
   if (!timingSafeEqual(a, b)) return null;
 
-  let payload: { shop?: string; accessToken?: string; scopes?: string; exp?: number };
+  let payload: {
+    shop?: string;
+    accessToken?: string;
+    scopes?: string;
+    refreshToken?: string | null;
+    expiresInSeconds?: number | null;
+    exp?: number;
+  };
   try {
     payload = JSON.parse(Buffer.from(encoded, "base64url").toString("utf8"));
   } catch {
@@ -48,5 +70,7 @@ export function verifyPendingInstall(cookie: string): PendingInstall | null {
     shop: payload.shop,
     accessToken: payload.accessToken,
     scopes: payload.scopes ?? "",
+    refreshToken: payload.refreshToken ?? null,
+    expiresInSeconds: payload.expiresInSeconds ?? null,
   };
 }

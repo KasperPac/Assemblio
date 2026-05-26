@@ -6,13 +6,33 @@ beforeAll(() => {
 });
 
 describe("signPendingInstall / verifyPendingInstall", () => {
-  it("round-trips a valid pending install", () => {
-    const cookie = signPendingInstall("mystore.myshopify.com", "tok_abc123", "read_orders,write_orders");
+  it("round-trips a valid pending install with refresh token + expiry", () => {
+    const cookie = signPendingInstall(
+      "mystore.myshopify.com",
+      "tok_abc123",
+      "read_orders,write_orders",
+      "rt_xyz",
+      86400
+    );
     const result = verifyPendingInstall(cookie);
     expect(result).toEqual({
       shop: "mystore.myshopify.com",
       accessToken: "tok_abc123",
       scopes: "read_orders,write_orders",
+      refreshToken: "rt_xyz",
+      expiresInSeconds: 86400,
+    });
+  });
+
+  it("defaults refreshToken and expiresInSeconds to null when not provided", () => {
+    const cookie = signPendingInstall("mystore.myshopify.com", "tok_abc", "");
+    const result = verifyPendingInstall(cookie);
+    expect(result).toEqual({
+      shop: "mystore.myshopify.com",
+      accessToken: "tok_abc",
+      scopes: "",
+      refreshToken: null,
+      expiresInSeconds: null,
     });
   });
 
