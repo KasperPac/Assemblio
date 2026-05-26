@@ -230,10 +230,16 @@ export default async function ComponentDetailPage({ params }: Props) {
       subText: totalReserved > 0 ? `${totalReserved} committed to production` : undefined,
     },
     {
+      label: "Reserved",
+      value: String(totalReserved),
+      color: "default" as const,
+      subText: "Committed to open orders",
+    },
+    {
       label: "In Production",
       value: String(totalInProd),
       color: "default" as const,
-      subText: "Committed to open orders",
+      subText: "Allocated to active jobs",
     },
     {
       label: "Reorder Point",
