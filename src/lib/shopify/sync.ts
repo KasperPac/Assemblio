@@ -76,7 +76,8 @@ async function upsertProducts(
 
 function mapOrderStatus(order: ShopifyOrderNode) {
   if (order.cancelledAt) return "cancelled";
-  if ((order.displayFulfillmentStatus ?? "").toLowerCase().includes("fulfilled")) {
+  const status = (order.displayFulfillmentStatus ?? "").toUpperCase();
+  if (status === "FULFILLED") {
     return "fulfilled";
   }
   return "open";
