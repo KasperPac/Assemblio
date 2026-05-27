@@ -13,6 +13,7 @@ import {
 import StatusBadge from "../../_ui/status-badge";
 import EmptyState from "../../_ui/empty-state";
 import SalesItemsTab from "./_tabs/sales-items-tab";
+import ProductionTab from "./_tabs/production-tab";
 import tabStyles from "./_tabs/tabs.module.css";
 import styles from "./page.module.css";
 
@@ -79,6 +80,7 @@ type LaborPlanRow = {
   week_start: string;
   sequence: number;
   planned_total_hours: number;
+  status: string;
   department:
     | {
         name: string | null;
@@ -188,7 +190,7 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
     supabase
       .from("job_labor_plan")
       .select(
-        "id,order_line_id,department_id,operation_name,week_start,sequence,planned_total_hours,department:department_id(name,code)"
+        "id,order_line_id,department_id,operation_name,week_start,sequence,planned_total_hours,status,department:department_id(name,code)"
       )
       .eq("order_id", orderId),
     supabase
@@ -203,6 +205,41 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
       .limit(1)
       .maybeSingle(),
   ]);
+
+  const { data: actualTimeRows } = await supabase
+    .from("job_actual_time_entry")
+    .select("job_labor_plan_id, hours")
+    .eq("tenant_id", tenantId)
+    .eq("order_id", typedOrder.id);
+  const actualHoursByPlan = new Map<string, number>();
+  for (const r of (actualTimeRows ?? []) as Array<{
+    job_labor_plan_id: string | null;
+    hours: number;
+  }>) {
+    if (!r.job_labor_plan_id) continue;
+    actualHoursByPlan.set(
+      r.job_labor_plan_id,
+      (actualHoursByPlan.get(r.job_labor_plan_id) ?? 0) + Number(r.hours)
+    );
+  }
+
+  const lineLabelById = new Map(
+    lineRows.map((l) => [l.id, l.variant_title ?? l.id.slice(0, 8)])
+  );
+
+  const productionRows = ((laborPlans ?? []) as LaborPlanRow[]).map((plan) => {
+    const dept = firstRelation(plan.department);
+    return {
+      id: plan.id,
+      line_label:
+        lineLabelById.get(plan.order_line_id) ?? plan.order_line_id.slice(0, 8),
+      department_name: dept?.name ?? dept?.code ?? "—",
+      operation_name: plan.operation_name,
+      planned_hours: Number(plan.planned_total_hours),
+      actual_hours: actualHoursByPlan.get(plan.id) ?? 0,
+      status: plan.status,
+    };
+  });
 
   const rollupMap = await getOrdersPipelineRollup(supabase, tenantId, [
     {
@@ -418,6 +455,8 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
           ) : (
             <SalesItemsTab lines={lineRows} statuses={lineStatusMap} />
           )
+        ) : activeTab === "production" ? (
+          <ProductionTab rows={productionRows} />
         ) : (
           <p className={tabStyles.dash}>Coming next task.</p>
         )}
