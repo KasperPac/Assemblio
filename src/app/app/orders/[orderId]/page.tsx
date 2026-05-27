@@ -2,7 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { allocateOrder } from "../actions";
-import { getOrderLineStatus } from "@/lib/orders/order-line-status";
 import { getOrdersPipelineRollup } from "@/lib/orders/pipeline-rollup";
 import { daysLate } from "@/lib/orders/target-ship";
 import {
@@ -155,11 +154,6 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
 
   const typedOrder = order as OrderRecord;
   const typedLines = (orderLines ?? []) as OrderLineRecord[];
-  const lineRefs = typedLines.map((l) => ({
-    id: l.id,
-    variant_id: l.variant_id,
-    quantity: l.quantity,
-  }));
   const lineRows = typedLines.map((line) => {
     const variant = firstRelation(line.variant);
     return {
@@ -173,14 +167,20 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
   });
 
   const [
-    lineStatusMap,
+    pipelineResult,
     { data: plannedSnapshots },
     { data: actualRollups },
     { data: laborPlans },
     { data: utilizationRows },
     { data: storeRow },
   ] = await Promise.all([
-    getOrderLineStatus(supabase, tenantId, lineRefs),
+    getOrdersPipelineRollup(supabase, tenantId, [
+      {
+        id: typedOrder.id,
+        status: typedOrder.status,
+        target_ship_date: typedOrder.target_ship_date ?? null,
+      },
+    ]),
     supabase
       .from("job_cost_snapshot")
       .select("order_line_id,planned_total_cost,planned_margin,planned_margin_pct")
@@ -207,6 +207,9 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
       .limit(1)
       .maybeSingle(),
   ]);
+
+  const { rollups, lineStatuses: lineStatusMap } = pipelineResult;
+  const rollup = rollups.get(typedOrder.id);
 
   const { data: actualTimeRows } = await supabase
     .from("job_actual_time_entry")
@@ -252,15 +255,6 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
       shippedAt: raw?.shipped_at ? new Date(raw.shipped_at) : null,
     };
   });
-
-  const rollupMap = await getOrdersPipelineRollup(supabase, tenantId, [
-    {
-      id: typedOrder.id,
-      status: typedOrder.status,
-      target_ship_date: typedOrder.target_ship_date ?? null,
-    },
-  ]);
-  const rollup = rollupMap.get(typedOrder.id);
 
   const plannedByLine = new Map(
     ((plannedSnapshots ?? []) as PlannedSnapshot[]).map((row) => [

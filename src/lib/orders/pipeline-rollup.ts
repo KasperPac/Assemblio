@@ -15,7 +15,7 @@ import {
   type DeliveryLineInput,
 } from "./delivery-state";
 import { isOverdue } from "./target-ship";
-import { getOrderLineStatus } from "./order-line-status";
+import { getOrderLineStatus, type OrderLineStatus } from "./order-line-status";
 
 export type OrderPipelineRollup = {
   orderId: string;
@@ -77,12 +77,20 @@ type OrderLineRow = {
   shipped_at: string | null;
 };
 
+export type OrdersPipelineRollupResult = {
+  rollups: Map<string, OrderPipelineRollup>;
+  lineStatuses: Map<string, OrderLineStatus>;
+};
+
 export async function getOrdersPipelineRollup(
   supabase: SupabaseClient,
   tenantId: string,
   orders: OrderRow[]
-): Promise<Map<string, OrderPipelineRollup>> {
-  const result = new Map<string, OrderPipelineRollup>();
+): Promise<OrdersPipelineRollupResult> {
+  const result: OrdersPipelineRollupResult = {
+    rollups: new Map(),
+    lineStatuses: new Map(),
+  };
   if (orders.length === 0) return result;
   const orderIds = orders.map((o) => o.id);
 
@@ -130,6 +138,7 @@ export async function getOrdersPipelineRollup(
     tenantId,
     lines.map((l) => ({ id: l.id, variant_id: l.variant_id, quantity: l.quantity }))
   );
+  result.lineStatuses = allLineStatuses;
 
   const now = new Date();
 
@@ -164,7 +173,7 @@ export async function getOrdersPipelineRollup(
       now,
     });
 
-    result.set(order.id, rollup);
+    result.rollups.set(order.id, rollup);
   }
 
   return result;

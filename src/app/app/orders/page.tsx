@@ -124,7 +124,7 @@ export default async function OrdersPage({ searchParams }: Props) {
     return acc;
   }, {});
 
-  const rollups = await getOrdersPipelineRollup(supabase, tenantId, allOrders);
+  const { rollups } = await getOrdersPipelineRollup(supabase, tenantId, allOrders);
 
   function matchesTab(orderId: string, tab: TabKey): boolean {
     const r = rollups.get(orderId);
