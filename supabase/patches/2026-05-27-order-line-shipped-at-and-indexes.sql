@@ -1,4 +1,5 @@
--- supabase/patches/2026-05-27-order-line-shipped-at-and-indexes.sql
+-- Orders pipeline redesign — apply order: 5 of 5
+-- Add order_line.shipped_at + pipeline indexes. Requires patches 1 and 2 (column refs).
 alter table public.order_line
   add column if not exists shipped_at timestamptz;
 

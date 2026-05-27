@@ -1,4 +1,5 @@
--- supabase/patches/2026-05-27-orders-target-ship-date-backfill.sql
+-- Orders pipeline redesign — apply order: 4 of 5
+-- Backfill orders.target_ship_date from order_source_sla. Requires patches 1, 2, 3 to be applied first.
 update public.orders o
   set target_ship_date = o.created_at + (sla.lead_time_days || ' days')::interval
   from public.order_source_sla sla

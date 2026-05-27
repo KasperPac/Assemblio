@@ -1,4 +1,5 @@
--- supabase/patches/2026-05-27-order-source-sla.sql
+-- Orders pipeline redesign — apply order: 3 of 5
+-- New order_source_sla table + RLS + seed default lead times per tenant.
 create table if not exists public.order_source_sla (
   tenant_id uuid not null references public.tenant(id) on delete cascade,
   source text not null check (source in ('shopify', 'manual')),
