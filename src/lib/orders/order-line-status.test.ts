@@ -18,3 +18,20 @@ describe("deriveAllocationState", () => {
     expect(deriveAllocationState({ id: "bom-1" }, 2, 0)).toBe("allocated");
   });
 });
+
+describe("ComponentStatus shape", () => {
+  it("includes earliestPoEta field on the type", () => {
+    // Compile-time check: this assignment must type-check.
+    // (Runtime no-op — purely guards the type contract.)
+    const _check: import("./order-line-status").ComponentStatus = {
+      componentId: "c1",
+      name: "Bolt",
+      requiredQty: 10,
+      availableQty: 4,
+      isShort: true,
+      costPerUnit: 0.5,
+      earliestPoEta: new Date("2026-06-02"),
+    };
+    expect(_check.earliestPoEta).toBeInstanceOf(Date);
+  });
+});
