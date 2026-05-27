@@ -292,6 +292,33 @@ export async function syncShopifyStoreData(
     assertNoError(error, "Failed to upsert order_line");
   }
 
+  const fulfilledOrderIds: string[] = [];
+  const partialOrders: string[] = [];
+  for (const order of orders) {
+    const localId = orderMap.get(order.id);
+    if (!localId) continue;
+    const status = (order.displayFulfillmentStatus ?? "").toUpperCase();
+    if (status === "FULFILLED") fulfilledOrderIds.push(localId);
+    else if (status === "PARTIALLY_FULFILLED") partialOrders.push(localId);
+  }
+
+  if (fulfilledOrderIds.length > 0) {
+    const nowIso = new Date().toISOString();
+    await admin
+      .from("order_line")
+      .update({ shipped_at: nowIso })
+      .eq("tenant_id", tenantId)
+      .in("order_id", fulfilledOrderIds)
+      .is("shipped_at", null);
+  }
+
+  if (partialOrders.length > 0) {
+    console.warn(
+      "[shopify-sync] partial fulfillment encountered for orders; per-line mark-shipped deferred to v2",
+      partialOrders
+    );
+  }
+
   let allocationRuns = 0;
   const orderLocalIds = Array.from(new Set(orderLineRows.map((row) => row.order_id)));
   for (const localOrderId of orderLocalIds) {
