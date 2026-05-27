@@ -29,6 +29,20 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     .maybeSingle();
 
   const isSuperAdmin = profile?.role === "super_admin";
+
+  const isSuspendedPath = pathname.startsWith("/app/suspended");
+  if (!isSuspendedPath && profile?.tenant_id && !isSuperAdmin) {
+    const { data: tenantLockState } = await supabase
+      .from("tenant")
+      .select("suspended_at, deleted_at")
+      .eq("id", profile.tenant_id)
+      .maybeSingle();
+    if (tenantLockState?.suspended_at || tenantLockState?.deleted_at) {
+      const { redirect } = await import("next/navigation");
+      redirect("/app/suspended");
+    }
+  }
+
   const [{ data: accessRows }, { data: allTenants }] = await Promise.all([
     supabase
       .from("profile_tenant_access")
