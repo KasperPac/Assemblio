@@ -25,35 +25,47 @@
 .syncError { color: var(--danger); }
 .errorMeta { color: var(--danger); }
 
-.orderRow {
-  align-items: center;
+.tableCard {
+  composes: tableCard from "../_ui/table.module.css";
 }
 
-.orderIdentity {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.table {
+  composes: table from "../_ui/table.module.css";
+}
+
+.cellRight {
+  text-align: right;
+}
+
+.emptyCell {
+  padding: 0 !important;
 }
 
 .orderLink {
   color: var(--ink-strong);
   text-decoration: none;
-  font-weight: 700;
+  font-weight: 600;
+}
+.orderLink:hover {
+  color: var(--brand-2);
 }
 
+.customerName {
+  color: var(--ink-strong);
+}
 
 .viewLink {
   color: var(--brand-2);
   text-decoration: none;
   font-size: 0.84rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .tabBar {
   display: flex;
   gap: 0;
   border-bottom: 1px solid var(--stroke);
-  margin: 16px 0 12px;
+  margin: 8px 0 0;
 }
 .tab {
   padding: 10px 16px;

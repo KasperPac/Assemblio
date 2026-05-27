@@ -5,7 +5,6 @@ import styles from "./orders.module.css";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import PageHeader from "../_ui/page-header";
 import EmptyState from "../_ui/empty-state";
-import ListPanel, { ListRow } from "../_ui/list-panel";
 import { getOrdersPipelineRollup } from "@/lib/orders/pipeline-rollup";
 import { daysLate } from "@/lib/orders/target-ship";
 import {
@@ -154,8 +153,6 @@ export default async function OrdersPage({ searchParams }: Props) {
 
   const visibleOrders = allOrders.filter((o) => matchesTab(o.id, activeTab));
   const now = new Date();
-  const columnsTemplate =
-    "1.1fr 0.9fr 0.9fr 0.6fr 0.9fr 0.8fr 0.8fr 0.4fr";
 
   return (
     <div className={styles.page}>
@@ -191,89 +188,108 @@ export default async function OrdersPage({ searchParams }: Props) {
         ))}
       </nav>
 
-      <ListPanel
-        eyebrow="Pipeline"
-        title={TAB_LABELS[activeTab]}
-        columns={[
-          "Order",
-          "Customer",
-          "Target ship",
-          "Total",
-          "Components",
-          "Production",
-          "Delivery",
-          "",
-        ]}
-        columnsTemplate={columnsTemplate}
-      >
-        {error ? (
-          <EmptyState
-            title="Failed to load orders"
-            message={`Supabase: ${error.message}.`}
-          />
-        ) : visibleOrders.length === 0 ? (
-          <EmptyState
-            title="No orders in this view"
-            message="Try a different tab or sync orders to populate the queue."
-          />
-        ) : (
-          visibleOrders.map((row) => {
-            const rollup = rollups.get(row.id);
-            const orderTotal = totalByOrder[row.id] ?? 0;
-            const target = rollup?.targetShipDate ?? null;
-            const overdue = rollup?.isOverdue ?? false;
-            const lateDays = overdue && target ? daysLate(target, now) : 0;
+      <div className={styles.tableCard}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>Customer</th>
+              <th>Target ship</th>
+              <th className={styles.cellRight}>Total</th>
+              <th>Components</th>
+              <th>Production</th>
+              <th>Delivery</th>
+              <th aria-label="Actions" />
+            </tr>
+          </thead>
+          <tbody>
+            {error ? (
+              <tr>
+                <td colSpan={8} className={styles.emptyCell}>
+                  <EmptyState
+                    title="Failed to load orders"
+                    message={`Supabase: ${error.message}.`}
+                  />
+                </td>
+              </tr>
+            ) : visibleOrders.length === 0 ? (
+              <tr>
+                <td colSpan={8} className={styles.emptyCell}>
+                  <EmptyState
+                    title="No orders in this view"
+                    message="Try a different tab or sync orders to populate the queue."
+                  />
+                </td>
+              </tr>
+            ) : (
+              visibleOrders.map((row) => {
+                const rollup = rollups.get(row.id);
+                const orderTotal = totalByOrder[row.id] ?? 0;
+                const target = rollup?.targetShipDate ?? null;
+                const overdue = rollup?.isOverdue ?? false;
+                const lateDays = overdue && target ? daysLate(target, now) : 0;
 
-            return (
-              <ListRow
-                key={row.id}
-                columnsTemplate={columnsTemplate}
-                className={styles.orderRow}
-              >
-                <Link href={`/app/orders/${row.id}`} className={styles.orderLink}>
-                  {row.order_number ?? row.id.slice(0, 8)}
-                </Link>
-                <span className={styles.meta}>
-                  {customerLabel(row.customer_email)}{" "}
-                  <span className={styles.sourceChip}>
-                    ({sourceChipText(row.source)})
-                  </span>
-                </span>
-                <span
-                  className={overdue ? styles.overdue : styles.meta}
-                >
-                  {target ? formatDate(target) : "—"}
-                  {overdue ? ` · ${lateDays}d late` : ""}
-                </span>
-                <span className={styles.meta}>
-                  {orderTotal > 0 ? formatCurrency(orderTotal) : "—"}
-                </span>
-                {rollup ? (
-                  <ComponentsPill state={rollup.components} />
-                ) : (
-                  <span className={styles.meta}>—</span>
-                )}
-                {rollup ? (
-                  <ProductionPill state={rollup.production} />
-                ) : (
-                  <span className={styles.meta}>—</span>
-                )}
-                {rollup ? (
-                  <DeliveryPill state={rollup.delivery} />
-                ) : (
-                  <span className={styles.meta}>—</span>
-                )}
-                <Link
-                  href={`/app/orders/${row.id}`}
-                  className={styles.viewLink}
-                >
-                  View →
-                </Link>
-              </ListRow>
-            );
-          })
-        )}
-      </ListPanel>
+                return (
+                  <tr key={row.id}>
+                    <td>
+                      <Link
+                        href={`/app/orders/${row.id}`}
+                        className={styles.orderLink}
+                      >
+                        {row.order_number ?? row.id.slice(0, 8)}
+                      </Link>
+                    </td>
+                    <td>
+                      <span className={styles.customerName}>
+                        {customerLabel(row.customer_email)}
+                      </span>{" "}
+                      <span className={styles.sourceChip}>
+                        ({sourceChipText(row.source)})
+                      </span>
+                    </td>
+                    <td className={overdue ? styles.overdue : undefined}>
+                      {target ? formatDate(target) : "—"}
+                      {overdue ? ` · ${lateDays}d late` : ""}
+                    </td>
+                    <td className={styles.cellRight}>
+                      {orderTotal > 0 ? formatCurrency(orderTotal) : "—"}
+                    </td>
+                    <td>
+                      {rollup ? (
+                        <ComponentsPill state={rollup.components} />
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                    <td>
+                      {rollup ? (
+                        <ProductionPill state={rollup.production} />
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                    <td>
+                      {rollup ? (
+                        <DeliveryPill state={rollup.delivery} />
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                    <td className={styles.cellRight}>
+                      <Link
+                        href={`/app/orders/${row.id}`}
+                        className={styles.viewLink}
+                      >
+                        View →
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
