@@ -1,0 +1,345 @@
+{
+  "version": 1,
+  "skills": {
+    "2d-games": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "4db03e15b1160043552e0fe353bfd89a2e3a8234f3b991d2730d88093a418063"
+    },
+    "3-statements": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "4f663cfb291fdc68b0eb6385a67222be58f1e9f7c6827e576a72db0ac270a0e3"
+    },
+    "3d-games": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "f9cbcc4acba16d81657aab99edf6683f2749ac2b968e937ee4f374d6fa1609c7"
+    },
+    "alpha-vantage": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "a25075a35412ef28b7e4fbc863cd86e3d44433ff3d840f6ca48509c3109b01f5"
+    },
+    "api-design": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "d22b17f3f244352250106fc9ac08f18f9a670505bc07511e91a804461af15197"
+    },
+    "api-patterns": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "9eb6135e6f306828f4331859a98ddfebb00dd1ecbc7361177a98372511b26b9f"
+    },
+    "app-builder": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "fe13235efb512da01bf2aeab37c4473ed4576cd84d0a33c6ad17a7917f177942"
+    },
+    "architecture": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "63e6ab07146f10aed351ee190e6c79dd8fb40bf20ed9c15c6ba397fbbba05559"
+    },
+    "bash-linux": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "7de4cb2ee7bcecd08bc9714470afaf93c49542bfda16553dbff22919a5beaad5"
+    },
+    "behavioral-modes": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "6b7dad418ca999953c06d5498c63156239786c93726144a6c3e41a23ae66d5f4"
+    },
+    "brainstorming": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "413be919d614278080871653e2ef5255f19746c2c35a74d57a630adb683c76af"
+    },
+    "clean-code": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "d62fed3ed3168e00b48098f3edf39f94525078216479947c0a5ee14b81b9e163"
+    },
+    "code-review": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "74e0800bcdf82cd6bc363807ead69832bb7103c8ed4c32b3d1999660a5732a1b"
+    },
+    "code-review-checklist": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "32652151e9647c2225acd6f08cbd683789e299ff6f5cf2e964de44329c7f5564"
+    },
+    "compound-docs": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "d38668b2044dbde6646b2aafaba35d4ce312b0ff9844d2f02bfba30623a901a2"
+    },
+    "database-design": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "f0bbb36226ae6be5a002bd36cb56ff577d4de2bf3582ced9d835d3b289d6c0c4"
+    },
+    "dcf-model": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "4620f921e709c5eee3710cea2643726920b25359a44e17833fc8b501b23894f3"
+    },
+    "debug": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "fe226eeb85f22b2f58394c4fc9c388feacd2a3be2c13576a65756f0a0c8675a8"
+    },
+    "deployment-procedures": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "5a97812d880a6382c27b1c6ac326e499c924a32e9dd9cf288997da814196d574"
+    },
+    "docker": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "8afc0f5777fc54f6bc9cfa0c9afd7cf1fcede218879f73a663e8d358d811d907"
+    },
+    "documentation-templates": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "e693be963b1861cf8cff51e3d42f92e144dc017e76bb02e90c56becae228c87b"
+    },
+    "file-todos": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "8031cb938884a2e52769052cd42e62ab232e7069b05282a9e46caa45cd213b31"
+    },
+    "financial-modeling": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "8b78324904be5fa751fc14bad130a9b318dde79631eed683b944a9b97ebc7aa8"
+    },
+    "frontend-design": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "472b510bd10095bc18c560eb438be310e9210fc0d11d487b7b82673fbeb12317"
+    },
+    "game-art": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "cdadcd7f36c78108f84a86c6b8ce9e313873b158cdd02deeb2319da86b16dca2"
+    },
+    "game-audio": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "d172c859ce24cb51d720cbf491aa58635ad47d6ba159051a253c94c880c5a02e"
+    },
+    "game-design": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "20889a7b718d3f4cce95261c93d18e38e5ec4fafbbc9162f9b7b7f5f413b05fb"
+    },
+    "game-development": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "e544e4b64e28cc610cad6043f87f47251570e126946dba8c3129f2c63cecf761"
+    },
+    "geo-fundamentals": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "73e2ba9499bfb461de54df017405dcd221afd9ad6cd3a5094716239455af4a90"
+    },
+    "i18n-localization": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "4078f8590da283e9ec17e916883b5b982628fb6c8bee860a1625ad5589d4ab83"
+    },
+    "intelligent-routing": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "d6bb9fcc939f588cabb5c18d2857b9363530999880969f6b2fa7e2e17fa3c470"
+    },
+    "lbo-model": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "41ebfe0caa243a33dc1c4cd03bd652777534bf1915586e498515eefce6b6f1b7"
+    },
+    "mcp-builder": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "422702294d4698dfa55169bedfd1160cfbf8503ec65103087cf24a48cc6fca51"
+    },
+    "merger-model": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "1046a1d54a52205384d4757839c36399f03098405183ba517a7aa321086923f2"
+    },
+    "mobile": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "1938b8fe7461eb91fd7f25ae3588097a67268d6822cf4270407db6eee5ab3dfa"
+    },
+    "mobile-design": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "f24ab51e4f6bbb6a38ad581b8dc648b6ffc6542f376c8fe0e23c08966653bff8"
+    },
+    "mobile-games": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "b8fbd0db8da88eb9a8a3a30db17393a754d297b1d7810fe03bb90a5a1e31e4a4"
+    },
+    "multiplayer": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "a09f117699a2cb10ff2359ba8669782a1554b002400e2a07bd3a7ba4cdb7c53c"
+    },
+    "nextjs": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "f27eea071f401ee1affffde58b7e58f95a4eb94dee27c0a5663323a608922db9"
+    },
+    "nodejs-best-practices": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "a942c5fc15af3e9f80bf7d338d31c8eeff411b5430995211ef3b975e63c3c929"
+    },
+    "parallel-agents": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "2635dc098237fe0067267d5973b2f142efcc272f43ce3ae635f590327b7a4ea6"
+    },
+    "pc-games": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "005cf0d0399fb4f580c078b74a5edb1c3fc9d9b07aad2c896479ef6ecdb76ed7"
+    },
+    "performance": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "41d0fa20142d8837eeffa17a0eb9d3b04aebd8bc8d5cee40e8169c548790864f"
+    },
+    "performance-profiling": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "905526e113543f943526053d7fe7b9998e9538816e475198c315ae5eb2c9fbf4"
+    },
+    "plan-writing": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "72d16a06648bf0c7ccdd538266f6a423b3ea746761f5bbf282c21dd6945195c3"
+    },
+    "powershell-windows": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "a5826d34e236673f7b06aa37c92121f31cffcd0dc405e79a63a97060114f3876"
+    },
+    "python-patterns": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "43a9de3f27a62b6ea5bd2e30b4d45ec71bf1467bbae67067dfcc83ce83bbcfc3"
+    },
+    "react-best-practices": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "7081185308ae4cb51271e9344ae8a6a612affcdd9485626d5c2814934354d310"
+    },
+    "react-patterns": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "ba1fe2179309646b9f061fc1203f246cdb9c8e211e2eddf2f2f163a325b906e6"
+    },
+    "red-team-tactics": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "5f9af33d1109245174eeec54f638ebeee31828a3889bbb4450b387e42124d2fc"
+    },
+    "rust-pro": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "af2806157009efb53821e30afcf77cc401b25de58abd5e9e33af5fb99772b8eb"
+    },
+    "security": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "c0e94f113c9e4f3d148aba87be7b48fdc684bac690a410c536727f8eba884147"
+    },
+    "seo-fundamentals": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "7b0e03dccdad66413b73d92779d0b94dc970da67afc613a815626f8b155e4340"
+    },
+    "server-management": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "2e1a9dd7f0c20ad6d74c1c394147a29cd99688e94d64ae32eb260b1c94d3c416"
+    },
+    "session-resume": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "7d331cbb5a18feb379a16c766f2117bf17720784d335f4318b04ce64a11ceae4"
+    },
+    "supabase": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "7bc43e3171d3ac13cdc10cc6520d840d6f09c8092bf87da858bc2c6174c64fa8"
+    },
+    "systematic-debugging": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "773a1f9cbb2bf60897447c927cc286b7956cce0171b05c41613f18d04640c28f"
+    },
+    "tailwind": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "46bb46667cec7234c17c5f3cf4d5b07c6e405e61225dce31455c5c9e513abaaa"
+    },
+    "tailwind-patterns": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "f290ab4c14cc322a2631afec394d711dff83ca0c5b05322d03e14a4bc6859674"
+    },
+    "tdd-workflow": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "adde44ca11625f88cb470a436c2d9c91aaa357a07eba18d522edc7e868ed8afc"
+    },
+    "templates": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "a38e77aa9856f776406e28b8fbd1d6fc17ab152a9c5396fab3f6c5277759d4e3"
+    },
+    "testing": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "aad26c6d18f6143fdb309df84ffa62d2118426d74c7037a096d898f99b7b747a"
+    },
+    "testing-patterns": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "7b2e935d9f17c2e8a9766020be26014a1119d668448c7f54c77af0d9aa8b80b3"
+    },
+    "vr-ar": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "6cb2150f6eb628b2f00726999d77eb20d977fa09a9e7f60dd5d404d1105b80ad"
+    },
+    "vulnerability-scanner": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "6a1cc2de58f01dd72702bad31110a987ef237c7b69b7067f70837ccac3e1a717"
+    },
+    "web-design-guidelines": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "071dd305e37bc0435986656747b6e300130ab7bae072e1b52625b9bab32445b1"
+    },
+    "web-games": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "874691aed68a7744b52d39bf63237cd2301eeba883ff543771fc0d800ad67556"
+    },
+    "webapp-testing": {
+      "source": "dgkngk/super-kit",
+      "sourceType": "github",
+      "computedHash": "fd55bdec6402f7bc2e7b6ec0fc7285f5ce14df455c738ff2374db4ecf59fb445"
+    }
+  }
+}

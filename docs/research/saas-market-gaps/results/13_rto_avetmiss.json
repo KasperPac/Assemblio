@@ -1,0 +1,85 @@
+{
+  "id": "13_rto_avetmiss",
+  "name": "RTO compliance + AVETMISS reporting",
+  "tier": "B",
+  "hypothesis": "ASQA audits + AVETMISS submission painful; aXcelerate/JobReady old/expensive; hundreds of small AU RTOs.",
+
+  "market_sizing": {
+    "target_buyer": "RTO owner/director or compliance/quality manager. For small RTOs (<200 students) the director is the buyer; for mid (200–2,000) it's a dedicated compliance manager.",
+    "business_count_au": "~4,000–5,000 RTOs in Australia (ASQA-regulated plus state regulators VRQA in Victoria and TAC in WA). Of these, roughly 60–70% are small/mid private RTOs (the ICP) — ~2,500–3,500 businesses.",
+    "business_count_global": "Direct AVETMISS analogue does not exist; closest equivalents: UK ~9,000 Ofsted-regulated learning providers; US ~30,000+ post-secondary career-college/CTE providers reporting to IPEDS; NZ ~700 TEC-funded PTEs; Canada ~1,200 private career colleges. Each market has its own data standard so cross-border data engine reuse is partial.",
+    "typical_size": "Small/mid RTO: 5–50 staff, AUD $0.5M–$15M revenue, 50–2,000 active students/year."
+  },
+
+  "pricing_reality": {
+    "incumbent_pricing": "aXcelerate: 'contact for quote', positioned mid-to-large RTOs — anecdotal AUD $500–2,500/month plus implementation. JobReady (ReadyTech): enterprise quote-only, typically $1,000+/month. Wisenet: published tiers — Starter $290/mo, Standard $500/mo, Premium $770/mo. VETtrak (ReadyTech): quote-only. Cloud Assess: quote-only LMS-focused. Smaller/newer: RTObase, RTOPilot, eSkilled, PowerPro RTO — generally $150–500/mo.",
+    "willingness_to_pay": "$100–500/mo band is realistic for small RTOs; the existing Wisenet Starter at $290 validates the lower end. Mid RTOs sit above $500/mo and are harder to win without LMS integration depth.",
+    "sales_motion": "Inside sales + 30-day trial; channel via RTO consultants/auditors and ITECA partnerships. ASQA audit prep is a powerful trigger event.",
+    "realistic_arpu_au": "AUD $250–450/month for the ICP (small private RTOs and short-course providers).",
+    "expansion_revenue_potential": "Moderate. Expansion via: (a) LMS/assessment bundling (add-on per active learner), (b) USI lookups and police-check verification (per-check fee), (c) AI assessment-tool review/validation (recurring premium feature aligned with 2025 Standards), (d) embedded payments for student fees, (e) trainer marketplace. Embedded fintech is limited because student fees often flow through state-funded contracts."
+  },
+
+  "competitive_landscape": {
+    "incumbents": "1) aXcelerate — Cairns/Brisbane-based, roots go back to 1989 (VM Learning) with commercial SMS launched 2008; the dominant 'old-guard' mid-market SMS. 2) JobReady — Sydney-based, acquired by ReadyTech; enterprise-focused. 3) Wisenet — published tiered pricing, dedicated SMS+LMS for AU/NZ RTOs. 4) VETtrak — long-standing Tasmania-origin desktop+cloud product, now ReadyTech. 5) Cloud Assess — Brisbane, assessment/LMS-led, integrates with aXcelerate/VETtrak/Wisenet/JobReady. Adjacent newer: eSkilled (RTO Software), RTOPilot, RTObase, PowerPro RTO, RTOComply.ai, SELMA, Coursebox AI.",
+    "incumbent_age_years": "aXcelerate ~17 years as commercial product (35+ years as an RTO/training entity); VETtrak ~25+ years; JobReady ~15+ years; Wisenet ~20 years. Average dominant-incumbent age >15 years — strong replatform signal.",
+    "user_satisfaction_signals": "Recurring complaints across Capterra/G2/SoftwareAdvice and ITECA forums: (a) aXcelerate UI feels dated and configuration is heavy; (b) VETtrak migration to cloud has been painful; (c) hidden costs around AVETMISS support, USI integration, custom forms; (d) implementation is multi-month for any mid-market option; (e) reporting/AVETMISS validation errors require external tools or consultants. RTOPilot and similar challengers explicitly market against 'manual AVETMISS pain'.",
+    "recent_funding_or_ma": "ReadyTech (ASX:RDY) owns JobReady + VETtrak — consolidating the legacy SMS space. Cloud Assess raised growth funding and continues to expand globally. No major new VC-backed AU-native RTO-software entrant in the last 12 months, though several bootstrapped challengers (RTOComply.ai, RTObase) are visible.",
+    "ai_disruption_risk": "Rising. Coursebox AI, RTOComply.ai and assessment-tool-review tools are positioning around the 2025 Standards' new 'pre-use assessment tool review' requirement. No dominant AI-native SMS yet — window is open but narrowing inside 12 months for assessment-validation specifically."
+  },
+
+  "opportunity_quality": {
+    "core_pain": "Two distinct unresolved workflows. (1) AVETMISS NAT-file generation and submission — small RTOs still use NCVER's free Data Entry Tool plus spreadsheets, hitting validation errors (top 5 errors are well known) and paying consultants to fix them at year-end. (2) Pre-use assessment-tool review and audit-evidence assembly under the 2025 Outcome Standards, which mandate documented review of every assessment tool. Word/Excel + SharePoint is the dominant 'system'. Secondary pain: USI verification, complaints register, trainer currency/PD tracking.",
+    "moat_source": "Defensibility from: (a) AVETMISS rule engine kept current across Release 8.0 NAT files + 19 ASQA compliance rules, (b) USI API integration depth, (c) accumulated assessment-tool review history and templates (network-effect), (d) state-regulator variance (VRQA, TAC) encoded as rules, (e) ITECA/auditor channel relationships.",
+    "critical_integrations": "Must: NCVER AVETMISS NAT-file export, USI Registry API, Xero/MYOB, Stripe for student fees, Single Touch Payroll for trainers, state apprenticeship portals (DAMS, state TAFE funding contracts). Strongly desired: Moodle/Canvas LMS integration, e-signature, Zoom/Teams for virtual delivery, police-check vendors.",
+    "incumbent_ehr_lock_in": "Moderate. Larger RTOs are locked into aXcelerate/JobReady because student history, AVETMISS submissions and certificates issued live there. Side-car wedge (assessment-tool review, audit-evidence portal) is viable; rip-and-replace is harder."
+  },
+
+  "build_difficulty": {
+    "regulatory_complexity": "High. Standards for RTOs 2015 (legacy) vs 2025 (Outcome Standards effective 1 July 2025), AVETMISS Release 8.0, USI Act, ESOS Act for CRICOS providers, state apprenticeship contracts. Audit framework shifted to outcome-based + continuous evidence in 2025.",
+    "regulatory_changes_2025_2026": "Strong forcing function: (1) Standards for RTOs 2025 came into effect 1 July 2025 — split into Outcome Standards, Compliance Requirements and Credential Policy; mandates that 'every assessment tool is reviewed before use' (pre-use review now compulsory). (2) Validation requirements significantly tightened vs the 2015 Standards. (3) AVETMISS annual submission deadline is locked (Total VET Activity by end-February each year) — nil-return still required. (4) FAQ Version 3.0 (October 2025) clarified ongoing transitional expectations. RTOs reviewing all assessment tools and updating evidence systems is a 2025–2026 buying trigger.",
+    "domain_depth": "Deep. AVETMISS validation, ASQA audit rituals, Training Package vs accredited-course rules, USI quirks. ~6–12 months to credible domain fluency; faster with a former auditor or RTO compliance manager co-founder.",
+    "mvp_effort": "6–9 months for a narrow wedge (e.g. AVETMISS validator + assessment-tool review register). Full SMS replacement is 18+ months.",
+    "technical_risks": "Moderate. Hard problems: AVETMISS NAT-file generation passing NCVER validation across all 8 files; USI Registry integration (token-based, batch lookups); rule engine for assessment-tool review aligned to Principles of Assessment + Rules of Evidence; state regulator variance.",
+    "state_by_state_variance_au": "Yes. Victoria (VRQA) and WA (TAC) regulate state-only RTOs separately from ASQA. State-funded contracts (Smart and Skilled NSW, Skills First Victoria, JobTrainer follow-ons) each have their own reporting requirements layered over AVETMISS.",
+    "data_residency_requirement": "Yes — AU data residency expected; student data is sensitive and state-funded contracts often require it."
+  },
+
+  "distribution_difficulty": {
+    "channel_options": "(1) ITECA partnerships and RTO Business Summit sponsorships (Sydney/Melbourne/Perth/Adelaide annually). (2) RTO consultant/auditor channel — a small community of ~50–100 consultants drives a large share of software recommendations. (3) Content/SEO on AVETMISS errors, 2025 Standards changes, assessment-tool review templates. (4) NCVER and ASQA webinar adjacencies. (5) LinkedIn outbound to RTO compliance managers (high LinkedIn density). (6) Coursebook/training package publisher partnerships.",
+    "trade_association_count_au": "3–5 active: ITECA (peak body, formerly ACPET), Velg Training (large CPD provider but operates association-like community), state-level bodies (Community Colleges Australia, TAFE Directors Australia for public side), Australian Council for Adult Literacy.",
+    "trade_publication_count": "Limited — VDC News, Campus Review, Training & Development Australia (AITD), Velg Training newsletter, ITECA member updates. ~4–6 with paid inventory.",
+    "industry_facebook_group_size": "Smaller than NDIS — 'RTO Mentors', 'RTO Compliance Help Australia' and similar groups range from a few thousand to ~15k members. LinkedIn is the dominant professional channel for this segment.",
+    "conference_event_count_au": "6–10/year: ITECA RTO Business Summits (4 cities), Velg National VET Conference, NCVER 'No Frills' research conference, AVETRA, state ITECA forums. Most have <$10K exhibit booths.",
+    "cold_outbound_viability": "High. training.gov.au lists every RTO publicly with contact and scope of registration. Enrichment + cadence works well; LinkedIn outreach to compliance managers is very effective.",
+    "founder_market_fit_proxy": "Moderate. Compliance managers will engage with technical outsiders but trust accelerates with auditor/RTO operator credibility. Less closed than funeral/vet; similar to NDIS.",
+    "case_study_acquisition_cost": "First 5 reference customers achievable in 2–3 months via ITECA event presence + consultant warm intros; expect to offer migration assistance.",
+    "content_seo_competitiveness": "Moderately crowded — aXcelerate, Cloud Assess, RTOPilot, eSkilled publish heavily. Long-tail keywords on 2025 Standards, AVETMISS errors and pre-use assessment review are winnable.",
+    "insurer_or_gatekeeper_dependency": "NCVER AVETMISS submission is file-based (no gated API). USI Registry API requires organisation registration but is open to RTOs and their software vendors. ASQA has no public API. Lower gatekeeper risk than insurer-dependent verticals."
+  },
+
+  "personal_fit": {
+    "manuva_data_model_reuse_pct": "~20–30%. Multi-tenant org/site, staff, RLS, audit log, document store reuse cleanly. Course/unit/competency/enrolment schema is new. No BOM/inventory reuse.",
+    "manuva_code_reuse": "Auth + tenant context, RLS patterns, server actions, invite flow, activity logging, design tokens all transfer. Reports/exports pattern reusable for AVETMISS NAT-file generation.",
+    "buyer_persona_overlap_with_manuva": "Low. Manuva sells to manufacturers, not training providers — though manufacturing employers do contract with RTOs for apprentices/upskilling, that's not a direct bundle.",
+    "adjacency_to_manufacturing": "Low. Different buyer, different regulator, different vocabulary. Platform-level reuse only.",
+    "technical_moat_durability_months": "9–12 months. AVETMISS rule engine + accumulated audit history + state regulator variance provide reasonable defensibility. Core SaaS shell replicable inside a year by AI-tooled competitors."
+  },
+
+  "unit_economics": {
+    "gross_margin_sensitivity": "Healthy. Low AI inference need (assessment-tool review can be batch). USI lookups have a marginal cost but pass-through is acceptable. ~85% gross margin achievable at $250–450 ARPU.",
+    "multi_location_natural": "Moderate. RTOs grow by adding delivery sites, third-party arrangements and CRICOS campuses — drives per-site expansion but not as naturally as multi-clinic verticals.",
+    "churn_risk": "Moderate-high at the small end. Small RTOs have elevated business-failure rates (ASQA cancellations, voluntary withdrawals). Mid-RTOs are sticky once AVETMISS history accumulates. Blended annual churn likely 10–18%.",
+    "customers_needed_for_target_arr": "At AUD $325/mo ARPU = $3,900/yr → ~260 customers for $1M ARR. Achievable but the addressable pool (~2,500–3,500) means ~10% market penetration needed — tighter than NDIS."
+  },
+
+  "uncertain": [
+    "business_count_global",
+    "willingness_to_pay",
+    "recent_funding_or_ma",
+    "industry_facebook_group_size",
+    "trade_association_count_au",
+    "trade_publication_count",
+    "conference_event_count_au",
+    "churn_risk"
+  ]
+}

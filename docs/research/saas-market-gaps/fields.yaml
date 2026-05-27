@@ -1,0 +1,193 @@
+version: 1
+description: Field definitions for SaaS market-gap research. Each item in outline.yaml is researched against these fields. detail_level controls expected depth (brief = 1–2 lines, moderate = a short paragraph + 2–3 facts, detailed = paragraph with citations).
+
+categories:
+  # ───────────────────────────────────────────────
+  # 1. Market sizing
+  # ───────────────────────────────────────────────
+  market_sizing:
+    description: How many target businesses exist and what they look like
+    fields:
+      - name: target_buyer
+        description: Who signs the contract (owner, ops manager, practice manager, etc.)
+        detail_level: brief
+      - name: business_count_au
+        description: Estimated number of target businesses in Australia
+        detail_level: moderate
+      - name: business_count_global
+        description: Global TAM (number of businesses) — focus on US, UK, CA in addition to AU
+        detail_level: moderate
+      - name: typical_size
+        description: Typical employee count and/or annual revenue range of a target buyer
+        detail_level: brief
+
+  # ───────────────────────────────────────────────
+  # 2. Pricing reality
+  # ───────────────────────────────────────────────
+  pricing_reality:
+    description: Can the $100–500/mo band realistically be achieved
+    fields:
+      - name: incumbent_pricing
+        description: What current tools charge (per seat / per location / per month). Specific examples.
+        detail_level: moderate
+      - name: willingness_to_pay
+        description: Realistic ACV for a new entrant in the $100–500/mo band, adjusted for AU (typically 70–85% of US)
+        detail_level: moderate
+      - name: sales_motion
+        description: Self-serve / inside sales / outside sales / channel
+        detail_level: brief
+      - name: realistic_arpu_au
+        description: AU-specific ARPU expectation (after AU willingness-to-pay discount)
+        detail_level: brief
+      - name: expansion_revenue_potential
+        description: Can ARPU grow 2–3× via payments, capital, marketplace, AI features? Embedded fintech opportunity?
+        detail_level: moderate
+
+  # ───────────────────────────────────────────────
+  # 3. Competitive landscape
+  # ───────────────────────────────────────────────
+  competitive_landscape:
+    description: Who's there now and how vulnerable they are
+    fields:
+      - name: incumbents
+        description: Top 3–5 current players with brief description and AU presence
+        detail_level: detailed
+      - name: incumbent_age_years
+        description: Founded year of dominant incumbent. >15 years correlates with UI rot + replatform opportunity.
+        detail_level: brief
+      - name: user_satisfaction_signals
+        description: Reddit / G2 / Capterra / IndieHackers complaint patterns. Quote specifics where possible.
+        detail_level: detailed
+      - name: recent_funding_or_ma
+        description: VC activity in last 12 months (mid-2025 → mid-2026). New entrants, exits, consolidation.
+        detail_level: moderate
+      - name: ai_disruption_risk
+        description: Are AI-native challengers already raising rounds in this vertical? If yes, window is closing.
+        detail_level: moderate
+
+  # ───────────────────────────────────────────────
+  # 4. Opportunity quality
+  # ───────────────────────────────────────────────
+  opportunity_quality:
+    description: Is there actually a wedge to exploit
+    fields:
+      - name: core_pain
+        description: The single most unsolved workflow today. What spreadsheets / paper / WhatsApp is replacing software for?
+        detail_level: detailed
+      - name: moat_source
+        description: Where would defensibility come from — integrations, data, network, switching cost, regulatory?
+        detail_level: moderate
+      - name: critical_integrations
+        description: Must-have integrations (Xero/MYOB, Stripe, govt portals, OEMs, EHRs)
+        detail_level: moderate
+      - name: incumbent_ehr_lock_in
+        description: Are buyers locked into an EHR/ERP that owns their data? Determines side-car vs. rip-and-replace.
+        detail_level: brief
+
+  # ───────────────────────────────────────────────
+  # 5. Build difficulty
+  # ───────────────────────────────────────────────
+  build_difficulty:
+    description: How hard to ship a credible MVP and reach product-market fit
+    fields:
+      - name: regulatory_complexity
+        description: Licensing, compliance burden, audit requirements
+        detail_level: moderate
+      - name: regulatory_changes_2025_2026
+        description: Specific upcoming regulatory events forcing buyer churn (e.g., NSW eCoC July 2026, NDIS Support at Home 2026, FSMA 204). Forcing functions are gold for new entrants.
+        detail_level: detailed
+      - name: domain_depth
+        description: Depth of domain expertise required. Can it be acquired by an outsider, or only by an insider?
+        detail_level: moderate
+      - name: mvp_effort
+        description: Months to credible MVP for a solo/small-team founder
+        detail_level: brief
+      - name: technical_risks
+        description: Hard technical problems (routing optimization, nesting, ML, deep integrations)
+        detail_level: moderate
+      - name: state_by_state_variance_au
+        description: Does regulation differ enough across AU states that multiple rule engines are needed?
+        detail_level: brief
+      - name: data_residency_requirement
+        description: AU-only data hosting required? (NDIS, healthcare, govt-adjacent.)
+        detail_level: brief
+
+  # ───────────────────────────────────────────────
+  # 6. Distribution difficulty (the real killer for solo VSaaS)
+  # ───────────────────────────────────────────────
+  distribution_difficulty:
+    description: Can you actually reach the buyer at a sustainable CAC
+    fields:
+      - name: channel_options
+        description: Available go-to-market channels (paid, content/SEO, partnerships, community, trade shows, cold outbound)
+        detail_level: detailed
+      - name: trade_association_count_au
+        description: Number of active industry associations in Australia (proxy for newsletter sponsorship and event reach)
+        detail_level: brief
+      - name: trade_publication_count
+        description: Active trade publications/newsletters with paid sponsorship slots
+        detail_level: brief
+      - name: industry_facebook_group_size
+        description: Approx total members across active industry Facebook groups — the dominant SMB community channel in AU trades/services
+        detail_level: brief
+      - name: conference_event_count_au
+        description: Annual AU trade shows/conferences where you could exhibit at <$10K
+        detail_level: brief
+      - name: cold_outbound_viability
+        description: Can verified emails/phones be found at scale? (Licensed electricians public; cosmetic chemists not.)
+        detail_level: moderate
+      - name: founder_market_fit_proxy
+        description: Does the buyer trust an outsider? Some verticals (funeral, vet) require deep insider trust; manufacturing trades more open.
+        detail_level: moderate
+      - name: case_study_acquisition_cost
+        description: How hard to get the first 5 paying reference customers
+        detail_level: brief
+      - name: content_seo_competitiveness
+        description: SEO crowding for category keywords. Can a new entrant rank?
+        detail_level: brief
+      - name: insurer_or_gatekeeper_dependency
+        description: Does the workflow require a gatekeeper API (insurer, govt portal, OEM) that won't grant access to a startup?
+        detail_level: moderate
+
+  # ───────────────────────────────────────────────
+  # 7. Personal fit (Manuva reuse / founder fit)
+  # ───────────────────────────────────────────────
+  personal_fit:
+    description: How much existing Manuva work transfers, and is the founder credible
+    fields:
+      - name: manuva_data_model_reuse_pct
+        description: Estimated % of Manuva's schema (BOM, inventory, suppliers, locations, production orders) directly reusable
+        detail_level: moderate
+      - name: manuva_code_reuse
+        description: What auth, tenant, RLS, UI patterns transfer cleanly
+        detail_level: brief
+      - name: buyer_persona_overlap_with_manuva
+        description: Could you sell to existing Manuva customers? (Bundle/expansion play vs. fresh GTM.)
+        detail_level: moderate
+      - name: adjacency_to_manufacturing
+        description: How close to the user's current domain knowledge
+        detail_level: brief
+      - name: technical_moat_durability_months
+        description: How long until an AI-coding-tool-equipped competitor could replicate your MVP?
+        detail_level: brief
+
+  # ───────────────────────────────────────────────
+  # 8. Unit economics
+  # ───────────────────────────────────────────────
+  unit_economics:
+    description: Will the business actually be worth running at this price point
+    fields:
+      - name: gross_margin_sensitivity
+        description: Does the product require AI inference / SMS / human-in-loop costs that erode SaaS 85% margin?
+        detail_level: moderate
+      - name: multi_location_natural
+        description: Do buyers naturally grow to multiple sites (drives seat/location expansion)?
+        detail_level: brief
+      - name: churn_risk
+        description: How likely are buyers to churn (project-based businesses, seasonal, single-owner)?
+        detail_level: brief
+      - name: customers_needed_for_target_arr
+        description: How many customers needed at realistic ARPU to hit $1M ARR
+        detail_level: brief
+
+uncertain: []  # auto-populated by /research-deep when an agent flags low-confidence fields

@@ -1,0 +1,67 @@
+{
+  "id": "16_allied_health",
+  "name": "Allied health solo/group practice (physio, osteo, EP)",
+  "tier": "C",
+  "hypothesis": "Cliniko/Halaxy UI-stale; AI scribe + Medicare/private-health claim workflow is greenfield in AU.",
+  "market_sizing": {
+    "target_buyer": "Solo or group practice owner / principal practitioner — physiotherapist, osteopath, exercise physiologist, occupational therapist, podiatrist, chiropractor. Practice manager in larger groups.",
+    "business_count_au": "Physiotherapy services alone: ~9,500 businesses (IBISWorld 2025). Adding osteopathy (~2,800 osteopaths, ~1,200–1,500 practices), exercise physiology (~7,000 AEPs, ~1,500 practices), chiropractic (~5,500 chiros, ~2,500 practices), podiatry (~5,800 podiatrists, ~2,500 practices) and OT private practice (~2,000 practices) gives a combined TAM of ~18,000–22,000 allied health businesses in AU. The high-fit ICP (1–10 practitioner group practices) is ~6,000–10,000 businesses.",
+    "business_count_global": "US: ~38,000 PT clinics + ~70,000 chiro practices + tens of thousands of OT/podiatry — combined allied-health practice count ~150,000+ in US alone. UK: ~8,000 physio clinics + ~3,000 osteo. Canada: ~10,000 allied-health practices. Global English-speaking allied-health TAM easily 200,000+ practices.",
+    "typical_size": "1–5 practitioners + 1–2 reception. Annual revenue $200k (solo) to $2M (5-practitioner group). Strong long-tail of multi-site groups in metro areas."
+  },
+  "pricing_reality": {
+    "incumbent_pricing": "Cliniko: $45/mo (1 practitioner), $95/mo (2–5), $145/mo (6–8), $195/mo (9–12), $295/mo (13–25), $395/mo (26–200). Halaxy: free base + pay-per-use credits (SMS, Medicare claim, telehealth, AI scribe). Power Diary: ~AU $25–$45/practitioner/month. Nookal: ~AU $55–$75/practitioner/month. Splose: $30/mo per tier (small AU player). Zanda: ~$59–$159/mo. Pricing band is clearly $45–$395/mo, well inside the $100–$500 target.",
+    "willingness_to_pay": "$150–$350/mo per practice realistic for a new entrant that offers a clear AI + AU-claims wedge. Owners already pay Cliniko + SMS + HICAPS + AI scribe (Heidi/Lyrebird) + Xero separately; a consolidator at $300/mo replacing 2–3 tools is attractive.",
+    "sales_motion": "Self-serve trial + inside sales follow-up. Facebook group + practitioner-network referrals drive most signups in this segment.",
+    "realistic_arpu_au": "$200–$300/mo per practice (AU-specific). Multi-practitioner expansion lifts this to $400–$600/mo.",
+    "expansion_revenue_potential": "High. Embedded payments (Tyro/Stripe — practices process tens of thousands per month), HICAPS/Medipass private-health claim margin, telehealth, AI scribe ($30–$80/seat add-on), patient comms (SMS), online-booking marketplace fees. 2–3× ARPU expansion realistic; payments alone can double net revenue per customer."
+  },
+  "competitive_landscape": {
+    "incumbents": "1) Cliniko (Melbourne, founded ~2011) — dominant AU allied-health PMS, clean UI for its era but increasingly criticised for thin reporting, no native AI, expensive SMS. 2) Halaxy (Melbourne, founded 2012, rebranded 2019) — free base + credits, broad feature surface, dated UI, mixed reviews. 3) Nookal (AU) — solid feature set, mid-tier price. 4) Power Diary (AU/NZ) — telehealth strength. 5) Splose (AU) — NDIS / OT focus, AI features baked in (notable challenger). 6) Coreplus, Front Desk (international). AU allied-health PMS market is unusually crowded with AU-native players.",
+    "incumbent_age_years": "Cliniko ~15 years (founded 2010–2011). Halaxy ~14 years. Power Diary ~17 years. Coreplus ~12 years. Dominant incumbents are 13–17 years old — classic replatform window.",
+    "user_satisfaction_signals": "Reddit r/Physiotherapy and r/ausphysio threads complain about Cliniko's thin reporting, slow feature velocity, $0.10/SMS gouge, lack of native AI scribe, and inability to do bulk Excel updates without creating duplicates. Halaxy critiques: dated UI, credit-system confusion, support latency. Capterra reviews repeat themes: \"works but feels old\". Practitioners are actively shopping for an AI-native alternative; Splose is winning some of this attention but is OT/NDIS-skewed.",
+    "recent_funding_or_ma": "Heidi Health (Melbourne AI scribe) raised significant rounds in 2024–2025 and is being adopted at scale (claims 50%+ of AU GPs); aggressively expanding into allied health. Lyrebird Health partnered with Best Practice (GP PMS market leader). Splose has steadily added AI features through 2025. No major M&A in core AU allied-health PMS in last 12 months — Cliniko remains bootstrapped/independent, Halaxy unchanged.",
+    "ai_disruption_risk": "High and rising. Heidi and Lyrebird are AI scribes that integrate alongside any PMS, eroding the value of a fresh PMS-with-AI play. Splose has shipped AI features. Window for a pure AI-scribe wedge is closing (12–18 months); window for an AI-native full PMS with deep AU claims is still open ~18–24 months."
+  },
+  "opportunity_quality": {
+    "core_pain": "Three persistent pains: (1) Medicare/EPC (Chronic Disease Management — items 10960, 10968 etc.) and DVA claim submission is multi-step, often manual, error-prone; (2) Private-health rebate posting via HICAPS/Tyro/Medipass is bolt-on and reconciliation lives in spreadsheets; (3) Clinical notes consume 1–2 hours/day, driving demand for AI scribes — but bolting a third-party scribe onto Cliniko leaves data orphaned. Plus NDIS plan-managed invoicing for practices serving NDIS clients is a known sink (line-item invoicing, plan-balance tracking).",
+    "moat_source": "Integration depth (Medicare PRODA, HICAPS/Tyro/Medipass, NDIS plan managers, My Health Record, AHPRA) + AI scribe specialised on allied-health vocabulary + workflow lock-in once clinical notes/templates are inside. Network effects via patient online booking + practitioner directory weak vs. HealthEngine.",
+    "critical_integrations": "Medicare Online (PRODA/HPOS), DVA claiming, HICAPS, Tyro Health, Medipass, Xero/MYOB, Stripe, AHPRA registration lookup, My Health Record (FHIR), HealthEngine (booking), Twilio/MessageMedia, AI scribe (Heidi/Lyrebird API or own model), Halaxy/Cliniko data import.",
+    "incumbent_ehr_lock_in": "Moderate. Cliniko/Halaxy export data and have APIs; migration is annoying but feasible. Not as locked as hospital EHRs. Side-car AI-scribe play viable but commoditising fast; rip-and-replace play is the bigger prize."
+  },
+  "build_difficulty": {
+    "regulatory_complexity": "Moderate. Privacy Act 1988 + APP, My Health Record obligations, AHPRA registration checks, Medicare/DVA claim compliance, NDIS Practice Standards (if serving NDIS). State health-records acts (e.g., VIC HRA, NSW HRIPA) add minor variance. PCI-DSS for payments.",
+    "regulatory_changes_2025_2026": "1) NDIS Support at Home transition (replacing CHSP/HCP from 1 July 2025 with rollout through 2026) drives big workflow change for allied-health providers serving older Australians. 2) NDIS pricing/registration reform under the Getting the NDIS Back on Track Act (2024) — new registration categories rolling out 2025–2026, forcing many providers to re-register and update their software. 3) MBS Review continues to adjust allied-health item numbers (CDM/EPC items under review). 4) AHPRA expanded scope of practice consultations. 5) My Health Record connection expected to become more mandatory for allied health. Each is a forcing function justifying PMS switch.",
+    "domain_depth": "Medium. Allied-health workflow (assessment, treatment plan, SOAP notes, claim) is documented and learnable. Medicare/HICAPS specifics take 3–6 months. Clinical co-founder valuable but not strictly required.",
+    "mvp_effort": "6–10 months solo for credible MVP (calendar + notes + AI scribe + HICAPS + Medicare CDM claiming). Power Diary/Splose-level feature parity is 12–18 months.",
+    "technical_risks": "PRODA/HPOS integration (B2B device-certificate auth), HICAPS terminal integration (hardware + software paths), Medipass API onboarding, AI scribe accuracy on allied-health terminology, NDIS plan-managed invoicing edge cases.",
+    "state_by_state_variance_au": "Low — federal Medicare/DVA/NDIS; minor state variance in WorkCover, state health records acts, and TAC/icare/return-to-work schemes.",
+    "data_residency_requirement": "AU hosting strongly expected; My Health Record requires AU. Supabase Sydney suitable."
+  },
+  "distribution_difficulty": {
+    "channel_options": "1) Facebook groups (Physio Network Australia, Aussie Physio, Osteo Australia, NDIS Allied Health Providers — tens of thousands of members combined). 2) APA (Australian Physiotherapy Association) conferences/newsletter. 3) Heidi / Lyrebird co-marketing if positioned as PMS partner. 4) SEO on \"Cliniko alternative AU\" / \"physio practice software AI\". 5) Paid: Google Ads on competitor keywords moderately competitive. 6) Practitioner referral / champion model — single practice champion drives 5–10 referrals. 7) University placement programs (new grads bring software preference into practices).",
+    "trade_association_count_au": "8–12 active: APA (Physio), Osteopathy Australia, ESSA (Exercise Physiology), Chiropractors Association of Australia, Australian Podiatry Association, OT Australia, Speech Pathology Australia, Dietitians Australia, plus state branches.",
+    "trade_publication_count": "5–8: InMotion (APA), Australian Journal of Physiotherapy, Osteopathy Australia magazine, ESSA newsletter, Allied Health Times, Talking HealthTech podcast, plus state-level newsletters.",
+    "industry_facebook_group_size": "Approximately 30,000–60,000 combined members across active AU allied-health groups (Aussie Physio, Physio Network AU, Osteo AU, NDIS Allied Health Providers, Sole Trader Physios, etc.). Facebook is the dominant peer channel.",
+    "conference_event_count_au": "8–12 per year (APA national + state, Osteopathy Australia, ESSA, Australian Podiatry Conf, OT Australia, Chiropractic Australia, Talking HealthTech Summit). Most have sub-$10k exhibitor packages.",
+    "cold_outbound_viability": "High. AHPRA public register lists every practitioner with practice address. Practice websites publicly searchable. Email/phone findable. ~10k–20k addressable practices via outbound.",
+    "founder_market_fit_proxy": "Medium-high. Allied-health owners are software-shoppers (already on Cliniko/Halaxy) and welcome new entrants if value is clear. Outsider builder is acceptable but a clinical co-founder/advisor accelerates credibility significantly.",
+    "case_study_acquisition_cost": "Low. 5 reference customers achievable in 2–4 months via warm Facebook-group introductions + concierge onboarding. Active early-adopter community.",
+    "content_seo_competitiveness": "Moderate. \"Cliniko alternative\" and \"Halaxy vs X\" are contested but rankable. Long-tail (\"NDIS allied health software\", \"physio AI scribe Australia\") is winnable.",
+    "insurer_or_gatekeeper_dependency": "Significant. PRODA/HPOS access requires software-vendor agreement with Services Australia (achievable but slow, ~3–6 months). HICAPS integration requires merchant agreement with NAB. Medipass and Tyro have developer programs that accept startups. None of these is a hard block, but each adds setup cost."
+  },
+  "personal_fit": {
+    "manuva_data_model_reuse_pct": "~25–35%. Reusable: tenant, RBAC, RLS patterns, location, audit log, Xero integration, supplier/PO scaffolding (lightly used for clinic consumables). Non-reusable: clinical note, appointment, claim, patient. Schema overlap is smaller than for an inventory-heavy vertical.",
+    "manuva_code_reuse": "Auth, tenant context, RLS, design system + CSS Modules, server actions pattern, Supabase migrations, activity_log, Xero connector, multi-location support.",
+    "buyer_persona_overlap_with_manuva": "Very low. Manuva is for manufacturers; allied-health practice owners are a fresh persona. No bundle play.",
+    "adjacency_to_manufacturing": "Low. Almost no domain overlap. Founder would be a healthcare outsider.",
+    "technical_moat_durability_months": "9–15 months. The PMS shell + AI scribe is replicable. Real moat (Medicare/PRODA/HICAPS depth + AI fine-tuned on allied-health vocab) takes 12+ months to build and is what protects you."
+  },
+  "unit_economics": {
+    "gross_margin_sensitivity": "Healthy ~75–82% if AI scribe inference is metered as a paid add-on. Pure SaaS margins eroded if AI scribe is bundled at flat rate and heavy users push inference cost. SMS pass-through standard. Onboarding can be largely self-serve, keeping CAC payback short.",
+    "multi_location_natural": "Yes. Group practices commonly run 2–4 locations; physio chains exist. Per-practitioner pricing scales naturally.",
+    "churn_risk": "Moderate. Practice closure rate is low; software churn is mainly competitive (jumping to Cliniko/Splose for a feature). Mitigated by Medicare/HICAPS integration lock-in and clinical-note history.",
+    "customers_needed_for_target_arr": "At $250/mo ARPU: ~335 practices for $1M ARR. With 6,000–10,000 ICP in AU, 3–5% market share gets there — achievable but requires real GTM execution."
+  },
+  "uncertain": []
+}

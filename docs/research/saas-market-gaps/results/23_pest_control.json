@@ -1,0 +1,76 @@
+{
+  "id": "23_pest_control",
+  "name": "Pest control routing & compliance",
+  "tier": "E",
+  "hypothesis": "Chemical-use logs + route optimization + license expiry tracking; mid-tier FSM doesn't fit cleanly.",
+  "market_sizing": {
+    "target_buyer": "Owner-operator or operations manager of a 2-25 technician pest control business. Decision-maker is typically the licensed principal technician who also handles compliance.",
+    "business_count_au": "2,924 Building Pest Control Services businesses in AU (IBISWorld 2025-26, +0.9% YoY). Industry revenue ~A$1.9B. Realistic SaaS-serviceable subset (excluding sole traders unwilling to pay $100+/mo and the large 50+ tech operators on PestPac/FieldRoutes) is ~1,500-2,000.",
+    "business_count_global": "US ~30,000+ pest control establishments (IBISWorld); UK ~3,500; CA ~3,000. Global TAM ~40,000-50,000 SMB pest operators. US market matures fastest (PestPac, FieldRoutes, ServSuite, Briostack dominant).",
+    "typical_size": "3-15 technicians, A$600K-A$5M annual revenue. Owner often holds the principal licence and rides along."
+  },
+  "pricing_reality": {
+    "incumbent_pricing": "GorillaDesk from US$49/mo (entry); ServSuite legacy plans US$126 / US$186 / US$339/mo before quote-only switch; PestPac and FieldRoutes are custom-quote, typically US$150-400/mo per user equivalent at SMB scale; Briostack mid-tier. In AU, generic tradie tools (ServiceM8, Tradify, AroFlo) used as poor-fit substitutes at A$50-A$150/mo.",
+    "willingness_to_pay": "AU realistic ACV A$150-A$350/mo for 3-10 tech operators, scaling to A$500+ for 15-25 tech. Compliance/license-expiry value-add justifies premium over generic FSM. Apply ~75% AU discount vs US list.",
+    "sales_motion": "Inside sales with demo + 2-week pilot. AEPMA trade-show booth and state-association partnerships drive top of funnel. Self-serve trial for sole traders.",
+    "realistic_arpu_au": "A$220-A$320/mo",
+    "expansion_revenue_potential": "Strong: per-technician seat expansion, customer-portal payments (Stripe), termite-warranty insurance referral, chemical-supplier rebate marketplace, AI-driven route optimization (premium tier). Embedded fintech via consumer payment plans for termite treatments (A$3-10K invoices). Plausible 2-2.5x ARPU lift."
+  },
+  "competitive_landscape": {
+    "incumbents": "1) PestPac (WorkWave, US) — legacy 30+ year incumbent, custom quote, heavy and dated; 2) FieldRoutes (US, now ServiceTitan company since 2022) — modern but US-centric, custom quote, $250M R&D backing; 3) ServSuite by FieldRoutes — same parent; 4) Briostack (US) — mid-market, route-optimization complaints; 5) GorillaDesk (US, ~US$49+) — SMB self-serve, light on AU compliance; 6) Fieldwork (US) — newer entrant with chemical tracking; 7) AU/local: Rapid Inspect (termite inspections), Pest Aware, plus generic ServiceM8/AroFlo. No AU-native end-to-end pest platform of scale.",
+    "incumbent_age_years": "PestPac founded ~1985 (40+ years); ServSuite founded 1996; FieldRoutes (formerly PestRoutes) founded 2012; Briostack 2014. Two of the top three are 25+ years old with documented UI rot.",
+    "user_satisfaction_signals": "Capterra/G2: Briostack — 'route optimization is horrendous, spending hours fixing routes monthly/daily'; PestPac — 'poor customer service', 'less value for price', 'archaic interface'; FieldRoutes — generally better reviewed but 'expensive for small operators' and 'support response slow post-ServiceTitan acquisition'. AU-specific complaint: 'no APVMA permit/chemical mapping', 'no NSW EPA record-keeping template', forcing technicians to keep parallel paper or Excel logs.",
+    "recent_funding_or_ma": "ServiceTitan IPO Dec 2024 ($TTAN) consolidating FieldRoutes + Aspire under one parent; $250M R&D commitment announced at Ignite 2025. WorkWave (PestPac parent) PE-owned (IFS / EQT). No major net-new pest-control SaaS raise identified mid-2025-2026 in AU. Briostack acquired by ServicePro / Anstar 2020. Consolidation phase, not greenfield VC.",
+    "ai_disruption_risk": "Moderate-high. FieldRoutes is shipping AI route optimization, predictive scheduling, and AI dispatch via ServiceTitan's R&D pipeline. AI-native challenger window is narrowing — likely 12-18 months before AI features become table stakes."
+  },
+  "opportunity_quality": {
+    "core_pain": "Three unsolved-in-AU pains: (1) compulsory chemical-use record keeping under NSW Pesticides Regulation 2017 Part 4 (and equivalents in VIC PHW Act, QLD Health Pest Management) — technicians keep paper logbooks or Excel; existing US software doesn't model APVMA PubCRIS permit numbers, active constituents, or AU pest+host taxonomy. (2) Technician licence expiry tracking — VIC technician licences expire 3 years, trainee 12 months, NSW 5 years; missing a renewal halts revenue; spreadsheets dominate. (3) Daily route optimization across spread-out suburban jobs with chemical-mix-by-stop constraint; mid-tier FSM lacks chemical-aware routing. Today's stack: ServiceM8 + Word .docx safety data sheets + paper logbooks + Xero.",
+    "moat_source": "Regulatory data moat: APVMA PubCRIS sync, state-by-state record-keeping rule engine, audit-ready export. Workflow moat: chemical inventory tied to technician licence + job + customer + state regulation. Network effect via shared chemical-mix recipes and SDS library. Switching cost via 7-year audit retention requirement.",
+    "critical_integrations": "Xero / MYOB; Stripe (consumer plans for termite); APVMA PubCRIS chemical database; NSW EPA / QLD Health / VIC DHHS technician licence verification (manual or scraped); SafeWorkAustralia SDS; Twilio SMS; Google Maps / Mapbox for routing; Cliniko-style customer portal.",
+    "incumbent_ehr_lock_in": "Low. No EHR-equivalent owns pest data. Customer data lives in PestPac / Briostack but exports cleanly; switching cost is workflow not data lock-in."
+  },
+  "build_difficulty": {
+    "regulatory_complexity": "High. Each AU state administers its own pest-management licensing and pesticide regulation (NSW EPA, VIC DHHS, QLD Health, WA Health, SA Health, TAS DPIPWE) with different record-keeping templates, retention periods (typically 4-7 years), notification rules (community notification for outdoor spraying), and trainee/principal/technician licence tiers. Federal APVMA controls the chemicals themselves (label rates, off-label permits).",
+    "regulatory_changes_2025_2026": "APVMA is mid-review of 21 active constituents including all four neonicotinoids (clothianidin, imidacloprid, thiamethoxam, acetamiprid) — proposed regulatory decisions rolling out Dec 2025 through Oct 2026. Each decision can change permitted uses, label rates, and record-keeping fields overnight, creating churn-forcing events that favour a software vendor who ships rule updates fast. NSW EPA continues to tighten compulsory record-keeping audits. WHS Code-of-Practice updates and PFAS-related restrictions also pending. No single 'July 2026 cliff' like NSW eCoC, but rolling compliance pressure throughout the window.",
+    "domain_depth": "Moderate-high. Outsider can ship MVP with 2-3 design partners but must internalise APVMA label structure, state record-keeping schemas, and termite-warranty workflow. ~3-month domain ramp before credible product.",
+    "mvp_effort": "5-8 months for solo/small team (jobs, customers, properties, technicians + licences, chemical inventory, application records, routing v1, Xero, customer portal, audit export). Chemical rule engine + state matrix is the long pole.",
+    "technical_risks": "Route optimization at scale (incumbents struggle — see Briostack); offline-first mobile for rural job sites; APVMA PubCRIS data ingest (no clean public API — needs scraping or PDF parsing); multi-state rule engine maintenance; SDS storage/version control.",
+    "state_by_state_variance_au": "High. Six state regulators + federal APVMA. Record-keeping fields, notification thresholds, licence categories, and renewal periods all differ. Rule engine per state is mandatory; this is also a competitive moat against US incumbents.",
+    "data_residency_requirement": "Soft. Not legally mandated, but auditors and government clients (council pest contracts) prefer AU hosting. Supabase ap-southeast-2 sufficient."
+  },
+  "distribution_difficulty": {
+    "channel_options": "1) AEPMA annual conference + state chapter events (peak body, ~A$5-10K booth); 2) State-by-state pest-management association sponsorships (NSW PCA, etc.); 3) Industry magazine Professional Pest Manager (paid sponsorship slots); 4) Facebook: 'Australian Pest Control Operators', state groups; 5) MPL Training Centre and registered training organisations as channel for new-licensee onboarding; 6) Cold outbound (licensed technician registers are partially public via state regulators); 7) Google Ads on 'pest control software Australia'.",
+    "trade_association_count_au": "~6-8 (AEPMA national, AWPMA women's chapter, plus state pest-management associations in NSW, QLD, VIC, WA, SA).",
+    "trade_publication_count": "~3-5 (Professional Pest Manager magazine, AEPMA newsletter, industry trade press; smaller universe than electrical/plumbing).",
+    "industry_facebook_group_size": "Small-mid. 'Australian Pest Control Operators' and state-level groups total ~5,000-15,000 members estimated; smaller and more tight-knit than electrician/plumber communities.",
+    "conference_event_count_au": "1-2 main (AEPMA Conference annual, state chapter events). Under-$10K booth attainable at state level; AEPMA national booth ~A$10-15K.",
+    "cold_outbound_viability": "Moderate. NSW EPA, QLD Health publish licensed-technician details partially (lookup by name); business ABN + Google Maps yields company contacts. Verified email enrichment via Apollo viable. Phone outbound highly effective in this trade.",
+    "founder_market_fit_proxy": "Moderate. Owner-operators trust insiders but will give outsiders a chance if compliance pain is acute. Co-founder or paid SME from AEPMA strongly recommended.",
+    "case_study_acquisition_cost": "Moderate. 5 reference customers in 8-12 weeks via direct outreach to AEPMA members + free pilot exchanging logo rights. Slower than mobile mechanic; faster than e.g. funeral directors.",
+    "content_seo_competitiveness": "Low-medium. 'Pest control software AU', 'APVMA chemical log software', 'NSW EPA pesticide record template' are rankable in 6-9 months. US incumbents do not target AU SEO.",
+    "insurer_or_gatekeeper_dependency": "Moderate. Termite warranty insurance carriers (Rapid Solutions, Termguard) are key gatekeepers if expanding into warranty issuance — they restrict integrations to accredited platforms. Core product viable without them. State regulator licence verification can be manual initially."
+  },
+  "personal_fit": {
+    "manuva_data_model_reuse_pct": "55-65%. Direct reuse: tenant + RLS, auth, activity_log, customers (= properties + bill-to), suppliers (= chemical suppliers), inventory items + bins (= van + warehouse chemical stock with batch/expiry), purchase orders, stock movements (= chemical applications). New: technician licences, properties (with GPS + history), application records (chemical + rate + target + area + WHP), routing engine, APVMA chemical master.",
+    "manuva_code_reuse": "Auth, tenant context, RLS, activity logging, server actions, Xero/MYOB scaffold, design system, batch/expiry inventory model — all transfer. Chemical batch + expiry tracking maps cleanly to Manuva's existing inventory invariants.",
+    "buyer_persona_overlap_with_manuva": "Very low. Manuva manufacturers and pest operators share zero customer base. Fresh GTM motion required.",
+    "adjacency_to_manufacturing": "Low. Field service / route-based / compliance-heavy is a different world from process manufacturing. Inventory + batch concepts are the only shared muscle.",
+    "technical_moat_durability_months": "12-18 months. Compliance + chemical rule engine + state-by-state matrix is non-trivial to replicate even with AI coding tools. Integrations (APVMA, payments, Xero) and accumulated compliance corpus are the durable moat."
+  },
+  "unit_economics": {
+    "gross_margin_sensitivity": "Healthy. Some Mapbox/Google Maps usage (routing), Twilio SMS notifications (pass-through). AI route optimization may eat 3-5% margin if hosted on premium AI infra; mitigated via OR-tools self-hosted. Expect 78-85% gross margin.",
+    "multi_location_natural": "Limited. Most pest businesses stay single-depot. Multi-state expansion exists but rare. Seat-based pricing per technician is the growth lever.",
+    "churn_risk": "Low-moderate. Compliance lock-in (audit retention, licence records) creates stickiness. Annual churn 8-15% plausible once past first year. Sole traders churn higher.",
+    "customers_needed_for_target_arr": "~280-320 customers at A$270 ARPU to hit A$1M ARR."
+  },
+  "uncertain": [
+    "business_count_global",
+    "willingness_to_pay",
+    "realistic_arpu_au",
+    "industry_facebook_group_size",
+    "trade_publication_count",
+    "case_study_acquisition_cost",
+    "churn_risk",
+    "customers_needed_for_target_arr"
+  ]
+}

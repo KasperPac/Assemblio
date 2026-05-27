@@ -1,0 +1,116 @@
+topic: "Competitor integrations with Shopify, Etsy, Amazon, Xero, and QuickBooks — full feature dive"
+generated_on: 2026-05-12
+notes: |
+  Comparative research across manufacturing-ops / multi-channel-inventory / e-commerce-accounting
+  SaaS, focused on what each product actually does with the five named integrations (Shopify, Etsy,
+  Amazon, Xero, QuickBooks). Source set blends original 17 incumbents with 10 supplementary items
+  surfaced by the web-search agent on 2026-05-12 plus A2X as the accounting-sync benchmark.
+
+execution:
+  batch_size: 3
+  items_per_agent: 1
+  output_dir: ./results
+
+items:
+  # --- Direct manufacturing / MRP competitors (closest to Manuva) ---
+  - name: Katana MRP
+    category: SMB Cloud MRP
+    description: SMB cloud manufacturing platform — Shopify-first marketplace presence, Xero & QBO certified, the closest direct competitor to Manuva.
+  - name: Fishbowl Inventory and Manufacturing
+    category: SMB MRP
+    description: QuickBooks-native MRP (FB Inventory + FB Manufacturing), strong US installed base.
+  - name: Unleashed Software
+    category: SMB Manufacturing Inventory
+    description: NZ/AU origin, Xero-first manufacturing + inventory; production batch and assembly support.
+  - name: MRPeasy
+    category: SMB Cloud MRP
+    description: EU-origin cloud MRP for small manufacturers; routings, work orders, multi-level BOMs.
+  - name: Megaventory
+    category: SMB Inventory and Light Manufacturing
+    description: SMB inventory + light manufacturing with Shopify / QBO / Xero connectors.
+  - name: Odoo Inventory Manufacturing Accounting
+    category: Open-source ERP
+    description: Open-source mid-market ERP, native Shopify/Amazon/eBay connectors, Xero/QBO via apps; routinely shortlisted alongside Katana.
+
+  # --- Multi-channel inventory + light manufacturing ---
+  - name: Cin7 Core (formerly DEAR Systems)
+    category: Multi-channel Inventory + Light Manufacturing
+    description: Multi-channel inventory with assemblies; integrates all five named platforms; strong landed-cost / costing engine.
+  - name: Cin7 Omni
+    category: Mid-market Omnichannel Inventory
+    description: Upmarket Cin7 sibling focused on omnichannel retail and 3PL workflows.
+  - name: Zoho Inventory
+    category: Multi-channel Inventory
+    description: Multi-channel inventory inside the Zoho suite; tight Zoho Books integration plus Xero/QBO.
+  - name: inFlow Inventory
+    category: SMB Inventory
+    description: SMB inventory with Shopify, QBO, Xero; barcoding and POs strong, manufacturing limited.
+  - name: Qoblex
+    category: SMB Multi-channel + B2B
+    description: Multi-channel inventory + light manufacturing + B2B; Xero Global App Awards 2025 finalist; Xero tracking-categories aware.
+  - name: Finale Inventory
+    category: Multi-channel Inventory
+    description: Multi-channel inventory with strong barcoding and serial/lot tracking.
+
+  # --- Order/retail ops mid-market ---
+  - name: Brightpearl by Sage
+    category: Retail Ops / Mid-market
+    description: Sage-owned retail operations platform; Shopify Plus partner; mid-market omnichannel.
+  - name: Linnworks
+    category: Multi-channel Listing + Inventory
+    description: UK-origin multi-channel listing + inventory + order management; acquired SkuVault.
+  - name: Veeqo
+    category: Multi-channel Inventory (Amazon-owned)
+    description: Free for Amazon sellers, multi-channel inventory with Amazon Buy Shipping baked in.
+  - name: Extensiv (formerly Skubana / 3PL Central)
+    category: Multi-channel Order + WMS
+    description: Mid-market multi-channel order/inventory plus WMS; strong 3PL and marketplace coverage.
+
+  # --- Shipping/order-mgmt with inventory overlap ---
+  - name: Ordoro
+    category: Multi-channel Inventory + Shipping
+    description: Multi-channel inventory and shipping; Shopify-heavy installed base; QBO integration.
+
+  # --- WMS / niche ---
+  - name: SkuVault Core (Linnworks Warehouse)
+    category: WMS for Multi-channel
+    description: WMS-focused product now under the Linnworks umbrella.
+  - name: Acctivate
+    category: QuickBooks Add-on Inventory + Manufacturing
+    description: QuickBooks Desktop / QBO add-on inventory + light manufacturing.
+
+  # --- Vertical / DTC specialists ---
+  - name: Craftybase
+    category: Handmade / Maker Vertical Inventory
+    description: Inventory + COGS for handmade makers; Etsy-vertical leader; launched QBO COGS & Inventory Valuation Sync in Dec 2025.
+  - name: Sumtracker
+    category: Multi-channel Sync + Replenishment
+    description: AI inventory sync + replenishment across Shopify/Amazon/eBay/Etsy/Walmart with bundle decomposition.
+  - name: Prediko
+    category: Shopify-native AI Inventory
+    description: AI forecasting + PO generation, Shopify-native; syncs POs directly into Xero as bills.
+  - name: Cogsy
+    category: Shopify DTC Demand Planning
+    description: Demand planning + cash-flow-aware buy plans for Shopify DTC brands.
+  - name: Inventory Planner by Sage
+    category: Forecasting / Replenishment
+    description: Sage-owned forecasting and replenishment incumbent for Shopify and Amazon brands.
+  - name: Stocky by Shopify
+    category: Native Shopify Inventory + POs
+    description: Shopify-native POS inventory / PO tool — the "do-nothing" baseline competitor that Prediko / Cogsy explicitly displace.
+
+  # --- Upmarket benchmark ---
+  - name: Xentral
+    category: E-commerce ERP
+    description: German e-commerce-focused ERP popular among DTC brands in DACH.
+  - name: NetSuite
+    category: Enterprise ERP
+    description: Enterprise ERP upmarket benchmark; named-integration support typically via SuiteApps.
+
+  # --- Accounting-sync benchmark (reference, not direct competitor) ---
+  - name: A2X (accounting sync benchmark)
+    category: Accounting Sync Layer (reference)
+    description: |
+      Not a direct competitor to Manuva but the dominant Shopify/Amazon/Etsy/eBay/Walmart →
+      Xero/QBO/Sage/NetSuite settlement-reconciliation layer. Included as a benchmark for the
+      summary-journal vs invoice-per-order pattern that Manuva must match.

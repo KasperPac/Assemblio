@@ -1,0 +1,76 @@
+{
+  "id": "06_joinery_millwork",
+  "name": "Cabinet / joinery / millwork shops",
+  "tier": "A",
+  "hypothesis": "Between hobby woodworker tools and full ERPs. Cutlist/CAD integration + job-shop scheduling.",
+  "market_sizing": {
+    "target_buyer": "Owner/operator of a small-to-mid cabinet or joinery shop (kitchens, robes, commercial fitouts), or the shop's production/operations manager once headcount passes ~10.",
+    "business_count_au": "Approximately 20,000–25,000 cabinet-making and joinery enterprises in Australia. The broader 'carpentry and cabinet-making' sector reported ~52,000 enterprises and ~$13.9B revenue in 2025 across ~96,000 workers, but a large share are sole-trader carpenters; cabinet/joinery shops with a workshop and CNC are the relevant slice.",
+    "business_count_global": "Global TAM is roughly 250,000+ cabinet/millwork shops. US has ~50,000–80,000 woodworking/cabinet establishments (per US Census NAICS 3371/337212 trends), UK has ~10,000–15,000 joinery/kitchen-fitting firms, Canada ~8,000–10,000. China and Europe each add tens of thousands more, but the relevant English-language SaaS TAM is ~150,000.",
+    "typical_size": "3–25 employees; AU$0.5M–$8M revenue. Most ACFA-style members run a small workshop with a CNC nesting machine and 1–3 office staff doing quotes/scheduling."
+  },
+  "pricing_reality": {
+    "incumbent_pricing": "INNERGY (Mainsail-backed, US): custom quotes typically US$1,000+/month for full ERP. Microvellum (now owned by INNERGY since March 2025): perpetual license historically US$5K–15K plus subscription. Cabinet Vision: license-based, US$5K–20K. Allmoxy: per-user/per-quote based, mid hundreds/month for small shops. Jobman (AU, cabinet ERP, Xero/MYOB-integrated): modular subscription, market reports place it in the AU$200–600/month band for small shops. Cabinetshop Maestro: ~US$150–300/month. CabMaster, Mozaik, MaxCut, goCabinets are typically per-seat AU$50–300/month for design/cutlist only.",
+    "willingness_to_pay": "AU shops will pay AU$150–400/month for a credible 'between cutlist tool and full ERP' product. Higher only if it tangibly removes office headcount or eliminates a CAD seat. 70–80% of US comparables (Allmoxy/Innergy) is the realistic AU ceiling for an outsider brand.",
+    "sales_motion": "Self-serve + inside sales hybrid. Industry buys at trade shows (AWISA, Visual Impact) and through Facebook groups; demos required to close.",
+    "realistic_arpu_au": "AU$250–350/month per shop is a realistic starting ARPU; AU$200/month for a 'starter' tier and AU$400–500 for multi-user shops.",
+    "expansion_revenue_potential": "Moderate. Sheet-goods/hardware procurement (Blum, Hettich, Laminex) is a real embedded-fintech angle — Allmoxy and goCabinets already monetise supplier order routing. Payments on customer deposits/progress claims (Stripe/AfterPay) could lift ARPU 1.3–1.5×. AI features (auto-quote from a kitchen drawing) are the most plausible 2× expansion lever."
+  },
+  "competitive_landscape": {
+    "incumbents": "1) INNERGY (US, founded 2014; took US$44M Series C from Mainsail Aug 2024; acquired Microvellum Mar 2025) — the dominant ETO cabinet ERP, expanding into AU. 2) Jobman (AU, Brisbane-based, cabinet-maker-built ERP, integrates Cabinet Vision/BenchFab and Xero/MYOB) — strongest local incumbent for the 5–25 person shop. 3) Cabinet Vision (Hexagon-owned) — ~40% of US millwork CAD market, weak ERP layer. 4) Microvellum (now INNERGY) — design+engineering with new ERP push. 5) Allmoxy (US, Daniel Schmidt) — quoting/ordering tool popular with door/cabinet component manufacturers. 6) Cabinetshop Maestro, Tractivity, System100 — small-shop project management. 7) AU-only design/cutlist tools: CabMaster, goCabinets, WoodCAM/Cabinets by Computer, HUTTO, Manager Software, MaxCut — many >20 years old.",
+    "incumbent_age_years": "Cabinet Vision founded ~1986 (~40 years); Microvellum founded 1989 (~37 years); CabMaster ~40 years; Jobman ~10 years; INNERGY founded 2014 (~12 years). Design incumbents are old and UI-rotten; ERP layer is newer but small-shop coverage remains weak.",
+    "user_satisfaction_signals": "WOODWEB/PracticalMachinist threads repeatedly say 'tried many over the years and never found anything that even closely hits the mark' and shops revert to spreadsheets/whiteboards. UK Workshop forum complains about modular pricing (e.g., 'Joinery Soft' £2K base + per-module). Common pain: 'wrong parts built, missing items on delivery day, change orders that never made it to the floor.' Cabinet Vision rates ~85% satisfaction vs Microvellum ~75% in McLineStudios comparison. Innergy reviews on Capterra/SoftwareAdvice praise the workflow but flag price and onboarding friction.",
+    "recent_funding_or_ma": "Major: Mainsail Partners invested US$44M growth round in INNERGY (Aug 2024); INNERGY acquired Microvellum (Mar 2025) — explicit roll-up underway. No public AU rounds in the vertical in last 12 months. Several AI-native woodworking quoting startups (e.g., CutPlan.ai) are visible but not yet funded at scale.",
+    "ai_disruption_risk": "Medium-rising. AI-native cutlist/nesting/quote-from-drawing players (CutPlan.ai, EZNesting) are emerging but pre-Series A. INNERGY has signalled AI estimating roadmap. Window is 12–18 months before AI-quoting becomes table stakes."
+  },
+  "opportunity_quality": {
+    "core_pain": "Quote-to-cut-list-to-CNC-to-schedule handoff. A typical AU shop quotes in Excel, models in Cabinet Vision or CabMaster, exports a CSV to MaxCut/OptiCut, schedules on a whiteboard, and back-costs nothing. The unsolved workflow is a single source-of-truth job that flows quote → BOM → cutlist → CNC G-code → schedule → install with change-order propagation. WhatsApp groups are still how factory-floor changes get communicated.",
+    "moat_source": "Integration depth: native two-way sync with Cabinet Vision/Microvellum/Mozaik DXF/cutlist plus Xero/MYOB plus supplier catalogues (Blum, Hettich, Laminex, Polytec). Data network effects (anonymised quote benchmarks) and switching cost (engineered BOM library + supplier price files) are the real moats. Manuva's BOM+inventory schema gives a head start.",
+    "critical_integrations": "Cabinet Vision/Microvellum DXF + cutlist import; MaxCut/OptiCut/CutRite for nesting; Xero, MYOB AccountRight, MYOB Business; supplier catalogues (Blum eServices, Hettich, Laminex, Polytec, Häfele Connect); CNC post-processors (Biesse, Homag/Weeke, Felder, Anderson); Stripe/Pinch for AU payments; HubSpot/Pipedrive for sales.",
+    "incumbent_ehr_lock_in": "Low to medium. Cabinet Vision/Microvellum own the design data and most shops won't rip those out — so a credible entrant lives side-by-side as the business layer (quoting, scheduling, costing, supplier orders). Rip-and-replace only feasible vs Jobman/Innergy."
+  },
+  "build_difficulty": {
+    "regulatory_complexity": "Low. Building Code of Australia (BCA) and AS/NZS 4386 for commercial cabinetry govern manufacturing, but the SaaS layer doesn't touch certifications. WHS, Modern Slavery Act for suppliers >$100M (irrelevant for SMB SaaS). Optional: AFRDI furniture testing for commercial.",
+    "regulatory_changes_2025_2026": "No major forcing function. The most relevant adjacent change is the NSW illegal-logging due-diligence reporting under Cth Illegal Logging Prohibition Act (amended 2024, fully in force March 2025) — shops importing veneer/MDF must declare supplier chain, but software impact is marginal. Engineered-stone benchtop ban (national, 1 July 2024) reshaped fabrication shops; cabinet shops indirectly affected as they now spec porcelain/laminate more often (creates a data update need for supplier catalogues). No 'July 2026' style forcing event identified.",
+    "domain_depth": "Moderate. Need to understand panel-based construction (32mm system, hardware sets, edging), nesting/grain direction, install sequences. Acquirable by an outsider in 3–6 months shadowing a shop; insider connection accelerates trust massively. Manuva founder background in manufacturing operations transfers well.",
+    "mvp_effort": "4–6 months for a credible MVP focused on quote → BOM → cutlist export → schedule with Xero sync, for a solo/small team. 8–12 months to credible scheduling + CNC integration.",
+    "technical_risks": "DXF/cutlist parsing across Cabinet Vision/Microvellum/Mozaik formats; nesting optimisation (solved by integrating MaxCut/OptiCut rather than building); CNC post-processor variance; supplier EDI/CSV ingestion. AI-from-drawing quoting is the hardest emerging feature but optional for MVP.",
+    "state_by_state_variance_au": "Minimal. BCA is national. State-level licensing applies to installers (e.g., NSW requires a builder/HBA licence above $5K work) but not to the cabinet shop SaaS itself.",
+    "data_residency_requirement": "No statutory requirement. Customer pricing data is commercially sensitive, so AU/Sydney region hosting is a sales talking point but not a regulatory must."
+  },
+  "distribution_difficulty": {
+    "channel_options": "(1) AWISA trade show (biennial, next 2026 Sydney) — primary industry event, booths ~AU$8–15K. (2) Visual Impact Expo Sept 2026 Sydney (touches sign/print/decoration but cabinet adjacency limited). (3) ACFA membership channel — newsletter, training partners. (4) Facebook groups: 'Cabinet Makers Australia and New Zealand' (~10K members) is the dominant SMB community. (5) Supplier co-marketing (Blum, Hettich, Laminex) — they have direct access to every cabinet shop. (6) Cabinet Vision/Microvellum reseller channel in AU (Planit, Cabinets by Computer). (7) SEO/content: 'cabinet shop software Australia' is moderately crowded but winnable. (8) Cold outbound: ABN/ASIC + Yellow Pages scrape gives ~15K emailable shops.",
+    "trade_association_count_au": "2–3 main: ACFA (Australian Cabinet & Furniture Association, merged with KBDi), AWISA (suppliers association), MGA TMA peripherally. ACFA covers cabinetry, kitchens, joinery, furnishing.",
+    "trade_publication_count": "3–5: Supplier (Forest & Wood Products Australia), Cabinet Maker Magazine (AU edition), Australian Wood Review, Inside Industry, Timber & Forestry e-News. Sponsorship slots available at AU$1–5K/issue.",
+    "industry_facebook_group_size": "~15K–25K total members across 'Cabinet Makers Australia and New Zealand', 'Aussie Cabinetmakers', 'Aussie Hobby Woodworking' (more hobbyist), Jobman/CabMaster user groups. Strong SMB channel.",
+    "conference_event_count_au": "2–4 annual/biennial: AWISA (biennial, ~AU$10K booth), ACFA national conference, Sydney/Melbourne Build Expo, KBB (Kitchen & Bathroom) shows. Under-$10K exhibiting is achievable at smaller state events.",
+    "cold_outbound_viability": "High. Cabinet shops have public ABN, websites, owner names; Apollo/Hunter coverage is good. Owners answer the phone. Email open rates in trade comparable to other manufacturing SMB (~25%).",
+    "founder_market_fit_proxy": "Moderate-high. Cabinet shop owners are trade-pragmatic; they trust software people who can speak BOM, edge-banding, and CNC. Insider trust not required, but credibility built by attending AWISA and producing technical content. Manuva manufacturing background is directly transferable.",
+    "case_study_acquisition_cost": "Low-medium: 2–4 weeks per case study if founder is local. First 5 reference customers achievable in 3–6 months via Facebook groups and a single AWISA presence, especially if priced under Jobman.",
+    "content_seo_competitiveness": "Moderate. Long-tail terms ('cabinet shop scheduling software Australia', 'cutlist Xero integration') are winnable; head terms ('cabinet making software') dominated by goCabinets, CabMaster, Cabinetsbycomputer.",
+    "insurer_or_gatekeeper_dependency": "None. No gatekeeper API required. Cabinet Vision/Microvellum file formats are accessible via DXF/CSV; no insurer or government portal sits between shop and customer."
+  },
+  "personal_fit": {
+    "manuva_data_model_reuse_pct": "60–70%. BOM, inventory, suppliers, locations, purchase orders, production orders all reuse cleanly. Cabinet-specific additions: panel/sheet stock by grain, edge-banding lookups, hardware sets (Blum/Hettich SKUs), CNC programs, install schedules. Cutlist/nesting is a new module (likely integrate MaxCut rather than build).",
+    "manuva_code_reuse": "Auth, tenant context (getServerTenantContext), RLS, activity_log, Xero/MYOB sync skeleton, supplier catalogues, BOM/production order UI patterns all transfer 1:1.",
+    "buyer_persona_overlap_with_manuva": "Strong adjacency. A Manuva customer who is a wholesale kitchen/joinery manufacturer is essentially the same buyer. Bundling/expansion play is credible: Manuva ships the operations layer; a cabinet-specific config sells as an industry pack. Not a separate GTM if Manuva already has joinery shops in its base.",
+    "adjacency_to_manufacturing": "Very close. Cabinet/joinery shops are discrete manufacturers; the operational vocabulary (BOM, WO, routings, supplier POs, back-costing) is identical to Manuva's existing domain.",
+    "technical_moat_durability_months": "9–15 months. Cutlist + Xero + supplier catalogues are reproducible by an AI-tooled team in under a year; defensibility comes from supplier integrations and brand, not code."
+  },
+  "unit_economics": {
+    "gross_margin_sensitivity": "Healthy 80–85% gross margin achievable. No SMS-heavy or AI-inference-heavy workflows in the base product. If AI quote-from-drawing becomes a feature, inference cost ~$0.20–0.80/quote is comfortably absorbed at AU$300/month ARPU.",
+    "multi_location_natural": "Limited natural multi-location growth — most cabinet shops are single-site. Multi-user seat expansion is more typical (1→5 seats over 2 years).",
+    "churn_risk": "Low-moderate. Cabinet shops are sticky once BOM library and supplier catalogues are loaded; switching cost is real. Risk: small shops fail in housing downturns (project-driven revenue). AU housing slowdown 2024–2026 is a headwind.",
+    "customers_needed_for_target_arr": "~280 customers at AU$300/month ARPU to hit AU$1M ARR. Achievable in 2–3 years with 1–2% AU market share."
+  },
+  "uncertain": [
+    "business_count_au",
+    "business_count_global",
+    "willingness_to_pay",
+    "realistic_arpu_au",
+    "incumbent_pricing",
+    "recent_funding_or_ma",
+    "industry_facebook_group_size",
+    "trade_publication_count"
+  ]
+}

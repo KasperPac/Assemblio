@@ -1,0 +1,77 @@
+{
+  "id": "07_sign_print_shops",
+  "name": "Sign & wide-format print shops",
+  "tier": "A",
+  "hypothesis": "Most run on spreadsheets + Shopify. Quote/estimate + production scheduling + proofing gap.",
+  "market_sizing": {
+    "target_buyer": "Owner/operator of a sign or wide-format print shop (typical 1–10 staff). Larger shops add a production/operations manager who becomes the primary user. ASGA reports the average member has ~$1M turnover and 5 staff.",
+    "business_count_au": "8,000–10,000 sign-industry businesses in Australia per ASGA, employing ~25,000 people, total industry turnover ~AU$4B. The wide-format/print-shop subset that does in-house production is roughly 4,000–6,000 shops; the remainder are installers, designers, or one-person operators.",
+    "business_count_global": "Global TAM ~150,000–200,000 sign & wide-format shops. US has ~70,000+ (SGIA/PRINTING United Alliance reports); UK ~8,000; Canada ~6,000–8,000. EU adds tens of thousands more.",
+    "typical_size": "2–10 employees; AU$300K–$3M revenue. Mix of signwriting + wide-format printing + vehicle wraps + installation."
+  },
+  "pricing_reality": {
+    "incumbent_pricing": "shopVOX: Express US$99/mo + US$19/user; Pro US$199/mo + US$39/user — typical small AU shop lands at US$250–500/mo (~AU$400–800). Printavo: US$49–199/mo (Starter/Standard/Premium); customers report price hikes to ~US$399/mo after Inktavo/PSG buyout. FluidPSM (AU-built): AU$149/mo flat, unlimited users — undercuts everyone. Hexicom HexiHub: contact-sales, market reports AU$200–400/mo. ONYX Align: contact-sales, US$150–300/mo equivalent. Tradeprint/Coreprint: enterprise pricing.",
+    "willingness_to_pay": "AU sign shops pay AU$150–400/mo today (FluidPSM at AU$149 unlimited has set a low anchor). A premium AU-built entrant can reach AU$300–500/mo if it ships production scheduling + proofing + Xero/MYOB. ~75% of US ARPU is the realistic ceiling.",
+    "sales_motion": "Self-serve trial + inside sales. Sign shops are tradeshow-driven (Visual Impact Sept 2026 Sydney, PacPrint Sydney 2025). Demos close most deals.",
+    "realistic_arpu_au": "AU$250–350/mo. AU$200 starter, AU$400 multi-user, AU$600+ for shops doing >AU$2M with installer crews.",
+    "expansion_revenue_potential": "Strong 2–3× lever via embedded payments (deposit/progress invoices on AU$5K–50K signage jobs), supplier ordering (substrates, vinyl, banner from Ball & Doggett, Spicers, Avery Dennison), and a proofing/customer-portal feature monetised as a per-user upsell. AI-assisted quoting from spec sheets is another credible upsell."
+  },
+  "competitive_landscape": {
+    "incumbents": "1) shopVOX (US, founded 2013) — most widely-used cross-vertical print/sign/embroidery tool, decent AU presence including 'largest sign maker in Perth' testimonial. 2) Printavo (US, now Inktavo/PSG, founded 2014) — strong screen-print roots, weaker for true wide-format/install workflow; price hikes generating churn signals. 3) FluidPSM (AU-built, AU$149/mo unlimited users) — local entrant, aggressive pricing, full quote→install→invoice with Xero/MYOB and a built-in AI helper. 4) HexiHub / Hexicom (AU contact +61 2 8005 1380) — established AU-relevant tool serving 1–20-user sign shops. 5) ONYX Align — RIP-adjacent quoting/scheduling, US-led. 6) Coreprint / Tharstern / EFI Pace — enterprise commercial print, too heavy. 7) SignTracker (Inktavo group) — legacy small sign-shop tool. 8) Nubium (Ball & Doggett, AU 2025 launch).",
+    "incumbent_age_years": "shopVOX ~13 years; Printavo ~12 years (rolled into Inktavo); SignTracker ~20 years (legacy); ONYX (parent ONYX Graphics) ~30 years; Hexicom ~15+ years. Most are 10–20 years old with dated UIs — solid replatform window.",
+    "user_satisfaction_signals": "PrintPlanet and t-shirtforums threads on Printavo: 'famous for promising to fix functionality problems and then ignore them for literally YEARS', 'no read/write permissions', 'no customer overpayment feature', PE-driven price hikes from US$2,500/yr to US$3,990/yr after buyout. ShopVOX criticised for complexity and slow performance on Capterra. ONYX Align positions itself as 'replace spreadsheets with 4-click quoting' — implying the baseline is still spreadsheets. AU-specific complaint pattern: lack of MYOB support and US-centric tax/templates.",
+    "recent_funding_or_ma": "Major: Inktavo (Printavo + InkSoft + SignTracker + GraphicsFlow + Clarity, PSG/Blue Star-backed) merged with OrderMyGear in October 2025 — large branded-merch consolidation. Microvellum/INNERGY consolidation in adjacent millwork (Mar 2025). FluidPSM (AU) appears bootstrapped. Nubium (Ball & Doggett distributor-led) launched Apr 2025.",
+    "ai_disruption_risk": "Medium. FluidPSM already ships an in-app AI helper. ONYX is layering AI on RIP/quoting. No fully AI-native pure-play has raised a public round in sign/wide-format yet, but the surface (auto-quote from artwork dimensions, AI proof generation) is highly attackable. 12–18 month window."
+  },
+  "opportunity_quality": {
+    "core_pain": "Three stacked pains: (1) Quoting consistency — every shop has a custom Excel pricing matrix per substrate/size/finish/install; estimators leave and the IP walks. (2) Proofing back-and-forth via email/WhatsApp with no audit trail (designs, change orders, sign-off). (3) Production scheduling across mixed equipment (large-format printer → laminator → cutter → CNC router → install crew) with shared bottleneck resources. Most shops still run on Shopify (web orders) + Xero (invoices) + Excel (quotes) + Trello/whiteboard (production), with no single source of truth.",
+    "moat_source": "Substrate/finish/install pricing rules engine; AU supplier integrations (Ball & Doggett, Spicers, Currie Group, IVE Group); proofing portal with audit trail; install scheduling with mobile sign-off. Defensibility = data (price templates), switching cost (pricing IP locked in), and AU compliance/payments.",
+    "critical_integrations": "Xero, MYOB AccountRight/Business; Stripe/Pinch/Tyro for AU payments; Ball & Doggett and Spicers supplier ordering APIs/EDI; Adobe Creative Cloud / artwork file handling; Onyx/Caldera RIP queues; Shopify (many shops have a B2B store); Google Maps for install routing; HubSpot/Pipedrive for sales.",
+    "incumbent_ehr_lock_in": "None equivalent to EHR. Most shops use loosely-coupled tools (Shopify + Xero + Excel + Trello). Rip-and-replace of the spreadsheet/whiteboard layer is the standard sale — not a side-car play."
+  },
+  "build_difficulty": {
+    "regulatory_complexity": "Low. Australian Consumer Law (consumer-facing quotes/deposits), GST/Tax Invoice formatting, WHS for installers working at height. No licensing of the SaaS itself.",
+    "regulatory_changes_2025_2026": "Minor: NSW Engineered Stone Ban (national, 1 July 2024) — peripheral, only affects shops doing benchtop signage. NSW Modern Slavery & Federal Modern Slavery Act amendments tightening supply-chain reporting (substrate sourcing, ongoing 2025–2026). e-Invoicing (Peppol) mandate for Commonwealth agencies (already in force 2022 onward) plus state-level rollouts through 2025–2026 — shops doing govt/council signage will need e-invoicing-ready software. No single hard forcing function like NSW eCoC for electricians.",
+    "domain_depth": "Moderate. Need to understand substrates (ACM, corflute, foamboard, vinyl), print profiles (CMYK+W, white ink), lamination, cutting, installation site logistics, council permits for signage. Acquirable by an outsider in 3–6 months. Manuva's manufacturing ops mental model transfers cleanly.",
+    "mvp_effort": "4–6 months for solo/small team to ship quoting + proofing + scheduling + Xero. Install scheduling and supplier ordering add 3–6 months.",
+    "technical_risks": "Pricing-rules engine flexibility (every shop's matrix is different); proofing portal large-file handling and version control; install scheduling with multi-resource constraints. No truly hard ML required for MVP.",
+    "state_by_state_variance_au": "Minor. Council/local government signage permit rules differ by LGA, but the SaaS doesn't need to embed permit logic — links/templates are sufficient.",
+    "data_residency_requirement": "None statutory. AU hosting (Supabase Sydney region) is a sales talking point especially for shops doing government/council work."
+  },
+  "distribution_difficulty": {
+    "channel_options": "(1) Visual Impact Conference & Expo 2026 (2–4 Sept, Sydney Olympic Park) — dominant AU sign/print event, alongside Connect Conference launching 2026. (2) PacPrint (biennial, Sydney 2025, Melbourne 2027) — covers commercial+sign+wide-format. (3) ASGA membership channel — newsletter, awards (next 3 Sept 2026 with Visual Impact). (4) Print21 magazine & email newsletter — primary AU trade publication, sponsorship AU$1–5K. (5) Wide Format Online (wideformatonline.com) news+newsletter. (6) Facebook groups for Australian sign-makers (multiple, ~5–15K combined). (7) Supplier co-marketing (Ball & Doggett's Nubium positioning suggests appetite). (8) Cold outbound: ASGA directory + ABN scrape gives ~8K targets.",
+    "trade_association_count_au": "2 primary: ASGA (Australian Sign & Graphics Association) and Visual Connections (broader print/visual industry events). PIAA (Print Industries Association of Australia) is adjacent for commercial print.",
+    "trade_publication_count": "3–5: Print21, Wide Format Online, Sign Update (AU), Australian Printer, Image Magazine. All have paid sponsorship/newsletter slots.",
+    "industry_facebook_group_size": "~5,000–10,000 combined across 'Sign Makers Australia', 'Wide Format Print Australia', and brand-specific groups. Smaller than cabinet/woodworking communities but engaged.",
+    "conference_event_count_au": "2–3 main: Visual Impact (annual rotating Sydney/Melbourne), PacPrint (biennial), ASGA awards. Smaller state ASGA events. Booths AU$5–15K.",
+    "cold_outbound_viability": "High. Sign shops have public websites, ABN, and ASGA directory listings. Owner emails are findable. Quote requests are a natural front-door for outbound.",
+    "founder_market_fit_proxy": "Moderate-high. Sign shop owners are trade-pragmatic and respond to clear ROI demos. Insider status not required; visiting 10 shops and shipping a credible quoting demo is enough to build trust. AU-built/AU-supported is a strong positioning lever vs US-headquartered shopVOX/Printavo.",
+    "case_study_acquisition_cost": "Low-medium. 3–5 customers via direct ASGA outreach + one Visual Impact booth in 3–4 months. FluidPSM appears to have done this with limited budget.",
+    "content_seo_competitiveness": "Moderate. 'Sign shop management software Australia' is winnable; long-tail ('wide format quoting AU', 'sign proofing portal') is wide open. Head terms dominated by shopVOX, Printavo.",
+    "insurer_or_gatekeeper_dependency": "None. No gatekeeper API. Shopify/Xero/MYOB/Stripe are all open APIs accessible to startups."
+  },
+  "personal_fit": {
+    "manuva_data_model_reuse_pct": "45–55%. Inventory (substrates, vinyl rolls, hardware), suppliers, purchase orders, production orders, locations, activity log all reuse. New domain: pricing-rules engine (size × substrate × finish × install), proofing/file-versioning, install scheduling with mobile sign-off. BOM concept maps loosely but is less central than in cabinet/manufacturing.",
+    "manuva_code_reuse": "Auth, tenant context, RLS, activity_log, Xero/MYOB sync skeleton, supplier/PO/inventory UI, dashboards reusable. Proofing portal and mobile install app are new builds.",
+    "buyer_persona_overlap_with_manuva": "Low-medium. Sign shops are a different buyer (graphic/trade-services mix) than Manuva's discrete-manufacturer ICP. Some overlap with shops that also do signage manufacturing (CNC routing of letters, fabricated signs), but largely a fresh GTM.",
+    "adjacency_to_manufacturing": "Medium. Production scheduling and supplier/inventory concepts transfer; the front-office (quoting, proofing) is a different muscle than Manuva's current focus.",
+    "technical_moat_durability_months": "6–12 months. The 'pricing engine + proofing + scheduling + Xero' bundle is reproducible by an AI-tooled competitor in under a year. FluidPSM already exists at AU$149 unlimited — moat must come from depth (supplier integrations, install workflow, payments) not surface."
+  },
+  "unit_economics": {
+    "gross_margin_sensitivity": "Healthy 80%+ GM achievable. Proofing portals consume storage (large artwork files at 300dpi) — 50–500GB per shop — but Supabase Storage/R2 keeps this <2% of ARPU. AI proof/quote features add small inference cost. No SMS-heavy workflows.",
+    "multi_location_natural": "Moderate. Larger shops grow to 2–3 production sites and separate install depots; some chains exist (Signarama, Kwik Kopy, Snap). Multi-location is a real expansion path but not the dominant pattern.",
+    "churn_risk": "Moderate. Sign shops are project-driven and small; ~10–15% annual SMB churn is typical. Failure mode: shop closes (housing/retail slowdown) rather than competitor switch.",
+    "customers_needed_for_target_arr": "~280–330 customers at AU$300/mo ARPU for AU$1M ARR. ~5% AU sign-shop share. Realistic in 3 years with focused GTM, harder if FluidPSM continues at AU$149."
+  },
+  "uncertain": [
+    "business_count_au",
+    "business_count_global",
+    "incumbent_pricing",
+    "willingness_to_pay",
+    "realistic_arpu_au",
+    "industry_facebook_group_size",
+    "trade_publication_count",
+    "case_study_acquisition_cost",
+    "recent_funding_or_ma"
+  ]
+}

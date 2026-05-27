@@ -1,0 +1,86 @@
+{
+  "id": "21_funeral_home",
+  "name": "Funeral home operations",
+  "tier": "E",
+  "hypothesis": "DOS-era incumbents; documented $650/mo per-location pricing in indie-hacker examples. Tight, trust-based community though.",
+
+  "market_sizing": {
+    "target_buyer": "Funeral home owner/director (typically owner-operator at single-site independents; group-level operations director at small chains).",
+    "business_count_au": "~1,011 businesses in 'Funeral Directors, Crematoria and Cemeteries' in AU (IBISWorld 2025), growing 3.8% YoY. A broader count including related funeral-services companies is ~2,672. ICP (independent + small-chain funeral homes, excluding InvoCare/Propel) is roughly 600–800 buyers. State distribution: VIC ~30%, NSW ~29%, QLD ~15% (74% combined in top three).",
+    "business_count_global": "US ~18,800 funeral homes (NFDA), UK ~4,500 funeral directors, Canada ~3,000. Global TAM is meaningful but each country has distinct regulation (death certificate flows, embalming licensure, preneed trust law) and a different incumbent set, so cross-border expansion requires localisation.",
+    "typical_size": "Independent funeral home: 2–10 staff, 50–400 funerals/year, AUD $500k–$3M revenue. Small chains (3–10 locations) common but tier above ICP."
+  },
+
+  "pricing_reality": {
+    "incumbent_pricing": "Mixed. Modern entrants visible: Gather (US-origin) — one-time activation + monthly subscription, transparent. 1Director — $49/month. Funeral Buddy (AU) — $999 setup + $20/case. Passare — anecdotal $10k engagements (with cemetery add-ons). SRS Computing — anecdotal $2k–$5k annual licence per site + setup. FuneralOne — quote-only, multi-location enterprise. TerraPro, Osiris, MorTrack, PlotBox, byondpro, Tukios round out the field. The 'documented $650/mo per-location' figure in indie-hacker writeups appears in US contexts; closest AU comparables are SRS-style annual licences and Passare's higher tiers.",
+    "willingness_to_pay": "AU funeral homes are conservative buyers but the bigger independents pay $300–600/mo for software they trust. Sweet spot for new entrant: $200–450/mo single-location, with per-location uplift for chains.",
+    "sales_motion": "Outside sales / channel-heavy. Self-serve is unlikely to work — trust is paramount. Demos at NFDA/Funerals Australia events and direct relationships with industry consultants drive deals.",
+    "realistic_arpu_au": "AUD $300–500/month/location (lower than US per-location norms reflecting smaller AU case volumes).",
+    "expansion_revenue_potential": "Strong 2–3x. Expansion via: (a) website/microsite tribute hosting (per-case), (b) live-streaming and memorial video (per-case), (c) embedded payments for at-need and preneed (high-value transactions), (d) preneed trust management module, (e) BDM/death-registry e-lodgement, (f) merchandise/casket/urn catalogue with ordering, (g) AI-drafted obituaries and orders-of-service. Embedded fintech is a particularly strong wedge — at-need invoices average AUD $7,000–12,000 with significant Stripe/AfterPay flow potential."
+  },
+
+  "competitive_landscape": {
+    "incumbents": "1) FuneralSoft (Instra Technologies, AU) — long-standing AU vendor. 2) Funeral Buddy (AU) — newer cloud entrant, transparent pricing. 3) Sacred Grounds — cloud, independent/family-run focus. 4) Passare (US) — cloud, present in AU via larger groups. 5) SRS Computing (US) — Procession/PROCession, established but legacy feel. 6) FuneralOne (US) — multi-location enterprise focus. 7) Gather (US) — modern UX, expanding. 8) Tukios (US) — tribute video + management. 9) TerraPro, Osiris, MorTrack, byondpro, PlotBox (cemetery-focused). Many AU independents still run paper + Excel + Word merge or legacy desktop tools.",
+    "incumbent_age_years": "Mixed. SRS Computing, FuneralOne, TerraPro >20 years (DOS lineage referenced in Passare migration anecdotes — Smartware-for-DOS 1988, FoxPro 1993). FuneralSoft ~15+ years. Gather ~10 years (founded 2014). Funeral Buddy newer. Dominant legacy players are >15 years old — strong UI rot signal.",
+    "user_satisfaction_signals": "Capterra/G2 reviews and indie-hacker writeups consistently flag: dated UI on SRS/FuneralOne-class tools, slow vendor support, difficulty handling state-specific BDM forms, manual rekeying between case management and the funeral website, weak payments/AfterPay integration. Indie-hacker case studies (e.g. Parting Pro, smaller funeral-tech bootstrappers) have publicly documented bootstrapping success at per-location pricing — evidence the market pays. Reddit r/funeraldirectors has periodic 'what software are you on?' threads with widespread frustration.",
+    "recent_funding_or_ma": "Gather, Passare and Tukios have all taken growth capital in recent years (US). Parting Stone, Parting Pro and other deathcare-tech startups raised in 2023–2024. No high-profile AU-specific funeral SaaS funding in the last 12 months. Industry consolidation continues at the funeral-home level (Propel Funeral Partners growth) but vendor-side AU activity is quiet.",
+    "ai_disruption_risk": "Low-to-moderate. AI obituary drafting and grief-support chatbots have appeared (Empathy.com etc.) but no AI-native end-to-end funeral-home SMS has emerged as dominant. Window is open ~18–24 months."
+  },
+
+  "opportunity_quality": {
+    "core_pain": "Three intertwined unresolved workflows. (1) Case intake to BDM (Births Deaths Marriages) lodgement — currently paper/PDF forms re-keyed into the registry portal per state, with high error rates. (2) Order-of-service, tribute website and live-stream generation — manually assembled in Word/Canva/Vimeo per case. (3) At-need invoicing and payment collection — many homes still rely on EFT/manual receipts; AfterPay and split-payment between estate and family members is poorly handled. Spreadsheets + Word + Outlook + WhatsApp dominate the small end.",
+    "moat_source": "Defensibility from: (a) state-by-state BDM integration depth (each state has its own portal — e.g. NSW LifeLink, VIC BDM Online, QLD BDM), (b) cemetery/crematorium scheduling integrations, (c) coroner/medical-certificate workflow, (d) accumulated case templates and order-of-service designs, (e) embedded payments stickiness, (f) deep insider trust within a tight community.",
+    "critical_integrations": "Must: state BDM e-lodgement portals (8 jurisdictions), Xero/MYOB, Stripe + AfterPay/Zip for at-need payments, SMS, email/Mailchimp, live-stream (Vimeo/Restream), e-signature. Strongly desired: cemetery booking APIs, coffin/casket supplier catalogues, florist integrations, hearse/transport scheduling, preneed trust management.",
+    "incumbent_ehr_lock_in": "Low at the small/independent end (paper + spreadsheets dominate). Moderate at the mid/chain end where Passare/FuneralOne hold case history. Side-car wedges (e.g. payments + tribute website + BDM lodgement) viable; full rip-and-replace is hard."
+  },
+
+  "build_difficulty": {
+    "regulatory_complexity": "Moderate. State-by-state BDM lodgement requirements, coroner referral rules, embalming/mortuary licensing (varies by state), cemetery and crematorium booking. No federal regulator equivalent to NDIS Commission/ASQA. Industry self-regulates heavily via AFDA/NFDA codes.",
+    "regulatory_changes_2025_2026": "Weaker forcing functions than NDIS or RTO. No federally mandated 2026 deadline. Ongoing modernisation of state BDM portals (NSW, VIC) creates integration opportunities but not a forced-churn event. Some state-level reviews of funeral-industry pricing transparency (Funeral Industry Code reviews) are ongoing — could create a documentation/transparency wedge but not a sharp deadline.",
+    "domain_depth": "Deep and culturally sensitive. Outsider needs a domain co-founder or operator partnership to be credible. Trust-based community where word-of-mouth dominates. ~9–12 months to credible fluency without an insider.",
+    "mvp_effort": "6–9 months for a narrow wedge (e.g. case intake + BDM lodgement + tribute site). Full SMS replacement is 12–18 months.",
+    "technical_risks": "Moderate. Hard problems: state BDM portal integrations (some are not API-first; may need RPA-style automation), live-stream reliability for funeral services (zero-failure expectation), cemetery scheduling, multi-jurisdiction death-certificate forms, preneed trust accounting (regulated financial product in some states).",
+    "state_by_state_variance_au": "High. Each state/territory has its own BDM registry, coroner rules, cremation permit forms, and mortuary licensing. ~8 rule engines needed for full national coverage.",
+    "data_residency_requirement": "Yes — sensitive personal data of the deceased and bereaved; AU hosting expected and explicitly preferred."
+  },
+
+  "distribution_difficulty": {
+    "channel_options": "(1) AFDA (Funerals Australia) and NFDA member partnerships and conference exhibits — the dominant channel. (2) State funeral directors associations (FDA NSW merged into NFDA in 2024). (3) Outside sales / regional sales reps with industry references. (4) Word-of-mouth via early-adopter funeral directors. (5) Content/SEO is weak — directors don't Google for software, they ask peers. (6) Coffin/casket and stationery supplier partnerships (these reps visit every home). (7) Cold outbound viable but conversion is slow.",
+    "trade_association_count_au": "3–4 active: Funerals Australia (formerly AFDA, founded 1935, national), NFDA (National Funeral Directors Association of Australia, ~200 members post-FDA-NSW merger 2024), state cemeteries/crematoria associations, Australasian Cemeteries and Crematoria Association (ACCA).",
+    "trade_publication_count": "Very few — AFDA/Funerals Australia journal, NFDA newsletter, Australian Cemeteries and Crematoria Review. ~2–3 with paid sponsorship inventory.",
+    "industry_facebook_group_size": "Small. Funeral-director Facebook groups are private and modest (low hundreds to low thousands). LinkedIn presence is also modest. Community is offline-first and relationship-based.",
+    "conference_event_count_au": "2–4/year: AFDA/Funerals Australia National Convention, NFDA conference, ACCA conference, state-level forums. Booths typically <$10K. Attending all of them is feasible and almost essential.",
+    "cold_outbound_viability": "Moderate. ABN/contact lists for funeral homes are obtainable (Yellow Pages-grade) but response rates are low without a warm intro or industry reference. Phone outbound works better than email.",
+    "founder_market_fit_proxy": "Low for a pure technologist outsider. Funeral directors trust other funeral directors. An insider co-founder, advisor, or owned reference site is close to a prerequisite. This is the single biggest distribution risk in this opportunity.",
+    "case_study_acquisition_cost": "High. First 5 reference customers may take 6–12 months and likely require free implementation + heavy hand-holding. Acquisition cost meaningfully higher than NDIS/RTO.",
+    "content_seo_competitiveness": "Low crowding but also low buyer search volume — directors don't research software via Google. SEO is not the primary acquisition lever here.",
+    "insurer_or_gatekeeper_dependency": "State BDM portals are the key gatekeeper — some accept third-party integrations, others don't. Cemetery/crematorium booking systems vary. No insurer gatekeeper, but preneed insurance products (Foresters Friendly, Sureplan) are relevant for the preneed module."
+  },
+
+  "personal_fit": {
+    "manuva_data_model_reuse_pct": "~15–25%. Multi-tenant org/site, staff, RLS, audit log, document store, suppliers (caskets/flowers ≈ Manuva supplier model), purchase orders (casket POs) reuse cleanly. Case management, body/disposition workflow, tribute sites are new.",
+    "manuva_code_reuse": "Auth, tenant context, RLS, server actions, invite flow, activity logging, design tokens transfer. Supplier/PO module from Manuva (goods-inwards, supplier filtering) maps to casket/urn/flower ordering surprisingly well.",
+    "buyer_persona_overlap_with_manuva": "None. Manuva sells to manufacturers, not funeral homes. No bundle/expansion play.",
+    "adjacency_to_manufacturing": "Very low. Different buyer, different culture, different regulator. Only platform-level reuse plus the supplier/PO sub-model.",
+    "technical_moat_durability_months": "12–18 months. State BDM integrations and accumulated trust extend defensibility; pure SaaS shell replicable inside a year. Real moat is relational/cultural, not technical."
+  },
+
+  "unit_economics": {
+    "gross_margin_sensitivity": "Healthy on subscription. Risk: live-streaming bandwidth costs (~$5–20/service), AI obituary inference (negligible), SMS/notification flow. Payments revenue is high-margin if embedded fintech is added. ~80–85% gross margin sustainable.",
+    "multi_location_natural": "Moderate. Independents may grow to 2–3 locations; large groups (InvoCare, Propel) are out of ICP. Per-location expansion is real but caps at a handful per customer.",
+    "churn_risk": "Low. Funeral homes are multi-generational, stable businesses with low business mortality. Once trust is established and case history is in-system, churn is very low (likely <5% annually).",
+    "customers_needed_for_target_arr": "At AUD $400/mo single-location ARPU = $4,800/yr → ~210 customers for $1M ARR. With ~600–800 ICP, that is ~30% market penetration — feasible only with strong insider channel."
+  },
+
+  "uncertain": [
+    "business_count_au",
+    "business_count_global",
+    "incumbent_pricing",
+    "willingness_to_pay",
+    "recent_funding_or_ma",
+    "industry_facebook_group_size",
+    "trade_publication_count",
+    "conference_event_count_au",
+    "churn_risk"
+  ]
+}

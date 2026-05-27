@@ -1,0 +1,76 @@
+{
+  "id": "24_marine_boatyard",
+  "name": "Marine / boatyard / marina management",
+  "tier": "E",
+  "hypothesis": "Dockwa is bookings; ops side (work orders, slip mgmt, haulouts, parts) weak.",
+  "market_sizing": {
+    "target_buyer": "Marina general manager or owner of a commercial marina, boatyard, or yacht club. Often a single decision-maker who also runs the workshop and reports to a board (yacht club) or owner-operator (private marina).",
+    "business_count_au": "~291-296 commercial marinas, yacht clubs and boatyards in AU (Marina Industries Association data via Marine Business News 2024 and AIMS Marine Index 2025). MIA membership covers ~85% of major marinas and ~80% of facilities with 100+ berths. Realistic SaaS-serviceable count: ~250-280.",
+    "business_count_global": "Global ~10,000-12,000 marinas/boatyards: US ~12,000 marinas (~1,200 with 100+ slips); UK ~500; CA ~600; EU ~5,000+. Molo claims customers in 47 US states + 10 countries.",
+    "typical_size": "50-500 berths/dry-stack spaces, 5-40 staff, A$2M-A$30M annual revenue. Mix of berthing income, fuel, haulout/yard fees, retail, and service workshop revenue."
+  },
+  "pricing_reality": {
+    "incumbent_pricing": "All quote-only. PacsoftNG, DockMaster, Molo (Storable Marine), Dockwa, MarinaOffice, Harbour Assist, HarbaMaster, YouNav, Smart Waters — none publish public pricing. Industry estimates: A$300-A$2,000+/mo per marina depending on berths, modules, payments take rate. Dockwa monetises primarily via transient-booking commission (~3-5% of transient bookings).",
+    "willingness_to_pay": "AU realistic ACV A$350-A$900/mo per small-to-mid marina; A$1,500+/mo for 200+ berth facilities. Top of $100-500 band realistic only for the smallest yacht clubs / single-boatyard operators. Mid-tier is genuinely $500-$2,000/mo territory — meaning this vertical exceeds the brief's price band for the median buyer.",
+    "sales_motion": "Outside sales / relationship-driven. MIA conference + on-site demos required for facilities >100 berths. Inside sales viable for smaller yacht clubs and single boatyards. Long sales cycle (3-9 months).",
+    "realistic_arpu_au": "A$550-A$850/mo (above the $100-500 band)",
+    "expansion_revenue_potential": "Strong: payments rake on berth + transient + workshop invoices (significant GMV per marina), fuel-dock POS, smart-meter electricity/water reconciliation (YouNav model), transient marketplace commission (Dockwa model), workshop parts marketplace, insurance referral. 2-3x ARPU lift very plausible via payments alone given high-ticket marine invoices."
+  },
+  "competitive_landscape": {
+    "incumbents": "1) PacsoftNG (NZ-based, acquired by Jonas Software 2018, 20+ years) — dominant ANZ marina platform; 2) DockMaster (US, owned by Valsoft) — legacy US incumbent with marina + boatyard + dealership modules; 3) Molo / Storable Marine (US, part of Storable storage-platform consolidator) — modern SaaS, 47 US states; 4) Dockwa (US, raised $13M+, owned by Marinas.com) — bookings-first, weak ops; 5) Harbour Assist (UK) — cloud, growing; 6) MarinaOffice, Total Marina Package, HarbaMaster, YouNav, Smart Waters, M-PRO — mid-tier and niche. In AU, PacsoftNG is the de-facto incumbent; Dockwa has limited AU traction.",
+    "incumbent_age_years": "PacsoftNG ~20+ years (well into UI-rot territory); DockMaster ~25+ years (heavy UI rot documented); Molo ~10 years (modern); Dockwa ~10 years.",
+    "user_satisfaction_signals": "DockMaster reviews (Capterra/G2/SoftwareAdvice): 'extremely outdated UI', 'clunky not intuitive', 'feels old', 'reporting requires unique naming conventions', 'cannot delete items - everything is reverse + rekey', 'cannot edit invoice once saved', 'every update breaks something next day'. PacsoftNG: reviews more favourable on support, but UI dated. Marina operators on industry forums complain bookings (Dockwa) is separate from ops (Pacsoft/DockMaster) — no unified system. Boatyard work-order side specifically weak across all incumbents; many shops run QuickBooks + Excel + paper job cards alongside the marina system.",
+    "recent_funding_or_ma": "Storable acquired Molo (date pre-2023); Jonas Software owns Pacsoft (acquired 2018); Valsoft owns DockMaster; Dockwa acquired by Marinas.com 2022. Pattern: roll-up by vertical-SaaS holding companies (Jonas, Constellation, Valsoft, Volaris), not VC growth funding. Few net-new entrants since ~2020 in the boatyard ops segment.",
+    "ai_disruption_risk": "Low. No identified AI-native marina/boatyard SaaS raising rounds as of mid-2026. AI-assisted scheduling and predictive haulout demand are obvious adjacent features but no challenger has staked the wedge. Window relatively open."
+  },
+  "opportunity_quality": {
+    "core_pain": "Marinas with workshops run a fragmented stack: PacsoftNG/DockMaster for berths + invoicing, Dockwa for transient bookings, paper or Excel for haulout schedule + yard map, QuickBooks/Xero for accounts, and separate workshop software (or paper) for work orders + parts + labour. Sublease/work-on-vessel insurance, marine-trade contractor sign-in, and tide-aware haulout scheduling are entirely manual. Parts inventory for stern-drive/outboard/rigging is tracked in Excel. Hypothesis check confirmed: Dockwa is bookings; ops side (work orders, slip mgmt, haulouts, parts) is weak across incumbents.",
+    "moat_source": "Integration moat: PacsoftNG/DockMaster data import + payments. Workflow moat: tide-aware haulout schedule + yard map + work order + parts in one system. Network effect via cross-marina transient traveller (Dockwa model) is the largest available moat but requires consumer side. AU regulatory moat is weak (no APVMA equivalent).",
+    "critical_integrations": "Xero / MYOB (mandatory in AU); Stripe + Tyro EFTPOS; smart meters (electricity/water sub-metering — Yo-Smart, EziMeter); fuel POS; tide data (BOM); AIS vessel-tracking feeds; Dockwa / Marinas.com inbound transient bookings; insurance certificate verification; MIA/Global Marina Institute training certificates.",
+    "incumbent_ehr_lock_in": "Moderate. PacsoftNG/DockMaster own years of berthing + customer history. Side-car play (bolt onto Pacsoft, replace workshop module first) more realistic than rip-and-replace for established marinas. Fresh boatyards and yacht clubs are greenfield."
+  },
+  "build_difficulty": {
+    "regulatory_complexity": "Moderate. MARPOL waste tracking, AMSA vessel registration (federal), state Marine Safety Acts, port authority lease conditions, biosecurity (DAFF) for international transients, OH&S for hot-work on vessels (welding/grinding permits), insurance certificate compliance for contractors entering the yard.",
+    "regulatory_changes_2025_2026": "No identified single forcing function. Background: AMSA Domestic Commercial Vessel National Law continues phased rollout; biosecurity vessel inspection rules tightening post-2023; some states (NSW Maritime, Marine Safety VIC) modernising commercial-marina permit conditions. Insurance / WHS pressure on contractor sign-in is the most consistent operational forcing function but is industry-driven not regulator-driven.",
+    "domain_depth": "High. Marinas have idiosyncratic workflows: tide tables, dry-stack rack assignments, slip dimensions vs vessel LOA + beam + draft, transient turnover, fuel-dock reconciliation, haulout sling capacity scheduling. Outsider needs 6+ months and 2-3 design-partner marinas to ship credible MVP.",
+    "mvp_effort": "8-12 months for solo/small team. Berth/slip allocation engine + haulout schedule + work order + parts + payments + Xero is materially more code than mobile mechanic or pest control MVPs.",
+    "technical_risks": "Slip-to-vessel assignment optimisation (LOA + beam + draft + power + sun/wind preference); haulout sling-capacity scheduling with tide windows; offline-tolerant mobile for dock staff; integration with smart utility meters (heterogeneous protocols); migration from legacy PacsoftNG/DockMaster databases.",
+    "state_by_state_variance_au": "Low. Marine safety and biosecurity differ by state but core workflow portable. Lease conditions vary marina to marina more than state to state.",
+    "data_residency_requirement": "Soft. AU hosting preferred by government-owned marinas (port authorities, councils). Not legally mandated for private operators."
+  },
+  "distribution_difficulty": {
+    "channel_options": "1) MIA annual conference + state events — central go-to-market channel (most AU buyers attend); 2) Global Marina Institute certified-marina-manager network; 3) Marine Business News, Marine Industry News, MySailing publications; 4) AIMEX (Australian Marine Export Group) for boatyard segment; 5) Direct outbound — MIA member list is partially public, ~250 reachable buyers total (entire AU TAM fits in a CRM); 6) Boat shows (Sydney International Boat Show, Sanctuary Cove) — premium booth but visibility to marina ops staff is incidental.",
+    "trade_association_count_au": "~4 (MIA, AIMEX, BIA NSW/state boating industry associations, Yachting Australia/Australian Sailing). Tight, well-organised.",
+    "trade_publication_count": "~3-5 (Marine Business News, Marine Industry News, MySailing, Modern Boating, Multihull World).",
+    "industry_facebook_group_size": "Small. Marina operations is not a Facebook-group-led community; LinkedIn is dominant. Estimated <5,000 across operator groups.",
+    "conference_event_count_au": "2-3 (MIA Annual Conference, Sanctuary Cove International Boat Show, Sydney International Boat Show — but only MIA reaches marina operators specifically). Under-$10K booth at MIA realistic.",
+    "cold_outbound_viability": "Very high. The entire AU TAM is ~290 named facilities, listed in MIA directory, MyMarinaGuide, and Superyacht Services Guide. Phone + email of GMs publicly available. Account-based marketing is the natural motion.",
+    "founder_market_fit_proxy": "Moderate-low. Marina GMs are conservative buyers; trust insiders (ex-marina-manager co-founder or advisor strongly preferred). Industry is small, reputation travels fast — first 3 customers gate the next 20.",
+    "case_study_acquisition_cost": "High. 5 reference customers in 6-12 months realistic with persistent ABM + MIA conference attendance + ex-industry advisor. Each design partner is a high-touch 3-month onboarding.",
+    "content_seo_competitiveness": "Low. 'Marina management software Australia', 'PacsoftNG alternative', 'DockMaster alternative' have low DR competitors. SEO matters less than ABM for a 290-buyer TAM.",
+    "insurer_or_gatekeeper_dependency": "Low for core product. Contractor insurance verification is workflow not gatekept API. Dockwa transient feed is desirable but not blocking — competitors exist (Snag-A-Slip)."
+  },
+  "personal_fit": {
+    "manuva_data_model_reuse_pct": "45-60%. Direct reuse: tenant + RLS, auth, customers (= berth holders + vessel owners), suppliers (= chandlery + parts), inventory items + bins (= chandlery store + workshop parts bins), purchase orders, activity_log, production orders re-skinned as work orders, BOM re-skinned as service kits. New: vessels (with LOA/beam/draft/power), berths/slips (with dimensions + utilities), haulout schedule, tide-aware allocation engine, smart-meter integration, transient bookings.",
+    "manuva_code_reuse": "Auth, tenant context, RLS, server actions, activity logging, Xero/MYOB scaffold, design system, inventory + bin model, production-order workflow — all transfer. BOM concept maps onto service kits (annual antifoul + zincs + service).",
+    "buyer_persona_overlap_with_manuva": "Very low. AU manufacturers and marina GMs are disjoint markets. No bundle/expansion path. Fresh GTM.",
+    "adjacency_to_manufacturing": "Low-moderate. Boatyards do contain a manufacturing-adjacent workshop (parts + labour + work orders), so Manuva's production-order + BOM + inventory muscle is genuinely reusable for the workshop module — but the marina-side (berths, haulouts, transient bookings) is foreign territory.",
+    "technical_moat_durability_months": "12-18 months. The slip/haulout allocation engine + tide integration + smart-meter integration + multi-incumbent data migration is genuinely hard. AI coding tools accelerate the CRUD but not the domain integration."
+  },
+  "unit_economics": {
+    "gross_margin_sensitivity": "Healthy. Some payments-processing pass-through; smart-meter integrations are one-off; minimal AI inference required. Expect 80-85% gross margin. Outside-sales motion is the bigger margin pressure (CAC > unit cost).",
+    "multi_location_natural": "Limited. Most marina operators run a single facility; a few groups operate 3-10 marinas (e.g. d'Albora Marinas, Superior Jetties customers). Per-marina pricing is the natural expansion lever; per-berth pricing also viable.",
+    "churn_risk": "Low. Mission-critical operations system with high switching cost (years of berthing + financial history). Annual churn likely <8% once past year one. Long sales cycle balanced by long retention.",
+    "customers_needed_for_target_arr": "~130-150 customers at A$650 ARPU to hit A$1M ARR — but AU TAM of ~290 means ~50% market share required, making AU-only a sub-$1M ARR business. International expansion (NZ, UK, Pacific) mandatory for venture-scale outcomes."
+  },
+  "uncertain": [
+    "business_count_global",
+    "incumbent_pricing",
+    "willingness_to_pay",
+    "realistic_arpu_au",
+    "industry_facebook_group_size",
+    "case_study_acquisition_cost",
+    "churn_risk",
+    "customers_needed_for_target_arr"
+  ]
+}

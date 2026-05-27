@@ -1,0 +1,73 @@
+{
+  "id": "01_food_copackers",
+  "name": "Contract food manufacturers / co-packers",
+  "tier": "A",
+  "hypothesis": "Mid-market between Craftybase (too light) and Nulogy (too heavy); growing AU private-label health-foods scene; FSANZ + FSMA 204 traceability is a forcing function.",
+  "market_sizing": {
+    "target_buyer": "Owner/operator or operations manager at a 5–80 person contract food manufacturer / co-packer (decision-maker is typically the founder or COO; financial sign-off by the owner).",
+    "business_count_au": "Estimated 800–1,500 dedicated contract food manufacturers and co-packers in Australia. The broader 'Other Food Product Manufacturing' (ANZSIC 1199) class alone contains hundreds of businesses; AU contract packaging market is worth USD 435M in 2025 growing at 9.76% CAGR. Directories like FineFoodWholesalers list ~300+ named contract manufacturers; full long-tail (including beverage, sauces, supplements) plausibly 1,000+. [uncertain]",
+    "business_count_global": "Global TAM ~30,000–50,000 co-packers/contract food manufacturers. US dominates with ~3,000–5,000 (Contract Packaging Association tracks ~500 members but long tail is much larger); UK ~1,500–2,500; Canada ~800–1,500. Nulogy serves '400+ brands worldwide' but that is a tiny fraction of the long tail. [uncertain]",
+    "typical_size": "10–80 employees, AUD $2M–$30M annual revenue. Single-site operations with 1–4 production lines; the larger plants (>$30M rev) tend to be on Nulogy/SAP/Microsoft Dynamics."
+  },
+  "pricing_reality": {
+    "incumbent_pricing": "Nulogy Shop Floor: enterprise pricing, ~USD $1,500–$5,000+/month/site (custom-quoted, plus implementation fees). Katana: USD $359/mo Standard, USD $799/mo Professional, unlimited users. MRPeasy: USD $49/user/month (rises sharply with headcount). Craftybase: USD $20–$199/mo, but limited recipe-only workflows. Deacom Essentials: USD $500/mo+. Wherefour and Cin7: typically USD $300–$1,000/mo.",
+    "willingness_to_pay": "Realistic AU ACV for a mid-market co-packer is AUD $300–$600/mo for the base product, with location/seat expansion. Operators are comfortable with $4,000–$8,000/yr software spend if it replaces multiple spreadsheets and prevents a recall. Apply ~80% AU discount to US benchmarks (Katana Pro at USD $799 ≈ AUD $1,000+).",
+    "sales_motion": "Inside sales + content-led self-serve. Hybrid: free trial → guided onboarding call → annual contract. Higher-touch than pure PLG due to data migration and compliance setup.",
+    "realistic_arpu_au": "AUD $400–$550/mo blended (~AUD $5,500/yr ACV), expanding to $800+/mo with multi-line or QA module add-ons.",
+    "expansion_revenue_potential": "Strong 2–3× expansion potential: per-line/per-production-run pricing, QA/HACCP module, label/artwork management, customer portal seats, embedded payments for invoicing brand-owner clients, and AI features (auto-recipe scaling, demand forecast). Embedded fintech is plausible for the brand-owner side (factoring AR) but harder for the co-packer side."
+  },
+  "competitive_landscape": {
+    "incumbents": "1) Nulogy (Canada, founded 2002) — dominant enterprise platform for co-packers/CPGs; ~400+ brand customers, 2024 revenue ~USD $24M (per Owler) or $5.1M (Latka — likely SaaS-only line). Heavy implementation, AU presence via remote sales. 2) Katana MRP (Estonia, 2017) — popular mid-market manufacturing platform with AU users; not co-packer-specific (no client-of-client billing model). 3) MRPeasy (Estonia, 2015) — per-seat MRP, broad but shallow on co-packer workflow. 4) Craftybase (AU/UK, 2011) — solo/micro-batch focus; weak on multi-client co-packer scenarios. 5) Wherefour (US, 2014) — small/mid food traceability-focused ERP. 6) Specialty AU vendors: Pronto Xi, Greentree (legacy, on-prem heritage).",
+    "incumbent_age_years": "Nulogy is 23 years old (founded 2002); Craftybase 14 years; Katana 8 years. The dominant co-packer-specific incumbent (Nulogy) is >20 years old — classic UI rot + replatform window.",
+    "user_satisfaction_signals": "Common complaints: Katana 'too complex/expensive for small shops' (cited repeatedly in Craftybase comparison content and software review aggregators). Nulogy criticised as enterprise-heavy with long implementations; small co-packers say it's overkill. Craftybase praised for ease but flagged as lightweight when buyers grow past ~$2M revenue — 'no real co-packer/client-of-client logic, no multi-line scheduling'. Across forums, the loudest pain is spreadsheet-based job costing and lack of customer-facing portals.",
+    "recent_funding_or_ma": "Nulogy was taken private by STG Partners (2023). Wherefour, FoodReady and Cin7 have all expanded traceability features in 2024–2025 in anticipation of FSMA 204. No major AU-specific VC round in co-packer software in the last 12 months observed. [uncertain]",
+    "ai_disruption_risk": "Moderate. Aptean and Advantive (PE-rollup ERP vendors) are bolting AI on legacy systems; FoodReady markets AI HACCP plan generation. No 'AI-native co-packer OS' has raised a notable round yet — window is open but narrowing. [uncertain]"
+  },
+  "opportunity_quality": {
+    "core_pain": "Co-packers run their whole business on a tangled web of Excel job sheets, paper batch records, and WhatsApp groups to coordinate with brand-owner clients. The biggest unsolved workflow is job costing per brand-client (so the co-packer can quote accurately and invoice with proof of labour/material consumption) plus producing audit-ready batch records on demand. Currently they manually reconcile production logs against the original quote, and recall drills require pulling paper records.",
+    "moat_source": "Workflow lock-in (data hostage: years of batch records, BOMs, customer-specific SKUs) + integrations (Xero/MYOB + supplier EDI + brand-owner customer portals). Secondary moat: regulatory templates (HACCP, FSANZ Standard 3.2.2/4.2.x, FSMA 204) maintained as the platform.",
+    "critical_integrations": "Xero (mandatory in AU), MYOB Acumatica/AccountRight, Shopify (for D2C brand clients), label printers (Zebra/SATO), Stripe for invoicing, GS1 (for FSMA 204 KDE/CTE data), basic EDI for Coles/Woolworths if customer ships private label, and (ideally) a co-packer-to-brand client portal.",
+    "incumbent_ehr_lock_in": "Low. Most AU SME co-packers are NOT locked into a heavy ERP — they sit on Xero + spreadsheets + at most a thin MRP. This is a rip-and-replace opportunity rather than side-car."
+  },
+  "build_difficulty": {
+    "regulatory_complexity": "Moderate to high. AU FSANZ Standards 1.2.2 (labelling), 3.2.2 (food safety practices/recall), and 4.2.x (primary production/processing) plus HACCP plans. For exports to US, FSMA 204 KDE/CTE recordkeeping. Audit-ready batch records are table stakes. No product registration regime (unlike TGA cosmetics), so 'just' recordkeeping discipline.",
+    "regulatory_changes_2025_2026": "FSMA 204 (US Food Traceability Rule) enforcement extended from January 20 2026 to July 20 2028 (FDA, Nov 2025) — still a forcing function for AU co-packers exporting to the US, just with a longer runway. AU FSANZ is conducting a multi-year review of food safety standards (chapter 3) through 2025–2026, with sharper traceability expectations. GS1 AU pushing 2D barcode adoption (Sunrise 2027). FDA has issued updated FSMA 204 industry resources late 2025, increasing market awareness even with the delay.",
+    "domain_depth": "Moderate. Need to understand BOM/yield/scrap, batch numbering, allergen segregation, lot/expiry, GS1 SSCC pallets, and the co-packer's job-cost economics. Acquirable by an outsider with 3–6 months of design partner interviews; insider co-founder (food technologist) accelerates GTM materially.",
+    "mvp_effort": "6–9 months for a credible MVP covering BOMs, batch records, job costing, and Xero integration on top of Manuva's existing schema.",
+    "technical_risks": "GS1 KDE/CTE data model correctness, label printer/barcode reliability on shop floor, scale weighing integrations, multi-tenant data isolation when co-packer's clients want their own login (B2B2B). Mobile-first shop-floor capture is non-trivial.",
+    "state_by_state_variance_au": "Low to moderate. State food authorities (NSWFA, VicHealth, Qld Health) enforce the federal FSANZ code; some licensing variance for dairy/meat/seafood but recordkeeping requirements are largely uniform.",
+    "data_residency_requirement": "Not legally required for general food but strongly preferred by AU buyers. Hosting in Supabase AU region (Sydney) is sufficient and is a marketing positive."
+  },
+  "distribution_difficulty": {
+    "channel_options": "1) Content/SEO around 'FSMA 204 for AU exporters', 'HACCP software AU', 'co-packer job costing' — moderate competition. 2) Partnerships with food industry consultants (HACCP auditors, food technologists, AIFST members) — high leverage. 3) AusPack and FoodPro trade shows — exhibition <AUD $15K. 4) Cold outbound to directories like FineFoodWholesalers (~300 named manufacturers — manageable). 5) Xero/MYOB app marketplaces — strong inbound channel. 6) AFGC (Australian Food and Grocery Council) and AIFST sponsorships.",
+    "trade_association_count_au": "5–8 relevant: AFGC, AIFST, Food and Beverage Importers Association, AUSVEG (adjacent), CMI (Co-Manufacturing Institute, mostly US), Australian Beverages Council, state food industry councils.",
+    "trade_publication_count": "4–6: Food & Drink Business, Australian Food News, AUSPACK Plus, Inside FMCG, FoodProcessing.com.au.",
+    "industry_facebook_group_size": "Smaller than makers — likely 5,000–15,000 across 'AU Food Manufacturers', 'HACCP Australia' and adjacent groups. Co-packers are less active on FB than indie makers; LinkedIn is the dominant channel. [uncertain]",
+    "conference_event_count_au": "3–5 main events: AUSPACK (biennial), FoodPro (biennial), Fine Food Australia (annual, Sydney/Melbourne), AIFST Convention, Foodservice Australia. All exhibit-able at <AUD $10K for a small booth.",
+    "cold_outbound_viability": "High. Co-packer principals are listed in directories and on LinkedIn; emails findable via Apollo/Lusha. Founder-led outbound to 300 named AU contract manufacturers is feasible in 60–90 days.",
+    "founder_market_fit_proxy": "Manufacturing trade — moderately open to outsiders if you speak their language (yield, scrap, allergen swaps). Trust-building requires plant tours and 1–2 reference customers. Easier than vet/funeral but harder than pure CPG software.",
+    "case_study_acquisition_cost": "First 5 customers: ~AUD $15K–$30K equivalent in founder time (3 months of design-partner work, free first year for 2 of them). Each reference customer accelerates the next 3.",
+    "content_seo_competitiveness": "Moderate. 'Food manufacturing software Australia' and 'HACCP software' are contested by Aptean, MRPeasy, Wherefour content farms. Long-tail terms ('co-packer job costing', 'AU FSANZ 3.2.2 software') are winnable.",
+    "insurer_or_gatekeeper_dependency": "Low for the core product. GS1 standards are open. No insurer/govt API required. Coles/Woolworths EDI is a partnership accelerator but not a startup-killer if absent in MVP."
+  },
+  "personal_fit": {
+    "manuva_data_model_reuse_pct": "~70–80% reusable. Manuva already has BOMs (recipes/formulas map directly), inventory with lot/expiry, suppliers, production orders, bin locations, GP%. Net-new: client-of-client (brand-owner) entity model, job-cost/quote engine, batch record audit trail with eSignature, allergen matrices, label/CoA generation.",
+    "manuva_code_reuse": "Next.js 15 App Router, Supabase auth + RLS + tenant context (getServerTenantContext), CSS Modules design system all transfer cleanly. Activity log table reusable for audit trails. Goods-inwards module is reusable as ingredient receival.",
+    "buyer_persona_overlap_with_manuva": "High overlap. Manuva already targets manufacturing SMBs in AU; co-packers are a natural specialised expansion. Could be packaged as 'Manuva for Co-Packers' tier rather than a separate product. Bundle/expansion play viable.",
+    "adjacency_to_manufacturing": "Very close — same operational primitives (BOMs, batches, lots, bins, COGS) with co-packer-specific layer on top.",
+    "technical_moat_durability_months": "9–15 months. An AI-coding-equipped competitor could clone the core in ~6 months; the moat is integrations (Xero/MYOB certified, GS1 templates, label printer reliability) and accumulated regulatory templates."
+  },
+  "unit_economics": {
+    "gross_margin_sensitivity": "Healthy 80%+ SaaS margins achievable. AI inference (for OCR of paper batch sheets, auto-recipe scaling) adds 3–5pp cost; no SMS or human-in-loop required. Label printer hardware support is software-only.",
+    "multi_location_natural": "Yes — successful co-packers expand to 2–4 sites or add lines. Natural per-line/per-site expansion revenue.",
+    "churn_risk": "Low. High data lock-in (years of batch records), audit dependency, integrated billing. Co-packers are sticky businesses; churn driven mostly by business closure, not switching.",
+    "customers_needed_for_target_arr": "~200 customers at AUD $5,000 ACV = $1M ARR. Achievable in 24–36 months with focused AU GTM and ~10% penetration of the addressable market."
+  },
+  "uncertain": [
+    "business_count_au",
+    "business_count_global",
+    "recent_funding_or_ma",
+    "ai_disruption_risk",
+    "industry_facebook_group_size"
+  ]
+}

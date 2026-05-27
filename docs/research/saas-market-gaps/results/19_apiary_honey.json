@@ -1,0 +1,72 @@
+{
+  "id": "19_apiary_honey",
+  "name": "Honey / apiary management",
+  "tier": "D",
+  "hypothesis": "AU biosecurity tightening (varroa response 2025+); BeeHero/Apimaye are hardware; pure software thin.",
+  "market_sizing": {
+    "target_buyer": "Owner of a commercial apiary (typically also the head beekeeper). Decision-maker is the founder; bookkeeper/spouse often handles software adoption.",
+    "business_count_au": "Approximately 29,690 registered beekeepers in Australia of which roughly 2,000 are commercial (>50 hives, average 400–800 hives). Realistic SaaS-paying TAM is the commercial ~2,000 plus the top tier of semi-commercial hobbyists, generously ~3,500–5,000. The vast hobbyist tail will not pay $100–500/mo.",
+    "business_count_global": "Global TAM ~50,000–100,000 commercial beekeepers; ~3M total beekeepers worldwide. US has ~2,000–3,000 commercial operations (USDA NASS); EU ~10,000–15,000 commercial; NZ ~1,500–2,500 commercial. [uncertain]",
+    "typical_size": "1–8 employees, AUD $100K–$3M revenue. Family-run; seasonal staff at extraction time. Capital-light but operationally complex (truck logistics, pollination contracts)."
+  },
+  "pricing_reality": {
+    "incumbent_pricing": "BeeTrakka (AU): subscription pricing not publicly listed, anecdotally ~AUD $30–$100/mo. MyApiary (NZ): ~NZD $40–$200/mo tiered by hive count. HiveTracks (US): freemium with paid tiers ~USD $50–$200/yr for hobbyists, higher for commercial. Navfarm: enterprise/custom. ApiManager: lightweight, ~USD $10–$30/mo. BeeHero (precision pollination): hardware-led, custom enterprise pricing. The 'commercial software' band is largely AUD $50–$200/mo today — below the $100–500 target band.",
+    "willingness_to_pay": "Realistic AU ACV is AUD $50–$150/mo for the commercial tier. The top 200 operations might pay AUD $200–$400/mo for a fully integrated platform with pollination contract management + traceability. Apply AU discount; honey margins are thin and operators are notoriously frugal.",
+    "sales_motion": "Self-serve with high-touch onboarding for the top tier. Conference/show presence at AHBIC and state association events is critical. Word-of-mouth dominates.",
+    "realistic_arpu_au": "AUD $80–$120/mo blended (~AUD $1,200/yr ACV). Just below the $100–500/mo target band on average.",
+    "expansion_revenue_potential": "Limited 1.5–2× expansion. Possible: pollination contract marketplace (take rate), honey traceability SKU/QR for premium brands, embedded payments for pollination invoicing, IoT sensor add-ons (but that's hardware margin not SaaS). True 3× expansion unlikely without moving into adjacent value chains (pollination services, honey wholesale)."
+  },
+  "competitive_landscape": {
+    "incumbents": "1) BeeTrakka (Australian-built, AU-hosted; QR-code hive/queen tracking, queen genealogy, biosecurity-aware) — strongest AU-specific player. 2) MyApiary (NZ, founded ~2014) — strong in ANZ commercial market, RFID-equipped, regional focus. 3) HiveTracks (US, since 2010, 40,000+ users in 150+ countries) — global but hobbyist-skewed, recent AI plant ID. 4) BeeHero (Israel/US, founded 2017, $64M raised, $42M Series B 2022) — IoT/precision pollination hardware-led, targets almond/blueberry growers, not pure software. 5) Apimaye — Turkish hive hardware company, not really software. 6) Navfarm — generic farm ERP with bee module. 7) ApiManager, BeeKeepPal, BeePlus — long tail of hobbyist apps.",
+    "incumbent_age_years": "HiveTracks is 15 years old (2010), MyApiary ~11 years, BeeTrakka likely 8–12 years. Older incumbents have UI rot but the market is small enough that no one has invested in a modern redesign. [uncertain]",
+    "user_satisfaction_signals": "Commercial beekeepers complain in forums and AHBIC fora that existing tools are either hobbyist (HiveTracks) or hardware-tethered (BeeHero/Pollenity). Common complaints: poor offline mode in remote apiary sites with no signal, weak truck/load-out logistics, no pollination contract module, no integration with honey traceability for retail QR codes. BeeTrakka praised for AU-specific compliance (queen records, biosecurity) but UI dated. Reddit r/Beekeeping threads regularly ask 'is there anything better than HiveTracks for a 200-hive operation?' — gap exists but is small.",
+    "recent_funding_or_ma": "BeeHero last raised $500K in May 2024 (small follow-on after 2022 Series B). No notable funding in pure beekeeping software in the last 12 months. Pollenity (Bulgaria) raised modest rounds. The category is too small for typical VC. [uncertain]",
+    "ai_disruption_risk": "Low. Some AI for hive-sound analysis (BeeHero) and plant ID (HiveTracks 2024 KindWise integration), but no AI-native software-pure challenger has raised meaningfully. Window remains open largely because the prize is too small to attract serious competition."
+  },
+  "opportunity_quality": {
+    "core_pain": "Commercial beekeepers run on paper notebooks in the truck, a whiteboard at the shed, and spreadsheets for pollination contract scheduling. The single most unsolved workflow is end-to-end pollination contract management: which hives go to which orchard on which date, with strength assessments, treatment records (varroa now mandatory in management mode), and customer invoicing. Honey extraction lot tracking and chain-of-custody back to apiary site (for premium/manuka-style branding) is the secondary unsolved problem. Biosecurity treatment records are now legally significant after varroa.",
+    "moat_source": "Domain depth (queen genealogy, varroa treatment cycles, pollination logistics, AU state biosecurity rules) + integrations (Xero, NLIS-style traceability if it emerges for hives, packing-shed scales). Modest network effects via shared queen breeder registry or pollination marketplace.",
+    "critical_integrations": "Xero/MYOB (must), state biosecurity portals (BeeWeb / state-by-state hive registration), AHBIC industry data, Stripe for pollination invoicing, GS1 for honey QR/2D barcodes (Sunrise 2027), optional IoT scale/sensor integrations.",
+    "incumbent_ehr_lock_in": "Low. Most commercial beekeepers are on Xero + spreadsheets + paper. Rip-and-replace from BeeTrakka/MyApiary is the realistic path."
+  },
+  "build_difficulty": {
+    "regulatory_complexity": "Moderate, varying sharply by state. Mandatory hive registration (state-by-state: NSW DPI, Agriculture Victoria, Biosecurity Qld, PIRSA, DPIRD WA, NRE Tas). General Biosecurity Obligation/Duty in each state requires beekeepers to manage pests and report notifiable diseases. Varroa transition-to-management regime (NMG decided eradication infeasible in Sept 2023; Transition to Management program concluded Feb 2026) means ongoing treatment recordkeeping is now table stakes.",
+    "regulatory_changes_2025_2026": "Varroa mite confirmed in South Australia (Sept 2025, Pooginook in the Riverland; Nov 2025 multiple detections in Limestone Coast, Fleurieu Peninsula). Continued spread across NSW, Vic, Qld, SA through 2024–2026. National Varroa Mite Management Program (NVMMP) replaces the eradication response. Each state is rolling out updated biosecurity obligations (e.g. Qld Factsheet v2.0 June 2025 on the General Biosecurity Obligation). AHBIC voted to increase the honey levy by 1c/kg to repay varroa response debt. GS1 2D barcode Sunrise 2027 affects honey packers. Net: real, recurring forcing function — but the buyer population is small.",
+    "domain_depth": "High and culturally specific. Beekeeping has a strong oral tradition, multi-generational families, and a low tolerance for 'tech bros'. An outsider needs 6–12 months of design-partner work plus an industry co-founder/advisor to be credible.",
+    "mvp_effort": "5–7 months on top of Manuva — but with significant rework. Manuva's BOM/inventory model is a poor fit for live biological assets (hives, queens) and pollination logistics.",
+    "technical_risks": "Offline-first mobile is a hard requirement (remote apiary sites have no signal). GPS routing/load-out for trucks. Queen genealogy data model. Weight/scale telemetry if hardware integrations are pursued.",
+    "state_by_state_variance_au": "Yes, meaningfully. Each state has its own hive registration system, biosecurity obligations, varroa response status, and movement restrictions. Multiple rule engines or per-state configuration required.",
+    "data_residency_requirement": "Not legally required but strongly preferred by biosecurity-conscious operators. AU hosting is a marketing positive."
+  },
+  "distribution_difficulty": {
+    "channel_options": "1) AHBIC and state association partnerships (NSWAA, VAA, QBA, etc.) — essential, low-cost. 2) AusBee Congress and state conferences — exhibit at <AUD $5K. 3) Facebook groups and Beekeeping Australia forums. 4) Trade press (The Australasian Beekeeper, Bee Craft Australia). 5) AHBIC newsletter sponsorship. 6) Direct outreach to the ~2,000 commercial beekeepers via state-registered-beekeeper lists (where accessible). Paid digital is largely irrelevant here.",
+    "trade_association_count_au": "8–12 active: AHBIC (peak) plus state bodies (NSWAA, Victorian Apiarists' Association, Queensland Beekeepers' Association, SA Apiarists' Association, WA Beekeepers, Tas Beekeepers), Honey Packers and Marketers Association, plus local clubs.",
+    "trade_publication_count": "3–5: The Australasian Beekeeper (monthly), Bee Craft Australia, AHBIC newsletter, AgriFutures Honey Bee & Pollination updates.",
+    "industry_facebook_group_size": "Estimated 15,000–40,000 across active AU groups (Beekeeping in Australia, state-level groups, Varroa Australia info groups). Smaller than makers but highly engaged. [uncertain]",
+    "conference_event_count_au": "AusBee Congress (biennial, the big one), state conferences annually, plus AgriFutures and pollination workshops. 4–6 events total annually under $10K each.",
+    "cold_outbound_viability": "Moderate. State hive registration lists are not publicly downloadable but commercial beekeepers are findable via AHBIC member lists, trade press advertisers, and trade-show exhibitor lists. Phone-first outreach more effective than email (rural broadband, older demographic).",
+    "founder_market_fit_proxy": "Low without an insider. Beekeeping is a 'trust your own' culture; older male demographic; outsiders viewed with suspicion until proven. An industry co-founder is close to mandatory.",
+    "case_study_acquisition_cost": "First 5 customers: high in time but low in dollars — ~AUD $20K–$40K equivalent in founder time over 4–6 months including farm visits and association sponsorships. Each reference unlocks the next 2–3 via word-of-mouth.",
+    "content_seo_competitiveness": "Low overall but the audience barely uses search for software. SEO is a minor channel; community/word-of-mouth dominates. Winnable but doesn't move the needle.",
+    "insurer_or_gatekeeper_dependency": "Low. No insurer dependency. State biosecurity portals are accessible APIs would be a stretch goal not a startup-killer."
+  },
+  "personal_fit": {
+    "manuva_data_model_reuse_pct": "~30–40% reusable. Suppliers, Xero integration, tenant/RLS, multi-location, activity log all reuse. But hives are live biological assets with location history and treatment cycles — a meaningfully different data model from inventory items. Pollination contracts are project/dispatch logic Manuva doesn't have. BOM is irrelevant except for honey-packing operations.",
+    "manuva_code_reuse": "Auth, tenant context, RLS, design system, invite/email shell, activity log all transfer. UI components (tables, forms, modals) reusable. Roughly half of Manuva's UI library is directly useful.",
+    "buyer_persona_overlap_with_manuva": "Very low. Honey/apiary buyers do not overlap with Manuva's manufacturing SMB ICP. Fresh GTM required.",
+    "adjacency_to_manufacturing": "Far. Beekeeping is primary production (agriculture), not manufacturing. Honey packing/extraction is the only manufacturing-adjacent slice.",
+    "technical_moat_durability_months": "12–18 months. The market is small enough that few competitors will bother, but domain depth + offline-first + state-by-state rules raise the bar against AI-clone attacks."
+  },
+  "unit_economics": {
+    "gross_margin_sensitivity": "Healthy 80% SaaS margins achievable if pure software. If hardware/IoT is bundled, margins compress sharply. No SMS or human-in-loop required. Offline-sync infra adds modest cost.",
+    "multi_location_natural": "Partial. Commercial beekeepers naturally have many apiary sites (dozens to hundreds) — drives location-count expansion. But sites are not 'paying seats'; they are data records. Truck/team expansion is modest.",
+    "churn_risk": "Moderate. Family business succession risk; weather/varroa-driven income shocks; small-operator burnout. Annual contracts help.",
+    "customers_needed_for_target_arr": "~830 customers at AUD $1,200 ACV = $1M ARR. With only ~2,000 commercial AU beekeepers and global penetration required, hitting $1M ARR AU-only is extremely hard. Realistic path requires NZ + US + UK + EU expansion."
+  },
+  "uncertain": [
+    "business_count_global",
+    "incumbent_age_years",
+    "recent_funding_or_ma",
+    "industry_facebook_group_size"
+  ]
+}

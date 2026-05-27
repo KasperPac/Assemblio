@@ -1,0 +1,86 @@
+{
+  "id": "12_ndis_provider_ops",
+  "name": "NDIS provider operations (small/mid)",
+  "tier": "B",
+  "hypothesis": "Lumary/CareMaster enterprise-priced; NDIS reforms + Support at Home Program 2026 forcing churn. Real gap below Lumary at $100–500/mo.",
+
+  "market_sizing": {
+    "target_buyer": "Owner/operator or operations manager of a small-to-mid NDIS provider (5–50 staff); secondary buyer is the quality/compliance manager.",
+    "business_count_au": "~25,000 registered NDIS providers as of Jan 2025 (24,989) plus ~150,000+ unregistered providers. Realistic ICP (small/mid registered + larger unregistered considering registration under 2026 reforms) is roughly 8,000–15,000 businesses.",
+    "business_count_global": "Closest global analogues: UK ~25,000 CQC-registered domiciliary/social-care providers; US ~33,000 home-health agencies + ~280,000 I/DD provider sites under HCBS waivers; Canada ~5,000 disability-services providers. Each market has its own regulator and funding model, so cross-border reuse is limited.",
+    "typical_size": "5–50 support workers, AUD $0.5M–$10M revenue; many are sole-traders or family-run with 3–10 participants."
+  },
+
+  "pricing_reality": {
+    "incumbent_pricing": "Lumary: custom enterprise pricing, commonly $50+/user/month with 3–6 month implementation. CareMaster: from $99/month for up to 5 users (tiered). ShiftCare: ~$9–25/user/month, 5-user minimum. Brevity: per-client (~$6.49/client/mo plus setup, base ~$44.90/mo). SupportAbility: $15–30/user/month.",
+    "willingness_to_pay": "Sweet spot for AU small providers is AUD $150–400/month total (not per-seat). Providers under cost pressure from the 2025 Support at Home transition (fee-for-service) and incoming SIL/platform registration are willing to pay for compliance-grade tooling but resist per-seat pricing that scales with casual staff.",
+    "sales_motion": "Inside sales + self-serve trial; partner channel via NDIS consultants/auditors is important.",
+    "realistic_arpu_au": "AUD $250–400/month/account (blended), ~70–80% of equivalent US ARPU.",
+    "expansion_revenue_potential": "2–3x expansion realistic via: (a) embedded payments/payroll/ABA file generation, (b) AI progress-note + incident-report drafting (per-seat add-on), (c) participant-funded modules (plan-management, SDA, allied health), (d) audit-prep service revenue. Embedded fintech is constrained because NDIS pays providers directly (PRODA portal) — main fintech wedge is staff payroll + super, not participant billing."
+  },
+
+  "competitive_landscape": {
+    "incumbents": "1) Lumary — Salesforce-based enterprise platform, 200+ providers, raised AUD $33M Series A (2022) from Five V Capital; targets multi-site providers. 2) CareMaster — AU-owned, tiered SMB pricing from $99/mo, strong compliance/incident features. 3) ShiftCare — AU-built rostering-led platform, broad SMB footprint, per-staff pricing. 4) Brevity — AU rostering + NDIS billing, per-client pricing. 5) SupportAbility (Sandwai) — long-standing AU specialist. Adjacent: Splose (allied-health/NDIS, AI-native), eZaango, FlowLogic, Vertex360.",
+    "incumbent_age_years": "Lumary founded 2017 (~9 years); SupportAbility/Sandwai ~15+ years; CareMaster ~10 years; ShiftCare founded 2017. The category has visible UI rot at the SupportAbility/Carelink end but Lumary is relatively modern.",
+    "user_satisfaction_signals": "Recurring complaints: Lumary is 'overkill and overpriced for small providers' with 3–6 month implementations; Brevity setup fees are 'significant for a small organisation'; per-seat models punish providers with high casual workforces; hidden costs around AVETMISS-style data export, custom forms, and SMS. Capterra/G2 reviews of legacy products (Carelink, SupportAbility) repeatedly cite dated UI, slow support, and difficulty keeping up with NDIS Price Guide changes. Facebook groups (NDIS Discussion Australia, NDIS Grassroots) regularly host 'what software are you using?' threads — strong signal of unmet need.",
+    "recent_funding_or_ma": "Lumary's AUD $33M Series A (2022) is still the most-cited round; no major new VC entrant announced in the AU NDIS-software space in the last 12 months. Splose continues to grow as the AI-native allied-health adjacent player. The bigger M&A story is in care delivery (Propel, InvoCare-style consolidation in aged care).",
+    "ai_disruption_risk": "Moderate-and-rising. Splose, Imploy and others are leaning into AI progress-note generation and 'smart shift matching'. NDIS Framework for AI-Enabled Assistive Technology (2025) legitimised AI in the sector. No dominant AI-native NDIS-ops player yet, so the window is still open ~12–18 months."
+  },
+
+  "opportunity_quality": {
+    "core_pain": "Compliance evidence under the 2026 stricter audit regime — providers are still using Word templates, Google Drive and WhatsApp to capture progress notes, incident reports, staff inductions, restrictive-practice authorisations and participant service agreements, then scrambling to assemble an audit pack. Secondary pain: NDIS Price Guide line-item complexity and shift-to-bulk-claim reconciliation in PRODA. With Support at Home moving to fee-for-service from 1 July 2025 and SIL/platform registration mandatory 1 July 2026, providers face a real forcing function to replace spreadsheets.",
+    "moat_source": "Defensibility from: (a) up-to-date NDIS/Support at Home line-item + price-guide rule engine, (b) PRODA integration depth, (c) audit-ready evidence graph (links progress notes to goals to claims), (d) compliance-content network effects (templates shared across providers), (e) regulatory switching cost once audit history lives in the system.",
+    "critical_integrations": "Must: PRODA/NDIS bulk-claim file generation, Xero/MYOB, payroll (KeyPay/Employment Hero), SMS, Stripe (preneed not relevant; staff card payments yes). Strongly desired: Tanda/Deputy for rostering, single-touch payroll, USI/police-check vendors, NDIS Worker Screening Database, Auslan/translation services.",
+    "incumbent_ehr_lock_in": "Low for small providers (most use spreadsheets + Xero). Larger providers locked into Lumary/Carelink — rip-and-replace is hard, side-car (incident/compliance only) is viable wedge."
+  },
+
+  "build_difficulty": {
+    "regulatory_complexity": "High. NDIS Practice Standards, restrictive practice authorisations, worker screening, incident reporting (24-hour and 5-day), conflict-of-interest registers, audit frameworks (verification vs certification). Support at Home adds a parallel funding regime from 1 July 2025.",
+    "regulatory_changes_2025_2026": "Forcing functions are unusually strong: (1) Support at Home Program commenced 1 July 2025 — fee-for-service replaces lump-sum HCP, with 8 funding classifications and full 2026 implementation. (2) NDIS Amendment (Integrity and Safeguarding) Act 2026 received Royal Assent 8 April 2026 — strengthens Commission powers, penalties and whistleblower protections. (3) SIL and platform providers must be registered from 1 July 2026; expansion of mandatory registration continues to 2027 and full implementation by end of 2030. (4) Stricter real-time evidence-based audits replacing periodic self-report. These dates collectively force tens of thousands of providers to upgrade tooling within 12–24 months.",
+    "domain_depth": "Deep. Outsider can learn the price guide and audit frameworks, but credibility with practice managers requires either hiring an ex-Commission auditor or co-founding with a provider operator. ~6–9 months to credible domain fluency.",
+    "mvp_effort": "6–9 months for a solo/small team focused on a narrow wedge (e.g. incident + restrictive-practice register, or shift-notes-to-bulk-claim).",
+    "technical_risks": "Moderate. Hard problems: NDIS Price Guide rule engine kept current; PRODA bulk-claim file format and error reconciliation; restrictive-practice authorisation logic; multi-tenant RLS with state-by-state worker screening rules; AI progress-note generation that survives audit review.",
+    "state_by_state_variance_au": "Moderate — worker screening, restrictive-practice authorisation, and behaviour-support practitioner registration differ by state/territory. Support at Home is federal but interacts with state aged-care contracts.",
+    "data_residency_requirement": "Yes — Australian data residency expected; healthcare-adjacent buyers will ask. Use AU-region Supabase/AWS Sydney."
+  },
+
+  "distribution_difficulty": {
+    "channel_options": "(1) NDIS consultant/auditor partnerships (highest leverage — auditors recommend tools to clients post-audit). (2) Content/SEO on price-guide changes, incident-reporting templates, audit-prep checklists. (3) Facebook groups (NDIS Discussion Australia, NDIS Grassroots — tens of thousands of members combined). (4) ITECA/NDS-style peak-body events. (5) Cold outbound to registered providers (PRODA-listed). (6) Provider Institute / NDIS Commission webinar sponsorships.",
+    "trade_association_count_au": "5–8 active: National Disability Services (NDS — peak), Disability Intermediaries Australia (DIA), NDIS Provider Network, state-level associations (NDS state branches), ACOSS-adjacent bodies.",
+    "trade_publication_count": "Limited — NDS publications, Pro Bono Australia (sector-wide), Community Care Review, Australian Ageing Agenda (Support at Home crossover). ~4–6 with paid sponsorship inventory.",
+    "industry_facebook_group_size": "NDIS Grassroots Discussion ~80k+ members; NDIS Discussion Australia ~30k+; numerous smaller provider-only groups. Total active reachable audience ~150k+ across overlapping groups.",
+    "conference_event_count_au": "8–12/year: NDS National Conference, NDIS Provider Conference, Disability Support Awards, ITECA cross-over events, state NDS conferences, Sourceable/HelloCare events. Most have <$10K exhibit booths.",
+    "cold_outbound_viability": "High. NDIS Provider Finder is public; registered provider list is downloadable. ABN + business email enrichment via Apollo/Clay yields workable cadences.",
+    "founder_market_fit_proxy": "Moderate. Practice managers will engage with technical outsiders, but trust accelerates dramatically with a co-founder who has run a registered provider or worked at the Commission. Not as closed as funeral/vet but more relationship-driven than manufacturing.",
+    "case_study_acquisition_cost": "First 5 reference customers achievable in 2–3 months via Facebook-group + warm-intro outreach if a clear compliance wedge is shown; expect to offer free implementation help.",
+    "content_seo_competitiveness": "Moderately crowded — Lumary, ShiftCare, FlowLogic and Vertex360 publish heavily. Long-tail keywords around Support at Home, 2026 reforms, restrictive-practice and incident-report templates are still winnable.",
+    "insurer_or_gatekeeper_dependency": "PRODA/NDIA APIs are accessible to providers (bulk-claim upload is a file format, not a closed API). NDIS Worker Screening Database is gated but read-only checks are workable. No insurer gatekeeper. Lower gatekeeper risk than health-insurer-dependent verticals."
+  },
+
+  "personal_fit": {
+    "manuva_data_model_reuse_pct": "~25–35%. Multi-tenant RLS, organisations/sites, staff, audit logs, document store, activity_log patterns transfer directly. BOM/inventory/production-order schema does not. Suppliers ≈ third-party allied-health partners.",
+    "manuva_code_reuse": "Auth (Supabase + getServerTenantContext), tenant/role model, RLS patterns, activity logging, invite flow, CSS Modules + design tokens all reusable. Server-action pattern and Next.js App Router structure ports cleanly.",
+    "buyer_persona_overlap_with_manuva": "Low — Manuva sells to manufacturers, NDIS sells to care providers. No bundle/expansion play with existing customers.",
+    "adjacency_to_manufacturing": "Low. Different buyer, different vocabulary, different regulator. Mainly platform-level reuse.",
+    "technical_moat_durability_months": "6–9 months. Compliance content + PRODA depth + audit-history accumulation extend defensibility, but core SaaS shell is replicable by an AI-coding-tool-equipped competitor inside a year."
+  },
+
+  "unit_economics": {
+    "gross_margin_sensitivity": "Moderate. AI progress-note generation adds inference cost (~$0.05–0.30 per shift if widely used) and SMS for shift comms (~$0.05–0.10/msg). At $250–400 ARPU, gross margin can hold ~80% if AI is metered or premium-tier.",
+    "multi_location_natural": "Yes — providers naturally expand to multi-site (group homes, SIL houses, day-program centres), driving per-site/per-participant expansion.",
+    "churn_risk": "Moderate. Sector has elevated business-failure rates post-Support-at-Home transition, but switched-on operators are sticky once audit history accumulates. Annual churn likely 8–15%.",
+    "customers_needed_for_target_arr": "At AUD $300/mo ARPU = $3,600/yr → ~280 customers for $1M ARR. Highly achievable given 8–15k ICP."
+  },
+
+  "uncertain": [
+    "business_count_global",
+    "incumbent_age_years",
+    "recent_funding_or_ma",
+    "industry_facebook_group_size",
+    "trade_association_count_au",
+    "trade_publication_count",
+    "conference_event_count_au",
+    "gross_margin_sensitivity",
+    "churn_risk"
+  ]
+}

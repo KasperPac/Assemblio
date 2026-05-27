@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manuva Competitive Analysis</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #1a1a2e;
+    background: #f5f5f7;
+    padding: 32px 16px;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #fff;
+    padding: 36px 40px;
+    border-radius: 12px;
+    margin-bottom: 32px;
+  }
+
+  header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+
+  header .meta {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 32px 36px;
+    margin-bottom: 28px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f0f0f5;
+  }
+
+  h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 24px 0 12px;
+  }
+
+  h3:first-child { margin-top: 0; }
+
+  p { margin-bottom: 12px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* Competitor chips */
+  .competitors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 4px;
+  }
+
+  .competitor-chip {
+    background: #f5f5f7;
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+
+  .competitor-chip .name {
+    font-weight: 700;
+    font-size: 13px;
+    color: #1a1a2e;
+  }
+
+  .competitor-chip .price {
+    font-size: 12px;
+    color: #666;
+    margin-top: 2px;
+  }
+
+  .competitor-chip .tier {
+    display: inline-block;
+    font-size: 11px;
+    color: #888;
+    background: #eee;
+    border-radius: 4px;
+    padding: 1px 6px;
+    margin-top: 4px;
+  }
+
+  .manuva-chip {
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+  }
+
+  .manuva-chip .name { color: #4338ca; }
+
+  /* Tables */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 16px 0;
+    border-radius: 8px;
+    border: 1px solid #e8e8f0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead th {
+    background: #1a1a2e;
+    color: #fff;
+    font-weight: 600;
+    padding: 10px 14px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  thead th:first-child { border-radius: 0; }
+
+  tbody tr:nth-child(even) { background: #fafafa; }
+
+  tbody td {
+    padding: 9px 14px;
+    border-bottom: 1px solid #f0f0f5;
+    vertical-align: top;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+
+  tbody td:first-child {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .manuva-col {
+    background: rgba(67,56,202,0.06) !important;
+    color: #4338ca;
+    font-weight: 600 !important;
+  }
+
+  /* Check/cross glyphs */
+  .yes  { color: #16a34a; font-weight: 700; }
+  .no   { color: #d1d5db; }
+  .addon { color: #d97706; font-size: 12px; }
+  .tier-badge {
+    font-size: 11px;
+    color: #7c3aed;
+    font-weight: 600;
+  }
+
+  /* Gap/advantage callouts */
+  .callout {
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 14px;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .callout.gap {
+    background: #fff7ed;
+    border-left: 3px solid #f97316;
+    color: #7c2d12;
+  }
+
+  .callout.advantage {
+    background: #f0fdf4;
+    border-left: 3px solid #22c55e;
+    color: #14532d;
+  }
+
+  .callout strong { font-weight: 700; }
+
+  /* Positioning cards */
+  .positioning-card {
+    border: 1px solid #e8e8f0;
+    border-radius: 10px;
+    padding: 22px 26px;
+    margin-bottom: 20px;
+  }
+
+  .positioning-card h3 {
+    font-size: 16px;
+    margin-top: 0;
+    margin-bottom: 6px;
+  }
+
+  .positioning-card .buyer-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #888;
+    margin-bottom: 8px;
+  }
+
+  .positioning-card .buyer-desc {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+
+  .strength-list, .weakness-list {
+    list-style: none;
+    font-size: 13px;
+  }
+
+  .strength-list li::before { content: "✓ "; color: #16a34a; font-weight: 700; }
+  .weakness-list li::before { content: "✗ "; color: #dc2626; font-weight: 700; }
+
+  .strength-list li, .weakness-list li { margin-bottom: 5px; }
+
+  .pitch-box {
+    background: #f5f5f7;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #333;
+    font-style: italic;
+    margin-top: 14px;
+  }
+
+  .pitch-box::before {
+    content: "Sales pitch: ";
+    font-style: normal;
+    font-weight: 700;
+    color: #4338ca;
+  }
+
+  .win-tier {
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #4338ca;
+  }
+
+  /* Gap priority table */
+  .priority-critical { color: #dc2626; font-weight: 700; }
+  .priority-high     { color: #d97706; font-weight: 700; }
+  .priority-medium   { color: #2563eb; font-weight: 600; }
+  .priority-low      { color: #16a34a; font-weight: 600; }
+
+  /* Summary box */
+  .summary-box {
+    background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%);
+    border: 1px solid #c7d2fe;
+    border-radius: 10px;
+    padding: 22px 26px;
+    margin-top: 8px;
+  }
+
+  .summary-box p { font-size: 14px; margin-bottom: 12px; }
+  .summary-box p:last-child { margin-bottom: 0; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #4338ca;
+    margin-bottom: 16px;
+  }
+
+  hr { border: none; border-top: 1px solid #e8e8f0; margin: 24px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>Manuva Competitive Analysis</h1>
+    <div class="meta">2026-05-11 &nbsp;·&nbsp; Dual-use: roadmap gap analysis + sales/marketing positioning</div>
+  </header>
+
+  <!-- Competitors covered -->
+  <div class="card">
+    <h2>Competitors Covered</h2>
+    <div class="competitors-grid">
+      <div class="competitor-chip manuva-chip">
+        <div class="name">Manuva</div>
+        <div class="price">$99 / $249 / $499 / Enterprise</div>
+        <span class="tier">Reference product</span>
+      </div>
+      <div class="competitor-chip">
+        <div class="name">Craftybase</div>
+        <div class="price">$20–$49+/mo</div>
+        <span class="tier">SMB / maker</span>
+      </div>
+      <div class="competitor-chip">
+        <div class="name">Qoblex</div>
+        <div class="price">$79–$179/mo</div>
+        <span class="tier">SMB / inventory-first</span>
+      </div>
+      <div class="competitor-chip">
+        <div class="name">inFlow Inventory</div>
+        <div class="price">$110–$1,319/mo</div>
+        <span class="tier">SMB / inventory-first</span>
+      </div>
+      <div class="competitor-chip">
+        <div class="name">Katana MRP</div>
+        <div class="price">$179–$799/mo + add-ons</div>
+        <span class="tier">Direct competitor</span>
+      </div>
+      <div class="competitor-chip">
+        <div class="name">MRPeasy</div>
+        <div class="price">$49/user/mo</div>
+        <span class="tier">Mid-market MRP</span>
+      </div>
+      <div class="competitor-chip">
+        <div class="name">Cin7 Core</div>
+        <div class="price">$349–$999/mo</div>
+        <span class="tier">Established ERP-lite</span>
+      </div>
+      <div class="competitor-chip">
+        <div class="name">Fishbowl</div>
+        <div class="price">$4,395–$6,595 one-time</div>
+        <span class="tier">Legacy / on-premise</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature matrix -->
+  <div class="card">
+    <h2>Part 1 — Feature Matrix</h2>
+    <p style="font-size:13px;color:#666;margin-bottom:20px;">
+      <strong>✓</strong> included &nbsp;·&nbsp; <strong style="color:#d1d5db">—</strong> not available &nbsp;·&nbsp; <span style="color:#d97706">add-on</span> = extra cost &nbsp;·&nbsp; <span style="color:#7c3aed">tier</span> = available from named tier upward
+    </p>
+
+    <h3>1. Shopify &amp; Ecommerce Integrations</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th class="manuva-col">Manuva</th>
+            <th>Katana</th>
+            <th>Craftybase</th>
+            <th>Qoblex</th>
+            <th>inFlow</th>
+            <th>MRPeasy</th>
+            <th>Cin7 Core</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Shopify native integration</td><td class="manuva-col yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Real-time webhook sync</td><td class="manuva-col yes">✓</td><td class="yes">✓</td><td class="addon">hourly (paid)</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Multiple Shopify stores</td><td class="manuva-col tier-badge">Pro+</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="tier-badge">Standard+</td></tr>
+          <tr><td>WooCommerce</td><td class="manuva-col no">—</td><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Amazon</td><td class="manuva-col no">—</td><td class="yes">✓</td><td class="tier-badge">Business+</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td></tr>
+          <tr><td>Etsy</td><td class="manuva-col no">—</td><td class="no">—</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+          <tr><td>B2B / wholesale portal</td><td class="manuva-col no">—</td><td class="no">—</td><td class="no">—</td><td class="addon">add-on $49/mo</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout gap"><strong>Gap:</strong> Manuva is Shopify-only. Every competitor except Craftybase supports WooCommerce and most support Amazon. This limits Manuva to brands selling exclusively through Shopify.</div>
+
+    <hr>
+
+    <h3>2. Inventory Management</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th class="manuva-col">Manuva</th>
+            <th>Katana</th>
+            <th>Craftybase</th>
+            <th>Qoblex</th>
+            <th>inFlow</th>
+            <th>MRPeasy</th>
+            <th>Cin7 Core</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Component / raw material tracking</td><td class="manuva-col yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Finished goods tracking</td><td class="manuva-col yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Inventory movements ledger</td><td class="manuva-col yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Stocktake / cycle counts</td><td class="manuva-col yes">✓</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Activity log</td><td class="manuva-col yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Low stock alerts</td><td class="manuva-col yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Reorder points / auto-PO</td><td class="manuva-col no">—</td><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Bin / aisle locations</td><td class="manuva-col tier-badge">Growth+</td><td class="addon">add-on $149/mo</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="tier-badge">Advanced+</td></tr>
+          <tr><td>Lot / batch tracking</td><td class="manuva-col no">—</td><td class="addon">add-on $249/mo</td><td class="tier-badge">Indie+</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="tier-badge">Standard+</td></tr>
+          <tr><td>Serial number tracking</td><td class="manuva-col no">—</td><td class="addon">add-on $249/mo</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="tier-badge">Standard+</td></tr>
+          <tr><td>Barcode scanning</td><td class="manuva-col no">—</td><td class="addon">add-on $149/mo</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Label printing</td><td class="manuva-col no">—</td><td class="addon">add-on $149/mo</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout gap">
+      <strong>Gaps:</strong><br>
+      <strong>Lot/batch/serial tracking</strong> is the most significant gap. Table-stakes for food, cosmetics, supplements, and regulated goods. Katana, Cin7, inFlow, MRPeasy, and Craftybase all have it. Craftybase includes it from $49/mo.<br><br>
+      <strong>Reorder points / auto-PO</strong> — Manuva has no demand signal for when to reorder. Every competitor except Craftybase has this.<br><br>
+      <strong>Barcode scanning</strong> — not critical for early-stage but increasingly expected as warehouses grow.
+    </div>
+
+    <hr>
+
+    <h3>3. BOM &amp; Manufacturing</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th class="manuva-col">Manuva</th>
+            <th>Katana</th>
+            <th>Craftybase</th>
+            <th>Qoblex</th>
+            <th>inFlow</th>
+            <th>MRPeasy</th>
+            <th>Cin7 Core</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Bill of Materials</td><td class="manuva-col yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="addon">add-on $39–$299/mo</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Multi-level / nested BOM</td><td class="manuva-col yes">✓</td><td class="yes">✓</td><td class="addon">limited</td><td class="yes">✓</td><td class="addon">add-on</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Production orders / work orders</td><td class="manuva-col yes">✓</td><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td><td class="addon">add-on</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Component allocation engine</td><td class="manuva-col yes">✓</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Yield % per BOM line</td><td class="manuva-col tier-badge">Growth+</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="no">—</td></tr>
+          <tr><td>BOM versioning</td><td class="manuva-col tier-badge">Growth+</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="no">—</td></tr>
+          <tr><td>BOM templates</td><td class="manuva-col tier-badge">Growth+</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+          <tr><td>Sub-assembly / kitting</td><td class="manuva-col yes">✓</td><td class="yes">✓</td><td class="addon">limited</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Batch production tracking</td><td class="manuva-col no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Visual production scheduler</td><td class="manuva-col no">—</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Subcontracting / outsourced ops</td><td class="manuva-col no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="no">—</td></tr>
+          <tr><td>Shop floor / floor view</td><td class="manuva-col tier-badge">Pro+</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="no">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout advantage">
+      <strong>Advantages:</strong><br>
+      <strong>Yield %</strong> — Manuva is the only tool in this price range with yield % per BOM line. Katana doesn't have it at any price.<br>
+      <strong>BOM versioning + templates</strong> — unique at the $249 price point.<br>
+      <strong>Shop floor view</strong> — Manuva has a planning/floor view at Pro; Katana has nothing equivalent.
+    </div>
+    <div class="callout gap">
+      <strong>Gaps:</strong><br>
+      <strong>Visual production scheduler</strong> — Katana's biggest UX differentiator. Drag-and-drop manufacturing order timeline.<br>
+      <strong>Batch production tracking</strong> — no batch-level tracking on production runs.
+    </div>
+
+    <hr>
+
+    <h3>4. Purchasing</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th class="manuva-col">Manuva</th>
+            <th>Katana</th>
+            <th>Craftybase</th>
+            <th>Qoblex</th>
+            <th>inFlow</th>
+            <th>MRPeasy</th>
+            <th>Cin7 Core</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Purchase orders</td><td class="manuva-col yes">✓</td><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Supplier management</td><td class="manuva-col yes">✓</td><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Goods inwards / receiving</td><td class="manuva-col yes">✓</td><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Reorder point → auto-PO</td><td class="manuva-col no">—</td><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Multi-currency purchasing</td><td class="manuva-col no">—</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Supplier lead time tracking</td><td class="manuva-col yes">✓ (reports)</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout advantage"><strong>Advantage:</strong> Manuva has lead-time accuracy reporting — a differentiator Katana doesn't surface.</div>
+    <div class="callout gap"><strong>Gap:</strong> No reorder point automation means users must manually monitor stock and create POs. Multi-currency is absent, which matters for brands with overseas suppliers.</div>
+
+    <hr>
+
+    <h3>5. Costing &amp; Finance</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th class="manuva-col">Manuva</th>
+            <th>Katana</th>
+            <th>Craftybase</th>
+            <th>Qoblex</th>
+            <th>inFlow</th>
+            <th>MRPeasy</th>
+            <th>Cin7 Core</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Cost per unit (BOM rollup)</td><td class="manuva-col tier-badge">Growth+</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Margin tracking per product</td><td class="manuva-col tier-badge">Growth+</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Inventory valuation</td><td class="manuva-col tier-badge">Growth+</td><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>COGS tracking</td><td class="manuva-col tier-badge">Growth+</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Financial profitability dashboard</td><td class="manuva-col tier-badge">Pro+</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Accounting sync (QuickBooks)</td><td class="manuva-col no">—</td><td class="yes">✓</td><td class="tier-badge">Growth+</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Accounting sync (Xero)</td><td class="manuva-col no">—</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Multi-currency</td><td class="manuva-col no">—</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout advantage"><strong>Advantage:</strong> Financial profitability dashboard at Pro is a genuine differentiator — Katana has no equivalent at any price.</div>
+    <div class="callout gap"><strong>Gap:</strong> <strong>No accounting integration</strong> is the most commercially painful gap. Virtually every competitor (including Craftybase at $49/mo) syncs to QuickBooks or Xero. This is a likely deal-breaker for any business with an accountant or bookkeeper.</div>
+
+    <hr>
+
+    <h3>6. Capacity &amp; Staffing</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th class="manuva-col">Manuva</th>
+            <th>Katana</th>
+            <th>Craftybase</th>
+            <th>Qoblex</th>
+            <th>inFlow</th>
+            <th>MRPeasy</th>
+            <th>Cin7 Core</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Departments</td><td class="manuva-col tier-badge">Pro+</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+          <tr><td>Staffing levels</td><td class="manuva-col tier-badge">Pro+</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="no">—</td></tr>
+          <tr><td>Capacity planning</td><td class="manuva-col tier-badge">Pro+</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="no">—</td></tr>
+          <tr><td>Actual vs planned time tracking</td><td class="manuva-col tier-badge">Pro+</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="no">—</td></tr>
+          <tr><td>Staff costing</td><td class="manuva-col tier-badge">Pro+</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout advantage"><strong>Advantage:</strong> This entire module is a Manuva differentiator at Pro ($499). Katana and Cin7 have nothing here. <strong>Staff costing is unique</strong> — no direct competitor tracks wage costs against production at this price.</div>
+
+    <hr>
+
+    <h3>7. Reports &amp; Exports</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th class="manuva-col">Manuva</th>
+            <th>Katana</th>
+            <th>Craftybase</th>
+            <th>Qoblex</th>
+            <th>inFlow</th>
+            <th>MRPeasy</th>
+            <th>Cin7 Core</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Dashboard overview</td><td class="manuva-col yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Stock on hand</td><td class="manuva-col tier-badge">Growth+</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Inventory movements</td><td class="manuva-col tier-badge">Growth+</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>PO summary / spend by supplier</td><td class="manuva-col tier-badge">Growth+</td><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>PO variance</td><td class="manuva-col yes">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Lead-time accuracy</td><td class="manuva-col yes">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+          <tr><td>Dead stock / slow-moving</td><td class="manuva-col yes">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Inventory integrity</td><td class="manuva-col yes">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+          <tr><td>Stocktake history</td><td class="manuva-col yes">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Inventory valuation report</td><td class="manuva-col tier-badge">Growth+</td><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Date range filtering</td><td class="manuva-col tier-badge">Growth+</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>PDF export</td><td class="manuva-col tier-badge">Pro+</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>CSV export</td><td class="manuva-col tier-badge">Pro+</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout advantage"><strong>Advantage:</strong> PO variance, lead-time accuracy, inventory integrity, and dead stock reports give Manuva a deeper analytical story than Katana.</div>
+    <div class="callout gap"><strong>Gap:</strong> PDF and CSV exports are locked to Pro ($499). Competitors include exports from entry-level tiers — friction point in Growth-tier sales conversations.</div>
+
+    <hr>
+
+    <h3>8. Platform &amp; Support</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th class="manuva-col">Manuva</th>
+            <th>Katana</th>
+            <th>Craftybase</th>
+            <th>Qoblex</th>
+            <th>inFlow</th>
+            <th>MRPeasy</th>
+            <th>Cin7 Core</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Free trial</td><td class="manuva-col">14-day (full Pro)</td><td>14-day</td><td>14-day</td><td>14-day</td><td>14-day</td><td>30-day</td><td>14-day</td></tr>
+          <tr><td>Per-seat pricing</td><td class="manuva-col yes">No</td><td class="no">Yes</td><td class="yes">No</td><td class="yes">No</td><td class="no">Yes</td><td class="no">Yes</td><td class="no">Yes (Std)</td></tr>
+          <tr><td>API access</td><td class="manuva-col tier-badge">Pro+</td><td class="yes">✓</td><td class="no">—</td><td class="addon">add-on $20/mo</td><td class="yes">✓</td><td class="yes">✓</td><td class="tier-badge">Standard+</td></tr>
+          <tr><td>Mobile app</td><td class="manuva-col no">—</td><td class="no">—</td><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Multi-currency</td><td class="manuva-col no">—</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>SSO</td><td class="manuva-col tier-badge">Enterprise</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+          <tr><td>Accounting sync</td><td class="manuva-col no">—</td><td>Xero, QBO</td><td>QBO (paid)</td><td class="no">—</td><td>QBO</td><td>Xero, QBO</td><td>Xero, QBO</td></tr>
+          <tr><td>Setup / onboarding</td><td class="manuva-col">Self-serve</td><td>Self-serve</td><td>Self-serve</td><td>Self-serve</td><td>Self-serve</td><td>Self-serve</td><td>Guided ($)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout advantage">
+      <strong>Advantages:</strong><br>
+      14-day trial with full Pro access — strongest trial offer in the segment.<br>
+      Flat per-tier pricing with unlimited users from Growth — for a 10-person team, Manuva Growth ($249) beats Katana's real cost with add-ons.
+    </div>
+    <div class="callout gap"><strong>Gap:</strong> No mobile app. No accounting sync. These are expected features by the time a brand is evaluating tools.</div>
+  </div>
+
+  <!-- Competitive positioning -->
+  <div class="card">
+    <h2>Part 2 — Competitive Positioning</h2>
+
+    <div class="positioning-card">
+      <h3>Katana MRP — Primary Competitor</h3>
+      <div class="buyer-label">Their buyer</div>
+      <div class="buyer-desc">Shopify-native product brand, 5–50 person team, $500K–$5M revenue, has outgrown spreadsheets. Usually selling finished goods with a manufacturing step (apparel, supplements, food &amp; beverage, cosmetics, hardware).</div>
+      <div class="two-col">
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#16a34a;margin-bottom:8px;">THEIR STRENGTHS</div>
+          <ul class="strength-list">
+            <li>Shopify App Store presence — first result for manufacturing on Shopify</li>
+            <li>Visual drag-and-drop production scheduler</li>
+            <li>Established brand — 7+ years, many G2 reviews</li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:8px;">THEIR WEAKNESSES</div>
+          <ul class="weakness-list">
+            <li>Add-on pricing: base + mfg + traceability = ~$807/mo</li>
+            <li>No capacity planning at any price point</li>
+            <li>No staff costing or time tracking</li>
+            <li>No yield % in BOMs</li>
+            <li>No BOM versioning — changing a BOM destroys history</li>
+            <li>No financial profitability dashboard</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pitch-box">"Katana is a solid tool, but by the time you add the warehouse and traceability modules you need, you're paying $800/mo — and you still don't get capacity planning, BOM versioning, or the ability to track what each production run actually cost in labour. Manuva gives you all of that for $249/mo with unlimited users."</div>
+      <div class="win-tier">Best Manuva tier for this conversation: Growth ($249/mo)</div>
+    </div>
+
+    <div class="positioning-card">
+      <h3>Craftybase — Entry-Level / Upgrade Path</h3>
+      <div class="buyer-label">Their buyer</div>
+      <div class="buyer-desc">Solo maker or very early-stage handmade brand. Often selling on Etsy as primary channel. Annual revenue under $200K. Candles, skincare, jewellery, baked goods, small-batch food.</div>
+      <div class="two-col">
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#16a34a;margin-bottom:8px;">THEIR STRENGTHS</div>
+          <ul class="strength-list">
+            <li>Entry price point ($20–$49/mo) — lowest cost in market</li>
+            <li>Purpose-built for artisan/batch workflows</li>
+            <li>Etsy + Shopify integration in one tool</li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:8px;">THEIR WEAKNESSES</div>
+          <ul class="weakness-list">
+            <li>No purchase orders or supplier management</li>
+            <li>No receiving / goods inwards workflow</li>
+            <li>No team features — effectively single-user</li>
+            <li>No capacity planning or staffing</li>
+            <li>Scales poorly past the first hire</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pitch-box">"Craftybase is where a lot of our customers start out. But once you're writing POs to suppliers, training a warehouse team, and needing to know your production capacity for the next month, Craftybase hits a wall. Manuva Starter is $99/mo and includes everything you need to run a growing manufacturing operation."</div>
+      <div class="win-tier">Best Manuva tier for this conversation: Starter ($99/mo)</div>
+    </div>
+
+    <div class="positioning-card">
+      <h3>MRPeasy — Full-MRP Alternative</h3>
+      <div class="buyer-label">Their buyer</div>
+      <div class="buyer-desc">Traditional small manufacturer (not Shopify-first), 10–200 employees, physical goods with complex routing, subcontracting, or quality compliance requirements.</div>
+      <div class="two-col">
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#16a34a;margin-bottom:8px;">THEIR STRENGTHS</div>
+          <ul class="strength-list">
+            <li>Full MRP — master production scheduling, capacity planning</li>
+            <li>Quality control and subcontracting modules</li>
+            <li>End-to-end traceability across the full supply chain</li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:8px;">THEIR WEAKNESSES</div>
+          <ul class="weakness-list">
+            <li>Per-user pricing — 10 people = $490/mo before extras</li>
+            <li>Not Shopify-native — orders don't drive production automatically</li>
+            <li>Complex to set up — built for ops managers, not e-com founders</li>
+            <li>Dated UI</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pitch-box">"MRPeasy is powerful if you're running a traditional manufacturing operation with 30 people on the floor. If you're a Shopify brand that manufactures your own products, it's overkill — and at $49/user/mo you'll hit $500/mo the moment you give your team access. Manuva Pro is $499/mo flat for unlimited users."</div>
+      <div class="win-tier">Best Manuva tier for this conversation: Pro ($499/mo)</div>
+    </div>
+
+    <div class="positioning-card">
+      <h3>Cin7 Core — Established ERP Anchor</h3>
+      <div class="buyer-label">Their buyer</div>
+      <div class="buyer-desc">Mid-market multichannel business, $5M+ revenue, selling across Shopify + Amazon + wholesale B2B, with accounting integration requirements and possibly multiple warehouses.</div>
+      <div class="two-col">
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#16a34a;margin-bottom:8px;">THEIR STRENGTHS</div>
+          <ul class="strength-list">
+            <li>700+ integrations — connects to almost everything</li>
+            <li>Full ERP coverage including CRM, B2B portal, advanced WMS</li>
+            <li>Established vendor — perceived lower risk for finance leadership</li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:8px;">THEIR WEAKNESSES</div>
+          <ul class="weakness-list">
+            <li>$349/mo minimum — enterprise budget for SMB features</li>
+            <li>Complex to implement — guided onboarding adds cost</li>
+            <li>Overkill for Shopify-first brands</li>
+            <li>Not manufacturing-first</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pitch-box">"Cin7 is built for businesses that need an ERP across 10 sales channels and a B2B wholesale portal. If you're manufacturing for Shopify, you'll pay $349/mo minimum for a lot of features you'll never use. Manuva is built specifically for Shopify manufacturers — better production tooling, lower price, up and running in a day."</div>
+      <div class="win-tier">Best Manuva tier: Growth ($249/mo) for most, Pro ($499/mo) for larger teams</div>
+    </div>
+  </div>
+
+  <!-- Gap prioritisation -->
+  <div class="card">
+    <h2>Part 3 — Gap Prioritisation for Roadmap</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Gap</th>
+            <th>Impact</th>
+            <th>Competitors with it</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Accounting integration (Xero / QuickBooks)</strong></td>
+            <td class="priority-critical">🔴 Critical</td>
+            <td>All except Qoblex</td>
+            <td>Likely deal-breaker for any business with an accountant. Most common reason a CFO vetoes a tool.</td>
+          </tr>
+          <tr>
+            <td><strong>Lot / batch / serial tracking</strong></td>
+            <td class="priority-critical">🔴 Critical</td>
+            <td>Katana, Cin7, inFlow, MRPeasy, Craftybase</td>
+            <td>Required for food, cosmetics, supplements, regulated goods. Craftybase has it at $49/mo.</td>
+          </tr>
+          <tr>
+            <td>Reorder points / auto-PO</td>
+            <td class="priority-high">🟡 High</td>
+            <td>Katana, Cin7, inFlow, MRPeasy, Qoblex</td>
+            <td>Reduces manual purchasing work. Frequently cited in Katana reviews as a reason to stay.</td>
+          </tr>
+          <tr>
+            <td>Multi-channel ecommerce (WooCommerce, Amazon)</td>
+            <td class="priority-high">🟡 High</td>
+            <td>All except Craftybase</td>
+            <td>Limits top of funnel to Shopify-only brands. Many Shopify brands also sell on Amazon.</td>
+          </tr>
+          <tr>
+            <td>Export (PDF / CSV) on Growth tier</td>
+            <td class="priority-high">🟡 High</td>
+            <td>All competitors from entry tier</td>
+            <td>Growth-tier users currently can't export reports. Creates friction in sales conversations.</td>
+          </tr>
+          <tr>
+            <td>Multi-currency</td>
+            <td class="priority-medium">🟠 Medium</td>
+            <td>Katana, Cin7, inFlow, MRPeasy</td>
+            <td>Important for brands with overseas suppliers or international Shopify stores.</td>
+          </tr>
+          <tr>
+            <td>Visual production scheduler</td>
+            <td class="priority-medium">🟠 Medium</td>
+            <td>Katana, MRPeasy, Cin7</td>
+            <td>Katana's biggest UX differentiator. Hard to build well, but noticeable absence.</td>
+          </tr>
+          <tr>
+            <td>Barcode scanning</td>
+            <td class="priority-medium">🟠 Medium</td>
+            <td>Katana (add-on), Cin7, inFlow, MRPeasy</td>
+            <td>More relevant as warehouse headcount grows.</td>
+          </tr>
+          <tr>
+            <td>Mobile app</td>
+            <td class="priority-medium">🟠 Medium</td>
+            <td>Craftybase, inFlow, MRPeasy, Cin7</td>
+            <td>Useful for floor staff. Less critical for Manuva's current buyer profile.</td>
+          </tr>
+          <tr>
+            <td>Batch production tracking</td>
+            <td class="priority-medium">🟠 Medium</td>
+            <td>Katana, Cin7, MRPeasy, Craftybase</td>
+            <td>Related to lot tracking. Important for any batch-mode manufacturing.</td>
+          </tr>
+          <tr>
+            <td>B2B / wholesale portal</td>
+            <td class="priority-low">🟢 Low</td>
+            <td>Cin7, Qoblex (add-on)</td>
+            <td>Different buyer motion. Not relevant until Manuva targets wholesale channels.</td>
+          </tr>
+          <tr>
+            <td>Subcontracting</td>
+            <td class="priority-low">🟢 Low</td>
+            <td>MRPeasy only</td>
+            <td>Niche — relevant for brands that outsource part of production.</td>
+          </tr>
+          <tr>
+            <td>CRM / customer management</td>
+            <td class="priority-low">🟢 Low</td>
+            <td>Cin7 only</td>
+            <td>Out of scope for Manuva's manufacturing focus.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="card">
+    <h2>Summary</h2>
+    <div class="summary-box">
+      <p><strong>Manuva's strongest competitive position:</strong> Growth tier ($249/mo) against Katana. Comparable manufacturing depth, unlimited users, BOM versioning + yield %, and better operational reports — at less than a third of Katana's real cost with add-ons.</p>
+      <p><strong>The two gaps that need to close before Manuva can win without a discount:</strong><br>
+        1. <strong>Accounting integration</strong> — the absence of Xero/QuickBooks sync is the most commonly cited veto by finance stakeholders.<br>
+        2. <strong>Lot/batch tracking</strong> — required for regulated product categories and increasingly expected by DTC brands with any traceability requirement.
+      </p>
+      <p><strong>The module where Manuva has no competition:</strong> Capacity planning + departments + staffing + actual time tracking + staff costing at Pro ($499/mo flat, unlimited users). No direct competitor offers this combination. Strongest story in a "Manuva Pro vs MRPeasy" conversation.</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

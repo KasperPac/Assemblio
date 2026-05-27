@@ -1,0 +1,76 @@
+{
+  "market_sizing": {
+    "target_buyer": "Owner/operator of a small-to-mid plumbing & gas business (1–15 plumbers/gas-fitters). The licensed plumber/gasfitter (nominee) signs each compliance cert; the bookkeeper or owner's partner often handles lodgement and warranty paperwork.",
+    "business_count_au": "~28,615 Plumbing Services businesses (IBISWorld 2025), CAGR 0.8% 2020–25. Licensed plumber/gasfitter individuals number ~75–90k; businesses requiring compliance-cert lodgement at scale are roughly the 28k figure.",
+    "business_count_global": "US: ~130k plumbing contracting firms (BLS/Census). UK: ~25k Gas Safe registered businesses + ~30k WaterSafe plumbers. Canada: ~15–20k. Each jurisdiction has its own compliance regime — global product is multi-product, not a single SKU.",
+    "typical_size": "Median 2–6 employees; revenue $350k–$2.5M. Hot-water and gas-appliance-heavy businesses tend to be slightly larger (4–10 employees) due to warranty volume."
+  },
+  "pricing_reality": {
+    "incumbent_pricing": "Fergus (plumbing-led): from ~AU$45/user/mo, plumbing-tuned. AroFlo: ~$235/mo for 3 users + add-ons. ServiceM8: $39–$59/user/mo. Tradify: ~$45/user/mo. simPRO: bespoke, $300+/mo for SMB. None are gas/plumbing-compliance specialists; cert lodgement is bolted on. AGA listed gas-fitter scheme has its own administrative overhead outside FSM.",
+    "willingness_to_pay": "$120–300/mo AUD for a plumbing-compliance + warranty-management product, lower than electrical because warranty automation is less mandatory and most cert lodgement is already free via VBA/QBCC portals. Hot-water-specialist plumbers (Rheem/Rinnai-heavy revenue) would pay more for warranty registration automation.",
+    "sales_motion": "Self-serve + inside sales. Inbound via SEO and Master Plumbers / NECA-Gas channel partnerships; some outbound to hot-water-specialist firms.",
+    "realistic_arpu_au": "$140–220 AUD/mo blended (single-licensee plumbers on $89–129, mid-size firms on $199–299).",
+    "expansion_revenue_potential": "Strong. Add-ons: warranty registration automation (Rheem, Rinnai, Bosch, Vulcan, Reece partner data), backflow Form 9 scheduling, gas appliance service-reminder SMS, embedded payments on cert delivery, parts-and-labour quote book, manufacturer rebate clawback. Embedded fintech: Reece-style trade-credit/invoice-financing partnership. 2–3× ARPU expansion realistic via warranty SKU + payments."
+  },
+  "competitive_landscape": {
+    "incumbents": "1) Fergus (NZ, 2013; specifically tuned for plumbing/material-heavy trades; strong AU presence). 2) AroFlo (Melbourne, 2001; broad trades). 3) ServiceM8 (AU, 2010). 4) simPRO (AU, 2002; PE-backed, K1+Level Equity, $397M raised, acquired BigChange 2024). 5) Tradify (NZ, 2013). 6) Niche: BPC's VBA360 (the regulator's own free certificate tool — direct competitor for lodgement). All FSMs treat compliance certs as a generic form; none automate warranty registration with manufacturers.",
+    "incumbent_age_years": "AroFlo 24, simPRO 23, ServiceM8 15, Tradify/Fergus 12. The free regulator portals (VBA360, myQBCC, ESVConnect) are themselves the 'incumbent' for cert lodgement and have classic government-software UX.",
+    "user_satisfaction_signals": "Plumbers on Whirlpool and Reddit AusTradies routinely complain about (a) double-entering cert data between the FSM and the VBA/QBCC portal, (b) lost warranty paperwork voiding manufacturer claims (Rheem cited as 'strict — if it wasn't installed to AS, claims rejected'; many manufacturers require warranty registration within 30–90 days), (c) Fergus learning curve ('two to three weeks to configure supplier connections, price books, job templates'), (d) simPRO 'one of our company's most costly decisions', (e) cert booklets lost on truck dashboards. The VBA's own 12-month expiry on purchased compliance certs (from 13 Aug 2025) has created a fresh complaint stream — plumbers buying packs and writing them off as they expire.",
+    "recent_funding_or_ma": "simPRO + BigChange (Oct 2024). No notable AU plumbing-pure-play raises in last 12 months. Reece (ASX:REH) acquired several plumbing-supply software/marketplace players over 2022–24 — they are the 800-pound gorilla because every plumber already has a MaX/Reece account. ServiceTitan IPO Dec 2024 has lifted comparables.",
+    "ai_disruption_risk": "Low. No AI-native AU plumbing-compliance startup raising publicly. ServiceTitan + Jobber + simPRO adding generic AI; risk is mid-term not immediate. Reece is the wildcard — if they bundled a compliance/warranty tool into their MaX app for free it would be game-over."
+  },
+  "opportunity_quality": {
+    "core_pain": "Plumbers do compliance + warranty paperwork three times: (1) on the truck (paper or PDF cert), (2) lodged with regulator (VBA/QBCC/state portal within 5 business days; 5-day rule in VIC, 10-business-day rule in QLD), (3) manufacturer warranty registration (Rheem/Rinnai/Bosch each with their own portal, 30–90 day window). Missing any of these voids the cert, voids the warranty for the customer, or triggers regulator penalties. Currently this is spreadsheets, WhatsApp photos, and a shoebox of cert booklets. Hot-water-system installers in particular lose serious money to warranty claims rejected for missing paperwork. The VBA 12-month expiry on purchased certs (Aug 2025) and the move from VBA → BPC (1 Jul 2025) has added regulatory churn on top.",
+    "moat_source": "1) Manufacturer warranty-registration integrations (Rheem, Rinnai, Bosch, Vulcan, Stiebel, Reece) — each takes a partnership and an API or scraping bridge. 2) Multi-state regulator lodgement (VBA → BPC, QBCC Form 4/4A/9, ESVConnect for gas in VIC, NT Worksafe, SA/WA/TAS). 3) AS/NZS 3500 (plumbing) + AS/NZS 5601 (gas) rule engine for cert content. 4) Master Plumbers / Master Gas Fitters partnership distribution. Moat depth: medium — manufacturer integrations are the hardest piece to replicate.",
+    "critical_integrations": "VBA / BPC compliance certificate system (VIC), QBCC myQBCC + Form 4/4A/9 (QLD), NSW Fair Trading plumbing cert, ESVConnect (VIC gas), Xero + MYOB, Reece MaX / Tradelink, Rheem/Rinnai/Bosch/Vulcan warranty portals, AGA listed gas-fitter scheme, Twilio/MessageMedia for SMS cert delivery.",
+    "incumbent_ehr_lock_in": "Moderate. Reece's MaX app is the closest analogue to an EHR — most plumbers price and order through it. Side-car play that reads Reece order data and pre-fills cert content is the wedge. FSM lock-in (Fergus/simPRO/AroFlo) is real but workable."
+  },
+  "build_difficulty": {
+    "regulatory_complexity": "High. Every state has its own plumbing cert regime, gas cert regime, lodgement timeline (5 business days VIC, 10 business days QLD, etc.) and retention period. Gas is regulated separately from water plumbing in most states (Energy Safe Victoria for gas in VIC, QBCC for gas in QLD, etc.). AS/NZS 3500 (plumbing) and AS/NZS 5601 (gas) drive the technical content of the cert.",
+    "regulatory_changes_2025_2026": "VIC: 1 July 2025 — Building Practitioner Conduct / Building and Plumbing Commission (BPC) replaces VBA as plumbing regulator. 13 August 2025 — 12-month expiry on purchased compliance certificates introduced under s221ZN(1A) Building Act 1993; certs purchased but not allocated within 12 months are void. This is a forcing function — plumbers who hoard cert packs are taking write-offs and need digital just-in-time issuance. NSW: BCNSW eCert mandate for electrical from 1 July 2026 — a precedent that plumbing is widely expected to follow within 2–3 years. QLD: ongoing tightening of notifiable work form 4/4A; Form 9 backflow inspection requirements gaining attention. AGA listed scheme + gas-network operator changes also creating churn for gas-fitters.",
+    "domain_depth": "Moderate–high. Need to understand prescribed vs notifiable work, AS/NZS 5601 gas-fitting rules, hot-water TMV/PRV regs, backflow Form 9 testing intervals, warranty registration windows per manufacturer, and plumber/gas-fitter liability under ACL. Acquirable by an outsider in 3–4 months with a Master Plumbers advisor.",
+    "mvp_effort": "5–7 months solo. Slightly heavier than electrical because gas + water + warranty are three workflows. VIC-only MVP (BPC cert lodgement + Rheem/Rinnai warranty registration + Xero sync) is feasible in 4 months.",
+    "technical_risks": "1) Manufacturer warranty portals are not designed for API access — many require scraping or partner deals. 2) State regulator portals (VBA360, myQBCC) have varying API maturity. 3) Backflow testing schedule logic. 4) Photo evidence + asset tagging for hot-water systems. 5) The BPC transition in VIC means APIs/portals are mid-rebuild — moving target through 2025–26.",
+    "state_by_state_variance_au": "Very high — even higher than electrical because gas and plumbing are usually regulated by different bodies in the same state. Need one rule engine per (state × {plumbing, gas, hot-water}) cell.",
+    "data_residency_requirement": "Not legally mandated but expected by regulators if API access granted; AU-hosted Supabase region recommended."
+  },
+  "distribution_difficulty": {
+    "channel_options": "1) SEO: 'VBA compliance certificate expiry', 'BPC plumbing cert', 'QBCC Form 4 online', 'hot water warranty registration'. 2) Master Plumbers Australia & NZ (state branches: MPANZ, MPA SA, MPA WA, NSW), Master Plumbers VIC. 3) Plumbing Industry Climate Action Centre, PICAC. 4) Plumbing Trades Employees Union (limited). 5) Facebook groups for plumbers (Aussie Plumbers, Plumbing Apprentices Australia). 6) Reece / Tradelink in-branch flyers (hard to access). 7) Trade shows: Plumbing Industry Climate Action Centre PICAC, AUSREF, Total Facilities. 8) Cold outbound — state licensing registers are public.",
+    "trade_association_count_au": "~6 major: Master Plumbers Australia & NZ (national peak), state Master Plumbers (MPA VIC, MPA WA, MPA SA/NT, MPA NSW), Plumbing Industry Climate Action Centre, Australian Institute of Plumbing Inspectors. Plus AGA on the gas side.",
+    "trade_publication_count": "~4–5: Plumbing Connection, Master Plumber magazine, Hydraulics & Heating, Ecolibrium (AIRAH adjacent), regulator e-newsletters.",
+    "industry_facebook_group_size": "Estimated 25–60k combined members across the top AU plumbing FB groups — strong sole-trader presence.",
+    "conference_event_count_au": "3–4 with exhibit options under $10k: Master Plumbers conferences (state level), PICAC events, AUSREF, regional trade nights.",
+    "cold_outbound_viability": "High. NSW Fair Trading, VBA/BPC, QBCC, etc. all publish licensee registers with business contact info. Personal mobile coverage is high for owner-operators.",
+    "founder_market_fit_proxy": "Plumbers are slightly warier of outsider software than sparkies — partly because Reece/Tradelink dominate their daily tooling and partly because gas work involves bodily-injury liability. Outsider founder is fine if endorsed by a Master Plumbers branch or partnered with a respected nominee.",
+    "case_study_acquisition_cost": "Moderate. Free lifetime in exchange for case studies works, but plumbers move slower than electricians to adopt new tools. Expect 8–12 weeks to first 5 reference customers.",
+    "content_seo_competitiveness": "Moderate. 'VBA compliance certificate' has multiple incumbents (TradieVerify, the regulator itself, big plumbing-services firms ranking for consumer-side queries). The niche-keyword space ('Rheem warranty registration automation', 'BPC plumbing cert expiry') is open.",
+    "insurer_or_gatekeeper_dependency": "Yes — VBA360/BPC and QBCC are gatekeepers. Manufacturer warranty portals are de-facto gatekeepers (no formal API). Less binary than NSW eCert (cert lodgement is not yet mandated to be portal-only nationally), so the gatekeeper risk is more about quality of integration than existence of one."
+  },
+  "personal_fit": {
+    "manuva_data_model_reuse_pct": "20–30%. Reusable: multi-tenant auth + RLS, customer/job entities, file/photo storage, supplier (manufacturer) entity (mapped to Rheem/Rinnai/Bosch), inventory of part numbers (hot-water units, gas appliances), activity_log audit, Xero integration. Not reusable: production orders, bins, BOM as such — but the supplier + part-number schema does carry over to manufacturer warranty registration.",
+    "manuva_code_reuse": "Auth, tenant RLS, file upload, Xero OAuth, activity_log, design tokens, Next.js App Router patterns.",
+    "buyer_persona_overlap_with_manuva": "Low. Manuva targets manufacturers, not plumbers. Some overlap in pre-fab bathroom-pod or hot-water-system assembly firms, but rare.",
+    "adjacency_to_manufacturing": "Distant. Closer than electrical in one respect — supplier/part-number/warranty data model overlaps with Manuva's inventory + supplier model — but the buyer is field-service.",
+    "technical_moat_durability_months": "12–18 months. The manufacturer warranty integrations are the slow piece (each requires a partnership, takes 3–6 months). Multi-state cert lodgement is replicable in 6–9 months by a determined competitor."
+  },
+  "unit_economics": {
+    "gross_margin_sensitivity": "Healthy. No mandatory AI inference. Variable costs: SMS for cert delivery (~$0.10/cert × ~25/mo = $2.50/customer), photo storage ($3–5/customer/mo), e-signature (~$0.50/cert). Manufacturer warranty registration adds API/partner-fee variable cost in some cases (e.g. Rheem may charge). Net 78–84% gross margin.",
+    "multi_location_natural": "Limited. Most plumbing firms are single-location; per-tech seat is the expansion vector.",
+    "churn_risk": "Moderate. Plumber retirement / business closure ~10–12%/yr industry baseline. Higher than electrical because plumbing has more sole-trader retirees. Once integrated with Xero + regulator portal + Rheem warranty registration, net churn 6–9%/yr.",
+    "customers_needed_for_target_arr": "At $180 ARPU AUD: ~465 customers for $1M ARR. At $140 ARPU: ~595. Achievable from a national base of ~28k licensed plumbing businesses at 2% adoption."
+  },
+  "uncertain": [
+    "business_count_au",
+    "business_count_global",
+    "typical_size",
+    "willingness_to_pay",
+    "realistic_arpu_au",
+    "industry_facebook_group_size",
+    "trade_publication_count",
+    "trade_association_count_au",
+    "case_study_acquisition_cost",
+    "technical_moat_durability_months",
+    "churn_risk",
+    "expansion_revenue_potential"
+  ]
+}

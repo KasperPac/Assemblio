@@ -1,0 +1,73 @@
+{
+  "market_sizing": {
+    "target_buyer": "Owner/operator of a small-to-mid electrical contracting business (1–20 sparkies). Office manager often does paperwork day-to-day; licensed electrical contractor (the nominated supervisor) signs off.",
+    "business_count_au": "~45,850 Electrical Services businesses in Australia (IBISWorld 2025). NSW share is roughly one-third (~14–16k). Licensed electrical contractor companies are a subset — roughly 25–30k actively trading.",
+    "business_count_global": "US: ~70k licensed electrical contracting firms (Census/IBIS). UK: ~30–35k NICEIC/NAPIT-registered. Canada: ~12–15k. Compliance certificate workflow is jurisdiction-specific, so global TAM is limited unless the product is repositioned as generic CofC/test-and-tag.",
+    "typical_size": "Median 2–8 employees; revenue $400k–$3M. Larger commercial sparkies (20–100 staff) are the high-value segment but already on simPRO/AroFlo."
+  },
+  "pricing_reality": {
+    "incumbent_pricing": "ServiceM8 AU: $39/user/mo (Team) → $59/user/mo (Professional). AroFlo Premium: ~$235/mo for 3 users + $29/mo storage + $11/mo accounting link (~$275 floor). simPRO: bespoke, typically $200–500+/mo for small teams. Tradify: ~$45/user/mo. None are eCoC-specialised; certs are a feature inside a broader FSM.",
+    "willingness_to_pay": "$100–300/mo AUD for a compliance-only or compliance-first tool that genuinely removes the eCert friction. Higher ($300–500) only if it replaces the FSM entirely. AU buyers are price-sensitive; expect 70–80% of US comparable.",
+    "sales_motion": "Self-serve + inside sales. Mainly inbound (search 'NSW eCert software', NECA newsletter, Facebook groups) with light human-assisted onboarding because compliance setup needs hand-holding.",
+    "realistic_arpu_au": "$150–250 AUD/mo blended (small teams on $99–149, larger contractors on $249–349).",
+    "expansion_revenue_potential": "Moderate. Add-ons: test-and-tag scheduling, asset register, RCD test reminders, e-signature on CCEWs, OEM warranty registration, embedded payments on the customer copy of CCEW. Plausible 2× expansion via per-tech seats and certificate-volume tiers; 3× is a stretch without bundling FSM."
+  },
+  "competitive_landscape": {
+    "incumbents": "1) ServiceM8 (AU-founded, 2010, ~30k+ subs globally; strong in AU sparkies; certs done via custom forms). 2) AroFlo (Melbourne, 2001; ~6k AU customers; built for electrical/plumbing). 3) simPRO (Brisbane, 2002; K1 + Level Equity-backed with $397M raised; acquired BigChange Oct 2024; mid-market). 4) Tradify (NZ, 2013; strong SMB). 5) Fergus (NZ; plumbing-led). 6) Greenbot/GreenDeal in adjacent solar. None of these are eCoC-specialist; CCEW is a checklist/PDF inside the broader FSM.",
+    "incumbent_age_years": "AroFlo: 24 years. simPRO: 23. ServiceM8: 15. Tradify: 12. Dominant AU incumbents are 15–25 years old — classic UI-rot + replatform window.",
+    "user_satisfaction_signals": "simPRO: Whirlpool forum thread 'The Flawed Job/Est Program'; users report 'majority of faults are database or programming issues', 'one of our company's most costly decisions', integration described as a 'nightmare'. ServiceM8 (Trustpilot AU): billing/support complaints, account suspensions, 'better pricing and more features elsewhere'. AroFlo: praised for compliance/checklists but criticised for slow feature enhancement response. Across all three, the consistent CCEW complaint is that the cert is a generic form bolted on, not a workflow — and that NT has already said third-party app-generated CoCs will not be accepted once the official online cert is live, foreshadowing the NSW model.",
+    "recent_funding_or_ma": "simPRO acquired BigChange (UK FSM) in Oct 2024; backed by K1 ($350M+ growth round 2021). Fieldd, GeoOp, Loc8 still independent. No notable AU-specific eCoC-pure-play raises in last 12 months — green-field. ServiceTitan IPO (NYSE 2024) has reset multiples upward for FSM globally, attracting more PE attention to the segment.",
+    "ai_disruption_risk": "Low–moderate. No AI-native eCoC challenger raising publicly in AU. ServiceTitan, simPRO and Jobber are adding generic AI features (write-up, dispatch, summarisation). An AI-coded clone of a CCEW form is trivial; the moat is the BCNSW eCert API approval + the workflow around photo evidence, RCD test logging, and customer/network copy distribution."
+  },
+  "opportunity_quality": {
+    "core_pain": "CCEWs today are a PDF or carbon-paper booklet completed at the truck, photographed and emailed to the customer, then transcribed into the FSM (or never). From Dec 2025 NSW electricians can register on BCNSW eCert, and from 1 July 2026 every CCEW must be submitted via the portal or an approved API — paper and third-party PDFs will no longer be accepted. Existing FSMs (ServiceM8, AroFlo, simPRO) generate PDFs that won't satisfy the new rule unless they build an approved API integration. Penalties are $1,000 per missed cert and up to $550,000 for non-compliant work. The pain is: every NSW sparky needs a compliant lodgement path on day one, and they currently rely on WhatsApp photos, spreadsheets and email chains to track which jobs still need a cert lodged.",
+    "moat_source": "1) Regulatory: BCNSW eCert approved-API status (gatekeeper). 2) Multi-jurisdiction rule engine (NSW CCEW + VIC COES via ESVConnect + QLD CofC/CTS + NT online cert + SA/WA forms). 3) Workflow data on RCD tests, asset registers, network-operator copies — sticky once populated. 4) NECA / Master Electricians partnership distribution. Moat is medium: the API + the multi-state rule engine is a real barrier, but a determined FSM incumbent can copy it within 12–18 months once they prioritise it.",
+    "critical_integrations": "BCNSW eCert API (NSW); ESVConnect (VIC); QLD WorkSafe certs; NT online cert portal; Xero and MYOB (required by ~all AU tradies); ServiceM8/AroFlo/simPRO (sidecar play); SMS provider (Twilio/MessageMedia) for customer cert delivery; network operator copy distribution (Ausgrid, Endeavour, Essential).",
+    "incumbent_ehr_lock_in": "Soft lock-in to FSM (ServiceM8/AroFlo/simPRO) is the analogue of EHR — but data is mostly in Xero/MYOB which has open APIs. Side-car play (sit alongside ServiceM8 as the compliance layer) is viable; rip-and-replace is harder."
+  },
+  "build_difficulty": {
+    "regulatory_complexity": "High. Each state has its own form, lodgement path, retention period and signing rules. NSW (CCEW, BCNSW eCert from Jul 2026), VIC (COES via ESVConnect, prescribed vs non-prescribed, paper deprecating), QLD (Certificate of Testing & Safety / Compliance, 5-year retention), NT (online cert), SA/WA/TAS each different. Must also encode AS/NZS 3000, AS/NZS 3017 testing requirements and RCD test schedules.",
+    "regulatory_changes_2025_2026": "NSW BCNSW eCert: registration opens Dec 2025; mandatory portal/API lodgement from 1 July 2026; paper and third-party PDF CCEWs no longer accepted. VIC: paper COES being phased out via ESVConnect; 12-month expiry on purchased compliance certificates from 13 Aug 2025 (note: this expiry rule is for plumbing compliance certs under s221ZN(1A) Building Act 1993, established under the new Building and Plumbing Commission from 1 Jul 2025 — adjacent regulatory churn, often confused with electrical). NT: third-party app-generated CoCs will not be accepted once the online electrical cert goes live. QLD: existing 5-year retention for certs of testing/compliance. These dated, hard-cutover events are forcing functions.",
+    "domain_depth": "Moderate. Need to understand CCEW vs CES, prescribed vs non-prescribed work, RCD/insulation/earth-continuity testing, network-operator copy obligations, and tester-of-record liability. Acquirable by an outsider in 2–3 months with a NECA-member advisor; deeper than typical SaaS but not closed-shop like funeral or vet.",
+    "mvp_effort": "4–6 months solo. Core: BCNSW eCert API submission + multi-state form templates + photo-evidence capture + simple job/customer model + Xero sync. NSW-only MVP is feasible in 3 months.",
+    "technical_risks": "1) BCNSW eCert API approval process — likely vetted, not open. 2) Network-operator copy distribution (Ausgrid/Endeavour/Essential each different). 3) Photo evidence with EXIF/geotag verification. 4) Offline-first mobile capture (sparkies work in basements, switchboards, no signal). 5) Rule engine for AS/NZS 3000 testing matrix per circuit type.",
+    "state_by_state_variance_au": "Very high — every state has a different form name, lodgement system, retention and signing rule. Multiple rule engines required to be a national product. NSW-first is the sensible wedge.",
+    "data_residency_requirement": "Not legally mandated for electrical certs, but BCNSW eCert API terms likely require AU-hosted handling of customer data and may impose audit/log requirements. Hosting in Supabase AU region is recommended and a sales talking point."
+  },
+  "distribution_difficulty": {
+    "channel_options": "1) SEO on 'NSW eCert', 'CCEW submission', 'BCNSW eCert API', 'NSW electrical compliance July 2026' — strong rising-tide query volume in 2025–26. 2) NECA branch partnerships (NSW, VIC, QLD) — newsletter, webinar, member-discount. 3) Master Electricians Australia partnership (QLD-strong). 4) Facebook groups: 'Australian Sparkies', 'Sparkies Helping Sparkies', 'Electrical Apprentices Australia' (tens of thousands of members combined). 5) Whirlpool forum, Reddit r/AusElectricians. 6) Trade shows: NECA Conference, Energy Next, Integrate Expo. 7) Cold outbound — licensed contractor lists are public via NSW Fair Trading and other state regulators. 8) Sidecar partnerships with ServiceM8/AroFlo (risky — they'd rather build it).",
+    "trade_association_count_au": "~5 major: NECA (national, 6,000+ members), Master Electricians Australia (QLD-led), ETU (union, less relevant), state-based NECA branches, plus regional groups. Manageable to canvas.",
+    "trade_publication_count": "~4–5: Electrical Connection, Voltage (NECA), Sparky (independent), ECD Solutions (AU edition), plus regulator e-news. Sponsorship slots are cheap (~$1–3k each).",
+    "industry_facebook_group_size": "Estimated 40–80k combined members across the top 5 AU sparky FB groups — sole-trader and small-firm-heavy, exactly the target buyer.",
+    "conference_event_count_au": "3–5 with exhibit options under $10k for a small booth: NECA branch conferences (NSW/VIC/QLD), Energy Next, Integrate Expo. NECA national conference is the big one.",
+    "cold_outbound_viability": "Very high. NSW Fair Trading and equivalents publish licensed-contractor registers. Many electricians have personal mobile + business email listed. SMS/email outbound is realistic at scale; 'NSW eCert is mandatory in X days — are you ready?' is a strong cold hook in early 2026.",
+    "founder_market_fit_proxy": "Sparkies are open to outsider software vendors — the segment is already saturated with non-sparky-built tools (ServiceM8, simPRO, AroFlo all built by software people). Credibility comes from a NECA-endorsed advisor and demos that show the founder knows what an RCD test card looks like, not from being a licensed electrician.",
+    "case_study_acquisition_cost": "Low. Offer free lifetime to first 5–10 NECA-member contractors in exchange for case study + advisory. With a NECA branch partnership this is realistic in 4–8 weeks.",
+    "content_seo_competitiveness": "Low–moderate. 'BCNSW eCert' is a brand-new keyword space with low competition; existing FSM blogs (ServiceM8, AroFlo, simPRO, Tradify) will rank for general terms. New entrant can own the regulatory-deadline niche.",
+    "insurer_or_gatekeeper_dependency": "Yes — BCNSW eCert API approval is a hard gatekeeper. From Jul 2026 there is no path to lodge a CCEW outside the portal. Application/approval timeline and criteria are not yet fully public (Dec 2025 registration opens). This is the single largest execution risk."
+  },
+  "personal_fit": {
+    "manuva_data_model_reuse_pct": "15–25%. Reusable: multi-tenant auth + RLS, customer/job entities, file/photo storage, activity_log audit pattern, Xero integration. Not reusable: BOM, production orders, bins/locations, supplier procurement.",
+    "manuva_code_reuse": "Auth (getServerTenantContext), tenant RLS pattern, file upload + signed-URL flow, activity_log, Xero OAuth scaffolding, design-system tokens. CSS Modules + Next.js App Router stack carries over cleanly.",
+    "buyer_persona_overlap_with_manuva": "Low. Manuva targets manufacturers (factories, workshops, makers). Electrical contractors are field-service, not factory. Some overlap in switchboard/panel-build shops but it's a niche.",
+    "adjacency_to_manufacturing": "Distant. Different buyer, different workflow (field jobs vs production orders). Domain reuse is mostly infrastructural, not conceptual.",
+    "technical_moat_durability_months": "9–15 months. The CCEW form + Xero sync is replicable in weeks with AI coding tools; the BCNSW eCert API approval + multi-state rule engine is the durable bit and takes a year+ to copy."
+  },
+  "unit_economics": {
+    "gross_margin_sensitivity": "Healthy. No mandatory AI inference cost. Costs: Supabase + Vercel (~$2–5/customer/mo at scale), SMS for cert delivery ($0.05–0.10/cert × ~30/mo = $1.50–3/customer). Photo storage is the main variable cost — geotagged JPEGs at scale could push storage to $3–6/customer/mo. Net gross margin 80–85% achievable.",
+    "multi_location_natural": "Limited. Most sparky firms are single-location; the seat-count axis (per-tech) is the natural expansion vector, not multi-site.",
+    "churn_risk": "Moderate. Sole-trader sparkies churn on retirement/business closure (~10–15%/yr industry baseline). Once integrated with Xero and BCNSW eCert, switching cost is real — 5–8%/yr net after first year is plausible.",
+    "customers_needed_for_target_arr": "At $200 ARPU AUD: ~420 customers for $1M ARR. At $150 ARPU: ~555. Achievable from a NSW base of 14–16k licensed electrical contractors if 3–4% adoption."
+  },
+  "uncertain": [
+    "business_count_au",
+    "business_count_global",
+    "willingness_to_pay",
+    "realistic_arpu_au",
+    "industry_facebook_group_size",
+    "trade_publication_count",
+    "case_study_acquisition_cost",
+    "technical_moat_durability_months",
+    "churn_risk"
+  ]
+}

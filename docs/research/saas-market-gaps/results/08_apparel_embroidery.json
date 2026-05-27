@@ -1,0 +1,77 @@
+{
+  "id": "08_apparel_embroidery",
+  "name": "Custom apparel / screen-print / embroidery shops",
+  "tier": "A",
+  "hypothesis": "Printavo is the only real player and is US-centric/dated; AU reach is weak.",
+  "market_sizing": {
+    "target_buyer": "Owner/operator of a custom apparel decoration shop (screen print + embroidery + DTG + DTF + vinyl). Production manager once headcount passes ~6.",
+    "business_count_au": "Roughly 1,500–2,500 apparel-decoration businesses in Australia. Rentech directory counts 380 'embroidery shops' and 651 'embroidery services' (Oct 2024 – Jan 2025); add screen-print-only and uniform/promo shops and the total addressable is ~2,000. Industry turnover ~AU$1.2B with workforce ~4,500 (2023). Australia printed ~45M custom apparel items in 2023.",
+    "business_count_global": "Global TAM ~80,000–120,000 decoration shops. US has ~30,000+ screen-print/embroidery shops (Printavo claims 3,000+ paying customers as ~10% of US TAM); UK ~3,000–5,000; Canada ~2,000–3,000. India/China dominate volume but not relevant SaaS TAM.",
+    "typical_size": "2–10 employees; AU$200K–$2M revenue. Mix of B2B uniforms/teamwear + retail merch + corporate gifting + small-batch online stores."
+  },
+  "pricing_reality": {
+    "incumbent_pricing": "Printavo: US$49 (Starter) / US$149 (Standard) / US$199 (Premium) per month; multiple reports of post-PE price hikes to ~US$399/mo. YoPrint: from US$39/mo (annual discount), positions explicitly as cheaper Printavo alternative. Teesom: US$67/mo single user → US$625/mo for 30 users; free under 20 orders/month. DecoNetwork (AU-built, Queensland team): Standard US$239/mo + license fee, Premium and Enterprise contact-sales — clearly above the AU$100–500 band for Premium+. InkSoft: bundled within Inktavo, similar tier. shopVOX Express: US$99/mo + US$19/user.",
+    "willingness_to_pay": "AU shops pay AU$100–400/mo today; very price-sensitive segment (margins thin on screen-print, embroidery slightly better). Realistic AU ARPU 70–80% of US — AU$150–350/mo. Above AU$400 only for shops doing >AU$1M revenue with team stores.",
+    "sales_motion": "Self-serve + community-led. Strong free-trial conversion expected; Facebook groups and YouTube demos drive most signup. Tradeshow (Visual Impact Sept 2026) adds breadth.",
+    "realistic_arpu_au": "AU$180–280/mo. AU$120 starter, AU$300 multi-user, AU$500+ for shops with online team-store ecommerce + advanced production.",
+    "expansion_revenue_potential": "High. Embedded payments on deposits/team-store orders (OrderMyGear-style model); blank-garment supplier procurement (PrimeLine, Aussie Pacific, Biz Collection, AS Colour wholesale) is a meaningful B2B fintech angle. Team-store ecommerce-as-a-feature is the canonical expansion (Inktavo+OMG merger validates this). AI design/mockup tools (GraphicsFlow-style) are emerging upsells. 2–3× ARPU expansion is credible."
+  },
+  "competitive_landscape": {
+    "incumbents": "1) Printavo (US, founded 2014, Inktavo group, PSG/Blue Star Innovation Partners) — ~3,000+ shops, the category default but US-centric tax/payments and Reddit-documented stagnation. 2) Inktavo umbrella: Printavo + InkSoft + GraphicsFlow + Clarity + SignTracker, merged with OrderMyGear October 2025. 3) DecoNetwork (AU-built, Queensland-headquartered team) — local strength, full ecommerce + shop management, Standard US$239/mo+ pricing keeps it above the budget tier. 4) YoPrint (US, fast-growing) — explicitly cheaper Printavo alternative from US$39/mo. 5) Teesom — older shop management, slower UX cycle. 6) shopVOX — cross-vertical, covers screen-print. 7) OrderMyGear (now Inktavo-merged) — team-store/B2B ordering, enterprise-tilt. 8) Local AU: limited — DecoNetwork is the dominant local; some Shopify+Xero+Excel hybrids.",
+    "incumbent_age_years": "Printavo ~12 years; InkSoft ~16 years; DecoNetwork ~17 years (founded ~2008 by Queensland team); Teesom ~12 years; OrderMyGear ~17 years (founded 2008); shopVOX ~13 years. All 12+ years old, classic 'UI rot + private-equity-rollup' window — strongly supports hypothesis.",
+    "user_satisfaction_signals": "Printavo Capterra/G2/Reddit/t-shirtforums: 'famous for promising to fix functionality problems and then ignore them for literally YEARS'; 'no read/write permissions, can't control who can do what'; 'doesn't do basic math, no customer overpayment feature'; ACH/payment-processor lock-in after Inktavo/PSG buyout (US$2,500/yr → US$3,990/yr). YoPrint's marketing leans heavily on Printavo defection. AU-specific complaint pattern: missing MYOB integration, US-only tax behaviour, US Stripe/payment rails, US blank-garment supplier catalogues (SanMar, S&S Activewear, AlphaBroder) instead of AS Colour/Biz Collection/Aussie Pacific.",
+    "recent_funding_or_ma": "Major: Inktavo (Printavo + InkSoft + GraphicsFlow + Clarity + SignTracker, PSG/Blue Star) merged with OrderMyGear (Susquehanna Growth Equity) October 2025 — largest decoration-industry consolidation event. Original Printavo/InkSoft PE acquisition closed 2022. No public AU-specific raises in last 12 months. AI-design startups (e.g., Inkydo, AI-mockup tools) emerging in adjacent space.",
+    "ai_disruption_risk": "Medium-high. Inktavo's GraphicsFlow is the existing AI design/mockup hook. Independent AI-mockup, auto-quote-from-artwork, and auto-print-spec startups are visible. No clear AI-native dominant entrant yet — 12–18 month window for a new wedge."
+  },
+  "opportunity_quality": {
+    "core_pain": "Quote-to-team-store-to-production-to-shipping workflow with art approval. Specific spreadsheet replacements: per-decoration pricing matrices (screen count × colours × placements × garment cost × markup); manual artwork approval via email; shared Google Sheet for the day's production schedule; manual blank-garment ordering across multiple suppliers. AU-specific pain: tax/payment mismatch and supplier catalogue gap with US tools (most shops buy from AS Colour, Aussie Pacific, Biz Collection, Ramo, JBs Wear — none integrated into Printavo).",
+    "moat_source": "AU supplier catalogue integration (AS Colour, Biz Collection, JBs Wear, Aussie Pacific, Ramo); AU payments rail (Stripe AU, Tyro, Pinch, BPAY); MYOB native integration; team-store/online-shop with AU shipping; AI mockup generation. Defensibility = data (AU price catalogues), switching cost (team-store URLs and history), brand trust as the local player.",
+    "critical_integrations": "Xero, MYOB AccountRight/Business (must-have, AU-specific); Stripe AU + Pinch + BPAY/PayID; AS Colour, Biz Collection, JBs Wear, Aussie Pacific, Ramo wholesale catalogues; Shopify (many shops use it as their B2C front); Australia Post + Sendle + StarTrack shipping APIs; Adobe Creative Cloud artwork; embroidery file formats (DST/EMB); DTG/DTF print queues.",
+    "incumbent_ehr_lock_in": "Low. Most AU shops use a tape of Shopify + Xero + Excel + ad-hoc tools, not a single ERP. Rip-and-replace is the standard sale. The locked-in segment is DecoNetwork customers, who would need clear AU$ ROI to switch."
+  },
+  "build_difficulty": {
+    "regulatory_complexity": "Low. Australian Consumer Law, GST/Tax Invoice, modern slavery clauses on garment sourcing for shops >$100M (irrelevant to ICP). No licensing of decoration shops themselves.",
+    "regulatory_changes_2025_2026": "Minor. Federal Modern Slavery Act amendments (2024–2026) tightening supply-chain reporting thresholds may push mid-market shops to want supplier-chain attestations on garments — software opportunity but not a hard forcing function. Privacy Act reform (small business exemption likely removed by 2026–2027) increases customer-data-handling requirements for all SMB software, slight tailwind for an AU-hosted entrant. No equivalent of NSW eCoC or NDIS 2026 deadlines.",
+    "domain_depth": "Moderate. Need to understand decoration methods (screen-print colour separations, embroidery thread/stitch counts, DTG/DTF white-base, vinyl HTV), garment sizing/SKU complexity, team-store ordering windows, art approval. Acquirable by an outsider in 3–4 months. Manuva BOM/inventory mental model transfers.",
+    "mvp_effort": "4–6 months for solo/small team: quoting + art approval portal + production schedule + Xero/MYOB + Shopify integration + AU supplier catalogue. Team-store ecommerce adds 3–4 months.",
+    "technical_risks": "Pricing-rules engine flexibility (per-decoration matrices); embroidery file (DST/EMB) handling; multi-tier inventory (blank stock + decorated finished goods); team-store ecommerce. No genuinely hard ML required for MVP.",
+    "state_by_state_variance_au": "None. National rules apply uniformly.",
+    "data_residency_requirement": "None statutory. AU hosting (Supabase Sydney region) is a sales angle, especially for government/uniform contracts."
+  },
+  "distribution_difficulty": {
+    "channel_options": "(1) Visual Impact Conference & Expo 2026 (2–4 Sept Sydney, includes garment decoration). (2) Facebook groups — 'Custom Apparel Australia', 'Embroidery Australia', 'Screen Printing Australia', 'Aussie T-shirt Printers' (~5–15K combined active members). (3) AS Colour / Biz Collection / JBs Wear distributor channels (~50K B2B accounts collectively, indirect access). (4) YouTube / TikTok demos — the segment over-indexes on visual content. (5) Print21 and Wide Format Online (cross-vertical). (6) ASGA peripheral (sign-shop overlap with garment decoration). (7) Cold outbound: scrape ABN + Google Maps + Yellow Pages → ~2K targets. (8) Embroiderers Guild and adjacent craft associations (small).",
+    "trade_association_count_au": "1–2: APPA (Australian Promotional Products Association) and PPAI Australia chapter cover this segment; ASGA peripherally for screen-print. No dedicated 'apparel decorator' association of scale.",
+    "trade_publication_count": "2–4: Print21, Image Magazine, Wide Format Online, Promotion Products Magazine. Sponsorship slots AU$1–3K.",
+    "industry_facebook_group_size": "~5,000–10,000 combined active across AU custom-apparel, screen-print, embroidery groups. Smaller than cabinet/sign communities but very engaged and visual.",
+    "conference_event_count_au": "1–2 main: Visual Impact (annual rotating Sydney/Melbourne) and APPA Promotional Products Expo. Booth costs AU$5–10K.",
+    "cold_outbound_viability": "High. Shops have public websites, Instagram presence, owner names; ~2K targets fully scrapable. Owners are accessible.",
+    "founder_market_fit_proxy": "Moderate. Apparel decoration owners are creative/trade hybrids; respond well to clear ROI and visual demos. Trust built via Facebook content, YouTube demos, and being AU-local with AU supplier integrations. Manuva's manufacturing-ops credibility transfers but less directly than for cabinet shops.",
+    "case_study_acquisition_cost": "Low. 3–5 reference customers in 2–3 months via Facebook groups + one Visual Impact booth. Strong appetite documented in Printavo-defection threads.",
+    "content_seo_competitiveness": "Low-moderate. 'Screen print shop software Australia', 'embroidery business software AU' winnable. Head terms dominated by Printavo/DecoNetwork.",
+    "insurer_or_gatekeeper_dependency": "None. Xero/MYOB/Stripe/Shopify all open APIs. Wholesale supplier APIs (AS Colour, Biz Collection) are partner-accessible but not closed to startups."
+  },
+  "personal_fit": {
+    "manuva_data_model_reuse_pct": "40–55%. Inventory (blanks, threads, inks, vinyl), suppliers, purchase orders, production orders, locations all reuse. BOM concept maps loosely to 'decorated SKU = blank + decoration spec'. New domain: per-decoration pricing matrices, art approval/proofing, team-store ecommerce, embroidery file handling.",
+    "manuva_code_reuse": "Auth, tenant context, RLS, activity_log, Xero/MYOB sync skeleton, supplier/PO UI, dashboards, production-order patterns all reusable. Team-store and art-approval portal are new builds.",
+    "buyer_persona_overlap_with_manuva": "Low. Apparel decorators are a distinct buyer from discrete manufacturers; minimal Manuva customer overlap. Fresh GTM required; no natural bundle/expansion play from existing Manuva base.",
+    "adjacency_to_manufacturing": "Medium-low. The shop is a discrete manufacturer in operational shape (BOM, WO, scheduling) but the front-office (quoting, art approval, ecommerce) is closer to print/agency than to industrial manufacturing.",
+    "technical_moat_durability_months": "6–9 months. The MVP feature set is highly replicable by an AI-tooled team. Defensibility comes from AU supplier integrations, payments rails, and brand — not code."
+  },
+  "unit_economics": {
+    "gross_margin_sensitivity": "Healthy 80%+ GM achievable. Art-approval portal storage (high-res mockups + production files) is moderate (~10–100GB/shop). AI mockup features add inference cost ($0.10–$0.50 per mockup) — comfortable at AU$200/mo ARPU. Embedded payments add a fintech revenue line at near-zero marginal cost.",
+    "multi_location_natural": "Low. Most decoration shops stay single-site; team-store/ecommerce expansion is more typical than physical multi-site.",
+    "churn_risk": "Moderate-high. Decoration is project-driven, seasonal (peak Q4 + sports-season), and small shops fail at ~10–15%/yr. Mitigated by stickiness once team-stores are live (shops won't switch URLs/order history mid-season).",
+    "customers_needed_for_target_arr": "~350–500 customers at AU$200/mo ARPU for AU$1M ARR. Equates to ~20–25% of the AU TAM — aggressive. More realistic with AU$300+ ARPU through team-store/payments upsell."
+  },
+  "uncertain": [
+    "business_count_au",
+    "business_count_global",
+    "willingness_to_pay",
+    "realistic_arpu_au",
+    "incumbent_pricing",
+    "industry_facebook_group_size",
+    "trade_publication_count",
+    "case_study_acquisition_cost",
+    "recent_funding_or_ma"
+  ]
+}

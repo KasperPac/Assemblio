@@ -1,0 +1,69 @@
+{
+  "id": "14_audiology",
+  "name": "Audiology clinic ops",
+  "tier": "C",
+  "hypothesis": "Blueprint dominant but expensive; AI scribe + Medicare/private health claim opening.",
+  "market_sizing": {
+    "target_buyer": "Clinic owner / principal audiologist or practice manager of an independent (1–5 location) audiology / hearing clinic.",
+    "business_count_au": "Approximately 700–900 audiology clinic locations in Australia. HCIA members operate ~700+ clinic locations across networks (Amplifon ~400, Audika 300+, Bloom 200+, plus large independents). Independent (non-corporate) operators likely number 250–400 locations — these are the realistic ICP for a new entrant.",
+    "business_count_global": "Global TAM is sizeable but fragmented: US ~14,000–15,000 audiology clinics/dispensing locations; UK ~2,500–3,000 dispensers (mostly through Specsavers/Boots networks); Canada ~1,500. Total English-speaking TAM ~20,000 clinic locations, ~50% addressable independents.",
+    "typical_size": "1–3 clinicians + 1–2 admin per location; ~$0.8M–$3M revenue per location. Independent groups frequently expand to 2–5 sites."
+  },
+  "pricing_reality": {
+    "incumbent_pricing": "Blueprint OMS does not publish prices publicly; community reports place it at roughly USD $150–$300+ per user/month with setup fees. Sycle (US-dominant) and TIMS Audiology are similarly priced. AU buyers face FX uplift and limited Medicare/HSP-aware features. NOAH-based PMS (Auditbase, Auditdata) is enterprise-tier (4-figure/month).",
+    "willingness_to_pay": "Realistic AU ACV $200–$450/month per clinic for an independent. Owners are accustomed to four-figure spend on US-imported tools, so a polished AU-native product at $300–$400/month is well within the band, especially if it replaces NOAH-side spreadsheets and reduces HSP claim friction.",
+    "sales_motion": "Inside sales + founder-led demos; some self-serve trial. AU market is small enough that 200 logos can be reached via direct outreach and conference attendance.",
+    "realistic_arpu_au": "$300–$400/month per clinic (single location), scaling per-location for multi-site groups. ~70–80% of US comparable pricing.",
+    "expansion_revenue_potential": "Strong: hearing-aid inventory/serial tracking and HSP claim batching are natural up-sells; AI scribe add-on (+$50–$100/seat); embedded payments on hearing-aid sales (avg device $2k–$5k → high payment GMV); finance/BNPL referral commissions for device purchases; patient comms (SMS/email) margin. 2–3× ARPU expansion plausible."
+  },
+  "competitive_landscape": {
+    "incumbents": "1) Blueprint OMS (Blueprint Solutions, Canada) — cloud-based, dominant in independents globally, NOAH-integrated, recently added AI features (2025). 2) Sycle (US, Demant-owned) — dominant in US chains, limited AU presence. 3) Auditbase / Auditdata (enterprise NOAH-based) — used by Hearing Australia and large networks. 4) TIMS Audiology (Computers Unlimited, US) — desktop, on-prem, legacy. 5) NOAH 4 (HIMSA) — clinical fitting standard but not a PMS; used alongside one of the above. No AU-native independent audiology PMS of note; AU clinics largely import US/Canadian tools.",
+    "incumbent_age_years": "Blueprint Solutions founded 2005 (~21 years). Sycle ~25 years. Auditbase >25 years. Classic UI-rot zone.",
+    "user_satisfaction_signals": "Reddit r/audiology and AudiologyOnline forums show recurring complaints about Blueprint reporting depth, integration brittleness with HSP claim formats, and pricing opacity. Capterra reviews praise Blueprint vs. legacy but flag steep learning curve and slow support for non-US issues. AU-specific gripes: HSP voucher reconciliation done in Excel; private-health (HICAPS) claim handling is bolt-on; no Medicare item-number support out of the box (audiologists currently only bill Medicare under limited diagnostic items, but coverage is widening).",
+    "recent_funding_or_ma": "Blueprint added AI features in 2025 (organic). Hearing aid OEMs (Sonova, Demant, GN, WS Audiology) continue rolling up clinics, which pulls volume into captive PMS — squeezing independents but also creating PMS-switch moments. No notable AU-based venture-backed entrant in 2025–2026 specifically targeting audiology ops.",
+    "ai_disruption_risk": "Moderate. General-purpose AI scribes (Heidi, Lyrebird) are sweeping AU GP/allied health; an audiology-specialized scribe with NOAH/REM context is not yet a clear winner. Blueprint added generic AI features in 2025 but not deeply audiology-native. Window open ~12–24 months before a vertical-specific AI scribe + PMS combination is funded."
+  },
+  "opportunity_quality": {
+    "core_pain": "HSP (Hearing Services Program) voucher claim reconciliation lives in spreadsheets alongside Blueprint/Sycle; hearing-aid serial/inventory tracking across manufacturers is messy (each OEM portal separate); private-health (HICAPS) claim posting requires manual re-keying; clinical fitting data lives in NOAH while billing lives elsewhere. Owners spend hours each week reconciling HSP payments to clients/devices.",
+    "moat_source": "Regulatory + integration moat: deep HSP claim engine, NOAH integration, HICAPS/Tyro, AU AHPRA registration handling. Network effect via OEM device-catalog data. Once a clinic's serials, vouchers, and fittings live in your system, switching cost is very high.",
+    "critical_integrations": "NOAH 4 (HIMSA SDK), Hearing Services Online (HSO portal — currently no public API, file/XML-based), HICAPS/Tyro/Medipass for private-health claims, Medicare Online (PRODA) for the limited audiology items, Xero/MYOB, Twilio/SMSGlobal, OEM portals (Phonak Target, Oticon Genie, Signia Connexx — mostly side-loaded via NOAH).",
+    "incumbent_ehr_lock_in": "Mixed. Clinical fitting data is in NOAH (HIMSA), which is portable and standardized. Practice/billing data is in Blueprint/Sycle and exportable but messy. Side-car play is viable: own the HSP-claim + AI scribe layer first, then expand into full PMS."
+  },
+  "build_difficulty": {
+    "regulatory_complexity": "Moderate-to-high. HSP is a federal program with strict provider/practitioner accreditation, voucher rules, and audit obligations. AHPRA registration of audiologists is being implemented (approved by health ministers, rollout from ~late 2025/2026), adding registration-checking workflows. Privacy Act + My Health Record obligations apply. NOAH/HIMSA certification required for clinical integration.",
+    "regulatory_changes_2025_2026": "1) AHPRA registration for audiologists — health ministers approved in 2024–25, with rollout proceeding through 2026. Forces every clinic to update practitioner records and verification workflows. 2) Ongoing HSP reform consultations (eligibility expansion, fee changes). 3) Possible expansion of Medicare audiology item numbers under ongoing MBS Review. 4) My Health Record audiology integration expectations increasing. Each of these is a forcing function that justifies a PMS switch.",
+    "domain_depth": "High. HSP voucher logic, NOAH data model, hearing-aid fitting workflow (REM, fine-tuning), and AU private-health rebate logic each take months to learn. Best built with an insider co-founder or paid clinical advisor.",
+    "mvp_effort": "8–14 months solo for a credible MVP (claim engine + NOAH integration + AI scribe). HSP claim certification timeline is the long pole.",
+    "technical_risks": "NOAH SDK integration (Windows-only historically; cloud NOAH is rolling out), HSO claim file format edge cases, REM/fitting data import, AI scribe quality on audiology-specific vocabulary (REM, audiogram interpretation).",
+    "state_by_state_variance_au": "Low — HSP is federal; private-health rules uniform; AHPRA national. Minor state variance in WorkCover audiology billing.",
+    "data_residency_requirement": "Effectively required. HSP data and patient PHI demand AU-hosted infrastructure (AWS ap-southeast-2 / Sydney). Supabase AU region supports this."
+  },
+  "distribution_difficulty": {
+    "channel_options": "1) Conferences: Audiology Australia National Conference, ACAud Annual, IHHCA — sub-$10k exhibits feasible. 2) Independent Audiologists Australia (IAA) newsletter sponsorship — directly targets ICP. 3) Hearing Practitioner Australia trade publication advertising. 4) LinkedIn outbound to clinic owners (small, identifiable population). 5) Audiology Australia member directory cold outbound. 6) OEM-rep referrals (Sonova/Demant reps know every independent). Content/SEO is low-volume but high-intent.",
+    "trade_association_count_au": "3–4 active: Audiology Australia (AudA), Australian College of Audiology (ACAud), Independent Audiologists Australia (IAA), Hearing Care Industry Association (HCIA — networks).",
+    "trade_publication_count": "2–3: Hearing Practitioner Australia, Hearing Review (US but read in AU), Audiology Today (international). Limited but concentrated.",
+    "industry_facebook_group_size": "[uncertain]",
+    "conference_event_count_au": "3–5 per year (AudA National, ACAud, IAA, regional CPD events, HCIA roundtables).",
+    "cold_outbound_viability": "High. Clinic locations are publicly directoried (HSP provider list, Audiology Australia find-an-audiologist), owners are named, phone/email findable. Population is small enough (200–400 independent owners) that personal outreach is realistic.",
+    "founder_market_fit_proxy": "Medium. Audiology is a tight-knit profession; an outsider builder will be tolerated if accompanied by a clinical co-founder or paid clinical advisor. Manufacturing builder profile is neutral.",
+    "case_study_acquisition_cost": "Low-to-moderate: 5 reference customers achievable in 3–6 months via IAA + conference presence + founder concierge service. Heavy white-glove onboarding required.",
+    "content_seo_competitiveness": "Low — \"audiology PMS Australia\" and similar queries are sparsely contested. Easy to rank with targeted content.",
+    "insurer_or_gatekeeper_dependency": "Significant. HSO (Hearing Services Online) is the only path for HSP claims; no public API, requires registered-provider credentials and supports file-based submission. HICAPS/Tyro require merchant integration agreements. Medicare PRODA accessible but requires software vendor registration. Each is doable but adds 3–6 months."
+  },
+  "personal_fit": {
+    "manuva_data_model_reuse_pct": "~35–45%. Reusable: tenant/user/role model, locations, inventory (hearing aids are SKUs with serials — directly maps to Manuva's components-with-serials model), suppliers (OEMs as suppliers), purchase orders, activity log, accounting integration. Non-reusable: clinical encounter, audiogram, NOAH, HSP claims.",
+    "manuva_code_reuse": "Auth, tenant context (getServerTenantContext), RLS patterns, CSS Modules + design system, Xero integration scaffolding, activity log, Supabase migrations, serial tracking, multi-location architecture.",
+    "buyer_persona_overlap_with_manuva": "Very low. Manuva targets manufacturers; no expected overlap with audiology clinic owners. This would be a fresh GTM.",
+    "adjacency_to_manufacturing": "Low. Hearing-aid serial/inventory and supplier handling has manufacturing-flavored data, but the workflow (clinical encounter, fitting, claims) is healthcare. Founder credibility needs a clinical co-founder.",
+    "technical_moat_durability_months": "12–18 months. The core PMS shell is replicable with AI tools, but HSP claim engine + NOAH integration + AHPRA verification are 12+ months of grind that a competitor cannot shortcut."
+  },
+  "unit_economics": {
+    "gross_margin_sensitivity": "Healthy SaaS margins (~80%) if AI scribe is a paid add-on priced to cover inference. SMS reminder costs pass-through. Onboarding cost is significant (HSP setup, NOAH config, data migration) — bake in setup fee.",
+    "multi_location_natural": "Yes. Independent owners frequently expand to 2–5 sites; per-location pricing scales naturally.",
+    "churn_risk": "Low once HSP claims and NOAH integration are live. Switching is painful; clinic owners are stable, long-tenured operators.",
+    "customers_needed_for_target_arr": "At $350/mo ARPU: ~240 clinic locations for $1M ARR. Realistic ceiling for AU-only at independent segment is ~250–400 locations, so AU-alone gets you to $1M but hits a ceiling — expansion to NZ/UK/CA needed for >$3M."
+  },
+  "uncertain": [
+    "industry_facebook_group_size"
+  ]
+}

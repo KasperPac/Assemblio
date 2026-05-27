@@ -1,0 +1,76 @@
+{
+  "id": "22_mobile_mechanic",
+  "name": "Mobile mechanic / on-site auto repair",
+  "tier": "E",
+  "hypothesis": "Distinct buyer from smash repair; rapidly growing AU segment with no dedicated software.",
+  "market_sizing": {
+    "target_buyer": "Owner-operator mobile mechanic (1-5 vans) or fleet ops manager at small mobile-mechanic franchises (e.g. Lube Mobile licensees).",
+    "business_count_au": "Approx 2,000-4,000 mobile-mechanic operators in AU. No dedicated ABS/IBISWorld category; mobile is a subset of the 28,323 Motor Vehicle Engine and Parts Repair businesses (IBISWorld 2025). Lube Mobile alone runs 200+ vans; remainder is highly fragmented owner-operators.",
+    "business_count_global": "Global TAM materially larger: US auto repair industry has ~280,000 establishments with mobile estimated 5-10% (~15,000-25,000 mobile shops); UK ~5,000-8,000 mobile operators; CA ~3,000-5,000. Global mobile-mechanic services market growing at ~8-10% CAGR per Dataintelo 2025.",
+    "typical_size": "1-3 employees, 1-3 service vans, A$200K-A$600K annual revenue. Solo operators dominate the long tail."
+  },
+  "pricing_reality": {
+    "incumbent_pricing": "Shop-focused suites: AutoLeap A$179+/mo, Shopmonkey A$199/mo, Tekmetric A$179/mo (all USD, designed for brick-and-mortar shops with 50K+ monthly revenue). AU tradie-generic tools: ServiceM8 A$29-A$349/mo (usage-based), Tradify A$45-A$58/seat/mo. Trackara Pro targets mobile mechanics specifically (pricing not public).",
+    "willingness_to_pay": "Realistic AU ACV A$120-A$280/mo for solo/small. AU buyers benchmark against ServiceM8 (~A$100-200 effective). Top of $100-500 band only realistic for 3-5 van shops with parts inventory + payments attached.",
+    "sales_motion": "Self-serve with low-touch inside sales (demo + onboarding call). Trade-show booth + Facebook community evangelism for first 50 customers.",
+    "realistic_arpu_au": "A$160-A$220/mo",
+    "expansion_revenue_potential": "Strong: payments (Stripe Terminal / surcharging), parts marketplace rev-share with AutoGuru / Repco / Burson, financing for repairs (Afterpay-style as Lube Mobile already promotes), telematics integration. Plausible 2-3x ARPU lift via embedded payments alone (typical FSM payments take rates 0.5-0.8% of GMV)."
+  },
+  "competitive_landscape": {
+    "incumbents": "1) ServiceM8 (AU, founded 2010) — dominant generic tradie FSM in AU, used by many mobile mechanics today but lacks VIN decode, parts catalogs, DVI; 2) Tradify (NZ, 2014) — similar generic tradie tool; 3) AutoLeap (US, 2020, well-funded) — shop-centric, expanding mobile features but desktop-first; 4) Shopmonkey (US, 2017, raised $250M+) and Tekmetric (US, 2017) — both brick-and-mortar focused; 5) Trackara Pro — purpose-built for mobile mechanics, small/early-stage; 6) Orderry, Workshop Software — generic auto repair, AU presence light.",
+    "incumbent_age_years": "ServiceM8 ~16 years; Tradify ~12 years; AutoLeap ~6 years. ServiceM8/Tradify are the de-facto AU incumbents and have visible UI rot complaints (Android instability, slow page loads, overwrite bugs).",
+    "user_satisfaction_signals": "Capterra/Trustpilot: ServiceM8 Android version repeatedly criticised ('lost everything', 'oops something went wrong', forced re-logins). Tradify: 'horrible customer service when cancelling', 'no offline access', timesheet overwrite bugs. Mobile mechanics specifically complain shop software is 'desktop crammed into a phone' — buttons too small, workflows assume service advisor, no van-inventory model, no mileage/travel logging, no offline capability (Trackara Pro marketing thesis). Reddit r/MechanicAdvice and r/AusFinance threads echo: spreadsheets + invoicing apps still common.",
+    "recent_funding_or_ma": "AutoLeap raised $30M Series B (Bain Capital Ventures, May 2023); Shopmonkey raised $75M Series D (2022, valuation ~$1.5B but reportedly down-rounded since). No notable mobile-specific raises identified in 2025-2026. ServiceTitan ($TTAN) IPO Dec 2024 has accelerated consolidation interest in trade FSM verticals.",
+    "ai_disruption_risk": "Moderate. AI is being grafted onto Aspire/FieldRoutes via ServiceTitan's $250M R&D push, and AutoLeap is shipping AI estimate write-ups. No identified AI-native mobile-mechanic challenger as of mid-2026; window still open for 12-18 months."
+  },
+  "opportunity_quality": {
+    "core_pain": "Mobile mechanics juggle: (a) booking + dispatch from phone calls/AutoGuru/website, (b) van-as-warehouse parts inventory across multiple vans with no min-stock auto-replenish, (c) on-vehicle VIN/rego decode + service-history capture, (d) digital vehicle inspections (DVI) with photo evidence at the customer's driveway, (e) Stripe Terminal payments + Afterpay-style financing, (f) compliance log for warranty/roadworthy. Today this is ServiceM8 + an Excel parts sheet + Repco/Burson web logins + paper invoices. No single tool spans the workflow.",
+    "moat_source": "Parts catalog integrations (Repco, Burson, Bapcor) + VIN/rego decode (NEVDIS access via approved data partner) + payments rake. Network effect of an AutoGuru-style consumer marketplace bolted on. Data moat from accumulated service history per VIN over time.",
+    "critical_integrations": "Xero / MYOB (mandatory in AU), Stripe + Stripe Terminal, NEVDIS / rego lookup, Repco / Burson / Bapcor parts catalogs, AutoGuru / Lube Mobile booking feeds, Google Calendar, Twilio SMS.",
+    "incumbent_ehr_lock_in": "None. Buyers use generic tools they actively dislike; no sticky vertical platform to dislodge — pure greenfield."
+  },
+  "build_difficulty": {
+    "regulatory_complexity": "Low to moderate. No federal licensing for the mechanic trade per se, but state-by-state Motor Vehicle Repairer / Repairer's licence applies (NSW Fair Trading, VIC VBA, QLD MVRA). Roadworthy/pink slip workflows differ by state. No equivalent of pest-control chemical logs.",
+    "regulatory_changes_2025_2026": "No identified single forcing function. Background trends: ACCC right-to-repair scheme for motor vehicle service info (MVSI) operational since July 2022 continues to expand OEM data access. EV servicing rules and high-voltage technician licensing being phased in across states (e.g. VIC AS/NZS 5732 EV awareness 2025-2027) — creates compliance opportunity but not a hard cliff.",
+    "domain_depth": "Moderate. Workflow is observable from ride-alongs; parts catalogs and VIN decode are integration problems not domain mysteries. Outsider can ship MVP credibly with 2-3 design partners.",
+    "mvp_effort": "4-6 months for a solo/small team (jobs, customers, vehicles with VIN, van inventory, invoicing, Stripe, basic mobile PWA).",
+    "technical_risks": "VIN/rego decode data access (NEVDIS gated to approved organisations); parts-catalog API access (Repco/Burson typically B2B not open); offline-first mobile sync; multi-van inventory transfers. None are research-grade.",
+    "state_by_state_variance_au": "Moderate. Motor vehicle repairer licensing differs per state, pink slip/roadworthy schemes differ, but the core job/parts/invoice workflow is portable.",
+    "data_residency_requirement": "No hard requirement. AU hosting (Supabase ap-southeast-2) is a marketing positive but not legally mandated."
+  },
+  "distribution_difficulty": {
+    "channel_options": "1) Facebook groups (AU Mobile Mechanics, Aussie Mechanics, suburb-level trade groups) — high density of owner-operators; 2) AutoGuru marketplace as channel partner (they already aggregate mobile mechanics); 3) Trade shows: Australian Auto Aftermarket Expo (annual, Melbourne, ~$8K booth); 4) SEO content (mobile mechanic software AU, VIN decoder, ServiceM8 alternative); 5) MTA/VACC state associations newsletter sponsorships; 6) Cold outbound — ABN + ASIC + Google Maps scraping yields verified business contacts.",
+    "trade_association_count_au": "~8 active (VACC VIC, MTA NSW/QLD/SA/WA, MTAA national, AAAA national, plus AMIF). Mobile mechanics underserved by these (which lean toward shops/dealerships).",
+    "trade_publication_count": "~5-8 (AAAA Magazine, AutoTalk, Motor Trader, Australasian Paint & Panel — though latter is smash repair). Limited mobile-specific publications.",
+    "industry_facebook_group_size": "Mid-tier. Public AU mobile-mechanic / auto-repair groups total ~30,000-60,000 members across 'Aussie Mechanics', 'Mobile Mechanics Australia', state-level groups; many private state-based groups add unknown count.",
+    "conference_event_count_au": "2-3 under $10K (AAA Expo Melbourne, MTA state expos, regional auto trade events).",
+    "cold_outbound_viability": "High. Mobile mechanics advertise on Google Maps, Hipages, Oneflare, AutoGuru — phone + email are public. ABN lookup yields legal entity. Enrichment with Clearbit/Apollo viable.",
+    "founder_market_fit_proxy": "Open vertical. Mechanics trust software outsiders more than e.g. funeral directors; demo + reference customer suffices. Non-mechanic founders have shipped ServiceM8, AutoLeap, Trackara successfully.",
+    "case_study_acquisition_cost": "Low. 5 reference customers achievable in 4-8 weeks via Facebook groups + free pilot. Mobile mechanics are vocal and refer easily.",
+    "content_seo_competitiveness": "Medium. 'Auto repair software' is crowded, but 'mobile mechanic software AU' and long-tail (VIN decoder AU, ServiceM8 vs alternative) have low DR competitors and are rankable in 6-9 months.",
+    "insurer_or_gatekeeper_dependency": "Low for core product. NEVDIS access is the one real gatekeeper (data broker partnership required); workaround is manual rego entry initially. Insurer integration only matters if expanding into smash repair (different buyer)."
+  },
+  "personal_fit": {
+    "manuva_data_model_reuse_pct": "40-55%. Direct reuse: customers, suppliers (=parts vendors), inventory items + bins (=van compartments), stock levels, purchase orders, activity_log, tenant/RLS, auth. New: vehicles (VIN/rego/make/model/odometer), jobs (= production orders re-skinned), DVI photo capture, recurring service intervals.",
+    "manuva_code_reuse": "Auth, tenant context (getServerTenantContext), RLS patterns, activity logging, server actions pattern, Xero/MYOB integration scaffolding, CSS Modules design system — all transfer cleanly. Inventory + BOM logic largely portable to van-inventory + service-kit concept.",
+    "buyer_persona_overlap_with_manuva": "Very low. Manuva sells to small AU manufacturers (process industry, food, fabrication). No natural cross-sell path. Fresh GTM motion required.",
+    "adjacency_to_manufacturing": "Low-moderate. Both are physical-goods + inventory + work-order businesses, but the customer, channel, and domain rituals differ significantly.",
+    "technical_moat_durability_months": "6-12 months. An AI-coding-equipped competitor could replicate a baseline MVP in a quarter. Durable moat must be integrations (NEVDIS, parts catalogs, payments) + brand + customer base, not code."
+  },
+  "unit_economics": {
+    "gross_margin_sensitivity": "Healthy. Minimal AI inference required for core product; SMS notifications priced per message and passed through. Stripe Terminal hardware is one-off. Expect 80-85% gross margin at scale.",
+    "multi_location_natural": "Limited. Most operators remain 1-3 vans for life. Franchise networks (Lube Mobile) are an exception and would be a separate sales motion. Per-van seat pricing is the natural expansion lever.",
+    "churn_risk": "Moderate. Sole-trader mobile mechanics close/retire at a meaningful rate; price-sensitive; will downgrade in slow months. Annual churn 15-25% plausible. Mitigated by payments lock-in.",
+    "customers_needed_for_target_arr": "~470-520 customers at A$165 ARPU to hit A$1M ARR (or ~380 at A$220)."
+  },
+  "uncertain": [
+    "business_count_au",
+    "business_count_global",
+    "willingness_to_pay",
+    "realistic_arpu_au",
+    "industry_facebook_group_size",
+    "churn_risk",
+    "customers_needed_for_target_arr",
+    "recent_funding_or_ma"
+  ]
+}

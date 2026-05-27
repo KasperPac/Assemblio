@@ -1,0 +1,373 @@
+# Field definitions for the Competitor Integrations research.
+# Each item's deep-research JSON must populate every field defined here.
+# Mark unknowns with the string "[uncertain]" and list the field name in the top-level
+# "uncertain" array of the output JSON (auto-handled by the research-deep prompt).
+
+field_categories:
+
+  - category: Basic Info
+    fields:
+      - name: product_name
+        description: Official product name as marketed today.
+        detail_level: brief
+        required: true
+      - name: vendor_company
+        description: Owning entity / parent company.
+        detail_level: brief
+        required: true
+      - name: hq_country
+        description: Headquarters country.
+        detail_level: brief
+      - name: target_segment
+        description: Buyer segment (SMB / mid-market / enterprise).
+        detail_level: brief
+      - name: target_vertical
+        description: Primary vertical (manufacturer, multi-channel retailer, wholesaler, DTC brand, maker/handmade, 3PL, etc.).
+        detail_level: brief
+      - name: pricing_model
+        description: How they charge (per user, per order volume, per location, tiered, etc.).
+        detail_level: moderate
+      - name: starting_price_usd
+        description: Entry-tier monthly price in USD (state currency if quoted differently).
+        detail_level: brief
+      - name: free_trial_or_freemium
+        description: Free trial length and/or freemium tier; "free for Amazon sellers" type benchmarks (Veeqo).
+        detail_level: brief
+
+  - category: Shopify Integration
+    fields:
+      - name: shopify_supported
+        description: Native, third-party, or none.
+        detail_level: brief
+        required: true
+      - name: shopify_app_listing_url
+        description: Shopify App Store listing URL if any.
+        detail_level: brief
+      - name: shopify_app_rating
+        description: App Store star rating (out of 5).
+        detail_level: brief
+      - name: shopify_install_count
+        description: Approx review count or installs.
+        detail_level: brief
+      - name: shopify_built_for_shopify_badge
+        description: Holds the Built for Shopify certification (yes/no).
+        detail_level: brief
+      - name: shopify_plus_partner_status
+        description: Shopify Plus Certified App Partner directory listing (yes/no).
+        detail_level: brief
+      - name: shopify_sync_direction
+        description: One-way vs bi-directional sync per entity.
+        detail_level: moderate
+      - name: shopify_synced_entities
+        description: Which entities sync — products, variants, inventory, orders, customers, fulfillments, refunds, draft orders.
+        detail_level: detailed
+        required: true
+      - name: shopify_service_item_support
+        description: Whether non-physical / service items (install, consulting, delivery) sync (Katana shipped this in 2025; now expected).
+        detail_level: moderate
+      - name: shopify_multi_store_support
+        description: Multiple Shopify stores per ERP tenant.
+        detail_level: brief
+      - name: shopify_pos_support
+        description: Shopify POS integration depth.
+        detail_level: moderate
+      - name: shopify_b2b_catalog_support
+        description: Native handling of Shopify B2B catalogs / price lists / company locations (Plus only).
+        detail_level: moderate
+      - name: shopify_markets_support
+        description: Awareness of Shopify Markets (multi-market pricing, duties, landed cost) — relevant since 2024.
+        detail_level: moderate
+      - name: shopify_metafield_to_erp_field_mapping
+        description: Generic configurable mapping of metafields ↔ ERP custom fields (Brightpearl differentiator).
+        detail_level: moderate
+      - name: shopify_variant_option_mapping
+        description: How variants/options/SKUs are mapped.
+        detail_level: moderate
+      - name: shopify_real_time_or_batch
+        description: Real-time webhook driven vs polled / batched, and frequency.
+        detail_level: moderate
+      - name: shopify_known_limitations
+        description: Documented or community-reported limits, edge cases, and frequent complaints.
+        detail_level: detailed
+
+  - category: Etsy Integration
+    fields:
+      - name: etsy_supported
+        description: Native, third-party, or none.
+        detail_level: brief
+        required: true
+      - name: etsy_native_or_third_party
+        description: Direct Etsy API integration vs via Codisto / partner.
+        detail_level: brief
+      - name: etsy_listing_creation_vs_sync_only
+        description: Can the app create new Etsy listings or only sync existing ones?
+        detail_level: moderate
+      - name: etsy_inventory_sync
+        description: Stock sync depth, frequency, and edge cases.
+        detail_level: moderate
+      - name: etsy_order_import
+        description: How Etsy orders flow in (manual, scheduled, real-time).
+        detail_level: moderate
+      - name: etsy_synced_entities
+        description: Entities synced (listings, variations, inventory, orders, shipments, receipts).
+        detail_level: detailed
+      - name: etsy_known_limitations
+        description: Documented limits — common Etsy gotchas around variations / personalization / digital products.
+        detail_level: moderate
+
+  - category: Amazon Integration
+    fields:
+      - name: amazon_supported
+        description: Native, third-party, or none.
+        detail_level: brief
+        required: true
+      - name: amazon_marketplaces
+        description: Supported marketplaces (US, UK, EU, AU, CA, JP, MX, IN, etc.).
+        detail_level: moderate
+      - name: amazon_seller_types
+        description: FBA, FBM, both; Vendor Central support.
+        detail_level: moderate
+      - name: amazon_synced_entities
+        description: Listings, inventory, orders, shipments, settlements, returns, customer messaging.
+        detail_level: detailed
+      - name: amazon_listing_creation
+        description: Can create / update listings from the app or only sync existing.
+        detail_level: moderate
+      - name: amazon_repricing_support
+        description: Repricer included or third-party.
+        detail_level: brief
+      - name: amazon_buy_shipping
+        description: In-app Amazon Buy Shipping label purchase (Veeqo benchmark).
+        detail_level: brief
+      - name: amazon_fba_inbound_workflow
+        description: FBA inbound creation flow; whether built on the new Fulfillment Inbound v2024-03-20 API.
+        detail_level: detailed
+      - name: amazon_sp_api_inbound_v2024_03_20
+        description: Migration status to v2024-03-20 inbound API (mandatory migration in progress).
+        detail_level: moderate
+      - name: amazon_settlement_report_handling
+        description: How Amazon settlement reports are processed and posted to accounting.
+        detail_level: detailed
+      - name: amazon_marketplace_facilitator_tax_handling
+        description: How marketplace-collected tax is journaled to accounting.
+        detail_level: moderate
+      - name: amazon_multi_account_support
+        description: Multiple seller accounts per tenant.
+        detail_level: brief
+      - name: amazon_known_limitations
+        description: Documented or reported limits / quirks.
+        detail_level: moderate
+
+  - category: Xero Integration
+    fields:
+      - name: xero_supported
+        description: Native, third-party, or none.
+        detail_level: brief
+        required: true
+      - name: xero_app_store_certified
+        description: Listed on Xero App Store and any certification badges held.
+        detail_level: brief
+      - name: xero_app_awards_recognition
+        description: Xero Global App Award status (e.g. Finalist 2025) — strong trust signal.
+        detail_level: brief
+      - name: xero_app_store_rating
+        description: Xero App Store star rating and review count.
+        detail_level: brief
+      - name: xero_synced_entities
+        description: Entities synced — invoices, bills, payments, contacts, COGS journals, inventory adjustments, credit notes.
+        detail_level: detailed
+        required: true
+      - name: xero_accounting_sync_mode
+        description: invoice_per_order | summary_journal | hybrid (A2X-style fork).
+        detail_level: detailed
+      - name: xero_cogs_journal_method
+        description: perpetual_per_movement | periodic_journal | landed_cost_inclusive.
+        detail_level: detailed
+      - name: xero_multi_currency
+        description: Multi-currency invoice / bill posting support.
+        detail_level: brief
+      - name: xero_tracking_category_mapping
+        description: Which entities can be tagged with which Xero tracking category.
+        detail_level: moderate
+      - name: xero_tax_handling
+        description: How GST / VAT / sales tax codes are mapped.
+        detail_level: moderate
+      - name: xero_known_limitations
+        description: Documented or community-reported limits.
+        detail_level: moderate
+
+  - category: QuickBooks Integration
+    fields:
+      - name: qb_online_supported
+        description: QuickBooks Online support.
+        detail_level: brief
+        required: true
+      - name: qb_desktop_supported
+        description: QuickBooks Desktop support and channel (direct, web connector, ODBC).
+        detail_level: brief
+      - name: qb_app_certified
+        description: Listed on Intuit App Store and any certification.
+        detail_level: brief
+      - name: qb_app_store_rating
+        description: Intuit App Store star rating and review count.
+        detail_level: brief
+      - name: qb_synced_entities
+        description: Entities synced — invoices, bills, payments, customers, vendors, COGS, inventory adjustments, credit memos.
+        detail_level: detailed
+        required: true
+      - name: qb_accounting_sync_mode
+        description: invoice_per_order | summary_journal | hybrid.
+        detail_level: detailed
+      - name: qb_cogs_journal_method
+        description: perpetual_per_movement | periodic_journal | landed_cost_inclusive.
+        detail_level: detailed
+      - name: qb_multi_currency
+        description: Multi-currency posting support.
+        detail_level: brief
+      - name: qb_class_location_mapping
+        description: QBO Class / Location dimension mapping equivalent to Xero tracking categories.
+        detail_level: moderate
+      - name: qb_known_limitations
+        description: Documented or community-reported limits.
+        detail_level: moderate
+
+  - category: Other E-commerce Channels
+    fields:
+      - name: other_ecom_channels
+        description: WooCommerce, BigCommerce, eBay, Walmart, TikTok Shop, Wix, Squarespace, Faire, Square, Magento, custom storefronts.
+        detail_level: detailed
+      - name: bundle_kit_component_decomposition
+        description: When a bundle sells, components decrement (and vice versa).
+        detail_level: moderate
+
+  - category: Other Accounting Integrations
+    fields:
+      - name: other_accounting_integrations
+        description: Sage 50 / Sage Intacct, Zoho Books, MYOB, FreshBooks, NetSuite, Wave.
+        detail_level: moderate
+
+  - category: Manufacturing and Inventory Features
+    fields:
+      - name: bom_support
+        description: Bill of materials support.
+        detail_level: brief
+      - name: multi_level_bom
+        description: Multi-level / nested BOMs.
+        detail_level: brief
+      - name: production_orders
+        description: Work orders / manufacture orders with routings or operations.
+        detail_level: moderate
+      - name: batch_lot_tracking
+        description: Lot / batch tracking with expiry.
+        detail_level: brief
+      - name: serial_tracking
+        description: Serial number tracking.
+        detail_level: brief
+      - name: bin_location_support
+        description: Bin / aisle / sub-location tracking inside a warehouse.
+        detail_level: brief
+      - name: multi_warehouse
+        description: Multiple physical locations support.
+        detail_level: brief
+      - name: barcoding
+        description: Barcode generation and label support.
+        detail_level: brief
+      - name: purchase_orders
+        description: PO creation, partial receipts, supplier price lists.
+        detail_level: moderate
+      - name: supplier_management
+        description: Supplier records, lead times, MOQs, supplier-SKU mapping.
+        detail_level: moderate
+      - name: landed_cost_support
+        description: Freight / duty / insurance allocated to inventory cost.
+        detail_level: moderate
+      - name: multi_currency_inventory_valuation
+        description: Valuation held per-currency vs single base.
+        detail_level: brief
+
+  - category: AI Features
+    fields:
+      - name: ai_demand_forecasting
+        description: AI/ML demand forecasting present.
+        detail_level: moderate
+      - name: ai_purchase_order_suggestions
+        description: AI-generated PO drafts / replenishment suggestions.
+        detail_level: moderate
+      - name: ai_natural_language_query
+        description: Chat-style "ask your inventory" feature (emerging 2025/2026).
+        detail_level: brief
+
+  - category: Platform and Extensibility
+    fields:
+      - name: public_api
+        description: REST / GraphQL public API availability and quality.
+        detail_level: moderate
+      - name: webhook_event_coverage
+        description: Inbound and outbound webhook events supported.
+        detail_level: moderate
+      - name: integration_architecture
+        description: native | iPaaS (Celigo/MESA) | Zapier-only | partner-built — affects reliability perception.
+        detail_level: moderate
+      - name: zapier_make_support
+        description: Zapier / Make / n8n connectors.
+        detail_level: brief
+      - name: mobile_app
+        description: Native iOS / Android app and what it does.
+        detail_level: brief
+      - name: mobile_barcode_scanning_app
+        description: Native barcode scanner app on mobile.
+        detail_level: brief
+      - name: rate_limit_handling_documented
+        description: Public documentation of throttle / rate-limit handling for Shopify / Amazon / Xero / QBO.
+        detail_level: moderate
+      - name: sync_frequency
+        description: real_time | 5_min | 15_min | hourly | nightly across each integration.
+        detail_level: moderate
+
+  - category: Shipping and Fulfillment
+    fields:
+      - name: shipping_carrier_integrations
+        description: Direct carrier integrations (USPS, UPS, FedEx, DHL, Royal Mail, AusPost, etc.).
+        detail_level: moderate
+      - name: shipping_label_buying
+        description: In-app label purchase (Veeqo free Buy-Shipping benchmark).
+        detail_level: brief
+      - name: three_pl_integrations
+        description: Native 3PL integrations — ShipBob, ShipHero, Extensiv, Deliverr, FBA-as-3PL, etc.
+        detail_level: moderate
+      - name: edi_support
+        description: EDI support for wholesale / retail partners.
+        detail_level: brief
+
+  - category: Market Signals
+    fields:
+      - name: g2_rating
+        description: G2 rating and review volume.
+        detail_level: brief
+      - name: g2_grid_quadrant
+        description: G2 Grid placement — Leader / High Performer / Niche.
+        detail_level: brief
+      - name: capterra_rating
+        description: Capterra rating and review volume.
+        detail_level: brief
+      - name: notable_customers
+        description: Publicly named customers / case studies.
+        detail_level: moderate
+      - name: last_major_release
+        description: Most recent significant release or roadmap item with date.
+        detail_level: moderate
+
+  - category: Vendor Stability
+    fields:
+      - name: owner_parent_company
+        description: Ownership / parent (e.g. Veeqo→Amazon, Brightpearl→Sage, Stocky→Shopify, Linnworks acquired SkuVault).
+        detail_level: brief
+      - name: last_funding_event
+        description: Latest funding round / acquisition with date.
+        detail_level: brief
+      - name: public_status_page_uptime
+        description: Public status page URL and recent uptime.
+        detail_level: brief
+
+# Reserved — auto-populated per item during /research-deep with any fields marked [uncertain]
+uncertain: []

@@ -1,0 +1,65 @@
+{
+  "market_sizing": {
+    "target_buyer": "Owner-operator or lab manager of an SME dental laboratory (denture/crown/bridge/aligner production). Typically the principal dental technician or dental prosthetist.",
+    "business_count_au": "Approximately 700-900 dental laboratories in Australia (ABS-equivalent estimates from IBISWorld Dental Laboratories industry reports; ADPA has several hundred registered dental prosthetist members operating denture-focused labs, plus crown/bridge/CAD-CAM labs not separately classified under ANZSIC 8531 since dental device manufacture is excluded). AU dental laboratory market revenue ~USD 236M in 2023 growing to USD 379M by 2030 (Grand View Research).",
+    "business_count_global": "Globally ~25,000-30,000 dental laboratories. US has ~6,500-7,000 labs (NADL/anythingresearch); UK ~700-800 (DLA); Canada ~700; consolidation by Dandy/Glidewell shrinking US count. Global dental lab market ~USD 30-35B in 2025.",
+    "typical_size": "1-15 employees; AUD $400k-$3M annual revenue. Many AU labs are 2-5 person operations; consolidated labs reach 20-50 staff."
+  },
+  "pricing_reality": {
+    "incumbent_pricing": "LabMagic (AU) and iDentalLab (AU) do not publish pricing publicly. Labtrac and Magic Touch (US) sell modular bundles; comparable US dental lab software like DLCPM, LabStar, Evident typically sit in USD $150-$400/month range for small labs, scaling with seats. DentaLab for QuickBooks has documented $80/month service-contract add-on complaints. CAD/CAM software (exocad, 3Shape) is separate capex/licensing.",
+    "willingness_to_pay": "AUD $150-$400/month for a 2-5 seat lab; AUD $400-$900/month for a 10+ seat lab. Conservative AU discount of ~75-80% of US ARPU. Labs already pay 4-figure annual fees for CAD/CAM seats so $200-300/mo for ops software is digestible.",
+    "sales_motion": "Inside sales with demo + trial. Self-serve unlikely because of data migration from incumbents. Trade-show driven (ADIA, ADX, AOMSI).",
+    "realistic_arpu_au": "AUD $250-$350/month average (~AUD $3-4k ARR per lab).",
+    "expansion_revenue_potential": "Moderate. Embedded payments on dentist invoicing (3-5% take); AI quoting/case-assist features; integration marketplace fees with scanner vendors (3Shape, Medit, iTero); supply ordering/marketplace take-rate. Could push ARPU 2x to AUD $500-700/mo over time. Lab-to-dentist case portal monetisation also possible per-active-dentist."
+  },
+  "competitive_landscape": {
+    "incumbents": "LabMagic (AU-built, the dominant AU player, on-prem heritage, modernising); iDentalLab (AU cloud, newer); Labtrac (UK/global, on-prem and cloud, widely used in AU CAD/CAM labs); Magic Touch (US, mature, modular); Evident (US, JDT readers' choice 2014, used in larger labs); DLCPM (US, dated UI). Dandy (US, $260M+ raised) is a vertically integrated 'lab-as-a-service' threatening traditional labs rather than a software vendor.",
+    "incumbent_age_years": "LabMagic ~20+ years; Labtrac founded 1990s (~30 years); Magic Touch 1980s heritage; DLCPM 20+ years. Most dominant players are 15-25+ years old — classic UI rot / replatform window.",
+    "user_satisfaction_signals": "Capterra/Dental Lab Network forum complaints: DentaLab for QuickBooks reported 'errors from day one' and undisclosed $80/mo service contracts; common gripes across vendors are clunky UIs, poor integration with CAD/CAM/scanners (3Shape, exocad, Medit), data trapped in desktop installs, hard data export, limited mobile use on the lab floor, weak digital case portals for dentist clients. Threads on dentallabnetwork.com show frustration with 'lab software... the good, the bad, the ugly' — strong appetite for modern cloud replacements.",
+    "recent_funding_or_ma": "Dandy raised ~USD $100M Series D-extension (lab-as-a-service, not pure software) in 2024-2025; Glidewell/National Dentex continuing acquisition roll-up of US labs. No major AU dental-lab SaaS funding rounds publicly noted in 2025-2026. SoftSmile, exocad (Align Tech-owned) active in CAD side.",
+    "ai_disruption_risk": "Moderate and rising. AI auto-quoting from STL files, AI margin-line detection, AI shade matching, and AI lab-tech assistants are being piloted (Pearl, SoftSmile, 3Shape Automate). Dandy + competitors building AI-native workflows. Window is 18-36 months before an AI-native lab-ops SaaS becomes table stakes."
+  },
+  "opportunity_quality": {
+    "core_pain": "Case logistics + dentist communication. Labs juggle case slips arriving via courier/email/scanner-cloud (3Shape Communicate, iTero), shop-floor routing across CAD/design/milling/finishing/QC stages, dentist remakes and shade adjustments, and invoicing — typically across paper job tickets, Excel, WhatsApp/SMS to dentists, and a legacy desktop system. Real-time WIP visibility, on-time delivery tracking, and a self-serve dentist portal are the unsolved core pains. Many small labs still run on spreadsheets + paper job dockets.",
+    "moat_source": "Integrations with scanner clouds (3Shape Communicate, iTero, Medit Link, exocad, Dental System) and CAD/CAM file routing; data network effects from dentist-lab case portals (each new lab brings its dentist book); switching cost via WIP/case history; TGA medical-device record-keeping audit trail. Regulatory moat from TGA personalised medical device record-keeping is modest but real.",
+    "critical_integrations": "Xero/MYOB (AU accounting); Stripe/eWay for payments; 3Shape Communicate, iTero/Align cloud, Medit Link, exocad, Dental System (CAD/CAM); courier APIs (StarTrack, TNT); SMS providers; dentist practice management (Dental4Windows/Centaur, Praktika, Exact, Oasis) for case intake; TGA medical device record retention.",
+    "incumbent_ehr_lock_in": "Low. Dental practice management systems (the dentist's EHR) own patient records but the lab is upstream of that. Labs are NOT locked into a dentist EHR — the lab software is the lab's own system. Side-car/replace-lab-software is viable; no need to rip out the dentist EHR."
+  },
+  "build_difficulty": {
+    "regulatory_complexity": "Moderate. Dental devices made to dentist prescription are 'patient-matched / custom-made medical devices' regulated by the TGA. Labs must keep manufacturing records, material batch traceability, sponsor registration for some devices. Not as heavy as pharma/medical-device-OEM but more than generic SMB SaaS.",
+    "regulatory_changes_2025_2026": "TGA's reformed personalised medical device framework (commenced 2021, transition arrangements concluding) is finalising audit/record-keeping expectations through 2025-2026 — labs must keep specific device traceability records and batch material info. This is a tailwind for software that automates compliance records but it is not a single hard-date forcing function like NSW eCoC. ISO 13485 audit pressure on larger labs continues. No FSMA-204-style cliff event identified specifically for dental labs in AU in 2025-2026.",
+    "domain_depth": "Moderate. Workflow stages (impression, model, design, wax-up, casting, finishing, QC) and CAD/CAM file handoff are learnable from the outside in 2-3 months with a domain advisor; deep enough to require an embedded dental-tech consultant or co-founder. Adjacent to Manuva's production-routing knowledge.",
+    "mvp_effort": "4-6 months solo for credible MVP (case intake, WIP routing across stations, dentist portal, invoicing with TGA traceability fields). 6-9 months to include scanner-cloud integrations.",
+    "technical_risks": "STL/PLY file handling and storage costs; reliable ingestion from scanner clouds with proprietary APIs; CAD/CAM file routing without owning the design tools; offline-tolerant shop-floor UI; secure dentist portal with patient name handling (privacy implications).",
+    "state_by_state_variance_au": "Low. TGA regulates federally. AHPRA registration of dental prosthetists is national. Minimal state variance.",
+    "data_residency_requirement": "Soft requirement. Patient-identifiable data triggers Privacy Act 1988 / APP obligations; AU hosting is preferred but not strictly mandated. Easy to satisfy with Sydney/Melbourne region Supabase."
+  },
+  "distribution_difficulty": {
+    "channel_options": "Trade shows (ADIA's ADX Sydney/Melbourne biennial, AOMSI), ADPA conference, ADIA newsletter sponsorship, Dental Lab Network online community (global but used in AU), partnerships with CAD/CAM resellers (Henry Schein Halas, Erkodent, Ivoclar), referrals from milling-centre operators, direct cold outbound to publicly listed labs, paid Google for 'dental lab software Australia'.",
+    "trade_association_count_au": "3 main: ADIA (Australian Dental Industry Association — manufacturers/suppliers), ADPA (Australian Dental Prosthetists Association — denture-focused practitioners), plus ADA (Australian Dental Association — dentist customers, not labs).",
+    "trade_publication_count": "Few. Australasian Dentist, Bite Magazine, Australasian Dental Practice cover dentists more than labs. LMT Magazine (US) read internationally. Maybe 2-3 viable AU sponsorship slots.",
+    "industry_facebook_group_size": "[uncertain]",
+    "conference_event_count_au": "2-3: ADX Sydney/Melbourne (biennial, alternating), ADPA Annual Convention, plus state-level dental conventions. ADX exhibition spend can be kept under $10k for a small booth.",
+    "cold_outbound_viability": "High. Dental labs are publicly listed in Yellow Pages / Google Maps directories; AHPRA register lists dental prosthetists; emails and phones discoverable. ADIA member directory accessible.",
+    "founder_market_fit_proxy": "Moderate. Lab owners are practical small-business operators (often dental technicians themselves) who respect operations knowledge. They tolerate non-dental founders if the product demonstrably saves lab-floor time. Less gatekept than vet/funeral.",
+    "case_study_acquisition_cost": "Reachable. 5 reference customers in 3-4 months with founder-led outbound + 1-2 ADIA event presences and an early-adopter discount.",
+    "content_seo_competitiveness": "Low to moderate. AU-specific keywords ('dental lab software Australia') are not crowded; LabMagic and iDentalLab rank but content marketing thin. Achievable in 6-9 months.",
+    "insurer_or_gatekeeper_dependency": "Low. Health-insurer interaction happens at the dentist level, not the lab. No mandatory insurer/govt API gatekeeper for lab-side workflow. Scanner-cloud APIs (3Shape, Align) are gatekept but partner programs exist."
+  },
+  "personal_fit": {
+    "manuva_data_model_reuse_pct": "~55-65%. Direct reuse: production orders, BOM (materials per case: alloy, zirconia, acrylic, porcelain), inventory (consumables, blanks, ingots), suppliers, bin locations, activity log, work centres. New: case slips, dentist clients (CRM-lite), STL/file attachments, shade/material spec, scanner-cloud webhook ingestion.",
+    "manuva_code_reuse": "Tenant context, RLS, auth, role checks, server-action patterns, activity-log primitives, CSS-modules design system, Supabase/Next.js 15 scaffolding all transfer cleanly.",
+    "buyer_persona_overlap_with_manuva": "Low direct overlap with Manuva manufacturing customers, but production-shop persona (owner-operator on the floor) is very similar — sales playbook transfers even if the customer list does not.",
+    "adjacency_to_manufacturing": "High. A dental lab is a small custom manufacturing shop: routing through workstations, BOM per job, WIP, QC, on-time delivery. Closest of the three options to Manuva.",
+    "technical_moat_durability_months": "12-18 months. Core ops software is replicable with AI tooling; the durable edge is scanner-cloud integrations, dentist-portal network effects, and TGA record automation, which take longer to assemble."
+  },
+  "unit_economics": {
+    "gross_margin_sensitivity": "Healthy. Modest AI inference (case ETA prediction, auto-quote) and STL storage are the main variable costs. Stripe/payments and SMS pass-through. Expect 78-85% gross margin at scale.",
+    "multi_location_natural": "Moderate. Most labs are single-site; consolidators (Modern Dental Group, Ivoclar-affiliated) run multi-site. Per-seat expansion within a lab is the main lever.",
+    "churn_risk": "Low to moderate. High switching cost once case history and dentist portal are in use. Risk: small single-owner labs closing on retirement (industry consolidation is real).",
+    "customers_needed_for_target_arr": "~280-330 customers at AUD $3-3.5k ARR to hit AUD $1M ARR; ~700-1000 customers globally for USD $1M ARR if expanding to UK/NZ/US."
+  },
+  "uncertain": [
+    "industry_facebook_group_size"
+  ]
+}

@@ -1,0 +1,170 @@
+topic: SaaS market gaps — vertical SaaS opportunities at $100–500/month
+description: >
+  Research vertical SaaS opportunities suitable for a solo/small-team builder coming
+  from Manuva (Next.js + Supabase manufacturing operations). Target per-business
+  pricing $100–500/month, Australia-first with global TAM awareness. Goal is to
+  identify 2–3 promising alternatives or adjacencies to evaluate further.
+
+context:
+  builder_background:
+    current_product: Manuva (Next.js 15 + Supabase, CSS Modules, TypeScript)
+    domain_strength: Manufacturing operations (BOM, inventory, suppliers, bins, production orders, purchasing)
+    geography: Australia (founder based in AU)
+  pricing_band:
+    min_monthly: 100
+    max_monthly: 500
+    rationale: Below $100 needs huge user base; above $500 typically requires enterprise sales motion the founder isn't set up for.
+  geographic_priority: Australia-first, global-aware
+
+execution:
+  batch_size: 8         # parallelism cap — up to 8 deep-research agents at once
+  items_per_agent: 3    # 3 items × 8 agents = 24 items total
+  output_dir: ./results
+
+items:
+  # ─── Tier A — Manuva data-model adjacent manufacturing (high reuse) ───
+  - id: 01_food_copackers
+    name: Contract food manufacturers / co-packers
+    tier: A
+    hypothesis: Mid-market between Craftybase (too light) and Nulogy (too heavy); growing AU private-label health-foods scene; FSANZ + FSMA 204 traceability is a forcing function.
+
+  - id: 02_cosmetic_makers
+    name: Cosmetics / skincare / candle / soap makers
+    tier: A
+    hypothesis: TGA-regulated cosmetics + batch records + ingredient costing. Craftybase dated. Manuva BOM + batch traceability maps directly. Indie founder community reachable via Etsy/Makers Australia.
+
+  - id: 03_sheet_metal_fabrication
+    name: Sheet metal / fabrication shops
+    tier: A
+    hypothesis: Job-shop manufacturers underserved between Fishbowl/Katana and Epicor/SYSPRO. Thousands of small AU fab shops. Nesting integration + quote-to-cash + traceability.
+
+  - id: 04_powder_coating
+    name: Powder coating / heat treatment / plating service bureaus
+    tier: A
+    hypothesis: Process-step manufacturing with batch tickets, certifications, customer-owned inventory. No dominant vertical software.
+
+  - id: 05_3d_print_bureaus
+    name: 3D printing / additive manufacturing service bureaus
+    tier: A
+    hypothesis: Booming SMB segment, no dedicated job-shop SaaS, mostly spreadsheets + slicer software.
+
+  - id: 06_joinery_millwork
+    name: Cabinet / joinery / millwork shops
+    tier: A
+    hypothesis: Between hobby woodworker tools and full ERPs. Cutlist/CAD integration + job-shop scheduling.
+
+  - id: 07_sign_print_shops
+    name: Sign & wide-format print shops
+    tier: A
+    hypothesis: Most run on spreadsheets + Shopify. Quote/estimate + production scheduling + proofing gap.
+
+  - id: 08_apparel_embroidery
+    name: Custom apparel / screen-print / embroidery shops
+    tier: A
+    hypothesis: Printavo is the only real player and is US-centric/dated; AU reach is weak.
+
+  # ─── Tier B — AU regulatory tailwind (forcing-function deadlines 2025–2026) ───
+  - id: 09_electrical_ecoc
+    name: Electrical contractor compliance certificates (eCoC) workflow
+    tier: B
+    hypothesis: NSW BCNSW eCert mandate July 2026; VIC 12-month expiry from Aug 2025; QLD 5-year retention. Regulatory churn = entry window. Adjacent to ServiceM8/AroFlo but compliance-specific.
+
+  - id: 10_plumbing_gas_compliance
+    name: Plumbing / gas compliance + warranty management (AU)
+    tier: B
+    hypothesis: Same regulatory tailwind as electrical, separate buyer.
+
+  - id: 11_solar_installer_stc
+    name: Solar installer ops + STC/SRES rebate paperwork
+    tier: B
+    hypothesis: AU-specific compliance (Clean Energy Regulator), poor existing software, large installer base.
+
+  - id: 12_ndis_provider_ops
+    name: NDIS provider operations (small/mid)
+    tier: B
+    hypothesis: Lumary/CareMaster enterprise-priced; NDIS reforms + Support at Home Program 2026 forcing churn. Real gap below Lumary at $100–500/mo.
+
+  - id: 13_rto_avetmiss
+    name: RTO compliance + AVETMISS reporting
+    tier: B
+    hypothesis: ASQA audits + AVETMISS submission painful; aXcelerate/JobReady old/expensive; hundreds of small AU RTOs.
+
+  # ─── Tier C — Healthcare-adjacent operations ───
+  - id: 14_audiology
+    name: Audiology clinic ops
+    tier: C
+    hypothesis: Blueprint dominant but expensive; AI scribe + Medicare/private health claim opening.
+
+  - id: 15_dental_lab
+    name: Dental lab operations
+    tier: C
+    hypothesis: Very few players globally; strong AU presence; production-shop economics adjacent to Manuva.
+
+  - id: 16_allied_health
+    name: Allied health solo/group practice (physio, osteo, EP)
+    tier: C
+    hypothesis: Cliniko/Halaxy UI-stale; AI scribe + Medicare/private-health claim workflow is greenfield in AU.
+
+  - id: 17_vet_clinic
+    name: Veterinary clinic ops (ezyVet alternative)
+    tier: C
+    hypothesis: "ezyVet (IDEXX-owned) has documented UX complaints; AI scribe + practice mgmt opening (US precedent: Shepherd, Instinct)."
+
+  # ─── Tier D — Specialty production (AU-specific niches) ───
+  - id: 18_winery_cellar_door
+    name: Winery / cellar door operations
+    tier: D
+    hypothesis: AU wine industry large; vintrace/InnoVint aging US-centric. WET tax + label + export + batch + tasting-room CRM gap.
+
+  - id: 19_apiary_honey
+    name: Honey / apiary management
+    tier: D
+    hypothesis: AU biosecurity tightening (varroa response 2025+); BeeHero/Apimaye are hardware; pure software thin.
+
+  - id: 20_aquaculture
+    name: Aquaculture / oyster / abalone farm management
+    tier: D
+    hypothesis: AU has substantial industry; near-zero dedicated SaaS.
+
+  # ─── Tier E — High-willingness-to-pay services ───
+  - id: 21_funeral_home
+    name: Funeral home operations
+    tier: E
+    hypothesis: DOS-era incumbents; documented $650/mo per-location pricing in indie-hacker examples. Tight, trust-based community though.
+
+  - id: 22_mobile_mechanic
+    name: Mobile mechanic / on-site auto repair
+    tier: E
+    hypothesis: Distinct buyer from smash repair; rapidly growing AU segment with no dedicated software.
+
+  - id: 23_pest_control
+    name: Pest control routing & compliance
+    tier: E
+    hypothesis: Chemical-use logs + route optimization + license expiry tracking; mid-tier FSM doesn't fit cleanly.
+
+  - id: 24_marine_boatyard
+    name: Marine / boatyard / marina management
+    tier: E
+    hypothesis: Dockwa is bookings; ops side (work orders, slip mgmt, haulouts, parts) weak.
+
+deferred_or_dropped:
+  - id: hvac_contractor
+    reason: Strong incumbents (ServiceTitan/SimPro) + AI-native challengers already funded. Window closing.
+  - id: microbrewery
+    reason: Ollie/Beer30 entrenched + AI challengers raising rounds.
+  - id: customs_broker
+    reason: CargoWise near-monopoly + enterprise-only sales motion. Distribution impossible for outsider.
+  - id: last_mile_courier
+    reason: Onfleet/Bringg/Circuit saturated; low SMB willingness-to-pay.
+  - id: tow_truck
+    reason: Tiny AU TAM, state-by-state regulatory variance.
+  - id: locksmith
+    reason: Very small AU TAM; paper-preferring buyers.
+  - id: self_storage
+    reason: storEDGE/SiteLink saturate; PE rollups own multi-site.
+  - id: smash_repair
+    reason: Insurer API moat (IAG/Suncorp); iBodyshop/Estimage entrenched.
+  - id: strata_hoa
+    reason: StrataMax/Console entrenched; high switching cost.
+  - id: med_spa
+    reason: Boulevard/Pabau/Phorest well-funded; now a hot Series A/B category, not a gap.

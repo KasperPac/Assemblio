@@ -1,0 +1,72 @@
+{
+  "id": "02_cosmetic_makers",
+  "name": "Cosmetics / skincare / candle / soap makers",
+  "tier": "A",
+  "hypothesis": "TGA-regulated cosmetics + batch records + ingredient costing. Craftybase dated. Manuva BOM + batch traceability maps directly. Indie founder community reachable via Etsy/Makers Australia.",
+  "market_sizing": {
+    "target_buyer": "Founder/owner of an indie cosmetics, skincare, candle, soap or fragrance brand. Typically the formulator is also the CEO. Decision-maker is the founder; sometimes a part-time bookkeeper has a say in tooling choice.",
+    "business_count_au": "Estimated 5,000–12,000 active indie makers in Australia across cosmetics, skincare, soap, candle and fragrance. Etsy AU returns 1,000+ handmade cosmetics shops; AICIS publishes a registered-business list (thousands of cosmetic/soap introducers); Australian Soapmakers FB group alone has thousands of members; the Handcrafted Soap & Cosmetic Guild (US-headquartered) has 'thousands of members' globally with substantial AU representation. [uncertain]",
+    "business_count_global": "Global TAM ~200,000–400,000 indie makers. US is the largest single market (HSCG-style indie cosmetic guild membership in the tens of thousands plus much larger unregistered long tail); UK ~15,000–25,000; Canada ~8,000–15,000. Etsy reports millions of active sellers globally with cosmetics/bath being a top category. [uncertain]",
+    "typical_size": "1–10 employees, AUD $50K–$2M annual revenue. Most are sole-traders or 2–3 person operations selling D2C via Shopify + Etsy + markets + a few wholesale stockists."
+  },
+  "pricing_reality": {
+    "incumbent_pricing": "Craftybase: USD $20–$199/mo (Studio/Indie/Business/Growth) — the dominant indie maker tool. Soapmaker 3 (legacy desktop, one-time ~USD $89). MRPeasy: USD $49/user/mo. Katana: USD $359–$799/mo (too expensive for most indies). Cin7 Core: USD $349/mo+. Spreadsheets remain the no.1 'competitor' — free.",
+    "willingness_to_pay": "Realistic AU ACV is AUD $30–$120/mo for true micro-businesses (the bulk of the market) and AUD $150–$400/mo for the $500K+ revenue tier. Apply 70–80% AU discount to US benchmarks. The $100–500/mo band fits only the upper half of this market.",
+    "sales_motion": "Pure self-serve PLG. Free trial → credit card. Indie founders refuse sales calls. Community-led growth via Instagram/TikTok creators and FB groups.",
+    "realistic_arpu_au": "AUD $60–$100/mo blended (~AUD $900/yr ACV). Power users at $200/mo carry the average up.",
+    "expansion_revenue_potential": "Moderate. Per-channel sync (Shopify/Etsy/Faire), AI-powered Cosmetic Product Safety Reports / AICIS annual declaration automation, label & batch-record PDF generation, embedded payments on D2C invoices to wholesale stockists, GMP-lite audit module. Plausible 2× expansion via add-ons; 3× is a stretch without moving upmarket."
+  },
+  "competitive_landscape": {
+    "incumbents": "1) Craftybase (founded 2011, AU/UK roots) — clear category leader for indie makers, mature recipe/COGS/lot tracking; UI is functional but visually dated. 2) MRPeasy (2015) — broader MRP, used by makers who outgrow Craftybase but find Katana too dear. 3) Katana (2017) — too expensive for most indies but wins the $1M+ tier. 4) Soapmaker 3 (legacy desktop, ~20 years old) — still used by older soap makers; no cloud. 5) Spreadsheets + Shopify + Xero — by far the largest 'competitor' for sub-$100K revenue makers. 6) Inflow Inventory, Sortly — generic inventory tools used as workarounds.",
+    "incumbent_age_years": "Craftybase is 14 years old (founded 2011). Soapmaker 3 lineage ~20+ years. UI rot is real on both; Craftybase is overdue for a redesign.",
+    "user_satisfaction_signals": "Strong love for Craftybase's domain fit ('finally something for makers') but consistent complaints in maker FB groups and Reddit/IndieHackers: 'UI feels old', 'mobile experience weak', 'reports rigid', 'no real multi-channel scheduling', 'Shopify sync occasionally drops'. Katana criticised as 'too complex/expensive for small shops'. Spreadsheet users complain about lot/expiry tracking and COGS reconciliation. Several Reddit threads ask 'is there a modern alternative to Craftybase?' — clear unmet demand for a refresh.",
+    "recent_funding_or_ma": "No notable VC raise for Craftybase publicly recorded (likely bootstrapped). Katana raised EUR €34M Series B in 2022; no major 2024–2025 round noted. Cin7 was recapitalised by Rubicon in 2021. Quiet from a funding perspective — no AI-native maker SaaS has raised a notable round publicly. [uncertain]",
+    "ai_disruption_risk": "Low-to-moderate. AI-native challengers haven't raised in this niche yet, but AI features (auto-formula scaling, ingredient compliance check, AI photo-to-recipe) are an obvious wedge. Window is open for ~12–18 months."
+  },
+  "opportunity_quality": {
+    "core_pain": "Makers run their business on a brittle stack: Google Sheets for recipes/COGS, Shopify for D2C orders, Xero for accounting, paper batch logs for AICIS/TGA records, plus Instagram DMs for wholesale orders. The single biggest unsolved workflow is 'show me my real COGS per batch given today's ingredient prices, then auto-generate the batch record and CoA for a stockist'. Secondary pain: AICIS annual declaration prep (Nov 30 deadline), allergen labelling per FSANZ where applicable to soap-as-cosmetic boundary cases, and scaling a recipe to a 3× batch without breaking the formula maths.",
+    "moat_source": "Switching cost (recipe library + batch history + multi-year COGS data) and integrations (Shopify, Etsy, Xero, Faire, AICIS templates). Community moat via in-product content/templates is plausible but takes years. Regulatory templates (AICIS, TGA listing, Cosmetic Product Safety Reports) are a defensible content moat.",
+    "critical_integrations": "Shopify (must-have), Xero/MYOB (must-have AU), Etsy (must), Faire and Bandcamp-style wholesale platforms, Square POS for markets, Stripe, AICIS chemical inventory lookup, a labelling tool (e.g. Avery or built-in PDF), and ideally INCI ingredient database (CosIng).",
+    "incumbent_ehr_lock_in": "Low. Makers are on Xero/MYOB + Shopify; no heavy ERP lock-in. Rip-and-replace from Craftybase or spreadsheets is feasible if migration is easy."
+  },
+  "build_difficulty": {
+    "regulatory_complexity": "Moderate. AICIS registration (mandatory for anyone importing or manufacturing cosmetics including soap-as-cosmetic); annual declaration by 30 November; ingredient compliance against the AICIS Inventory; ACCC product safety standards; FSANZ where edible (lip balm cross-over); TGA only if therapeutic claims are made. Not as heavy as therapeutic goods or food, but the documentation burden is real.",
+    "regulatory_changes_2025_2026": "AICIS annual declaration regime continues to mature (transitioned from NICNAS in 2020; ongoing inventory updates). EU CPNP and US MoCRA (Modernization of Cosmetics Regulation Act, full enforcement phased through 2025–2026) create export pressure on AU makers selling to those markets — strong forcing function for 'export-ready cosmetic records' as a feature. TGA continues tightening cosmetic/therapeutic boundary (e.g. sunscreens, anti-ageing claims) through 2025. EU 16th amendment to Cosmetics Regulation hits 2026. No single AU-specific compliance deadline as dramatic as FSMA 204, but the steady drip of declaration + export compliance is a recurring purchase trigger.",
+    "domain_depth": "Low-to-moderate. Makers themselves are remarkably technical (they read INCI lists for fun). An outsider founder needs to learn formulation basics (percent-by-weight, phase-of-addition, INCI naming) plus AICIS/TGA paperwork. 2–4 months of design partner work gets to credibility.",
+    "mvp_effort": "4–6 months on top of Manuva's existing schema. BOM = formulation, batch records exist, lot/expiry exists. New: Shopify/Etsy sync, INCI ingredient library, CoA/label PDF generation, AICIS declaration helper.",
+    "technical_risks": "Multi-channel inventory sync (Shopify + Etsy + Faire) is the classic hard problem. Recipe scaling math (percent-by-weight with density adjustments). INCI ingredient autocomplete with the AICIS Inventory. Mobile UX for batch logging in the studio.",
+    "state_by_state_variance_au": "Low. AICIS and ACCC are federal. State variance is minimal (some state-level fair-trading rules around 'natural'/'organic' claims).",
+    "data_residency_requirement": "Not legally required for cosmetics. Sydney-region hosting is sufficient and a soft positive."
+  },
+  "distribution_difficulty": {
+    "channel_options": "1) Content/SEO around 'AICIS annual declaration', 'cosmetic batch record', 'Craftybase alternative' — moderate competition, very winnable. 2) Instagram/TikTok creator partnerships with indie maker influencers — high leverage. 3) Facebook groups (Australian Soapmakers, Indie Beauty Makers AU) — direct community presence. 4) Etsy/Shopify app stores — strong inbound. 5) Maker markets and Finders Keepers / Etsy markets — IRL exhibition for $1–3K. 6) Sponsoring 'Making Soap Cosmetics & Candles' magazine and ANZSCA (Australian and New Zealand Soap and Cosmetic Association) events.",
+    "trade_association_count_au": "3–5: ANZSCA, Accord Australasia (peak body for hygiene/cosmetic/specialty products), Cosmetic, Toiletry and Fragrance Association (international with AU chapter), Australian Society of Cosmetic Chemists, plus the broader Handmade Business Australia community.",
+    "trade_publication_count": "2–4: Making Soap Cosmetics & Candles Magazine (US-based but read globally), Australian Beauty Industry, Esprit (cosmetic chemists), Soap Queen blog (global).",
+    "industry_facebook_group_size": "Estimated 50,000–120,000 combined across active AU maker groups (Australian Soapmakers ~10–20K, indie beauty/candle makers AU groups, Etsy AU seller groups, Scents and Suds community, plus general Handmade Business AU). Strong, organised, opinionated community. [uncertain]",
+    "conference_event_count_au": "5–8 makers markets and small trade events annually (Finders Keepers, The Big Design Market, Sydney Royal Show artisan section, AusBeauty trade events). All sub-$10K booth.",
+    "cold_outbound_viability": "Moderate. Makers are listed publicly on Etsy/Shopify and AICIS registered-business list, but they hate cold outreach. Better to land via community + content. Direct email outbound viable but low conversion vs. content-led.",
+    "founder_market_fit_proxy": "Indie makers trust 'one of us' (a maker themselves) much more than an outsider in a suit. Either co-found with a maker, or do 6 months of public 'building in public' on Instagram with real maker advisors. Solvable but real.",
+    "case_study_acquisition_cost": "First 5 customers: very cheap if a community-native founder — basically free in time. As an outsider: ~AUD $5K–$10K equivalent in founder time over 2–3 months (active group participation, free accounts, in-person at markets).",
+    "content_seo_competitiveness": "Moderate. Craftybase dominates 'inventory software for makers' SERPs with extensive content. Long-tail ('AICIS annual declaration tool', 'cosmetic batch record template AU', 'soap recipe COGS calculator') is winnable in 6–9 months.",
+    "insurer_or_gatekeeper_dependency": "None. No gatekeeper API required. AICIS Inventory is publicly searchable. Shopify/Etsy APIs are open."
+  },
+  "personal_fit": {
+    "manuva_data_model_reuse_pct": "~80–85% reusable. Manuva has BOMs (recipes), inventory with lot/expiry, suppliers, production orders, bin locations, GP%, goods inwards. Net-new: INCI ingredient library, percent-by-weight recipe model with phase-of-addition, multi-channel order sync, CoA/label generator.",
+    "manuva_code_reuse": "Strong reuse: Next.js 15 App Router, Supabase auth + RLS + tenant context, CSS Modules with Manuva design system, server actions pattern. Invite/email shell already shipped.",
+    "buyer_persona_overlap_with_manuva": "Low-to-moderate direct overlap — Manuva targets industrial SMB manufacturers (10–80 employees), indie makers are 1–10. But the product is a positioning split, not a different product: 'Manuva Studio' for makers, 'Manuva' for factories. Could share the same codebase with pricing tiers.",
+    "adjacency_to_manufacturing": "Very close — same primitives (BOMs, batches, lots, COGS). Cosmetic makers ARE manufacturers, just smaller.",
+    "technical_moat_durability_months": "6–12 months. An AI-coding-equipped competitor could clone the core in 4–6 months. Moat is community, integrations (especially Shopify/Etsy reliability), and INCI/AICIS data."
+  },
+  "unit_economics": {
+    "gross_margin_sensitivity": "Healthy 85% SaaS margins achievable. AI features (formula scaling, INCI compliance check, label generation) add 2–4pp inference cost. No SMS, no human-in-loop. Shopify/Etsy sync infra is the main variable cost.",
+    "multi_location_natural": "Low. Most makers stay single-site. Expansion via channel adds, AI add-ons, premium templates.",
+    "churn_risk": "Moderate-to-high. Indie makers churn when the business closes (high SMB failure rate), pauses (maternity, life events), or pivots to a job. Annual plans help. Some makers will go back to spreadsheets if budget pressure hits.",
+    "customers_needed_for_target_arr": "~1,100 customers at AUD $900 ACV = $1M ARR. Higher volume, lower ARPU than co-packers. Harder logo count but easier to acquire each."
+  },
+  "uncertain": [
+    "business_count_au",
+    "business_count_global",
+    "recent_funding_or_ma",
+    "industry_facebook_group_size"
+  ]
+}
