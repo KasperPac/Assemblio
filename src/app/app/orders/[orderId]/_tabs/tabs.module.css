@@ -1,0 +1,78 @@
+.tabBar {
+  display: flex;
+  border-bottom: 1px solid var(--stroke);
+  margin-bottom: 0;
+  background: var(--bg-card);
+  padding: 0 16px;
+  border: 1px solid var(--stroke);
+  border-bottom: none;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.tab {
+  padding: 12px 18px;
+  color: var(--ink-muted);
+  font-size: 13px;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+  text-decoration: none;
+}
+.tab:hover { color: var(--ink-strong); }
+.tabActive {
+  color: var(--ink-strong);
+  border-bottom-color: var(--brand-1);
+}
+.panel {
+  background: var(--bg-card);
+  border: 1px solid var(--stroke);
+  border-top: none;
+  padding: 16px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.table th {
+  text-align: left;
+  padding: 8px;
+  color: var(--ink-muted);
+  font-weight: 500;
+  border-bottom: 1px solid var(--stroke);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.table td {
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--stroke);
+  vertical-align: top;
+}
+.itemName {
+  color: var(--ink-strong);
+  font-weight: 500;
+}
+.itemMeta {
+  color: var(--ink-muted);
+  font-size: 11px;
+  margin-top: 2px;
+}
+.shortList {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  color: var(--ink-muted);
+  font-size: 11px;
+}
+.dash { color: var(--ink-muted); }
+.markBtn {
+  background: var(--brand-1);
+  color: var(--ink-on-brand);
+  border: none;
+  padding: 4px 12px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}

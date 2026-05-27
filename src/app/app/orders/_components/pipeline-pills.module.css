@@ -1,0 +1,5 @@
+/* src/app/app/orders/_components/pipeline-pills.module.css */
+.dash {
+  color: var(--ink-muted);
+  font-size: 13px;
+}

@@ -7,6 +7,7 @@ export type ComponentStatus = {
   availableQty: number;
   isShort: boolean;
   costPerUnit: number;
+  earliestPoEta: Date | null;
 };
 
 export type OrderLineStatus = {
@@ -103,35 +104,53 @@ export async function getOrderLineStatus(
     .maybeSingle();
   const defaultLocationId = (defaultLocationRow as { id: string } | null)?.id ?? null;
 
-  const [{ data: componentRows }, { data: balanceRows }, { data: allocationRows }] =
-    await Promise.all([
-      componentIds.length > 0
-        ? supabase.from("component").select("id,name,cost_per_unit").in("id", componentIds)
-        : Promise.resolve({ data: [] as Array<{ id: string; name: string; cost_per_unit: number }> }),
-      componentIds.length > 0
-        ? (() => {
-            let q = supabase
-              .from("inventory_balance")
-              .select("component_id,on_hand,reserved")
-              .in("component_id", componentIds);
-            if (defaultLocationId) q = q.eq("location_id", defaultLocationId);
-            return q;
-          })()
-        : Promise.resolve({
-            data: [] as Array<{
-              component_id: string;
-              on_hand: number;
-              reserved: number;
-            }>,
-          }),
-      supabase
-        .from("order_component_allocation")
-        .select("order_line_id,quantity")
-        .in(
-          "order_line_id",
-          lines.map((l) => l.id)
-        ),
-    ]);
+  const [
+    { data: componentRows },
+    { data: balanceRows },
+    { data: allocationRows },
+    { data: poEtaRows },
+  ] = await Promise.all([
+    componentIds.length > 0
+      ? supabase.from("component").select("id,name,cost_per_unit").in("id", componentIds)
+      : Promise.resolve({ data: [] as Array<{ id: string; name: string; cost_per_unit: number }> }),
+    componentIds.length > 0
+      ? (() => {
+          let q = supabase
+            .from("inventory_balance")
+            .select("component_id,on_hand,reserved")
+            .in("component_id", componentIds);
+          if (defaultLocationId) q = q.eq("location_id", defaultLocationId);
+          return q;
+        })()
+      : Promise.resolve({
+          data: [] as Array<{
+            component_id: string;
+            on_hand: number;
+            reserved: number;
+          }>,
+        }),
+    supabase
+      .from("order_component_allocation")
+      .select("order_line_id,quantity")
+      .in(
+        "order_line_id",
+        lines.map((l) => l.id)
+      ),
+    componentIds.length > 0
+      ? supabase
+          .from("purchase_order_line")
+          .select(
+            "component_id, purchase_order:purchase_order_id(status, expected_date)"
+          )
+          .eq("tenant_id", tenantId)
+          .in("component_id", componentIds)
+      : Promise.resolve({
+          data: [] as Array<{
+            component_id: string;
+            purchase_order: { status: string; expected_date: string | null } | null;
+          }>,
+        }),
+  ]);
 
   const nameById = new Map(
     (componentRows ?? []).map((c) => {
@@ -153,6 +172,26 @@ export async function getOrderLineStatus(
       ];
     })
   );
+
+  const earliestEtaByComponent = new Map<string, Date>();
+  for (const row of poEtaRows ?? []) {
+    const r = row as {
+      component_id: string;
+      purchase_order:
+        | { status: string; expected_date: string | null }
+        | Array<{ status: string; expected_date: string | null }>
+        | null;
+    };
+    const po = Array.isArray(r.purchase_order) ? r.purchase_order[0] : r.purchase_order;
+    if (!po) continue;
+    if (po.status === "received" || po.status === "cancelled") continue;
+    if (!po.expected_date) continue;
+    const eta = new Date(po.expected_date);
+    const existing = earliestEtaByComponent.get(r.component_id);
+    if (!existing || eta.getTime() < existing.getTime()) {
+      earliestEtaByComponent.set(r.component_id, eta);
+    }
+  }
 
   const allocatedByLine = new Map<string, number>();
   for (const row of allocationRows ?? []) {
@@ -178,13 +217,15 @@ export async function getOrderLineStatus(
       const bal = balanceByComponent.get(bc.component_id);
       const availableQty = (bal?.onHand ?? 0) - (bal?.reserved ?? 0);
       const comp = nameById.get(bc.component_id);
+      const isShort = availableQty < requiredQty;
       return {
         componentId: bc.component_id,
         name: comp?.name ?? bc.component_id,
         requiredQty,
         availableQty,
-        isShort: availableQty < requiredQty,
+        isShort,
         costPerUnit: comp?.costPerUnit ?? 0,
+        earliestPoEta: isShort ? (earliestEtaByComponent.get(bc.component_id) ?? null) : null,
       };
     });
 

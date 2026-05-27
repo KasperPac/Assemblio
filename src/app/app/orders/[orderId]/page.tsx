@@ -1,12 +1,29 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
-import { allocateOrder, updateJobLaborPlanWeek } from "../actions";
+import { allocateOrder } from "../actions";
 import { getOrderLineStatus } from "@/lib/orders/order-line-status";
-import PageHeader from "../../_ui/page-header";
+import { getOrdersPipelineRollup } from "@/lib/orders/pipeline-rollup";
+import { daysLate } from "@/lib/orders/target-ship";
+import {
+  ComponentsPill,
+  ProductionPill,
+  DeliveryPill,
+} from "../_components/pipeline-pills";
 import StatusBadge from "../../_ui/status-badge";
 import EmptyState from "../../_ui/empty-state";
+import SalesItemsTab from "./_tabs/sales-items-tab";
+import ProductionTab from "./_tabs/production-tab";
+import DeliveryTab from "./_tabs/delivery-tab";
+import tabStyles from "./_tabs/tabs.module.css";
 import styles from "./page.module.css";
+
+type DetailTab = "sales-items" | "production" | "delivery";
+
+function parseDetailTab(value: string | undefined): DetailTab {
+  if (value === "production" || value === "delivery") return value;
+  return "sales-items";
+}
 
 type OrderRecord = {
   id: string;
@@ -14,6 +31,9 @@ type OrderRecord = {
   order_number: string | null;
   status: string;
   created_at: string;
+  target_ship_date: string | null;
+  source: string;
+  customer_email: string | null;
 };
 
 type ProductData = {
@@ -35,6 +55,7 @@ type OrderLineRecord = {
   unit_sell_price: number;
   line_sell_price: number;
   variant_id: string;
+  shipped_at: string | null;
   variant: VariantData | VariantData[] | null;
 };
 
@@ -61,6 +82,7 @@ type LaborPlanRow = {
   week_start: string;
   sequence: number;
   planned_total_hours: number;
+  status: string;
   department:
     | {
         name: string | null;
@@ -84,6 +106,7 @@ type UtilizationRow = {
 type Props = {
   params: Promise<{ orderId: string }>;
   searchParams?: Promise<{
+    tab?: string;
     allocated?: string;
     planError?: string;
   }>;
@@ -102,17 +125,10 @@ function formatCurrency(value: number) {
   }).format(value);
 }
 
-function getStatusVariant(status: string) {
-  const normalized = status.toLowerCase();
-  if (normalized === "fulfilled") return "success";
-  if (normalized === "cancelled") return "danger";
-  if (normalized === "in_progress" || normalized === "allocated") return "info";
-  return "warning";
-}
-
 export default async function OrderDetailPage({ params, searchParams }: Props) {
   const { orderId } = await params;
   const query = (await searchParams) ?? {};
+  const activeTab = parseDetailTab(query.tab);
   const context = await getServerTenantContext();
   if (!context) notFound();
   const { supabase, tenantId } = context;
@@ -120,14 +136,16 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
   const [{ data: order }, { data: orderLines }] = await Promise.all([
     supabase
       .from("orders")
-      .select("id,shopify_order_id,order_number,status,created_at")
+      .select(
+        "id,shopify_order_id,order_number,status,created_at,target_ship_date,source,customer_email"
+      )
       .eq("id", orderId)
       .eq("tenant_id", tenantId)
       .maybeSingle(),
     supabase
       .from("order_line")
       .select(
-        "id,quantity,unit_sell_price,line_sell_price,variant_id,variant:variant_id(title,sku,shopify_id,product:product_id(title,image_url,shopify_id))"
+        "id,quantity,unit_sell_price,line_sell_price,variant_id,shipped_at,variant:variant_id(title,sku,shopify_id,product:product_id(title,image_url,shopify_id))"
       )
       .eq("order_id", orderId)
       .eq("tenant_id", tenantId),
@@ -142,9 +160,17 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
     variant_id: l.variant_id,
     quantity: l.quantity,
   }));
-
-  const { role } = context;
-  const showCosts = role === "admin" || role === "super_admin";
+  const lineRows = typedLines.map((line) => {
+    const variant = firstRelation(line.variant);
+    return {
+      id: line.id,
+      quantity: Number(line.quantity),
+      unit_sell_price: Number(line.unit_sell_price),
+      line_sell_price: Number(line.line_sell_price),
+      variant_title: variant?.title ?? null,
+      variant_sku: variant?.sku ?? null,
+    };
+  });
 
   const [
     lineStatusMap,
@@ -166,7 +192,7 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
     supabase
       .from("job_labor_plan")
       .select(
-        "id,order_line_id,department_id,operation_name,week_start,sequence,planned_total_hours,department:department_id(name,code)"
+        "id,order_line_id,department_id,operation_name,week_start,sequence,planned_total_hours,status,department:department_id(name,code)"
       )
       .eq("order_id", orderId),
     supabase
@@ -182,6 +208,60 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
       .maybeSingle(),
   ]);
 
+  const { data: actualTimeRows } = await supabase
+    .from("job_actual_time_entry")
+    .select("job_labor_plan_id, hours")
+    .eq("tenant_id", tenantId)
+    .eq("order_id", typedOrder.id);
+  const actualHoursByPlan = new Map<string, number>();
+  for (const r of (actualTimeRows ?? []) as Array<{
+    job_labor_plan_id: string | null;
+    hours: number;
+  }>) {
+    if (!r.job_labor_plan_id) continue;
+    actualHoursByPlan.set(
+      r.job_labor_plan_id,
+      (actualHoursByPlan.get(r.job_labor_plan_id) ?? 0) + Number(r.hours)
+    );
+  }
+
+  const lineLabelById = new Map(
+    lineRows.map((l) => [l.id, l.variant_title ?? l.id.slice(0, 8)])
+  );
+
+  const productionRows = ((laborPlans ?? []) as LaborPlanRow[]).map((plan) => {
+    const dept = firstRelation(plan.department);
+    return {
+      id: plan.id,
+      line_label:
+        lineLabelById.get(plan.order_line_id) ?? plan.order_line_id.slice(0, 8),
+      department_name: dept?.name ?? dept?.code ?? "—",
+      operation_name: plan.operation_name,
+      planned_hours: Number(plan.planned_total_hours),
+      actual_hours: actualHoursByPlan.get(plan.id) ?? 0,
+      status: plan.status,
+    };
+  });
+
+  const deliveryLines = lineRows.map((l) => {
+    const raw = typedLines.find((x) => x.id === l.id);
+    return {
+      id: l.id,
+      label: l.variant_title ?? l.id.slice(0, 8),
+      quantity: l.quantity,
+      shippedAt: raw?.shipped_at ? new Date(raw.shipped_at) : null,
+    };
+  });
+
+  const rollupMap = await getOrdersPipelineRollup(supabase, tenantId, [
+    {
+      id: typedOrder.id,
+      status: typedOrder.status,
+      target_ship_date: typedOrder.target_ship_date ?? null,
+    },
+  ]);
+  const rollup = rollupMap.get(typedOrder.id);
+
   const plannedByLine = new Map(
     ((plannedSnapshots ?? []) as PlannedSnapshot[]).map((row) => [
       row.order_line_id ?? "",
@@ -195,14 +275,6 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
     Record<string, number>
   >((acc, row) => {
     acc[row.order_line_id] = (acc[row.order_line_id] ?? 0) + Number(row.planned_total_hours ?? 0);
-    return acc;
-  }, {});
-  const laborPlansByLine = ((laborPlans ?? []) as LaborPlanRow[]).reduce<
-    Record<string, LaborPlanRow[]>
-  >((acc, row) => {
-    const bucket = acc[row.order_line_id] ?? [];
-    bucket.push(row);
-    acc[row.order_line_id] = bucket;
     return acc;
   }, {});
   const utilizationMap = new Map(
@@ -276,8 +348,6 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
     return `https://${shopDomain}/admin/${type}/${numericId}`;
   }
 
-  const statusVariant = getStatusVariant(typedOrder.status);
-
   return (
     <div className={styles.page}>
       <div className={styles.topRow}>
@@ -286,34 +356,79 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
         </Link>
       </div>
 
-      <PageHeader
-        eyebrow="Order detail"
-        title={typedOrder.order_number ?? typedOrder.shopify_order_id ?? typedOrder.id.slice(0, 8)}
-        description={`Created ${new Date(typedOrder.created_at).toLocaleDateString("en-GB")}`}
-        actions={
-          <div className={styles.headerActions}>
-            <StatusBadge variant={statusVariant}>{typedOrder.status}</StatusBadge>
+      <div className={styles.detailHeader}>
+        <div className={styles.headRow}>
+          <div className={styles.headCell}>
+            <div className={styles.headLabel}>Order</div>
+            <h1 className={styles.headTitle}>
+              {typedOrder.order_number ?? typedOrder.id.slice(0, 8)}
+            </h1>
+            <div className={styles.headSub}>
+              Created {new Date(typedOrder.created_at).toLocaleDateString("en-AU")} ·{" "}
+              {typedOrder.customer_email ?? "—"} ·{" "}
+              {typedOrder.source === "shopify" ? "Shopify" : "B2B"}
+            </div>
+          </div>
+          <div className={styles.headCell}>
+            <div className={styles.headLabel}>Target ship</div>
+            <div
+              className={
+                rollup?.isOverdue ? styles.headValueOverdue : styles.headValue
+              }
+            >
+              {rollup?.targetShipDate
+                ? rollup.targetShipDate.toLocaleDateString("en-AU", {
+                    day: "numeric",
+                    month: "short",
+                  })
+                : "—"}
+              {rollup?.isOverdue && rollup.targetShipDate
+                ? ` · ${daysLate(rollup.targetShipDate)}d late`
+                : ""}
+            </div>
+          </div>
+          <div className={styles.headCell}>
+            <div className={styles.headLabel}>Total</div>
+            <div className={styles.headValue}>{formatCurrency(totals.sell)}</div>
+          </div>
+          <div className={styles.headCell}>
+            <div className={styles.headLabel}>Lines</div>
+            <div className={styles.headValue}>{typedLines.length}</div>
+          </div>
+          <div className={`${styles.headCell} ${styles.headActions}`}>
             {shopifyAdminUrl("orders", typedOrder.shopify_order_id) ? (
               <a
                 href={shopifyAdminUrl("orders", typedOrder.shopify_order_id)!}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={styles.shopifyLink}
+                className={styles.headActionLink}
               >
                 View in Shopify ↗
               </a>
             ) : null}
-            <form action={allocateOrder}>
+            <form action={allocateOrder} className={styles.headActionForm}>
               <input type="hidden" name="order_id" value={typedOrder.id} />
               <input type="hidden" name="return_to" value={`/app/orders/${typedOrder.id}`} />
               <input type="hidden" name="idempotency_key" value={crypto.randomUUID()} />
-              <button className={styles.secondary} type="submit">
-                Re-run allocation
-              </button>
+              <button type="submit">Re-run allocation</button>
             </form>
           </div>
-        }
-      />
+        </div>
+        <div className={styles.pillsRow}>
+          <div className={styles.pillStage}>
+            <div className={styles.stageLabel}>Components</div>
+            {rollup ? <ComponentsPill state={rollup.components} /> : "—"}
+          </div>
+          <div className={styles.pillStage}>
+            <div className={styles.stageLabel}>Production</div>
+            {rollup ? <ProductionPill state={rollup.production} /> : "—"}
+          </div>
+          <div className={styles.pillStage}>
+            <div className={styles.stageLabel}>Delivery</div>
+            {rollup ? <DeliveryPill state={rollup.delivery} /> : "—"}
+          </div>
+        </div>
+      </div>
 
       {query.allocated ? (
         <p className={styles.successMeta}>Allocation updated for this order.</p>
@@ -321,6 +436,47 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
       {query.planError ? (
         <p className={styles.errorMeta}>Error: {query.planError}</p>
       ) : null}
+
+      <nav className={tabStyles.tabBar} aria-label="Order detail tabs">
+        <Link
+          href={`?tab=sales-items`}
+          className={`${tabStyles.tab} ${activeTab === "sales-items" ? tabStyles.tabActive : ""}`}
+        >
+          Sales items
+        </Link>
+        <Link
+          href={`?tab=production`}
+          className={`${tabStyles.tab} ${activeTab === "production" ? tabStyles.tabActive : ""}`}
+        >
+          Production
+        </Link>
+        <Link
+          href={`?tab=delivery`}
+          className={`${tabStyles.tab} ${activeTab === "delivery" ? tabStyles.tabActive : ""}`}
+        >
+          Delivery
+        </Link>
+      </nav>
+      <div className={tabStyles.panel}>
+        {activeTab === "sales-items" ? (
+          typedLines.length === 0 ? (
+            <EmptyState
+              title="No order lines found"
+              message="This order has no synced line items. Trigger a Shopify sync to populate them."
+            />
+          ) : (
+            <SalesItemsTab lines={lineRows} statuses={lineStatusMap} />
+          )
+        ) : activeTab === "production" ? (
+          <ProductionTab rows={productionRows} />
+        ) : (
+          <DeliveryTab
+            orderId={typedOrder.id}
+            orderSource={typedOrder.source}
+            lines={deliveryLines}
+          />
+        )}
+      </div>
 
       <div className={styles.summaryCards}>
         <div className={styles.summaryCard}>
@@ -374,210 +530,6 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
           </div>
         </section>
       ) : null}
-
-      <section className={styles.linesSection}>
-        <div className={styles.sectionHeader}>
-          <div>
-            <p className={styles.eyebrow}>Order lines</p>
-            <h2>Components reserved · BOM · Labor</h2>
-          </div>
-        </div>
-
-        {typedLines.length === 0 ? (
-          <EmptyState
-            title="No order lines found"
-            message="This order has no synced line items. Trigger a Shopify sync to populate them."
-          />
-        ) : (
-          <div className={styles.lineList}>
-            {typedLines.map((line) => {
-              const variant = firstRelation(line.variant);
-              const product = firstRelation(variant?.product);
-              const planned = plannedByLine.get(line.id);
-              const plannedHours = laborByLine[line.id] ?? 0;
-              const lineLaborPlans = laborPlansByLine[line.id] ?? [];
-              const lineStatus = lineStatusMap.get(line.id);
-              const allocationState = lineStatus?.allocationState ?? "no-bom";
-
-              return (
-                <article
-                  key={line.id}
-                  className={`${styles.lineCard} ${allocationState !== "allocated" ? styles.lineCardWarning : ""}`}
-                >
-                  <div className={styles.lineHeader}>
-                    {product?.image_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={product.image_url}
-                        alt={product.title ?? ""}
-                        className={styles.productThumb}
-                      />
-                    ) : (
-                      <div className={styles.productThumbEmpty} />
-                    )}
-                    <div className={styles.lineIdentity}>
-                      <div className={styles.lineHeading}>
-                        <h3>{product?.title ?? variant?.title ?? "Variant"}</h3>
-                        <StatusBadge variant={allocationState === "allocated" ? "success" : "warning"}>
-                          {allocationState === "allocated"
-                            ? "✓ Allocated"
-                            : allocationState === "empty-bom"
-                            ? "⚠ Empty BOM"
-                            : "⚠ No active BOM"}
-                        </StatusBadge>
-                      </div>
-                      <p className={styles.meta}>
-                        {variant?.sku ?? "No SKU"} · Qty {line.quantity} · {formatCurrency(line.unit_sell_price)} each
-                        {lineStatus?.bom ? (
-                          <>
-                            {" · "}
-                            <Link href={`/app/bom`} className={styles.bomLink}>
-                              BOM v{lineStatus.bom.version} →
-                            </Link>
-                          </>
-                        ) : null}
-                        {shopifyAdminUrl("products", product?.shopify_id ?? null) ? (
-                          <>
-                            {" · "}
-                            <a
-                              href={shopifyAdminUrl("products", product?.shopify_id ?? null)!}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={styles.shopifyLink}
-                            >
-                              Shopify ↗
-                            </a>
-                          </>
-                        ) : null}
-                      </p>
-                    </div>
-                    <div className={styles.lineMargin}>
-                      <span>Planned margin</span>
-                      <strong>
-                        {planned
-                          ? `${formatCurrency(planned.planned_margin)} (${planned.planned_margin_pct.toFixed(1)}%)`
-                          : "—"}
-                      </strong>
-                    </div>
-                  </div>
-
-                  {allocationState === "allocated" && lineStatus && lineStatus.components.length > 0 ? (
-                    <details className={styles.bomSection}>
-                      <summary className={styles.bomToggle}>
-                        BOM v{lineStatus.bom?.version} · {lineStatus.components.length} component{lineStatus.components.length === 1 ? "" : "s"} · ×{line.quantity} ordered
-                      </summary>
-                      <div className={styles.componentSection}>
-                        <table className={styles.componentTable}>
-                          <thead>
-                            <tr>
-                              <th>Component</th>
-                              <th>Required</th>
-                              {showCosts ? <th>Unit cost</th> : null}
-                              {showCosts ? <th>Material cost</th> : null}
-                              <th>Available</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {lineStatus.components.map((comp) => (
-                              <tr key={comp.componentId}>
-                                <td>
-                                  <Link href={`/app/components/${comp.componentId}`} className={styles.componentLink}>
-                                    {comp.name}
-                                  </Link>
-                                </td>
-                                <td className={styles.numCell}>{comp.requiredQty.toFixed(2)}</td>
-                                {showCosts ? <td className={styles.costCell}>{formatCurrency(comp.costPerUnit)}</td> : null}
-                                {showCosts ? <td className={styles.costCell}>{formatCurrency(comp.costPerUnit * comp.requiredQty)}</td> : null}
-                                <td className={styles.availCell}>
-                                  <span className={comp.isShort ? styles.shortBadge : styles.okBadge}>
-                                    {comp.isShort
-                                      ? `⚠ ${comp.availableQty.toFixed(2)} avail`
-                                      : `✓ ${comp.availableQty.toFixed(2)} avail`}
-                                  </span>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </details>
-                  ) : null}
-
-                  {allocationState !== "allocated" ? (
-                    <div className={styles.noBomCard}>
-                      <p>
-                        {allocationState === "empty-bom"
-                          ? "Allocation skipped — the active BOM has no components. Add components to the BOM and re-run allocation."
-                          : "Allocation skipped — create an active BOM for this variant to reserve components and generate a cost plan."}
-                      </p>
-                      <Link href="/app/bom" className={styles.bomLink}>
-                        Go to BOM →
-                      </Link>
-                    </div>
-                  ) : null}
-
-                  <details className={styles.laborSection}>
-                    <summary className={styles.laborToggle}>
-                      Labor: {lineLaborPlans.length} operation{lineLaborPlans.length === 1 ? "" : "s"} · {plannedHours.toFixed(1)} hrs
-                    </summary>
-                    {lineLaborPlans.length === 0 ? (
-                      <EmptyState
-                        title="No labor operations planned"
-                        message="Run planning for this order to place labor by department and week."
-                      />
-                    ) : (
-                      <div className={styles.planList}>
-                        {lineLaborPlans.map((plan) => {
-                          const department = firstRelation(plan.department);
-                          const utilization = utilizationMap.get(`${plan.department_id}:${plan.week_start}`);
-                          const overload = Number(utilization?.overload_hours ?? 0);
-
-                          return (
-                            <form key={plan.id} action={updateJobLaborPlanWeek} className={styles.planRow}>
-                              <input type="hidden" name="plan_id" value={plan.id} />
-                              <input type="hidden" name="order_id" value={typedOrder.id} />
-                              <input type="hidden" name="return_to" value={`/app/orders/${typedOrder.id}`} />
-                              <div className={styles.planIdentity}>
-                                <strong>{plan.operation_name}</strong>
-                                <p className={styles.meta}>
-                                  {department?.name ?? "Department"} · Seq {plan.sequence}
-                                </p>
-                              </div>
-                              <div className={styles.planMeta}>
-                                <div className={styles.planMetaItem}>
-                                  <span>Hours</span>
-                                  <strong>{plan.planned_total_hours.toFixed(1)}</strong>
-                                </div>
-                                <div className={styles.planMetaItem}>
-                                  <span>Capacity</span>
-                                  <strong className={overload > 0 ? styles.capacityDanger : styles.capacitySafe}>
-                                    {overload > 0
-                                      ? `Over by ${overload.toFixed(1)} hrs`
-                                      : `Spare ${Number(utilization?.idle_hours ?? 0).toFixed(1)} hrs`}
-                                  </strong>
-                                </div>
-                              </div>
-                              <div className={styles.weekField}>
-                                <label>
-                                  <span>Week</span>
-                                  <input name="week_start" type="date" defaultValue={plan.week_start} />
-                                </label>
-                                <button className={styles.secondary} type="submit">
-                                  Move week
-                                </button>
-                              </div>
-                            </form>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </details>
-                </article>
-              );
-            })}
-          </div>
-        )}
-      </section>
     </div>
   );
 }
