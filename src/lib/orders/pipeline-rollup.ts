@@ -97,12 +97,10 @@ export async function getOrdersPipelineRollup(
         .select("order_id, snapshot_status")
         .eq("tenant_id", tenantId)
         .in("order_id", orderIds),
-      supabase
-        .from("job_actual_time_entry")
-        .select("order_id")
-        .eq("tenant_id", tenantId)
-        .in("order_id", orderIds)
-        .limit(1000),
+      supabase.rpc("orders_with_actual_time", {
+        p_tenant_id: tenantId,
+        p_order_ids: orderIds,
+      }),
     ]);
 
   const lines = (lineRows ?? []) as OrderLineRow[];
