@@ -14,6 +14,7 @@ import StatusBadge from "../../_ui/status-badge";
 import EmptyState from "../../_ui/empty-state";
 import SalesItemsTab from "./_tabs/sales-items-tab";
 import ProductionTab from "./_tabs/production-tab";
+import DeliveryTab from "./_tabs/delivery-tab";
 import tabStyles from "./_tabs/tabs.module.css";
 import styles from "./page.module.css";
 
@@ -54,6 +55,7 @@ type OrderLineRecord = {
   unit_sell_price: number;
   line_sell_price: number;
   variant_id: string;
+  shipped_at: string | null;
   variant: VariantData | VariantData[] | null;
 };
 
@@ -143,7 +145,7 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
     supabase
       .from("order_line")
       .select(
-        "id,quantity,unit_sell_price,line_sell_price,variant_id,variant:variant_id(title,sku,shopify_id,product:product_id(title,image_url,shopify_id))"
+        "id,quantity,unit_sell_price,line_sell_price,variant_id,shipped_at,variant:variant_id(title,sku,shopify_id,product:product_id(title,image_url,shopify_id))"
       )
       .eq("order_id", orderId)
       .eq("tenant_id", tenantId),
@@ -238,6 +240,16 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
       planned_hours: Number(plan.planned_total_hours),
       actual_hours: actualHoursByPlan.get(plan.id) ?? 0,
       status: plan.status,
+    };
+  });
+
+  const deliveryLines = lineRows.map((l) => {
+    const raw = typedLines.find((x) => x.id === l.id);
+    return {
+      id: l.id,
+      label: l.variant_title ?? l.id.slice(0, 8),
+      quantity: l.quantity,
+      shippedAt: raw?.shipped_at ? new Date(raw.shipped_at) : null,
     };
   });
 
@@ -458,7 +470,11 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
         ) : activeTab === "production" ? (
           <ProductionTab rows={productionRows} />
         ) : (
-          <p className={tabStyles.dash}>Coming next task.</p>
+          <DeliveryTab
+            orderId={typedOrder.id}
+            orderSource={typedOrder.source}
+            lines={deliveryLines}
+          />
         )}
       </div>
 
