@@ -1,9 +1,15 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
-import { allocateOrder, updateJobLaborPlanWeek } from "../actions";
+import { updateJobLaborPlanWeek } from "../actions";
 import { getOrderLineStatus } from "@/lib/orders/order-line-status";
-import PageHeader from "../../_ui/page-header";
+import { getOrdersPipelineRollup } from "@/lib/orders/pipeline-rollup";
+import { daysLate } from "@/lib/orders/target-ship";
+import {
+  ComponentsPill,
+  ProductionPill,
+  DeliveryPill,
+} from "../_components/pipeline-pills";
 import StatusBadge from "../../_ui/status-badge";
 import EmptyState from "../../_ui/empty-state";
 import styles from "./page.module.css";
@@ -14,6 +20,9 @@ type OrderRecord = {
   order_number: string | null;
   status: string;
   created_at: string;
+  target_ship_date: string | null;
+  source: string;
+  customer_email: string | null;
 };
 
 type ProductData = {
@@ -102,14 +111,6 @@ function formatCurrency(value: number) {
   }).format(value);
 }
 
-function getStatusVariant(status: string) {
-  const normalized = status.toLowerCase();
-  if (normalized === "fulfilled") return "success";
-  if (normalized === "cancelled") return "danger";
-  if (normalized === "in_progress" || normalized === "allocated") return "info";
-  return "warning";
-}
-
 export default async function OrderDetailPage({ params, searchParams }: Props) {
   const { orderId } = await params;
   const query = (await searchParams) ?? {};
@@ -120,7 +121,9 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
   const [{ data: order }, { data: orderLines }] = await Promise.all([
     supabase
       .from("orders")
-      .select("id,shopify_order_id,order_number,status,created_at")
+      .select(
+        "id,shopify_order_id,order_number,status,created_at,target_ship_date,source,customer_email"
+      )
       .eq("id", orderId)
       .eq("tenant_id", tenantId)
       .maybeSingle(),
@@ -181,6 +184,15 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
       .limit(1)
       .maybeSingle(),
   ]);
+
+  const rollupMap = await getOrdersPipelineRollup(supabase, tenantId, [
+    {
+      id: typedOrder.id,
+      status: typedOrder.status,
+      target_ship_date: typedOrder.target_ship_date ?? null,
+    },
+  ]);
+  const rollup = rollupMap.get(typedOrder.id);
 
   const plannedByLine = new Map(
     ((plannedSnapshots ?? []) as PlannedSnapshot[]).map((row) => [
@@ -276,8 +288,6 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
     return `https://${shopDomain}/admin/${type}/${numericId}`;
   }
 
-  const statusVariant = getStatusVariant(typedOrder.status);
-
   return (
     <div className={styles.page}>
       <div className={styles.topRow}>
@@ -286,34 +296,61 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
         </Link>
       </div>
 
-      <PageHeader
-        eyebrow="Order detail"
-        title={typedOrder.order_number ?? typedOrder.shopify_order_id ?? typedOrder.id.slice(0, 8)}
-        description={`Created ${new Date(typedOrder.created_at).toLocaleDateString("en-GB")}`}
-        actions={
-          <div className={styles.headerActions}>
-            <StatusBadge variant={statusVariant}>{typedOrder.status}</StatusBadge>
-            {shopifyAdminUrl("orders", typedOrder.shopify_order_id) ? (
-              <a
-                href={shopifyAdminUrl("orders", typedOrder.shopify_order_id)!}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.shopifyLink}
-              >
-                View in Shopify ↗
-              </a>
-            ) : null}
-            <form action={allocateOrder}>
-              <input type="hidden" name="order_id" value={typedOrder.id} />
-              <input type="hidden" name="return_to" value={`/app/orders/${typedOrder.id}`} />
-              <input type="hidden" name="idempotency_key" value={crypto.randomUUID()} />
-              <button className={styles.secondary} type="submit">
-                Re-run allocation
-              </button>
-            </form>
+      <div className={styles.detailHeader}>
+        <div className={styles.headRow}>
+          <div className={styles.headCell}>
+            <div className={styles.headLabel}>Order</div>
+            <h1 className={styles.headTitle}>
+              {typedOrder.order_number ?? typedOrder.id.slice(0, 8)}
+            </h1>
+            <div className={styles.headSub}>
+              Created {new Date(typedOrder.created_at).toLocaleDateString("en-AU")} ·{" "}
+              {typedOrder.customer_email ?? "—"} ·{" "}
+              {typedOrder.source === "shopify" ? "Shopify" : "B2B"}
+            </div>
           </div>
-        }
-      />
+          <div className={styles.headCell}>
+            <div className={styles.headLabel}>Target ship</div>
+            <div
+              className={
+                rollup?.isOverdue ? styles.headValueOverdue : styles.headValue
+              }
+            >
+              {rollup?.targetShipDate
+                ? rollup.targetShipDate.toLocaleDateString("en-AU", {
+                    day: "numeric",
+                    month: "short",
+                  })
+                : "—"}
+              {rollup?.isOverdue && rollup.targetShipDate
+                ? ` · ${daysLate(rollup.targetShipDate)}d late`
+                : ""}
+            </div>
+          </div>
+          <div className={styles.headCell}>
+            <div className={styles.headLabel}>Total</div>
+            <div className={styles.headValue}>{formatCurrency(totals.sell)}</div>
+          </div>
+          <div className={styles.headCell}>
+            <div className={styles.headLabel}>Lines</div>
+            <div className={styles.headValue}>{typedLines.length}</div>
+          </div>
+        </div>
+        <div className={styles.pillsRow}>
+          <div className={styles.pillStage}>
+            <div className={styles.stageLabel}>Components</div>
+            {rollup ? <ComponentsPill state={rollup.components} /> : "—"}
+          </div>
+          <div className={styles.pillStage}>
+            <div className={styles.stageLabel}>Production</div>
+            {rollup ? <ProductionPill state={rollup.production} /> : "—"}
+          </div>
+          <div className={styles.pillStage}>
+            <div className={styles.stageLabel}>Delivery</div>
+            {rollup ? <DeliveryPill state={rollup.delivery} /> : "—"}
+          </div>
+        </div>
+      </div>
 
       {query.allocated ? (
         <p className={styles.successMeta}>Allocation updated for this order.</p>
