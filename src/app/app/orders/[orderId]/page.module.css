@@ -456,9 +456,32 @@
 }
 .headRow {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr auto;
   gap: 24px;
   align-items: start;
+}
+.headActions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+.headActionLink,
+.headActionForm button {
+  background: var(--bg-card-alt);
+  color: var(--ink-strong);
+  border: 1px solid var(--stroke);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: inherit;
+}
+.headActionLink:hover,
+.headActionForm button:hover {
+  background: var(--bg-card);
 }
 .headCell { }
 .headLabel {

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
-import { updateJobLaborPlanWeek } from "../actions";
+import { allocateOrder, updateJobLaborPlanWeek } from "../actions";
 import { getOrderLineStatus } from "@/lib/orders/order-line-status";
 import { getOrdersPipelineRollup } from "@/lib/orders/pipeline-rollup";
 import { daysLate } from "@/lib/orders/target-ship";
@@ -334,6 +334,24 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
           <div className={styles.headCell}>
             <div className={styles.headLabel}>Lines</div>
             <div className={styles.headValue}>{typedLines.length}</div>
+          </div>
+          <div className={`${styles.headCell} ${styles.headActions}`}>
+            {shopifyAdminUrl("orders", typedOrder.shopify_order_id) ? (
+              <a
+                href={shopifyAdminUrl("orders", typedOrder.shopify_order_id)!}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.headActionLink}
+              >
+                View in Shopify ↗
+              </a>
+            ) : null}
+            <form action={allocateOrder} className={styles.headActionForm}>
+              <input type="hidden" name="order_id" value={typedOrder.id} />
+              <input type="hidden" name="return_to" value={`/app/orders/${typedOrder.id}`} />
+              <input type="hidden" name="idempotency_key" value={crypto.randomUUID()} />
+              <button type="submit">Re-run allocation</button>
+            </form>
           </div>
         </div>
         <div className={styles.pillsRow}>
