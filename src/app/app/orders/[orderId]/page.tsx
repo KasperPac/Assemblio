@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
-import { allocateOrder, updateJobLaborPlanWeek } from "../actions";
+import { allocateOrder } from "../actions";
 import { getOrderLineStatus } from "@/lib/orders/order-line-status";
 import { getOrdersPipelineRollup } from "@/lib/orders/pipeline-rollup";
 import { daysLate } from "@/lib/orders/target-ship";
@@ -12,7 +12,16 @@ import {
 } from "../_components/pipeline-pills";
 import StatusBadge from "../../_ui/status-badge";
 import EmptyState from "../../_ui/empty-state";
+import SalesItemsTab from "./_tabs/sales-items-tab";
+import tabStyles from "./_tabs/tabs.module.css";
 import styles from "./page.module.css";
+
+type DetailTab = "sales-items" | "production" | "delivery";
+
+function parseDetailTab(value: string | undefined): DetailTab {
+  if (value === "production" || value === "delivery") return value;
+  return "sales-items";
+}
 
 type OrderRecord = {
   id: string;
@@ -93,6 +102,7 @@ type UtilizationRow = {
 type Props = {
   params: Promise<{ orderId: string }>;
   searchParams?: Promise<{
+    tab?: string;
     allocated?: string;
     planError?: string;
   }>;
@@ -114,6 +124,7 @@ function formatCurrency(value: number) {
 export default async function OrderDetailPage({ params, searchParams }: Props) {
   const { orderId } = await params;
   const query = (await searchParams) ?? {};
+  const activeTab = parseDetailTab(query.tab);
   const context = await getServerTenantContext();
   if (!context) notFound();
   const { supabase, tenantId } = context;
@@ -145,9 +156,17 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
     variant_id: l.variant_id,
     quantity: l.quantity,
   }));
-
-  const { role } = context;
-  const showCosts = role === "admin" || role === "super_admin";
+  const lineRows = typedLines.map((line) => {
+    const variant = firstRelation(line.variant);
+    return {
+      id: line.id,
+      quantity: Number(line.quantity),
+      unit_sell_price: Number(line.unit_sell_price),
+      line_sell_price: Number(line.line_sell_price),
+      variant_title: variant?.title ?? null,
+      variant_sku: variant?.sku ?? null,
+    };
+  });
 
   const [
     lineStatusMap,
@@ -207,14 +226,6 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
     Record<string, number>
   >((acc, row) => {
     acc[row.order_line_id] = (acc[row.order_line_id] ?? 0) + Number(row.planned_total_hours ?? 0);
-    return acc;
-  }, {});
-  const laborPlansByLine = ((laborPlans ?? []) as LaborPlanRow[]).reduce<
-    Record<string, LaborPlanRow[]>
-  >((acc, row) => {
-    const bucket = acc[row.order_line_id] ?? [];
-    bucket.push(row);
-    acc[row.order_line_id] = bucket;
     return acc;
   }, {});
   const utilizationMap = new Map(
@@ -377,6 +388,41 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
         <p className={styles.errorMeta}>Error: {query.planError}</p>
       ) : null}
 
+      <nav className={tabStyles.tabBar} aria-label="Order detail tabs">
+        <Link
+          href={`?tab=sales-items`}
+          className={`${tabStyles.tab} ${activeTab === "sales-items" ? tabStyles.tabActive : ""}`}
+        >
+          Sales items
+        </Link>
+        <Link
+          href={`?tab=production`}
+          className={`${tabStyles.tab} ${activeTab === "production" ? tabStyles.tabActive : ""}`}
+        >
+          Production
+        </Link>
+        <Link
+          href={`?tab=delivery`}
+          className={`${tabStyles.tab} ${activeTab === "delivery" ? tabStyles.tabActive : ""}`}
+        >
+          Delivery
+        </Link>
+      </nav>
+      <div className={tabStyles.panel}>
+        {activeTab === "sales-items" ? (
+          typedLines.length === 0 ? (
+            <EmptyState
+              title="No order lines found"
+              message="This order has no synced line items. Trigger a Shopify sync to populate them."
+            />
+          ) : (
+            <SalesItemsTab lines={lineRows} statuses={lineStatusMap} />
+          )
+        ) : (
+          <p className={tabStyles.dash}>Coming next task.</p>
+        )}
+      </div>
+
       <div className={styles.summaryCards}>
         <div className={styles.summaryCard}>
           <span>Order value</span>
@@ -429,210 +475,6 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
           </div>
         </section>
       ) : null}
-
-      <section className={styles.linesSection}>
-        <div className={styles.sectionHeader}>
-          <div>
-            <p className={styles.eyebrow}>Order lines</p>
-            <h2>Components reserved · BOM · Labor</h2>
-          </div>
-        </div>
-
-        {typedLines.length === 0 ? (
-          <EmptyState
-            title="No order lines found"
-            message="This order has no synced line items. Trigger a Shopify sync to populate them."
-          />
-        ) : (
-          <div className={styles.lineList}>
-            {typedLines.map((line) => {
-              const variant = firstRelation(line.variant);
-              const product = firstRelation(variant?.product);
-              const planned = plannedByLine.get(line.id);
-              const plannedHours = laborByLine[line.id] ?? 0;
-              const lineLaborPlans = laborPlansByLine[line.id] ?? [];
-              const lineStatus = lineStatusMap.get(line.id);
-              const allocationState = lineStatus?.allocationState ?? "no-bom";
-
-              return (
-                <article
-                  key={line.id}
-                  className={`${styles.lineCard} ${allocationState !== "allocated" ? styles.lineCardWarning : ""}`}
-                >
-                  <div className={styles.lineHeader}>
-                    {product?.image_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={product.image_url}
-                        alt={product.title ?? ""}
-                        className={styles.productThumb}
-                      />
-                    ) : (
-                      <div className={styles.productThumbEmpty} />
-                    )}
-                    <div className={styles.lineIdentity}>
-                      <div className={styles.lineHeading}>
-                        <h3>{product?.title ?? variant?.title ?? "Variant"}</h3>
-                        <StatusBadge variant={allocationState === "allocated" ? "success" : "warning"}>
-                          {allocationState === "allocated"
-                            ? "✓ Allocated"
-                            : allocationState === "empty-bom"
-                            ? "⚠ Empty BOM"
-                            : "⚠ No active BOM"}
-                        </StatusBadge>
-                      </div>
-                      <p className={styles.meta}>
-                        {variant?.sku ?? "No SKU"} · Qty {line.quantity} · {formatCurrency(line.unit_sell_price)} each
-                        {lineStatus?.bom ? (
-                          <>
-                            {" · "}
-                            <Link href={`/app/bom`} className={styles.bomLink}>
-                              BOM v{lineStatus.bom.version} →
-                            </Link>
-                          </>
-                        ) : null}
-                        {shopifyAdminUrl("products", product?.shopify_id ?? null) ? (
-                          <>
-                            {" · "}
-                            <a
-                              href={shopifyAdminUrl("products", product?.shopify_id ?? null)!}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={styles.shopifyLink}
-                            >
-                              Shopify ↗
-                            </a>
-                          </>
-                        ) : null}
-                      </p>
-                    </div>
-                    <div className={styles.lineMargin}>
-                      <span>Planned margin</span>
-                      <strong>
-                        {planned
-                          ? `${formatCurrency(planned.planned_margin)} (${planned.planned_margin_pct.toFixed(1)}%)`
-                          : "—"}
-                      </strong>
-                    </div>
-                  </div>
-
-                  {allocationState === "allocated" && lineStatus && lineStatus.components.length > 0 ? (
-                    <details className={styles.bomSection}>
-                      <summary className={styles.bomToggle}>
-                        BOM v{lineStatus.bom?.version} · {lineStatus.components.length} component{lineStatus.components.length === 1 ? "" : "s"} · ×{line.quantity} ordered
-                      </summary>
-                      <div className={styles.componentSection}>
-                        <table className={styles.componentTable}>
-                          <thead>
-                            <tr>
-                              <th>Component</th>
-                              <th>Required</th>
-                              {showCosts ? <th>Unit cost</th> : null}
-                              {showCosts ? <th>Material cost</th> : null}
-                              <th>Available</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {lineStatus.components.map((comp) => (
-                              <tr key={comp.componentId}>
-                                <td>
-                                  <Link href={`/app/components/${comp.componentId}`} className={styles.componentLink}>
-                                    {comp.name}
-                                  </Link>
-                                </td>
-                                <td className={styles.numCell}>{comp.requiredQty.toFixed(2)}</td>
-                                {showCosts ? <td className={styles.costCell}>{formatCurrency(comp.costPerUnit)}</td> : null}
-                                {showCosts ? <td className={styles.costCell}>{formatCurrency(comp.costPerUnit * comp.requiredQty)}</td> : null}
-                                <td className={styles.availCell}>
-                                  <span className={comp.isShort ? styles.shortBadge : styles.okBadge}>
-                                    {comp.isShort
-                                      ? `⚠ ${comp.availableQty.toFixed(2)} avail`
-                                      : `✓ ${comp.availableQty.toFixed(2)} avail`}
-                                  </span>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </details>
-                  ) : null}
-
-                  {allocationState !== "allocated" ? (
-                    <div className={styles.noBomCard}>
-                      <p>
-                        {allocationState === "empty-bom"
-                          ? "Allocation skipped — the active BOM has no components. Add components to the BOM and re-run allocation."
-                          : "Allocation skipped — create an active BOM for this variant to reserve components and generate a cost plan."}
-                      </p>
-                      <Link href="/app/bom" className={styles.bomLink}>
-                        Go to BOM →
-                      </Link>
-                    </div>
-                  ) : null}
-
-                  <details className={styles.laborSection}>
-                    <summary className={styles.laborToggle}>
-                      Labor: {lineLaborPlans.length} operation{lineLaborPlans.length === 1 ? "" : "s"} · {plannedHours.toFixed(1)} hrs
-                    </summary>
-                    {lineLaborPlans.length === 0 ? (
-                      <EmptyState
-                        title="No labor operations planned"
-                        message="Run planning for this order to place labor by department and week."
-                      />
-                    ) : (
-                      <div className={styles.planList}>
-                        {lineLaborPlans.map((plan) => {
-                          const department = firstRelation(plan.department);
-                          const utilization = utilizationMap.get(`${plan.department_id}:${plan.week_start}`);
-                          const overload = Number(utilization?.overload_hours ?? 0);
-
-                          return (
-                            <form key={plan.id} action={updateJobLaborPlanWeek} className={styles.planRow}>
-                              <input type="hidden" name="plan_id" value={plan.id} />
-                              <input type="hidden" name="order_id" value={typedOrder.id} />
-                              <input type="hidden" name="return_to" value={`/app/orders/${typedOrder.id}`} />
-                              <div className={styles.planIdentity}>
-                                <strong>{plan.operation_name}</strong>
-                                <p className={styles.meta}>
-                                  {department?.name ?? "Department"} · Seq {plan.sequence}
-                                </p>
-                              </div>
-                              <div className={styles.planMeta}>
-                                <div className={styles.planMetaItem}>
-                                  <span>Hours</span>
-                                  <strong>{plan.planned_total_hours.toFixed(1)}</strong>
-                                </div>
-                                <div className={styles.planMetaItem}>
-                                  <span>Capacity</span>
-                                  <strong className={overload > 0 ? styles.capacityDanger : styles.capacitySafe}>
-                                    {overload > 0
-                                      ? `Over by ${overload.toFixed(1)} hrs`
-                                      : `Spare ${Number(utilization?.idle_hours ?? 0).toFixed(1)} hrs`}
-                                  </strong>
-                                </div>
-                              </div>
-                              <div className={styles.weekField}>
-                                <label>
-                                  <span>Week</span>
-                                  <input name="week_start" type="date" defaultValue={plan.week_start} />
-                                </label>
-                                <button className={styles.secondary} type="submit">
-                                  Move week
-                                </button>
-                              </div>
-                            </form>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </details>
-                </article>
-              );
-            })}
-          </div>
-        )}
-      </section>
     </div>
   );
 }
