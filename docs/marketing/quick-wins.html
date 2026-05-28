@@ -1,0 +1,1960 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Manuva Quick Wins · GTM Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+  --brand-1: #0E5BFF;
+  --brand-1-soft: #E6EEFF;
+  --brand-2: #1B2433;
+  --ink-strong: #0F1320;
+  --ink-muted: #5A6273;
+  --bg-card: #FFFFFF;
+  --bg-canvas: #F5F7FB;
+  --border-subtle: #E3E7EE;
+  --success: #1AA563;
+  --warning: #F0A91E;
+  --danger: #E04646;
+  --priority-1: var(--brand-1);
+  --priority-2: #5B8DEF;
+  --priority-3: #9CB5F2;
+}
+body { color: var(--ink-strong); background: var(--bg-canvas); }
+
+
+    body { max-width: 1100px; margin: 0 auto; padding: 32px 24px 64px; line-height: 1.45; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    header.top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+    header.top h1 { margin: 0; font-size: 28px; color: var(--ink-strong); }
+    nav.anchors a { margin-right: 16px; color: var(--brand-1); text-decoration: none; font-size: 14px; }
+    nav.anchors a:hover { text-decoration: underline; }
+    .meta { color: var(--ink-muted); font-size: 13px; }
+
+    section { margin-top: 48px; }
+    section > h2 { margin-bottom: 8px; font-size: 20px; color: var(--ink-strong); }
+    section > p.note { color: var(--ink-muted); font-size: 13px; margin-top: 0; }
+
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 16px; }
+    .kpi { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 16px; }
+    .kpi .label { color: var(--ink-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .kpi .value { font-size: 24px; font-weight: 600; margin-top: 4px; color: var(--ink-strong); }
+    .kpi .sub { font-size: 12px; color: var(--ink-muted); margin-top: 4px; }
+    .hour-bar { display: flex; height: 6px; margin-top: 6px; border-radius: 3px; overflow: hidden; }
+    .hour-bar span { display: block; }
+
+    .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px; }
+    .chart-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 16px; }
+    .chart-card h3 { margin: 0 0 8px; font-size: 14px; color: var(--ink-strong); }
+    .chart-wrap { position: relative; height: 240px; }
+
+    .filter-strip { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+    .filter-strip label { font-size: 12px; color: var(--ink-muted); display: flex; align-items: center; gap: 6px; }
+    .filter-strip select { font-size: 12px; padding: 4px 6px; border: 1px solid var(--border-subtle); border-radius: 4px; }
+    .filter-strip button { font-size: 12px; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-subtle); background: var(--bg-card); cursor: pointer; }
+
+    .segment-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    .segment { background: var(--bg-card); border: 1px solid var(--border-subtle); border-left: 4px solid var(--priority-1, var(--brand-1)); border-radius: 8px; padding: 16px; }
+    .segment[data-priority="2"] { border-left-color: var(--priority-2, #5B8DEF); }
+    .segment h3 { margin: 0; font-size: 16px; display: flex; justify-content: space-between; align-items: baseline; }
+    .segment .priority-tag { font-size: 12px; color: var(--brand-1); }
+    .segment .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 12px 0; font-size: 13px; }
+    .segment .metric .k { color: var(--ink-muted); font-size: 11px; text-transform: uppercase; }
+    .segment .metric .v { color: var(--ink-strong); font-weight: 500; }
+    .segment .motion { font-size: 13px; padding: 6px 8px; background: var(--brand-1-soft, #E6EEFF); color: var(--brand-2, #1B2433); border-radius: 4px; margin: 8px 0; }
+    .segment details { margin-top: 8px; }
+    .segment details summary { font-size: 13px; cursor: pointer; color: var(--brand-1); }
+    .segment ul { margin: 8px 0 0 0; padding-left: 20px; font-size: 13px; }
+    .segment li label { cursor: pointer; }
+    .segment li input[type=checkbox] { margin-right: 6px; }
+    .segment .source { font-size: 12px; color: var(--ink-muted); margin-top: 8px; }
+
+    .gantt-wrap { overflow-x: auto; margin-top: 16px; }
+    svg.gantt { width: 100%; min-width: 800px; height: 330px; display: block; }
+    .gantt .lane-label { font-size: 11px; fill: var(--ink-muted); text-transform: uppercase; }
+    .gantt .week-line { stroke: var(--border-subtle, #E3E7EE); stroke-width: 1; }
+    .gantt .task-block { rx: 3; ry: 3; opacity: 0.85; cursor: pointer; }
+    .gantt .task-block.Build { fill: var(--brand-1, #0E5BFF); }
+    .gantt .task-block.Sell { fill: var(--success, #1AA563); }
+    .gantt .task-block.Support { fill: var(--warning, #F0A91E); }
+    .gantt .task-block.Content { fill: var(--brand-2, #1B2433); }
+
+    .week-list { columns: 2; column-gap: 32px; margin-top: 24px; }
+    .week-list .week { break-inside: avoid; margin-bottom: 16px; }
+    .week-list .week h4 { margin: 0 0 4px; font-size: 13px; color: var(--ink-strong); }
+    .week-list .week ul { padding-left: 20px; margin: 0; font-size: 12px; }
+
+    .charter-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 16px; }
+    .charter-tile { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; font-size: 13px; }
+    .charter-tile h4 { margin: 0 0 8px; font-size: 13px; }
+    .charter-tile select, .charter-tile input { width: 100%; padding: 4px; font-size: 12px; margin-top: 4px; border: 1px solid var(--border-subtle); border-radius: 3px; box-sizing: border-box; }
+
+    .controls { display: flex; gap: 12px; margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
+    .controls button { font-size: 12px; padding: 6px 10px; border-radius: 4px; border: 1px solid var(--border-subtle); background: var(--bg-card); cursor: pointer; }
+    .controls button:hover { background: var(--bg-canvas, #F5F7FB); }
+
+    /* ── Section 5: Integrations ─────────────────────────────────────────── */
+    .wave-tracker { display: flex; margin: 16px 0 24px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-subtle); }
+    .wave { flex: 1; padding: 10px 14px; background: var(--bg-card); border-right: 1px solid var(--border-subtle); }
+    .wave:last-child { border-right: none; }
+    .wave-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-muted); }
+    .wave-items { font-size: 13px; color: var(--ink-strong); margin-top: 4px; }
+    .wave.wave-shipped { background: var(--bg-canvas, #F5F7FB); }
+    .wave.wave-progress { background: rgba(14,91,255,0.06); }
+
+    .integrations-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .integ-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px; }
+    .integ-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    .integ-name { font-weight: 600; font-size: 14px; color: var(--ink-strong); }
+    .wave-badge { font-size: 10px; padding: 2px 6px; border-radius: 10px; background: var(--border-subtle); color: var(--ink-muted); font-weight: 600; }
+    .status-pill { font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: 600; text-transform: capitalize; }
+    .status-pill.shipped { background: rgba(26,165,99,0.12); color: #1AA563; }
+    .status-pill.in_progress { background: rgba(240,169,30,0.15); color: #C47D00; }
+    .status-pill.planned { background: rgba(14,91,255,0.1); color: var(--brand-1, #0E5BFF); }
+    .status-pill.partner { background: rgba(0,0,0,0.06); color: var(--ink-muted); }
+    .integ-card .data-flows { margin: 0 0 8px; padding-left: 16px; font-size: 12px; color: var(--ink-base, #2C3444); line-height: 1.6; }
+    .integ-card .gotcha { font-size: 11px; color: var(--ink-muted); border-top: 1px solid var(--border-subtle); padding-top: 8px; margin-top: 8px; }
+
+    .matrix-details summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--brand-1, #0E5BFF); padding: 8px 0; user-select: none; }
+    .matrix-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+    .matrix-table th { background: var(--bg-canvas, #F5F7FB); padding: 6px 10px; text-align: left; font-weight: 600; color: var(--ink-muted); border-bottom: 2px solid var(--border-subtle); }
+    .matrix-table td { padding: 6px 10px; border-bottom: 1px solid var(--border-subtle); color: var(--ink-strong); }
+    .matrix-table tr:last-child td { border-bottom: none; }
+    .cell-native, .cell-shipped { color: #1AA563; font-weight: 600; }
+    .cell-wave-1, .cell-wave-2, .cell-wave-3 { color: var(--brand-1, #0E5BFF); }
+    .cell-partner { color: var(--ink-muted); font-style: italic; }
+    .cell-via-extensiv, .cell-zapier-only { color: #C47D00; }
+    .cell-none { color: var(--border-subtle); }
+
+    /* ── Section 6: Competitor Gaps ─────────────────────────────────────── */
+    .gap-summary { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+    .sev-pill { font-size: 13px; font-weight: 600; }
+    .gap-progress { font-size: 12px; color: var(--ink-muted); }
+
+    .gaps-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 24px; }
+    .gaps-table th { background: var(--bg-canvas, #F5F7FB); padding: 8px 12px; text-align: left; font-weight: 600; color: var(--ink-muted); border-bottom: 2px solid var(--border-subtle); }
+    .gaps-table td { padding: 8px 12px; border-bottom: 1px solid var(--border-subtle); color: var(--ink-strong); }
+    .gaps-table tr:last-child td { border-bottom: none; }
+
+    .sev-badge { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 10px; text-transform: capitalize; }
+    .sev-badge.critical { background: rgba(220,38,38,0.1); color: #DC2626; }
+    .sev-badge.high { background: rgba(240,169,30,0.15); color: #C47D00; }
+    .sev-badge.medium { background: rgba(14,91,255,0.1); color: var(--brand-1, #0E5BFF); }
+    .sev-badge.low { background: rgba(0,0,0,0.06); color: var(--ink-muted); }
+
+    .status-cycle { font-size: 11px; padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border-subtle); background: var(--bg-card); cursor: pointer; text-transform: capitalize; }
+    .status-cycle[data-status="done"] { background: rgba(26,165,99,0.12); border-color: #1AA563; color: #1AA563; font-weight: 600; }
+    .status-cycle[data-status="in_progress"] { background: rgba(240,169,30,0.15); border-color: #C47D00; color: #C47D00; }
+    .status-cycle[data-status="planned"] { background: rgba(14,91,255,0.1); border-color: var(--brand-1,#0E5BFF); color: var(--brand-1,#0E5BFF); }
+
+    .advantages-panel { background: var(--bg-card); border: 1px solid var(--border-subtle); border-left: 4px solid var(--brand-1, #0E5BFF); border-radius: 8px; padding: 16px 20px; }
+    .advantages-panel h3 { margin: 0 0 10px; font-size: 14px; color: var(--ink-strong); }
+    .advantages-panel ul { margin: 0; padding-left: 18px; }
+    .advantages-panel li { font-size: 13px; color: var(--ink-base, #2C3444); line-height: 1.7; }
+
+    /* ── Section 7: Client Pipeline ─────────────────────────────────────────── */
+    .funnel-summary { font-size: 13px; color: var(--ink-muted); margin-bottom: 16px; min-height: 20px; }
+    .funnel-summary strong { color: var(--ink-strong); }
+
+    .kanban { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 32px; }
+    .kanban-col { flex: 0 0 190px; background: var(--bg-canvas, #F5F7FB); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 160px; }
+    .kanban-col.drag-over { outline: 2px dashed var(--brand-1, #0E5BFF); }
+    .col-header { font-size: 11px; font-weight: 700; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.06em; padding: 2px; }
+    .cards-container { flex: 1; display: flex; flex-direction: column; gap: 6px; min-height: 40px; }
+    .pipeline-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; font-size: 12px; cursor: grab; position: relative; }
+    .pipeline-card:active { cursor: grabbing; opacity: 0.7; }
+    .pipeline-card .card-name { font-weight: 600; color: var(--ink-strong); margin-bottom: 4px; outline: none; border: none; background: none; width: 100%; font-size: 12px; padding: 0; }
+    .pipeline-card .card-seg { font-size: 11px; color: var(--brand-1, #0E5BFF); margin: 4px 0; display: block; border: 1px solid var(--border-subtle); border-radius: 4px; padding: 2px 4px; background: var(--bg-card); width: 100%; }
+    .pipeline-card .card-mrr { font-size: 11px; color: var(--ink-muted); margin-top: 4px; border: 1px solid var(--border-subtle); border-radius: 4px; padding: 2px 4px; width: 100%; background: var(--bg-card); }
+    .pipeline-card .card-delete { position: absolute; top: 6px; right: 6px; border: none; background: none; cursor: pointer; color: var(--ink-muted); font-size: 14px; line-height: 1; padding: 0 2px; }
+    .pipeline-card .card-delete:hover { color: #DC2626; }
+    .add-card-btn { font-size: 12px; color: var(--ink-muted); background: none; border: 1px dashed var(--border-subtle); border-radius: 6px; padding: 6px; cursor: pointer; text-align: center; width: 100%; }
+    .add-card-btn:hover { background: var(--bg-card); color: var(--brand-1, #0E5BFF); }
+
+    .channels-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+    .channels-table th { background: var(--bg-canvas, #F5F7FB); padding: 8px 12px; text-align: left; font-weight: 600; color: var(--ink-muted); border-bottom: 2px solid var(--border-subtle); }
+    .channels-table td { padding: 8px 12px; border-bottom: 1px solid var(--border-subtle); color: var(--ink-strong); vertical-align: top; }
+    .channels-table tr:last-child td { border-bottom: none; }
+  </style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <h1>Manuva Quick Wins</h1>
+    <div class="meta">Generated 2026-05-20 · 9 Phase-1 segments · 12-week plan</div>
+  </div>
+  <nav class="anchors">
+    <a href="#overview">Overview</a>
+    <a href="#segments">Segments</a>
+    <a href="#plan">90-Day Plan</a>
+    <a href="#charter">Charter</a>
+    <a href="#integrations">Integrations</a>
+    <a href="#gaps">Gaps</a>
+    <a href="#pipeline">Pipeline</a>
+  </nav>
+</header>
+
+<main>
+
+<section id="overview">
+  <h2>Overview</h2>
+  <div class="kpis">
+    <div class="kpi">
+      <div class="label">12-mo MRR if all hit</div>
+      <div class="value">AU$51,400</div>
+      <div class="sub">Upper bound across 9 segments</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Blended ARPU</div>
+      <div class="value">AU$248</div>
+      <div class="sub">MRR-weighted across 9</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Founder hours / wk</div>
+      <div class="value">40 hr</div>
+      <div class="hour-bar">
+        <span style="background:var(--brand-1,#0E5BFF);width:40.0%"></span>
+        <span style="background:var(--success,#1AA563);width:30.0%"></span>
+        <span style="background:var(--warning,#F0A91E);width:15.0%"></span>
+        <span style="background:var(--brand-2,#1B2433);width:15.0%"></span>
+      </div>
+      <div class="sub">Build 16 · Sell 12 · Support 6 · Content 6</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Addressable today</div>
+      <div class="value">0 / 9</div>
+      <div class="sub">+9 after Xero ships</div>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-card">
+      <h3>12-mo MRR potential (upper bound, AU$)</h3>
+      <div class="chart-wrap"><canvas id="bar-mrr"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>ARPU × Time-to-value (bubble = Manuva fit)</h3>
+      <div class="chart-wrap"><canvas id="scatter-arpu"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<section id="segments">
+  <h2>Segments</h2>
+  <p class="note">Filter to focus. Ticks persist in localStorage.</p>
+  <div class="filter-strip">
+    <label>Motion <select id="filter-motion"><option value="">All motions</option></select></label>
+    <label>ARPU <select id="filter-arpu">
+      <option value="">All ARPU</option>
+      <option value="0-200">&lt;200</option>
+      <option value="200-300">200–300</option>
+      <option value="300-400">300–400</option>
+      <option value="400+">400+</option>
+    </select></label>
+    <button id="clear-filters">Clear filters</button>
+  </div>
+  <div class="segment-grid" id="segment-grid">
+    
+    <article class="segment" data-priority="1" data-arpu="185" data-motion="Phase 1 (months 0-3): 14-day free trial (no CC) + 5 design partners from FB grou">
+      <h3>
+        <span>#4 · 04_candle_soap_homefragrance</span>
+        <span class="priority-tag">★ P1</span>
+      </h3>
+      <div class="metrics">
+        <div class="metric"><div class="k">ARPU</div><div class="v">AU$185</div></div>
+        <div class="metric"><div class="k">12-mo MRR</div><div class="v">5.5k–11.1k</div></div>
+        <div class="metric"><div class="k">Time to value</div><div class="v">5d</div></div>
+        <div class="metric"><div class="k">Manuva fit</div><div class="v">5/5</div></div>
+      </div>
+      <div class="motion"><strong>Motion:</strong> Phase 1 (months 0-3): 14-day free trial (no CC) + 5 design partners from FB grou</div>
+      
+      <details>
+        <summary>Where they live (3)</summary>
+        <ul><li>Aussie Candle Supplies, Candle Supply, Luxury Candle Supplies, Scents and Suds Supplies — all AU suppliers with active communities</li><li>Australian Made directory</li><li>Faire AU</li></ul>
+      </details>
+      
+      <details open>
+        <summary>This week (1)</summary>
+        <ul>
+          
+          <li><label><input type="checkbox" data-task-id="w01-t00"> W1 · (no plan tasks tagged this week — see Day-90 review for Phase 2 priorities)</label></li>
+          
+        </ul>
+      </details>
+      
+      <details>
+        <summary>This month (5)</summary>
+        <ul>
+          
+          <li><label><input type="checkbox" data-task-id="w02-t03"> W2 · **Post in "Australian candle makers" FB group**: a value-first post on "How to track wax + fragrance lots when retail...</label></li>
+          
+          <li><label><input type="checkbox" data-task-id="w02-t05"> W2 · **Write pillar post draft #1**: "Outgrowing Craftybase: a guide for AU candle and soap makers." Target keywords: 'Cra...</label></li>
+          
+          <li><label><input type="checkbox" data-task-id="w03-t01"> W3 · **Sign 3 Charter Partners** (target: 2 cosmetics, 1 candle/soap). Send Common Paper agreement, kickoff Notion doc wit...</label></li>
+          
+          <li><label><input type="checkbox" data-task-id="w03-t03"> W3 · **Publish pillar post #1** ("Outgrowing Craftybase") on `manuva.app/blog`. Submit to r/soapmaking, r/candlemaking, r/...</label></li>
+          
+          <li><label><input type="checkbox" data-task-id="w04-t01"> W4 · **Sign Charter Partners 4 and 5.** Target mix: 1 candle/soap + 1 Craftybase or Katana defector (cross-vertical). **De...</label></li>
+          
+        </ul>
+      </details>
+      
+      <div class="source">Source: <code>docs/research/manuva-gtm/results/04_candle_soap_homefragrance.json</code></div>
+    </article>
+    
+    <article class="segment" data-priority="1" data-arpu="210" data-motion="Phase 1: Design partner program — 5-8 indie cosmetics/skincare brands, 6 months ">
+      <h3>
+        <span>#1 · 01_indie_cosmetics_skincare</span>
+        <span class="priority-tag">★ P1</span>
+      </h3>
+      <div class="metrics">
+        <div class="metric"><div class="k">ARPU</div><div class="v">AU$210</div></div>
+        <div class="metric"><div class="k">12-mo MRR</div><div class="v">4.2k–7.4k</div></div>
+        <div class="metric"><div class="k">Time to value</div><div class="v">7d</div></div>
+        <div class="metric"><div class="k">Manuva fit</div><div class="v">4/5</div></div>
+      </div>
+      <div class="motion"><strong>Motion:</strong> Phase 1: Design partner program — 5-8 indie cosmetics/skincare brands, 6 months </div>
+      
+      <details>
+        <summary>Where they live (3)</summary>
+        <ul><li>Skincare Business Foundations (Jennifer Rudd, Brisbane) — Label Launchpad + Beauty Brand Bootcamp + Circle community</li><li>Australian Made directory</li><li>Beauty Independent (US-led but AU coverage)</li></ul>
+      </details>
+      
+      <details open>
+        <summary>This week (1)</summary>
+        <ul>
+          
+          <li><label><input type="checkbox" data-task-id="w01-t04"> W1 · **Email Jennifer Rudd (Skincare Business Foundations, Brisbane)** with a partnership pitch: co-promotion to her Label...</label></li>
+          
+        </ul>
+      </details>
+      
+      <details>
+        <summary>This month (3)</summary>
+        <ul>
+          
+          <li><label><input type="checkbox" data-task-id="w01-t04"> W1 · **Email Jennifer Rudd (Skincare Business Foundations, Brisbane)** with a partnership pitch: co-promotion to her Label...</label></li>
+          
+          <li><label><input type="checkbox" data-task-id="w03-t01"> W3 · **Sign 3 Charter Partners** (target: 2 cosmetics, 1 candle/soap). Send Common Paper agreement, kickoff Notion doc wit...</label></li>
+          
+          <li><label><input type="checkbox" data-task-id="w03-t05"> W3 · **Confirm Jennifer Rudd partnership terms** (follow-up from Week 1). If declined or unresponsive, pivot to Beauty Ind...</label></li>
+          
+        </ul>
+      </details>
+      
+      <div class="source">Source: <code>docs/research/manuva-gtm/results/01_indie_cosmetics_skincare.json</code></div>
+    </article>
+    
+    <article class="segment" data-priority="1" data-arpu="245" data-motion="Founder-led inbound funnel + 14-day CC-required trial PLUS a paid 'Katana Switch">
+      <h3>
+        <span>#16 · Katana defectors</span>
+        <span class="priority-tag">★ P1</span>
+      </h3>
+      <div class="metrics">
+        <div class="metric"><div class="k">ARPU</div><div class="v">AU$245</div></div>
+        <div class="metric"><div class="k">12-mo MRR</div><div class="v">2.9k–6.1k</div></div>
+        <div class="metric"><div class="k">Time to value</div><div class="v">10d</div></div>
+        <div class="metric"><div class="k">Manuva fit</div><div class="v">4/5</div></div>
+      </div>
+      <div class="motion"><strong>Motion:</strong> Founder-led inbound funnel + 14-day CC-required trial PLUS a paid 'Katana Switch</div>
+      
+      <details>
+        <summary>Where they live (3)</summary>
+        <ul><li>Shopify App Store reviews on Katana's listing (G2/Capterra adjacent)</li><li>Software-comparison sites: G2, Capterra, GetApp, Software Advice, SoftwareConnect, Tekpon, ITQlick</li><li>Brahmin Solutions blog (Katana competitor — high SEO authority on Katana criticism)</li></ul>
+      </details>
+      
+      <details open>
+        <summary>This week (1)</summary>
+        <ul>
+          
+          <li><label><input type="checkbox" data-task-id="w01-t00"> W1 · (no plan tasks tagged this week — see Day-90 review for Phase 2 priorities)</label></li>
+          
+        </ul>
+      </details>
+      
+      <details>
+        <summary>This month (3)</summary>
+        <ul>
+          
+          <li><label><input type="checkbox" data-task-id="w04-t01"> W4 · **Sign Charter Partners 4 and 5.** Target mix: 1 candle/soap + 1 Craftybase or Katana defector (cross-vertical). **De...</label></li>
+          
+          <li><label><input type="checkbox" data-task-id="w04-t03"> W4 · **Build Katana CSV import wizard v1** (products + BOMs + suppliers from Katana's standard export). **Deliverable: imp...</label></li>
+          
+          <li><label><input type="checkbox" data-task-id="w04-t04"> W4 · **Publish pillar post #2**: "Katana real-cost calculator: Core + traceability + manufacturing + warehouse add-ons vs ...</label></li>
+          
+        </ul>
+      </details>
+      
+      <div class="source">Source: <code>docs/research/manuva-gtm/results/16_katana_defectors.json</code></div>
+    </article>
+    
+    <article class="segment" data-priority="1" data-arpu="235" data-motion="Inbound-led + 14-day CC-required trial + 'Craftybase Switcher Pack' (free migrat">
+      <h3>
+        <span>#17 · Craftybase graduates</span>
+        <span class="priority-tag">★ P1</span>
+      </h3>
+      <div class="metrics">
+        <div class="metric"><div class="k">ARPU</div><div class="v">AU$235</div></div>
+        <div class="metric"><div class="k">12-mo MRR</div><div class="v">3.5k–5.8k</div></div>
+        <div class="metric"><div class="k">Time to value</div><div class="v">7d</div></div>
+        <div class="metric"><div class="k">Manuva fit</div><div class="v">5/5</div></div>
+      </div>
+      <div class="motion"><strong>Motion:</strong> Inbound-led + 14-day CC-required trial + 'Craftybase Switcher Pack' (free migrat</div>
+      
+      <details>
+        <summary>Where they live (1)</summary>
+        <ul><li>Australian Made directory, Etsy Maker meetups, Bluethumb (art/maker marketplace), Handmade Canberra/Melbourne/Sydney markets, Indie Beauty Australia, Australian Candle Makers Network, Australian Soap Makers Guild, Craftybase community forum (closed-ish but readable), Faire AU marketplace, MakersHQ communities.</li></ul>
+      </details>
+      
+      <details open>
+        <summary>This week (1)</summary>
+        <ul>
+          
+          <li><label><input type="checkbox" data-task-id="w01-t00"> W1 · (no plan tasks tagged this week — see Day-90 review for Phase 2 priorities)</label></li>
+          
+        </ul>
+      </details>
+      
+      <details>
+        <summary>This month (4)</summary>
+        <ul>
+          
+          <li><label><input type="checkbox" data-task-id="w02-t05"> W2 · **Write pillar post draft #1**: "Outgrowing Craftybase: a guide for AU candle and soap makers." Target keywords: 'Cra...</label></li>
+          
+          <li><label><input type="checkbox" data-task-id="w03-t03"> W3 · **Publish pillar post #1** ("Outgrowing Craftybase") on `manuva.app/blog`. Submit to r/soapmaking, r/candlemaking, r/...</label></li>
+          
+          <li><label><input type="checkbox" data-task-id="w03-t04"> W3 · **Build Craftybase CSV import wizard v1** — material catalog + supplier list + product list mappers. (BOMs in v2.) **...</label></li>
+          
+          <li><label><input type="checkbox" data-task-id="w04-t01"> W4 · **Sign Charter Partners 4 and 5.** Target mix: 1 candle/soap + 1 Craftybase or Katana defector (cross-vertical). **De...</label></li>
+          
+        </ul>
+      </details>
+      
+      <div class="source">Source: <code>docs/research/manuva-gtm/results/17_craftybase_graduates.json</code></div>
+    </article>
+    
+    <article class="segment" data-priority="1" data-arpu="320" data-motion="Paid pilot ($249/mo Growth tier for 3 months, fully credited to annual conversio">
+      <h3>
+        <span>#19 · 19_unleashed_defectors_anz</span>
+        <span class="priority-tag">★ P1</span>
+      </h3>
+      <div class="metrics">
+        <div class="metric"><div class="k">ARPU</div><div class="v">AU$320</div></div>
+        <div class="metric"><div class="k">12-mo MRR</div><div class="v">2.8k–4.5k</div></div>
+        <div class="metric"><div class="k">Time to value</div><div class="v">15d</div></div>
+        <div class="metric"><div class="k">Manuva fit</div><div class="v">4 — Unleashed's core data model (BOMs, assemblies, POs, stock-on-hand, multi-location, lot/batch) overlaps Manuva's directly. The gap is depth: Unleashed has stronger reporting, B2B portal, and 10+ years of edge-case features. Manuva matches 70-80% of the daily workflow at half the price./5</div></div>
+      </div>
+      <div class="motion"><strong>Motion:</strong> Paid pilot ($249/mo Growth tier for 3 months, fully credited to annual conversio</div>
+      
+      <details>
+        <summary>Where they live (3)</summary>
+        <ul><li>Australian Made directory</li><li>Food & Grocery Council AU members</li><li>Australian Industry Group (AiGroup) member list</li></ul>
+      </details>
+      
+      <details open>
+        <summary>This week (1)</summary>
+        <ul>
+          
+          <li><label><input type="checkbox" data-task-id="w01-t00"> W1 · (no plan tasks tagged this week — see Day-90 review for Phase 2 priorities)</label></li>
+          
+        </ul>
+      </details>
+      
+      <div class="source">Source: <code>docs/research/manuva-gtm/results/19_unleashed_defectors_anz.json</code></div>
+    </article>
+    
+    <article class="segment" data-priority="2" data-arpu="250" data-motion="Two-track motion">
+      <h3>
+        <span>#11 · Packaged foods, sauces, condiments</span>
+        <span class="priority-tag">★ P2</span>
+      </h3>
+      <div class="metrics">
+        <div class="metric"><div class="k">ARPU</div><div class="v">AU$250</div></div>
+        <div class="metric"><div class="k">12-mo MRR</div><div class="v">2.5k–5.2k</div></div>
+        <div class="metric"><div class="k">Time to value</div><div class="v">14d</div></div>
+        <div class="metric"><div class="k">Manuva fit</div><div class="v">5 — strong fit. Multi-level BOMs map naturally to recipes + sub-recipes (sauce base -> finished sauce -> retail SKU). Lot tracking + FSANZ recall = core requirement. Co-packer workflows (~30% use co-packers) addressed by location-based inventory./5</div></div>
+      </div>
+      <div class="motion"><strong>Motion:</strong> Two-track motion</div>
+      
+      <details>
+        <summary>Where they live (3)</summary>
+        <ul><li>Australian Food & Grocery Council (AFGC) — 150 corporate members</li><li>Fine Food Australia</li><li>Australian Made directory</li></ul>
+      </details>
+      
+      <details open>
+        <summary>This week (1)</summary>
+        <ul>
+          
+          <li><label><input type="checkbox" data-task-id="w01-t00"> W1 · (no plan tasks tagged this week — see Day-90 review for Phase 2 priorities)</label></li>
+          
+        </ul>
+      </details>
+      
+      <div class="source">Source: <code>docs/research/manuva-gtm/results/11_packaged_foods_sauces_condiments.json</code></div>
+    </article>
+    
+    <article class="segment" data-priority="2" data-arpu="305" data-motion="Paid pilot AU$249/mo x 3 months credit-on-conversion + founder-led LinkedIn outb">
+      <h3>
+        <span>#8 · Pet treats & dry pet food brands</span>
+        <span class="priority-tag">★ P2</span>
+      </h3>
+      <div class="metrics">
+        <div class="metric"><div class="k">ARPU</div><div class="v">AU$305</div></div>
+        <div class="metric"><div class="k">12-mo MRR</div><div class="v">2.2k–4.5k</div></div>
+        <div class="metric"><div class="k">Time to value</div><div class="v">14d</div></div>
+        <div class="metric"><div class="k">Manuva fit</div><div class="v">5/5</div></div>
+      </div>
+      <div class="motion"><strong>Motion:</strong> Paid pilot AU$249/mo x 3 months credit-on-conversion + founder-led LinkedIn outb</div>
+      
+      <details>
+        <summary>Where they live (3)</summary>
+        <ul><li>Pet Industry Association of Australia (PIAA) — trade body, runs PETS conference</li><li>PFIAA (Pet Food Industry Association of Australia) — manufacturer body, runs Tick of Approval program</li><li>Australian Made directory</li></ul>
+      </details>
+      
+      <details open>
+        <summary>This week (1)</summary>
+        <ul>
+          
+          <li><label><input type="checkbox" data-task-id="w01-t00"> W1 · (no plan tasks tagged this week — see Day-90 review for Phase 2 priorities)</label></li>
+          
+        </ul>
+      </details>
+      
+      <div class="source">Source: <code>docs/research/manuva-gtm/results/08_pet_treats_dry.json</code></div>
+    </article>
+    
+    <article class="segment" data-priority="2" data-arpu="430" data-motion="Two-track motion">
+      <h3>
+        <span>#21 · 21_shopify_plus_no_ops_stack</span>
+        <span class="priority-tag">★ P2</span>
+      </h3>
+      <div class="metrics">
+        <div class="metric"><div class="k">ARPU</div><div class="v">AU$430</div></div>
+        <div class="metric"><div class="k">12-mo MRR</div><div class="v">2.4k–4.0k</div></div>
+        <div class="metric"><div class="k">Time to value</div><div class="v">10d</div></div>
+        <div class="metric"><div class="k">Manuva fit</div><div class="v">4 — Manuva's data model (BOMs/kits, allocation, POs, locations, lot tracking, Shopify integration) maps cleanly to the typical Plus brand running spreadsheets. The fit gap is depth in capacity planning, demand forecasting, and channel reconciliation — most no-ops-stack Plus brands don't need those yet but will within 12 months. Phase 1 sweet spot: brands at the spreadsheet-breaking moment./5</div></div>
+      </div>
+      <div class="motion"><strong>Motion:</strong> Two-track motion</div>
+      
+      <details>
+        <summary>Where they live (3)</summary>
+        <ul><li>Shopify Plus Partner Directory (AU agencies: Convert Digital, eStar, Pixc, Magia Digital, etc.)</li><li>BuiltWith Shopify Plus filter</li><li>'AU Shopify Plus' lists curated by agencies</li></ul>
+      </details>
+      
+      <details open>
+        <summary>This week (1)</summary>
+        <ul>
+          
+          <li><label><input type="checkbox" data-task-id="w01-t00"> W1 · (no plan tasks tagged this week — see Day-90 review for Phase 2 priorities)</label></li>
+          
+        </ul>
+      </details>
+      
+      <div class="source">Source: <code>docs/research/manuva-gtm/results/21_shopify_plus_no_ops_stack.json</code></div>
+    </article>
+    
+    <article class="segment" data-priority="2" data-arpu="170" data-motion="Founder-led outbound + 14-day CC-required trial">
+      <h3>
+        <span>#14 · Functional / gut-health ferment brands</span>
+        <span class="priority-tag">★ P2</span>
+      </h3>
+      <div class="metrics">
+        <div class="metric"><div class="k">ARPU</div><div class="v">AU$170</div></div>
+        <div class="metric"><div class="k">12-mo MRR</div><div class="v">1.5k–2.8k</div></div>
+        <div class="metric"><div class="k">Time to value</div><div class="v">12d</div></div>
+        <div class="metric"><div class="k">Manuva fit</div><div class="v">4/5</div></div>
+      </div>
+      <div class="motion"><strong>Motion:</strong> Founder-led outbound + 14-day CC-required trial</div>
+      
+      <details>
+        <summary>Where they live (1)</summary>
+        <ul><li>Australian Farmers' Markets Association (AFMA), Sustainable Table, Australian Food & Grocery Council (AFGC), Slow Food Australia, Open Food Network Australia, Organic Federation of Australia (OFA), Foodbank/Foodprint directories, Naturally Good Expo exhibitor list, Fine Food Australia exhibitor list, Cert IV Artisan Fermented Products (TAFE FBP40621) alumni networks.</li></ul>
+      </details>
+      
+      <details open>
+        <summary>This week (1)</summary>
+        <ul>
+          
+          <li><label><input type="checkbox" data-task-id="w01-t00"> W1 · (no plan tasks tagged this week — see Day-90 review for Phase 2 priorities)</label></li>
+          
+        </ul>
+      </details>
+      
+      <div class="source">Source: <code>docs/research/manuva-gtm/results/14_functional_ferment_brands.json</code></div>
+    </article>
+    
+  </div>
+</section>
+
+<section id="plan">
+  <h2>90-Day Plan</h2>
+  <p class="note">Gantt by workstream · Weeks 1–12</p>
+  <div class="gantt-wrap">
+    <svg class="gantt" id="gantt-svg" viewBox="0 0 1100 330" preserveAspectRatio="xMinYMid meet"></svg>
+  </div>
+  <div class="week-list">
+    
+    <div class="week">
+      <h4>Week 1 · Phase A</h4>
+      <ul>
+        
+        <li><label><input type="checkbox" data-task-id="w01-t01"> **Publish Charter Partner Program landing page** at `manuva.app/charter`. Use Common Paper Design Partner Agreement template (commonpaper...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w01-t02"> **Write and send 30 personalised Charter invites** in this exact split:</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w01-t03"> **Draft Xero OAuth integration spec.** Decide scope: COGS journal + inventory valuation push from Manuva → Xero (do NOT attempt bank-rec ...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w01-t04"> **Email Jennifer Rudd (Skincare Business Foundations, Brisbane)** with a partnership pitch: co-promotion to her Label Launchpad / Beauty ...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w01-t05"> **Set up weekly metrics dashboard** (Notion or Plausible + a Google Sheet): Charter applications, demos booked, pilots started, MRR, foun...</label></li>
+        
+      </ul>
+    </div>
+    
+    <div class="week">
+      <h4>Week 2 · Phase A</h4>
+      <ul>
+        
+        <li><label><input type="checkbox" data-task-id="w02-t01"> **Run 8–12 Charter discovery calls** from Week-1 outreach. Target conversion: 30 invites → 12 calls → 5 signed Charter Partners by Week 4...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w02-t02"> **Ship Xero OAuth + connection screen** (Manuva side). No data sync yet — connection establishment only. **Deliverable: PR merged, stagin...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w02-t03"> **Post in "Australian candle makers" FB group**: a value-first post on "How to track wax + fragrance lots when retailers ask for COA — a ...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w02-t04"> **Reach out to 5 Xero specialist advisors** found via Xero Advisor Directory (filter: AU + "inventory" or "manufacturing" or "ecommerce" ...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w02-t05"> **Write pillar post draft #1**: "Outgrowing Craftybase: a guide for AU candle and soap makers." Target keywords: 'Craftybase alternative'...</label></li>
+        
+      </ul>
+    </div>
+    
+    <div class="week">
+      <h4>Week 3 · Phase A</h4>
+      <ul>
+        
+        <li><label><input type="checkbox" data-task-id="w03-t01"> **Sign 3 Charter Partners** (target: 2 cosmetics, 1 candle/soap). Send Common Paper agreement, kickoff Notion doc with success criteria, ...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w03-t02"> **Ship Xero COGS journal sync (one-way, Manuva → Xero).** Test against a sandbox Xero org. **Deliverable: working sync in staging.**</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w03-t03"> **Publish pillar post #1** ("Outgrowing Craftybase") on `manuva.app/blog`. Submit to r/soapmaking, r/candlemaking, r/Etsy (one comment in...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w03-t04"> **Build Craftybase CSV import wizard v1** — material catalog + supplier list + product list mappers. (BOMs in v2.) **Deliverable: backend...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w03-t05"> **Confirm Jennifer Rudd partnership terms** (follow-up from Week 1). If declined or unresponsive, pivot to Beauty Industry Group AU Linke...</label></li>
+        
+      </ul>
+    </div>
+    
+    <div class="week">
+      <h4>Week 4 · Phase A</h4>
+      <ul>
+        
+        <li><label><input type="checkbox" data-task-id="w04-t01"> **Sign Charter Partners 4 and 5.** Target mix: 1 candle/soap + 1 Craftybase or Katana defector (cross-vertical). **Deliverable: 5/5 Chart...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w04-t02"> **Ship Xero integration to production** behind a feature flag; turn on for Charter Partners only. **Deliverable: prod release; one Charte...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w04-t03"> **Build Katana CSV import wizard v1** (products + BOMs + suppliers from Katana's standard export). **Deliverable: import works end-to-end...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w04-t04"> **Publish pillar post #2**: "Katana real-cost calculator: Core + traceability + manufacturing + warehouse add-ons vs Manuva flat." Embed ...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w04-t05"> **Schedule 5 introductory Zoom calls with Xero specialist advisors** from Week 2 outreach. **Deliverable: 5 calls on the calendar for Wee...</label></li>
+        
+      </ul>
+    </div>
+    
+    <div class="week">
+      <h4>Week 5 · Phase B</h4>
+      <ul>
+        
+        <li><label><input type="checkbox" data-task-id="w05-t01"> **Run first bi-weekly cadence calls with all 5 Charter Partners.** Capture top 3 product asks per partner; consolidate. **Deliverable: fe...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w05-t02"> **Run 5 Xero advisor intro calls** (from Week 4 scheduling). Pitch: 20% rev-share for 24 months on referred clients + free Manuva Pro for...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w05-t03"> **Ship Craftybase CSV import wizard v2** — adds BOMs + recipes. Onboard 1 Charter Partner via the wizard as a dogfood test. **Deliverable...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w05-t04"> **Publish pillar post #3**: "Recall-readiness in 7 days: how Shopify candle, soap, and cosmetic makers can pass an ACCC recall drill." An...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w05-t05"> **Launch the paid-pilot offer page** at `manuva.app/pilot`. Offer: AU$249/mo × 3 months, 100% credit on annual conversion, 4hr founder on...</label></li>
+        
+      </ul>
+    </div>
+    
+    <div class="week">
+      <h4>Week 6 · Phase B</h4>
+      <ul>
+        
+        <li><label><input type="checkbox" data-task-id="w06-t01"> **Start 30 cold DMs/week cadence to AU candle makers** (Instagram preferred, second touch on LinkedIn) using a 3-message sequence: (1) re...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w06-t02"> **Continue Xero advisor outreach** — send 10 new DMs to specialist Xero ecommerce/manufacturing bookkeepers. Sources: Xero Advisor Direct...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w06-t03"> **First Manuva-on-Xero case study draft** — interview Charter Partner #1 (the one onboarded in Week 5). 400-word version + LinkedIn carou...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w06-t04"> **Publish pillar post #4**: "Recall-readiness, part 2 — what your Shopify order data needs to look like when a retailer asks for tracebac...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w06-t05"> **Submit Manuva to Shopify App Store** (Manufacturing & Inventory category). Charter Partners satisfy the "needs real installs" requireme...</label></li>
+        
+      </ul>
+    </div>
+    
+    <div class="week">
+      <h4>Week 7 · Phase B</h4>
+      <ul>
+        
+        <li><label><input type="checkbox" data-task-id="w07-t01"> **Run paid-pilot demos for inbound leads** from Week 5–6 content. Target: 4 demos this week. Conversion goal: 2 paid pilots started. **De...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w07-t02"> **Ship the cost-comparison calculator (v2)** covering Manuva vs Katana real-cost (already live from Week 4), **plus** Unleashed AUD-equiv...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w07-t03"> **Hold a 30-min webinar** ("Outgrowing Craftybase or Katana? A 30-min migration walkthrough") promoted in the two AU candle/soap FB group...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w07-t04"> **Begin Xero App Store listing application** (Xero requires 3 active integration customers — Charter Partners #1, #2, #3 satisfy this). *...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w07-t05"> **Run third Charter cadence call** for each partner. Surface one cross-partner blocker per call. **Deliverable: blockers logged + 1 shipped.**</label></li>
+        
+      </ul>
+    </div>
+    
+    <div class="week">
+      <h4>Week 8 · Phase B</h4>
+      <ul>
+        
+        <li><label><input type="checkbox" data-task-id="w08-t01"> **Convert 1 paid pilot** (the strongest of Week 6–7 starts) to annual contract. **Deliverable: AU$2,988 annual invoice paid; first non-Ch...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w08-t02"> **Launch on Product Hunt + Indie Hackers + r/shopify (where rules permit, comment-first not self-post).** Use the Charter case study + co...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w08-t03"> **Publish Charter Partner case study #1** as a long-form blog + LinkedIn post + Loom video. **Deliverable: all 3 assets live.**</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w08-t04"> **Sign first Xero advisor partner agreement** (20% rev-share, 24-month cap, free Pro practitioner account, named in Manuva's Xero App Sto...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w08-t05"> **Mid-quarter metrics review (founder solo).** Numbers required: Charter signed (target 5), demos completed (target 30+ cumulative), pilo...</label></li>
+        
+      </ul>
+    </div>
+    
+    <div class="week">
+      <h4>Week 9 · Phase C</h4>
+      <ul>
+        
+        <li><label><input type="checkbox" data-task-id="w09-t01"> **Push paid-pilot pipeline to 6 active demos this week.** Source split: 50% inbound (Compare page + content), 30% cold candle/soap DMs, 2...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w09-t02"> **Outreach to 10 more Xero advisors.** Now lead with the Charter case study + working Xero integration screenshots. **Deliverable: 10 DMs...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w09-t03"> **Publish pillar post #5**: "Unleashed alternative for AU manufacturers: NZD billing, FX, and a flat-AUD comparison." Embed the calculato...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w09-t04"> **Approach 3 accountant referral partners with their first real client referral conversation.** From the 1 advisor signed in Week 8 + 2 m...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w09-t05"> **Apply for a speaker slot at the Australian Soaping and Candle Conference** (annual, ~200–400 attendees, sponsor slots AU$500–3K). Defer...</label></li>
+        
+      </ul>
+    </div>
+    
+    <div class="week">
+      <h4>Week 10 · Phase C</h4>
+      <ul>
+        
+        <li><label><input type="checkbox" data-task-id="w10-t01"> **Run 5 demo+pilot calls** sourced from the accountant pipeline (3) + inbound (2). **Deliverable: ≥2 pilots started.**</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w10-t02"> **Sign 2 more Xero advisors** to the partner agreement. Target 5 cumulative by Week 12. **Deliverable: 2 more agreements signed.**</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w10-t03"> **Publish Charter Partner case study #2.** Same playbook as Week 8 — long-form + LinkedIn + Loom. **Deliverable: all 3 assets live.**</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w10-t04"> **Build a "Switch Pack" service page** at `manuva.app/switch` covering Craftybase + Katana + Cin7 + Unleashed import services. AU$199 one...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w10-t05"> **Run the fourth Charter cadence call** for each partner. By now expect at least one Charter Partner to verbally commit to converting at ...</label></li>
+        
+      </ul>
+    </div>
+    
+    <div class="week">
+      <h4>Week 11 · Phase C</h4>
+      <ul>
+        
+        <li><label><input type="checkbox" data-task-id="w11-t01"> **Convert pilot #2 to annual.** Target: by end of week, 2 cumulative non-Charter paying customers + 2 paid pilots in flight + 5 Charter P...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w11-t02"> **Run 4 demos** — bias toward Xero-advisor-referred (highest LTV, lowest churn). **Deliverable: 4 demos; ≥1 paid pilot started.**</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w11-t03"> **Publish pillar post #6**: "Lot-and-recall content hub index page" linking all four recall-readiness posts published in Weeks 5–9. Add a...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w11-t04"> **Reach out to 3 ecommerce-3PLs in AU** (eStore Logistics, James and James AU, ShipBob AU) for a basic co-referral conversation. Goal: 1 ...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w11-t05"> **Submit a Xerocon AU side-event speaker pitch** for the September event ("MRP for ecommerce: where Xero stops and a manufacturing layer ...</label></li>
+        
+      </ul>
+    </div>
+    
+    <div class="week">
+      <h4>Week 12 · Phase C</h4>
+      <ul>
+        
+        <li><label><input type="checkbox" data-task-id="w12-t01"> **Run the Day-90 review (see section 6).** Day allocated: full day Friday Aug 1, no meetings. **Deliverable: written 2-page Day-90 memo w...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w12-t02"> **Push final pilot conversions of the quarter.** Target conversion ratio: ≥40% of paid pilots started in Weeks 5–8 converted by end of We...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w12-t03"> **Publish Charter Partner case study #3.** **Deliverable: all 3 assets live.**</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w12-t04"> **Send a "Quarter-in-review" email to the full list + LinkedIn post** with the 3 case studies, the calculator stats, and the Xero integra...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w12-t05"> **Lock the Phase-2 (months 4–6) priorities in writing** based on the Day-90 review. Decision points listed in section 6. **Deliverable: Q...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w12-t01"> **Charter Partner conversion** — Are ≥3 of 5 Charter Partners on track to convert at month 7 at AU$125 Growth-equivalent? If yes, proceed...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w12-t02"> **Paid-pilot conversion rate** — Is the rolling conversion rate ≥40%? If yes, double the outbound cadence to 60 DMs/week. If 30–40%, hold...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w12-t03"> **Xero advisor channel** — Are ≥5 advisors signed and ≥3 of them sourcing real client conversations? If yes, push Xerocon AU side-event p...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w12-t04"> **Content + SEO compounding** — Is the recall-readiness hub producing ≥300 monthly organic visits and ≥20 email captures/month? If yes, c...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w12-t05"> **MYOB integration** — Ship in Phase 2 (target Weeks 13–18). Confirm scope: AccountRight desktop vs MYOB Business cloud. Default to Busin...</label></li>
+        
+        <li><label><input type="checkbox" data-task-id="w12-t06"> **Lot tracking workflow hardening** — If both candle/soap Charter Partners are using lot tracking in real production by Day 90, consider ...</label></li>
+        
+      </ul>
+    </div>
+    
+  </div>
+  <h3 style="margin-top:24px">Day-90 review</h3>
+  <ul>
+    
+    <li><label><input type="checkbox" data-task-id="d90-1"> 1. **Charter Partner conversion** — Are ≥3 of 5 Charter Partners on track to convert at month 7 at AU$125 Growth-equivalent? If yes, proceed; if no, run individual save-or-graduate calls in Week 13–14.</label></li>
+    
+    <li><label><input type="checkbox" data-task-id="d90-2"> 2. **Paid-pilot conversion rate** — Is the rolling conversion rate ≥40%? If yes, double the outbound cadence to 60 DMs/week. If 30–40%, hold cadence; tighten ICP qualification. If <30%, pause outbound and rework the demo script.</label></li>
+    
+    <li><label><input type="checkbox" data-task-id="d90-3"> 3. **Xero advisor channel** — Are ≥5 advisors signed and ≥3 of them sourcing real client conversations? If yes, push Xerocon AU side-event presence in September (budget up to AU$3K for a side-event sponsorship if a speaker slot accepted). If <5 advisors, lower the activation bar — try Bookkeepers Hub AU FB group office hours.</label></li>
+    
+    <li><label><input type="checkbox" data-task-id="d90-4"> 4. **Content + SEO compounding** — Is the recall-readiness hub producing ≥300 monthly organic visits and ≥20 email captures/month? If yes, commit to 2 more pillar posts in Q3 ("AICIS for indie brands", "FSANZ-lite for makers"). If no, pause new content; double down on calculator distribution instead.</label></li>
+    
+    <li><label><input type="checkbox" data-task-id="d90-5"> 5. **MYOB integration** — Ship in Phase 2 (target Weeks 13–18). Confirm scope: AccountRight desktop vs MYOB Business cloud. Default to Business cloud only; AccountRight is desktop-legacy and a tar pit per research item 28.</label></li>
+    
+    <li><label><input type="checkbox" data-task-id="d90-6"> 6. **Lot tracking workflow hardening** — If both candle/soap Charter Partners are using lot tracking in real production by Day 90, consider opening the supplements waitlist to a quiet 1-on-1 Charter conversation (NOT public reopen).</label></li>
+    
+  </ul>
+</section>
+
+<section id="charter">
+  <h2>Charter Program</h2>
+  <p class="note">5 slots · 6mo free Pro then 50% off for 24mo. State persists in localStorage.</p>
+  <div class="charter-grid">
+    
+    <div class="charter-tile" data-slot="1">
+      <h4>Slot 1 · Cosmetics</h4>
+      <select data-field="status">
+        
+        <option value="Open" selected>Open</option>
+        
+        <option value="Outreach">Outreach</option>
+        
+        <option value="In-talks">In-talks</option>
+        
+        <option value="Signed">Signed</option>
+        
+        <option value="Withdrawn">Withdrawn</option>
+        
+      </select>
+      <input data-field="contact" placeholder="Contact name" value="">
+      <input data-field="note" placeholder="Note" value="">
+    </div>
+    
+    <div class="charter-tile" data-slot="2">
+      <h4>Slot 2 · Cosmetics</h4>
+      <select data-field="status">
+        
+        <option value="Open" selected>Open</option>
+        
+        <option value="Outreach">Outreach</option>
+        
+        <option value="In-talks">In-talks</option>
+        
+        <option value="Signed">Signed</option>
+        
+        <option value="Withdrawn">Withdrawn</option>
+        
+      </select>
+      <input data-field="contact" placeholder="Contact name" value="">
+      <input data-field="note" placeholder="Note" value="">
+    </div>
+    
+    <div class="charter-tile" data-slot="3">
+      <h4>Slot 3 · Candle/Soap</h4>
+      <select data-field="status">
+        
+        <option value="Open" selected>Open</option>
+        
+        <option value="Outreach">Outreach</option>
+        
+        <option value="In-talks">In-talks</option>
+        
+        <option value="Signed">Signed</option>
+        
+        <option value="Withdrawn">Withdrawn</option>
+        
+      </select>
+      <input data-field="contact" placeholder="Contact name" value="">
+      <input data-field="note" placeholder="Note" value="">
+    </div>
+    
+    <div class="charter-tile" data-slot="4">
+      <h4>Slot 4 · Candle/Soap</h4>
+      <select data-field="status">
+        
+        <option value="Open" selected>Open</option>
+        
+        <option value="Outreach">Outreach</option>
+        
+        <option value="In-talks">In-talks</option>
+        
+        <option value="Signed">Signed</option>
+        
+        <option value="Withdrawn">Withdrawn</option>
+        
+      </select>
+      <input data-field="contact" placeholder="Contact name" value="">
+      <input data-field="note" placeholder="Note" value="">
+    </div>
+    
+    <div class="charter-tile" data-slot="5">
+      <h4>Slot 5 · Coffee/Defector</h4>
+      <select data-field="status">
+        
+        <option value="Open" selected>Open</option>
+        
+        <option value="Outreach">Outreach</option>
+        
+        <option value="In-talks">In-talks</option>
+        
+        <option value="Signed">Signed</option>
+        
+        <option value="Withdrawn">Withdrawn</option>
+        
+      </select>
+      <input data-field="contact" placeholder="Contact name" value="">
+      <input data-field="note" placeholder="Note" value="">
+    </div>
+    
+  </div>
+</section>
+
+<section id="integrations">
+  <h2>Integrations Roadmap</h2>
+  <p class="note">10 targets across 4 waves. Data flows show what syncs in each direction. Matrix is collapsible.</p>
+
+  <div class="wave-tracker">
+    <div class="wave wave-shipped">
+      <div class="wave-label">Wave 0 · Shipped</div>
+      <div class="wave-items">Shopify</div>
+    </div>
+    <div class="wave wave-progress">
+      <div class="wave-label">Wave 1 · In Progress</div>
+      <div class="wave-items">Xero</div>
+    </div>
+    <div class="wave">
+      <div class="wave-label">Wave 2 · Planned</div>
+      <div class="wave-items">WooCommerce · Amazon AU · QuickBooks Online</div>
+    </div>
+    <div class="wave">
+      <div class="wave-label">Wave 3 · Planned</div>
+      <div class="wave-items">MyOB · Etsy · eBay AU · Starshipit</div>
+    </div>
+  </div>
+
+  <div class="integrations-grid">
+    
+    <div class="integ-card">
+      <div class="integ-header">
+        <span class="integ-name">Shopify</span>
+        <span class="wave-badge">Wave 0</span>
+        <span class="status-pill shipped">shipped</span>
+      </div>
+      <ul class="data-flows">
+        <li>Orders in (webhook, real-time)</li><li>Stock push (finished goods)</li><li>Fulfilment writeback + tracking</li><li>Returns: not yet synced</li>
+      </ul>
+      <div class="gotcha">⚠ Shopify returns are NOT synced — must be handled manually.</div>
+    </div>
+    
+    <div class="integ-card">
+      <div class="integ-header">
+        <span class="integ-name">Xero</span>
+        <span class="wave-badge">Wave 1</span>
+        <span class="status-pill in_progress">in progress</span>
+      </div>
+      <ul class="data-flows">
+        <li>Sales invoices (AR)</li><li>Purchase bills (AP)</li><li>Per-production-order COGS journal</li><li>WIP roll-forward journal</li><li>Variance lines (PPV, MUV, scrap)</li>
+      </ul>
+      <div class="gotcha">⚠ Tracking categories hard-capped at 2 active; granular OAuth scopes mandatory from March 2026.</div>
+    </div>
+    
+    <div class="integ-card">
+      <div class="integ-header">
+        <span class="integ-name">WooCommerce</span>
+        <span class="wave-badge">Wave 2</span>
+        <span class="status-pill planned">planned</span>
+      </div>
+      <ul class="data-flows">
+        <li>Orders in (webhook)</li><li>Stock push</li><li>Fulfilment writeback</li>
+      </ul>
+      <div class="gotcha">⚠ Auth is per-store key pair (not OAuth); FastCGI hosts may strip Authorization header.</div>
+    </div>
+    
+    <div class="integ-card">
+      <div class="integ-header">
+        <span class="integ-name">Amazon AU</span>
+        <span class="wave-badge">Wave 2</span>
+        <span class="status-pill planned">planned</span>
+      </div>
+      <ul class="data-flows">
+        <li>Orders in (polling + ORDER_CHANGE notifications)</li><li>FBA inventory reconciliation</li><li>FBM fulfilment writeback</li>
+      </ul>
+      <div class="gotcha">⚠ Amazon AU is a separate seller account from US/EU; marketplace ID A39IBJ37TRP1C6 (Far East cluster).</div>
+    </div>
+    
+    <div class="integ-card">
+      <div class="integ-header">
+        <span class="integ-name">QuickBooks Online</span>
+        <span class="wave-badge">Wave 2</span>
+        <span class="status-pill planned">planned</span>
+      </div>
+      <ul class="data-flows">
+        <li>Sales invoices (AR)</li><li>Purchase bills (AP)</li><li>COGS journal (Xero parity)</li>
+      </ul>
+      <div class="gotcha">⚠ Negligible AU market share — priority secondary to Xero; relevant for US expansion.</div>
+    </div>
+    
+    <div class="integ-card">
+      <div class="integ-header">
+        <span class="integ-name">MyOB AccountRight</span>
+        <span class="wave-badge">Wave 3</span>
+        <span class="status-pill planned">planned</span>
+      </div>
+      <ul class="data-flows">
+        <li>Purchase bills (AP)</li><li>Sales invoices (AR)</li><li>COGS journal</li><li>Inventory Adjustment for build events</li>
+      </ul>
+      <div class="gotcha">⚠ Requires x-myobapi-cftoken header alongside OAuth; no hosted sandbox with seeded data.</div>
+    </div>
+    
+    <div class="integ-card">
+      <div class="integ-header">
+        <span class="integ-name">Etsy</span>
+        <span class="wave-badge">Wave 3</span>
+        <span class="status-pill planned">planned</span>
+      </div>
+      <ul class="data-flows">
+        <li>Orders in (polling — no webhooks available)</li><li>Stock push</li><li>Listing sync</li>
+      </ul>
+      <div class="gotcha">⚠ Rate limit: 10k QPD shared across ALL shops — scaling risk at multi-tenant volumes.</div>
+    </div>
+    
+    <div class="integ-card">
+      <div class="integ-header">
+        <span class="integ-name">eBay AU</span>
+        <span class="wave-badge">Wave 3</span>
+        <span class="status-pill planned">planned</span>
+      </div>
+      <ul class="data-flows">
+        <li>Orders in</li><li>Stock push</li><li>Fulfilment writeback with tracking number</li>
+      </ul>
+      <div class="gotcha">⚠ Must set marketplaceId: EBAY_AU on every offer — wrong value lists on .com not .com.au.</div>
+    </div>
+    
+    <div class="integ-card">
+      <div class="integ-header">
+        <span class="integ-name">Starshipit</span>
+        <span class="wave-badge">Wave 3</span>
+        <span class="status-pill planned">planned</span>
+      </div>
+      <ul class="data-flows">
+        <li>Outbound order handoff (ready-to-ship orders)</li><li>Tracking number writeback to source channel</li>
+      </ul>
+      <div class="gotcha">⚠ AU-native carrier roster (AusPost, StarTrack, Aramex, Sendle); follow existing Katana/Cin7 connector pattern.</div>
+    </div>
+    
+    <div class="integ-card">
+      <div class="integ-header">
+        <span class="integ-name">A2X</span>
+        
+        <span class="status-pill partner">partner</span>
+      </div>
+      <ul class="data-flows">
+        <li>Payout reconciliation (revenue side)</li><li>Channel fees, refunds, GST → Xero/MyOB</li>
+      </ul>
+      <div class="gotcha">⚠ Not built by Manuva — partner recommendation. A2X handles revenue journals; Manuva handles COGS. Accounts don't overlap.</div>
+    </div>
+    
+  </div>
+
+  <details class="matrix-details">
+    <summary>Competitor × Integration matrix</summary>
+    <table class="matrix-table">
+      <thead>
+        <tr>
+          <th>Integration</th>
+          <th>Katana</th><th>Cin7 Core</th><th>MRPeasy</th><th>Craftybase</th><th>inFlow</th><th>Manuva</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+          <td>Shopify</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-shipped">Shipped</td>
+          
+        </tr>
+        
+        <tr>
+          <td>Xero</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-none">None</td>
+          
+          
+          <td class="cell-none">None</td>
+          
+          
+          <td class="cell-wave-1">Wave 1</td>
+          
+        </tr>
+        
+        <tr>
+          <td>WooCommerce</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-wave-2">Wave 2</td>
+          
+        </tr>
+        
+        <tr>
+          <td>Amazon AU</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-wave-2">Wave 2</td>
+          
+        </tr>
+        
+        <tr>
+          <td>QuickBooks Online</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-none">None</td>
+          
+          
+          <td class="cell-wave-2">Wave 2</td>
+          
+        </tr>
+        
+        <tr>
+          <td>MyOB AccountRight</td>
+          
+          
+          <td class="cell-none">None</td>
+          
+          
+          <td class="cell-none">None</td>
+          
+          
+          <td class="cell-none">None</td>
+          
+          
+          <td class="cell-none">None</td>
+          
+          
+          <td class="cell-none">None</td>
+          
+          
+          <td class="cell-wave-3">Wave 3</td>
+          
+        </tr>
+        
+        <tr>
+          <td>Etsy</td>
+          
+          
+          <td class="cell-via-extensiv">Via Extensiv</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-zapier-only">Zapier only</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-none">None</td>
+          
+          
+          <td class="cell-wave-3">Wave 3</td>
+          
+        </tr>
+        
+        <tr>
+          <td>eBay AU</td>
+          
+          
+          <td class="cell-via-extensiv">Via Extensiv</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-zapier-only">Zapier only</td>
+          
+          
+          <td class="cell-none">None</td>
+          
+          
+          <td class="cell-none">None</td>
+          
+          
+          <td class="cell-wave-3">Wave 3</td>
+          
+        </tr>
+        
+        <tr>
+          <td>Starshipit</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-native">Native</td>
+          
+          
+          <td class="cell-none">None</td>
+          
+          
+          <td class="cell-none">None</td>
+          
+          
+          <td class="cell-none">None</td>
+          
+          
+          <td class="cell-wave-3">Wave 3</td>
+          
+        </tr>
+        
+        <tr>
+          <td>A2X</td>
+          
+          
+          <td class="cell-none">None</td>
+          
+          
+          <td class="cell-none">None</td>
+          
+          
+          <td class="cell-none">None</td>
+          
+          
+          <td class="cell-none">None</td>
+          
+          
+          <td class="cell-none">None</td>
+          
+          
+          <td class="cell-partner">Partner</td>
+          
+        </tr>
+        
+      </tbody>
+    </table>
+  </details>
+</section>
+
+<section id="gaps">
+  <h2>Competitor Feature Gaps</h2>
+  <p class="note">13 gaps ranked by sales impact. Click Status to cycle: backlog → planned → in progress → done.</p>
+
+  <div class="gap-summary">
+    <span class="sev-pill">🔴 2 Critical</span>
+    <span class="sev-pill">🟡 3 High</span>
+    <span class="sev-pill">🟠 5 Medium</span>
+    <span class="sev-pill">🟢 3 Low</span>
+    <span class="gap-progress" id="gap-progress-count"></span>
+  </div>
+
+  <table class="gaps-table">
+    <thead>
+      <tr><th>Gap</th><th>Severity</th><th>Competitors with it</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      
+      <tr>
+        <td>Accounting integration (Xero / QuickBooks)</td>
+        <td><span class="sev-badge critical">critical</span></td>
+        <td>6/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="0"
+                  data-default="in_progress"
+                  data-status="in_progress">
+            in progress
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Lot / batch / serial tracking</td>
+        <td><span class="sev-badge critical">critical</span></td>
+        <td>5/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="1"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Multi-channel ecommerce (WooCommerce, Amazon)</td>
+        <td><span class="sev-badge high">high</span></td>
+        <td>6/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="2"
+                  data-default="planned"
+                  data-status="planned">
+            planned
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Reorder points / auto-PO</td>
+        <td><span class="sev-badge high">high</span></td>
+        <td>5/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="3"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Export PDF / CSV on Growth tier</td>
+        <td><span class="sev-badge high">high</span></td>
+        <td>7/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="4"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Multi-currency</td>
+        <td><span class="sev-badge medium">medium</span></td>
+        <td>4/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="5"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Visual production scheduler</td>
+        <td><span class="sev-badge medium">medium</span></td>
+        <td>3/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="6"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Barcode scanning</td>
+        <td><span class="sev-badge medium">medium</span></td>
+        <td>4/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="7"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Mobile app</td>
+        <td><span class="sev-badge medium">medium</span></td>
+        <td>4/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="8"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Batch production tracking</td>
+        <td><span class="sev-badge medium">medium</span></td>
+        <td>4/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="9"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>B2B / wholesale portal</td>
+        <td><span class="sev-badge low">low</span></td>
+        <td>2/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="10"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>Subcontracting</td>
+        <td><span class="sev-badge low">low</span></td>
+        <td>1/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="11"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+      <tr>
+        <td>CRM / customer management</td>
+        <td><span class="sev-badge low">low</span></td>
+        <td>1/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="12"
+                  data-default="backlog"
+                  data-status="backlog">
+            backlog
+          </button>
+        </td>
+      </tr>
+      
+    </tbody>
+  </table>
+
+  <div class="advantages-panel">
+    <h3>Where Manuva wins today</h3>
+    <ul>
+      <li>Yield % per BOM line — unique at this price range (Katana has none at any price)</li><li>BOM versioning + templates — exclusive at $249/mo</li><li>Unlimited users flat pricing — Katana hits $807/mo with equivalent add-ons</li><li>Capacity planning + staff costing at Pro — no direct competitor at $499/mo flat</li>
+    </ul>
+  </div>
+</section>
+
+<section id="pipeline">
+  <h2>Client Pipeline</h2>
+  <p class="note">Drag cards between columns. State persists in localStorage. Charter slots above are separate.</p>
+
+  <div class="funnel-summary" id="funnel-summary"></div>
+
+  <div class="kanban" id="kanban-board">
+    
+    <div class="kanban-col" data-col="0">
+      <div class="col-header">Prospect</div>
+      <div class="cards-container" id="col-0"></div>
+      <button class="add-card-btn" data-col="0">+ Add</button>
+    </div>
+    
+    <div class="kanban-col" data-col="1">
+      <div class="col-header">Discovery Call</div>
+      <div class="cards-container" id="col-1"></div>
+      <button class="add-card-btn" data-col="1">+ Add</button>
+    </div>
+    
+    <div class="kanban-col" data-col="2">
+      <div class="col-header">Trial</div>
+      <div class="cards-container" id="col-2"></div>
+      <button class="add-card-btn" data-col="2">+ Add</button>
+    </div>
+    
+    <div class="kanban-col" data-col="3">
+      <div class="col-header">Negotiation</div>
+      <div class="cards-container" id="col-3"></div>
+      <button class="add-card-btn" data-col="3">+ Add</button>
+    </div>
+    
+    <div class="kanban-col" data-col="4">
+      <div class="col-header">Closed Won</div>
+      <div class="cards-container" id="col-4"></div>
+      <button class="add-card-btn" data-col="4">+ Add</button>
+    </div>
+    
+  </div>
+
+  <h3 style="font-size:15px;margin:0 0 8px;color:var(--ink-strong)">Acquisition Channels by Segment</h3>
+  <table class="channels-table">
+    <thead>
+      <tr><th>Segment</th><th>Primary channel</th><th>Secondary channel</th><th>Where to find them</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Cosmetics / Skincare</td><td>Instagram DM (beauty founders)</td><td>Beauty Expo AU</td><td>#indiebeauty, AU beauty founder Facebook groups</td></tr>
+      <tr><td>Candle / Soap makers</td><td>Facebook groups</td><td>Etsy seller communities</td><td>"Candle making AU" FB groups, Faire wholesale</td></tr>
+      <tr><td>Coffee Roasters</td><td>Direct outreach</td><td>Specialty coffee events</td><td>ASCA events, AU specialty roaster directories</td></tr>
+      <tr><td>Small-batch Food / Bev</td><td>Industry associations</td><td>State food expos</td><td>AFCA, Fine Food Australia</td></tr>
+      <tr><td>Apparel / Accessories</td><td>Shopify App Store reviews</td><td>Fashion trade shows</td><td>AGHA Gift Fair, rag trade FB groups</td></tr>
+      <tr><td>Supplements / Nutraceuticals</td><td>LinkedIn (founders)</td><td>TGA compliance forums</td><td>Supplement industry associations</td></tr>
+      <tr><td>Pet Food / Treats</td><td>Facebook groups</td><td>Petbarn supplier pathway</td><td>AU pet industry trade shows</td></tr>
+      <tr><td>Craft Beer / Spirits</td><td>Brewing associations</td><td>BrewCon AU</td><td>IBD AU chapter, independent bottle shops</td></tr>
+      <tr><td>Home Goods / Furniture</td><td>Trade shows</td><td>Interior design communities</td><td>AGHA, Decor + Design Melbourne</td></tr>
+    </tbody>
+  </table>
+</section>
+
+</main>
+
+<div class="controls">
+  <button id="reset-all">Reset all ticks</button>
+  <button id="export-state">Export state to JSON</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script id="payload" type="application/json">{"bar": {"labels": ["04_candle_soap_homefragrance", "01_indie_cosmetics_skincare", "Katana defectors", "Craftybase graduates", "19_unleashed_defectors_anz", "Packaged foods, sauces, condiments", "Pet treats & dry pet food brands", "21_shopify_plus_no_ops_stack", "Functional / gut-health ferment brands"], "data": [11100, 7400, 6100, 5800, 4500, 5200, 4500, 4000, 2800], "colors": ["#0E5BFF", "#0E5BFF", "#0E5BFF", "#0E5BFF", "#0E5BFF", "#5B8DEF", "#5B8DEF", "#5B8DEF", "#5B8DEF"]}, "scatter": [{"x": 5, "y": 185, "r": 20, "label": "", "motion": "Phase 1 (months 0-3): 14-day free trial (no CC) + 5 design partners from FB group + targeted 'Craftybase graduate' campaign aimed at brands hitting the 1,000-order ceiling. Founder-led posts in 'Australian candle makers' + 'Australian Soapmakers' FB groups offering free 6mo + case study to brands at AU$25K+/mo revenue. Pair with one piece of pillar content ('Outgrowing Craftybase: a guide for AU candle/soap makers'). This is the highest-leverage segment for Phase 1 self-serve motion."}, {"x": 7, "y": 210, "r": 16, "label": "", "motion": "Phase 1: Design partner program — 5-8 indie cosmetics/skincare brands, 6 months free + monthly 30-min feedback Loom, in exchange for case study + permission to quote. Recruit via (a) Skincare Business Foundations co-promotion, (b) targeted Instagram DM to AU brands at AU$200K-1M revenue stage, (c) AU indie beauty FB group posts. After design partners convert, shift to 14-day free trial (no CC) + founder-led demo for inbound, with Loom + email nurture. Avoid paid pilot — segment underestimates ops cost and design-partner trust is the higher-value asset."}, {"x": 10, "y": 245, "r": 16, "label": "Katana defectors", "motion": "Founder-led inbound funnel + 14-day CC-required trial PLUS a paid 'Katana Switcher' import-assist service (AU$199 one-time, waived if Growth annual). Inbound powered by 'Katana alternative AU' SEO, side-by-side cost comparison calculator on the Manuva site, and 1-2 deep-dive blog posts ('We migrated 5 Katana customers — here's what we learned'). Re-engage Capterra/G2 negative reviewers with personalised LinkedIn / email."}, {"x": 7, "y": 235, "r": 20, "label": "Craftybase graduates", "motion": "Inbound-led + 14-day CC-required trial + 'Craftybase Switcher Pack' (free migration assist, free first month, half-price months 2-3). Pair with 1-2 in-depth comparison blog posts ('Craftybase Business vs Manuva Growth: real cost over 12 months') and a tier-cliff calculator. Active engagement in r/Etsy / r/soapmaking / r/candlemaking with genuine helpful answers (not spam) builds organic discovery."}, {"x": 15, "y": 320, "r": 16, "label": "", "motion": "Paid pilot ($249/mo Growth tier for 3 months, fully credited to annual conversion) bundled with founder-led migration (data import + first BOM/PO setup). Outbound channel: LinkedIn DM + email to ops managers identified via G2/Capterra reviewer attribution + Apollo enrichment. Inbound channel: SEO-optimised 'Unleashed alternative for AU manufacturers' comparison page, FX cost-savings calculator, and a 'Switching from Unleashed' migration guide. Convert via a 30-min discovery call → paid pilot start within 7 days."}, {"x": 14, "y": 250, "r": 20, "label": "Packaged foods, sauces, condiments", "motion": "Two-track motion. Track A (kitchen/artisanal AU$150K-$500K): 30-day no-card trial + 'Craftybase alternative AU' content + Shopify App Store + Foodstarter community presence. Track B (retail-distributed AU$500K-$3M): founder-led LinkedIn + paid pilot AU$249 x 3 months + Fine Food Australia attendance (walk floor, no booth) + 'FSANZ recall-readiness' cornerstone content. Two case studies in year 1: one artisanal hot-sauce brand, one Coles-supplier mid-market brand."}, {"x": 14, "y": 305, "r": 20, "label": "Pet treats & dry pet food brands", "motion": "Paid pilot AU$249/mo x 3 months credit-on-conversion + founder-led LinkedIn outbound + 'AS5812 lot tracking made easy' content moat. Target Petbarn/Pet Circle suppliers first (forcing function for traceability). After 5 customers, offer Shopify App Store + PIAA newsletter sponsorship as scale channels. Design-partner framing only for first 3 brands with >AU$1M revenue."}, {"x": 10, "y": 430, "r": 16, "label": "", "motion": "Two-track motion. Track A (strategic, 2-3 logos in months 0-6): Design-partner program — 6 months free Pro + roadmap input + co-marketing + case study on launch. Target 2-3 named AU Plus brands via warm intro through Shopify Plus AU agency partners (Convert Digital, eStar, Pixc). Track B (volume, months 3-12): Paid pilot at Pro $499 × 3 months credited, sourced via LinkedIn outbound + agency referrals + Shopify Plus AU partner events. Convert via 45-min discovery → pilot start within 10-14 days. Anchor inbound: 'How [Plus brand] replaced 5 spreadsheets with Manuva' long-form case study."}, {"x": 12, "y": 170, "r": 16, "label": "Functional / gut-health ferment brands", "motion": "Founder-led outbound + 14-day CC-required trial. 2-3 early design partners (free 3 months in exchange for FSANZ recall-drill feedback + logo). Co-marketing with AFMA newsletter and Sustainable Table. Inbound funnel through 'Craftybase alternative for ferments' + 'FSANZ batch traceability' SEO. Faire/Open Food Network adjacency is a partner-channel angle worth testing."}], "gantt": {"Build": [{"week": 1, "text": "**Publish Charter Partner Program landing page** at `manuva.app/charter`. Use Common Paper Design Partner Agreement template (commonpaper.com) as the contract base. Terms: free Pro 6mo + 50% off 24mo + bi-weekly 30-min call + one written case study + one reference call/quarter. 5 slots, named publicly. **Deliverable: live URL + PDF agreement.**", "deliverable": "live URL + PDF agreement"}, {"week": 1, "text": "**Draft Xero OAuth integration spec.** Decide scope: COGS journal + inventory valuation push from Manuva → Xero (do NOT attempt bank-rec or P&L pull in v1). **Deliverable: 1-page spec + Linear epic.**", "deliverable": "1-page spec + Linear epic"}, {"week": 1, "text": "**Set up weekly metrics dashboard** (Notion or Plausible + a Google Sheet): Charter applications, demos booked, pilots started, MRR, founder hours per customer, gross margin per customer. **Deliverable: dashboard live, baseline = 0.**", "deliverable": "dashboard live, baseline = 0"}, {"week": 2, "text": "**Ship Xero OAuth + connection screen** (Manuva side). No data sync yet — connection establishment only. **Deliverable: PR merged, staging demo recordable.**", "deliverable": "PR merged, staging demo recordable"}, {"week": 3, "text": "**Ship Xero COGS journal sync (one-way, Manuva → Xero).** Test against a sandbox Xero org. **Deliverable: working sync in staging.**", "deliverable": "working sync in staging"}, {"week": 3, "text": "**Build Craftybase CSV import wizard v1** — material catalog + supplier list + product list mappers. (BOMs in v2.) **Deliverable: backend importer + UI in staging.**", "deliverable": "backend importer + UI in staging"}, {"week": 3, "text": "**Confirm Jennifer Rudd partnership terms** (follow-up from Week 1). If declined or unresponsive, pivot to Beauty Industry Group AU LinkedIn newsletter sponsorship enquiry (~AU$1–3K range — defer commit to Week 8). **Deliverable: yes/no decision logged.**", "deliverable": "yes/no decision logged"}, {"week": 4, "text": "**Sign Charter Partners 4 and 5.** Target mix: 1 candle/soap + 1 Craftybase or Katana defector (cross-vertical). **Deliverable: 5/5 Charter Partners signed.**", "deliverable": "5/5 Charter Partners signed"}, {"week": 4, "text": "**Ship Xero integration to production** behind a feature flag; turn on for Charter Partners only. **Deliverable: prod release; one Charter Partner connected successfully.**", "deliverable": "prod release; one Charter Partner connected successfully"}, {"week": 4, "text": "**Build Katana CSV import wizard v1** (products + BOMs + suppliers from Katana's standard export). **Deliverable: import works end-to-end with a sample Katana export file in staging.**", "deliverable": "import works end-to-end with a sample Katana export file in staging"}, {"week": 5, "text": "**Ship Craftybase CSV import wizard v2** — adds BOMs + recipes. Onboard 1 Charter Partner via the wizard as a dogfood test. **Deliverable: imported live data for 1 Charter Partner.**", "deliverable": "imported live data for 1 Charter Partner"}, {"week": 5, "text": "**Launch the paid-pilot offer page** at `manuva.app/pilot`. Offer: AU$249/mo × 3 months, 100% credit on annual conversion, 4hr founder onboarding included, written success criteria. Stripe + PandaDoc plumbing for credit-on-conversion. **Deliverable: page + payment + contract automation live.**", "deliverable": "page + payment + contract automation live"}, {"week": 6, "text": "**Start 30 cold DMs/week cadence to AU candle makers** (Instagram preferred, second touch on LinkedIn) using a 3-message sequence: (1) reference their product, (2) \"saw you might be hitting the Craftybase 1,000-order ceiling — built a calculator\", (3) offer 15-min Loom-only audit (no demo). Cap at 30/week for 4 weeks. **Deliverable: 30 messages sent; replies logged.**", "deliverable": "30 messages sent; replies logged"}, {"week": 6, "text": "**Submit Manuva to Shopify App Store** (Manufacturing & Inventory category). Charter Partners satisfy the \"needs real installs\" requirement. **Deliverable: submission acknowledged.**", "deliverable": "submission acknowledged"}, {"week": 7, "text": "**Ship the cost-comparison calculator (v2)** covering Manuva vs Katana real-cost (already live from Week 4), **plus** Unleashed AUD-equivalent (NZ$349–499 + FX + GST) vs Manuva flat, **plus** Craftybase Business+Premium vs Manuva Growth. Embed on `/compare`. **Deliverable: 3-tool calculator live.**", "deliverable": "3-tool calculator live"}, {"week": 7, "text": "**Hold a 30-min webinar** (\"Outgrowing Craftybase or Katana? A 30-min migration walkthrough\") promoted in the two AU candle/soap FB groups and to the email list built from Week 5–6 lead magnets. **Deliverable: ≥15 registrants; recording posted publicly.**", "deliverable": "≥15 registrants; recording posted publicly"}, {"week": 7, "text": "**Begin Xero App Store listing application** (Xero requires 3 active integration customers — Charter Partners #1, #2, #3 satisfy this). **Deliverable: listing submitted.**", "deliverable": "listing submitted"}, {"week": 8, "text": "**Launch on Product Hunt + Indie Hackers + r/shopify (where rules permit, comment-first not self-post).** Use the Charter case study + cost calculator as anchor. **Deliverable: PH launch live; Indie Hackers post live; ≥200 visits to `/compare`.**", "deliverable": "PH launch live; Indie Hackers post live; ≥200 visits to `/compare`"}, {"week": 8, "text": "**Publish Charter Partner case study #1** as a long-form blog + LinkedIn post + Loom video. **Deliverable: all 3 assets live.**", "deliverable": "all 3 assets live"}, {"week": 8, "text": "**Sign first Xero advisor partner agreement** (20% rev-share, 24-month cap, free Pro practitioner account, named in Manuva's Xero App Store listing). **Deliverable: signed agreement + first referral name pencilled in.**", "deliverable": "signed agreement + first referral name pencilled in"}, {"week": 8, "text": "**Mid-quarter metrics review (founder solo).** Numbers required: Charter signed (target 5), demos completed (target 30+ cumulative), pilots started (target 2+), MRR (target ≥AU$700), founder hours/customer this month (target ≤12). **Deliverable: 1-page memo, written, dated.**", "deliverable": "1-page memo, written, dated"}, {"week": 9, "text": "**Approach 3 accountant referral partners with their first real client referral conversation.** From the 1 advisor signed in Week 8 + 2 most-engaged from Week 5–6. **Deliverable: 3 named end-customer conversations on the calendar for Weeks 10–11.**", "deliverable": "3 named end-customer conversations on the calendar for Weeks 10–11"}, {"week": 10, "text": "**Publish Charter Partner case study #2.** Same playbook as Week 8 — long-form + LinkedIn + Loom. **Deliverable: all 3 assets live.**", "deliverable": "all 3 assets live"}, {"week": 10, "text": "**Build a \"Switch Pack\" service page** at `manuva.app/switch` covering Craftybase + Katana + Cin7 + Unleashed import services. AU$199 one-time, waived on annual conversion. **Deliverable: page + Stripe product live.**", "deliverable": "page + Stripe product live"}, {"week": 11, "text": "**Convert pilot #2 to annual.** Target: by end of week, 2 cumulative non-Charter paying customers + 2 paid pilots in flight + 5 Charter Partners in month 3 of pilot. **Deliverable: AU$1,500–2,000 MRR running, 1 more conversion logged.**", "deliverable": "AU$1,500–2,000 MRR running, 1 more conversion logged"}, {"week": 12, "text": "**Push final pilot conversions of the quarter.** Target conversion ratio: ≥40% of paid pilots started in Weeks 5–8 converted by end of Week 12. **Deliverable: at least 2 annual conversions logged.**", "deliverable": "at least 2 annual conversions logged"}, {"week": 12, "text": "**Publish Charter Partner case study #3.** **Deliverable: all 3 assets live.**", "deliverable": "all 3 assets live"}, {"week": 12, "text": "**Lock the Phase-2 (months 4–6) priorities in writing** based on the Day-90 review. Decision points listed in section 6. **Deliverable: Q3 plan committed to repo in `docs/marketing/`.**", "deliverable": "Q3 plan committed to repo in `docs/marketing/`"}, {"week": 12, "text": "**Charter Partner conversion** — Are ≥3 of 5 Charter Partners on track to convert at month 7 at AU$125 Growth-equivalent? If yes, proceed; if no, run individual save-or-graduate calls in Week 13–14.", "deliverable": ""}, {"week": 12, "text": "**Paid-pilot conversion rate** — Is the rolling conversion rate ≥40%? If yes, double the outbound cadence to 60 DMs/week. If 30–40%, hold cadence; tighten ICP qualification. If <30%, pause outbound and rework the demo script.", "deliverable": ""}, {"week": 12, "text": "**Xero advisor channel** — Are ≥5 advisors signed and ≥3 of them sourcing real client conversations? If yes, push Xerocon AU side-event presence in September (budget up to AU$3K for a side-event sponsorship if a speaker slot accepted). If <5 advisors, lower the activation bar — try Bookkeepers Hub AU FB group office hours.", "deliverable": ""}, {"week": 12, "text": "**Content + SEO compounding** — Is the recall-readiness hub producing ≥300 monthly organic visits and ≥20 email captures/month? If yes, commit to 2 more pillar posts in Q3 (\"AICIS for indie brands\", \"FSANZ-lite for makers\"). If no, pause new content; double down on calculator distribution instead.", "deliverable": ""}, {"week": 12, "text": "**MYOB integration** — Ship in Phase 2 (target Weeks 13–18). Confirm scope: AccountRight desktop vs MYOB Business cloud. Default to Business cloud only; AccountRight is desktop-legacy and a tar pit per research item 28.", "deliverable": ""}, {"week": 12, "text": "**Lot tracking workflow hardening** — If both candle/soap Charter Partners are using lot tracking in real production by Day 90, consider opening the supplements waitlist to a quiet 1-on-1 Charter conversation (NOT public reopen).", "deliverable": ""}], "Sell": [{"week": 1, "text": "**Write and send 30 personalised Charter invites** in this exact split:", "deliverable": ""}, {"week": 1, "text": "**Email Jennifer Rudd (Skincare Business Foundations, Brisbane)** with a partnership pitch: co-promotion to her Label Launchpad / Beauty Brand Bootcamp Circle community in exchange for affiliate (AU$50/closed customer first year) + free Manuva Growth for her practice. **Deliverable: email sent; follow-up scheduled D+5.**", "deliverable": "email sent; follow-up scheduled D+5"}, {"week": 2, "text": "**Run 8–12 Charter discovery calls** from Week-1 outreach. Target conversion: 30 invites → 12 calls → 5 signed Charter Partners by Week 4. **Deliverable: 8+ calls completed; notes in CRM.**", "deliverable": "8+ calls completed; notes in CRM"}, {"week": 2, "text": "**Reach out to 5 Xero specialist advisors** found via Xero Advisor Directory (filter: AU + \"inventory\" or \"manufacturing\" or \"ecommerce\" specialism). Named targets to seek: practices known in the ecommerce-bookkeeper niche — search Heather Smith's \"Anise Consulting\" referrals, ICB Australia member directory ecommerce specialists, Bookkeepers Hub Australia FB group active voices. **Deliverable: 5 LinkedIn DMs + emails sent.**", "deliverable": "5 LinkedIn DMs + emails sent"}, {"week": 3, "text": "**Sign 3 Charter Partners** (target: 2 cosmetics, 1 candle/soap). Send Common Paper agreement, kickoff Notion doc with success criteria, schedule first bi-weekly call. **Deliverable: 3 signed agreements; Stripe set to AU$0 with auto-flip to AU$125 at month 7.**", "deliverable": "3 signed agreements; Stripe set to AU$0 with auto-flip to AU$125 at month 7"}, {"week": 4, "text": "**Schedule 5 introductory Zoom calls with Xero specialist advisors** from Week 2 outreach. **Deliverable: 5 calls on the calendar for Weeks 5–6.**", "deliverable": "5 calls on the calendar for Weeks 5–6"}, {"week": 5, "text": "**Run 5 Xero advisor intro calls** (from Week 4 scheduling). Pitch: 20% rev-share for 24 months on referred clients + free Manuva Pro for the practice + quarterly insider Zoom. **Deliverable: 5 calls done; 2–3 advisors agree to a follow-up \"first client review\" call.**", "deliverable": "5 calls done; 2–3 advisors agree to a follow-up \"first client review\" call"}, {"week": 6, "text": "**Continue Xero advisor outreach** — send 10 new DMs to specialist Xero ecommerce/manufacturing bookkeepers. Sources: Xero Advisor Directory + Bookkeepers Hub Australia FB + ICB Australia directory. Named voices to follow and engage with first (comment on their content for 1 week before DM): Heather Smith (Anise Consulting, AU Xero/MYOB voice), Clayton Oates (QA Business — Xero specialist), Diane Lucas (Direct Management). **Deliverable: 10 DMs sent.**", "deliverable": "10 DMs sent"}, {"week": 7, "text": "**Run paid-pilot demos for inbound leads** from Week 5–6 content. Target: 4 demos this week. Conversion goal: 2 paid pilots started. **Deliverable: 4 demos done; ≥1 pilot started.**", "deliverable": "4 demos done; ≥1 pilot started"}, {"week": 8, "text": "**Convert 1 paid pilot** (the strongest of Week 6–7 starts) to annual contract. **Deliverable: AU$2,988 annual invoice paid; first non-Charter paying customer.**", "deliverable": "AU$2,988 annual invoice paid; first non-Charter paying customer"}, {"week": 9, "text": "**Push paid-pilot pipeline to 6 active demos this week.** Source split: 50% inbound (Compare page + content), 30% cold candle/soap DMs, 20% G2/Capterra Katana reviewer outreach. **Deliverable: 6 demos; ≥2 new pilots started.**", "deliverable": "6 demos; ≥2 new pilots started"}, {"week": 9, "text": "**Outreach to 10 more Xero advisors.** Now lead with the Charter case study + working Xero integration screenshots. **Deliverable: 10 DMs; ≥3 intro calls booked for Week 10.**", "deliverable": "10 DMs; ≥3 intro calls booked for Week 10"}, {"week": 9, "text": "**Apply for a speaker slot at the Australian Soaping and Candle Conference** (annual, ~200–400 attendees, sponsor slots AU$500–3K). Defer paid sponsorship; lead with a free practitioner talk pitch (\"How AU candle/soap makers pass a retailer COA audit in 7 days\"). **Deliverable: application submitted.**", "deliverable": "application submitted"}, {"week": 10, "text": "**Run 5 demo+pilot calls** sourced from the accountant pipeline (3) + inbound (2). **Deliverable: ≥2 pilots started.**", "deliverable": "≥2 pilots started"}, {"week": 10, "text": "**Sign 2 more Xero advisors** to the partner agreement. Target 5 cumulative by Week 12. **Deliverable: 2 more agreements signed.**", "deliverable": "2 more agreements signed"}, {"week": 11, "text": "**Run 4 demos** — bias toward Xero-advisor-referred (highest LTV, lowest churn). **Deliverable: 4 demos; ≥1 paid pilot started.**", "deliverable": "4 demos; ≥1 paid pilot started"}, {"week": 11, "text": "**Reach out to 3 ecommerce-3PLs in AU** (eStore Logistics, James and James AU, ShipBob AU) for a basic co-referral conversation. Goal: 1 informal handshake, no formal agreement yet. **Deliverable: 3 emails sent.**", "deliverable": "3 emails sent"}, {"week": 11, "text": "**Submit a Xerocon AU side-event speaker pitch** for the September event (\"MRP for ecommerce: where Xero stops and a manufacturing layer starts\"). **Deliverable: pitch submitted.**", "deliverable": "pitch submitted"}, {"week": 12, "text": "**Send a \"Quarter-in-review\" email to the full list + LinkedIn post** with the 3 case studies, the calculator stats, and the Xero integration shipped. End with a paid-pilot CTA. **Deliverable: email sent; LinkedIn post live.**", "deliverable": "email sent; LinkedIn post live"}], "Support": [{"week": 5, "text": "**Run first bi-weekly cadence calls with all 5 Charter Partners.** Capture top 3 product asks per partner; consolidate. **Deliverable: feedback log; top 5 cross-partner asks prioritised in Linear.**", "deliverable": "feedback log; top 5 cross-partner asks prioritised in Linear"}, {"week": 7, "text": "**Run third Charter cadence call** for each partner. Surface one cross-partner blocker per call. **Deliverable: blockers logged + 1 shipped.**", "deliverable": "blockers logged + 1 shipped"}, {"week": 10, "text": "**Run the fourth Charter cadence call** for each partner. By now expect at least one Charter Partner to verbally commit to converting at month 7 at AU$125 (50% off Pro). Get it in writing in the Notion doc. **Deliverable: written WTP confirmations from ≥3 Charter Partners.**", "deliverable": "written WTP confirmations from ≥3 Charter Partners"}, {"week": 12, "text": "**Run the Day-90 review (see section 6).** Day allocated: full day Friday Aug 1, no meetings. **Deliverable: written 2-page Day-90 memo with go/no-go calls per channel.**", "deliverable": "written 2-page Day-90 memo with go/no-go calls per channel"}], "Content": [{"week": 2, "text": "**Post in \"Australian candle makers\" FB group**: a value-first post on \"How to track wax + fragrance lots when retailers ask for COA — a free template\" (link to a downloadable PDF on the Manuva site, email-gated). DO NOT pitch. **Deliverable: post live; download form live; track signups.**", "deliverable": "post live; download form live; track signups"}, {"week": 2, "text": "**Write pillar post draft #1**: \"Outgrowing Craftybase: a guide for AU candle and soap makers.\" Target keywords: 'Craftybase alternative', 'Craftybase Indie ceiling', 'Craftybase outgrowing'. **Deliverable: 1,800-word draft for review.**", "deliverable": "1,800-word draft for review"}, {"week": 3, "text": "**Publish pillar post #1** (\"Outgrowing Craftybase\") on `manuva.app/blog`. Submit to r/soapmaking, r/candlemaking, r/Etsy (one comment in an existing thread, not a self-post — read mod rules first). **Deliverable: post live; 3 community placements logged.**", "deliverable": "post live; 3 community placements logged"}, {"week": 4, "text": "**Publish pillar post #2**: \"Katana real-cost calculator: Core + traceability + manufacturing + warehouse add-ons vs Manuva flat.\" Embed a working calculator. Target keywords: 'Katana MRP alternative', 'Katana add-on cost', 'Katana 523% price hike'. Use the figures from research item 16 (Brahmin Solutions analysis: US$747–1,095/mo all-in). **Deliverable: post + calculator live.**", "deliverable": "post + calculator live"}, {"week": 5, "text": "**Publish pillar post #3**: \"Recall-readiness in 7 days: how Shopify candle, soap, and cosmetic makers can pass an ACCC recall drill.\" Anchor of the recall-readiness content hub. Include downloadable mock-recall checklist (email-gated). **Deliverable: post + checklist live.**", "deliverable": "post + checklist live"}, {"week": 6, "text": "**First Manuva-on-Xero case study draft** — interview Charter Partner #1 (the one onboarded in Week 5). 400-word version + LinkedIn carousel. **Deliverable: draft case study + 1 carousel.**", "deliverable": "draft case study + 1 carousel"}, {"week": 6, "text": "**Publish pillar post #4**: \"Recall-readiness, part 2 — what your Shopify order data needs to look like when a retailer asks for traceback in 24 hours.\" Include a downloadable lot-trace SQL/CSV template. **Deliverable: post + template live.**", "deliverable": "post + template live"}, {"week": 9, "text": "**Publish pillar post #5**: \"Unleashed alternative for AU manufacturers: NZD billing, FX, and a flat-AUD comparison.\" Embed the calculator. Target keywords: 'Unleashed alternative', 'Unleashed AU cost NZD', 'Unleashed pricing'. **Deliverable: post live.**", "deliverable": "post live"}, {"week": 11, "text": "**Publish pillar post #6**: \"Lot-and-recall content hub index page\" linking all four recall-readiness posts published in Weeks 5–9. Add a self-assessment quiz (\"Are you recall-ready in 7 days?\"). **Deliverable: hub page + quiz live.**", "deliverable": "hub page + quiz live"}]}}</script>
+<script>
+(() => {
+  const payload = JSON.parse(document.getElementById('payload').textContent);
+  const LS_TASKS    = 'manuva:quick-wins:tasks';
+  const LS_CHARTER  = 'manuva:quick-wins:charter';
+  const LS_GAPS     = 'manuva:quick-wins:gaps';
+  const LS_PIPELINE = 'manuva:quick-wins:pipeline';
+
+  // ── Bar chart ────────────────────────────────────────────────────────────
+  const bar = payload.bar;
+  if (bar && document.getElementById('bar-mrr')) {
+    new Chart(document.getElementById('bar-mrr'), {
+      type: 'bar',
+      data: {
+        labels: bar.labels,
+        datasets: [{ data: bar.data, backgroundColor: bar.colors, borderRadius: 4 }],
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { callback: v => 'AU$' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v) } },
+        },
+      },
+    });
+  }
+
+  // ── Scatter / bubble chart ───────────────────────────────────────────────
+  const scatter = payload.scatter;
+  if (scatter && document.getElementById('scatter-arpu')) {
+    new Chart(document.getElementById('scatter-arpu'), {
+      type: 'bubble',
+      data: {
+        datasets: [{
+          data: scatter,
+          backgroundColor: 'rgba(14,91,255,0.35)',
+          borderColor: 'rgba(14,91,255,0.8)',
+          borderWidth: 1,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const p = ctx.raw;
+                return [`${p.label}`, `ARPU AU$${p.y} · TTV ${p.x}d`, p.motion].filter(Boolean);
+              },
+            },
+          },
+        },
+        scales: {
+          x: { title: { display: true, text: 'Time-to-value (days)' } },
+          y: { title: { display: true, text: 'ARPU (AU$/mo)' } },
+        },
+      },
+    });
+  }
+
+  // ── SVG Gantt ────────────────────────────────────────────────────────────
+  const svg = document.getElementById('gantt-svg');
+  if (svg && payload.gantt) {
+    const LANES = ['Build', 'Sell', 'Support', 'Content'];
+    const W = 1100, LH = 68, HEAD = 28, LABEL_W = 80;
+    const CELL = (W - LABEL_W) / 12;
+    const COLORS = { Build: '#0E5BFF', Sell: '#1AA563', Support: '#F0A91E', Content: '#1B2433' };
+
+    // Week header labels + grid lines
+    for (let w = 1; w <= 12; w++) {
+      const x = LABEL_W + (w - 1) * CELL;
+      svg.insertAdjacentHTML('beforeend',
+        `<text x="${x + CELL/2}" y="18" text-anchor="middle" font-size="10" fill="#5A6273">W${w}</text>
+         <line x1="${x}" y1="${HEAD}" x2="${x}" y2="${HEAD + LANES.length * LH}" stroke="#E3E7EE" stroke-width="1"/>`
+      );
+    }
+    // Final grid line
+    svg.insertAdjacentHTML('beforeend',
+      `<line x1="${W}" y1="${HEAD}" x2="${W}" y2="${HEAD + LANES.length * LH}" stroke="#E3E7EE" stroke-width="1"/>`
+    );
+
+    LANES.forEach((lane, i) => {
+      const yBase = HEAD + i * LH;
+      // Lane label
+      svg.insertAdjacentHTML('beforeend',
+        `<text x="4" y="${yBase + LH/2}" dominant-baseline="middle" font-size="10" fill="#5A6273" text-transform="uppercase">${lane}</text>`
+      );
+      // Lane separator
+      if (i > 0) {
+        svg.insertAdjacentHTML('beforeend',
+          `<line x1="0" y1="${yBase}" x2="${W}" y2="${yBase}" stroke="#E3E7EE" stroke-width="1"/>`
+        );
+      }
+      // Task blocks
+      (payload.gantt[lane] || []).forEach(t => {
+        const x = LABEL_W + (t.week - 1) * CELL + 2;
+        const title = `${t.text}\n${t.deliverable}`.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        svg.insertAdjacentHTML('beforeend',
+          `<rect x="${x}" y="${yBase + 10}" width="${CELL - 4}" height="${LH - 20}"
+           rx="3" fill="${COLORS[lane]}" opacity="0.8" class="task-block ${lane}">
+             <title>${title}</title>
+           </rect>`
+        );
+      });
+    });
+  }
+
+  // ── localStorage: task checkboxes ────────────────────────────────────────
+  const taskState = JSON.parse(localStorage.getItem(LS_TASKS) || '{}');
+  document.querySelectorAll('input[type=checkbox][data-task-id]').forEach(cb => {
+    const id = cb.dataset.taskId;
+    if (taskState[id]) cb.checked = true;
+    cb.addEventListener('change', () => {
+      taskState[id] = cb.checked;
+      localStorage.setItem(LS_TASKS, JSON.stringify(taskState));
+    });
+  });
+
+  // ── localStorage: charter tiles ──────────────────────────────────────────
+  const charterState = JSON.parse(localStorage.getItem(LS_CHARTER) || '{}');
+  document.querySelectorAll('.charter-tile').forEach(tile => {
+    const slot = tile.dataset.slot;
+    const saved = charterState[slot] || {};
+    tile.querySelectorAll('[data-field]').forEach(el => {
+      const f = el.dataset.field;
+      if (saved[f] != null) el.value = saved[f];
+      el.addEventListener('change', () => {
+        charterState[slot] = { ...charterState[slot], [f]: el.value };
+        localStorage.setItem(LS_CHARTER, JSON.stringify(charterState));
+      });
+    });
+  });
+
+  // ── Filter strip ─────────────────────────────────────────────────────────
+  const motionSel = document.getElementById('filter-motion');
+  if (motionSel) {
+    const motions = new Set();
+    document.querySelectorAll('.segment[data-motion]').forEach(c => {
+      if (c.dataset.motion) motions.add(c.dataset.motion);
+    });
+    [...motions].sort().forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m; opt.textContent = m;
+      motionSel.appendChild(opt);
+    });
+  }
+
+  function applyFilters() {
+    const m  = document.getElementById('filter-motion').value;
+    const ab = document.getElementById('filter-arpu').value;
+    document.querySelectorAll('.segment').forEach(c => {
+      let show = true;
+      if (m && c.dataset.motion !== m) show = false;
+      if (ab && ab !== '') {
+        const arpu = Number(c.dataset.arpu);
+        if (ab === '400+') { if (arpu < 400) show = false; }
+        else {
+          const [lo, hi] = ab.split('-').map(Number);
+          if (!(arpu >= lo && arpu < hi)) show = false;
+        }
+      }
+      c.style.display = show ? '' : 'none';
+    });
+    const params = new URLSearchParams();
+    if (m)  params.set('motion', m);
+    if (ab) params.set('arpu', ab);
+    history.replaceState(null, '', params.toString() ? '#' + params : location.pathname + location.search);
+  }
+
+  document.getElementById('filter-motion').addEventListener('change', applyFilters);
+  document.getElementById('filter-arpu').addEventListener('change', applyFilters);
+  document.getElementById('clear-filters').addEventListener('click', () => {
+    document.getElementById('filter-motion').value = '';
+    document.getElementById('filter-arpu').value = '';
+    applyFilters();
+  });
+
+  // Restore filters from URL hash on load
+  const initHash = new URLSearchParams(location.hash.replace(/^#/, ''));
+  if (initHash.get('motion')) document.getElementById('filter-motion').value = initHash.get('motion');
+  if (initHash.get('arpu'))   document.getElementById('filter-arpu').value   = initHash.get('arpu');
+  applyFilters();
+
+  // ── Reset + Export ────────────────────────────────────────────────────────
+  document.getElementById('reset-all').addEventListener('click', () => {
+    if (confirm('Reset all ticks, Charter slot status, gap statuses, and pipeline cards?')) {
+      localStorage.removeItem(LS_TASKS);
+      localStorage.removeItem(LS_CHARTER);
+      localStorage.removeItem(LS_GAPS);
+      localStorage.removeItem(LS_PIPELINE);
+      location.reload();
+    }
+  });
+
+  document.getElementById('export-state').addEventListener('click', () => {
+    const data = JSON.stringify({
+      tasks:    JSON.parse(localStorage.getItem(LS_TASKS)    || '{}'),
+      charter:  JSON.parse(localStorage.getItem(LS_CHARTER)  || '{}'),
+      gaps:     JSON.parse(localStorage.getItem(LS_GAPS)     || '{}'),
+      pipeline: JSON.parse(localStorage.getItem(LS_PIPELINE) || '[]'),
+    }, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(blob),
+      download: 'manuva-quick-wins-state.json',
+    });
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+  // ── Gap status cycling (Section 6) ────────────────────────────────────────
+  const GAP_STATUSES = ['backlog', 'planned', 'in_progress', 'done'];
+  const gapState = JSON.parse(localStorage.getItem(LS_GAPS) || '{}');
+
+  function updateGapProgress() {
+    const total = document.querySelectorAll('.status-cycle').length;
+    const done  = document.querySelectorAll('.status-cycle[data-status="done"]').length;
+    const prog  = document.querySelectorAll('.status-cycle[data-status="in_progress"]').length;
+    const el = document.getElementById('gap-progress-count');
+    if (el) el.textContent = `${done} done · ${prog} in progress / ${total} total`;
+  }
+
+  document.querySelectorAll('.status-cycle').forEach(btn => {
+    const idx = btn.dataset.gapIdx;
+    const saved = gapState[idx];
+    if (saved) {
+      btn.dataset.status = saved;
+      btn.textContent = saved.replace('_', ' ');
+    }
+    btn.addEventListener('click', () => {
+      const cur  = GAP_STATUSES.indexOf(btn.dataset.status);
+      const next = GAP_STATUSES[(cur + 1) % GAP_STATUSES.length];
+      btn.dataset.status = next;
+      btn.textContent    = next.replace('_', ' ');
+      gapState[idx] = next;
+      localStorage.setItem(LS_GAPS, JSON.stringify(gapState));
+      updateGapProgress();
+    });
+  });
+  updateGapProgress();
+
+  // ── Pipeline Kanban (Section 7) ────────────────────────────────────────────
+  const PIPELINE_SEGS = ['Cosmetics','Candle/Soap','Coffee Roasters','Food/Bev','Apparel','Supplements','Pet Food','Craft Beer','Home Goods'];
+  const PIPELINE_COL_NAMES = ['Prospect','Discovery Call','Trial','Negotiation','Closed Won'];
+  let pipelineCards = JSON.parse(localStorage.getItem(LS_PIPELINE) || '[]');
+  let dragCardId = null;
+
+  function savePipeline() {
+    localStorage.setItem(LS_PIPELINE, JSON.stringify(pipelineCards));
+  }
+
+  function updateFunnelSummary() {
+    const counts = [0, 0, 0, 0, 0];
+    let mrrTotal = 0;
+    pipelineCards.forEach(c => {
+      if (c.col >= 0 && c.col <= 4) counts[c.col]++;
+      if (c.mrr) mrrTotal += Number(c.mrr) || 0;
+    });
+    const el = document.getElementById('funnel-summary');
+    if (!el) return;
+    el.innerHTML = PIPELINE_COL_NAMES.map((n, i) => `<strong>${counts[i]}</strong> ${n}`).join(' · ') +
+      (mrrTotal > 0 ? ` · <strong>AU$${mrrTotal.toLocaleString()}</strong> pipeline MRR` : '');
+  }
+
+  function renderCard(card) {
+    const container = document.getElementById(`col-${card.col}`);
+    if (!container) return;
+    const div = document.createElement('div');
+    div.className = 'pipeline-card';
+    div.draggable = true;
+    div.dataset.cardId = card.id;
+    const segOptions = PIPELINE_SEGS.map(s => `<option${s === card.seg ? ' selected' : ''}>${s}</option>`).join('');
+    div.innerHTML = `
+      <input class="card-name" type="text" value="${(card.name || '').replace(/"/g, '&quot;')}" placeholder="Company name">
+      <select class="card-seg">${segOptions}</select>
+      <input class="card-mrr" type="number" placeholder="Est. MRR (AU$)" value="${card.mrr || ''}" min="0">
+      <button class="card-delete" title="Remove">×</button>`;
+    div.querySelector('.card-name').addEventListener('change', e => {
+      card.name = e.target.value.trim() || 'New prospect';
+      savePipeline();
+    });
+    div.querySelector('.card-seg').addEventListener('change', e => {
+      card.seg = e.target.value; savePipeline();
+    });
+    div.querySelector('.card-mrr').addEventListener('change', e => {
+      card.mrr = e.target.value; savePipeline(); updateFunnelSummary();
+    });
+    div.querySelector('.card-delete').addEventListener('click', () => {
+      pipelineCards = pipelineCards.filter(c => c.id !== card.id);
+      savePipeline();
+      div.remove();
+      updateFunnelSummary();
+    });
+    div.addEventListener('dragstart', e => {
+      dragCardId = card.id;
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    div.addEventListener('dragend', () => {
+      document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
+    });
+    container.appendChild(div);
+  }
+
+  function renderPipeline() {
+    document.querySelectorAll('.cards-container').forEach(c => { c.innerHTML = ''; });
+    pipelineCards.forEach(card => renderCard(card));
+    updateFunnelSummary();
+  }
+
+  function pipelineAddCard(colIdx) {
+    const card = { id: Date.now(), name: 'New prospect', seg: PIPELINE_SEGS[0], mrr: '', col: colIdx };
+    pipelineCards.push(card);
+    savePipeline();
+    renderCard(card);
+    updateFunnelSummary();
+  }
+
+  // Wire column drop targets and add buttons via addEventListener (not inline handlers,
+  // since inline handlers can't reach functions defined inside this IIFE).
+  document.querySelectorAll('#kanban-board .cards-container').forEach(container => {
+    const colIdx = parseInt(container.closest('.kanban-col').dataset.col);
+    container.addEventListener('dragover', e => {
+      e.preventDefault();
+      container.closest('.kanban-col').classList.add('drag-over');
+    });
+    container.addEventListener('dragleave', () => {
+      container.closest('.kanban-col').classList.remove('drag-over');
+    });
+    container.addEventListener('drop', e => {
+      e.preventDefault();
+      container.closest('.kanban-col').classList.remove('drag-over');
+      if (dragCardId === null) return;
+      const card = pipelineCards.find(c => c.id === dragCardId);
+      if (card) { card.col = colIdx; savePipeline(); renderPipeline(); }
+      dragCardId = null;
+    });
+  });
+
+  document.querySelectorAll('#kanban-board .add-card-btn').forEach(btn => {
+    btn.addEventListener('click', () => pipelineAddCard(parseInt(btn.dataset.col)));
+  });
+
+  renderPipeline();
+
+})();
+</script>
+
+</body>
+</html>

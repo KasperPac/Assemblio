@@ -1,0 +1,18 @@
+{
+  "planPath": "docs/superpowers/plans/2026-05-18-quick-wins-dashboard.md",
+  "tasks": [
+    {"id": 0, "subject": "Task 1: Project scaffolding + first failing test", "status": "completed"},
+    {"id": 1, "subject": "Task 2: Implement loaders — JSON + field extraction", "status": "completed", "blockedBy": [0]},
+    {"id": 2, "subject": "Task 3: 9-segment filter", "status": "completed", "blockedBy": [1]},
+    {"id": 3, "subject": "Task 4: 90-day plan parser", "status": "completed", "blockedBy": [0]},
+    {"id": 4, "subject": "Task 5: Workstream + segment mapping tables", "status": "completed", "blockedBy": [3]},
+    {"id": 5, "subject": "Task 6: KPI math", "status": "completed", "blockedBy": [1]},
+    {"id": 6, "subject": "Task 7: Chart datasets (bar + scatter + gantt)", "status": "completed", "blockedBy": [1]},
+    {"id": 7, "subject": "Task 8: Style loader with fallback tokens", "status": "completed", "blockedBy": [0]},
+    {"id": 8, "subject": "Task 9: Jinja2 template — HTML structure", "status": "completed", "blockedBy": [0]},
+    {"id": 9, "subject": "Task 10: Client-side JS — charts, Gantt, localStorage, filters", "status": "completed", "blockedBy": [8]},
+    {"id": 10, "subject": "Task 11: CLI entry point + integration test", "status": "completed", "blockedBy": [2, 4, 5, 6, 7, 9]},
+    {"id": 11, "subject": "Task 12: Manual acceptance against spec §15", "status": "completed", "blockedBy": [10]}
+  ],
+  "lastUpdated": "2026-05-19T12:00:00+10:00"
+}

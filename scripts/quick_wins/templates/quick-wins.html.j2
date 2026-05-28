@@ -1,0 +1,831 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Manuva Quick Wins · GTM Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    {{ tokens_css | safe }}
+
+    body { max-width: 1100px; margin: 0 auto; padding: 32px 24px 64px; line-height: 1.45; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    header.top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+    header.top h1 { margin: 0; font-size: 28px; color: var(--ink-strong); }
+    nav.anchors a { margin-right: 16px; color: var(--brand-1); text-decoration: none; font-size: 14px; }
+    nav.anchors a:hover { text-decoration: underline; }
+    .meta { color: var(--ink-muted); font-size: 13px; }
+
+    section { margin-top: 48px; }
+    section > h2 { margin-bottom: 8px; font-size: 20px; color: var(--ink-strong); }
+    section > p.note { color: var(--ink-muted); font-size: 13px; margin-top: 0; }
+
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 16px; }
+    .kpi { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 16px; }
+    .kpi .label { color: var(--ink-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .kpi .value { font-size: 24px; font-weight: 600; margin-top: 4px; color: var(--ink-strong); }
+    .kpi .sub { font-size: 12px; color: var(--ink-muted); margin-top: 4px; }
+    .hour-bar { display: flex; height: 6px; margin-top: 6px; border-radius: 3px; overflow: hidden; }
+    .hour-bar span { display: block; }
+
+    .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px; }
+    .chart-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 16px; }
+    .chart-card h3 { margin: 0 0 8px; font-size: 14px; color: var(--ink-strong); }
+    .chart-wrap { position: relative; height: 240px; }
+
+    .filter-strip { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+    .filter-strip label { font-size: 12px; color: var(--ink-muted); display: flex; align-items: center; gap: 6px; }
+    .filter-strip select { font-size: 12px; padding: 4px 6px; border: 1px solid var(--border-subtle); border-radius: 4px; }
+    .filter-strip button { font-size: 12px; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-subtle); background: var(--bg-card); cursor: pointer; }
+
+    .segment-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    .segment { background: var(--bg-card); border: 1px solid var(--border-subtle); border-left: 4px solid var(--priority-1, var(--brand-1)); border-radius: 8px; padding: 16px; }
+    .segment[data-priority="2"] { border-left-color: var(--priority-2, #5B8DEF); }
+    .segment h3 { margin: 0; font-size: 16px; display: flex; justify-content: space-between; align-items: baseline; }
+    .segment .priority-tag { font-size: 12px; color: var(--brand-1); }
+    .segment .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 12px 0; font-size: 13px; }
+    .segment .metric .k { color: var(--ink-muted); font-size: 11px; text-transform: uppercase; }
+    .segment .metric .v { color: var(--ink-strong); font-weight: 500; }
+    .segment .motion { font-size: 13px; padding: 6px 8px; background: var(--brand-1-soft, #E6EEFF); color: var(--brand-2, #1B2433); border-radius: 4px; margin: 8px 0; }
+    .segment details { margin-top: 8px; }
+    .segment details summary { font-size: 13px; cursor: pointer; color: var(--brand-1); }
+    .segment ul { margin: 8px 0 0 0; padding-left: 20px; font-size: 13px; }
+    .segment li label { cursor: pointer; }
+    .segment li input[type=checkbox] { margin-right: 6px; }
+    .segment .source { font-size: 12px; color: var(--ink-muted); margin-top: 8px; }
+
+    .gantt-wrap { overflow-x: auto; margin-top: 16px; }
+    svg.gantt { width: 100%; min-width: 800px; height: 330px; display: block; }
+    .gantt .lane-label { font-size: 11px; fill: var(--ink-muted); text-transform: uppercase; }
+    .gantt .week-line { stroke: var(--border-subtle, #E3E7EE); stroke-width: 1; }
+    .gantt .task-block { rx: 3; ry: 3; opacity: 0.85; cursor: pointer; }
+    .gantt .task-block.Build { fill: var(--brand-1, #0E5BFF); }
+    .gantt .task-block.Sell { fill: var(--success, #1AA563); }
+    .gantt .task-block.Support { fill: var(--warning, #F0A91E); }
+    .gantt .task-block.Content { fill: var(--brand-2, #1B2433); }
+
+    .week-list { columns: 2; column-gap: 32px; margin-top: 24px; }
+    .week-list .week { break-inside: avoid; margin-bottom: 16px; }
+    .week-list .week h4 { margin: 0 0 4px; font-size: 13px; color: var(--ink-strong); }
+    .week-list .week ul { padding-left: 20px; margin: 0; font-size: 12px; }
+
+    .charter-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 16px; }
+    .charter-tile { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; font-size: 13px; }
+    .charter-tile h4 { margin: 0 0 8px; font-size: 13px; }
+    .charter-tile select, .charter-tile input { width: 100%; padding: 4px; font-size: 12px; margin-top: 4px; border: 1px solid var(--border-subtle); border-radius: 3px; box-sizing: border-box; }
+
+    .controls { display: flex; gap: 12px; margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
+    .controls button { font-size: 12px; padding: 6px 10px; border-radius: 4px; border: 1px solid var(--border-subtle); background: var(--bg-card); cursor: pointer; }
+    .controls button:hover { background: var(--bg-canvas, #F5F7FB); }
+
+    /* ── Section 5: Integrations ─────────────────────────────────────────── */
+    .wave-tracker { display: flex; margin: 16px 0 24px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-subtle); }
+    .wave { flex: 1; padding: 10px 14px; background: var(--bg-card); border-right: 1px solid var(--border-subtle); }
+    .wave:last-child { border-right: none; }
+    .wave-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-muted); }
+    .wave-items { font-size: 13px; color: var(--ink-strong); margin-top: 4px; }
+    .wave.wave-shipped { background: var(--bg-canvas, #F5F7FB); }
+    .wave.wave-progress { background: rgba(14,91,255,0.06); }
+
+    .integrations-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .integ-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px; }
+    .integ-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    .integ-name { font-weight: 600; font-size: 14px; color: var(--ink-strong); }
+    .wave-badge { font-size: 10px; padding: 2px 6px; border-radius: 10px; background: var(--border-subtle); color: var(--ink-muted); font-weight: 600; }
+    .status-pill { font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: 600; text-transform: capitalize; }
+    .status-pill.shipped { background: rgba(26,165,99,0.12); color: #1AA563; }
+    .status-pill.in_progress { background: rgba(240,169,30,0.15); color: #C47D00; }
+    .status-pill.planned { background: rgba(14,91,255,0.1); color: var(--brand-1, #0E5BFF); }
+    .status-pill.partner { background: rgba(0,0,0,0.06); color: var(--ink-muted); }
+    .integ-card .data-flows { margin: 0 0 8px; padding-left: 16px; font-size: 12px; color: var(--ink-base, #2C3444); line-height: 1.6; }
+    .integ-card .gotcha { font-size: 11px; color: var(--ink-muted); border-top: 1px solid var(--border-subtle); padding-top: 8px; margin-top: 8px; }
+
+    .matrix-details summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--brand-1, #0E5BFF); padding: 8px 0; user-select: none; }
+    .matrix-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+    .matrix-table th { background: var(--bg-canvas, #F5F7FB); padding: 6px 10px; text-align: left; font-weight: 600; color: var(--ink-muted); border-bottom: 2px solid var(--border-subtle); }
+    .matrix-table td { padding: 6px 10px; border-bottom: 1px solid var(--border-subtle); color: var(--ink-strong); }
+    .matrix-table tr:last-child td { border-bottom: none; }
+    .cell-native, .cell-shipped { color: #1AA563; font-weight: 600; }
+    .cell-wave-1, .cell-wave-2, .cell-wave-3 { color: var(--brand-1, #0E5BFF); }
+    .cell-partner { color: var(--ink-muted); font-style: italic; }
+    .cell-via-extensiv, .cell-zapier-only { color: #C47D00; }
+    .cell-none { color: var(--border-subtle); }
+
+    /* ── Section 6: Competitor Gaps ─────────────────────────────────────── */
+    .gap-summary { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+    .sev-pill { font-size: 13px; font-weight: 600; }
+    .gap-progress { font-size: 12px; color: var(--ink-muted); }
+
+    .gaps-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 24px; }
+    .gaps-table th { background: var(--bg-canvas, #F5F7FB); padding: 8px 12px; text-align: left; font-weight: 600; color: var(--ink-muted); border-bottom: 2px solid var(--border-subtle); }
+    .gaps-table td { padding: 8px 12px; border-bottom: 1px solid var(--border-subtle); color: var(--ink-strong); }
+    .gaps-table tr:last-child td { border-bottom: none; }
+
+    .sev-badge { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 10px; text-transform: capitalize; }
+    .sev-badge.critical { background: rgba(220,38,38,0.1); color: #DC2626; }
+    .sev-badge.high { background: rgba(240,169,30,0.15); color: #C47D00; }
+    .sev-badge.medium { background: rgba(14,91,255,0.1); color: var(--brand-1, #0E5BFF); }
+    .sev-badge.low { background: rgba(0,0,0,0.06); color: var(--ink-muted); }
+
+    .status-cycle { font-size: 11px; padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border-subtle); background: var(--bg-card); cursor: pointer; text-transform: capitalize; }
+    .status-cycle[data-status="done"] { background: rgba(26,165,99,0.12); border-color: #1AA563; color: #1AA563; font-weight: 600; }
+    .status-cycle[data-status="in_progress"] { background: rgba(240,169,30,0.15); border-color: #C47D00; color: #C47D00; }
+    .status-cycle[data-status="planned"] { background: rgba(14,91,255,0.1); border-color: var(--brand-1,#0E5BFF); color: var(--brand-1,#0E5BFF); }
+
+    .advantages-panel { background: var(--bg-card); border: 1px solid var(--border-subtle); border-left: 4px solid var(--brand-1, #0E5BFF); border-radius: 8px; padding: 16px 20px; }
+    .advantages-panel h3 { margin: 0 0 10px; font-size: 14px; color: var(--ink-strong); }
+    .advantages-panel ul { margin: 0; padding-left: 18px; }
+    .advantages-panel li { font-size: 13px; color: var(--ink-base, #2C3444); line-height: 1.7; }
+
+    /* ── Section 7: Client Pipeline ─────────────────────────────────────────── */
+    .funnel-summary { font-size: 13px; color: var(--ink-muted); margin-bottom: 16px; min-height: 20px; }
+    .funnel-summary strong { color: var(--ink-strong); }
+
+    .kanban { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 32px; }
+    .kanban-col { flex: 0 0 190px; background: var(--bg-canvas, #F5F7FB); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 160px; }
+    .kanban-col.drag-over { outline: 2px dashed var(--brand-1, #0E5BFF); }
+    .col-header { font-size: 11px; font-weight: 700; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.06em; padding: 2px; }
+    .cards-container { flex: 1; display: flex; flex-direction: column; gap: 6px; min-height: 40px; }
+    .pipeline-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; font-size: 12px; cursor: grab; position: relative; }
+    .pipeline-card:active { cursor: grabbing; opacity: 0.7; }
+    .pipeline-card .card-name { font-weight: 600; color: var(--ink-strong); margin-bottom: 4px; outline: none; border: none; background: none; width: 100%; font-size: 12px; padding: 0; }
+    .pipeline-card .card-seg { font-size: 11px; color: var(--brand-1, #0E5BFF); margin: 4px 0; display: block; border: 1px solid var(--border-subtle); border-radius: 4px; padding: 2px 4px; background: var(--bg-card); width: 100%; }
+    .pipeline-card .card-mrr { font-size: 11px; color: var(--ink-muted); margin-top: 4px; border: 1px solid var(--border-subtle); border-radius: 4px; padding: 2px 4px; width: 100%; background: var(--bg-card); }
+    .pipeline-card .card-delete { position: absolute; top: 6px; right: 6px; border: none; background: none; cursor: pointer; color: var(--ink-muted); font-size: 14px; line-height: 1; padding: 0 2px; }
+    .pipeline-card .card-delete:hover { color: #DC2626; }
+    .add-card-btn { font-size: 12px; color: var(--ink-muted); background: none; border: 1px dashed var(--border-subtle); border-radius: 6px; padding: 6px; cursor: pointer; text-align: center; width: 100%; }
+    .add-card-btn:hover { background: var(--bg-card); color: var(--brand-1, #0E5BFF); }
+
+    .channels-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+    .channels-table th { background: var(--bg-canvas, #F5F7FB); padding: 8px 12px; text-align: left; font-weight: 600; color: var(--ink-muted); border-bottom: 2px solid var(--border-subtle); }
+    .channels-table td { padding: 8px 12px; border-bottom: 1px solid var(--border-subtle); color: var(--ink-strong); vertical-align: top; }
+    .channels-table tr:last-child td { border-bottom: none; }
+  </style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <h1>Manuva Quick Wins</h1>
+    <div class="meta">Generated {{ generated_at }} · 9 Phase-1 segments · 12-week plan</div>
+  </div>
+  <nav class="anchors">
+    <a href="#overview">Overview</a>
+    <a href="#segments">Segments</a>
+    <a href="#plan">90-Day Plan</a>
+    <a href="#charter">Charter</a>
+    <a href="#integrations">Integrations</a>
+    <a href="#gaps">Gaps</a>
+    <a href="#pipeline">Pipeline</a>
+  </nav>
+</header>
+
+<main>
+
+<section id="overview">
+  <h2>Overview</h2>
+  <div class="kpis">
+    <div class="kpi">
+      <div class="label">12-mo MRR if all hit</div>
+      <div class="value">AU${{ "{:,.0f}".format(kpis.total_mrr_upper_aud) }}</div>
+      <div class="sub">Upper bound across 9 segments</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Blended ARPU</div>
+      <div class="value">AU${{ kpis.blended_arpu_aud }}</div>
+      <div class="sub">MRR-weighted across 9</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Founder hours / wk</div>
+      <div class="value">{{ kpis.founder_hours.total }} hr</div>
+      <div class="hour-bar">
+        <span style="background:var(--brand-1,#0E5BFF);width:{{ (kpis.founder_hours.build / kpis.founder_hours.total * 100) | round }}%"></span>
+        <span style="background:var(--success,#1AA563);width:{{ (kpis.founder_hours.sell / kpis.founder_hours.total * 100) | round }}%"></span>
+        <span style="background:var(--warning,#F0A91E);width:{{ (kpis.founder_hours.support / kpis.founder_hours.total * 100) | round }}%"></span>
+        <span style="background:var(--brand-2,#1B2433);width:{{ (kpis.founder_hours.content / kpis.founder_hours.total * 100) | round }}%"></span>
+      </div>
+      <div class="sub">Build {{ kpis.founder_hours.build }} · Sell {{ kpis.founder_hours.sell }} · Support {{ kpis.founder_hours.support }} · Content {{ kpis.founder_hours.content }}</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Addressable today</div>
+      <div class="value">{{ kpis.addressable_today_count }} / 9</div>
+      <div class="sub">+{{ kpis.addressable_after_xero_count }} after Xero ships</div>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-card">
+      <h3>12-mo MRR potential (upper bound, AU$)</h3>
+      <div class="chart-wrap"><canvas id="bar-mrr"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>ARPU × Time-to-value (bubble = Manuva fit)</h3>
+      <div class="chart-wrap"><canvas id="scatter-arpu"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<section id="segments">
+  <h2>Segments</h2>
+  <p class="note">Filter to focus. Ticks persist in localStorage.</p>
+  <div class="filter-strip">
+    <label>Motion <select id="filter-motion"><option value="">All motions</option></select></label>
+    <label>ARPU <select id="filter-arpu">
+      <option value="">All ARPU</option>
+      <option value="0-200">&lt;200</option>
+      <option value="200-300">200–300</option>
+      <option value="300-400">300–400</option>
+      <option value="400+">400+</option>
+    </select></label>
+    <button id="clear-filters">Clear filters</button>
+  </div>
+  <div class="segment-grid" id="segment-grid">
+    {% for s in segments %}
+    <article class="segment" data-priority="{{ s.priority }}" data-arpu="{{ s.arpu }}" data-motion="{{ s.motion_short }}">
+      <h3>
+        <span>#{{ s.id_num }} · {{ s.name_short }}</span>
+        <span class="priority-tag">★ P{{ s.priority }}</span>
+      </h3>
+      <div class="metrics">
+        <div class="metric"><div class="k">ARPU</div><div class="v">AU${{ s.arpu }}</div></div>
+        <div class="metric"><div class="k">12-mo MRR</div><div class="v">{{ s.mrr_str }}</div></div>
+        <div class="metric"><div class="k">Time to value</div><div class="v">{{ s.ttv_days }}d</div></div>
+        <div class="metric"><div class="k">Manuva fit</div><div class="v">{{ s.fit }}/5</div></div>
+      </div>
+      <div class="motion"><strong>Motion:</strong> {{ s.motion_short }}</div>
+      {% if s.where_short %}
+      <details>
+        <summary>Where they live ({{ s.where_short | length }})</summary>
+        <ul>{% for w in s.where_short %}<li>{{ w }}</li>{% endfor %}</ul>
+      </details>
+      {% endif %}
+      <details open>
+        <summary>This week ({{ s.this_week | length }})</summary>
+        <ul>
+          {% for t in s.this_week %}
+          <li><label><input type="checkbox" data-task-id="w{{ '%02d' % t.week }}-t{{ '%02d' % t.index }}"> W{{ t.week }} · {{ t.text | truncate(120, true) }}</label></li>
+          {% endfor %}
+        </ul>
+      </details>
+      {% if s.this_month %}
+      <details>
+        <summary>This month ({{ s.this_month | length }})</summary>
+        <ul>
+          {% for t in s.this_month %}
+          <li><label><input type="checkbox" data-task-id="w{{ '%02d' % t.week }}-t{{ '%02d' % t.index }}"> W{{ t.week }} · {{ t.text | truncate(120, true) }}</label></li>
+          {% endfor %}
+        </ul>
+      </details>
+      {% endif %}
+      <div class="source">Source: <code>{{ s.source_file }}</code></div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="plan">
+  <h2>90-Day Plan</h2>
+  <p class="note">Gantt by workstream · Weeks 1–12</p>
+  <div class="gantt-wrap">
+    <svg class="gantt" id="gantt-svg" viewBox="0 0 1100 330" preserveAspectRatio="xMinYMid meet"></svg>
+  </div>
+  <div class="week-list">
+    {% for week in weeks %}
+    <div class="week">
+      <h4>Week {{ week.week }} · Phase {{ week.phase }}</h4>
+      <ul>
+        {% for t in week.tasks %}
+        <li><label><input type="checkbox" data-task-id="w{{ '%02d' % t.week }}-t{{ '%02d' % t.index }}"> {{ t.text | truncate(140, true) }}</label></li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+  </div>
+  <h3 style="margin-top:24px">Day-90 review</h3>
+  <ul>
+    {% for d in day90 %}
+    <li><label><input type="checkbox" data-task-id="d90-{{ loop.index }}"> {{ d }}</label></li>
+    {% endfor %}
+  </ul>
+</section>
+
+<section id="charter">
+  <h2>Charter Program</h2>
+  <p class="note">5 slots · 6mo free Pro then 50% off for 24mo. State persists in localStorage.</p>
+  <div class="charter-grid">
+    {% for slot in charter_slots %}
+    <div class="charter-tile" data-slot="{{ slot.number }}">
+      <h4>Slot {{ slot.number }} · {{ slot.vertical }}</h4>
+      <select data-field="status">
+        {% for opt in ["Open", "Outreach", "In-talks", "Signed", "Withdrawn"] %}
+        <option value="{{ opt }}"{% if opt == slot.status %} selected{% endif %}>{{ opt }}</option>
+        {% endfor %}
+      </select>
+      <input data-field="contact" placeholder="Contact name" value="{{ slot.contact }}">
+      <input data-field="note" placeholder="Note" value="{{ slot.note }}">
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="integrations">
+  <h2>Integrations Roadmap</h2>
+  <p class="note">10 targets across 4 waves. Data flows show what syncs in each direction. Matrix is collapsible.</p>
+
+  <div class="wave-tracker">
+    <div class="wave wave-shipped">
+      <div class="wave-label">Wave 0 · Shipped</div>
+      <div class="wave-items">Shopify</div>
+    </div>
+    <div class="wave wave-progress">
+      <div class="wave-label">Wave 1 · In Progress</div>
+      <div class="wave-items">Xero</div>
+    </div>
+    <div class="wave">
+      <div class="wave-label">Wave 2 · Planned</div>
+      <div class="wave-items">WooCommerce · Amazon AU · QuickBooks Online</div>
+    </div>
+    <div class="wave">
+      <div class="wave-label">Wave 3 · Planned</div>
+      <div class="wave-items">MyOB · Etsy · eBay AU · Starshipit</div>
+    </div>
+  </div>
+
+  <div class="integrations-grid">
+    {% for integ in integrations %}
+    <div class="integ-card">
+      <div class="integ-header">
+        <span class="integ-name">{{ integ.name }}</span>
+        {% if integ.wave is not none %}<span class="wave-badge">Wave {{ integ.wave }}</span>{% endif %}
+        <span class="status-pill {{ integ.status }}">{{ integ.status | replace('_', ' ') }}</span>
+      </div>
+      <ul class="data-flows">
+        {% for flow in integ.data_flows %}<li>{{ flow }}</li>{% endfor %}
+      </ul>
+      <div class="gotcha">⚠ {{ integ.gotcha }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <details class="matrix-details">
+    <summary>Competitor × Integration matrix</summary>
+    <table class="matrix-table">
+      <thead>
+        <tr>
+          <th>Integration</th>
+          {% for comp in ["Katana", "Cin7 Core", "MRPeasy", "Craftybase", "inFlow", "Manuva"] %}<th>{{ comp }}</th>{% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for integ in integrations %}
+        <tr>
+          <td>{{ integ.name }}</td>
+          {% for comp in ["Katana", "Cin7 Core", "MRPeasy", "Craftybase", "inFlow", "Manuva"] %}
+          {% set cell = competitor_matrix[integ.name][comp] %}
+          <td class="cell-{{ cell | lower | replace(' ', '-') }}">{{ cell }}</td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </details>
+</section>
+
+<section id="gaps">
+  <h2>Competitor Feature Gaps</h2>
+  <p class="note">13 gaps ranked by sales impact. Click Status to cycle: backlog → planned → in progress → done.</p>
+
+  <div class="gap-summary">
+    <span class="sev-pill">🔴 2 Critical</span>
+    <span class="sev-pill">🟡 3 High</span>
+    <span class="sev-pill">🟠 5 Medium</span>
+    <span class="sev-pill">🟢 3 Low</span>
+    <span class="gap-progress" id="gap-progress-count"></span>
+  </div>
+
+  <table class="gaps-table">
+    <thead>
+      <tr><th>Gap</th><th>Severity</th><th>Competitors with it</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      {% for gap in feature_gaps %}
+      <tr>
+        <td>{{ gap.name }}</td>
+        <td><span class="sev-badge {{ gap.severity }}">{{ gap.severity }}</span></td>
+        <td>{{ gap.competitor_count }}/7</td>
+        <td>
+          <button class="status-cycle"
+                  data-gap-idx="{{ loop.index0 }}"
+                  data-default="{{ gap.default_status }}"
+                  data-status="{{ gap.default_status }}">
+            {{ gap.default_status | replace('_', ' ') }}
+          </button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="advantages-panel">
+    <h3>Where Manuva wins today</h3>
+    <ul>
+      {% for adv in manuva_advantages %}<li>{{ adv }}</li>{% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section id="pipeline">
+  <h2>Client Pipeline</h2>
+  <p class="note">Drag cards between columns. State persists in localStorage. Charter slots above are separate.</p>
+
+  <div class="funnel-summary" id="funnel-summary"></div>
+
+  <div class="kanban" id="kanban-board">
+    {% for col_name in ["Prospect", "Discovery Call", "Trial", "Negotiation", "Closed Won"] %}
+    <div class="kanban-col" data-col="{{ loop.index0 }}">
+      <div class="col-header">{{ col_name }}</div>
+      <div class="cards-container" id="col-{{ loop.index0 }}"></div>
+      <button class="add-card-btn" data-col="{{ loop.index0 }}">+ Add</button>
+    </div>
+    {% endfor %}
+  </div>
+
+  <h3 style="font-size:15px;margin:0 0 8px;color:var(--ink-strong)">Acquisition Channels by Segment</h3>
+  <table class="channels-table">
+    <thead>
+      <tr><th>Segment</th><th>Primary channel</th><th>Secondary channel</th><th>Where to find them</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Cosmetics / Skincare</td><td>Instagram DM (beauty founders)</td><td>Beauty Expo AU</td><td>#indiebeauty, AU beauty founder Facebook groups</td></tr>
+      <tr><td>Candle / Soap makers</td><td>Facebook groups</td><td>Etsy seller communities</td><td>"Candle making AU" FB groups, Faire wholesale</td></tr>
+      <tr><td>Coffee Roasters</td><td>Direct outreach</td><td>Specialty coffee events</td><td>ASCA events, AU specialty roaster directories</td></tr>
+      <tr><td>Small-batch Food / Bev</td><td>Industry associations</td><td>State food expos</td><td>AFCA, Fine Food Australia</td></tr>
+      <tr><td>Apparel / Accessories</td><td>Shopify App Store reviews</td><td>Fashion trade shows</td><td>AGHA Gift Fair, rag trade FB groups</td></tr>
+      <tr><td>Supplements / Nutraceuticals</td><td>LinkedIn (founders)</td><td>TGA compliance forums</td><td>Supplement industry associations</td></tr>
+      <tr><td>Pet Food / Treats</td><td>Facebook groups</td><td>Petbarn supplier pathway</td><td>AU pet industry trade shows</td></tr>
+      <tr><td>Craft Beer / Spirits</td><td>Brewing associations</td><td>BrewCon AU</td><td>IBD AU chapter, independent bottle shops</td></tr>
+      <tr><td>Home Goods / Furniture</td><td>Trade shows</td><td>Interior design communities</td><td>AGHA, Decor + Design Melbourne</td></tr>
+    </tbody>
+  </table>
+</section>
+
+</main>
+
+<div class="controls">
+  <button id="reset-all">Reset all ticks</button>
+  <button id="export-state">Export state to JSON</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script id="payload" type="application/json">{{ payload_json | safe }}</script>
+<script>
+(() => {
+  const payload = JSON.parse(document.getElementById('payload').textContent);
+  const LS_TASKS    = 'manuva:quick-wins:tasks';
+  const LS_CHARTER  = 'manuva:quick-wins:charter';
+  const LS_GAPS     = 'manuva:quick-wins:gaps';
+  const LS_PIPELINE = 'manuva:quick-wins:pipeline';
+
+  // ── Bar chart ────────────────────────────────────────────────────────────
+  const bar = payload.bar;
+  if (bar && document.getElementById('bar-mrr')) {
+    new Chart(document.getElementById('bar-mrr'), {
+      type: 'bar',
+      data: {
+        labels: bar.labels,
+        datasets: [{ data: bar.data, backgroundColor: bar.colors, borderRadius: 4 }],
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { callback: v => 'AU$' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v) } },
+        },
+      },
+    });
+  }
+
+  // ── Scatter / bubble chart ───────────────────────────────────────────────
+  const scatter = payload.scatter;
+  if (scatter && document.getElementById('scatter-arpu')) {
+    new Chart(document.getElementById('scatter-arpu'), {
+      type: 'bubble',
+      data: {
+        datasets: [{
+          data: scatter,
+          backgroundColor: 'rgba(14,91,255,0.35)',
+          borderColor: 'rgba(14,91,255,0.8)',
+          borderWidth: 1,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const p = ctx.raw;
+                return [`${p.label}`, `ARPU AU$${p.y} · TTV ${p.x}d`, p.motion].filter(Boolean);
+              },
+            },
+          },
+        },
+        scales: {
+          x: { title: { display: true, text: 'Time-to-value (days)' } },
+          y: { title: { display: true, text: 'ARPU (AU$/mo)' } },
+        },
+      },
+    });
+  }
+
+  // ── SVG Gantt ────────────────────────────────────────────────────────────
+  const svg = document.getElementById('gantt-svg');
+  if (svg && payload.gantt) {
+    const LANES = ['Build', 'Sell', 'Support', 'Content'];
+    const W = 1100, LH = 68, HEAD = 28, LABEL_W = 80;
+    const CELL = (W - LABEL_W) / 12;
+    const COLORS = { Build: '#0E5BFF', Sell: '#1AA563', Support: '#F0A91E', Content: '#1B2433' };
+
+    // Week header labels + grid lines
+    for (let w = 1; w <= 12; w++) {
+      const x = LABEL_W + (w - 1) * CELL;
+      svg.insertAdjacentHTML('beforeend',
+        `<text x="${x + CELL/2}" y="18" text-anchor="middle" font-size="10" fill="#5A6273">W${w}</text>
+         <line x1="${x}" y1="${HEAD}" x2="${x}" y2="${HEAD + LANES.length * LH}" stroke="#E3E7EE" stroke-width="1"/>`
+      );
+    }
+    // Final grid line
+    svg.insertAdjacentHTML('beforeend',
+      `<line x1="${W}" y1="${HEAD}" x2="${W}" y2="${HEAD + LANES.length * LH}" stroke="#E3E7EE" stroke-width="1"/>`
+    );
+
+    LANES.forEach((lane, i) => {
+      const yBase = HEAD + i * LH;
+      // Lane label
+      svg.insertAdjacentHTML('beforeend',
+        `<text x="4" y="${yBase + LH/2}" dominant-baseline="middle" font-size="10" fill="#5A6273" text-transform="uppercase">${lane}</text>`
+      );
+      // Lane separator
+      if (i > 0) {
+        svg.insertAdjacentHTML('beforeend',
+          `<line x1="0" y1="${yBase}" x2="${W}" y2="${yBase}" stroke="#E3E7EE" stroke-width="1"/>`
+        );
+      }
+      // Task blocks
+      (payload.gantt[lane] || []).forEach(t => {
+        const x = LABEL_W + (t.week - 1) * CELL + 2;
+        const title = `${t.text}\n${t.deliverable}`.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        svg.insertAdjacentHTML('beforeend',
+          `<rect x="${x}" y="${yBase + 10}" width="${CELL - 4}" height="${LH - 20}"
+           rx="3" fill="${COLORS[lane]}" opacity="0.8" class="task-block ${lane}">
+             <title>${title}</title>
+           </rect>`
+        );
+      });
+    });
+  }
+
+  // ── localStorage: task checkboxes ────────────────────────────────────────
+  const taskState = JSON.parse(localStorage.getItem(LS_TASKS) || '{}');
+  document.querySelectorAll('input[type=checkbox][data-task-id]').forEach(cb => {
+    const id = cb.dataset.taskId;
+    if (taskState[id]) cb.checked = true;
+    cb.addEventListener('change', () => {
+      taskState[id] = cb.checked;
+      localStorage.setItem(LS_TASKS, JSON.stringify(taskState));
+    });
+  });
+
+  // ── localStorage: charter tiles ──────────────────────────────────────────
+  const charterState = JSON.parse(localStorage.getItem(LS_CHARTER) || '{}');
+  document.querySelectorAll('.charter-tile').forEach(tile => {
+    const slot = tile.dataset.slot;
+    const saved = charterState[slot] || {};
+    tile.querySelectorAll('[data-field]').forEach(el => {
+      const f = el.dataset.field;
+      if (saved[f] != null) el.value = saved[f];
+      el.addEventListener('change', () => {
+        charterState[slot] = { ...charterState[slot], [f]: el.value };
+        localStorage.setItem(LS_CHARTER, JSON.stringify(charterState));
+      });
+    });
+  });
+
+  // ── Filter strip ─────────────────────────────────────────────────────────
+  const motionSel = document.getElementById('filter-motion');
+  if (motionSel) {
+    const motions = new Set();
+    document.querySelectorAll('.segment[data-motion]').forEach(c => {
+      if (c.dataset.motion) motions.add(c.dataset.motion);
+    });
+    [...motions].sort().forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m; opt.textContent = m;
+      motionSel.appendChild(opt);
+    });
+  }
+
+  function applyFilters() {
+    const m  = document.getElementById('filter-motion').value;
+    const ab = document.getElementById('filter-arpu').value;
+    document.querySelectorAll('.segment').forEach(c => {
+      let show = true;
+      if (m && c.dataset.motion !== m) show = false;
+      if (ab && ab !== '') {
+        const arpu = Number(c.dataset.arpu);
+        if (ab === '400+') { if (arpu < 400) show = false; }
+        else {
+          const [lo, hi] = ab.split('-').map(Number);
+          if (!(arpu >= lo && arpu < hi)) show = false;
+        }
+      }
+      c.style.display = show ? '' : 'none';
+    });
+    const params = new URLSearchParams();
+    if (m)  params.set('motion', m);
+    if (ab) params.set('arpu', ab);
+    history.replaceState(null, '', params.toString() ? '#' + params : location.pathname + location.search);
+  }
+
+  document.getElementById('filter-motion').addEventListener('change', applyFilters);
+  document.getElementById('filter-arpu').addEventListener('change', applyFilters);
+  document.getElementById('clear-filters').addEventListener('click', () => {
+    document.getElementById('filter-motion').value = '';
+    document.getElementById('filter-arpu').value = '';
+    applyFilters();
+  });
+
+  // Restore filters from URL hash on load
+  const initHash = new URLSearchParams(location.hash.replace(/^#/, ''));
+  if (initHash.get('motion')) document.getElementById('filter-motion').value = initHash.get('motion');
+  if (initHash.get('arpu'))   document.getElementById('filter-arpu').value   = initHash.get('arpu');
+  applyFilters();
+
+  // ── Reset + Export ────────────────────────────────────────────────────────
+  document.getElementById('reset-all').addEventListener('click', () => {
+    if (confirm('Reset all ticks, Charter slot status, gap statuses, and pipeline cards?')) {
+      localStorage.removeItem(LS_TASKS);
+      localStorage.removeItem(LS_CHARTER);
+      localStorage.removeItem(LS_GAPS);
+      localStorage.removeItem(LS_PIPELINE);
+      location.reload();
+    }
+  });
+
+  document.getElementById('export-state').addEventListener('click', () => {
+    const data = JSON.stringify({
+      tasks:    JSON.parse(localStorage.getItem(LS_TASKS)    || '{}'),
+      charter:  JSON.parse(localStorage.getItem(LS_CHARTER)  || '{}'),
+      gaps:     JSON.parse(localStorage.getItem(LS_GAPS)     || '{}'),
+      pipeline: JSON.parse(localStorage.getItem(LS_PIPELINE) || '[]'),
+    }, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(blob),
+      download: 'manuva-quick-wins-state.json',
+    });
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+  // ── Gap status cycling (Section 6) ────────────────────────────────────────
+  const GAP_STATUSES = ['backlog', 'planned', 'in_progress', 'done'];
+  const gapState = JSON.parse(localStorage.getItem(LS_GAPS) || '{}');
+
+  function updateGapProgress() {
+    const total = document.querySelectorAll('.status-cycle').length;
+    const done  = document.querySelectorAll('.status-cycle[data-status="done"]').length;
+    const prog  = document.querySelectorAll('.status-cycle[data-status="in_progress"]').length;
+    const el = document.getElementById('gap-progress-count');
+    if (el) el.textContent = `${done} done · ${prog} in progress / ${total} total`;
+  }
+
+  document.querySelectorAll('.status-cycle').forEach(btn => {
+    const idx = btn.dataset.gapIdx;
+    const saved = gapState[idx];
+    if (saved) {
+      btn.dataset.status = saved;
+      btn.textContent = saved.replace('_', ' ');
+    }
+    btn.addEventListener('click', () => {
+      const cur  = GAP_STATUSES.indexOf(btn.dataset.status);
+      const next = GAP_STATUSES[(cur + 1) % GAP_STATUSES.length];
+      btn.dataset.status = next;
+      btn.textContent    = next.replace('_', ' ');
+      gapState[idx] = next;
+      localStorage.setItem(LS_GAPS, JSON.stringify(gapState));
+      updateGapProgress();
+    });
+  });
+  updateGapProgress();
+
+  // ── Pipeline Kanban (Section 7) ────────────────────────────────────────────
+  const PIPELINE_SEGS = ['Cosmetics','Candle/Soap','Coffee Roasters','Food/Bev','Apparel','Supplements','Pet Food','Craft Beer','Home Goods'];
+  const PIPELINE_COL_NAMES = ['Prospect','Discovery Call','Trial','Negotiation','Closed Won'];
+  let pipelineCards = JSON.parse(localStorage.getItem(LS_PIPELINE) || '[]');
+  let dragCardId = null;
+
+  function savePipeline() {
+    localStorage.setItem(LS_PIPELINE, JSON.stringify(pipelineCards));
+  }
+
+  function updateFunnelSummary() {
+    const counts = [0, 0, 0, 0, 0];
+    let mrrTotal = 0;
+    pipelineCards.forEach(c => {
+      if (c.col >= 0 && c.col <= 4) counts[c.col]++;
+      if (c.mrr) mrrTotal += Number(c.mrr) || 0;
+    });
+    const el = document.getElementById('funnel-summary');
+    if (!el) return;
+    el.innerHTML = PIPELINE_COL_NAMES.map((n, i) => `<strong>${counts[i]}</strong> ${n}`).join(' · ') +
+      (mrrTotal > 0 ? ` · <strong>AU$${mrrTotal.toLocaleString()}</strong> pipeline MRR` : '');
+  }
+
+  function renderCard(card) {
+    const container = document.getElementById(`col-${card.col}`);
+    if (!container) return;
+    const div = document.createElement('div');
+    div.className = 'pipeline-card';
+    div.draggable = true;
+    div.dataset.cardId = card.id;
+    const segOptions = PIPELINE_SEGS.map(s => `<option${s === card.seg ? ' selected' : ''}>${s}</option>`).join('');
+    div.innerHTML = `
+      <input class="card-name" type="text" value="${(card.name || '').replace(/"/g, '&quot;')}" placeholder="Company name">
+      <select class="card-seg">${segOptions}</select>
+      <input class="card-mrr" type="number" placeholder="Est. MRR (AU$)" value="${card.mrr || ''}" min="0">
+      <button class="card-delete" title="Remove">×</button>`;
+    div.querySelector('.card-name').addEventListener('change', e => {
+      card.name = e.target.value.trim() || 'New prospect';
+      savePipeline();
+    });
+    div.querySelector('.card-seg').addEventListener('change', e => {
+      card.seg = e.target.value; savePipeline();
+    });
+    div.querySelector('.card-mrr').addEventListener('change', e => {
+      card.mrr = e.target.value; savePipeline(); updateFunnelSummary();
+    });
+    div.querySelector('.card-delete').addEventListener('click', () => {
+      pipelineCards = pipelineCards.filter(c => c.id !== card.id);
+      savePipeline();
+      div.remove();
+      updateFunnelSummary();
+    });
+    div.addEventListener('dragstart', e => {
+      dragCardId = card.id;
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    div.addEventListener('dragend', () => {
+      document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
+    });
+    container.appendChild(div);
+  }
+
+  function renderPipeline() {
+    document.querySelectorAll('.cards-container').forEach(c => { c.innerHTML = ''; });
+    pipelineCards.forEach(card => renderCard(card));
+    updateFunnelSummary();
+  }
+
+  function pipelineAddCard(colIdx) {
+    const card = { id: Date.now(), name: 'New prospect', seg: PIPELINE_SEGS[0], mrr: '', col: colIdx };
+    pipelineCards.push(card);
+    savePipeline();
+    renderCard(card);
+    updateFunnelSummary();
+  }
+
+  // Wire column drop targets and add buttons via addEventListener (not inline handlers,
+  // since inline handlers can't reach functions defined inside this IIFE).
+  document.querySelectorAll('#kanban-board .cards-container').forEach(container => {
+    const colIdx = parseInt(container.closest('.kanban-col').dataset.col);
+    container.addEventListener('dragover', e => {
+      e.preventDefault();
+      container.closest('.kanban-col').classList.add('drag-over');
+    });
+    container.addEventListener('dragleave', () => {
+      container.closest('.kanban-col').classList.remove('drag-over');
+    });
+    container.addEventListener('drop', e => {
+      e.preventDefault();
+      container.closest('.kanban-col').classList.remove('drag-over');
+      if (dragCardId === null) return;
+      const card = pipelineCards.find(c => c.id === dragCardId);
+      if (card) { card.col = colIdx; savePipeline(); renderPipeline(); }
+      dragCardId = null;
+    });
+  });
+
+  document.querySelectorAll('#kanban-board .add-card-btn').forEach(btn => {
+    btn.addEventListener('click', () => pipelineAddCard(parseInt(btn.dataset.col)));
+  });
+
+  renderPipeline();
+
+})();
+</script>
+
+</body>
+</html>
