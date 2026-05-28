@@ -20,6 +20,7 @@ type Props = {
   currentTier: string | null;
   currentStatus: string | null;
   currentTrialEndsAt: string | null;
+  /** UI-only gate. Server actions enforce the same check via requireSuperAdmin(). */
   canMutate: boolean;
 };
 
@@ -49,7 +50,7 @@ export default function LifecycleControls(props: Props) {
       <div className={styles.actions}>
         {!props.isSuspended && !props.isDeleted && (
           <button
-            onClick={() => props.canMutate && setModal("suspend")}
+            onClick={() => setModal("suspend")}
             disabled={!props.canMutate || pending}
             title={!props.canMutate ? "Observers cannot make changes" : undefined}
           >
@@ -58,7 +59,7 @@ export default function LifecycleControls(props: Props) {
         )}
         {props.isSuspended && (
           <button
-            onClick={() => props.canMutate && run(() => unsuspendTenant({ tenantId: props.tenantId }))}
+            onClick={() => run(() => unsuspendTenant({ tenantId: props.tenantId }))}
             disabled={!props.canMutate || pending}
             title={!props.canMutate ? "Observers cannot make changes" : undefined}
           >
@@ -67,7 +68,7 @@ export default function LifecycleControls(props: Props) {
         )}
         {!props.isDeleted && (
           <button
-            onClick={() => props.canMutate && setModal("extend")}
+            onClick={() => setModal("extend")}
             disabled={!props.canMutate || pending}
             title={!props.canMutate ? "Observers cannot make changes" : undefined}
           >
@@ -76,7 +77,7 @@ export default function LifecycleControls(props: Props) {
         )}
         {!props.isDeleted && (
           <button
-            onClick={() => props.canMutate && setModal("plan")}
+            onClick={() => setModal("plan")}
             disabled={!props.canMutate || pending}
             title={!props.canMutate ? "Observers cannot make changes" : undefined}
           >
@@ -85,7 +86,7 @@ export default function LifecycleControls(props: Props) {
         )}
         {!props.isDeleted && (
           <button
-            onClick={() => props.canMutate && setModal("delete")}
+            onClick={() => setModal("delete")}
             className={styles.danger}
             disabled={!props.canMutate || pending}
             title={!props.canMutate ? "Observers cannot make changes" : undefined}
@@ -95,7 +96,7 @@ export default function LifecycleControls(props: Props) {
         )}
         {props.isDeleted && (
           <button
-            onClick={() => props.canMutate && run(() => restoreTenant({ tenantId: props.tenantId }))}
+            onClick={() => run(() => restoreTenant({ tenantId: props.tenantId }))}
             disabled={!props.canMutate || pending}
             title={!props.canMutate ? "Observers cannot make changes" : undefined}
           >

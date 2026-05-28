@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import styles from "./tenant-detail.module.css";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import LifecycleControls from "./_components/lifecycle-controls";
@@ -14,8 +14,9 @@ export default async function TenantDetailPage({
 }) {
   const { tenantId } = await params;
   const ctx = await getServerTenantContext();
-  const supabase = ctx!.supabase;
-  const canMutate = ctx?.role === "super_admin";
+  if (!ctx) redirect("/app");
+  const { supabase } = ctx;
+  const canMutate = ctx.role === "super_admin";
 
   const [{ data: tenant }, { data: sub }, { data: members }, { data: audit }] = await Promise.all([
     supabase

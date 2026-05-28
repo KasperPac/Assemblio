@@ -7,7 +7,10 @@ import styles from "./members-panel.module.css";
 
 type Member = { profile_id: string; role: string; email: string | null };
 
-export default function MembersPanel({ tenantId, members, canMutate }: { tenantId: string; members: Member[]; canMutate: boolean }) {
+/** UI-only gate. Server actions enforce the same check via requireSuperAdmin(). */
+type MembersPanelProps = { tenantId: string; members: Member[]; canMutate: boolean };
+
+export default function MembersPanel({ tenantId, members, canMutate }: MembersPanelProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +34,7 @@ export default function MembersPanel({ tenantId, members, canMutate }: { tenantI
       <div className={styles.headerRow}>
         <h2 className={styles.title}>Members ({members.length})</h2>
         <button
-          onClick={() => canMutate && setAddOpen(true)}
+          onClick={() => setAddOpen(true)}
           className={styles.addButton}
           disabled={!canMutate}
           title={!canMutate ? "Observers cannot make changes" : undefined}
@@ -68,7 +71,7 @@ export default function MembersPanel({ tenantId, members, canMutate }: { tenantI
               <td>
                 <button
                   className={styles.removeButton}
-                  onClick={() => canMutate && run(() => removeMember({ tenantId, profileId: m.profile_id }))}
+                  onClick={() => run(() => removeMember({ tenantId, profileId: m.profile_id }))}
                   disabled={!canMutate || pending}
                   title={!canMutate ? "Observers cannot make changes" : undefined}
                 >

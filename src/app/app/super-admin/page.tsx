@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import styles from "./super-admin.module.css";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import PageHeader from "../_ui/page-header";
@@ -37,8 +38,9 @@ export default async function SuperAdminTenantsPage({
   const search = (params.q ?? "").trim();
 
   const ctx = await getServerTenantContext();
-  const supabase = ctx!.supabase;
-  const canMutate = ctx?.role === "super_admin";
+  if (!ctx) redirect("/app");
+  const { supabase } = ctx;
+  const canMutate = ctx.role === "super_admin";
 
   const [{ data: tenants }, { data: subs }, { data: members }] = await Promise.all([
     supabase
