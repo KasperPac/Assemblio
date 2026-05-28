@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import styles from "./super-admin.module.css";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import PageHeader from "../_ui/page-header";
 import NewTenantModal from "./_components/new-tenant-modal";
 
@@ -36,7 +37,10 @@ export default async function SuperAdminTenantsPage({
   const filter = parseFilter(params.status);
   const search = (params.q ?? "").trim();
 
-  const supabase = await createSupabaseServerClient();
+  const ctx = await getServerTenantContext();
+  if (!ctx) redirect("/app");
+  const { supabase } = ctx;
+  const canMutate = ctx.role === "super_admin";
 
   const [{ data: tenants }, { data: subs }, { data: members }] = await Promise.all([
     supabase
@@ -92,9 +96,15 @@ export default async function SuperAdminTenantsPage({
         title="Tenants"
         description={`${filtered.length} of ${allRows.length} tenants on the platform.`}
         actions={
-          <Link href="/app/super-admin?new=1" className={styles.newButton}>
-            + New tenant
-          </Link>
+          canMutate ? (
+            <Link href="/app/super-admin?new=1" className={styles.newButton}>
+              + New tenant
+            </Link>
+          ) : (
+            <button disabled title="Observers cannot make changes" className={styles.newButton}>
+              + New tenant
+            </button>
+          )
         }
       />
 
@@ -164,7 +174,7 @@ export default async function SuperAdminTenantsPage({
         </div>
       )}
 
-      {params.new === "1" && (
+      {canMutate && params.new === "1" && (
         <NewTenantModal defaultTimezone={Intl.DateTimeFormat().resolvedOptions().timeZone} />
       )}
     </div>

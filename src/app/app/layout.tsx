@@ -30,9 +30,17 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     .maybeSingle();
 
   const isSuperAdmin = profile?.role === "super_admin";
+  const isPlatformOperator =
+    profile?.role === "super_admin" || profile?.role === "platform_observer";
+
+  // Platform operator with no active tenant → send them to the platform module.
+  if (isPlatformOperator && !profile?.tenant_id) {
+    const { redirect } = await import("next/navigation");
+    redirect("/app/super-admin");
+  }
 
   const isSuspendedPath = pathname.startsWith("/app/suspended");
-  if (!isSuspendedPath && profile?.tenant_id && !isSuperAdmin) {
+  if (!isSuspendedPath && profile?.tenant_id && !isPlatformOperator) {
     const { data: tenantLockState } = await supabase
       .from("tenant")
       .select("suspended_at, deleted_at")
@@ -124,7 +132,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           />
         </div>
 
-        <SidebarNav hasPlanning={hasPlanning} isSuperAdmin={isSuperAdmin} />
+        <SidebarNav hasPlanning={hasPlanning} isSuperAdmin={isSuperAdmin} isPlatformOperator={isPlatformOperator} />
       </aside>
 
       <div className={styles.main}>
@@ -135,7 +143,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           selectableTenants={selectableTenants}
           currentTenantId={profile?.tenant_id ?? ""}
         />
-        {isSuperAdmin && profile?.super_admin_home_tenant_id && profile?.tenant_id !== profile.super_admin_home_tenant_id && (
+        {isPlatformOperator && profile?.tenant_id && profile?.tenant_id !== profile?.super_admin_home_tenant_id && (
           <ViewAsBanner tenantName={tenant?.name ?? "tenant"} />
         )}
         {trialDaysLeft !== null && sub ? (

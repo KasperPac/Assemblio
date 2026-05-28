@@ -2,7 +2,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export type TenantContext = {
   supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>;
-  tenantId: string;
+  tenantId: string | null;   // null = platform operator with no active tenant
   role: string;
   userId: string;
   superAdminHomeTenantId: string | null;
@@ -21,9 +21,24 @@ export async function getServerTenantContext(): Promise<TenantContext | null> {
     .eq("id", user.id)
     .single();
 
-  if (!profile?.tenant_id) return null;
-  if (profile.status === "deactivated") return null;
+  if (profile?.status === "deactivated") return null;
 
+  // Platform operators (super_admin / platform_observer) may have null tenant_id.
+  if (!profile?.tenant_id) {
+    if (profile?.role === "super_admin" || profile?.role === "platform_observer") {
+      return {
+        supabase,
+        tenantId: null,
+        role: profile.role,
+        userId: user.id,
+        superAdminHomeTenantId: profile.super_admin_home_tenant_id ?? null,
+      };
+    }
+    // Member with null tenant_id: invariant violation — treat as logged-out.
+    return null;
+  }
+
+  // Regular user with a tenant set — validate and fall back to first available.
   if (profile.role !== "super_admin") {
     const { data: accessRows } = await supabase
       .from("profile_tenant_access")

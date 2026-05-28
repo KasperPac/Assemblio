@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import styles from "./tenant-detail.module.css";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getServerTenantContext } from "@/lib/tenant/context";
 import LifecycleControls from "./_components/lifecycle-controls";
 import MembersPanel from "./_components/members-panel";
 import { viewAsTenant } from "../../actions";
@@ -13,7 +13,10 @@ export default async function TenantDetailPage({
   params: Promise<{ tenantId: string }>;
 }) {
   const { tenantId } = await params;
-  const supabase = await createSupabaseServerClient();
+  const ctx = await getServerTenantContext();
+  if (!ctx) redirect("/app");
+  const { supabase } = ctx;
+  const canMutate = ctx.role === "super_admin";
 
   const [{ data: tenant }, { data: sub }, { data: members }, { data: audit }] = await Promise.all([
     supabase
@@ -78,6 +81,7 @@ export default async function TenantDetailPage({
               currentTier={sub?.selected_tier ?? null}
               currentStatus={sub?.status ?? null}
               currentTrialEndsAt={sub?.trial_ends_at ?? null}
+              canMutate={canMutate}
             />
           </div>
         }
@@ -106,7 +110,7 @@ export default async function TenantDetailPage({
       </section>
 
       <section className={styles.card}>
-        <MembersPanel tenantId={tenant.id} members={memberRows} />
+        <MembersPanel tenantId={tenant.id} members={memberRows} canMutate={canMutate} />
       </section>
 
       <section className={styles.card}>
