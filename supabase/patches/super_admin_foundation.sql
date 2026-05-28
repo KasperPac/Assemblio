@@ -12,6 +12,7 @@ alter table public.profiles
 create or replace function public.is_platform_operator()
 returns boolean
 language sql
+stable
 security definer
 set search_path = public
 as $$
@@ -20,15 +21,14 @@ $$;
 
 grant execute on function public.is_platform_operator() to anon, authenticated;
 
--- 3. Tighten business-table RLS: drop super-admin bypass entirely.
---    Every user (including super-admin) sees only rows whose tenant_id
---    matches their current active tenant. For a tenant-less super-admin
---    with no active tenant, current_tenant_id() returns NULL and no rows match.
+-- 3a. Tighten business-table RLS: drop super-admin bypass from tables that use
+--     the standard <table>_tenant_isolation ALL-ops policy convention.
 do $$
 declare
   tbl text;
 begin
   foreach tbl in array array[
+    -- original 22 tables from multi_tenant_access_and_super_admin.sql
     'tenant_domain',
     'component_group',
     'component',
@@ -50,7 +50,26 @@ begin
     'purchase_order',
     'purchase_order_line',
     'activity_log',
-    'event_log'
+    'event_log',
+    -- finance_planning_phase1.sql
+    'department',
+    'staff_member',
+    'staff_availability_week',
+    'cost_rate_schedule',
+    'product_bom_labor',
+    'job_cost_snapshot',
+    'job_labor_plan',
+    'job_actual_time_entry',
+    'job_cost_actual_rollup',
+    'department_capacity_week',
+    'department_utilization_week',
+    -- locations_manager_schema.sql
+    'bin_sub_location',
+    'bin_aisle',
+    'bin_bay',
+    -- bom_template_rls.sql
+    'bom_template',
+    'bom_template_line'
   ]
   loop
     execute format('drop policy if exists %I_tenant_isolation on public.%I', tbl, tbl);
@@ -61,8 +80,154 @@ begin
   end loop;
 end $$;
 
+-- 3b. Tables using quoted "Tenant isolation" ALL-ops policy (planning_module_schema.sql).
+do $$
+declare
+  tbl text;
+begin
+  foreach tbl in array array[
+    'job_routing_step',
+    'product_notification_trigger',
+    'notification_log'
+  ]
+  loop
+    execute format('drop policy if exists %I on public.%I', 'Tenant isolation', tbl);
+    execute format(
+      'create policy %I on public.%I using (tenant_id = public.current_tenant_id()) with check (tenant_id = public.current_tenant_id())',
+      'Tenant isolation', tbl
+    );
+  end loop;
+end $$;
+
+-- 3c. Tables using quoted "tenant isolation" ALL-ops policy (stocktake_redesign_schema.sql).
+drop policy if exists "tenant isolation" on public.stocktake_variance_reason;
+create policy "tenant isolation" on public.stocktake_variance_reason
+  using (tenant_id = public.current_tenant_id())
+  with check (tenant_id = public.current_tenant_id());
+
+-- 3d. Tables using quoted per-operation "tenant_isolation_*" policies.
+-- delivery_receipt (no DELETE policy in original)
+drop policy if exists "tenant_isolation_select" on public.delivery_receipt;
+drop policy if exists "tenant_isolation_insert" on public.delivery_receipt;
+drop policy if exists "tenant_isolation_update" on public.delivery_receipt;
+create policy "tenant_isolation_select" on public.delivery_receipt
+  for select using (tenant_id = public.current_tenant_id());
+create policy "tenant_isolation_insert" on public.delivery_receipt
+  for insert with check (tenant_id = public.current_tenant_id());
+create policy "tenant_isolation_update" on public.delivery_receipt
+  for update using (tenant_id = public.current_tenant_id())
+  with check (tenant_id = public.current_tenant_id());
+
+-- delivery_receipt_line (no DELETE policy in original)
+drop policy if exists "tenant_isolation_select" on public.delivery_receipt_line;
+drop policy if exists "tenant_isolation_insert" on public.delivery_receipt_line;
+drop policy if exists "tenant_isolation_update" on public.delivery_receipt_line;
+create policy "tenant_isolation_select" on public.delivery_receipt_line
+  for select using (tenant_id = public.current_tenant_id());
+create policy "tenant_isolation_insert" on public.delivery_receipt_line
+  for insert with check (tenant_id = public.current_tenant_id());
+create policy "tenant_isolation_update" on public.delivery_receipt_line
+  for update using (tenant_id = public.current_tenant_id())
+  with check (tenant_id = public.current_tenant_id());
+
+-- supplier_contacts
+drop policy if exists "tenant_isolation_select" on public.supplier_contacts;
+drop policy if exists "tenant_isolation_insert" on public.supplier_contacts;
+drop policy if exists "tenant_isolation_update" on public.supplier_contacts;
+drop policy if exists "tenant_isolation_delete" on public.supplier_contacts;
+create policy "tenant_isolation_select" on public.supplier_contacts
+  for select using (tenant_id = public.current_tenant_id());
+create policy "tenant_isolation_insert" on public.supplier_contacts
+  for insert with check (tenant_id = public.current_tenant_id());
+create policy "tenant_isolation_update" on public.supplier_contacts
+  for update using (tenant_id = public.current_tenant_id())
+  with check (tenant_id = public.current_tenant_id());
+create policy "tenant_isolation_delete" on public.supplier_contacts
+  for delete using (tenant_id = public.current_tenant_id());
+
+-- supplier_components
+drop policy if exists "tenant_isolation_select" on public.supplier_components;
+drop policy if exists "tenant_isolation_insert" on public.supplier_components;
+drop policy if exists "tenant_isolation_update" on public.supplier_components;
+drop policy if exists "tenant_isolation_delete" on public.supplier_components;
+create policy "tenant_isolation_select" on public.supplier_components
+  for select using (tenant_id = public.current_tenant_id());
+create policy "tenant_isolation_insert" on public.supplier_components
+  for insert with check (tenant_id = public.current_tenant_id());
+create policy "tenant_isolation_update" on public.supplier_components
+  for update using (tenant_id = public.current_tenant_id())
+  with check (tenant_id = public.current_tenant_id());
+create policy "tenant_isolation_delete" on public.supplier_components
+  for delete using (tenant_id = public.current_tenant_id());
+
+-- supplier_component_price_breaks
+drop policy if exists "tenant_isolation_select" on public.supplier_component_price_breaks;
+drop policy if exists "tenant_isolation_insert" on public.supplier_component_price_breaks;
+drop policy if exists "tenant_isolation_update" on public.supplier_component_price_breaks;
+drop policy if exists "tenant_isolation_delete" on public.supplier_component_price_breaks;
+create policy "tenant_isolation_select" on public.supplier_component_price_breaks
+  for select using (tenant_id = public.current_tenant_id());
+create policy "tenant_isolation_insert" on public.supplier_component_price_breaks
+  for insert with check (tenant_id = public.current_tenant_id());
+create policy "tenant_isolation_update" on public.supplier_component_price_breaks
+  for update using (tenant_id = public.current_tenant_id())
+  with check (tenant_id = public.current_tenant_id());
+create policy "tenant_isolation_delete" on public.supplier_component_price_breaks
+  for delete using (tenant_id = public.current_tenant_id());
+
+-- order_source_sla
+drop policy if exists "tenant_isolation_select" on public.order_source_sla;
+drop policy if exists "tenant_isolation_insert" on public.order_source_sla;
+drop policy if exists "tenant_isolation_update" on public.order_source_sla;
+drop policy if exists "tenant_isolation_delete" on public.order_source_sla;
+create policy "tenant_isolation_select" on public.order_source_sla
+  for select using (tenant_id = public.current_tenant_id());
+create policy "tenant_isolation_insert" on public.order_source_sla
+  for insert with check (tenant_id = public.current_tenant_id());
+create policy "tenant_isolation_update" on public.order_source_sla
+  for update using (tenant_id = public.current_tenant_id())
+  with check (tenant_id = public.current_tenant_id());
+create policy "tenant_isolation_delete" on public.order_source_sla
+  for delete using (tenant_id = public.current_tenant_id());
+
+-- 3e. Tables with custom policy names.
+-- tenant_dashboard_config: remove super-admin bypass from read and write policies.
+drop policy if exists tenant_members_select on public.tenant_dashboard_config;
+create policy tenant_members_select on public.tenant_dashboard_config
+  for select using (tenant_id = public.current_tenant_id());
+
+drop policy if exists tenant_admins_write on public.tenant_dashboard_config;
+create policy tenant_admins_write on public.tenant_dashboard_config
+  for all
+  using (
+    tenant_id = public.current_tenant_id()
+    and exists (
+      select 1 from public.profiles
+      where id = auth.uid()
+        and tenant_id = public.current_tenant_id()
+        and role in ('admin', 'super_admin')
+    )
+  )
+  with check (
+    tenant_id = public.current_tenant_id()
+    and exists (
+      select 1 from public.profiles
+      where id = auth.uid()
+        and tenant_id = public.current_tenant_id()
+        and role in ('admin', 'super_admin')
+    )
+  );
+
+-- tenant_invoices: remove super-admin bypass (writes remain service-role only).
+drop policy if exists tenant_admins_read_invoices on public.tenant_invoices;
+create policy tenant_admins_read_invoices on public.tenant_invoices
+  for select using (
+    tenant_id = public.current_tenant_id()
+    and public.current_profile_role() in ('admin', 'super_admin')
+  );
+
 -- 4. Extend platform-table READ policies to platform_observer.
---    Writes stay gated to is_super_admin() — those policies are unchanged.
+--    Write policies on platform tables remain gated to is_super_admin() — unchanged.
 drop policy if exists profiles_is_self on public.profiles;
 create policy profiles_is_self on public.profiles
   for select
@@ -91,7 +256,7 @@ create policy super_admin_audit_log_select on public.super_admin_audit_log
 -- 5. Audit marker.
 insert into public.super_admin_audit_log (actor_id, action, metadata)
 select id, 'privacy_model_tightened', jsonb_build_object(
-  'note', 'business-table RLS no longer bypassed by is_super_admin()',
+  'note', 'business-table RLS no longer bypassed by is_super_admin() — all tables covered',
   'migration', 'super_admin_foundation.sql'
 )
 from public.profiles
