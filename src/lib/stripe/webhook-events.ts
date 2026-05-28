@@ -106,7 +106,8 @@ async function onCheckoutCompleted(
       billing_interval: resolved.billing,
       current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
     })
-    .eq("tenant_id", tenantId);
+    .eq("tenant_id", tenantId)
+    .is("manual_override_at", null);
 
   await admin.from("activity_log").insert({
     tenant_id: tenantId,
@@ -133,7 +134,8 @@ async function onSubscriptionUpdated(
       billing_interval: resolved.billing,
       current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
     })
-    .eq("stripe_subscription_id", stripeSub.id);
+    .eq("stripe_subscription_id", stripeSub.id)
+    .is("manual_override_at", null);
 }
 
 async function onSubscriptionDeleted(
@@ -143,7 +145,8 @@ async function onSubscriptionDeleted(
   await admin
     .from("tenant_subscription")
     .update({ status: "canceled" })
-    .eq("stripe_subscription_id", stripeSub.id);
+    .eq("stripe_subscription_id", stripeSub.id)
+    .is("manual_override_at", null);
 }
 
 async function onInvoiceFailed(admin: Admin, invoice: Stripe.Invoice) {
@@ -152,7 +155,8 @@ async function onInvoiceFailed(admin: Admin, invoice: Stripe.Invoice) {
   await admin
     .from("tenant_subscription")
     .update({ status: "past_due" })
-    .eq("stripe_subscription_id", subId);
+    .eq("stripe_subscription_id", subId)
+    .is("manual_override_at", null);
 }
 
 async function onInvoiceSucceeded(admin: Admin, invoice: Stripe.Invoice) {
@@ -163,7 +167,8 @@ async function onInvoiceSucceeded(admin: Admin, invoice: Stripe.Invoice) {
     .from("tenant_subscription")
     .update({ status: "active" })
     .eq("stripe_subscription_id", subId)
-    .eq("status", "past_due");
+    .eq("status", "past_due")
+    .is("manual_override_at", null);
 }
 
 // Stripe placed current_period_end on the subscription item (or root, depending

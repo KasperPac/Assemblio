@@ -1,0 +1,15 @@
+.headerRow { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.title { font-size: 14px; font-weight: 600; color: var(--ink-strong); }
+.addButton { padding: 6px 12px; border-radius: 6px; border: 1px solid var(--stroke); background: var(--bg-card); font-size: 13px; }
+.table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table th, .table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--stroke); }
+.removeButton { padding: 4px 10px; border: 1px solid var(--stroke); border-radius: 6px; color: var(--danger); font-size: 12px; }
+.empty { text-align: center; color: var(--ink-muted); padding: 16px; }
+.error { color: var(--danger); font-size: 13px; margin-top: 8px; }
+.backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: grid; place-items: center; z-index: 50; }
+.modal { background: var(--bg-card); border-radius: 12px; padding: 24px; width: 100%; max-width: 460px; }
+.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; font-size: 13px; color: var(--ink-muted); }
+.field input, .field select, .field textarea { padding: 8px 10px; border: 1px solid var(--stroke); border-radius: 6px; background: var(--bg-card); }
+.modalActions { display: flex; justify-content: flex-end; gap: 8px; }
+.modalActions button[type="submit"] { background: var(--brand-1); color: white; padding: 8px 14px; border-radius: 6px; font-weight: 500; }
+.modalActions button[type="button"] { padding: 8px 14px; border-radius: 6px; border: 1px solid var(--stroke); }

@@ -1,28 +1,28 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export async function getServerTenantContext() {
+export type TenantContext = {
+  supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>;
+  tenantId: string;
+  role: string;
+  userId: string;
+  superAdminHomeTenantId: string | null;
+};
+
+export async function getServerTenantContext(): Promise<TenantContext | null> {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("tenant_id,role,status")
+    .select("tenant_id,role,status,super_admin_home_tenant_id")
     .eq("id", user.id)
     .single();
 
-  if (!profile?.tenant_id) {
-    return null;
-  }
-
-  if (profile.status === "deactivated") {
-    return null;
-  }
+  if (!profile?.tenant_id) return null;
+  if (profile.status === "deactivated") return null;
 
   if (profile.role !== "super_admin") {
     const { data: accessRows } = await supabase
@@ -48,6 +48,7 @@ export async function getServerTenantContext() {
         tenantId: fallbackTenantId,
         role: profile.role as string,
         userId: user.id,
+        superAdminHomeTenantId: profile.super_admin_home_tenant_id ?? null,
       };
     }
   }
@@ -57,5 +58,6 @@ export async function getServerTenantContext() {
     tenantId: profile.tenant_id,
     role: profile.role as string,
     userId: user.id,
+    superAdminHomeTenantId: profile.super_admin_home_tenant_id ?? null,
   };
 }

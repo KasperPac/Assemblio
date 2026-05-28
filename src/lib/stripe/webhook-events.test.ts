@@ -20,6 +20,7 @@ interface RecordedCall {
   op: "insert" | "update";
   row: Record<string, unknown>;
   filters: Array<{ col: string; val: unknown }>;
+  isFilters: Array<{ col: string; val: unknown }>;
 }
 
 function makeAdmin(insertResults: Record<string, { error: unknown } | undefined> = {}) {
@@ -27,6 +28,7 @@ function makeAdmin(insertResults: Record<string, { error: unknown } | undefined>
 
   function builder(table: string) {
     const filters: RecordedCall["filters"] = [];
+    const isFilters: RecordedCall["isFilters"] = [];
     let row: Record<string, unknown> = {};
     let op: "insert" | "update" = "insert";
 
@@ -34,6 +36,7 @@ function makeAdmin(insertResults: Record<string, { error: unknown } | undefined>
       insert: (r: Record<string, unknown>) => unknown;
       update: (r: Record<string, unknown>) => unknown;
       eq: (col: string, val: unknown) => unknown;
+      is: (col: string, val: unknown) => unknown;
       then: <T>(
         onF: (value: { error: unknown }) => T,
         onR?: (reason: unknown) => T
@@ -43,7 +46,7 @@ function makeAdmin(insertResults: Record<string, { error: unknown } | undefined>
         op = "insert";
         row = r;
         const result = insertResults[table] ?? { error: null };
-        calls.push({ table, op, row, filters: [...filters] });
+        calls.push({ table, op, row, filters: [...filters], isFilters: [...isFilters] });
         return Promise.resolve(result);
       },
       update(r) {
@@ -55,9 +58,13 @@ function makeAdmin(insertResults: Record<string, { error: unknown } | undefined>
         filters.push({ col, val });
         return chain;
       },
+      is(col, val) {
+        isFilters.push({ col, val });
+        return chain;
+      },
       then(onF, onR) {
         // For update chains: terminal await
-        calls.push({ table, op, row, filters: [...filters] });
+        calls.push({ table, op, row, filters: [...filters], isFilters: [...isFilters] });
         return Promise.resolve({ error: null }).then(onF, onR);
       },
     };
@@ -304,5 +311,74 @@ describe("processStripeEvent", () => {
     // Only the event-log insert; no dispatch
     expect(admin._calls).toHaveLength(1);
     expect(admin._calls[0].table).toBe("stripe_event_log");
+  });
+
+  it("all tenant_subscription updates apply .is('manual_override_at', null)", async () => {
+    const { processStripeEvent } = await loadModule();
+
+    const eventTypes: Array<{ event: Stripe.Event; label: string }> = [
+      {
+        label: "customer.subscription.deleted",
+        event: makeEvent(
+          "customer.subscription.deleted",
+          makeSubscription({ id: "sub_del" })
+        ),
+      },
+      {
+        label: "customer.subscription.updated",
+        event: makeEvent(
+          "customer.subscription.updated",
+          makeSubscription({ id: "sub_upd", priceId: PRO_A })
+        ),
+      },
+      {
+        label: "invoice.payment_failed",
+        event: makeEvent("invoice.payment_failed", {
+          id: "in_fail",
+          subscription: "sub_fail",
+        }),
+      },
+      {
+        label: "invoice.payment_succeeded",
+        event: makeEvent("invoice.payment_succeeded", {
+          id: "in_ok",
+          subscription: "sub_ok",
+        }),
+      },
+    ];
+
+    for (const { label, event } of eventTypes) {
+      const admin = makeAdmin();
+      await processStripeEvent(admin as never, event);
+
+      const tsUpdate = admin._calls.find(
+        (c) => c.table === "tenant_subscription" && c.op === "update"
+      );
+      expect(tsUpdate, `${label}: expected a tenant_subscription update`).toBeDefined();
+      expect(
+        tsUpdate?.isFilters,
+        `${label}: expected .is("manual_override_at", null)`
+      ).toContainEqual({ col: "manual_override_at", val: null });
+    }
+
+    // Also cover checkout.session.completed
+    const checkoutAdmin = makeAdmin();
+    const stripeSub = makeSubscription({ id: "sub_co", priceId: GROWTH_M });
+    const checkoutEvent = makeEvent("checkout.session.completed", {
+      id: "cs_override_test",
+      subscription: stripeSub.id,
+      metadata: { tenant_id: "tenant_override" },
+    });
+    await processStripeEvent(checkoutAdmin as never, checkoutEvent, {
+      getSubscription: async () => stripeSub,
+    });
+    const coUpdate = checkoutAdmin._calls.find(
+      (c) => c.table === "tenant_subscription" && c.op === "update"
+    );
+    expect(coUpdate, "checkout.session.completed: expected a tenant_subscription update").toBeDefined();
+    expect(
+      coUpdate?.isFilters,
+      "checkout.session.completed: expected .is('manual_override_at', null)"
+    ).toContainEqual({ col: "manual_override_at", val: null });
   });
 });
