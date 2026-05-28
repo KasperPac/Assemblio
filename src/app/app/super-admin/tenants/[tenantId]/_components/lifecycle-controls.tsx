@@ -20,6 +20,7 @@ type Props = {
   currentTier: string | null;
   currentStatus: string | null;
   currentTrialEndsAt: string | null;
+  canMutate: boolean;
 };
 
 type ModalKind = null | "suspend" | "delete" | "extend" | "plan";
@@ -47,22 +48,57 @@ export default function LifecycleControls(props: Props) {
     <div className={styles.wrapper}>
       <div className={styles.actions}>
         {!props.isSuspended && !props.isDeleted && (
-          <button onClick={() => setModal("suspend")}>Suspend</button>
+          <button
+            onClick={() => props.canMutate && setModal("suspend")}
+            disabled={!props.canMutate || pending}
+            title={!props.canMutate ? "Observers cannot make changes" : undefined}
+          >
+            Suspend
+          </button>
         )}
         {props.isSuspended && (
-          <button onClick={() => run(() => unsuspendTenant({ tenantId: props.tenantId }))}>
+          <button
+            onClick={() => props.canMutate && run(() => unsuspendTenant({ tenantId: props.tenantId }))}
+            disabled={!props.canMutate || pending}
+            title={!props.canMutate ? "Observers cannot make changes" : undefined}
+          >
             Unsuspend
           </button>
         )}
-        {!props.isDeleted && <button onClick={() => setModal("extend")}>Extend trial</button>}
-        {!props.isDeleted && <button onClick={() => setModal("plan")}>Change plan</button>}
         {!props.isDeleted && (
-          <button onClick={() => setModal("delete")} className={styles.danger}>
+          <button
+            onClick={() => props.canMutate && setModal("extend")}
+            disabled={!props.canMutate || pending}
+            title={!props.canMutate ? "Observers cannot make changes" : undefined}
+          >
+            Extend trial
+          </button>
+        )}
+        {!props.isDeleted && (
+          <button
+            onClick={() => props.canMutate && setModal("plan")}
+            disabled={!props.canMutate || pending}
+            title={!props.canMutate ? "Observers cannot make changes" : undefined}
+          >
+            Change plan
+          </button>
+        )}
+        {!props.isDeleted && (
+          <button
+            onClick={() => props.canMutate && setModal("delete")}
+            className={styles.danger}
+            disabled={!props.canMutate || pending}
+            title={!props.canMutate ? "Observers cannot make changes" : undefined}
+          >
             Delete
           </button>
         )}
         {props.isDeleted && (
-          <button onClick={() => run(() => restoreTenant({ tenantId: props.tenantId }))}>
+          <button
+            onClick={() => props.canMutate && run(() => restoreTenant({ tenantId: props.tenantId }))}
+            disabled={!props.canMutate || pending}
+            title={!props.canMutate ? "Observers cannot make changes" : undefined}
+          >
             Restore
           </button>
         )}

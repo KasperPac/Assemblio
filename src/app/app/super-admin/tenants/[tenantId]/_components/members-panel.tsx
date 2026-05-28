@@ -7,7 +7,7 @@ import styles from "./members-panel.module.css";
 
 type Member = { profile_id: string; role: string; email: string | null };
 
-export default function MembersPanel({ tenantId, members }: { tenantId: string; members: Member[] }) {
+export default function MembersPanel({ tenantId, members, canMutate }: { tenantId: string; members: Member[]; canMutate: boolean }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +30,14 @@ export default function MembersPanel({ tenantId, members }: { tenantId: string; 
     <div>
       <div className={styles.headerRow}>
         <h2 className={styles.title}>Members ({members.length})</h2>
-        <button onClick={() => setAddOpen(true)} className={styles.addButton}>+ Add member</button>
+        <button
+          onClick={() => canMutate && setAddOpen(true)}
+          className={styles.addButton}
+          disabled={!canMutate}
+          title={!canMutate ? "Observers cannot make changes" : undefined}
+        >
+          + Add member
+        </button>
       </div>
 
       <table className={styles.table}>
@@ -51,7 +58,8 @@ export default function MembersPanel({ tenantId, members }: { tenantId: string; 
                       })
                     )
                   }
-                  disabled={pending}
+                  disabled={!canMutate || pending}
+                  title={!canMutate ? "Observers cannot make changes" : undefined}
                 >
                   <option value="admin">admin</option>
                   <option value="member">member</option>
@@ -60,8 +68,9 @@ export default function MembersPanel({ tenantId, members }: { tenantId: string; 
               <td>
                 <button
                   className={styles.removeButton}
-                  onClick={() => run(() => removeMember({ tenantId, profileId: m.profile_id }))}
-                  disabled={pending}
+                  onClick={() => canMutate && run(() => removeMember({ tenantId, profileId: m.profile_id }))}
+                  disabled={!canMutate || pending}
+                  title={!canMutate ? "Observers cannot make changes" : undefined}
                 >
                   Remove
                 </button>
