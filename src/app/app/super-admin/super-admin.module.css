@@ -1,0 +1,21 @@
+.page { padding: 24px; }
+.headerRow { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.title { font-size: 24px; font-weight: 600; color: var(--ink-strong); }
+.newButton { background: var(--brand-1); color: white; padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 500; }
+.filterRow { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+.filterPill { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--stroke); font-size: 13px; color: var(--ink-muted); }
+.filterPill.active { background: var(--ink-strong); color: var(--bg-card); border-color: var(--ink-strong); }
+.searchForm { margin-left: auto; }
+.searchInput { padding: 6px 12px; border-radius: 8px; border: 1px solid var(--stroke); font-size: 13px; min-width: 220px; }
+.table { width: 100%; border-collapse: collapse; }
+.table thead th { text-align: left; padding: 10px 12px; font-size: 12px; font-weight: 500; color: var(--ink-muted); text-transform: uppercase; border-bottom: 1px solid var(--stroke); }
+.table tbody td { padding: 12px; border-bottom: 1px solid var(--stroke); font-size: 14px; }
+.rowLink { color: var(--ink-strong); font-weight: 500; }
+.row:hover { background: var(--surface-hover); }
+.statusPill { padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+.status_trialing { background: var(--info-dim); color: var(--info); }
+.status_active { background: var(--ok-dim); color: var(--ok); }
+.status_past_due { background: var(--warning-dim); color: var(--warning); }
+.status_suspended { background: var(--danger-dim); color: var(--danger); }
+.status_deleted { background: var(--surface-1); color: var(--ink-muted); }
+.empty { padding: 32px; text-align: center; color: var(--ink-muted); }
