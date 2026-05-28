@@ -125,3 +125,71 @@ export async function changePlan(input: {
   });
   revalidatePath(`/app/super-admin/tenants/${input.tenantId}`);
 }
+
+export async function addMember(input: {
+  tenantId: string;
+  profileId: string;
+  role: "admin" | "member";
+  reason?: string;
+}): Promise<void> {
+  const { supabase, userId } = await requireSuperAdmin();
+  const { error } = await supabase.from("profile_tenant_access").insert({
+    profile_id: input.profileId,
+    tenant_id: input.tenantId,
+    role: input.role,
+  });
+  if (error) throw new Error(error.message);
+  await logSuperAdminAction(supabase, {
+    actorId: userId,
+    action: "add_member",
+    targetTenantId: input.tenantId,
+    targetUserId: input.profileId,
+    metadata: { role: input.role, reason: input.reason },
+  });
+  revalidatePath(`/app/super-admin/tenants/${input.tenantId}`);
+}
+
+export async function removeMember(input: {
+  tenantId: string;
+  profileId: string;
+  reason?: string;
+}): Promise<void> {
+  const { supabase, userId } = await requireSuperAdmin();
+  const { error } = await supabase
+    .from("profile_tenant_access")
+    .delete()
+    .eq("tenant_id", input.tenantId)
+    .eq("profile_id", input.profileId);
+  if (error) throw new Error(error.message);
+  await logSuperAdminAction(supabase, {
+    actorId: userId,
+    action: "remove_member",
+    targetTenantId: input.tenantId,
+    targetUserId: input.profileId,
+    metadata: input.reason ? { reason: input.reason } : {},
+  });
+  revalidatePath(`/app/super-admin/tenants/${input.tenantId}`);
+}
+
+export async function changeMemberRole(input: {
+  tenantId: string;
+  profileId: string;
+  newRole: "admin" | "member";
+  reason?: string;
+}): Promise<void> {
+  const { supabase, userId } = await requireSuperAdmin();
+  const { error } = await supabase
+    .from("profile_tenant_access")
+    .update({ role: input.newRole })
+    .eq("tenant_id", input.tenantId)
+    .eq("profile_id", input.profileId);
+  if (error) throw new Error(error.message);
+  await logSuperAdminAction(supabase, {
+    actorId: userId,
+    action: "change_role",
+    targetTenantId: input.tenantId,
+    targetUserId: input.profileId,
+    metadata: { newRole: input.newRole, reason: input.reason },
+  });
+  revalidatePath(`/app/super-admin/tenants/${input.tenantId}`);
+}

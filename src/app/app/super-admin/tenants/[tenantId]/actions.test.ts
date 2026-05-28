@@ -118,3 +118,49 @@ describe("changePlan", () => {
     await expect(changePlan({ tenantId: "t1" })).rejects.toThrow(/at least one/i);
   });
 });
+
+import { addMember, removeMember, changeMemberRole } from "./actions";
+
+describe("addMember", () => {
+  it("inserts a profile_tenant_access row and logs", async () => {
+    const insert = vi.fn().mockResolvedValue({ error: null });
+    const sb = { from: vi.fn().mockReturnValue({ insert }) } as any;
+    vi.mocked(requireSuperAdmin).mockResolvedValue({ supabase: sb, userId: "u1" } as any);
+    await addMember({ tenantId: "t1", profileId: "p1", role: "admin" });
+    expect(sb.from).toHaveBeenCalledWith("profile_tenant_access");
+    expect(insert).toHaveBeenCalledWith({ profile_id: "p1", tenant_id: "t1", role: "admin" });
+    expect(logSuperAdminAction).toHaveBeenCalledWith(sb, expect.objectContaining({
+      action: "add_member", targetTenantId: "t1", targetUserId: "p1",
+    }));
+  });
+});
+
+describe("removeMember", () => {
+  it("deletes the row and logs", async () => {
+    const eq2 = vi.fn().mockResolvedValue({ error: null });
+    const eq1 = vi.fn().mockReturnValue({ eq: eq2 });
+    const del = vi.fn().mockReturnValue({ eq: eq1 });
+    const sb = { from: vi.fn().mockReturnValue({ delete: del }) } as any;
+    vi.mocked(requireSuperAdmin).mockResolvedValue({ supabase: sb, userId: "u1" } as any);
+    await removeMember({ tenantId: "t1", profileId: "p1" });
+    expect(del).toHaveBeenCalled();
+    expect(logSuperAdminAction).toHaveBeenCalledWith(sb, expect.objectContaining({
+      action: "remove_member", targetTenantId: "t1", targetUserId: "p1",
+    }));
+  });
+});
+
+describe("changeMemberRole", () => {
+  it("updates the role and logs", async () => {
+    const eq2 = vi.fn().mockResolvedValue({ error: null });
+    const eq1 = vi.fn().mockReturnValue({ eq: eq2 });
+    const update = vi.fn().mockReturnValue({ eq: eq1 });
+    const sb = { from: vi.fn().mockReturnValue({ update }) } as any;
+    vi.mocked(requireSuperAdmin).mockResolvedValue({ supabase: sb, userId: "u1" } as any);
+    await changeMemberRole({ tenantId: "t1", profileId: "p1", newRole: "member" });
+    expect(update).toHaveBeenCalledWith({ role: "member" });
+    expect(logSuperAdminAction).toHaveBeenCalledWith(sb, expect.objectContaining({
+      action: "change_role", metadata: { newRole: "member" },
+    }));
+  });
+});

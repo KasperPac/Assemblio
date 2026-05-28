@@ -2,7 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import styles from "./tenant-detail.module.css";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import LifecycleControls from "./_components/lifecycle-controls";
+import MembersPanel from "./_components/members-panel";
 
 export default async function TenantDetailPage({
   params,
@@ -34,6 +36,21 @@ export default async function TenantDetailPage({
       .order("created_at", { ascending: false })
       .limit(20),
   ]);
+
+  const memberIds = (members ?? []).map((m) => m.profile_id);
+  let memberEmails: Record<string, string | null> = {};
+  if (memberIds.length > 0) {
+    const admin = createSupabaseAdminClient();
+    const { data: usersResp } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+    const byId = new Map((usersResp?.users ?? []).map((u) => [u.id, u.email ?? null]));
+    memberEmails = Object.fromEntries(memberIds.map((id) => [id, byId.get(id) ?? null]));
+  }
+
+  const memberRows = (members ?? []).map((m) => ({
+    profile_id: m.profile_id,
+    role: m.role,
+    email: memberEmails[m.profile_id] ?? null,
+  }));
 
   if (!tenant) notFound();
 
@@ -79,19 +96,7 @@ export default async function TenantDetailPage({
       </section>
 
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Members ({members?.length ?? 0})</h2>
-        <table className={styles.membersTable}>
-          <thead><tr><th>Profile ID</th><th>Role</th></tr></thead>
-          <tbody>
-            {(members ?? []).map((m) => (
-              <tr key={m.profile_id}>
-                <td>{m.profile_id}</td>
-                <td>{m.role}</td>
-              </tr>
-            ))}
-            {(members ?? []).length === 0 && <tr><td colSpan={2} className={styles.empty}>No members.</td></tr>}
-          </tbody>
-        </table>
+        <MembersPanel tenantId={tenant.id} members={memberRows} />
       </section>
 
       <section className={styles.section}>
