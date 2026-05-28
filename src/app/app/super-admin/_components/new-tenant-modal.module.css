@@ -1,0 +1,10 @@
+.backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: grid; place-items: center; z-index: 50; }
+.modal { background: var(--bg-card); border-radius: 12px; padding: 24px; width: 100%; max-width: 480px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); }
+.title { font-size: 18px; font-weight: 600; color: var(--ink-strong); margin-bottom: 16px; }
+.form { display: flex; flex-direction: column; gap: 12px; }
+.field { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--ink-muted); }
+.field input, .field select, .field textarea { padding: 8px 10px; border: 1px solid var(--stroke); border-radius: 6px; font-size: 14px; color: var(--ink-strong); background: var(--bg-card); }
+.actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+.actions button[type="submit"] { background: var(--brand-1); color: white; padding: 8px 14px; border-radius: 6px; font-weight: 500; }
+.actions button[type="button"] { padding: 8px 14px; border-radius: 6px; border: 1px solid var(--stroke); }
+.error { color: var(--danger); font-size: 13px; }

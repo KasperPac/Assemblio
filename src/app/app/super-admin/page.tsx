@@ -1,6 +1,7 @@
 import Link from "next/link";
 import styles from "./super-admin.module.css";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import NewTenantModal from "./_components/new-tenant-modal";
 
 type StatusFilter = "all" | "trialing" | "active" | "past_due" | "suspended" | "deleted";
 
@@ -28,7 +29,7 @@ function parseFilter(value: string | undefined): StatusFilter {
 export default async function SuperAdminTenantsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; q?: string }>;
+  searchParams: Promise<{ status?: string; q?: string; new?: string }>;
 }) {
   const params = await searchParams;
   const filter = parseFilter(params.status);
@@ -139,6 +140,10 @@ export default async function SuperAdminTenantsPage({
           )}
         </tbody>
       </table>
+
+      {params.new === "1" && (
+        <NewTenantModal defaultTimezone={Intl.DateTimeFormat().resolvedOptions().timeZone} />
+      )}
     </div>
   );
 }
