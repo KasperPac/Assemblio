@@ -91,6 +91,7 @@ describe("viewAsTenant", () => {
     } as any);
     await expect(viewAsTenant("t-1")).rejects.toThrow(); // redirect throws in test env
     expect(sb._rpc).toHaveBeenCalledWith("set_active_tenant", { p_tenant_id: "t-1" });
+    expect(logSuperAdminAction).toHaveBeenCalledWith(sb, expect.objectContaining({ action: "view_as", targetTenantId: "t-1" }));
   });
 
   it("succeeds for platform_observer", async () => {
@@ -100,6 +101,7 @@ describe("viewAsTenant", () => {
     } as any);
     await expect(viewAsTenant("t-1")).rejects.toThrow(); // redirect throws in test env
     expect(sb._rpc).toHaveBeenCalledWith("set_active_tenant", { p_tenant_id: "t-1" });
+    expect(logSuperAdminAction).toHaveBeenCalledWith(sb, expect.objectContaining({ action: "view_as", targetTenantId: "t-1" }));
   });
 });
 
