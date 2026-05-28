@@ -7,6 +7,8 @@ vi.mock("@/lib/tenant/context", () => ({
 
 import { getServerTenantContext } from "@/lib/tenant/context";
 
+// Post-Task 2, platform operators have tenantId: null when no tenant is active.
+// Regular roles always have a tenantId.
 function makeCtx(role: string) {
   return {
     supabase: {} as any,
@@ -20,13 +22,20 @@ function makeCtx(role: string) {
 describe("requireSuperAdmin", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("passes for super_admin", async () => {
-    vi.mocked(getServerTenantContext).mockResolvedValue(makeCtx("super_admin"));
-    await expect(requireSuperAdmin()).resolves.not.toThrow();
+  it("returns context for super_admin", async () => {
+    const ctx = makeCtx("super_admin");
+    vi.mocked(getServerTenantContext).mockResolvedValue(ctx);
+    const result = await requireSuperAdmin();
+    expect(result).toBe(ctx);
   });
 
   it("throws for platform_observer", async () => {
     vi.mocked(getServerTenantContext).mockResolvedValue(makeCtx("platform_observer"));
+    await expect(requireSuperAdmin()).rejects.toThrow("forbidden");
+  });
+
+  it("throws for admin", async () => {
+    vi.mocked(getServerTenantContext).mockResolvedValue(makeCtx("admin"));
     await expect(requireSuperAdmin()).rejects.toThrow("forbidden");
   });
 
@@ -44,14 +53,23 @@ describe("requireSuperAdmin", () => {
 describe("requirePlatformOperator", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("passes for super_admin", async () => {
-    vi.mocked(getServerTenantContext).mockResolvedValue(makeCtx("super_admin"));
-    await expect(requirePlatformOperator()).resolves.not.toThrow();
+  it("returns context for super_admin", async () => {
+    const ctx = makeCtx("super_admin");
+    vi.mocked(getServerTenantContext).mockResolvedValue(ctx);
+    const result = await requirePlatformOperator();
+    expect(result).toBe(ctx);
   });
 
-  it("passes for platform_observer", async () => {
-    vi.mocked(getServerTenantContext).mockResolvedValue(makeCtx("platform_observer"));
-    await expect(requirePlatformOperator()).resolves.not.toThrow();
+  it("returns context for platform_observer", async () => {
+    const ctx = makeCtx("platform_observer");
+    vi.mocked(getServerTenantContext).mockResolvedValue(ctx);
+    const result = await requirePlatformOperator();
+    expect(result).toBe(ctx);
+  });
+
+  it("throws for admin", async () => {
+    vi.mocked(getServerTenantContext).mockResolvedValue(makeCtx("admin"));
+    await expect(requirePlatformOperator()).rejects.toThrow("forbidden");
   });
 
   it("throws for member", async () => {
