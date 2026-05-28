@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import styles from "./tenant-detail.module.css";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import LifecycleControls from "./_components/lifecycle-controls";
 
 export default async function TenantDetailPage({
   params,
@@ -52,6 +53,15 @@ export default async function TenantDetailPage({
         <p className={styles.meta}>
           Created {new Date(tenant.created_at).toLocaleDateString()} · {tenant.timezone} · {tenant.currency}
         </p>
+        <LifecycleControls
+          tenantId={tenant.id}
+          tenantName={tenant.name}
+          isSuspended={!!tenant.suspended_at}
+          isDeleted={!!tenant.deleted_at}
+          currentTier={sub?.selected_tier ?? null}
+          currentStatus={sub?.status ?? null}
+          currentTrialEndsAt={sub?.trial_ends_at ?? null}
+        />
       </section>
 
       <section className={styles.section}>
