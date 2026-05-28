@@ -2,10 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import styles from "./tenant-detail.module.css";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import LifecycleControls from "./_components/lifecycle-controls";
 import MembersPanel from "./_components/members-panel";
 import { viewAsTenant } from "../../actions";
+import PageHeader from "../../../_ui/page-header";
 
 export default async function TenantDetailPage({
   params,
@@ -38,55 +38,61 @@ export default async function TenantDetailPage({
       .limit(20),
   ]);
 
+  if (!tenant) notFound();
+
   const memberIds = (members ?? []).map((m) => m.profile_id);
-  let memberEmails: Record<string, string | null> = {};
-  if (memberIds.length > 0) {
-    const admin = createSupabaseAdminClient();
-    const { data: usersResp } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
-    const byId = new Map((usersResp?.users ?? []).map((u) => [u.id, u.email ?? null]));
-    memberEmails = Object.fromEntries(memberIds.map((id) => [id, byId.get(id) ?? null]));
+  const auditActorIds = Array.from(new Set((audit ?? []).map((r) => r.actor_id)));
+  const allIds = Array.from(new Set([...memberIds, ...auditActorIds]));
+
+  let emailById = new Map<string, string | null>();
+  if (allIds.length > 0) {
+    const { data: emailRows } = await supabase.rpc("get_user_emails", { p_ids: allIds });
+    emailById = new Map(((emailRows ?? []) as Array<{ id: string; email: string | null }>).map((r) => [r.id, r.email]));
   }
 
   const memberRows = (members ?? []).map((m) => ({
     profile_id: m.profile_id,
     role: m.role,
-    email: memberEmails[m.profile_id] ?? null,
+    email: emailById.get(m.profile_id) ?? null,
   }));
-
-  if (!tenant) notFound();
 
   return (
     <div className={styles.page}>
-      <div className={styles.crumbs}>
-        <Link href="/app/super-admin">Tenants</Link> <span>/</span> <span>{tenant.name}</span>
+      <PageHeader
+        breadcrumbs={[
+          { label: "Tenants", href: "/app/super-admin" },
+          { label: tenant.name },
+        ]}
+        title={tenant.name}
+        description={`Created ${new Date(tenant.created_at).toLocaleDateString()} · ${tenant.timezone} · ${tenant.currency}`}
+        actions={
+          <div className={styles.headerActions}>
+            <form action={async () => { "use server"; await viewAsTenant(tenant.id); }}>
+              <button type="submit" className={styles.viewAsButton}>View as</button>
+            </form>
+            <LifecycleControls
+              tenantId={tenant.id}
+              tenantName={tenant.name}
+              isSuspended={!!tenant.suspended_at}
+              isDeleted={!!tenant.deleted_at}
+              currentTier={sub?.selected_tier ?? null}
+              currentStatus={sub?.status ?? null}
+              currentTrialEndsAt={sub?.trial_ends_at ?? null}
+            />
+          </div>
+        }
+      />
+
+      <div className={styles.pills}>
+        {tenant.deleted_at && <span className={`${styles.pill} ${styles.pillDanger}`}>Deleted</span>}
+        {tenant.suspended_at && <span className={`${styles.pill} ${styles.pillDanger}`}>Suspended</span>}
+        {sub?.status && (
+          <span className={`${styles.pill} ${styles[`status_${sub.status}`]}`}>{sub.status}</span>
+        )}
       </div>
 
-      <section className={styles.headerCard}>
-        <h1 className={styles.title}>{tenant.name}</h1>
-        <div className={styles.pills}>
-          {tenant.deleted_at && <span className={`${styles.pill} ${styles.pillDanger}`}>Deleted</span>}
-          {tenant.suspended_at && <span className={`${styles.pill} ${styles.pillDanger}`}>Suspended</span>}
-          {sub?.status && <span className={`${styles.pill} ${styles[`status_${sub.status}`]}`}>{sub.status}</span>}
-        </div>
-        <p className={styles.meta}>
-          Created {new Date(tenant.created_at).toLocaleDateString()} · {tenant.timezone} · {tenant.currency}
-        </p>
-        <form action={async () => { "use server"; await viewAsTenant(tenant.id); }}>
-          <button type="submit" className={styles.viewAsButton}>View as</button>
-        </form>
-        <LifecycleControls
-          tenantId={tenant.id}
-          tenantName={tenant.name}
-          isSuspended={!!tenant.suspended_at}
-          isDeleted={!!tenant.deleted_at}
-          currentTier={sub?.selected_tier ?? null}
-          currentStatus={sub?.status ?? null}
-          currentTrialEndsAt={sub?.trial_ends_at ?? null}
-        />
-      </section>
-
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Subscription</h2>
+      <section className={styles.card}>
+        <h2 className={styles.cardTitle}>Subscription</h2>
         <dl className={styles.dl}>
           <div><dt>Tier</dt><dd>{sub?.selected_tier ?? "—"}</dd></div>
           <div><dt>Status</dt><dd>{sub?.status ?? "—"}</dd></div>
@@ -99,26 +105,30 @@ export default async function TenantDetailPage({
         </dl>
       </section>
 
-      <section className={styles.section}>
+      <section className={styles.card}>
         <MembersPanel tenantId={tenant.id} members={memberRows} />
       </section>
 
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Recent audit</h2>
-        <table className={styles.auditTable}>
-          <thead><tr><th>When</th><th>Action</th><th>Actor</th><th>Metadata</th></tr></thead>
-          <tbody>
-            {(audit ?? []).map((row) => (
-              <tr key={row.id}>
-                <td>{new Date(row.created_at).toLocaleString()}</td>
-                <td>{row.action}</td>
-                <td>{row.actor_id.slice(0, 8)}…</td>
-                <td><code className={styles.code}>{JSON.stringify(row.metadata)}</code></td>
-              </tr>
-            ))}
-            {(audit ?? []).length === 0 && <tr><td colSpan={4} className={styles.empty}>No audit entries.</td></tr>}
-          </tbody>
-        </table>
+      <section className={styles.card}>
+        <h2 className={styles.cardTitle}>Recent audit</h2>
+        <div className={styles.tableCard}>
+          <table className={styles.table}>
+            <thead><tr><th>When</th><th>Action</th><th>Actor</th><th>Metadata</th></tr></thead>
+            <tbody>
+              {(audit ?? []).map((row) => (
+                <tr key={row.id}>
+                  <td className={styles.meta}>{new Date(row.created_at).toLocaleString()}</td>
+                  <td>{row.action}</td>
+                  <td className={styles.meta}>{emailById.get(row.actor_id) ?? row.actor_id.slice(0, 8) + "…"}</td>
+                  <td><code className={styles.code}>{JSON.stringify(row.metadata)}</code></td>
+                </tr>
+              ))}
+              {(audit ?? []).length === 0 && (
+                <tr><td colSpan={4} className={styles.empty}>No audit entries.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </section>
     </div>
   );

@@ -1,21 +1,120 @@
-.page { padding: 24px; }
-.headerRow { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.title { font-size: 24px; font-weight: 600; color: var(--ink-strong); }
-.newButton { background: var(--brand-1); color: white; padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 500; }
-.filterRow { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
-.filterPill { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--stroke); font-size: 13px; color: var(--ink-muted); }
-.filterPill.active { background: var(--ink-strong); color: var(--bg-card); border-color: var(--ink-strong); }
-.searchForm { margin-left: auto; }
-.searchInput { padding: 6px 12px; border-radius: 8px; border: 1px solid var(--stroke); font-size: 13px; min-width: 220px; }
-.table { width: 100%; border-collapse: collapse; }
-.table thead th { text-align: left; padding: 10px 12px; font-size: 12px; font-weight: 500; color: var(--ink-muted); text-transform: uppercase; border-bottom: 1px solid var(--stroke); }
-.table tbody td { padding: 12px; border-bottom: 1px solid var(--stroke); font-size: 14px; }
-.rowLink { color: var(--ink-strong); font-weight: 500; }
-.row:hover { background: var(--surface-hover); }
-.statusPill { padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 500; }
-.status_trialing { background: var(--info-dim); color: var(--info); }
-.status_active { background: var(--ok-dim); color: var(--ok); }
-.status_past_due { background: var(--warning-dim); color: var(--warning); }
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.newButton {
+  composes: primary from "../_ui/buttons.module.css";
+}
+
+.tableCard {
+  composes: tableCard from "../_ui/table.module.css";
+}
+
+.table {
+  composes: table from "../_ui/table.module.css";
+}
+
+.meta {
+  color: var(--ink-muted);
+}
+
+.empty {
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+  padding: 8px 0;
+}
+
+/* Toolbar with tabs + search — mirrors components page */
+
+.toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.tab,
+.tabActive {
+  padding: 7px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tab {
+  color: var(--ink-muted);
+  background: transparent;
+}
+
+.tab:hover {
+  background: var(--surface-1);
+  color: var(--ink-strong);
+}
+
+.tabActive {
+  background: var(--brand-dim);
+  color: var(--brand-1);
+}
+
+.tabCount {
+  color: var(--ink-faint);
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.search {
+  flex: 1;
+}
+
+.search input {
+  width: 100%;
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-lg);
+  min-height: 44px;
+  padding: 0 14px;
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+.search input:hover { border-color: var(--stroke-strong); }
+.search input:focus {
+  outline: none;
+  border-color: var(--brand-1);
+  box-shadow: var(--shadow-focus);
+}
+
+.nameCell {
+  color: var(--ink-strong);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.nameCell:hover { color: var(--brand-1); }
+
+.statusPill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: var(--radius-lg);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status_trialing  { background: var(--info-dim);    color: var(--info); }
+.status_active    { background: var(--ok-dim);      color: var(--ok); }
+.status_past_due  { background: var(--warning-dim); color: var(--warning); }
 .status_suspended { background: var(--danger-dim); color: var(--danger); }
-.status_deleted { background: var(--surface-1); color: var(--ink-muted); }
-.empty { padding: 32px; text-align: center; color: var(--ink-muted); }
+.status_deleted   { background: var(--surface-1);  color: var(--ink-muted); }
+.status_all       { background: var(--surface-1);  color: var(--ink-muted); }

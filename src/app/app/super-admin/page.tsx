@@ -1,6 +1,7 @@
 import Link from "next/link";
 import styles from "./super-admin.module.css";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import PageHeader from "../_ui/page-header";
 import NewTenantModal from "./_components/new-tenant-modal";
 
 type StatusFilter = "all" | "trialing" | "active" | "past_due" | "suspended" | "deleted";
@@ -56,90 +57,112 @@ export default async function SuperAdminTenantsPage({
     memberCountByTenant.set(row.tenant_id, (memberCountByTenant.get(row.tenant_id) ?? 0) + 1);
   }
 
-  const rows = (tenants ?? [])
-    .map((t) => {
-      const sub = subByTenant.get(t.id);
-      const derivedStatus: StatusFilter = t.deleted_at
-        ? "deleted"
-        : t.suspended_at
-        ? "suspended"
-        : ((sub?.status as StatusFilter) ?? "all");
-      return {
-        id: t.id,
-        name: t.name,
-        created_at: t.created_at,
-        tier: sub?.selected_tier ?? "—",
-        trial_ends_at: sub?.trial_ends_at ?? null,
-        members: memberCountByTenant.get(t.id) ?? 0,
-        derivedStatus,
-      };
-    })
-    .filter((r) => {
-      if (filter !== "all" && r.derivedStatus !== filter) return false;
-      if (search && !r.name.toLowerCase().includes(search.toLowerCase())) return false;
-      return true;
-    });
+  const allRows = (tenants ?? []).map((t) => {
+    const sub = subByTenant.get(t.id);
+    const derivedStatus: StatusFilter = t.deleted_at
+      ? "deleted"
+      : t.suspended_at
+      ? "suspended"
+      : ((sub?.status as StatusFilter) ?? "all");
+    return {
+      id: t.id,
+      name: t.name,
+      created_at: t.created_at,
+      tier: sub?.selected_tier ?? "—",
+      trial_ends_at: sub?.trial_ends_at ?? null,
+      members: memberCountByTenant.get(t.id) ?? 0,
+      derivedStatus,
+    };
+  });
+
+  const filtered = allRows.filter((r) => {
+    if (filter !== "all" && r.derivedStatus !== filter) return false;
+    if (search && !r.name.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
+
+  const countsByStatus = new Map<StatusFilter, number>();
+  for (const r of allRows) {
+    countsByStatus.set(r.derivedStatus, (countsByStatus.get(r.derivedStatus) ?? 0) + 1);
+  }
 
   return (
     <div className={styles.page}>
-      <div className={styles.headerRow}>
-        <h1 className={styles.title}>Tenants</h1>
-        <Link className={styles.newButton} href="/app/super-admin?new=1">+ New tenant</Link>
-      </div>
+      <PageHeader
+        title="Tenants"
+        description={`${filtered.length} of ${allRows.length} tenants on the platform.`}
+        actions={
+          <Link href="/app/super-admin?new=1" className={styles.newButton}>
+            + New tenant
+          </Link>
+        }
+      />
 
-      <div className={styles.filterRow}>
-        {(Object.keys(FILTER_LABELS) as StatusFilter[]).map((key) => {
-          const href = `/app/super-admin${key === "all" ? "" : `?status=${key}`}`;
-          const active = key === filter;
-          return (
-            <Link key={key} href={href} className={`${styles.filterPill} ${active ? styles.active : ""}`}>
-              {FILTER_LABELS[key]}
-            </Link>
-          );
-        })}
-        <form className={styles.searchForm}>
+      <div className={styles.toolbar}>
+        <div className={styles.tabs}>
+          {(Object.keys(FILTER_LABELS) as StatusFilter[]).map((key) => {
+            const href = `/app/super-admin${key === "all" ? "" : `?status=${key}`}`;
+            const active = key === filter;
+            const count = key === "all" ? allRows.length : countsByStatus.get(key) ?? 0;
+            return (
+              <a key={key} href={href} className={active ? styles.tabActive : styles.tab}>
+                {FILTER_LABELS[key]}
+                <span className={styles.tabCount}>{count}</span>
+              </a>
+            );
+          })}
+        </div>
+        <form className={styles.search} method="get">
+          {filter !== "all" && <input type="hidden" name="status" value={filter} />}
           <input
-            type="search"
             name="q"
             defaultValue={search}
-            placeholder="Search tenant name…"
-            className={styles.searchInput}
+            placeholder="Search by tenant name"
+            aria-label="Search by tenant name"
           />
-          {filter !== "all" && <input type="hidden" name="status" value={filter} />}
         </form>
       </div>
 
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Plan</th>
-            <th>Trial ends</th>
-            <th>Members</th>
-            <th>Created</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.id} className={styles.row}>
-              <td>
-                <Link href={`/app/super-admin/tenants/${r.id}`} className={styles.rowLink}>
-                  {r.name}
-                </Link>
-              </td>
-              <td><span className={`${styles.statusPill} ${styles[`status_${r.derivedStatus}`]}`}>{FILTER_LABELS[r.derivedStatus] ?? r.derivedStatus}</span></td>
-              <td>{r.tier}</td>
-              <td>{r.trial_ends_at ? new Date(r.trial_ends_at).toLocaleDateString() : "—"}</td>
-              <td>{r.members}</td>
-              <td>{new Date(r.created_at).toLocaleDateString()}</td>
-            </tr>
-          ))}
-          {rows.length === 0 && (
-            <tr><td colSpan={6} className={styles.empty}>No tenants match.</td></tr>
-          )}
-        </tbody>
-      </table>
+      {filtered.length === 0 ? (
+        <p className={styles.empty}>No tenants match.</p>
+      ) : (
+        <div className={styles.tableCard}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Plan</th>
+                <th>Trial ends</th>
+                <th>Members</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((r) => (
+                <tr key={r.id}>
+                  <td>
+                    <Link href={`/app/super-admin/tenants/${r.id}`} className={styles.nameCell}>
+                      {r.name}
+                    </Link>
+                  </td>
+                  <td>
+                    <span className={`${styles.statusPill} ${styles[`status_${r.derivedStatus}`]}`}>
+                      {FILTER_LABELS[r.derivedStatus] ?? r.derivedStatus}
+                    </span>
+                  </td>
+                  <td>{r.tier}</td>
+                  <td className={styles.meta}>
+                    {r.trial_ends_at ? new Date(r.trial_ends_at).toLocaleDateString() : "—"}
+                  </td>
+                  <td>{r.members}</td>
+                  <td className={styles.meta}>{new Date(r.created_at).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {params.new === "1" && (
         <NewTenantModal defaultTimezone={Intl.DateTimeFormat().resolvedOptions().timeZone} />
