@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { requireSuperAdmin } from "@/lib/super-admin/guard";
+import { requireSuperAdmin, requirePlatformOperator } from "@/lib/super-admin/guard";
 import { logSuperAdminAction } from "@/lib/super-admin/audit";
 
 export interface CreateTenantInput {
@@ -43,12 +43,8 @@ export async function createTenant(input: CreateTenantInput): Promise<string> {
   });
   if (subError) throw new Error(subError.message);
 
-  const { error: ptaError } = await supabase.from("profile_tenant_access").insert({
-    profile_id: userId,
-    tenant_id: tenantRow.id,
-    role: "admin",
-  });
-  if (ptaError) throw new Error(ptaError.message);
+  // NOTE: deliberately NOT inserting profile_tenant_access for the actor.
+  // The actor enters the new tenant via view-as if they need to set it up.
 
   await logSuperAdminAction(supabase, {
     actorId: userId,
@@ -67,7 +63,7 @@ export async function createTenant(input: CreateTenantInput): Promise<string> {
 }
 
 export async function viewAsTenant(tenantId: string): Promise<void> {
-  const ctx = await requireSuperAdmin();
+  const ctx = await requirePlatformOperator();  // observer allowed to view-as
   const { supabase, userId } = ctx;
 
   const { error } = await supabase.rpc("set_active_tenant", { p_tenant_id: tenantId });
@@ -84,21 +80,30 @@ export async function viewAsTenant(tenantId: string): Promise<void> {
 }
 
 export async function exitViewAs(): Promise<void> {
-  const ctx = await requireSuperAdmin();
+  const ctx = await requirePlatformOperator();
   const { supabase, userId, superAdminHomeTenantId } = ctx;
-  if (!superAdminHomeTenantId) {
-    throw new Error("no super_admin_home_tenant_id set");
-  }
 
-  const { error } = await supabase.rpc("set_active_tenant", { p_tenant_id: superAdminHomeTenantId });
-  if (error) throw new Error(error.message);
+  if (superAdminHomeTenantId) {
+    // Has a home tenant — return there.
+    const { error } = await supabase.rpc("set_active_tenant", {
+      p_tenant_id: superAdminHomeTenantId,
+    });
+    if (error) throw new Error(error.message);
+  } else {
+    // No home tenant — clear active tenant so next /app visit redirects to platform module.
+    const { error } = await supabase
+      .from("profiles")
+      .update({ tenant_id: null })
+      .eq("id", userId);
+    if (error) throw new Error(error.message);
+  }
 
   await logSuperAdminAction(supabase, {
     actorId: userId,
-    action: "exit_view_as",
+    action: superAdminHomeTenantId ? "exit_view_as" : "exit_view_as_no_home",
     targetTenantId: superAdminHomeTenantId,
   });
 
   revalidatePath("/app");
-  redirect("/app");
+  redirect("/app/super-admin");
 }
