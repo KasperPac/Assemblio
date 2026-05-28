@@ -123,7 +123,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           />
         </div>
 
-        <SidebarNav hasPlanning={hasPlanning} />
+        <SidebarNav hasPlanning={hasPlanning} isSuperAdmin={isSuperAdmin} />
       </aside>
 
       <div className={styles.main}>

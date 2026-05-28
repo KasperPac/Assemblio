@@ -10,8 +10,8 @@ type NavItem = {
   icon: ReactNode;
 };
 
-function buildNavSections(hasPlanning: boolean): { label: string; items: NavItem[] }[] {
-  return [
+function buildNavSections(hasPlanning: boolean, isSuperAdmin: boolean): { label: string; items: NavItem[] }[] {
+  const sections: { label: string; items: NavItem[] }[] = [
   {
     label: "Operations",
     items: [
@@ -176,7 +176,7 @@ function buildNavSections(hasPlanning: boolean): { label: string; items: NavItem
           </svg>
         ),
       },
-{
+      {
         label: "Trash",
         href: "/app/trash",
         icon: (
@@ -190,11 +190,49 @@ function buildNavSections(hasPlanning: boolean): { label: string; items: NavItem
     ],
   },
   ];
+
+  if (isSuperAdmin) {
+    sections.push({
+      label: "Platform",
+      items: [
+        {
+          label: "Tenants",
+          href: "/app/super-admin",
+          icon: (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <rect x="9" y="13" width="6" height="8" />
+            </svg>
+          ),
+        },
+        {
+          label: "Audit log",
+          href: "/app/super-admin/audit",
+          icon: (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="9" y1="13" x2="15" y2="13" />
+              <line x1="9" y1="17" x2="13" y2="17" />
+            </svg>
+          ),
+        },
+      ],
+    });
+  }
+
+  return sections;
 }
 
-export default function SidebarNav({ hasPlanning = false }: { hasPlanning?: boolean }) {
+export default function SidebarNav({
+  hasPlanning = false,
+  isSuperAdmin = false,
+}: {
+  hasPlanning?: boolean;
+  isSuperAdmin?: boolean;
+}) {
   const pathname = usePathname();
-  const navSections = buildNavSections(hasPlanning);
+  const navSections = buildNavSections(hasPlanning, isSuperAdmin);
 
   return (
     <nav className={styles.nav}>
