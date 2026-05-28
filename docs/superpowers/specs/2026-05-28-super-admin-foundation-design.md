@@ -149,7 +149,7 @@ limit 1;
 
 ### What is NOT in this migration
 
-- `profile_tenant_access` row cleanup for kasper. Existing auto-added memberships from v1's `createTenant` are kept. A manual SQL sweep after deploy decides which to retain (sandbox tenant) and which to drop. One `delete from profile_tenant_access where profile_id = '<kasper-id>' and tenant_id <> '<sandbox-id>'`.
+- `profile_tenant_access` row cleanup for kasper. Existing auto-added memberships from v1's `createTenant` are kept. A manual SQL sweep after deploy decides which to retain (sandbox tenant) and which to drop. One `delete from profile_tenant_access where profile_id = '5a019756-ede3-4614-be1e-41afed6b6b63' and tenant_id <> '<sandbox-tenant-id>'` (substitute the actual sandbox tenant UUID before running).
 - `super_admin_home_tenant_id` column — already exists from v1. Stays nullable; no backfill needed.
 
 ---
@@ -317,7 +317,7 @@ Actions (super-admin only):
 - **Demote** (super_admin → observer) — confirmation modal, blocks if last super_admin.
 - **Remove** (platform role → member) — confirmation modal. Requires target `profiles.tenant_id` to be non-null. Blocks if last super_admin.
 
-Mutation buttons hidden/disabled for observer (tooltip: "Requires super-admin").
+Mutation buttons disabled with tooltip "Requires super-admin" for observer. Buttons remain visible so observers understand what actions exist; only interaction is blocked.
 
 ### "Last super-admin" lockout
 
@@ -390,7 +390,7 @@ First super-admin is still created via `scripts/provision_super_admin.mjs`. All 
 )}
 ```
 
-**Mutation controls across platform module.** Every action button (suspend, change plan, extend trial, soft-delete, restore, add/remove member, + new tenant, team management) is disabled for observer with tooltip "Requires super-admin." View-as button is NOT disabled for observer. Pattern: derive `canMutate = ctx.role === "super_admin"` at page level and pass as prop to panels.
+**Mutation controls across platform module.** Every action button (suspend, change plan, extend trial, soft-delete, restore, add/remove member, + new tenant, team management) is disabled with tooltip "Requires super-admin" for observer. Buttons remain visible so observers understand what actions exist; only interaction is blocked. View-as button is NOT disabled for observer. Pattern: derive `canMutate = ctx.role === "super_admin"` at page level and pass as prop to panels.
 
 **`/app/super-admin/team/page.tsx`** — new page (table + modals, as described in section 3).
 
