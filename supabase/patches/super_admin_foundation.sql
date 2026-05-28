@@ -1,3 +1,20 @@
+-- super_admin_foundation.sql
+-- Foundation migration for the tenant-less platform operator model.
+--
+-- SCOPE: Removes the is_super_admin() bypass from ALL tenant-isolated *business*
+-- tables so that a platform operator with no active tenant sees zero business rows.
+-- Platform-table WRITE policies (tenant_update, tenant INSERT/UPDATE, audit INSERT,
+-- storage.objects logo/avatar policies) intentionally retain is_super_admin() because
+-- these are platform-level operations that do not involve reading tenant business data.
+-- Similarly, has_tenant_access() and current_tenant_id() retain is_super_admin()
+-- internally — required for set_active_tenant() to work.
+--
+-- APPLICATION ORDER DEPENDENCY: This migration must be applied BEFORE or TOGETHER
+-- WITH the context.ts update (Task 2). Applying this SQL alone will cause any
+-- super_admin profile with tenant_id = NULL to be redirected out of the app by
+-- getServerTenantContext(), since that function currently returns null when tenant_id
+-- is null. Task 2 adds the tenant-less branch that handles this case.
+
 -- 1. Allow tenant_id to be null for platform operators.
 alter table public.profiles alter column tenant_id drop not null;
 
@@ -239,6 +256,8 @@ create policy profile_tenant_access_select on public.profile_tenant_access
   using (profile_id = auth.uid() or public.is_platform_operator());
 
 drop policy if exists tenant_read on public.tenant;
+-- has_tenant_access(id) already covers super_admin (it calls is_super_admin() internally).
+-- is_platform_operator() is the additional grant that lets platform_observer list tenants.
 create policy tenant_read on public.tenant
   for select
   using (public.has_tenant_access(id) or public.is_platform_operator());
@@ -254,11 +273,18 @@ create policy super_admin_audit_log_select on public.super_admin_audit_log
   using (public.is_platform_operator());
 
 -- 5. Audit marker.
-insert into public.super_admin_audit_log (actor_id, action, metadata)
-select id, 'privacy_model_tightened', jsonb_build_object(
-  'note', 'business-table RLS no longer bypassed by is_super_admin() — all tables covered',
-  'migration', 'super_admin_foundation.sql'
-)
-from public.profiles
-where role = 'super_admin'
-limit 1;
+do $$
+declare
+  v_actor_id uuid;
+begin
+  select id into v_actor_id from public.profiles where role = 'super_admin' limit 1;
+  -- Fall back to a nil UUID in CI/staging environments with no super_admin profile yet.
+  if v_actor_id is null then
+    v_actor_id := '00000000-0000-0000-0000-000000000000'::uuid;
+  end if;
+  insert into public.super_admin_audit_log (actor_id, action, metadata)
+  values (v_actor_id, 'privacy_model_tightened', jsonb_build_object(
+    'note', 'business-table RLS no longer bypassed by is_super_admin() — all tables covered',
+    'migration', 'super_admin_foundation.sql'
+  ));
+end $$;
