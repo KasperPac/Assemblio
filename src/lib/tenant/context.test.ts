@@ -131,4 +131,16 @@ describe("getServerTenantContext", () => {
     );
     expect(await getServerTenantContext()).toBeNull();
   });
+
+  it("returns null for admin with null tenant_id (invariant violation — same as member)", async () => {
+    // The 'admin' role is a tenant-scoped role; null tenant_id is an invariant
+    // violation for any non-platform-operator role, including admin.
+    vi.mocked(createSupabaseServerClient).mockResolvedValue(
+      makeSupabase({
+        userId: "user-a",
+        profile: { tenant_id: null, role: "admin" },
+      }) as any
+    );
+    expect(await getServerTenantContext()).toBeNull();
+  });
 });
