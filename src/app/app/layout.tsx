@@ -8,6 +8,7 @@ import SidebarNav from "./sidebar-nav";
 import Topbar from "./topbar";
 import { requireActiveSubscription } from "./_lib/require-active-subscription";
 import { TrialBanner } from "./_components/trial-banner";
+import ViewAsBanner from "./_components/view-as-banner";
 import { PastDueBanner } from "./_components/past-due-banner";
 import { pastDueSoftLocked } from "@/lib/plans";
 import type { AccessResult } from "@/lib/subscription/access";
@@ -24,7 +25,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("tenant_id,role,avatar_url,tenant:tenant_id(id,name,has_planning_module)")
+    .select("tenant_id,role,avatar_url,super_admin_home_tenant_id,tenant:tenant_id(id,name,has_planning_module)")
     .eq("id", user?.id ?? "")
     .maybeSingle();
 
@@ -134,6 +135,9 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           selectableTenants={selectableTenants}
           currentTenantId={profile?.tenant_id ?? ""}
         />
+        {isSuperAdmin && profile?.super_admin_home_tenant_id && profile?.tenant_id !== profile.super_admin_home_tenant_id && (
+          <ViewAsBanner tenantName={tenant?.name ?? "tenant"} />
+        )}
         {trialDaysLeft !== null && sub ? (
           <TrialBanner
             daysLeft={trialDaysLeft}

@@ -5,6 +5,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import LifecycleControls from "./_components/lifecycle-controls";
 import MembersPanel from "./_components/members-panel";
+import { viewAsTenant } from "../../actions";
 
 export default async function TenantDetailPage({
   params,
@@ -70,6 +71,9 @@ export default async function TenantDetailPage({
         <p className={styles.meta}>
           Created {new Date(tenant.created_at).toLocaleDateString()} · {tenant.timezone} · {tenant.currency}
         </p>
+        <form action={async () => { "use server"; await viewAsTenant(tenant.id); }}>
+          <button type="submit" className={styles.viewAsButton}>View as</button>
+        </form>
         <LifecycleControls
           tenantId={tenant.id}
           tenantName={tenant.name}

@@ -22,3 +22,4 @@
 .membersTable th, .auditTable th, .membersTable td, .auditTable td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--stroke); }
 .code { font-family: ui-monospace, monospace; font-size: 12px; background: var(--surface-1); padding: 2px 4px; border-radius: 4px; }
 .empty { color: var(--ink-muted); text-align: center; padding: 16px; }
+.viewAsButton { padding: 6px 12px; border-radius: 6px; border: 1px solid var(--brand-1); color: var(--brand-1); background: var(--bg-card); font-size: 13px; margin-right: 6px; margin-bottom: 8px; }
