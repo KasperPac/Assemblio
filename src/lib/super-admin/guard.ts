@@ -7,3 +7,11 @@ export async function requireSuperAdmin(): Promise<TenantContext> {
   }
   return ctx;
 }
+
+export async function requirePlatformOperator(): Promise<TenantContext> {
+  const ctx = await getServerTenantContext();
+  if (!ctx || (ctx.role !== "super_admin" && ctx.role !== "platform_observer")) {
+    throw new Error("forbidden");
+  }
+  return ctx;
+}

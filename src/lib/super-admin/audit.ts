@@ -10,9 +10,14 @@ export type SuperAdminAction =
   | "restore_tenant"
   | "view_as"
   | "exit_view_as"
+  | "exit_view_as_no_home"
   | "add_member"
   | "remove_member"
-  | "change_role";
+  | "change_role"
+  | "add_platform_user"
+  | "change_platform_user_role"
+  | "remove_platform_user"
+  | "privacy_model_tightened";
 
 export interface AuditEntry {
   actorId: string;
