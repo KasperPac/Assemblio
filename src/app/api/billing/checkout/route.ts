@@ -27,7 +27,7 @@ const LIMIT_KINDS: ReadonlyArray<LimitKind> = ["locations", "users"];
 
 export async function POST(req: Request) {
   const ctx = await getServerTenantContext();
-  if (!ctx) {
+  if (!ctx || !ctx.tenantId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
