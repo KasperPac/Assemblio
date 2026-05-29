@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export default async function PastDuePage() {
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/login");
+  if (!ctx || !ctx.tenantId) redirect("/login");
 
   // We render this page regardless of access.state so users in the soft-warn
   // window who click the banner CTA still see it. The gate in the app shell

@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function PaywallPage() {
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/login");
+  if (!ctx || !ctx.tenantId) redirect("/login");
 
   const access = await getSubscriptionAccess(ctx.supabase, ctx.tenantId);
   const sub = access.sub;
