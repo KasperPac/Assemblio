@@ -40,7 +40,7 @@ export async function addDepartment(
   if (!name) return { error: "Department name is required." };
 
   const context = await getServerTenantContext();
-  if (!context) return { error: "Missing tenant context." };
+  if (!context || !context.tenantId) return { error: "Missing tenant context." };
   const { supabase, tenantId } = context;
 
   const groupId = await ensureLabourGroup(supabase, tenantId);

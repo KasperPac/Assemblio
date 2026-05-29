@@ -173,7 +173,7 @@ export async function createStaffMember(formData: FormData) {
   }
 
   const context = await getServerTenantContext();
-  if (!context) {
+  if (!context || !context.tenantId) {
     redirect(staffingPath(weekStart, { error: "Missing+tenant+context." }));
   }
 
@@ -246,7 +246,7 @@ export async function updateStaffMember(formData: FormData) {
   }
 
   const context = await getServerTenantContext();
-  if (!context) {
+  if (!context || !context.tenantId) {
     redirect(staffingPath(weekStart, { error: "Missing+tenant+context." }));
   }
 

@@ -117,7 +117,7 @@ export async function startStep(stepId: string) {
 
 export async function completeStep(stepId: string) {
   const ctx = await getServerTenantContext();
-  if (!ctx) return;
+  if (!ctx || !ctx.tenantId) return;
   const { supabase, tenantId } = ctx;
 
   const { data: tenant } = await supabase

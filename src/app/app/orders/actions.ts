@@ -20,7 +20,7 @@ export async function allocateOrder(formData: FormData) {
   const idempotencyKey = formData.get("idempotency_key")?.toString().trim() || null;
 
   const context = await getServerTenantContext();
-  if (!context) return;
+  if (!context || !context.tenantId) return;
   const { supabase, tenantId } = context;
 
   const returnTo = sanitizeReturnPath(

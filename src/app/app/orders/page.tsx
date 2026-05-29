@@ -87,7 +87,7 @@ function sourceChipText(source: string): string {
 
 export default async function OrdersPage({ searchParams }: Props) {
   const context = await getServerTenantContext();
-  if (!context) redirect("/auth/login");
+  if (!context || !context.tenantId) redirect("/auth/login");
   const { supabase, tenantId } = context;
   const params = (await searchParams) ?? {};
   const activeTab = parseTab(params.tab);

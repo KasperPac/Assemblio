@@ -129,7 +129,7 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
   const query = (await searchParams) ?? {};
   const activeTab = parseDetailTab(query.tab);
   const context = await getServerTenantContext();
-  if (!context) notFound();
+  if (!context || !context.tenantId) notFound();
   const { supabase, tenantId } = context;
 
   const [{ data: order }, { data: orderLines }] = await Promise.all([

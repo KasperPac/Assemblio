@@ -27,7 +27,7 @@ function getWeekBounds(weeksAgo: number): { start: Date; end: Date } {
 
 export default async function DashboardPage() {
   const context = await getServerTenantContext();
-  if (!context) {
+  if (!context || !context.tenantId) {
     return (
       <div className={styles.dashboard}>
         <p className={styles.emptyMsg}>Could not resolve the active tenant.</p>

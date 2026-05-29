@@ -52,7 +52,7 @@ export async function createStocktakeSession(formData: FormData): Promise<void> 
   if (!locationId) throw new Error("Location is required.");
 
   const context = await getServerTenantContext();
-  if (!context) throw new Error("Missing tenant context.");
+  if (!context || !context.tenantId) throw new Error("Missing tenant context.");
   const { supabase, tenantId } = context;
 
   await seedVarianceReasonsIfNeeded(supabase, tenantId);

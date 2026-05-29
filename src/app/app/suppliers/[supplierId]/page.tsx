@@ -36,7 +36,7 @@ type Props = { params: Promise<{ supplierId: string }> };
 export default async function SupplierDetailPage({ params }: Props) {
   const { supplierId } = await params;
   const context = await getServerTenantContext();
-  if (!context) notFound();
+  if (!context || !context.tenantId) notFound();
   const { supabase, tenantId } = context;
 
   const [

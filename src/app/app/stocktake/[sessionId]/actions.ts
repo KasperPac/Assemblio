@@ -41,7 +41,7 @@ export async function saveLineCountClient({
   if (!lineId || !sessionId) return { ok: false };
 
   const context = await getServerTenantContext();
-  if (!context) return { ok: false };
+  if (!context || !context.tenantId) return { ok: false };
   const { supabase, tenantId } = context;
 
   const { data: { user } } = await supabase.auth.getUser();
@@ -70,7 +70,7 @@ export async function submitForReview(formData: FormData) {
   if (!sessionId) return;
 
   const context = await getServerTenantContext();
-  if (!context) return;
+  if (!context || !context.tenantId) return;
   const { supabase, tenantId } = context;
 
   const session = await fetchSession(supabase, tenantId, sessionId);
@@ -107,7 +107,7 @@ export async function saveVarianceReason(formData: FormData) {
   if (!lineId || !sessionId) return;
 
   const context = await getServerTenantContext();
-  if (!context) return;
+  if (!context || !context.tenantId) return;
   const { supabase, tenantId } = context;
 
   // Guard: only allow updates when session is in reconciliation
@@ -129,7 +129,7 @@ export async function approveAndApply(formData: FormData) {
   if (!sessionId) redirect("/app/stocktake?apply_error=missing_session");
 
   const context = await getServerTenantContext();
-  if (!context) redirect("/app/stocktake?apply_error=missing_tenant");
+  if (!context || !context.tenantId) redirect("/app/stocktake?apply_error=missing_tenant");
   const { supabase, tenantId } = context;
 
   const session = await fetchSession(supabase, tenantId, sessionId);
@@ -182,7 +182,7 @@ export async function sendBackForRecount(formData: FormData) {
   if (!sessionId) return;
 
   const context = await getServerTenantContext();
-  if (!context) return;
+  if (!context || !context.tenantId) return;
   const { supabase, tenantId } = context;
 
   const session = await fetchSession(supabase, tenantId, sessionId);
@@ -204,7 +204,7 @@ export async function applyOpeningStock(formData: FormData) {
   if (!sessionId) redirect("/app/stocktake?apply_error=missing_session");
 
   const context = await getServerTenantContext();
-  if (!context) redirect("/app/stocktake?apply_error=missing_tenant");
+  if (!context || !context.tenantId) redirect("/app/stocktake?apply_error=missing_tenant");
   const { supabase, tenantId } = context;
 
   const session = await fetchSession(supabase, tenantId, sessionId);

@@ -29,7 +29,7 @@ const BOM_EDITOR_ROLES = new Set(["admin", "super_admin"]);
 
 async function requireBomEditor() {
   const context = await getServerTenantContext();
-  if (!context) {
+  if (!context || !context.tenantId) {
     return { error: "Missing tenant context." };
   }
 
