@@ -23,7 +23,7 @@ export default async function InventoryIntegrityPage({
 }) {
   const sp = await searchParams;
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/auth/login");
+  if (!ctx || !ctx.tenantId) redirect("/auth/login");
   const { supabase, tenantId } = ctx;
 
   const integrity = await loadInventoryIntegrityAudit(

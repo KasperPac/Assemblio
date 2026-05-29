@@ -9,7 +9,7 @@ import styles from "./reports.module.css";
 
 export default async function ReportsHubPage() {
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/auth/login");
+  if (!ctx || !ctx.tenantId) redirect("/auth/login");
   const { supabase, tenantId } = ctx;
 
   const now = new Date();

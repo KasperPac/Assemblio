@@ -9,7 +9,7 @@ import styles from "./page.module.css";
 
 export default async function LocationsPage() {
   const context = await getServerTenantContext();
-  if (!context) redirect("/auth/login");
+  if (!context || !context.tenantId) redirect("/auth/login");
   const { supabase, tenantId } = context;
 
   const access = await getSubscriptionAccess(supabase, tenantId);

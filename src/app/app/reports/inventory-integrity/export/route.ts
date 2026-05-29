@@ -7,7 +7,7 @@ import {
 
 export async function GET() {
   const ctx = await getServerTenantContext();
-  if (!ctx) return new NextResponse("Unauthorized", { status: 401 });
+  if (!ctx || !ctx.tenantId) return new NextResponse("Unauthorized", { status: 401 });
   const { supabase, tenantId } = ctx;
 
   const integrity = await loadInventoryIntegrityAudit(

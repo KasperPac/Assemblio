@@ -163,7 +163,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
   const { variantId } = await params;
   const query = (await searchParams) ?? {};
   const context = await getServerTenantContext();
-  if (!context) notFound();
+  if (!context || !context.tenantId) notFound();
   const { supabase, tenantId } = context;
 
   const subscriptionAccess = await getSubscriptionAccess(supabase, tenantId);
