@@ -10,7 +10,11 @@ const REQUIRED_HEADERS = ["name"];
 export async function POST(req: NextRequest) {
   const context = await getServerTenantContext();
   if (!context) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { supabase, tenantId } = context;
+  const { supabase, tenantId, role } = context;
+  if (!tenantId) return NextResponse.json({ error: "No active tenant" }, { status: 403 });
+  if (role !== "admin" && role !== "super_admin") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   const formData = await req.formData();
   const file = formData.get("file") as File | null;
