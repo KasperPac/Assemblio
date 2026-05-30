@@ -1,0 +1,26 @@
+{
+  "planPath": "docs/superpowers/plans/2026-05-30-super-admin-f1-vitals.md",
+  "tasks": [
+    {
+      "id": 20,
+      "subject": "Task 1: SQL patch — get_tenant_health_indicators + get_tenant_vitals RPCs",
+      "status": "pending",
+      "description": "**Goal:** Create both security-definer RPCs in a new patch file, plus Vitest integration tests that skip gracefully when no live DB is present.\n\n**Files:**\n- Create: `supabase/patches/super_admin_tenant_vitals.sql`\n- Create: `supabase/__tests__/super_admin_tenant_vitals.test.ts`\n\n**Acceptance Criteria:**\n- [ ] `get_tenant_health_indicators(uuid[])` returns (tenant_id, health, reasons[]) — health levels: critical/warn/ok, first match wins\n- [ ] `get_tenant_vitals(uuid)` returns single row with all 19 vitals fields\n- [ ] Both raise `forbidden` when caller is not platform operator\n- [ ] Both granted `execute` to `authenticated` only\n- [ ] Tests use `it.skipIf(!hasEnv)` pattern\n- [ ] Tests cover: non-operator → forbidden, empty array → 0 rows, full shape check on vitals\n\n**Verify:** `npx vitest run supabase/__tests__/super_admin_tenant_vitals.test.ts --reporter=verbose`\n\n```json:metadata\n{\"files\": [\"supabase/patches/super_admin_tenant_vitals.sql\", \"supabase/__tests__/super_admin_tenant_vitals.test.ts\"], \"verifyCommand\": \"npx vitest run supabase/__tests__/super_admin_tenant_vitals.test.ts --reporter=verbose\", \"acceptanceCriteria\": [\"get_tenant_health_indicators returns correct health levels\", \"get_tenant_vitals returns correct shape\", \"Both raise forbidden for non-operators\", \"Tests use it.skipIf pattern\"]}\n```"
+    },
+    {
+      "id": 21,
+      "subject": "Task 2: Health dot column on tenant list",
+      "status": "pending",
+      "blockedBy": [20],
+      "description": "**Goal:** Add a Health column (second column, after Name) to the tenant list table showing a coloured 10px dot with a native tooltip listing health reasons.\n\n**Files:**\n- Modify: `src/app/app/super-admin/page.tsx`\n- Modify: `src/app/app/super-admin/super-admin.module.css`\n\n**Acceptance Criteria:**\n- [ ] After fetching tenants, calls `get_tenant_health_indicators` with all tenant IDs in one RPC call\n- [ ] Health column appears between Name and Status columns\n- [ ] Dot colours: ok = --ok, warn = --warning, critical = --danger\n- [ ] Tooltip shows reasons joined by ` · ` or \"Healthy\" when none\n- [ ] `npx tsc --noEmit` passes with 0 errors\n\n**Verify:** `npx tsc --noEmit`\n\n```json:metadata\n{\"files\": [\"src/app/app/super-admin/page.tsx\", \"src/app/app/super-admin/super-admin.module.css\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Health dot column added between Name and Status\", \"RPC called with all tenant IDs\", \"Dot colour matches health level\", \"Tooltip shows reasons or Healthy\"]}\n```"
+    },
+    {
+      "id": 22,
+      "subject": "Task 3: Vitals panel on tenant detail page",
+      "status": "pending",
+      "blockedBy": [20],
+      "description": "**Goal:** Create the VitalsPanel component (three cards: Integrations, Activity, Data snapshot) and wire it into the tenant detail page between Members and Recent audit.\n\n**Files:**\n- Create: `src/app/app/super-admin/tenants/[tenantId]/_components/vitals-panel.tsx`\n- Create: `src/app/app/super-admin/tenants/[tenantId]/_components/vitals-panel.module.css`\n- Modify: `src/app/app/super-admin/tenants/[tenantId]/page.tsx`\n\n**Acceptance Criteria:**\n- [ ] Panel renders between Members section and Recent audit section\n- [ ] Card 1 (Integrations): Shopify + Xero/QBO rows; handles not-connected states\n- [ ] Card 2 (Activity): last sign-in, active members, write events; stale sign-in in warning colour\n- [ ] Card 3 (Data snapshot): component, BOM, open order, supplier counts\n- [ ] Three cards side-by-side on wide viewports, stacked on narrow (<900px)\n- [ ] `npx tsc --noEmit` passes with 0 errors\n\n**Verify:** `npx tsc --noEmit`\n\n```json:metadata\n{\"files\": [\"src/app/app/super-admin/tenants/[tenantId]/_components/vitals-panel.tsx\", \"src/app/app/super-admin/tenants/[tenantId]/_components/vitals-panel.module.css\", \"src/app/app/super-admin/tenants/[tenantId]/page.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"VitalsPanel renders between Members and Audit\", \"Integrations card handles connected/not-connected states\", \"Activity card shows sign-in/active members/events\", \"Data snapshot shows counts\", \"Responsive layout\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-05-30T13:00:00.000Z"
+}
