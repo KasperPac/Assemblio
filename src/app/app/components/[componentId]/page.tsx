@@ -106,7 +106,8 @@ export default async function ComponentDetailPage({ params }: Props) {
 
   const context = await getServerTenantContext();
   if (!context) redirect("/auth/login");
-  const { supabase, tenantId, role } = context;
+  const { supabase, tenantId: _tenantId, role } = context;
+  const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
   const isAdmin = role === "admin" || role === "super_admin";
 
   const { data: component } = await supabase

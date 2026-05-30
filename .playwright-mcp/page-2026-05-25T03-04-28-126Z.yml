@@ -1,0 +1,104 @@
+- generic [active] [ref=e120]:
+  - banner [ref=e121]:
+    - generic [ref=e123]:
+      - link "Skip to main content" [ref=e124] [cursor=pointer]:
+        - /url: "#main"
+      - link "Dev Dashboard logo" [ref=e126] [cursor=pointer]:
+        - /url: /dashboard/189899333
+        - img "Dev Dashboard logo" [ref=e127]
+    - button "Settings" [ref=e130] [cursor=pointer]:
+      - img "View code" [ref=e132]
+      - paragraph [ref=e136]: Pac Technologies
+  - generic [ref=e137]:
+    - navigation "Primary" [ref=e141]:
+      - generic [ref=e143]:
+        - list [ref=e145]:
+          - listitem [ref=e146]:
+            - link "Apps Apps" [ref=e147] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps
+              - img "Apps" [ref=e149]
+              - text: Apps
+          - listitem [ref=e154]:
+            - link "Dev Stores icon Stores" [ref=e155] [cursor=pointer]:
+              - /url: /dashboard/189899333/stores
+              - img "Dev Stores icon" [ref=e157]
+              - text: Stores
+          - listitem [ref=e159]:
+            - link "Catalogs icon Catalogs" [ref=e160] [cursor=pointer]:
+              - /url: /dashboard/189899333/catalogs
+              - img "Catalogs icon" [ref=e162]
+              - text: Catalogs
+        - list [ref=e168]:
+          - listitem [ref=e169]:
+            - link "App icon Manuva" [ref=e170] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps/360504393729
+              - img "App icon" [ref=e171]
+              - generic [ref=e172]: Manuva
+          - listitem [ref=e173]:
+            - list [ref=e174]:
+              - listitem [ref=e175]:
+                - img
+                - link "Monitoring" [ref=e176] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/monitoring
+              - listitem [ref=e177]:
+                - img
+                - link "Logs" [ref=e178] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/logs
+              - listitem [ref=e179]:
+                - img
+                - link "Versions" [ref=e180] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/versions
+              - listitem [ref=e181]:
+                - link "Settings" [ref=e182] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/settings
+      - list [ref=e184]:
+        - listitem [ref=e185]:
+          - link "Organization icon Organization" [ref=e186] [cursor=pointer]:
+            - /url: https://admin.shopify.com/organization/189899333/settings/organization-account?from=dev
+            - img "Organization icon" [ref=e188]
+            - text: Organization
+    - main [ref=e194]:
+      - generic [ref=e196]:
+        - generic [ref=e198]:
+          - link "Arrow Back to versions list page" [ref=e199] [cursor=pointer]:
+            - /url: /dashboard/189899333/apps/360504393729/versions
+            - img "Arrow" [ref=e200]
+            - generic [ref=e202]: Back to versions list page
+          - heading "app-subdomain-fix" [level=1] [ref=e203]
+          - generic [ref=e204]: Active
+        - generic [ref=e206]:
+          - generic [ref=e208]:
+            - generic [ref=e210]:
+              - paragraph [ref=e211]: App name
+              - paragraph [ref=e212]: Manuva
+            - generic [ref=e213]:
+              - paragraph [ref=e214]: Access
+              - generic [ref=e215]:
+                - paragraph [ref=e216]: Redirect URLs
+                - paragraph [ref=e217]: "[\"https://app.manuva.app/api/shopify/callback\", \"https://assemblio-one.vercel.app/api/shopify/callback\"]"
+                - paragraph [ref=e218]: Scopes
+                - paragraph [ref=e219]: read_inventory,read_orders,read_products
+                - paragraph [ref=e220]: Use legacy install flow
+                - paragraph [ref=e221]: "false"
+            - generic [ref=e222]:
+              - paragraph [ref=e223]: App URL
+              - generic [ref=e224]:
+                - paragraph [ref=e225]:
+                  - code [ref=e226]: app_url
+                - paragraph [ref=e227]: https://app.manuva.app
+                - paragraph [ref=e228]:
+                  - code [ref=e229]: embedded
+                - paragraph [ref=e230]: "false"
+            - generic [ref=e231]:
+              - paragraph [ref=e232]: Webhooks
+              - generic [ref=e233]:
+                - paragraph [ref=e234]:
+                  - code [ref=e235]: api_version
+                - paragraph [ref=e236]: 2026-01
+          - generic [ref=e239]:
+            - generic [ref=e244]:
+              - generic [ref=e245]: Released
+              - generic [ref=e246]: May 11, 2026 at 9:03 am +0000
+            - generic [ref=e249]:
+              - generic [ref=e250]: Created
+              - generic [ref=e251]: May 11, 2026 at 9:03 am +0000

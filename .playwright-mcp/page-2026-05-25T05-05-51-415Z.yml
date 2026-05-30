@@ -1,0 +1,157 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - link "Skip to main content" [ref=e5] [cursor=pointer]:
+        - /url: "#main"
+      - link "Dev Dashboard logo" [ref=e7] [cursor=pointer]:
+        - /url: /dashboard/189899333
+        - img "Dev Dashboard logo" [ref=e8]
+    - button "Settings" [ref=e11] [cursor=pointer]:
+      - img "View code" [ref=e13]
+      - paragraph [ref=e17]: Pac Technologies
+  - generic [ref=e18]:
+    - navigation "Primary" [ref=e22]:
+      - generic [ref=e24]:
+        - list [ref=e26]:
+          - listitem [ref=e27]:
+            - link "Apps Apps" [ref=e28] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps
+              - img "Apps" [ref=e30]
+              - text: Apps
+          - listitem [ref=e35]:
+            - link "Dev Stores icon Stores" [ref=e36] [cursor=pointer]:
+              - /url: /dashboard/189899333/stores
+              - img "Dev Stores icon" [ref=e38]
+              - text: Stores
+          - listitem [ref=e40]:
+            - link "Catalogs icon Catalogs" [ref=e41] [cursor=pointer]:
+              - /url: /dashboard/189899333/catalogs
+              - img "Catalogs icon" [ref=e43]
+              - text: Catalogs
+        - list [ref=e49]:
+          - listitem [ref=e50]:
+            - link "App icon Manuva" [ref=e51] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps/360504393729
+              - img "App icon" [ref=e52]
+              - generic [ref=e53]: Manuva
+          - listitem [ref=e54]:
+            - list [ref=e55]:
+              - listitem [ref=e56]:
+                - link "Monitoring" [ref=e57] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/monitoring
+              - listitem [ref=e58]:
+                - link "Logs" [ref=e59] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/logs
+              - listitem [ref=e60]:
+                - link "Versions" [ref=e61] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/versions
+              - listitem [ref=e62]:
+                - link "Settings" [ref=e63] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/settings
+      - list [ref=e65]:
+        - listitem [ref=e66]:
+          - link "Organization icon Organization" [ref=e67] [cursor=pointer]:
+            - /url: https://admin.shopify.com/organization/189899333/settings/organization-account?from=dev
+            - img "Organization icon" [ref=e69]
+            - text: Organization
+    - main [ref=e75]:
+      - generic [ref=e77]:
+        - heading "Overview" [level=1] [ref=e80]
+        - generic [ref=e82]:
+          - generic [ref=e83]:
+            - generic [ref=e84]:
+              - paragraph [ref=e86]: API health
+              - link "Alert Fix overdue Calls made with deprecated offline tokens detected in the last 14 days Arrow" [ref=e87] [cursor=pointer]:
+                - /url: /dashboard/189899333/apps/360504393729/monitoring/api_health
+                - generic [ref=e88]:
+                  - generic [ref=e89]:
+                    - img "Alert" [ref=e91]
+                    - generic [ref=e93]:
+                      - paragraph [ref=e94]: Fix overdue
+                      - paragraph [ref=e95]: Calls made with deprecated offline tokens detected in the last 14 days
+                  - img "Arrow" [ref=e97]
+              - link "Success OK No calls with breaking changes detected in the last 14 days Arrow" [ref=e100] [cursor=pointer]:
+                - /url: /dashboard/189899333/apps/360504393729/monitoring/api_health
+                - generic [ref=e101]:
+                  - generic [ref=e102]:
+                    - img "Success" [ref=e104]
+                    - generic [ref=e106]:
+                      - paragraph [ref=e107]: OK
+                      - paragraph [ref=e108]: No calls with breaking changes detected in the last 14 days
+                  - img "Arrow" [ref=e110]
+            - generic [ref=e115]:
+              - generic [ref=e116]:
+                - img "Calendar" [ref=e117]
+                - paragraph [ref=e119]: 7 days
+              - paragraph [ref=e122]: Webhook failure rate
+              - paragraph [ref=e128]: Removed subscriptions
+              - paragraph [ref=e134]: Function error rate
+            - generic [ref=e139]:
+              - paragraph [ref=e141]: Activity
+              - generic [ref=e142]:
+                - paragraph [ref=e145]: Today
+                - link "manuva-4 released • 4:28 am" [ref=e149] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/versions/984373428225
+                  - paragraph [ref=e150]: manuva-4 released • 4:28 am
+              - generic [ref=e151]:
+                - paragraph [ref=e154]: May 11, 2026
+                - link "app-subdomain-fix released • 9:03 am" [ref=e158] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/versions/957820796929
+                  - paragraph [ref=e159]: app-subdomain-fix released • 9:03 am
+              - link "initial-config released • 8:41 am" [ref=e164] [cursor=pointer]:
+                - /url: /dashboard/189899333/apps/360504393729/versions/957791371265
+                - paragraph [ref=e165]: initial-config released • 8:41 am
+              - generic [ref=e166]:
+                - link "manuva-1 released • 8:31 am" [ref=e170] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/versions/957776789505
+                  - paragraph [ref=e171]: manuva-1 released • 8:31 am
+                - paragraph [ref=e174]:
+                  - link "View all versions" [ref=e175] [cursor=pointer]:
+                    - /url: /dashboard/189899333/apps/360504393729/versions
+          - generic [ref=e176]:
+            - generic [ref=e178]:
+              - generic [ref=e179]:
+                - paragraph [ref=e180]: Installs
+                - generic [ref=e181]:
+                  - link "Install app" [ref=e182] [cursor=pointer]:
+                    - /url: https://admin.shopify.com/?organization_id=189899333&no_redirect=true&redirect=/oauth/redirect_from_developer_dashboard?client_id%3D923db8d97db22d30c0517520f1498933
+                    - generic [ref=e184]: Install app
+                  - button "Copy to clipboard" [ref=e186] [cursor=pointer]:
+                    - img "Copy to clipboard" [ref=e189]
+              - link "1 Arrow" [ref=e193] [cursor=pointer]:
+                - /url: /dashboard/189899333/apps/360504393729/installs
+                - generic [ref=e195]:
+                  - paragraph [ref=e196]: "1"
+                  - img "Arrow" [ref=e198]
+            - generic [ref=e202]:
+              - paragraph [ref=e205]: Distribution
+              - link "Manage Shopify App Store listing Open in new tab" [ref=e207] [cursor=pointer]:
+                - /url: https://partners.shopify.com/org/189899333/org_apps/360504393729/distribution_app_store
+                - generic [ref=e209]:
+                  - paragraph [ref=e210]: Manage Shopify App Store listing
+                  - img "Open in new tab" [ref=e212]
+            - generic [ref=e216]:
+              - generic [ref=e217]:
+                - paragraph [ref=e218]: Versions
+                - link "New version" [ref=e220] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/versions/new
+                  - generic [ref=e222]: New version
+              - generic [ref=e223]: Update your configuration by creating a new version
+              - link "manuva-4 Active Arrow" [ref=e226] [cursor=pointer]:
+                - /url: /dashboard/189899333/apps/360504393729/versions/984373428225
+                - generic [ref=e228]:
+                  - paragraph [ref=e229]: manuva-4
+                  - generic [ref=e230]: Active
+                  - img "Arrow" [ref=e232]
+            - generic [ref=e235]:
+              - generic [ref=e236]:
+                - paragraph [ref=e237]: Preview app with Shopify CLI
+                - link "Docs Open in new tab" [ref=e238] [cursor=pointer]:
+                  - /url: https://shopify.dev/docs/api/shopify-cli/app/app-dev
+                  - generic [ref=e239]: Docs
+                  - img "Open in new tab" [ref=e240]
+              - generic [ref=e245]:
+                - generic [ref=e246]: $
+                - generic [ref=e247]: shopify app dev
+                - button "Copy to clipboard" [ref=e249] [cursor=pointer]:
+                  - img "Copy to clipboard" [ref=e252]

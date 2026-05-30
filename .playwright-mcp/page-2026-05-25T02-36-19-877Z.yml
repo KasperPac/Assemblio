@@ -1,0 +1,589 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - img "Manuva" [ref=e5]
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - paragraph [ref=e8]: Operations
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /app
+            - img [ref=e11]
+            - text: Dashboard
+          - link "Products" [ref=e16] [cursor=pointer]:
+            - /url: /app/products
+            - img [ref=e18]
+            - text: Products
+          - link "Components" [ref=e22] [cursor=pointer]:
+            - /url: /app/components
+            - img [ref=e24]
+            - text: Components
+          - link "Goods Inwards" [ref=e28] [cursor=pointer]:
+            - /url: /app/goods-inwards
+            - img [ref=e30]
+            - text: Goods Inwards
+          - link "Orders" [ref=e34] [cursor=pointer]:
+            - /url: /app/orders
+            - img [ref=e36]
+            - text: Orders
+          - link "Stocktake" [ref=e39] [cursor=pointer]:
+            - /url: /app/stocktake
+            - img [ref=e41]
+            - text: Stocktake
+          - link "Suppliers" [ref=e43] [cursor=pointer]:
+            - /url: /app/suppliers
+            - img [ref=e45]
+            - text: Suppliers
+          - link "Reports" [ref=e49] [cursor=pointer]:
+            - /url: /app/reports
+            - img [ref=e51]
+            - text: Reports
+        - generic [ref=e52]:
+          - paragraph [ref=e53]: Warehouse
+          - link "Locations" [ref=e54] [cursor=pointer]:
+            - /url: /app/warehouse/locations
+            - img [ref=e56]
+            - text: Locations
+        - generic [ref=e59]:
+          - paragraph [ref=e60]: Planning
+          - link "Production Planning" [ref=e61] [cursor=pointer]:
+            - /url: /app/planning/floor
+            - img [ref=e63]
+            - text: Production Planning
+          - link "Departments" [ref=e67] [cursor=pointer]:
+            - /url: /app/departments
+            - img [ref=e69]
+            - text: Departments
+        - generic [ref=e71]:
+          - paragraph [ref=e72]: Workspace
+          - link "Activity Log" [ref=e73] [cursor=pointer]:
+            - /url: /app/activity-log
+            - img [ref=e75]
+            - text: Activity Log
+          - link "Trash" [ref=e78] [cursor=pointer]:
+            - /url: /app/trash
+            - img [ref=e80]
+            - text: Trash
+    - generic [ref=e83]:
+      - banner [ref=e84]:
+        - generic [ref=e86]:
+          - paragraph [ref=e87]: Orders
+          - paragraph [ref=e88]: Track imported orders and move them through allocation workflows.
+        - button "User menu" [ref=e91] [cursor=pointer]: K
+      - generic [ref=e93]:
+        - generic [ref=e94]:
+          - paragraph [ref=e96]: Orders sync and allocate automatically. Re-run allocation from the order detail if BOMs change.
+          - button "Sync orders" [ref=e99] [cursor=pointer]
+        - generic [ref=e100]:
+          - generic [ref=e102]:
+            - paragraph [ref=e103]: Live queue
+            - heading "Orders ready for action" [level=2] [ref=e104]
+            - paragraph [ref=e105]: Allocation status updates automatically on every sync. Open an order to re-run or inspect components.
+          - generic [ref=e106]:
+            - generic [ref=e107]: Order
+            - generic [ref=e108]: Date
+            - generic [ref=e109]: Total
+            - generic [ref=e110]: Items
+            - generic [ref=e111]: Status
+            - generic [ref=e112]: Allocation
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - link "#1085" [ref=e115] [cursor=pointer]:
+                - /url: /app/orders/5a5a9329-5a16-42df-a3c7-11315f6db1d0
+              - generic [ref=e116]: 12 May
+              - generic [ref=e117]: $259,000
+              - generic [ref=e118]: 1 item
+              - generic [ref=e119]: fulfilled
+              - generic [ref=e120]: —
+              - link "View →" [ref=e121] [cursor=pointer]:
+                - /url: /app/orders/5a5a9329-5a16-42df-a3c7-11315f6db1d0
+            - generic [ref=e122]:
+              - link "#1126" [ref=e123] [cursor=pointer]:
+                - /url: /app/orders/d2059957-f509-4c9d-957a-a2a5518b4ec6
+              - generic [ref=e124]: 11 May
+              - generic [ref=e125]: $12,000
+              - generic [ref=e126]: 1 item
+              - generic [ref=e127]: open
+              - generic [ref=e129]: ✓ Allocated
+              - link "View →" [ref=e130] [cursor=pointer]:
+                - /url: /app/orders/d2059957-f509-4c9d-957a-a2a5518b4ec6
+            - generic [ref=e131]:
+              - link "#1127" [ref=e132] [cursor=pointer]:
+                - /url: /app/orders/5e1ffc4d-2e53-469f-9ab7-358b8a611f98
+              - generic [ref=e133]: 10 May
+              - generic [ref=e134]: $103,000
+              - generic [ref=e135]: 2 items
+              - generic [ref=e136]: open
+              - generic [ref=e138]: ✓ Allocated
+              - link "View →" [ref=e139] [cursor=pointer]:
+                - /url: /app/orders/5e1ffc4d-2e53-469f-9ab7-358b8a611f98
+            - generic [ref=e140]:
+              - link "#1128" [ref=e141] [cursor=pointer]:
+                - /url: /app/orders/2be96fee-267c-4dc3-9364-c8c22371f998
+              - generic [ref=e142]: 9 May
+              - generic [ref=e143]: $75
+              - generic [ref=e144]: 1 item
+              - generic [ref=e145]: open
+              - generic [ref=e147]: ✓ Allocated
+              - link "View →" [ref=e148] [cursor=pointer]:
+                - /url: /app/orders/2be96fee-267c-4dc3-9364-c8c22371f998
+            - generic [ref=e149]:
+              - link "#1129" [ref=e150] [cursor=pointer]:
+                - /url: /app/orders/b7f8b06c-eb31-45d1-95d4-a0ed1412b674
+              - generic [ref=e151]: 8 May
+              - generic [ref=e152]: $32,000
+              - generic [ref=e153]: 1 item
+              - generic [ref=e154]: open
+              - generic [ref=e156]: ✓ Allocated
+              - link "View →" [ref=e157] [cursor=pointer]:
+                - /url: /app/orders/b7f8b06c-eb31-45d1-95d4-a0ed1412b674
+            - generic [ref=e158]:
+              - link "#1130" [ref=e159] [cursor=pointer]:
+                - /url: /app/orders/97af7cf0-74b4-4fae-9d45-20555498a23c
+              - generic [ref=e160]: 7 May
+              - generic [ref=e161]: $284,000
+              - generic [ref=e162]: 2 items
+              - generic [ref=e163]: open
+              - generic [ref=e165]: ✓ Allocated
+              - link "View →" [ref=e166] [cursor=pointer]:
+                - /url: /app/orders/97af7cf0-74b4-4fae-9d45-20555498a23c
+            - generic [ref=e167]:
+              - link "#1131" [ref=e168] [cursor=pointer]:
+                - /url: /app/orders/7d6bb90c-a93c-4b80-a151-518b5453b45c
+              - generic [ref=e169]: 6 May
+              - generic [ref=e170]: $135,000
+              - generic [ref=e171]: 1 item
+              - generic [ref=e172]: open
+              - generic [ref=e174]: ✓ Allocated
+              - link "View →" [ref=e175] [cursor=pointer]:
+                - /url: /app/orders/7d6bb90c-a93c-4b80-a151-518b5453b45c
+            - generic [ref=e176]:
+              - link "#1132" [ref=e177] [cursor=pointer]:
+                - /url: /app/orders/bb4b48ff-6de7-4c36-aa5a-80aad91b95ce
+              - generic [ref=e178]: 5 May
+              - generic [ref=e179]: $32,000
+              - generic [ref=e180]: 1 item
+              - generic [ref=e181]: open
+              - generic [ref=e183]: ✓ Allocated
+              - link "View →" [ref=e184] [cursor=pointer]:
+                - /url: /app/orders/bb4b48ff-6de7-4c36-aa5a-80aad91b95ce
+            - generic [ref=e185]:
+              - link "#1133" [ref=e186] [cursor=pointer]:
+                - /url: /app/orders/a981ac3a-157a-4a34-a920-bab7de136ebe
+              - generic [ref=e187]: 4 May
+              - generic [ref=e188]: $128,000
+              - generic [ref=e189]: 2 items
+              - generic [ref=e190]: open
+              - generic [ref=e192]: ✓ Allocated
+              - link "View →" [ref=e193] [cursor=pointer]:
+                - /url: /app/orders/a981ac3a-157a-4a34-a920-bab7de136ebe
+            - generic [ref=e194]:
+              - link "#1134" [ref=e195] [cursor=pointer]:
+                - /url: /app/orders/e991627a-0477-40a5-a5a1-1881aeac3eef
+              - generic [ref=e196]: 3 May
+              - generic [ref=e197]: $285,000
+              - generic [ref=e198]: 1 item
+              - generic [ref=e199]: open
+              - generic [ref=e201]: ✓ Allocated
+              - link "View →" [ref=e202] [cursor=pointer]:
+                - /url: /app/orders/e991627a-0477-40a5-a5a1-1881aeac3eef
+            - generic [ref=e203]:
+              - link "#1135" [ref=e204] [cursor=pointer]:
+                - /url: /app/orders/27a90511-e1cf-4fff-bbe0-55782de42791
+              - generic [ref=e205]: 2 May
+              - generic [ref=e206]: $18,500
+              - generic [ref=e207]: 1 item
+              - generic [ref=e208]: open
+              - generic [ref=e210]: ✓ Allocated
+              - link "View →" [ref=e211] [cursor=pointer]:
+                - /url: /app/orders/27a90511-e1cf-4fff-bbe0-55782de42791
+            - generic [ref=e212]:
+              - link "#1121" [ref=e213] [cursor=pointer]:
+                - /url: /app/orders/68e3620d-1442-44ba-b4b2-1421e155dc0a
+              - generic [ref=e214]: 28 Apr
+              - generic [ref=e215]: $135,100
+              - generic [ref=e216]: 2 items
+              - generic [ref=e217]: in_production
+              - generic [ref=e219]: ✓ Allocated
+              - link "View →" [ref=e220] [cursor=pointer]:
+                - /url: /app/orders/68e3620d-1442-44ba-b4b2-1421e155dc0a
+            - generic [ref=e221]:
+              - link "#1122" [ref=e222] [cursor=pointer]:
+                - /url: /app/orders/240ad994-3475-47d4-9d68-113b56b247ab
+              - generic [ref=e223]: 24 Apr
+              - generic [ref=e224]: $72,000
+              - generic [ref=e225]: 1 item
+              - generic [ref=e226]: in_production
+              - generic [ref=e228]: ✓ Allocated
+              - link "View →" [ref=e229] [cursor=pointer]:
+                - /url: /app/orders/240ad994-3475-47d4-9d68-113b56b247ab
+            - generic [ref=e230]:
+              - link "#1123" [ref=e231] [cursor=pointer]:
+                - /url: /app/orders/4d13b80c-87e6-4b92-9941-5fc1e2dd88e7
+              - generic [ref=e232]: 20 Apr
+              - generic [ref=e233]: $25
+              - generic [ref=e234]: 1 item
+              - generic [ref=e235]: in_production
+              - generic [ref=e237]: ✓ Allocated
+              - link "View →" [ref=e238] [cursor=pointer]:
+                - /url: /app/orders/4d13b80c-87e6-4b92-9941-5fc1e2dd88e7
+            - generic [ref=e239]:
+              - link "#1124" [ref=e240] [cursor=pointer]:
+                - /url: /app/orders/0c51a8b0-8c45-45ce-846f-d1a1cc44e776
+              - generic [ref=e241]: 16 Apr
+              - generic [ref=e242]: $304,000
+              - generic [ref=e243]: 2 items
+              - generic [ref=e244]: in_production
+              - generic [ref=e246]: ✓ Allocated
+              - link "View →" [ref=e247] [cursor=pointer]:
+                - /url: /app/orders/0c51a8b0-8c45-45ce-846f-d1a1cc44e776
+            - generic [ref=e248]:
+              - link "#1125" [ref=e249] [cursor=pointer]:
+                - /url: /app/orders/eaf2d458-f45a-4e8a-99b7-5abf54b37a9a
+              - generic [ref=e250]: 12 Apr
+              - generic [ref=e251]: $75
+              - generic [ref=e252]: 1 item
+              - generic [ref=e253]: in_production
+              - generic [ref=e255]: ✓ Allocated
+              - link "View →" [ref=e256] [cursor=pointer]:
+                - /url: /app/orders/eaf2d458-f45a-4e8a-99b7-5abf54b37a9a
+            - generic [ref=e257]:
+              - link "#1086" [ref=e258] [cursor=pointer]:
+                - /url: /app/orders/6b18bb4d-de51-4b9b-a44c-6825caaf0472
+              - generic [ref=e259]: 8 Apr
+              - generic [ref=e260]: $114,000
+              - generic [ref=e261]: 1 item
+              - generic [ref=e262]: fulfilled
+              - generic [ref=e263]: —
+              - link "View →" [ref=e264] [cursor=pointer]:
+                - /url: /app/orders/6b18bb4d-de51-4b9b-a44c-6825caaf0472
+            - generic [ref=e265]:
+              - link "#1087" [ref=e266] [cursor=pointer]:
+                - /url: /app/orders/7baa368f-acd1-4a65-a910-8fb1be3d2958
+              - generic [ref=e267]: 4 Apr
+              - generic [ref=e268]: $50
+              - generic [ref=e269]: 1 item
+              - generic [ref=e270]: fulfilled
+              - generic [ref=e271]: —
+              - link "View →" [ref=e272] [cursor=pointer]:
+                - /url: /app/orders/7baa368f-acd1-4a65-a910-8fb1be3d2958
+            - generic [ref=e273]:
+              - link "#1088" [ref=e274] [cursor=pointer]:
+                - /url: /app/orders/8d7f99d2-3d70-4a3d-b73d-6f445ac88d17
+              - generic [ref=e275]: 31 Mar
+              - generic [ref=e276]: $118,500
+              - generic [ref=e277]: 2 items
+              - generic [ref=e278]: fulfilled
+              - generic [ref=e279]: —
+              - link "View →" [ref=e280] [cursor=pointer]:
+                - /url: /app/orders/8d7f99d2-3d70-4a3d-b73d-6f445ac88d17
+            - generic [ref=e281]:
+              - link "#1089" [ref=e282] [cursor=pointer]:
+                - /url: /app/orders/19823679-eb73-40a2-afa8-2982bdabce86
+              - generic [ref=e283]: 27 Mar
+              - generic [ref=e284]: $72,000
+              - generic [ref=e285]: 1 item
+              - generic [ref=e286]: fulfilled
+              - generic [ref=e287]: —
+              - link "View →" [ref=e288] [cursor=pointer]:
+                - /url: /app/orders/19823679-eb73-40a2-afa8-2982bdabce86
+            - generic [ref=e289]:
+              - link "#1090" [ref=e290] [cursor=pointer]:
+                - /url: /app/orders/6fafc7ac-8de3-4fc5-8b0a-dc5d103cb792
+              - generic [ref=e291]: 23 Mar
+              - generic [ref=e292]: $50
+              - generic [ref=e293]: 1 item
+              - generic [ref=e294]: fulfilled
+              - generic [ref=e295]: —
+              - link "View →" [ref=e296] [cursor=pointer]:
+                - /url: /app/orders/6fafc7ac-8de3-4fc5-8b0a-dc5d103cb792
+            - generic [ref=e297]:
+              - link "#1091" [ref=e298] [cursor=pointer]:
+                - /url: /app/orders/22ffd021-5ae7-4bfd-8d18-77f4b0738f74
+              - generic [ref=e299]: 19 Mar
+              - generic [ref=e300]: $303,000
+              - generic [ref=e301]: 2 items
+              - generic [ref=e302]: fulfilled
+              - generic [ref=e303]: —
+              - link "View →" [ref=e304] [cursor=pointer]:
+                - /url: /app/orders/22ffd021-5ae7-4bfd-8d18-77f4b0738f74
+            - generic [ref=e305]:
+              - link "#1092" [ref=e306] [cursor=pointer]:
+                - /url: /app/orders/212bffdd-b493-4a90-85fb-c85c92e01a88
+              - generic [ref=e307]: 15 Mar
+              - generic [ref=e308]: $75
+              - generic [ref=e309]: 1 item
+              - generic [ref=e310]: fulfilled
+              - generic [ref=e311]: —
+              - link "View →" [ref=e312] [cursor=pointer]:
+                - /url: /app/orders/212bffdd-b493-4a90-85fb-c85c92e01a88
+            - generic [ref=e313]:
+              - link "#1093" [ref=e314] [cursor=pointer]:
+                - /url: /app/orders/1e2ebaaf-2778-4454-b96e-0661c140f258
+              - generic [ref=e315]: 11 Mar
+              - generic [ref=e316]: $95,000
+              - generic [ref=e317]: 1 item
+              - generic [ref=e318]: fulfilled
+              - generic [ref=e319]: —
+              - link "View →" [ref=e320] [cursor=pointer]:
+                - /url: /app/orders/1e2ebaaf-2778-4454-b96e-0661c140f258
+            - generic [ref=e321]:
+              - link "#1094" [ref=e322] [cursor=pointer]:
+                - /url: /app/orders/f1509fd8-5811-499b-94ba-e4e011fff207
+              - generic [ref=e323]: 7 Mar
+              - generic [ref=e324]: $36,050
+              - generic [ref=e325]: 2 items
+              - generic [ref=e326]: fulfilled
+              - generic [ref=e327]: —
+              - link "View →" [ref=e328] [cursor=pointer]:
+                - /url: /app/orders/f1509fd8-5811-499b-94ba-e4e011fff207
+            - generic [ref=e329]:
+              - link "#1095" [ref=e330] [cursor=pointer]:
+                - /url: /app/orders/d748dba9-bcba-4892-a2f6-c59940777204
+              - generic [ref=e331]: 3 Mar
+              - generic [ref=e332]: $36,000
+              - generic [ref=e333]: 1 item
+              - generic [ref=e334]: fulfilled
+              - generic [ref=e335]: —
+              - link "View →" [ref=e336] [cursor=pointer]:
+                - /url: /app/orders/d748dba9-bcba-4892-a2f6-c59940777204
+            - generic [ref=e337]:
+              - link "#1096" [ref=e338] [cursor=pointer]:
+                - /url: /app/orders/7bb05a06-4a19-4fb1-afe9-cc7fb6fe5c81
+              - generic [ref=e339]: 27 Feb
+              - generic [ref=e340]: $9,500
+              - generic [ref=e341]: 1 item
+              - generic [ref=e342]: fulfilled
+              - generic [ref=e343]: —
+              - link "View →" [ref=e344] [cursor=pointer]:
+                - /url: /app/orders/7bb05a06-4a19-4fb1-afe9-cc7fb6fe5c81
+            - generic [ref=e345]:
+              - link "#1097" [ref=e346] [cursor=pointer]:
+                - /url: /app/orders/00b4a24b-9e07-464d-a61f-606d14c3a847
+              - generic [ref=e347]: 23 Feb
+              - generic [ref=e348]: $125
+              - generic [ref=e349]: 2 items
+              - generic [ref=e350]: fulfilled
+              - generic [ref=e351]: —
+              - link "View →" [ref=e352] [cursor=pointer]:
+                - /url: /app/orders/00b4a24b-9e07-464d-a61f-606d14c3a847
+            - generic [ref=e353]:
+              - link "#1098" [ref=e354] [cursor=pointer]:
+                - /url: /app/orders/a20840e9-a1fe-4bbe-b6ec-ed1d5dabb516
+              - generic [ref=e355]: 19 Feb
+              - generic [ref=e356]: $96,000
+              - generic [ref=e357]: 1 item
+              - generic [ref=e358]: fulfilled
+              - generic [ref=e359]: —
+              - link "View →" [ref=e360] [cursor=pointer]:
+                - /url: /app/orders/a20840e9-a1fe-4bbe-b6ec-ed1d5dabb516
+            - generic [ref=e361]:
+              - link "#1099" [ref=e362] [cursor=pointer]:
+                - /url: /app/orders/c8ffab1b-7c51-4e72-83e8-f2536579be5b
+              - generic [ref=e363]: 15 Feb
+              - generic [ref=e364]: $85,000
+              - generic [ref=e365]: 1 item
+              - generic [ref=e366]: fulfilled
+              - generic [ref=e367]: —
+              - link "View →" [ref=e368] [cursor=pointer]:
+                - /url: /app/orders/c8ffab1b-7c51-4e72-83e8-f2536579be5b
+            - generic [ref=e369]:
+              - link "#1100" [ref=e370] [cursor=pointer]:
+                - /url: /app/orders/6cd3a8a7-d080-4541-be11-b91673b6704e
+              - generic [ref=e371]: 11 Feb
+              - generic [ref=e372]: $90,150
+              - generic [ref=e373]: 2 items
+              - generic [ref=e374]: fulfilled
+              - generic [ref=e375]: —
+              - link "View →" [ref=e376] [cursor=pointer]:
+                - /url: /app/orders/6cd3a8a7-d080-4541-be11-b91673b6704e
+            - generic [ref=e377]:
+              - link "#1101" [ref=e378] [cursor=pointer]:
+                - /url: /app/orders/ab8553f1-b454-40f6-a6d5-27606ec42644
+              - generic [ref=e379]: 7 Feb
+              - generic [ref=e380]: $96,000
+              - generic [ref=e381]: 1 item
+              - generic [ref=e382]: fulfilled
+              - generic [ref=e383]: —
+              - link "View →" [ref=e384] [cursor=pointer]:
+                - /url: /app/orders/ab8553f1-b454-40f6-a6d5-27606ec42644
+            - generic [ref=e385]:
+              - link "#1102" [ref=e386] [cursor=pointer]:
+                - /url: /app/orders/c6751238-5a05-4940-93a3-3a05685e35e1
+              - generic [ref=e387]: 3 Feb
+              - generic [ref=e388]: $28,000
+              - generic [ref=e389]: 1 item
+              - generic [ref=e390]: fulfilled
+              - generic [ref=e391]: —
+              - link "View →" [ref=e392] [cursor=pointer]:
+                - /url: /app/orders/c6751238-5a05-4940-93a3-3a05685e35e1
+            - generic [ref=e393]:
+              - link "#1103" [ref=e394] [cursor=pointer]:
+                - /url: /app/orders/0b0a2d72-fa9c-43d4-87aa-91dc5b0b1da9
+              - generic [ref=e395]: 30 Jan
+              - generic [ref=e396]: $190,150
+              - generic [ref=e397]: 2 items
+              - generic [ref=e398]: fulfilled
+              - generic [ref=e399]: —
+              - link "View →" [ref=e400] [cursor=pointer]:
+                - /url: /app/orders/0b0a2d72-fa9c-43d4-87aa-91dc5b0b1da9
+            - generic [ref=e401]:
+              - link "#1104" [ref=e402] [cursor=pointer]:
+                - /url: /app/orders/5d28b7fc-3ad6-4983-8725-346ef5cb9e35
+              - generic [ref=e403]: 26 Jan
+              - generic [ref=e404]: $55,500
+              - generic [ref=e405]: 1 item
+              - generic [ref=e406]: fulfilled
+              - generic [ref=e407]: —
+              - link "View →" [ref=e408] [cursor=pointer]:
+                - /url: /app/orders/5d28b7fc-3ad6-4983-8725-346ef5cb9e35
+            - generic [ref=e409]:
+              - link "#1105" [ref=e410] [cursor=pointer]:
+                - /url: /app/orders/b1a076df-e6c2-46c2-8a87-9c6cd6e384f0
+              - generic [ref=e411]: 22 Jan
+              - generic [ref=e412]: $12,000
+              - generic [ref=e413]: 1 item
+              - generic [ref=e414]: fulfilled
+              - generic [ref=e415]: —
+              - link "View →" [ref=e416] [cursor=pointer]:
+                - /url: /app/orders/b1a076df-e6c2-46c2-8a87-9c6cd6e384f0
+            - generic [ref=e417]:
+              - link "#1106" [ref=e418] [cursor=pointer]:
+                - /url: /app/orders/f3a6d69f-0c23-4ba0-846f-48973331acd1
+              - generic [ref=e419]: 18 Jan
+              - generic [ref=e420]: $304,000
+              - generic [ref=e421]: 2 items
+              - generic [ref=e422]: fulfilled
+              - generic [ref=e423]: —
+              - link "View →" [ref=e424] [cursor=pointer]:
+                - /url: /app/orders/f3a6d69f-0c23-4ba0-846f-48973331acd1
+            - generic [ref=e425]:
+              - link "#1107" [ref=e426] [cursor=pointer]:
+                - /url: /app/orders/f1df1c2f-54d8-4391-bef4-3d334f5b1b76
+              - generic [ref=e427]: 14 Jan
+              - generic [ref=e428]: $114,000
+              - generic [ref=e429]: 1 item
+              - generic [ref=e430]: fulfilled
+              - generic [ref=e431]: —
+              - link "View →" [ref=e432] [cursor=pointer]:
+                - /url: /app/orders/f1df1c2f-54d8-4391-bef4-3d334f5b1b76
+            - generic [ref=e433]:
+              - link "#1108" [ref=e434] [cursor=pointer]:
+                - /url: /app/orders/6272958b-aedd-44fc-803c-04a3a1f8809f
+              - generic [ref=e435]: 10 Jan
+              - generic [ref=e436]: $45,000
+              - generic [ref=e437]: 1 item
+              - generic [ref=e438]: fulfilled
+              - generic [ref=e439]: —
+              - link "View →" [ref=e440] [cursor=pointer]:
+                - /url: /app/orders/6272958b-aedd-44fc-803c-04a3a1f8809f
+            - generic [ref=e441]:
+              - link "#1109" [ref=e442] [cursor=pointer]:
+                - /url: /app/orders/2fabd5e1-2a48-44f2-a8e7-3b9692f9f39a
+              - generic [ref=e443]: 6 Jan
+              - generic [ref=e444]: $198,500
+              - generic [ref=e445]: 2 items
+              - generic [ref=e446]: fulfilled
+              - generic [ref=e447]: —
+              - link "View →" [ref=e448] [cursor=pointer]:
+                - /url: /app/orders/2fabd5e1-2a48-44f2-a8e7-3b9692f9f39a
+            - generic [ref=e449]:
+              - link "#1110" [ref=e450] [cursor=pointer]:
+                - /url: /app/orders/9c756e71-8159-4113-ab62-3d41db162dea
+              - generic [ref=e451]: 2 Jan
+              - generic [ref=e452]: $84,000
+              - generic [ref=e453]: 1 item
+              - generic [ref=e454]: fulfilled
+              - generic [ref=e455]: —
+              - link "View →" [ref=e456] [cursor=pointer]:
+                - /url: /app/orders/9c756e71-8159-4113-ab62-3d41db162dea
+            - generic [ref=e457]:
+              - link "#1111" [ref=e458] [cursor=pointer]:
+                - /url: /app/orders/8daa9e1e-3790-4149-807a-2dc54aaf02d3
+              - generic [ref=e459]: 29 Dec 2025
+              - generic [ref=e460]: $38,000
+              - generic [ref=e461]: 1 item
+              - generic [ref=e462]: fulfilled
+              - generic [ref=e463]: —
+              - link "View →" [ref=e464] [cursor=pointer]:
+                - /url: /app/orders/8daa9e1e-3790-4149-807a-2dc54aaf02d3
+            - generic [ref=e465]:
+              - link "#1112" [ref=e466] [cursor=pointer]:
+                - /url: /app/orders/d899d4ac-92c7-4582-bdab-81aed0e08fd0
+              - generic [ref=e467]: 25 Dec 2025
+              - generic [ref=e468]: $279,000
+              - generic [ref=e469]: 2 items
+              - generic [ref=e470]: fulfilled
+              - generic [ref=e471]: —
+              - link "View →" [ref=e472] [cursor=pointer]:
+                - /url: /app/orders/d899d4ac-92c7-4582-bdab-81aed0e08fd0
+            - generic [ref=e473]:
+              - link "#1113" [ref=e474] [cursor=pointer]:
+                - /url: /app/orders/6eef22fa-608f-41ad-919d-7368635f2e66
+              - generic [ref=e475]: 21 Dec 2025
+              - generic [ref=e476]: $96,000
+              - generic [ref=e477]: 1 item
+              - generic [ref=e478]: fulfilled
+              - generic [ref=e479]: —
+              - link "View →" [ref=e480] [cursor=pointer]:
+                - /url: /app/orders/6eef22fa-608f-41ad-919d-7368635f2e66
+            - generic [ref=e481]:
+              - link "#1114" [ref=e482] [cursor=pointer]:
+                - /url: /app/orders/9aae938a-c087-4091-96d5-50e23047cf6a
+              - generic [ref=e483]: 17 Dec 2025
+              - generic [ref=e484]: $28,000
+              - generic [ref=e485]: 1 item
+              - generic [ref=e486]: fulfilled
+              - generic [ref=e487]: —
+              - link "View →" [ref=e488] [cursor=pointer]:
+                - /url: /app/orders/9aae938a-c087-4091-96d5-50e23047cf6a
+            - generic [ref=e489]:
+              - link "#1115" [ref=e490] [cursor=pointer]:
+                - /url: /app/orders/2e9390dc-7788-44a9-b357-23975a4eb869
+              - generic [ref=e491]: 13 Dec 2025
+              - generic [ref=e492]: $84,050
+              - generic [ref=e493]: 2 items
+              - generic [ref=e494]: fulfilled
+              - generic [ref=e495]: —
+              - link "View →" [ref=e496] [cursor=pointer]:
+                - /url: /app/orders/2e9390dc-7788-44a9-b357-23975a4eb869
+            - generic [ref=e497]:
+              - link "#1116" [ref=e498] [cursor=pointer]:
+                - /url: /app/orders/83833fe2-3742-4e8b-9f67-8e1a486080c0
+              - generic [ref=e499]: 9 Dec 2025
+              - generic [ref=e500]: $150
+              - generic [ref=e501]: 1 item
+              - generic [ref=e502]: fulfilled
+              - generic [ref=e503]: —
+              - link "View →" [ref=e504] [cursor=pointer]:
+                - /url: /app/orders/83833fe2-3742-4e8b-9f67-8e1a486080c0
+            - generic [ref=e505]:
+              - link "#1117" [ref=e506] [cursor=pointer]:
+                - /url: /app/orders/64c4b87d-9321-49bf-b04c-fddd1572cdf7
+              - generic [ref=e507]: 5 Dec 2025
+              - generic [ref=e508]: $38,000
+              - generic [ref=e509]: 1 item
+              - generic [ref=e510]: fulfilled
+              - generic [ref=e511]: —
+              - link "View →" [ref=e512] [cursor=pointer]:
+                - /url: /app/orders/64c4b87d-9321-49bf-b04c-fddd1572cdf7
+            - generic [ref=e513]:
+              - link "#1118" [ref=e514] [cursor=pointer]:
+                - /url: /app/orders/b1125ae5-00b9-4e4d-a805-4c867e8f6db3
+              - generic [ref=e515]: 1 Dec 2025
+              - generic [ref=e516]: $36,100
+              - generic [ref=e517]: 2 items
+              - generic [ref=e518]: fulfilled
+              - generic [ref=e519]: —
+              - link "View →" [ref=e520] [cursor=pointer]:
+                - /url: /app/orders/b1125ae5-00b9-4e4d-a805-4c867e8f6db3
+            - generic [ref=e521]:
+              - link "#1119" [ref=e522] [cursor=pointer]:
+                - /url: /app/orders/126e2853-cb4b-42ec-8ae1-0b87f37e23e3
+              - generic [ref=e523]: 27 Nov 2025
+              - generic [ref=e524]: $135,000
+              - generic [ref=e525]: 1 item
+              - generic [ref=e526]: fulfilled
+              - generic [ref=e527]: —
+              - link "View →" [ref=e528] [cursor=pointer]:
+                - /url: /app/orders/126e2853-cb4b-42ec-8ae1-0b87f37e23e3
+  - alert [ref=e529]

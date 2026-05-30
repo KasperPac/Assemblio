@@ -1,0 +1,130 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - link "Skip to main content" [ref=e5] [cursor=pointer]:
+        - /url: "#main"
+      - link "Dev Dashboard logo" [ref=e7] [cursor=pointer]:
+        - /url: /dashboard/189899333
+        - img "Dev Dashboard logo" [ref=e8]
+    - button "Settings" [ref=e11] [cursor=pointer]:
+      - img "View code" [ref=e13]
+      - paragraph [ref=e17]: Pac Technologies
+  - generic [ref=e18]:
+    - navigation "Primary" [ref=e22]:
+      - generic [ref=e24]:
+        - list [ref=e26]:
+          - listitem [ref=e27]:
+            - link "Apps Apps" [ref=e28] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps
+              - img "Apps" [ref=e30]
+              - text: Apps
+          - listitem [ref=e35]:
+            - link "Dev Stores icon Stores" [ref=e36] [cursor=pointer]:
+              - /url: /dashboard/189899333/stores
+              - img "Dev Stores icon" [ref=e38]
+              - text: Stores
+          - listitem [ref=e40]:
+            - link "Catalogs icon Catalogs" [ref=e41] [cursor=pointer]:
+              - /url: /dashboard/189899333/catalogs
+              - img "Catalogs icon" [ref=e43]
+              - text: Catalogs
+        - list [ref=e49]:
+          - listitem [ref=e50]:
+            - link "App icon Manuva" [ref=e51] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps/360504393729
+              - img "App icon" [ref=e52]
+              - generic [ref=e53]: Manuva
+          - listitem [ref=e54]:
+            - list [ref=e55]:
+              - listitem [ref=e56]:
+                - img
+                - link "Monitoring" [ref=e57] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/monitoring
+              - listitem [ref=e58]:
+                - img
+                - link "Logs" [ref=e59] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/logs
+              - listitem [ref=e60]:
+                - img
+                - link "Versions" [ref=e61] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/versions
+              - listitem [ref=e62]:
+                - link "Settings" [ref=e63] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/settings
+      - list [ref=e65]:
+        - listitem [ref=e66]:
+          - link "Organization icon Organization" [ref=e67] [cursor=pointer]:
+            - /url: https://admin.shopify.com/organization/189899333/settings/organization-account?from=dev
+            - img "Organization icon" [ref=e69]
+            - text: Organization
+    - main [ref=e75]:
+      - generic [ref=e77]:
+        - generic [ref=e79]:
+          - link "Arrow Back to versions list page" [ref=e80] [cursor=pointer]:
+            - /url: /dashboard/189899333/apps/360504393729/versions
+            - img "Arrow" [ref=e81]
+            - generic [ref=e83]: Back to versions list page
+          - heading "manuva-5" [level=1] [ref=e84]
+          - generic [ref=e85]: Active
+        - generic [ref=e87]:
+          - generic [ref=e89]:
+            - generic [ref=e91]:
+              - paragraph [ref=e92]: App name
+              - paragraph [ref=e93]: Manuva
+              - paragraph [ref=e94]: Handle
+              - paragraph [ref=e95]: manuva
+            - generic [ref=e96]:
+              - paragraph [ref=e97]: Access
+              - generic [ref=e98]:
+                - paragraph [ref=e99]: Redirect URLs
+                - paragraph [ref=e100]: "[\"https://app.manuva.app/api/shopify/callback\"]"
+                - paragraph [ref=e101]: Scopes
+                - paragraph [ref=e102]: read_orders,read_products
+            - generic [ref=e103]:
+              - paragraph [ref=e104]: POS
+              - generic [ref=e105]:
+                - paragraph [ref=e106]:
+                  - code [ref=e107]: embedded
+                - paragraph [ref=e108]: "false"
+            - generic [ref=e109]:
+              - paragraph [ref=e110]: App URL
+              - generic [ref=e111]:
+                - paragraph [ref=e112]:
+                  - code [ref=e113]: app_url
+                - paragraph [ref=e114]: https://app.manuva.app/shopify/embedded
+                - paragraph [ref=e115]:
+                  - code [ref=e116]: embedded
+                - paragraph [ref=e117]: "true"
+            - generic [ref=e118]:
+              - paragraph [ref=e119]: Webhooks
+              - generic [ref=e120]:
+                - paragraph [ref=e121]:
+                  - code [ref=e122]: api_version
+                - paragraph [ref=e123]: 2026-01
+            - button "Expand Webhook subscriptions 7" [ref=e126] [cursor=pointer]:
+              - img "Expand" [ref=e127]
+              - generic [ref=e130]:
+                - paragraph [ref=e131]: Webhook subscriptions
+                - generic [ref=e132]: "7"
+            - generic [ref=e133]:
+              - paragraph [ref=e134]: Privacy compliance webhook subscriptions
+              - generic [ref=e135]:
+                - paragraph [ref=e136]:
+                  - code [ref=e137]: api_version
+                - paragraph [ref=e138]: 2026-01
+                - paragraph [ref=e139]:
+                  - code [ref=e140]: customers_redact_url
+                - paragraph [ref=e141]: https://app.manuva.app/api/shopify/webhooks/gdpr/customers-redact
+                - paragraph [ref=e142]:
+                  - code [ref=e143]: customers_data_request_url
+                - paragraph [ref=e144]: https://app.manuva.app/api/shopify/webhooks/gdpr/customers-data-request
+                - paragraph [ref=e145]:
+                  - code [ref=e146]: shop_redact_url
+                - paragraph [ref=e147]: https://app.manuva.app/api/shopify/webhooks/gdpr/shop-redact
+          - generic [ref=e150]:
+            - generic [ref=e155]:
+              - generic [ref=e156]: Released
+              - generic [ref=e157]: May 25, 2026 at 5:30 am +0000
+            - generic [ref=e160]:
+              - generic [ref=e161]: Created
+              - generic [ref=e162]: May 25, 2026 at 5:26 am +0000

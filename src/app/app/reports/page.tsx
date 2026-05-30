@@ -10,7 +10,8 @@ import styles from "./reports.module.css";
 export default async function ReportsHubPage() {
   const ctx = await getServerTenantContext();
   if (!ctx) redirect("/auth/login");
-  const { supabase, tenantId } = ctx;
+  const { supabase, tenantId: _tenantId } = ctx;
+  const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const now = new Date();
   const cutoff30d = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();

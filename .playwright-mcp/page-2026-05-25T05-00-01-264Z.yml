@@ -1,0 +1,126 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - img "Manuva" [ref=e5]
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - paragraph [ref=e8]: Operations
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /app
+            - img [ref=e11]
+            - text: Dashboard
+          - link "Products" [ref=e16] [cursor=pointer]:
+            - /url: /app/products
+            - img [ref=e18]
+            - text: Products
+          - link "Components" [ref=e22] [cursor=pointer]:
+            - /url: /app/components
+            - img [ref=e24]
+            - text: Components
+          - link "Goods Inwards" [ref=e28] [cursor=pointer]:
+            - /url: /app/goods-inwards
+            - img [ref=e30]
+            - text: Goods Inwards
+          - link "Orders" [ref=e34] [cursor=pointer]:
+            - /url: /app/orders
+            - img [ref=e36]
+            - text: Orders
+          - link "Stocktake" [ref=e39] [cursor=pointer]:
+            - /url: /app/stocktake
+            - img [ref=e41]
+            - text: Stocktake
+          - link "Suppliers" [ref=e43] [cursor=pointer]:
+            - /url: /app/suppliers
+            - img [ref=e45]
+            - text: Suppliers
+          - link "Reports" [ref=e49] [cursor=pointer]:
+            - /url: /app/reports
+            - img [ref=e51]
+            - text: Reports
+        - generic [ref=e52]:
+          - paragraph [ref=e53]: Warehouse
+          - link "Locations" [ref=e54] [cursor=pointer]:
+            - /url: /app/warehouse/locations
+            - img [ref=e56]
+            - text: Locations
+        - generic [ref=e59]:
+          - paragraph [ref=e60]: Planning
+          - link "Production Planning" [ref=e61] [cursor=pointer]:
+            - /url: /app/planning/floor
+            - img [ref=e63]
+            - text: Production Planning
+          - link "Departments" [ref=e67] [cursor=pointer]:
+            - /url: /app/departments
+            - img [ref=e69]
+            - text: Departments
+        - generic [ref=e71]:
+          - paragraph [ref=e72]: Workspace
+          - link "Activity Log" [ref=e73] [cursor=pointer]:
+            - /url: /app/activity-log
+            - img [ref=e75]
+            - text: Activity Log
+          - link "Trash" [ref=e78] [cursor=pointer]:
+            - /url: /app/trash
+            - img [ref=e80]
+            - text: Trash
+    - generic [ref=e83]:
+      - banner [ref=e84]:
+        - generic [ref=e85]:
+          - generic [ref=e86]:
+            - link "Settings" [ref=e88] [cursor=pointer]:
+              - /url: /app/settings
+            - generic [ref=e89]: /Integrations
+          - generic [ref=e90]:
+            - paragraph [ref=e91]: Integrations
+            - paragraph [ref=e92]: Shopify and other connected services.
+        - button "User menu" [ref=e95] [cursor=pointer]: K
+      - generic [ref=e97]:
+        - navigation [ref=e98]:
+          - paragraph [ref=e99]: Personal
+          - list [ref=e100]:
+            - listitem [ref=e101]:
+              - link "Profile" [ref=e102] [cursor=pointer]:
+                - /url: /app/settings/profile
+            - listitem [ref=e103]:
+              - link "Appearance" [ref=e104] [cursor=pointer]:
+                - /url: /app/settings/appearance
+          - paragraph [ref=e105]: Workspace
+          - list [ref=e106]:
+            - listitem [ref=e107]:
+              - link "Company" [ref=e108] [cursor=pointer]:
+                - /url: /app/settings/company
+            - listitem [ref=e109]:
+              - link "Team" [ref=e110] [cursor=pointer]:
+                - /url: /app/settings/team
+            - listitem [ref=e111]:
+              - link "Integrations" [ref=e112] [cursor=pointer]:
+                - /url: /app/settings/integrations
+            - listitem [ref=e113]:
+              - link "Locations" [ref=e114] [cursor=pointer]:
+                - /url: /app/settings/locations
+            - listitem [ref=e115]:
+              - link "Invoices" [ref=e116] [cursor=pointer]:
+                - /url: /app/settings/invoices
+        - generic [ref=e117]:
+          - generic [ref=e119]:
+            - generic [ref=e120]: Workspace
+            - paragraph [ref=e121]: Connect external services to sync catalog, orders, and inventory.
+          - generic [ref=e122]:
+            - generic [ref=e123]:
+              - generic [ref=e124]:
+                - generic [ref=e125]:
+                  - generic [ref=e126]: Shopify
+                  - generic [ref=e127]: Connected
+                - paragraph [ref=e128]: Sync products, variants, and orders from your Shopify store.
+              - button "Manage" [ref=e130] [cursor=pointer]
+            - generic [ref=e131]:
+              - generic [ref=e133]:
+                - generic [ref=e134]: Xero
+                - generic [ref=e135]: Not connected
+              - generic [ref=e137]:
+                - generic [ref=e138]:
+                  - generic [ref=e139]: Xero
+                  - generic [ref=e140]: Automatically push bills to Xero when deliveries are received.
+                - link "Connect Xero" [ref=e141] [cursor=pointer]:
+                  - /url: /api/xero/install
+  - alert [ref=e142]

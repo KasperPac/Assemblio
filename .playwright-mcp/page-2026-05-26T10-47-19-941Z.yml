@@ -1,0 +1,1059 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic:
+    - img
+  - banner [ref=e3]:
+    - navigation [ref=e4]:
+      - link "Docs page" [ref=e6] [cursor=pointer]:
+        - /url: /docs
+        - img "Docs page" [ref=e7]
+      - list [ref=e11]:
+        - listitem [ref=e12]:
+          - link "Apps" [ref=e13] [cursor=pointer]:
+            - /url: /docs/apps/build
+        - listitem [ref=e14]:
+          - link "Storefronts" [ref=e15] [cursor=pointer]:
+            - /url: /docs/storefronts
+        - listitem [ref=e16]:
+          - link "Agents" [ref=e17] [cursor=pointer]:
+            - /url: /docs/agents
+        - listitem [ref=e18]:
+          - button "References" [ref=e19] [cursor=pointer]:
+            - text: References
+            - img [ref=e20]
+      - list [ref=e22]:
+        - listitem [ref=e23]:
+          - button "Ask assistant" [ref=e24] [cursor=pointer]:
+            - img [ref=e25]
+            - generic [ref=e27]: Ask assistant
+            - generic [ref=e28]: /
+        - listitem [ref=e29]:
+          - button "Search" [ref=e30] [cursor=pointer]:
+            - img [ref=e31]
+        - listitem [ref=e33]:
+          - button "Toggle dark mode" [ref=e34] [cursor=pointer]:
+            - generic [ref=e35]:
+              - img [ref=e36]
+              - img [ref=e38]
+        - listitem [ref=e40]:
+          - link "Help" [ref=e41] [cursor=pointer]:
+            - /url: /support
+        - listitem [ref=e42]: •
+        - link "Log in" [ref=e43] [cursor=pointer]:
+          - /url: http://dev.shopify.com/dashboard
+    - navigation [ref=e44]:
+      - generic [ref=e45]: Apps
+      - list [ref=e48]:
+        - listitem [ref=e49]:
+          - link "Build" [ref=e50] [cursor=pointer]:
+            - /url: /docs/apps/build
+        - listitem [ref=e51]:
+          - link "Design" [ref=e52] [cursor=pointer]:
+            - /url: /docs/apps/design
+        - listitem [ref=e53]:
+          - link "Launch" [ref=e54] [cursor=pointer]:
+            - /url: /docs/apps/launch
+  - generic [ref=e57]:
+    - complementary [ref=e58]:
+      - generic "Navigation" [ref=e59]:
+        - generic [ref=e61]:
+          - button "Collapse sidebar" [expanded] [ref=e63] [cursor=pointer]:
+            - img [ref=e64]
+            - generic [ref=e66]: Collapse sidebar
+          - generic "Collapse sidebar" [ref=e67]:
+            - textbox "Filter navigation items" [ref=e71]:
+              - /placeholder: Filter
+            - navigation [ref=e72]:
+              - list [ref=e73]:
+                - listitem [ref=e74]:
+                  - heading "Getting started" [level=3] [ref=e75]
+                  - list [ref=e76]:
+                    - listitem [ref=e77]:
+                      - link "Build apps for Shopify" [ref=e78] [cursor=pointer]:
+                        - /url: /docs/apps/build
+                        - generic [ref=e79]: Build apps for Shopify
+                    - listitem [ref=e80]:
+                      - link "Scaffold an app" [ref=e81] [cursor=pointer]:
+                        - /url: /docs/apps/build/scaffold-app
+                        - generic [ref=e82]: Scaffold an app
+                    - listitem [ref=e83]:
+                      - link "Build an app" [ref=e84] [cursor=pointer]:
+                        - /url: /docs/apps/build/build
+                        - generic [ref=e85]: Build an app
+                - listitem [ref=e86]:
+                  - heading "Dev tools" [level=3] [ref=e87]
+                  - list [ref=e88]:
+                    - listitem [ref=e89]:
+                      - link "Shopify AI Toolkit" [ref=e90] [cursor=pointer]:
+                        - /url: /docs/apps/build/ai-toolkit
+                        - generic [ref=e91]: Shopify AI Toolkit
+                    - listitem [ref=e92]:
+                      - group [ref=e93]:
+                        - button "Shopify CLI for apps" [ref=e94] [cursor=pointer]:
+                          - img [ref=e96]
+                          - generic [ref=e98]: Shopify CLI for apps
+                    - listitem [ref=e99]:
+                      - group [ref=e100]:
+                        - button "Dev Dashboard" [ref=e101] [cursor=pointer]:
+                          - img [ref=e103]
+                          - generic [ref=e105]: Dev Dashboard
+                - listitem [ref=e106]:
+                  - heading "Extending Shopify" [level=3] [ref=e107]
+                  - list [ref=e108]:
+                    - listitem [ref=e109]:
+                      - link "App surfaces" [ref=e110] [cursor=pointer]:
+                        - /url: /docs/apps/build/app-surfaces
+                        - generic [ref=e111]: App surfaces
+                    - listitem [ref=e112]:
+                      - link "App Home" [ref=e113] [cursor=pointer]:
+                        - /url: /docs/apps/build/app-home
+                        - generic [ref=e114]: App Home
+                    - listitem [ref=e115]:
+                      - group [ref=e116]:
+                        - button "Admin" [ref=e117] [cursor=pointer]:
+                          - img [ref=e119]
+                          - generic [ref=e121]: Admin
+                    - listitem [ref=e122]:
+                      - group [ref=e123]:
+                        - button "Checkout" [ref=e124] [cursor=pointer]:
+                          - img [ref=e126]
+                          - generic [ref=e128]: Checkout
+                    - listitem [ref=e129]:
+                      - group [ref=e130]:
+                        - button "Customer accounts" [ref=e131] [cursor=pointer]:
+                          - img [ref=e133]
+                          - generic [ref=e135]: Customer accounts
+                    - listitem [ref=e136]:
+                      - group [ref=e137]:
+                        - button "Flow" [ref=e138] [cursor=pointer]:
+                          - img [ref=e140]
+                          - generic [ref=e142]: Flow
+                    - listitem [ref=e143]:
+                      - group [ref=e144]:
+                        - button "Online store" [ref=e145] [cursor=pointer]:
+                          - img [ref=e147]
+                          - generic [ref=e149]: Online store
+                    - listitem [ref=e150]:
+                      - group [ref=e151]:
+                        - button "Point of Sale" [ref=e152] [cursor=pointer]:
+                          - img [ref=e154]
+                          - generic [ref=e156]: Point of Sale
+                    - listitem [ref=e157]:
+                      - group [ref=e158]:
+                        - button "Sidekick" [ref=e159] [cursor=pointer]:
+                          - img [ref=e161]
+                          - generic [ref=e163]: Sidekick
+                - listitem [ref=e164]:
+                  - heading "Building blocks" [level=3] [ref=e165]
+                  - list [ref=e166]:
+                    - listitem [ref=e167]:
+                      - group [ref=e168]:
+                        - button "GraphQL" [ref=e169] [cursor=pointer]:
+                          - img [ref=e171]
+                          - generic [ref=e173]:
+                            - text: Graph
+                            - text: QL
+                    - listitem [ref=e174]:
+                      - group [ref=e175]:
+                        - button "Extensions" [ref=e176] [cursor=pointer]:
+                          - img [ref=e178]
+                          - generic [ref=e180]: Extensions
+                    - listitem [ref=e181]:
+                      - group [ref=e182]:
+                        - button "Shopify Functions" [ref=e183] [cursor=pointer]:
+                          - img [ref=e185]
+                          - generic [ref=e187]: Shopify Functions
+                    - listitem [ref=e188]:
+                      - group [ref=e189]:
+                        - button "ShopifyQL" [ref=e190] [cursor=pointer]:
+                          - img [ref=e192]
+                          - generic [ref=e194]:
+                            - text: Shopify
+                            - text: QL
+                    - listitem [ref=e195]:
+                      - group [ref=e196]:
+                        - button "Storefront MCP" [ref=e197] [cursor=pointer]:
+                          - img [ref=e199]
+                          - generic [ref=e201]: Storefront MCP
+                    - listitem [ref=e202]:
+                      - group [ref=e203]:
+                        - button "Events and webhooks" [ref=e204] [cursor=pointer]:
+                          - img [ref=e206]
+                          - generic [ref=e208]: Events and webhooks
+                    - listitem [ref=e209]:
+                      - group [ref=e210]:
+                        - button "App Events" [ref=e211] [cursor=pointer]:
+                          - img [ref=e213]
+                          - generic [ref=e215]: App Events
+                    - listitem [ref=e216]:
+                      - group [ref=e217]:
+                        - button "Metafields" [ref=e218] [cursor=pointer]:
+                          - img [ref=e220]
+                          - generic [ref=e222]: Metafields
+                    - listitem [ref=e223]:
+                      - group [ref=e224]:
+                        - button "Metaobjects" [ref=e225] [cursor=pointer]:
+                          - img [ref=e227]
+                          - generic [ref=e229]: Metaobjects
+                    - listitem [ref=e230]:
+                      - group [ref=e231]:
+                        - button "Authentication" [ref=e232] [cursor=pointer]:
+                          - img [ref=e234]
+                          - generic [ref=e236]: Authentication
+                - listitem [ref=e237]:
+                  - heading "Use cases" [level=3] [ref=e238]
+                  - list [ref=e239]:
+                    - listitem [ref=e240]:
+                      - group [ref=e241]:
+                        - button "Marketing and analytics" [ref=e242] [cursor=pointer]:
+                          - img [ref=e244]
+                          - generic [ref=e246]: Marketing and analytics
+                    - listitem [ref=e247]:
+                      - group [ref=e248]:
+                        - button "Discounts" [ref=e249] [cursor=pointer]:
+                          - img [ref=e251]
+                          - generic [ref=e253]: Discounts
+                    - listitem [ref=e254]:
+                      - group [ref=e255]:
+                        - button "Product merchandising" [ref=e256] [cursor=pointer]:
+                          - img [ref=e258]
+                          - generic [ref=e260]: Product merchandising
+                    - listitem [ref=e261]:
+                      - group [ref=e262]:
+                        - button "Purchase options" [ref=e263] [cursor=pointer]:
+                          - img [ref=e265]
+                          - generic [ref=e267]: Purchase options
+                    - listitem [ref=e268]:
+                      - group [ref=e269]:
+                        - button "Global markets" [ref=e270] [cursor=pointer]:
+                          - img [ref=e272]
+                          - generic [ref=e274]: Global markets
+                    - listitem [ref=e275]:
+                      - group [ref=e276]:
+                        - button "Orders and fulfillment" [ref=e277] [cursor=pointer]:
+                          - img [ref=e279]
+                          - generic [ref=e281]: Orders and fulfillment
+                    - listitem [ref=e282]:
+                      - group [ref=e283]:
+                        - button "Payments" [ref=e284] [cursor=pointer]:
+                          - img [ref=e286]
+                          - generic [ref=e288]: Payments
+                    - listitem [ref=e289]:
+                      - group [ref=e290]:
+                        - button "Sales channels" [ref=e291] [cursor=pointer]:
+                          - img [ref=e293]
+                          - generic [ref=e295]: Sales channels
+                    - listitem [ref=e296]:
+                      - group [ref=e297]:
+                        - button "B2B" [ref=e298] [cursor=pointer]:
+                          - img [ref=e300]
+                          - generic [ref=e302]: B2B
+                    - listitem [ref=e303]:
+                      - group [ref=e304]:
+                        - button "Shopify Collective" [ref=e305] [cursor=pointer]:
+                          - img [ref=e307]
+                          - generic [ref=e309]: Shopify Collective
+                    - listitem [ref=e310]:
+                      - group [ref=e311]:
+                        - button "Blockchain" [ref=e312] [cursor=pointer]:
+                          - img [ref=e314]
+                          - generic [ref=e316]: Blockchain
+                - listitem [ref=e317]:
+                  - heading "Best practices" [level=3] [ref=e318]
+                  - list [ref=e319]:
+                    - listitem [ref=e320]:
+                      - group [ref=e321]:
+                        - button "Performance" [ref=e322] [cursor=pointer]:
+                          - img [ref=e324]
+                          - generic [ref=e326]: Performance
+                    - listitem [ref=e327]:
+                      - link "Accessibility" [ref=e328] [cursor=pointer]:
+                        - /url: /docs/apps/build/accessibility
+                        - generic [ref=e329]: Accessibility
+                    - listitem [ref=e330]:
+                      - link "Localize your app" [ref=e331] [cursor=pointer]:
+                        - /url: /docs/apps/build/localize-your-app
+                        - generic [ref=e332]: Localize your app
+                    - listitem [ref=e333]:
+                      - link "Integrating with Shopify" [ref=e334] [cursor=pointer]:
+                        - /url: /docs/apps/build/integrating-with-shopify
+                        - generic [ref=e335]: Integrating with Shopify
+                    - listitem [ref=e336]:
+                      - link "Mobile support" [ref=e337] [cursor=pointer]:
+                        - /url: /docs/apps/build/mobile-support
+                        - generic [ref=e338]: Mobile support
+                    - listitem [ref=e339]:
+                      - link "Non-deceptive code" [ref=e340] [cursor=pointer]:
+                        - /url: /docs/apps/build/non-deceptive-code
+                        - generic [ref=e341]: Non-deceptive code
+                    - listitem [ref=e342]:
+                      - group [ref=e343]:
+                        - button "Compliance" [ref=e344] [cursor=pointer]:
+                          - img [ref=e346]
+                          - generic [ref=e348]: Compliance
+                    - listitem [ref=e349]:
+                      - group [ref=e350]:
+                        - button "Security" [ref=e351] [cursor=pointer]:
+                          - img [ref=e353]
+                          - generic [ref=e355]: Security
+    - main [ref=e356]:
+      - generic [ref=e360]:
+        - article [ref=e361]:
+          - generic [ref=e362]:
+            - generic [ref=e363]:
+              - heading "About offline access tokens" [level=1] [ref=e364]
+              - generic [ref=e365]:
+                - button "Ask" [ref=e366] [cursor=pointer]:
+                  - img [ref=e368]
+                  - generic [ref=e370]: Ask
+                - button "Copy MD" [ref=e372] [cursor=pointer]:
+                  - img [ref=e374]
+                  - generic [ref=e376]: Copy MD
+                - button "Toggle dropdown" [ref=e378] [cursor=pointer]:
+                  - img [ref=e380]
+            - paragraph [ref=e382]:
+              - text: When you create an API access token for the
+              - link "GraphQL Admin API" [ref=e383] [cursor=pointer]:
+                - /url: /docs/api/admin-graphql
+              - text: ", you can choose between two access modes: offline and"
+              - link "online" [ref=e384] [cursor=pointer]:
+                - /url: /docs/apps/build/authentication-authorization/access-tokens/online-access-tokens
+              - text: . Offline is the default access mode when none is specified. Tokens with offline access mode are meant for service-to-service requests where no user interaction is involved. Offline access mode is ideal for background work in response to webhooks, or for maintenance work in backgrounded jobs.
+            - separator [ref=e385]
+            - heading "Anchor to Expiring vs non-expiring offline tokens Expiring vs non-expiring offline tokens" [level=2] [ref=e386]:
+              - generic [ref=e387]:
+                - link "Anchor to Expiring vs non-expiring offline tokens" [ref=e388] [cursor=pointer]:
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#expiring-vs-non-expiring-offline-tokens
+                  - img [ref=e389]
+                  - generic [ref=e391]: Anchor to Expiring vs non-expiring offline tokens
+                - text: Expiring vs non-expiring offline tokens
+            - paragraph [ref=e392]:
+              - text: As of December 2025, Shopify supports
+              - strong [ref=e393]: expiring offline access tokens
+              - text: ", providing enhanced security through token rotation with a refresh token while maintaining the ability for apps to perform background operations without user interaction."
+            - heading "Anchor to Expiring offline tokens Expiring offline tokens" [level=3] [ref=e394]:
+              - generic [ref=e395]:
+                - link "Anchor to Expiring offline tokens" [ref=e396] [cursor=pointer]:
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#expiring-offline-tokens
+                  - img [ref=e397]
+                  - generic [ref=e399]: Anchor to Expiring offline tokens
+                - text: Expiring offline tokens
+            - paragraph [ref=e400]: "Introduced in December 2025, expiring offline tokens provide enhanced security by allowing apps to regularly rotate access tokens using refresh tokens. Apps can continue performing background operations without user interaction while maintaining better security through token expiration and app-managed token refresh. Expiring offline tokens have the following characteristics:"
+            - list [ref=e401]:
+              - listitem [ref=e402]:
+                - strong [ref=e403]: 90-day refresh token lifetime
+                - text: ": A refresh token is provided in the response when obtaining new access tokens."
+              - listitem [ref=e404]:
+                - strong [ref=e405]: Token refresh
+                - text: ": Apps can refresh expired tokens without merchant intervention."
+              - listitem [ref=e406]:
+                - strong [ref=e407]: Only one expiring offline token can be active per app/shop combination
+                - text: ": Acquiring a new expiring token will revoke all previous expiring tokens for that shop."
+            - heading "Anchor to Non-expiring offline tokens Non-expiring offline tokens" [level=3] [ref=e408]:
+              - generic [ref=e409]:
+                - link "Anchor to Non-expiring offline tokens" [ref=e410] [cursor=pointer]:
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#non-expiring-offline-tokens
+                  - img [ref=e411]
+                  - generic [ref=e413]: Anchor to Non-expiring offline tokens
+                - text: Non-expiring offline tokens
+            - paragraph [ref=e414]: "Prior to December 2025, non-expiring offline tokens were the default and only option for offline access. These tokens grant permanent access to a shop's data and can only be revoked through app uninstallation or secret revocation, making them less secure than expiring tokens. Non-expiring offline tokens have the following characteristics:"
+            - list [ref=e415]:
+              - listitem [ref=e416]:
+                - strong [ref=e417]: No expiration
+                - text: ": Tokens remain valid indefinitely until app is uninstalled or secret revocation."
+              - listitem [ref=e418]:
+                - strong [ref=e419]: Acquiring offline tokens
+                - text: ": Getting offline tokens for the same shop and installation returns the same access token each time."
+            - generic [ref=e420]:
+              - generic [ref=e421]:
+                - img [ref=e424]
+                - generic [ref=e426]: Note
+              - paragraph [ref=e428]:
+                - text: Apps can migrate from non-expiring to expiring tokens using the
+                - link "token exchange grant" [ref=e429] [cursor=pointer]:
+                  - /url: "#migrating-from-non-expiring-to-expiring-tokens"
+                - text: . This is a one-time, irreversible migration per shop.
+            - separator [ref=e430]
+            - heading "Anchor to Acquiring expiring offline tokens Acquiring expiring offline tokens" [level=2] [ref=e431]:
+              - generic [ref=e432]:
+                - link "Anchor to Acquiring expiring offline tokens" [ref=e433] [cursor=pointer]:
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#acquiring-expiring-offline-tokens
+                  - img [ref=e434]
+                  - generic [ref=e436]: Anchor to Acquiring expiring offline tokens
+                - text: Acquiring expiring offline tokens
+            - paragraph [ref=e437]:
+              - text: Expiring offline tokens are supported in the different
+              - link "token acquisition flows" [ref=e438] [cursor=pointer]:
+                - /url: /docs/apps/build/authentication-authorization/access-tokens
+              - text: .
+            - heading "Anchor to Token exchange from session token Token exchange from session token" [level=3] [ref=e439]:
+              - generic [ref=e440]:
+                - link "Anchor to Token exchange from session token" [ref=e441] [cursor=pointer]:
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#token-exchange-from-session-token
+                  - img [ref=e442]
+                  - generic [ref=e444]: Anchor to Token exchange from session token
+                - text: Token exchange from session token
+            - paragraph [ref=e445]:
+              - text: When using token exchange, include the
+              - code [ref=e446]: expiring=1
+              - text: "parameter:"
+            - generic [ref=e447]:
+              - button "Copy" [ref=e451] [cursor=pointer]:
+                - img [ref=e452]
+                - generic [ref=e454]: Copy
+              - generic [ref=e460]:
+                - generic [ref=e463]: "1"
+                - textbox [ref=e464]:
+                  - generic [ref=e465]: "POST https://{shop}.myshopify.com/admin/oauth/access_token"
+            - table "Parameters for the token exchange API and their descriptions" [ref=e467]:
+              - caption [ref=e468]: Parameters for the token exchange API and their descriptions
+              - rowgroup [ref=e469]:
+                - row "Parameter Description" [ref=e470]:
+                  - columnheader "Parameter" [ref=e471]
+                  - columnheader "Description" [ref=e472]
+              - rowgroup [ref=e473]:
+                - row "client_id required The API key for the app." [ref=e474]:
+                  - cell "client_id required" [ref=e475]:
+                    - code [ref=e476]: client_id
+                    - generic [ref=e478]: required
+                  - cell "The API key for the app." [ref=e479]
+                - row "client_secret required The client secret for the app." [ref=e480]:
+                  - cell "client_secret required" [ref=e481]:
+                    - code [ref=e482]: client_secret
+                    - generic [ref=e484]: required
+                  - cell "The client secret for the app." [ref=e485]
+                - row "grant_type required The value urn:ietf:params:oauth:grant-type:token-exchange indicates that token exchange is to be performed." [ref=e486]:
+                  - cell "grant_type required" [ref=e487]:
+                    - code [ref=e488]: grant_type
+                    - generic [ref=e490]: required
+                  - cell "The value urn:ietf:params:oauth:grant-type:token-exchange indicates that token exchange is to be performed." [ref=e491]:
+                    - text: The value
+                    - code [ref=e492]: urn:ietf:params:oauth:grant-type:token-exchange
+                    - text: indicates that token exchange is to be performed.
+                - row "subject_token required An ID token that represents the identity and active browser session of a merchant using the app." [ref=e493]:
+                  - cell "subject_token required" [ref=e494]:
+                    - code [ref=e495]: subject_token
+                    - generic [ref=e497]: required
+                  - cell "An ID token that represents the identity and active browser session of a merchant using the app." [ref=e498]
+                - row "subject_token_type required The value urn:ietf:params:oauth:token-type:id_token indicates that the subject token type is an ID token." [ref=e499]:
+                  - cell "subject_token_type required" [ref=e500]:
+                    - code [ref=e501]: subject_token_type
+                    - generic [ref=e503]: required
+                  - cell "The value urn:ietf:params:oauth:token-type:id_token indicates that the subject token type is an ID token." [ref=e504]:
+                    - text: The value
+                    - code [ref=e505]: urn:ietf:params:oauth:token-type:id_token
+                    - text: indicates that the subject token type is an ID token.
+                - row "requested_token_type The value urn:shopify:params:oauth:token-type:offline-access-token for requesting offline access tokens." [ref=e506]:
+                  - cell "requested_token_type" [ref=e507]:
+                    - code [ref=e508]: requested_token_type
+                  - cell "The value urn:shopify:params:oauth:token-type:offline-access-token for requesting offline access tokens." [ref=e509]:
+                    - text: The value
+                    - code [ref=e510]: urn:shopify:params:oauth:token-type:offline-access-token
+                    - text: for requesting offline access tokens.
+                - row "expiring 0 (default) for requesting a non-expiring offline token 1 for requesting an expiring offline token" [ref=e511]:
+                  - cell "expiring" [ref=e512]:
+                    - code [ref=e513]: expiring
+                  - cell "0 (default) for requesting a non-expiring offline token 1 for requesting an expiring offline token" [ref=e514]:
+                    - list [ref=e515]:
+                      - listitem [ref=e516]:
+                        - code [ref=e517]: "0"
+                        - text: (default) for requesting a non-expiring offline token
+                      - listitem [ref=e518]:
+                        - code [ref=e519]: "1"
+                        - text: for requesting an expiring offline token
+            - paragraph [ref=e520]:
+              - text: For more details on token exchange, refer to
+              - link "Exchange a session token for an access token" [ref=e521] [cursor=pointer]:
+                - /url: /docs/apps/build/authentication-authorization/access-tokens/token-exchange
+              - text: .
+            - heading "Anchor to Example Example" [level=4] [ref=e522]:
+              - generic [ref=e523]:
+                - link "Anchor to Example" [ref=e524] [cursor=pointer]:
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#example
+                  - img [ref=e525]
+                  - generic [ref=e527]: Anchor to Example
+                - text: Example
+            - paragraph [ref=e528]: The following example shows how to exchange a session token for an expiring offline access token. The response returns an access token, a refresh token, and their respective expiration times.
+            - generic [ref=e529]:
+              - generic [ref=e530]:
+                - generic [ref=e531]:
+                  - heading "Request" [level=2] [ref=e533]:
+                    - img [ref=e534]
+                    - text: Request
+                  - button "Copy" [ref=e538] [cursor=pointer]:
+                    - img [ref=e539]
+                    - generic [ref=e541]: Copy
+                - generic [ref=e547]:
+                  - generic [ref=e549]:
+                    - generic [ref=e550]: $
+                    - generic [ref=e551]: $
+                    - generic [ref=e552]: $
+                    - generic [ref=e553]: $
+                    - generic [ref=e554]: $
+                    - generic [ref=e555]: $
+                    - generic [ref=e556]: $
+                    - generic [ref=e557]: $
+                    - generic [ref=e558]: $
+                    - generic [ref=e559]: $
+                    - generic [ref=e560]: $
+                  - textbox [ref=e561]:
+                    - generic [ref=e562]: curl -X POST \
+                    - generic [ref=e563]: "https://{shop}.myshopify.com/admin/oauth/access_token \\"
+                    - generic [ref=e564]: "-H 'Content-Type: application/x-www-form-urlencoded' \\"
+                    - generic [ref=e565]: "-H 'Accept: application/json' \\"
+                    - generic [ref=e566]: "-d 'client_id={client_id}' \\"
+                    - generic [ref=e567]: "-d 'client_secret={client_secret}' \\"
+                    - generic [ref=e568]: "-d 'grant_type=urn:ietf:params:oauth:grant-type:token-exchange' \\"
+                    - generic [ref=e569]: "-d 'subject_token={session_token}' \\"
+                    - generic [ref=e570]: "-d 'subject_token_type=urn:ietf:params:oauth:token-type:id_token' \\"
+                    - generic [ref=e571]: "-d 'requested_token_type=urn:shopify:params:oauth:token-type:offline-access-token' \\"
+                    - generic [ref=e572]: "-d 'expiring=1'"
+              - generic [ref=e573]:
+                - generic [ref=e574]:
+                  - heading "Response" [level=2] [ref=e576]:
+                    - img [ref=e577]
+                    - text: Response
+                  - button "Copy" [ref=e581] [cursor=pointer]:
+                    - img [ref=e582]
+                    - generic [ref=e584]: Copy
+                - generic [ref=e590]:
+                  - generic [ref=e592]:
+                    - generic [ref=e593]: "1"
+                    - generic [ref=e594]: "2"
+                    - generic [ref=e595]: "3"
+                    - generic [ref=e596]: "4"
+                    - generic [ref=e597]: "5"
+                    - generic [ref=e598]: "6"
+                    - generic [ref=e599]: "7"
+                  - textbox [ref=e600]:
+                    - generic [ref=e601]: "{"
+                    - generic [ref=e602]: "\"access_token\": \"shpat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\","
+                    - generic [ref=e603]: "\"expires_in\": 3600,"
+                    - generic [ref=e604]: "\"refresh_token\": \"shprt_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\","
+                    - generic [ref=e605]: "\"refresh_token_expires_in\": 7776000,"
+                    - generic [ref=e606]: "\"scope\": \"write_products,read_orders\""
+                    - generic [ref=e607]: "}"
+            - heading "Anchor to Authorization code grant Authorization code grant" [level=3] [ref=e608]:
+              - generic [ref=e609]:
+                - link "Anchor to Authorization code grant" [ref=e610] [cursor=pointer]:
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#authorization-code-grant
+                  - img [ref=e611]
+                  - generic [ref=e613]: Anchor to Authorization code grant
+                - text: Authorization code grant
+            - paragraph [ref=e614]:
+              - text: When exchanging an authorization code for an offline access token, include the
+              - code [ref=e615]: expiring=1
+              - text: "parameter:"
+            - generic [ref=e616]:
+              - button "Copy" [ref=e620] [cursor=pointer]:
+                - img [ref=e621]
+                - generic [ref=e623]: Copy
+              - generic [ref=e629]:
+                - generic [ref=e632]: "1"
+                - textbox [ref=e633]:
+                  - generic [ref=e634]: "POST https://{shop}.myshopify.com/admin/oauth/access_token"
+            - table "Parameters for the authorization code exchange and their descriptions" [ref=e636]:
+              - caption [ref=e637]: Parameters for the authorization code exchange and their descriptions
+              - rowgroup [ref=e638]:
+                - row "Parameter Description" [ref=e639]:
+                  - columnheader "Parameter" [ref=e640]
+                  - columnheader "Description" [ref=e641]
+              - rowgroup [ref=e642]:
+                - row "client_id required The client ID for the app, as configured in the Dev Dashboard." [ref=e643]:
+                  - cell "client_id required" [ref=e644]:
+                    - code [ref=e645]: client_id
+                    - generic [ref=e647]: required
+                  - cell "The client ID for the app, as configured in the Dev Dashboard." [ref=e648]
+                - row "client_secret required The client secret for the app, as configured in the Dev Dashboard." [ref=e649]:
+                  - cell "client_secret required" [ref=e650]:
+                    - code [ref=e651]: client_secret
+                    - generic [ref=e653]: required
+                  - cell "The client secret for the app, as configured in the Dev Dashboard." [ref=e654]
+                - row "code required The authorization code provided in the redirect." [ref=e655]:
+                  - cell "code required" [ref=e656]:
+                    - code [ref=e657]: code
+                    - generic [ref=e659]: required
+                  - cell "The authorization code provided in the redirect." [ref=e660]
+                - 'row "expiring Only applicable if the initial https://{shop}/admin/oauth/authorize request was for an offline token 0 (default) for requesting a non-expiring offline token 1 for requesting an expiring offline token" [ref=e661]':
+                  - cell "expiring" [ref=e662]:
+                    - code [ref=e663]: expiring
+                  - 'cell "Only applicable if the initial https://{shop}/admin/oauth/authorize request was for an offline token 0 (default) for requesting a non-expiring offline token 1 for requesting an expiring offline token" [ref=e664]':
+                    - text: Only applicable if the initial
+                    - code [ref=e665]: "https://{shop}/admin/oauth/authorize"
+                    - text: request was for an offline token
+                    - list [ref=e666]:
+                      - listitem [ref=e667]:
+                        - code [ref=e668]: "0"
+                        - text: (default) for requesting a non-expiring offline token
+                      - listitem [ref=e669]:
+                        - code [ref=e670]: "1"
+                        - text: for requesting an expiring offline token
+            - paragraph [ref=e671]:
+              - text: For more details on the authorization code grant flow, refer to
+              - link "Implement authorization code grant manually" [ref=e672] [cursor=pointer]:
+                - /url: /docs/apps/build/authentication-authorization/access-tokens/authorization-code-grant
+              - text: .
+            - heading "Anchor to Example Example" [level=4] [ref=e673]:
+              - generic [ref=e674]:
+                - link "Anchor to Example" [ref=e675] [cursor=pointer]:
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#example
+                  - img [ref=e676]
+                  - generic [ref=e678]: Anchor to Example
+                - text: Example
+            - paragraph [ref=e679]: The following example demonstrates exchanging an authorization code for an expiring offline access token. The response returns an access token, a refresh token, and their respective expiration times.
+            - generic [ref=e680]:
+              - generic [ref=e681]:
+                - generic [ref=e682]:
+                  - heading "Request" [level=2] [ref=e684]:
+                    - img [ref=e685]
+                    - text: Request
+                  - button "Copy" [ref=e689] [cursor=pointer]:
+                    - img [ref=e690]
+                    - generic [ref=e692]: Copy
+                - generic [ref=e698]:
+                  - generic [ref=e700]:
+                    - generic [ref=e701]: $
+                    - generic [ref=e702]: $
+                    - generic [ref=e703]: $
+                    - generic [ref=e704]: $
+                    - generic [ref=e705]: $
+                    - generic [ref=e706]: $
+                    - generic [ref=e707]: $
+                    - generic [ref=e708]: $
+                  - textbox [ref=e709]:
+                    - generic [ref=e710]: curl -X POST \
+                    - generic [ref=e711]: "https://{shop}.myshopify.com/admin/oauth/access_token \\"
+                    - generic [ref=e712]: "-H 'Content-Type: application/x-www-form-urlencoded' \\"
+                    - generic [ref=e713]: "-H 'Accept: application/json' \\"
+                    - generic [ref=e714]: "-d 'client_id={client_id}' \\"
+                    - generic [ref=e715]: "-d 'client_secret={client_secret}' \\"
+                    - generic [ref=e716]: "-d 'code={authorization_code}' \\"
+                    - generic [ref=e717]: "-d 'expiring=1'"
+              - generic [ref=e718]:
+                - generic [ref=e719]:
+                  - heading "Response" [level=2] [ref=e721]:
+                    - img [ref=e722]
+                    - text: Response
+                  - button "Copy" [ref=e726] [cursor=pointer]:
+                    - img [ref=e727]
+                    - generic [ref=e729]: Copy
+                - generic [ref=e735]:
+                  - generic [ref=e737]:
+                    - generic [ref=e738]: "1"
+                    - generic [ref=e739]: "2"
+                    - generic [ref=e740]: "3"
+                    - generic [ref=e741]: "4"
+                    - generic [ref=e742]: "5"
+                    - generic [ref=e743]: "6"
+                    - generic [ref=e744]: "7"
+                  - textbox [ref=e745]:
+                    - generic [ref=e746]: "{"
+                    - generic [ref=e747]: "\"access_token\": \"shpat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\","
+                    - generic [ref=e748]: "\"expires_in\": 3600,"
+                    - generic [ref=e749]: "\"refresh_token\": \"shprt_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\","
+                    - generic [ref=e750]: "\"refresh_token_expires_in\": 7776000,"
+                    - generic [ref=e751]: "\"scope\": \"write_products,read_orders\""
+                    - generic [ref=e752]: "}"
+            - separator [ref=e753]
+            - heading "Anchor to Refreshing expiring offline tokens Refreshing expiring offline tokens" [level=2] [ref=e754]:
+              - generic [ref=e755]:
+                - link "Anchor to Refreshing expiring offline tokens" [ref=e756] [cursor=pointer]:
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#refreshing-expiring-offline-tokens
+                  - img [ref=e757]
+                  - generic [ref=e759]: Anchor to Refreshing expiring offline tokens
+                - text: Refreshing expiring offline tokens
+            - paragraph [ref=e760]: When an expiring offline token expires, use the refresh token to obtain a new access token and refresh token.
+            - generic [ref=e761]:
+              - button "Copy" [ref=e765] [cursor=pointer]:
+                - img [ref=e766]
+                - generic [ref=e768]: Copy
+              - generic [ref=e774]:
+                - generic [ref=e777]: "1"
+                - textbox [ref=e778]:
+                  - generic [ref=e779]: "POST https://{shop}.myshopify.com/admin/oauth/access_token"
+            - table "Parameters for refreshing an access token" [ref=e781]:
+              - caption [ref=e782]: Parameters for refreshing an access token
+              - rowgroup [ref=e783]:
+                - row "Parameter Description" [ref=e784]:
+                  - columnheader "Parameter" [ref=e785]
+                  - columnheader "Description" [ref=e786]
+              - rowgroup [ref=e787]:
+                - row "client_id required The API key for the app." [ref=e788]:
+                  - cell "client_id required" [ref=e789]:
+                    - code [ref=e790]: client_id
+                    - generic [ref=e792]: required
+                  - cell "The API key for the app." [ref=e793]
+                - row "client_secret required The client secret for the app." [ref=e794]:
+                  - cell "client_secret required" [ref=e795]:
+                    - code [ref=e796]: client_secret
+                    - generic [ref=e798]: required
+                  - cell "The client secret for the app." [ref=e799]
+                - row "grant_type required The value refresh_token indicates that a refresh token grant is being used." [ref=e800]:
+                  - cell "grant_type required" [ref=e801]:
+                    - code [ref=e802]: grant_type
+                    - generic [ref=e804]: required
+                  - cell "The value refresh_token indicates that a refresh token grant is being used." [ref=e805]:
+                    - text: The value
+                    - code [ref=e806]: refresh_token
+                    - text: indicates that a refresh token grant is being used.
+                - row "refresh_token required The refresh token received when the access token was issued." [ref=e807]:
+                  - cell "refresh_token required" [ref=e808]:
+                    - code [ref=e809]: refresh_token
+                    - generic [ref=e811]: required
+                  - cell "The refresh token received when the access token was issued." [ref=e812]
+            - heading "Anchor to Example Example" [level=4] [ref=e813]:
+              - generic [ref=e814]:
+                - link "Anchor to Example" [ref=e815] [cursor=pointer]:
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#example
+                  - img [ref=e816]
+                  - generic [ref=e818]: Anchor to Example
+                - text: Example
+            - paragraph [ref=e819]: The following example demonstrates using a refresh token to obtain new tokens. The response returns a new access token and a new refresh token, both with updated expiration times.
+            - generic [ref=e820]:
+              - generic [ref=e821]:
+                - generic [ref=e822]:
+                  - heading "Request" [level=2] [ref=e824]:
+                    - img [ref=e825]
+                    - text: Request
+                  - button "Copy" [ref=e829] [cursor=pointer]:
+                    - img [ref=e830]
+                    - generic [ref=e832]: Copy
+                - generic [ref=e838]:
+                  - generic [ref=e840]:
+                    - generic [ref=e841]: $
+                    - generic [ref=e842]: $
+                    - generic [ref=e843]: $
+                    - generic [ref=e844]: $
+                    - generic [ref=e845]: $
+                    - generic [ref=e846]: $
+                    - generic [ref=e847]: $
+                    - generic [ref=e848]: $
+                  - textbox [ref=e849]:
+                    - generic [ref=e850]: curl -X POST \
+                    - generic [ref=e851]: "https://{shop}.myshopify.com/admin/oauth/access_token \\"
+                    - generic [ref=e852]: "-H 'Content-Type: application/x-www-form-urlencoded' \\"
+                    - generic [ref=e853]: "-H 'Accept: application/json' \\"
+                    - generic [ref=e854]: "-d 'client_id={client_id}' \\"
+                    - generic [ref=e855]: "-d 'client_secret={client_secret}' \\"
+                    - generic [ref=e856]: "-d 'grant_type=refresh_token' \\"
+                    - generic [ref=e857]: "-d 'refresh_token={refresh_token}'"
+              - generic [ref=e858]:
+                - generic [ref=e859]:
+                  - heading "Response" [level=2] [ref=e861]:
+                    - img [ref=e862]
+                    - text: Response
+                  - button "Copy" [ref=e866] [cursor=pointer]:
+                    - img [ref=e867]
+                    - generic [ref=e869]: Copy
+                - generic [ref=e875]:
+                  - generic [ref=e877]:
+                    - generic [ref=e878]: "1"
+                    - generic [ref=e879]: "2"
+                    - generic [ref=e880]: "3"
+                    - generic [ref=e881]: "4"
+                    - generic [ref=e882]: "5"
+                    - generic [ref=e883]: "6"
+                    - generic [ref=e884]: "7"
+                  - textbox [ref=e885]:
+                    - generic [ref=e886]: "{"
+                    - generic [ref=e887]: "\"access_token\": \"shpat_yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy\","
+                    - generic [ref=e888]: "\"expires_in\": 3600,"
+                    - generic [ref=e889]: "\"refresh_token\": \"shprt_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\","
+                    - generic [ref=e890]: "\"refresh_token_expires_in\": 7776000,"
+                    - generic [ref=e891]: "\"scope\": \"write_products,read_orders\""
+                    - generic [ref=e892]: "}"
+            - heading "Anchor to Refresh token behavior Refresh token behavior" [level=3] [ref=e893]:
+              - generic [ref=e894]:
+                - link "Anchor to Refresh token behavior" [ref=e895] [cursor=pointer]:
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#refresh-token-behavior
+                  - img [ref=e896]
+                  - generic [ref=e898]: Anchor to Refresh token behavior
+                - text: Refresh token behavior
+            - paragraph [ref=e899]: "When you refresh an expiring offline token, the following behavior applies:"
+            - list [ref=e900]:
+              - listitem [ref=e901]:
+                - strong [ref=e902]: New tokens on each refresh
+                - text: ": Both access token and refresh token are regenerated."
+              - listitem [ref=e903]:
+                - strong [ref=e904]: Extended expiration
+                - text: ": A new refresh token has a new 90-day expiration from the refresh time."
+              - listitem [ref=e905]:
+                - strong [ref=e906]: One-time use
+                - text: ": The previous refresh token is invalidated after use."
+            - generic [ref=e907]:
+              - generic [ref=e908]:
+                - img [ref=e911]
+                - generic [ref=e913]: Caution
+              - paragraph [ref=e915]: If the refresh token expires (after 90 days), the merchant will need to re-launch the app for the app to re-trigger the token acquisition flow.
+            - separator [ref=e916]
+            - heading "Anchor to Migrating from non-expiring to expiring tokens Migrating from non-expiring to expiring tokens" [level=2] [ref=e917]:
+              - generic [ref=e918]:
+                - link "Anchor to Migrating from non-expiring to expiring tokens" [ref=e919] [cursor=pointer]:
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#migrating-from-non-expiring-to-expiring-tokens
+                  - img [ref=e920]
+                  - generic [ref=e922]: Anchor to Migrating from non-expiring to expiring tokens
+                - text: Migrating from non-expiring to expiring tokens
+            - paragraph [ref=e923]: If your app currently uses non-expiring offline tokens, you can migrate to expiring tokens to enhance security.
+            - 'heading "Anchor to Step 1: Update your app''s session storage Step 1: Update your app''s session storage" [level=3] [ref=e924]':
+              - generic [ref=e925]:
+                - 'link "Anchor to Step 1: Update your app''s session storage" [ref=e926] [cursor=pointer]':
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#step-1-update-your-apps-session-storage
+                  - img [ref=e927]
+                  - generic [ref=e929]: "Anchor to Step 1: Update your app's session storage"
+                - text: "Step 1: Update your app's session storage"
+            - paragraph [ref=e930]: "Add fields to store token expiration metadata:"
+            - list [ref=e931]:
+              - listitem [ref=e932]:
+                - code [ref=e933]: expires_at
+                - text: ": When the access token expires"
+              - listitem [ref=e934]:
+                - code [ref=e935]: refresh_token
+                - text: ": The refresh token value"
+              - listitem [ref=e936]:
+                - code [ref=e937]: refresh_token_expires_at
+                - text: ": When the refresh token expires"
+            - 'heading "Anchor to Step 2: Implement token refresh logic Step 2: Implement token refresh logic" [level=3] [ref=e938]':
+              - generic [ref=e939]:
+                - 'link "Anchor to Step 2: Implement token refresh logic" [ref=e940] [cursor=pointer]':
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#step-2-implement-token-refresh-logic
+                  - img [ref=e941]
+                  - generic [ref=e943]: "Anchor to Step 2: Implement token refresh logic"
+                - text: "Step 2: Implement token refresh logic"
+            - paragraph [ref=e944]:
+              - text: Before making API requests where no user interaction is involved, like a background job, check if the offline access token has expired and
+              - link "refresh it if needed using the refresh token" [ref=e945] [cursor=pointer]:
+                - /url: "#refreshing-expiring-offline-tokens"
+              - text: .
+            - 'heading "Anchor to Step 3: Start requesting expiring offline tokens Step 3: Start requesting expiring offline tokens" [level=3] [ref=e946]':
+              - generic [ref=e947]:
+                - 'link "Anchor to Step 3: Start requesting expiring offline tokens" [ref=e948] [cursor=pointer]':
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#step-3-start-requesting-expiring-offline-tokens
+                  - img [ref=e949]
+                  - generic [ref=e951]: "Anchor to Step 3: Start requesting expiring offline tokens"
+                - text: "Step 3: Start requesting expiring offline tokens"
+            - paragraph [ref=e952]:
+              - text: For new installs, start
+              - link "acquiring expiring offline tokens" [ref=e953] [cursor=pointer]:
+                - /url: "#acquiring-expiring-offline-tokens"
+              - text: ", and persist the refresh token for refreshing."
+            - 'heading "Anchor to Step 4: Migrate existing tokens Step 4: Migrate existing tokens" [level=3] [ref=e954]':
+              - generic [ref=e955]:
+                - 'link "Anchor to Step 4: Migrate existing tokens" [ref=e956] [cursor=pointer]':
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#step-4-migrate-existing-tokens
+                  - img [ref=e957]
+                  - generic [ref=e959]: "Anchor to Step 4: Migrate existing tokens"
+                - text: "Step 4: Migrate existing tokens"
+            - paragraph [ref=e960]: For installed shops with existing non-expiring tokens, perform the migration using token exchange. The migration can be done via a background job or during the next app launch.
+            - generic [ref=e961]:
+              - generic [ref=e962]:
+                - img [ref=e965]
+                - generic [ref=e967]: Caution
+              - paragraph [ref=e969]: The original non-expiring token will be revoked upon successful exchange. This migration is irreversible. To obtain a new non-expiring offline access token, the app would have to re-trigger the token acquisition flow with merchant interaction.
+            - generic [ref=e970]:
+              - button "Copy" [ref=e974] [cursor=pointer]:
+                - img [ref=e975]
+                - generic [ref=e977]: Copy
+              - generic [ref=e983]:
+                - generic [ref=e986]: "1"
+                - textbox [ref=e987]:
+                  - generic [ref=e988]: "POST https://{shop}.myshopify.com/admin/oauth/access_token"
+            - table "Parameters for migrating to expiring tokens" [ref=e990]:
+              - caption [ref=e991]: Parameters for migrating to expiring tokens
+              - rowgroup [ref=e992]:
+                - row "Parameter Description" [ref=e993]:
+                  - columnheader "Parameter" [ref=e994]
+                  - columnheader "Description" [ref=e995]
+              - rowgroup [ref=e996]:
+                - row "client_id required The API key for the app." [ref=e997]:
+                  - cell "client_id required" [ref=e998]:
+                    - code [ref=e999]: client_id
+                    - generic [ref=e1001]: required
+                  - cell "The API key for the app." [ref=e1002]
+                - row "client_secret required The client secret for the app." [ref=e1003]:
+                  - cell "client_secret required" [ref=e1004]:
+                    - code [ref=e1005]: client_secret
+                    - generic [ref=e1007]: required
+                  - cell "The client secret for the app." [ref=e1008]
+                - row "grant_type required The value urn:ietf:params:oauth:grant-type:token-exchange indicates that token exchange is to be performed." [ref=e1009]:
+                  - cell "grant_type required" [ref=e1010]:
+                    - code [ref=e1011]: grant_type
+                    - generic [ref=e1013]: required
+                  - cell "The value urn:ietf:params:oauth:grant-type:token-exchange indicates that token exchange is to be performed." [ref=e1014]:
+                    - text: The value
+                    - code [ref=e1015]: urn:ietf:params:oauth:grant-type:token-exchange
+                    - text: indicates that token exchange is to be performed.
+                - row "subject_token required The non-expiring offline access token to migrate." [ref=e1016]:
+                  - cell "subject_token required" [ref=e1017]:
+                    - code [ref=e1018]: subject_token
+                    - generic [ref=e1020]: required
+                  - cell "The non-expiring offline access token to migrate." [ref=e1021]
+                - row "subject_token_type required The value urn:shopify:params:oauth:token-type:offline-access-token indicates that the subject token is an offline access token." [ref=e1022]:
+                  - cell "subject_token_type required" [ref=e1023]:
+                    - code [ref=e1024]: subject_token_type
+                    - generic [ref=e1026]: required
+                  - cell "The value urn:shopify:params:oauth:token-type:offline-access-token indicates that the subject token is an offline access token." [ref=e1027]:
+                    - text: The value
+                    - code [ref=e1028]: urn:shopify:params:oauth:token-type:offline-access-token
+                    - text: indicates that the subject token is an offline access token.
+                - row "requested_token_type required The value urn:shopify:params:oauth:token-type:offline-access-token for requesting an offline access token." [ref=e1029]:
+                  - cell "requested_token_type required" [ref=e1030]:
+                    - code [ref=e1031]: requested_token_type
+                    - generic [ref=e1033]: required
+                  - cell "The value urn:shopify:params:oauth:token-type:offline-access-token for requesting an offline access token." [ref=e1034]:
+                    - text: The value
+                    - code [ref=e1035]: urn:shopify:params:oauth:token-type:offline-access-token
+                    - text: for requesting an offline access token.
+                - row "expiring required Must be set to 1 to request an expiring offline token." [ref=e1036]:
+                  - cell "expiring required" [ref=e1037]:
+                    - code [ref=e1038]: expiring
+                    - generic [ref=e1040]: required
+                  - cell "Must be set to 1 to request an expiring offline token." [ref=e1041]:
+                    - text: Must be set to
+                    - code [ref=e1042]: "1"
+                    - text: to request an expiring offline token.
+            - heading "Anchor to Example Example" [level=4] [ref=e1043]:
+              - generic [ref=e1044]:
+                - link "Anchor to Example" [ref=e1045] [cursor=pointer]:
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#example
+                  - img [ref=e1046]
+                  - generic [ref=e1048]: Anchor to Example
+                - text: Example
+            - paragraph [ref=e1049]: The following example shows how to exchange a non-expiring offline token for an expiring one. The response returns a new expiring access token and refresh token, and the original non-expiring token is revoked.
+            - generic [ref=e1050]:
+              - generic [ref=e1051]:
+                - generic [ref=e1052]:
+                  - heading "Request" [level=2] [ref=e1054]:
+                    - img [ref=e1055]
+                    - text: Request
+                  - button "Copy" [ref=e1059] [cursor=pointer]:
+                    - img [ref=e1060]
+                    - generic [ref=e1062]: Copy
+                - generic [ref=e1068]:
+                  - generic [ref=e1070]:
+                    - generic [ref=e1071]: $
+                    - generic [ref=e1072]: $
+                    - generic [ref=e1073]: $
+                    - generic [ref=e1074]: $
+                    - generic [ref=e1075]: $
+                    - generic [ref=e1076]: $
+                    - generic [ref=e1077]: $
+                    - generic [ref=e1078]: $
+                    - generic [ref=e1079]: $
+                    - generic [ref=e1080]: $
+                    - generic [ref=e1081]: $
+                  - textbox [ref=e1082]:
+                    - generic [ref=e1083]: curl -X POST \
+                    - generic [ref=e1084]: "https://{shop}.myshopify.com/admin/oauth/access_token \\"
+                    - generic [ref=e1085]: "-H 'Content-Type: application/x-www-form-urlencoded' \\"
+                    - generic [ref=e1086]: "-H 'Accept: application/json' \\"
+                    - generic [ref=e1087]: "-d 'client_id={client_id}' \\"
+                    - generic [ref=e1088]: "-d 'client_secret={client_secret}' \\"
+                    - generic [ref=e1089]: "-d 'grant_type=urn:ietf:params:oauth:grant-type:token-exchange' \\"
+                    - generic [ref=e1090]: "-d 'subject_token={non_expiring_offline_token}' \\"
+                    - generic [ref=e1091]: "-d 'subject_token_type=urn:shopify:params:oauth:token-type:offline-access-token' \\"
+                    - generic [ref=e1092]: "-d 'requested_token_type=urn:shopify:params:oauth:token-type:offline-access-token' \\"
+                    - generic [ref=e1093]: "-d 'expiring=1'"
+              - generic [ref=e1094]:
+                - generic [ref=e1095]:
+                  - heading "Response" [level=2] [ref=e1097]:
+                    - img [ref=e1098]
+                    - text: Response
+                  - button "Copy" [ref=e1102] [cursor=pointer]:
+                    - img [ref=e1103]
+                    - generic [ref=e1105]: Copy
+                - generic [ref=e1111]:
+                  - generic [ref=e1113]:
+                    - generic [ref=e1114]: "1"
+                    - generic [ref=e1115]: "2"
+                    - generic [ref=e1116]: "3"
+                    - generic [ref=e1117]: "4"
+                    - generic [ref=e1118]: "5"
+                    - generic [ref=e1119]: "6"
+                    - generic [ref=e1120]: "7"
+                  - textbox [ref=e1121]:
+                    - generic [ref=e1122]: "{"
+                    - generic [ref=e1123]: "\"access_token\": \"shpat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\","
+                    - generic [ref=e1124]: "\"expires_in\": 3600,"
+                    - generic [ref=e1125]: "\"refresh_token\": \"shprt_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\","
+                    - generic [ref=e1126]: "\"refresh_token_expires_in\": 7776000,"
+                    - generic [ref=e1127]: "\"scope\": \"write_products,read_orders\""
+                    - generic [ref=e1128]: "}"
+            - separator [ref=e1129]
+            - group "Was this page helpful?" [ref=e1132]:
+              - generic [ref=e1133]: Was this page helpful?
+              - generic [ref=e1134]:
+                - button "Yes" [ref=e1135] [cursor=pointer]:
+                  - generic [ref=e1136]: "Yes"
+                - button "No" [ref=e1137] [cursor=pointer]:
+                  - generic [ref=e1138]: "No"
+        - complementary [ref=e1139]:
+          - navigation "On this page" [ref=e1140]:
+            - list [ref=e1141]:
+              - listitem [ref=e1142]:
+                - link "Expiring vs non-expiring offline tokens" [ref=e1143] [cursor=pointer]:
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#expiring-vs-non-expiring-offline-tokens
+              - listitem [ref=e1144]:
+                - link "Acquiring expiring offline tokens" [ref=e1145] [cursor=pointer]:
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#acquiring-expiring-offline-tokens
+              - listitem [ref=e1146]:
+                - link "Refreshing expiring offline tokens" [ref=e1147] [cursor=pointer]:
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#refreshing-expiring-offline-tokens
+              - listitem [ref=e1148]:
+                - link "Migrating from non-expiring to expiring tokens" [ref=e1149] [cursor=pointer]:
+                  - /url: /docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens#migrating-from-non-expiring-to-expiring-tokens
+      - generic [ref=e1153]:
+        - generic [ref=e1154]:
+          - heading "Updates" [level=3] [ref=e1155]
+          - list [ref=e1156]:
+            - listitem [ref=e1157]:
+              - link "Developer changelog" [ref=e1158] [cursor=pointer]:
+                - /url: /changelog
+            - listitem [ref=e1159]:
+              - link "Shopify Editions" [ref=e1160] [cursor=pointer]:
+                - /url: https://www.shopify.com/editions
+        - generic [ref=e1161]:
+          - heading "Business growth" [level=3] [ref=e1162]
+          - list [ref=e1163]:
+            - listitem [ref=e1164]:
+              - link "Shopify Partners Program" [ref=e1165] [cursor=pointer]:
+                - /url: https://www.shopify.com/partners?shpxid=222dd762-CA08-48FF-E4D4-FF926B8FFCAD
+            - listitem [ref=e1166]:
+              - link "Shopify App Store" [ref=e1167] [cursor=pointer]:
+                - /url: https://apps.shopify.com/?shpxid=222dd762-CA08-48FF-E4D4-FF926B8FFCAD
+            - listitem [ref=e1168]:
+              - link "Shopify Academy" [ref=e1169] [cursor=pointer]:
+                - /url: https://www.shopifyacademy.com/page/catalog#role_developer?utm_source=web_dotdev&utm_medium=footer_businessgrowth
+        - generic [ref=e1170]:
+          - heading "Legal" [level=3] [ref=e1171]
+          - list [ref=e1172]:
+            - listitem [ref=e1173]:
+              - link "Terms of service" [ref=e1174] [cursor=pointer]:
+                - /url: https://www.shopify.com/legal/terms?shpxid=222dd762-CA08-48FF-E4D4-FF926B8FFCAD
+            - listitem [ref=e1175]:
+              - link "API terms of use" [ref=e1176] [cursor=pointer]:
+                - /url: https://www.shopify.com/legal/api-terms?shpxid=222dd762-CA08-48FF-E4D4-FF926B8FFCAD
+            - listitem [ref=e1177]:
+              - link "Privacy policy" [ref=e1178] [cursor=pointer]:
+                - /url: https://www.shopify.com/legal/privacy?shpxid=222dd762-CA08-48FF-E4D4-FF926B8FFCAD
+            - listitem [ref=e1179]:
+              - link "Partners Program Agreement" [ref=e1180] [cursor=pointer]:
+                - /url: https://www.shopify.com/partners/terms?shpxid=222dd762-CA08-48FF-E4D4-FF926B8FFCAD
+        - generic [ref=e1181]:
+          - heading "Shopify" [level=3] [ref=e1182]
+          - list [ref=e1183]:
+            - listitem [ref=e1184]:
+              - link "About Shopify" [ref=e1185] [cursor=pointer]:
+                - /url: https://www.shopify.com/about?shpxid=222dd762-CA08-48FF-E4D4-FF926B8FFCAD
+            - listitem [ref=e1186]:
+              - link "Shopify Plus" [ref=e1187] [cursor=pointer]:
+                - /url: https://www.shopify.com/plus?shpxid=222dd762-CA08-48FF-E4D4-FF926B8FFCAD
+            - listitem [ref=e1188]:
+              - link "Careers" [ref=e1189] [cursor=pointer]:
+                - /url: https://www.shopify.com/careers?shpxid=222dd762-CA08-48FF-E4D4-FF926B8FFCAD
+            - listitem [ref=e1190]:
+              - link "Investors" [ref=e1191] [cursor=pointer]:
+                - /url: https://investors.shopify.com/home/default.aspx?shpxid=222dd762-CA08-48FF-E4D4-FF926B8FFCAD
+            - listitem [ref=e1192]:
+              - link "Press and media" [ref=e1193] [cursor=pointer]:
+                - /url: https://shopify.com/news?shpxid=7db0d4e4-24E8-4087-58FA-7EE470CA745A

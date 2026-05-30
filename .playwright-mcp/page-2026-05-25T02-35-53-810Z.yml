@@ -1,0 +1,347 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - img "Manuva" [ref=e5]
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - paragraph [ref=e8]: Operations
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /app
+            - img [ref=e11]
+            - text: Dashboard
+          - link "Products" [ref=e16] [cursor=pointer]:
+            - /url: /app/products
+            - img [ref=e18]
+            - text: Products
+          - link "Components" [ref=e22] [cursor=pointer]:
+            - /url: /app/components
+            - img [ref=e24]
+            - text: Components
+          - link "Goods Inwards" [ref=e28] [cursor=pointer]:
+            - /url: /app/goods-inwards
+            - img [ref=e30]
+            - text: Goods Inwards
+          - link "Orders" [ref=e34] [cursor=pointer]:
+            - /url: /app/orders
+            - img [ref=e36]
+            - text: Orders
+          - link "Stocktake" [ref=e39] [cursor=pointer]:
+            - /url: /app/stocktake
+            - img [ref=e41]
+            - text: Stocktake
+          - link "Suppliers" [ref=e43] [cursor=pointer]:
+            - /url: /app/suppliers
+            - img [ref=e45]
+            - text: Suppliers
+          - link "Reports" [ref=e49] [cursor=pointer]:
+            - /url: /app/reports
+            - img [ref=e51]
+            - text: Reports
+        - generic [ref=e52]:
+          - paragraph [ref=e53]: Warehouse
+          - link "Locations" [ref=e54] [cursor=pointer]:
+            - /url: /app/warehouse/locations
+            - img [ref=e56]
+            - text: Locations
+        - generic [ref=e59]:
+          - paragraph [ref=e60]: Planning
+          - link "Production Planning" [ref=e61] [cursor=pointer]:
+            - /url: /app/planning/floor
+            - img [ref=e63]
+            - text: Production Planning
+          - link "Departments" [ref=e67] [cursor=pointer]:
+            - /url: /app/departments
+            - img [ref=e69]
+            - text: Departments
+        - generic [ref=e71]:
+          - paragraph [ref=e72]: Workspace
+          - link "Activity Log" [ref=e73] [cursor=pointer]:
+            - /url: /app/activity-log
+            - img [ref=e75]
+            - text: Activity Log
+          - link "Trash" [ref=e78] [cursor=pointer]:
+            - /url: /app/trash
+            - img [ref=e80]
+            - text: Trash
+    - generic [ref=e83]:
+      - banner [ref=e84]:
+        - generic [ref=e85]:
+          - generic [ref=e86]:
+            - link "Products" [ref=e88] [cursor=pointer]:
+              - /url: /app/products
+            - generic [ref=e89]: /Variant Detail
+          - generic [ref=e90]:
+            - paragraph [ref=e91]: Variant Detail
+            - paragraph [ref=e92]: Review BOM, routing, and labor operations for a variant.
+        - button "User menu" [ref=e95] [cursor=pointer]: K
+      - generic [ref=e97]:
+        - paragraph [ref=e98]:
+          - link "Products" [ref=e99] [cursor=pointer]:
+            - /url: /app/products
+          - text: /
+          - link "Conveyor Line Integration Package" [ref=e100] [cursor=pointer]:
+            - /url: /app/products/9d8ff818-93f8-4288-a09f-5d700cb0c188
+          - text: / Up to 25m
+        - generic [ref=e101]:
+          - heading "Up to 25m" [level=3] [ref=e102]
+          - paragraph [ref=e103]: SKU CONV-PKG-25
+          - paragraph [ref=e104]: "Shopify ID: gid://shopify/ProductVariant/48240052535539"
+        - generic [ref=e105]:
+          - generic [ref=e106]:
+            - button "Overview" [ref=e107] [cursor=pointer]
+            - button "Bill of Materials" [ref=e108] [cursor=pointer]
+            - button "Labour & Routing" [ref=e109] [cursor=pointer]
+            - button "Versions" [ref=e110] [cursor=pointer]
+            - button "Notifications" [ref=e111] [cursor=pointer]
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - generic [ref=e115]:
+                - generic [ref=e116]: ACTIVE
+                - generic [ref=e117]: v2 · 12 May 2026
+              - generic [ref=e118]:
+                - button "Version history" [ref=e119] [cursor=pointer]
+                - button "Edit BOM" [ref=e121] [cursor=pointer]
+            - table [ref=e123]:
+              - rowgroup [ref=e124]:
+                - row "Component SKU Unit Qty Yield % Unit cost Line cost" [ref=e125]:
+                  - columnheader "Component" [ref=e126]
+                  - columnheader "SKU" [ref=e127]
+                  - columnheader "Unit" [ref=e128]
+                  - columnheader "Qty" [ref=e129]
+                  - columnheader "Yield %" [ref=e130]
+                  - columnheader "Unit cost" [ref=e131]
+                  - columnheader "Line cost" [ref=e132]
+              - rowgroup [ref=e133]:
+                - row "Aluminium Extrusion 40x40 2m CMP-ALU-4040 ea 20 100% $32.00 $640.00" [ref=e134]:
+                  - cell "Aluminium Extrusion 40x40 2m" [ref=e135]
+                  - cell "CMP-ALU-4040" [ref=e136]
+                  - cell "ea" [ref=e137]
+                  - cell "20" [ref=e138]
+                  - cell "100%" [ref=e139]:
+                    - generic [ref=e140]: 100%
+                  - cell "$32.00" [ref=e141]
+                  - cell "$640.00" [ref=e142]
+                - row "Modular Belt 1m Section CMP-BELT-1M m 25 100% $180.00 $4500.00" [ref=e143]:
+                  - cell "Modular Belt 1m Section" [ref=e144]
+                  - cell "CMP-BELT-1M" [ref=e145]
+                  - cell "m" [ref=e146]
+                  - cell "25" [ref=e147]
+                  - cell "100%" [ref=e148]:
+                    - generic [ref=e149]: 100%
+                  - cell "$180.00" [ref=e150]
+                  - cell "$4500.00" [ref=e151]
+                - row "Angle Bracket 40x40 CMP-BRKT-40 ea 40 100% $4.00 $160.00" [ref=e152]:
+                  - cell "Angle Bracket 40x40" [ref=e153]
+                  - cell "CMP-BRKT-40" [ref=e154]
+                  - cell "ea" [ref=e155]
+                  - cell "40" [ref=e156]
+                  - cell "100%" [ref=e157]:
+                    - generic [ref=e158]: 100%
+                  - cell "$4.00" [ref=e159]
+                  - cell "$160.00" [ref=e160]
+                - row "Control Cabinet 800x600x300 CMP-CAB-800 ea 1 100% $680.00 $680.00" [ref=e161]:
+                  - cell "Control Cabinet 800x600x300" [ref=e162]
+                  - cell "CMP-CAB-800" [ref=e163]
+                  - cell "ea" [ref=e164]
+                  - cell "1" [ref=e165]
+                  - cell "100%" [ref=e166]:
+                    - generic [ref=e167]: 100%
+                  - cell "$680.00" [ref=e168]
+                  - cell "$680.00" [ref=e169]
+                - row "CAT6 Industrial Ethernet Cable 10m CMP-CAT6-10M ea 4 100% $28.00 $112.00" [ref=e170]:
+                  - cell "CAT6 Industrial Ethernet Cable 10m" [ref=e171]
+                  - cell "CMP-CAT6-10M" [ref=e172]
+                  - cell "ea" [ref=e173]
+                  - cell "4" [ref=e174]
+                  - cell "100%" [ref=e175]:
+                    - generic [ref=e176]: 100%
+                  - cell "$28.00" [ref=e177]
+                  - cell "$112.00" [ref=e178]
+                - row "Servo Drive 1.5kW CMP-DRV-1500 ea 3 100% $980.00 $2940.00" [ref=e179]:
+                  - cell "Servo Drive 1.5kW" [ref=e180]
+                  - cell "CMP-DRV-1500" [ref=e181]
+                  - cell "ea" [ref=e182]
+                  - cell "3" [ref=e183]
+                  - cell "100%" [ref=e184]:
+                    - generic [ref=e185]: 100%
+                  - cell "$980.00" [ref=e186]
+                  - cell "$2940.00" [ref=e187]
+                - row "E-Stop Mushroom Button CMP-ESTOP-01 ea 2 100% $45.00 $90.00" [ref=e188]:
+                  - cell "E-Stop Mushroom Button" [ref=e189]
+                  - cell "CMP-ESTOP-01" [ref=e190]
+                  - cell "ea" [ref=e191]
+                  - cell "2" [ref=e192]
+                  - cell "100%" [ref=e193]:
+                    - generic [ref=e194]: 100%
+                  - cell "$45.00" [ref=e195]
+                  - cell "$90.00" [ref=e196]
+                - row "Gearbox 10:1 Ratio CMP-GBOX-10 ea 2 100% $410.00 $820.00" [ref=e197]:
+                  - cell "Gearbox 10:1 Ratio" [ref=e198]
+                  - cell "CMP-GBOX-10" [ref=e199]
+                  - cell "ea" [ref=e200]
+                  - cell "2" [ref=e201]
+                  - cell "100%" [ref=e202]:
+                    - generic [ref=e203]: 100%
+                  - cell "$410.00" [ref=e204]
+                  - cell "$820.00" [ref=e205]
+                - row "Machine Guarding Panel 1200x800 CMP-GUARD-1200 ea 4 100% $280.00 $1120.00" [ref=e206]:
+                  - cell "Machine Guarding Panel 1200x800" [ref=e207]
+                  - cell "CMP-GUARD-1200" [ref=e208]
+                  - cell "ea" [ref=e209]
+                  - cell "4" [ref=e210]
+                  - cell "100%" [ref=e211]:
+                    - generic [ref=e212]: 100%
+                  - cell "$280.00" [ref=e213]
+                  - cell "$1120.00" [ref=e214]
+                - row "Siemens HMI KTP700 Touch Panel CMP-HMI-KTP700 ea 1 100% $1620.00 $1620.00" [ref=e215]:
+                  - cell "Siemens HMI KTP700 Touch Panel" [ref=e216]
+                  - cell "CMP-HMI-KTP700" [ref=e217]
+                  - cell "ea" [ref=e218]
+                  - cell "1" [ref=e219]
+                  - cell "100%" [ref=e220]:
+                    - generic [ref=e221]: 100%
+                  - cell "$1620.00" [ref=e222]
+                  - cell "$1620.00" [ref=e223]
+                - row "Safety Light Curtain Type 4 CMP-LCURT-T4 ea 1 100% $1450.00 $1450.00" [ref=e224]:
+                  - cell "Safety Light Curtain Type 4" [ref=e225]
+                  - cell "CMP-LCURT-T4" [ref=e226]
+                  - cell "ea" [ref=e227]
+                  - cell "1" [ref=e228]
+                  - cell "100%" [ref=e229]:
+                    - generic [ref=e230]: 100%
+                  - cell "$1450.00" [ref=e231]
+                  - cell "$1450.00" [ref=e232]
+                - row "Linear Guide Rail 1m CMP-LGR-1M ea 5 100% $220.00 $1100.00" [ref=e233]:
+                  - cell "Linear Guide Rail 1m" [ref=e234]
+                  - cell "CMP-LGR-1M" [ref=e235]
+                  - cell "ea" [ref=e236]
+                  - cell "5" [ref=e237]
+                  - cell "100%" [ref=e238]:
+                    - generic [ref=e239]: 100%
+                  - cell "$220.00" [ref=e240]
+                  - cell "$1100.00" [ref=e241]
+                - row "Circuit Breaker 16A CMP-MCB-16A ea 4 100% $28.00 $112.00" [ref=e242]:
+                  - cell "Circuit Breaker 16A" [ref=e243]
+                  - cell "CMP-MCB-16A" [ref=e244]
+                  - cell "ea" [ref=e245]
+                  - cell "4" [ref=e246]
+                  - cell "100%" [ref=e247]:
+                    - generic [ref=e248]: 100%
+                  - cell "$28.00" [ref=e249]
+                  - cell "$112.00" [ref=e250]
+                - row "Servo Motor 1.5kW CMP-MOT-1500 ea 3 100% $720.00 $2160.00" [ref=e251]:
+                  - cell "Servo Motor 1.5kW" [ref=e252]
+                  - cell "CMP-MOT-1500" [ref=e253]
+                  - cell "ea" [ref=e254]
+                  - cell "3" [ref=e255]
+                  - cell "100%" [ref=e256]:
+                    - generic [ref=e257]: 100%
+                  - cell "$720.00" [ref=e258]
+                  - cell "$2160.00" [ref=e259]
+                - row "Photoelectric Sensor CMP-PE-SENS ea 4 100% $85.00 $340.00" [ref=e260]:
+                  - cell "Photoelectric Sensor" [ref=e261]
+                  - cell "CMP-PE-SENS" [ref=e262]
+                  - cell "ea" [ref=e263]
+                  - cell "4" [ref=e264]
+                  - cell "100%" [ref=e265]:
+                    - generic [ref=e266]: 100%
+                  - cell "$85.00" [ref=e267]
+                  - cell "$340.00" [ref=e268]
+                - row "Siemens S7-1500 Safety PLC CMP-PLC-S71500 ea 1 100% $4850.00 $4850.00" [ref=e269]:
+                  - cell "Siemens S7-1500 Safety PLC" [ref=e270]
+                  - cell "CMP-PLC-S71500" [ref=e271]
+                  - cell "ea" [ref=e272]
+                  - cell "1" [ref=e273]
+                  - cell "100%" [ref=e274]:
+                    - generic [ref=e275]: 100%
+                  - cell "$4850.00" [ref=e276]
+                  - cell "$4850.00" [ref=e277]
+                - row "PROFINET Cable 5m CMP-PNET-5M ea 1 100% $35.00 $35.00" [ref=e278]:
+                  - cell "PROFINET Cable 5m" [ref=e279]
+                  - cell "CMP-PNET-5M" [ref=e280]
+                  - cell "ea" [ref=e281]
+                  - cell "1" [ref=e282]
+                  - cell "100%" [ref=e283]:
+                    - generic [ref=e284]: 100%
+                  - cell "$35.00" [ref=e285]
+                  - cell "$35.00" [ref=e286]
+                - row "Proximity Sensor Inductive CMP-PROX-IND ea 4 100% $65.00 $260.00" [ref=e287]:
+                  - cell "Proximity Sensor Inductive" [ref=e288]
+                  - cell "CMP-PROX-IND" [ref=e289]
+                  - cell "ea" [ref=e290]
+                  - cell "4" [ref=e291]
+                  - cell "100%" [ref=e292]:
+                    - generic [ref=e293]: 100%
+                  - cell "$65.00" [ref=e294]
+                  - cell "$260.00" [ref=e295]
+                - row "24VDC Power Supply 20A CMP-PSU-24V20 ea 1 100% $185.00 $185.00" [ref=e296]:
+                  - cell "24VDC Power Supply 20A" [ref=e297]
+                  - cell "CMP-PSU-24V20" [ref=e298]
+                  - cell "ea" [ref=e299]
+                  - cell "1" [ref=e300]
+                  - cell "100%" [ref=e301]:
+                    - generic [ref=e302]: 100%
+                  - cell "$185.00" [ref=e303]
+                  - cell "$185.00" [ref=e304]
+                - row "Conveyor Roller 500mm CMP-ROLL-500 ea 12 100% $75.00 $900.00" [ref=e305]:
+                  - cell "Conveyor Roller 500mm" [ref=e306]
+                  - cell "CMP-ROLL-500" [ref=e307]
+                  - cell "ea" [ref=e308]
+                  - cell "12" [ref=e309]
+                  - cell "100%" [ref=e310]:
+                    - generic [ref=e311]: 100%
+                  - cell "$75.00" [ref=e312]
+                  - cell "$900.00" [ref=e313]
+                - row "Safety Relay Module CMP-SREL-01 ea 1 100% $260.00 $260.00" [ref=e314]:
+                  - cell "Safety Relay Module" [ref=e315]
+                  - cell "CMP-SREL-01" [ref=e316]
+                  - cell "ea" [ref=e317]
+                  - cell "1" [ref=e318]
+                  - cell "100%" [ref=e319]:
+                    - generic [ref=e320]: 100%
+                  - cell "$260.00" [ref=e321]
+                  - cell "$260.00" [ref=e322]
+                - row "Terminal Blocks Set (50pc) CMP-TERM-50 set 1 100% $42.00 $42.00" [ref=e323]:
+                  - cell "Terminal Blocks Set (50pc)" [ref=e324]
+                  - cell "CMP-TERM-50" [ref=e325]
+                  - cell "set" [ref=e326]
+                  - cell "1" [ref=e327]
+                  - cell "100%" [ref=e328]:
+                    - generic [ref=e329]: 100%
+                  - cell "$42.00" [ref=e330]
+                  - cell "$42.00" [ref=e331]
+                - row "VFD 2.2kW CMP-VFD-2200 ea 1 100% $560.00 $560.00" [ref=e332]:
+                  - cell "VFD 2.2kW" [ref=e333]
+                  - cell "CMP-VFD-2200" [ref=e334]
+                  - cell "ea" [ref=e335]
+                  - cell "1" [ref=e336]
+                  - cell "100%" [ref=e337]:
+                    - generic [ref=e338]: 100%
+                  - cell "$560.00" [ref=e339]
+                  - cell "$560.00" [ref=e340]
+            - generic [ref=e341]:
+              - generic [ref=e342]:
+                - generic [ref=e343]: Materials
+                - generic [ref=e344]: $24936.00
+                - generic [ref=e345]: incl. scrap
+              - generic [ref=e346]:
+                - generic [ref=e347]: Labour
+                - generic [ref=e348]: $2596.00
+                - generic [ref=e349]: per unit, excl. setup
+              - generic [ref=e350]:
+                - generic [ref=e351]: Overhead
+                - generic [ref=e352]: $1170.64
+                - generic [ref=e353]: admin + utilities + overhead
+              - generic [ref=e354]:
+                - generic [ref=e355]: Total BOM cost
+                - generic [ref=e356]: $28702.64
+              - generic [ref=e357]:
+                - generic [ref=e358]: Sell price
+                - generic [ref=e359]: $129000.00
+                - generic [ref=e360]: from Shopify
+              - generic [ref=e361]:
+                - generic [ref=e362]: Gross margin
+                - generic [ref=e363]: 77.7%
+            - button "▸ Labour & overhead breakdown" [ref=e365] [cursor=pointer]:
+              - generic [ref=e366]: ▸ Labour & overhead breakdown
+  - alert [ref=e367]

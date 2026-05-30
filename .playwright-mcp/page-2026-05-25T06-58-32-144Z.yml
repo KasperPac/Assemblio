@@ -1,0 +1,216 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - generic:
+      - link "Skip to content":
+        - /url: "#AppFrameMain"
+    - generic [ref=e5]:
+      - link "Return to home page" [ref=e7] [cursor=pointer]:
+        - /url: /4581855
+        - img "Return to home page" [ref=e8]
+      - generic [ref=e9]:
+        - generic [ref=e11]:
+          - generic [ref=e12]: Search
+          - searchbox "Search" [ref=e13]
+          - generic:
+            - generic:
+              - img
+        - button "Notifications 1" [ref=e18] [cursor=pointer]:
+          - link "Notifications 1" [ref=e19]:
+            - /url: /4581855/notifications
+            - generic [ref=e20]:
+              - generic [ref=e21]: Notifications
+              - img [ref=e22]
+            - generic [ref=e24]: "1"
+        - button "Avatar with initials P A Pac Technologies Kasper Simonsen" [ref=e27] [cursor=pointer]:
+          - img "Avatar with initials P A" [ref=e29]:
+            - img [ref=e31]:
+              - generic [ref=e32]: PA
+          - generic [ref=e33]:
+            - paragraph [ref=e34]: Pac Technologies
+            - paragraph [ref=e35]: Kasper Simonsen
+    - generic "Navigation" [ref=e36]:
+      - navigation [ref=e37]:
+        - generic [ref=e38]:
+          - list [ref=e40]:
+            - listitem [ref=e41]:
+              - link "ALL APPS" [ref=e44] [cursor=pointer]:
+                - /url: /4581855/apps
+                - img [ref=e48]
+                - generic [ref=e50]: ALL APPS
+          - heading "Manuva" [level=2] [ref=e52]
+          - list [ref=e54]:
+            - listitem [ref=e55]:
+              - link "Overview" [ref=e58] [cursor=pointer]:
+                - /url: /4581855/apps/360504393729/overview
+                - generic [ref=e59]: Overview
+            - listitem [ref=e60]:
+              - link "API access requests" [ref=e63] [cursor=pointer]:
+                - /url: /4581855/apps/360504393729/api_access
+                - generic [ref=e64]: API access requests
+            - listitem [ref=e65]:
+              - link "Admin performance" [ref=e68] [cursor=pointer]:
+                - /url: /4581855/apps/360504393729/admin_performance
+                - generic [ref=e69]: Admin performance
+            - listitem [ref=e70]:
+              - link "Distribution" [ref=e73] [cursor=pointer]:
+                - /url: /4581855/apps/360504393729/distribution
+                - generic [ref=e74]: Distribution
+            - listitem [ref=e75]:
+              - link "App history" [ref=e78] [cursor=pointer]:
+                - /url: /4581855/apps/360504393729/history
+                - generic [ref=e79]: App history
+    - main [ref=e82]:
+      - generic [ref=e95]:
+        - generic [ref=e98]:
+          - navigation [ref=e101]:
+            - link "Click to go back" [ref=e102] [cursor=pointer]:
+              - /url: /4581855/apps/360504393729/overview
+              - img [ref=e106]
+              - generic [ref=e108]: Click to go back
+          - heading "App Store review" [level=1] [ref=e110]
+        - generic [ref=e111]:
+          - generic [ref=e113]:
+            - generic [ref=e115]:
+              - generic [ref=e116]: Attention
+              - generic [ref=e117]: Draft
+            - generic [ref=e118]:
+              - paragraph [ref=e120]: Complete preliminary steps to prepare your submission
+              - generic [ref=e121]:
+                - button "Submit for review" [disabled]:
+                  - generic:
+                    - generic: Submit for review
+          - generic [ref=e122]:
+            - heading "Preliminary steps" [level=2] [ref=e124]
+            - generic [ref=e126]:
+              - generic [ref=e129]:
+                - img [ref=e133]
+                - heading "Queries supported API versions" [level=3] [ref=e141]
+              - generic [ref=e144]:
+                - img [ref=e148]
+                - heading "Fixed requirement issues with configuration" [level=3] [ref=e156]
+              - generic [ref=e159]:
+                - img [ref=e163]
+                - heading "Added an emergency contact for your account" [level=3] [ref=e171]
+              - generic [ref=e174]:
+                - img [ref=e178]
+                - generic [ref=e181]:
+                  - generic [ref=e183]:
+                    - heading "Complete your listing content (English)" [level=3] [ref=e185]
+                    - button "Change language" [ref=e187] [cursor=pointer]
+                  - paragraph [ref=e189]: You started working on your listing content, but it's still incomplete or has errors. Finish it up, or address the errors.
+                  - link "Complete" [ref=e192] [cursor=pointer]:
+                    - /url: /4581855/apps/360504393729/edit_listing/en
+                    - generic [ref=e194]: Complete
+              - generic [ref=e197]:
+                - img [ref=e201]
+                - generic [ref=e207]:
+                  - heading "Doesn't need access to protected customer data" [level=3] [ref=e209]
+                  - link "Change" [ref=e211] [cursor=pointer]:
+                    - /url: /4581855/apps/360504393729/customer_data
+              - generic [ref=e212]:
+                - generic [ref=e213]: Address automated check errors
+                - generic [ref=e215]:
+                  - img [ref=e219]
+                  - generic [ref=e223]:
+                    - heading "Automated checks for common errors" [level=3] [ref=e227]
+                    - list [ref=e229]:
+                      - listitem [ref=e230]:
+                        - generic [ref=e231]:
+                          - img [ref=e235]
+                          - generic [ref=e239]:
+                            - text: Immediately
+                            - link "authenticates after install" [ref=e240] [cursor=pointer]:
+                              - /url: https://shopify.dev/docs/apps/launch/app-requirements-checklist#a-authentication
+                      - listitem [ref=e241]:
+                        - generic [ref=e242]:
+                          - img [ref=e246]
+                          - generic [ref=e250]:
+                            - text: Immediately
+                            - link "redirects to app UI" [ref=e251] [cursor=pointer]:
+                              - /url: https://shopify.dev/docs/apps/launch/app-requirements-checklist#b-permissions
+                            - text: after authentication
+                      - listitem [ref=e252]:
+                        - generic [ref=e253]:
+                          - img [ref=e257]
+                          - generic [ref=e261]:
+                            - text: Provides mandatory
+                            - link "compliance webhooks" [ref=e262] [cursor=pointer]:
+                              - /url: https://shopify.dev/docs/apps/webhooks/configuration/mandatory-webhooks
+                      - listitem [ref=e263]:
+                        - generic [ref=e264]:
+                          - img [ref=e268]
+                          - button "Webhook error" [ref=e272] [cursor=pointer]:
+                            - generic [ref=e273]:
+                              - generic [ref=e275]: Verifies webhooks with HMAC signatures
+                              - img [ref=e280]
+                      - listitem [ref=e282]:
+                        - generic [ref=e283]:
+                          - img [ref=e287]
+                          - generic [ref=e291]:
+                            - text: Uses a
+                            - link "valid TLS certificate" [ref=e292] [cursor=pointer]:
+                              - /url: https://shopify.dev/docs/apps/store/security/tls-certificates
+                    - button "Run" [ref=e295] [cursor=pointer]:
+                      - generic [ref=e297]: Run
+              - generic [ref=e300]:
+                - img [ref=e304]
+                - generic [ref=e307]:
+                  - heading "Select your app's capabilities to show personalized review requirements" [level=3] [ref=e311]
+                  - paragraph [ref=e313]: Some apps may have special requirements based on how they'll help merchants.
+                  - button "Select" [ref=e316] [cursor=pointer]:
+                    - generic [ref=e318]: Select
+              - generic [ref=e321]:
+                - img [ref=e325]
+                - generic [ref=e328]:
+                  - heading "Embedded app checks" [level=3] [ref=e332]
+                  - paragraph [ref=e334]: Auto-checked every 2 hours. Log in and interact with your app on a dev store to generate session data.
+                  - generic [ref=e337]:
+                    - img [ref=e341]
+                    - paragraph [ref=e348]: Using the latest App Bridge script loaded from Shopify's CDN
+                  - generic [ref=e351]:
+                    - img [ref=e355]
+                    - paragraph [ref=e362]:
+                      - text: Using
+                      - link "session tokens" [ref=e363] [cursor=pointer]:
+                        - /url: https://shopify.dev/docs/apps/build/authentication-authorization/session-tokens
+                      - text: for user authentication
+              - generic [ref=e366]:
+                - img [ref=e370]
+                - generic [ref=e373]:
+                  - heading "Run a self review of your submission with AI" [level=3] [ref=e377]
+                  - paragraph [ref=e379]:
+                    - generic [ref=e380]:
+                      - generic [ref=e381]: Use your AI assistant to run through the app review checks and get feedback before you submit. This can reduce review time and increase your chances of approval.
+                      - generic [ref=e382]:
+                        - text: Install the
+                        - link "Shopify AI Toolkit" [ref=e383] [cursor=pointer]:
+                          - /url: https://shopify.dev/docs/apps/build/ai-toolkit
+                        - text: "if you haven't already, then run this command:"
+                  - generic [ref=e385]:
+                    - generic [ref=e388]:
+                      - generic [ref=e391]: Shopify AI Toolkit command
+                      - generic [ref=e394]:
+                        - alert "Shopify AI Toolkit command Copy text to clipboard" [ref=e395]: /shopify-app-store-review
+                        - button "Copy text to clipboard" [ref=e398] [cursor=pointer]:
+                          - img [ref=e403]
+                    - button "Mark as done" [ref=e406] [cursor=pointer]
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - dialog "Webhook error" [active]:
+              - generic [ref=e408]:
+                - generic [ref=e410]:
+                  - heading "Webhook error" [level=2] [ref=e412]
+                  - button "Close" [ref=e413] [cursor=pointer]:
+                    - img [ref=e416]
+                - generic [ref=e420]:
+                  - paragraph [ref=e422]:
+                    - generic [ref=e423]:
+                      - text: Expected HTTP 401 (Unauthorized)
+                      - text: Received HTTP 404 from https://app.manuva.app/api/shopify/webhooks/gdpr/shop-redact
+                  - paragraph [ref=e424]:
+                    - text: Your app’s HTTPS webhook endpoints must validate the HMAC digest of each request and return an HTTP 401 response when rejecting a request with an invalid digest.
+                    - link "Learn how to secure mandatory webhooks" [ref=e425] [cursor=pointer]:
+                      - /url: https://shopify.dev/docs/apps/webhooks/configuration/https#step-5-verify-the-webhook

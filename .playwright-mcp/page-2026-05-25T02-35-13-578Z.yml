@@ -1,0 +1,153 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - img "Manuva" [ref=e5]
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - paragraph [ref=e8]: Operations
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /app
+            - img [ref=e11]
+            - text: Dashboard
+          - link "Products" [ref=e16] [cursor=pointer]:
+            - /url: /app/products
+            - img [ref=e18]
+            - text: Products
+          - link "Components" [ref=e22] [cursor=pointer]:
+            - /url: /app/components
+            - img [ref=e24]
+            - text: Components
+          - link "Goods Inwards" [ref=e28] [cursor=pointer]:
+            - /url: /app/goods-inwards
+            - img [ref=e30]
+            - text: Goods Inwards
+          - link "Orders" [ref=e34] [cursor=pointer]:
+            - /url: /app/orders
+            - img [ref=e36]
+            - text: Orders
+          - link "Stocktake" [ref=e39] [cursor=pointer]:
+            - /url: /app/stocktake
+            - img [ref=e41]
+            - text: Stocktake
+          - link "Suppliers" [ref=e43] [cursor=pointer]:
+            - /url: /app/suppliers
+            - img [ref=e45]
+            - text: Suppliers
+          - link "Reports" [ref=e49] [cursor=pointer]:
+            - /url: /app/reports
+            - img [ref=e51]
+            - text: Reports
+        - generic [ref=e52]:
+          - paragraph [ref=e53]: Warehouse
+          - link "Locations" [ref=e54] [cursor=pointer]:
+            - /url: /app/warehouse/locations
+            - img [ref=e56]
+            - text: Locations
+        - generic [ref=e59]:
+          - paragraph [ref=e60]: Planning
+          - link "Production Planning" [ref=e61] [cursor=pointer]:
+            - /url: /app/planning/floor
+            - img [ref=e63]
+            - text: Production Planning
+          - link "Departments" [ref=e67] [cursor=pointer]:
+            - /url: /app/departments
+            - img [ref=e69]
+            - text: Departments
+        - generic [ref=e71]:
+          - paragraph [ref=e72]: Workspace
+          - link "Activity Log" [ref=e73] [cursor=pointer]:
+            - /url: /app/activity-log
+            - img [ref=e75]
+            - text: Activity Log
+          - link "Trash" [ref=e78] [cursor=pointer]:
+            - /url: /app/trash
+            - img [ref=e80]
+            - text: Trash
+    - generic [ref=e83]:
+      - banner [ref=e84]:
+        - generic [ref=e85]:
+          - generic [ref=e86]:
+            - link "Products" [ref=e88] [cursor=pointer]:
+              - /url: /app/products
+            - generic [ref=e89]: /Product Detail
+          - generic [ref=e90]:
+            - paragraph [ref=e91]: Product Detail
+            - paragraph [ref=e92]: Inspect variants, active BOMs, and product-level context.
+        - button "User menu" [ref=e95] [cursor=pointer]: K
+      - generic [ref=e97]:
+        - generic [ref=e99]:
+          - heading "Conveyor Line Integration Package" [level=1] [ref=e100]
+          - paragraph [ref=e101]: "Shopify ID: gid://shopify/Product/9317787828467 · 3 variants · Last sync 12d ago"
+        - generic [ref=e102]:
+          - img "Conveyor Line Integration Package" [ref=e103]
+          - generic [ref=e104]: Factory-proven conveyor line integration package including controls, safety, sensors, and commissioning. Ideal for upgrading legacy conveyors or integrating new line sections.
+        - generic [ref=e107]: 3 / 3 variants have a BOM
+        - generic [ref=e110]:
+          - table [ref=e111]:
+            - rowgroup [ref=e112]:
+              - row "Variant SKU BOM status Components Mat. cost Material GP % Actual GP % Actions" [ref=e113]:
+                - columnheader "Variant" [ref=e114]
+                - columnheader "SKU" [ref=e115]
+                - columnheader "BOM status" [ref=e116]
+                - columnheader "Components" [ref=e117]
+                - columnheader "Mat. cost" [ref=e118]
+                - columnheader "Material GP %" [ref=e119]
+                - columnheader "Actual GP %" [ref=e120]
+                - columnheader "Actions" [ref=e121]
+            - rowgroup [ref=e122]:
+              - row "Up to 10m v2 active · created 12d ago CONV-PKG-10 Active BOM 23 $18420.00 76.7% 71.9% Edit BOM" [ref=e123] [cursor=pointer]:
+                - cell "Up to 10m v2 active · created 12d ago" [ref=e124]:
+                  - link "Up to 10m" [ref=e125]:
+                    - /url: /app/products/variants/7eb286ef-bbda-4752-9528-9709d3aacff7
+                  - generic [ref=e126]: v2 active · created 12d ago
+                - cell "CONV-PKG-10" [ref=e127]
+                - cell "Active BOM" [ref=e128]:
+                  - generic [ref=e129]: Active BOM
+                - cell "23" [ref=e130]
+                - cell "$18420.00" [ref=e131]
+                - cell "76.7%" [ref=e132]
+                - cell "71.9%" [ref=e133]
+                - cell "Edit BOM" [ref=e134]:
+                  - link "Edit BOM" [ref=e135]:
+                    - /url: /app/products/variants/7eb286ef-bbda-4752-9528-9709d3aacff7
+              - row "Up to 25m v2 active · created 12d ago CONV-PKG-25 Active BOM 23 $24936.00 80.7% 77.7% Edit BOM" [ref=e136] [cursor=pointer]:
+                - cell "Up to 25m v2 active · created 12d ago" [ref=e137]:
+                  - link "Up to 25m" [ref=e138]:
+                    - /url: /app/products/variants/22fca3df-7331-42e1-9cad-aedc1ba8f82b
+                  - generic [ref=e139]: v2 active · created 12d ago
+                - cell "CONV-PKG-25" [ref=e140]
+                - cell "Active BOM" [ref=e141]:
+                  - generic [ref=e142]: Active BOM
+                - cell "23" [ref=e143]
+                - cell "$24936.00" [ref=e144]
+                - cell "80.7%" [ref=e145]
+                - cell "77.7%" [ref=e146]
+                - cell "Edit BOM" [ref=e147]:
+                  - link "Edit BOM" [ref=e148]:
+                    - /url: /app/products/variants/22fca3df-7331-42e1-9cad-aedc1ba8f82b
+              - row "Up to 50m v2 active · created 12d ago CONV-PKG-50 Active BOM 23 $34445.00 84.3% 82.6% Edit BOM" [ref=e149] [cursor=pointer]:
+                - cell "Up to 50m v2 active · created 12d ago" [ref=e150]:
+                  - link "Up to 50m" [ref=e151]:
+                    - /url: /app/products/variants/62fc53db-a88a-49af-8ec3-fb5a5567ab23
+                  - generic [ref=e152]: v2 active · created 12d ago
+                - cell "CONV-PKG-50" [ref=e153]
+                - cell "Active BOM" [ref=e154]:
+                  - generic [ref=e155]: Active BOM
+                - cell "23" [ref=e156]
+                - cell "$34445.00" [ref=e157]
+                - cell "84.3%" [ref=e158]
+                - cell "82.6%" [ref=e159]
+                - cell "Edit BOM" [ref=e160]:
+                  - link "Edit BOM" [ref=e161]:
+                    - /url: /app/products/variants/62fc53db-a88a-49af-8ec3-fb5a5567ab23
+          - generic [ref=e162]:
+            - generic [ref=e163]:
+              - text: "Avg material GP:"
+              - strong [ref=e164]: 80.5%
+            - generic [ref=e165]:
+              - text: "Avg actual GP:"
+              - strong [ref=e166]: 77.4%
+            - generic [ref=e167]:
+              - text: "Worst:"
+              - strong [ref=e168]: Up to 10m (71.9%)
+  - alert [ref=e169]

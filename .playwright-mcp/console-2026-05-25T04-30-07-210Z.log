@@ -1,0 +1,2 @@
+[    2343ms] [WARNING] polaris:  JSHandle@node - accessibilityLabel is recommended when scroll-box is provided @ https://cdn.shopify.com/shopifycloud/web/assets/v1/vite/client/en/assets/main-ff104958d7ee.js:1
+[    5388ms] [WARNING] using deprecated parameters for the initialization function; pass a single object instead @ https://cdn.shopify.com/shopifycloud/web/assets/v1/vite/client/en/assets/main-ff104958d7ee.js:1

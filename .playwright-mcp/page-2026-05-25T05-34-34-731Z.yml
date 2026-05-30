@@ -1,0 +1,176 @@
+- generic [ref=e2]:
+  - generic [ref=e7]:
+    - link "Skip to content":
+      - /url: "#AppFrameMain"
+    - generic [ref=e12]:
+      - generic [ref=e17] [cursor=pointer]:
+        - img "Shopify" [ref=e18]
+        - img "Shopify" [ref=e19]
+      - button "Search CTRL K" [ref=e27] [cursor=pointer]:
+        - generic [ref=e28]:
+          - generic [ref=e29]:
+            - generic:
+              - generic:
+                - generic:
+                  - img
+            - generic "Search" [ref=e30]
+          - generic [ref=e31]:
+            - generic [ref=e32]: CTRL
+            - generic [ref=e33]: K
+      - generic [ref=e34]:
+        - generic [ref=e36]:
+          - button "Sidekick" [ref=e40] [cursor=pointer]:
+            - img [ref=e44]
+          - button "Alerts Feed - 0 unseen alerts" [ref=e54] [cursor=pointer]:
+            - img [ref=e58]
+        - button "Kasper Simonsen" [ref=e69] [cursor=pointer]:
+          - generic [ref=e72]:
+            - img "Pac Technologies Test Store" [ref=e76]:
+              - generic [ref=e77]: PS
+            - paragraph [ref=e79]: Pac Technologies Test Store
+            - generic [ref=e81]: dev
+    - generic [ref=e83]:
+      - generic "Navigation" [ref=e84]:
+        - navigation [ref=e86]:
+          - generic [ref=e87]:
+            - generic [ref=e88]:
+              - list [ref=e90]:
+                - listitem [ref=e91]:
+                  - link "Home" [ref=e94] [cursor=pointer]:
+                    - /url: /store/pactechdev
+                    - generic [ref=e95]:
+                      - img [ref=e98]
+                      - img [ref=e102]
+                    - generic [ref=e104]: Home
+                - listitem [ref=e105]:
+                  - link "Orders 2" [ref=e108] [cursor=pointer]:
+                    - /url: /store/pactechdev/orders
+                    - generic [ref=e109]:
+                      - img [ref=e112]
+                      - img [ref=e116]
+                    - generic [ref=e118]: Orders
+                    - generic [ref=e121]:
+                      - generic: "2"
+                - listitem [ref=e122]:
+                  - link "Products" [ref=e125] [cursor=pointer]:
+                    - /url: /store/pactechdev/products
+                    - generic [ref=e126]:
+                      - img [ref=e129]
+                      - img [ref=e133]
+                    - generic [ref=e136]: Products
+                - listitem [ref=e137]:
+                  - link "Customers" [ref=e140] [cursor=pointer]:
+                    - /url: /store/pactechdev/customers
+                    - generic [ref=e141]:
+                      - img [ref=e144]
+                      - img [ref=e149]
+                    - generic [ref=e152]: Customers
+                - listitem [ref=e153]:
+                  - link "Marketing" [ref=e156] [cursor=pointer]:
+                    - /url: /store/pactechdev/marketing
+                    - generic [ref=e157]:
+                      - img [ref=e160]
+                      - img [ref=e166]
+                    - generic [ref=e170]: Marketing
+                - listitem [ref=e171]:
+                  - link "Discounts" [ref=e174] [cursor=pointer]:
+                    - /url: /store/pactechdev/discounts
+                    - generic [ref=e175]:
+                      - img [ref=e178]
+                      - img [ref=e182]
+                    - generic [ref=e187]: Discounts
+                - listitem [ref=e188]:
+                  - link "Content" [ref=e191] [cursor=pointer]:
+                    - /url: /store/pactechdev/content/metaobjects
+                    - generic [ref=e192]:
+                      - img [ref=e195]
+                      - img [ref=e202]
+                    - generic [ref=e207]: Content
+                - listitem [ref=e208]:
+                  - link "Markets" [ref=e211] [cursor=pointer]:
+                    - /url: /store/pactechdev/markets
+                    - generic [ref=e212]:
+                      - img [ref=e215]
+                      - img [ref=e220]
+                    - generic [ref=e223]: Markets
+                - listitem [ref=e224]:
+                  - link "Finance" [ref=e227] [cursor=pointer]:
+                    - /url: /store/pactechdev/finance
+                    - generic [ref=e228]:
+                      - img [ref=e231]
+                      - img [ref=e235]
+                    - generic [ref=e237]: Finance
+                - listitem [ref=e238]:
+                  - link "Analytics" [ref=e241] [cursor=pointer]:
+                    - /url: /store/pactechdev/analytics
+                    - generic [ref=e242]:
+                      - img [ref=e245]
+                      - img [ref=e251]
+                    - generic [ref=e255]: Analytics
+              - list [ref=e256]:
+                - listitem [ref=e257]:
+                  - button "Sales channels" [ref=e259] [cursor=pointer]:
+                    - strong [ref=e261]:
+                      - generic: Sales channels
+                  - list [ref=e263]:
+                    - button "Online Store" [disabled] [ref=e264]:
+                      - list [ref=e265]:
+                        - listitem [ref=e266]:
+                          - link "Online Store" [ref=e269] [cursor=pointer]:
+                            - /url: /store/pactechdev/themes?appLoadId=730cc20c-32f0-4ffd-a453-81920547b215
+                            - img [ref=e271]
+                            - generic [ref=e272]: Online Store
+                  - status [ref=e273]
+                - listitem [ref=e274]:
+                  - button "Apps" [ref=e276] [cursor=pointer]:
+                    - strong [ref=e278]:
+                      - generic: Apps
+                  - list [ref=e280]:
+                    - button "Manuva Pin to your navigation" [disabled] [ref=e281]:
+                      - list [ref=e282]:
+                        - listitem [ref=e283]:
+                          - generic [ref=e285]:
+                            - link "Manuva" [disabled] [ref=e286] [cursor=pointer]:
+                              - /url: /store/pactechdev/apps/manuva
+                              - img [ref=e288]
+                              - generic [ref=e289]: Manuva
+                            - button "Pin to your navigation" [disabled] [ref=e292] [cursor=pointer]:
+                              - text: •
+                              - img [ref=e296]
+                  - status [ref=e298]
+            - list [ref=e300]:
+              - listitem [ref=e301]:
+                - link "Settings" [ref=e304] [cursor=pointer]:
+                  - /url: /store/pactechdev/settings
+                  - img [ref=e308]
+                  - generic [ref=e310]: Settings
+      - main [ref=e311]:
+        - generic [ref=e316]:
+          - generic [ref=e318]:
+            - navigation "Breadcrumbs for Manuva" [ref=e320]:
+              - heading "Manuva" [level=1] [ref=e324]
+            - button "More actions" [ref=e328] [cursor=pointer]:
+              - img [ref=e332]
+          - iframe [ref=e336]:
+            - generic [active] [ref=f3e1]:
+              - main [ref=f3e2]:
+                - generic [ref=f3e3]:
+                  - heading "Manuva" [level=1] [ref=f3e4]
+                  - paragraph [ref=f3e5]: Manufacturing operations for Shopify merchants
+                  - paragraph [ref=f3e6]: Couldn't reach Shopify App Bridge. Try refreshing this page from inside Shopify Admin.
+              - alert [ref=f3e7]
+  - generic:
+    - generic:
+      - generic:
+        - generic: General shortcuts
+        - generic: Adding items to your store
+        - generic: Navigating your admin panel
+        - generic: Navigating settings
+    - dialog "Sidekick" [ref=e338]:
+      - button "Resize Sidebar" [ref=e339]:
+        - generic [ref=e340]:
+          - generic: Resize Sidebar
+    - generic:
+      - generic:
+        - generic: Cancel
+        - generic: OK

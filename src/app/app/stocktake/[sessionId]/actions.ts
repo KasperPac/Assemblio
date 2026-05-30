@@ -43,6 +43,7 @@ export async function saveLineCountClient({
   const context = await getServerTenantContext();
   if (!context) return { ok: false };
   const { supabase, tenantId } = context;
+  if (!tenantId) return { ok: false }; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -72,6 +73,7 @@ export async function submitForReview(formData: FormData) {
   const context = await getServerTenantContext();
   if (!context) return;
   const { supabase, tenantId } = context;
+  if (!tenantId) return; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const session = await fetchSession(supabase, tenantId, sessionId);
   if (!session || !canSubmitForReview(session.status as StocktakeSessionStatus)) return;
@@ -109,6 +111,7 @@ export async function saveVarianceReason(formData: FormData) {
   const context = await getServerTenantContext();
   if (!context) return;
   const { supabase, tenantId } = context;
+  if (!tenantId) return; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   // Guard: only allow updates when session is in reconciliation
   const session = await fetchSession(supabase, tenantId, sessionId);
@@ -131,6 +134,7 @@ export async function approveAndApply(formData: FormData) {
   const context = await getServerTenantContext();
   if (!context) redirect("/app/stocktake?apply_error=missing_tenant");
   const { supabase, tenantId } = context;
+  if (!tenantId) redirect("/app/stocktake?apply_error=missing_tenant"); // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const session = await fetchSession(supabase, tenantId, sessionId);
   if (!session || !canApprove(session.status as StocktakeSessionStatus)) {
@@ -184,6 +188,7 @@ export async function sendBackForRecount(formData: FormData) {
   const context = await getServerTenantContext();
   if (!context) return;
   const { supabase, tenantId } = context;
+  if (!tenantId) return; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const session = await fetchSession(supabase, tenantId, sessionId);
   if (!session || !canSendBackForRecount(session.status as StocktakeSessionStatus)) return;
@@ -206,6 +211,7 @@ export async function applyOpeningStock(formData: FormData) {
   const context = await getServerTenantContext();
   if (!context) redirect("/app/stocktake?apply_error=missing_tenant");
   const { supabase, tenantId } = context;
+  if (!tenantId) redirect("/app/stocktake?apply_error=missing_tenant"); // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const session = await fetchSession(supabase, tenantId, sessionId);
   if (!session || session.session_type !== "initial") {

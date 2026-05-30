@@ -1,0 +1,171 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - link "Skip to main content" [ref=e5] [cursor=pointer]:
+        - /url: "#main"
+      - link "Dev Dashboard logo" [ref=e7] [cursor=pointer]:
+        - /url: /dashboard/189899333
+        - img "Dev Dashboard logo" [ref=e8]
+    - button "Settings" [ref=e11] [cursor=pointer]:
+      - img "View code" [ref=e13]
+      - paragraph [ref=e17]: Pac Technologies
+  - generic [ref=e18]:
+    - navigation "Primary" [ref=e22]:
+      - generic [ref=e24]:
+        - list [ref=e26]:
+          - listitem [ref=e27]:
+            - link "Apps Apps" [ref=e28] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps
+              - img "Apps" [ref=e30]
+              - text: Apps
+          - listitem [ref=e35]:
+            - link "Dev Stores icon Stores" [ref=e36] [cursor=pointer]:
+              - /url: /dashboard/189899333/stores
+              - img "Dev Stores icon" [ref=e38]
+              - text: Stores
+          - listitem [ref=e40]:
+            - link "Catalogs icon Catalogs" [ref=e41] [cursor=pointer]:
+              - /url: /dashboard/189899333/catalogs
+              - img "Catalogs icon" [ref=e43]
+              - text: Catalogs
+        - list [ref=e49]:
+          - listitem [ref=e50]:
+            - link "App icon Manuva" [ref=e51] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps/360504393729
+              - img "App icon" [ref=e52]
+              - generic [ref=e53]: Manuva
+          - listitem [ref=e54]:
+            - list [ref=e55]:
+              - listitem [ref=e56]:
+                - img
+                - link "Monitoring" [ref=e57] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/monitoring
+              - listitem [ref=e58]:
+                - img
+                - link "Logs" [ref=e59] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/logs
+              - listitem [ref=e60]:
+                - img
+                - link "Versions" [ref=e61] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/versions
+              - listitem [ref=e62]:
+                - img
+                - link "Settings" [ref=e63] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/settings
+      - list [ref=e65]:
+        - listitem [ref=e66]:
+          - link "Organization icon Organization" [ref=e67] [cursor=pointer]:
+            - /url: https://admin.shopify.com/organization/189899333/settings/organization-account?from=dev
+            - img "Organization icon" [ref=e69]
+            - text: Organization
+    - main [ref=e75]:
+      - generic [ref=e77]:
+        - heading "Settings" [level=1] [ref=e80]
+        - generic [ref=e82]:
+          - generic [ref=e83]:
+            - generic [ref=e84]:
+              - paragraph [ref=e85]: Credentials
+              - link "Docs Open in new tab" [ref=e86] [cursor=pointer]:
+                - /url: https://shopify.dev/docs/apps/build/authentication-authorization/client-secrets
+                - generic [ref=e87]: Docs
+                - img "Open in new tab" [ref=e88]
+            - generic [ref=e92]:
+              - generic [ref=e93]:
+                - generic [ref=e94]:
+                  - paragraph [ref=e95]: Client ID
+                  - textbox [disabled] [ref=e96]: 923db8d97db22d30c0517520f1498933
+                - button "Copy client ID to clipboard" [ref=e97] [cursor=pointer]:
+                  - img "Copy to clipboard" [ref=e100]
+              - generic [ref=e102]:
+                - generic [ref=e103]:
+                  - paragraph [ref=e104]: Secret
+                  - generic [ref=e105]:
+                    - textbox [disabled] [ref=e106]: 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
+                    - generic [ref=e107]:
+                      - text: Created
+                      - generic [ref=e108]: May 11, 2026 at 4:30 am
+                - generic [ref=e109]:
+                  - button "Reveal client secret" [ref=e110] [cursor=pointer]:
+                    - img "Show or hide" [ref=e113]
+                  - button "Copy client secret to clipboard" [ref=e116] [cursor=pointer]:
+                    - img "Copy to clipboard" [ref=e119]
+                  - button "Rotate client secret" [ref=e121] [cursor=pointer]:
+                    - generic [ref=e123]: Rotate
+          - generic [ref=e124]:
+            - generic [ref=e125]:
+              - paragraph [ref=e126]: App automation token
+              - link "Docs Open in new tab" [ref=e127] [cursor=pointer]:
+                - /url: https://shopify.dev/docs/apps/build/dev-dashboard/app-automation-tokens
+                - generic [ref=e128]: Docs
+                - img "Open in new tab" [ref=e129]
+            - generic [ref=e132]:
+              - paragraph [ref=e134]: Enable continuous integration and deployment. Keep tokens secure and encrypted.
+              - button "Create token" [ref=e136] [cursor=pointer]:
+                - generic [ref=e138]: Create token
+          - generic [ref=e139]:
+            - paragraph [ref=e141]: Contact information
+            - generic [ref=e143]:
+              - generic [ref=e144]:
+                - paragraph [ref=e145]: API contact email
+                - paragraph [ref=e146]: kasper.simonsen@pac-technologies.com.au
+              - button "Edit" [ref=e148] [cursor=pointer]:
+                - generic [ref=e150]: Edit
+          - generic [ref=e151]:
+            - generic [ref=e152]:
+              - paragraph [ref=e153]: Google Cloud Pub/Sub
+              - link "Docs Open in new tab" [ref=e154] [cursor=pointer]:
+                - /url: https://shopify.dev/docs/apps/build/webhooks/subscribe/get-started?framework=remix&deliveryMethod=pubSub
+                - generic [ref=e155]: Docs
+                - img "Open in new tab" [ref=e156]
+            - paragraph [ref=e160]: Recommended solution for handling a high volume of webhooks across app versions
+            - generic [ref=e162]:
+              - generic [ref=e163]:
+                - paragraph [ref=e164]: Shopify service account address
+                - paragraph [ref=e165]: delivery@shopify-pubsub-webhooks.iam.gserviceaccount.com
+              - button "Copy Google Cloud Pub/Sub Shopify service account address to clipboard" [ref=e166] [cursor=pointer]:
+                - img "Copy to clipboard" [ref=e169]
+          - generic [ref=e172]:
+            - generic [ref=e173]:
+              - paragraph [ref=e174]: Amazon EventBridge
+              - link "Docs Open in new tab" [ref=e175] [cursor=pointer]:
+                - /url: https://shopify.dev/docs/apps/build/webhooks/subscribe/get-started?framework=remix&deliveryMethod=eventBridge
+                - generic [ref=e176]: Docs
+                - img "Open in new tab" [ref=e177]
+            - generic [ref=e180]:
+              - paragraph [ref=e182]: Connect Shopify and Amazon EventBridge to handle webhook deliveries at scale across app versions
+              - button "Create source" [ref=e184] [cursor=pointer]:
+                - generic [ref=e186]: Create source
+          - generic [ref=e187]:
+            - paragraph [ref=e189]: Navigation bar
+            - generic [ref=e190]:
+              - paragraph [ref=e192]: Static navigation is supported until December 2026
+              - link "Manage Open in new tab" [ref=e193] [cursor=pointer]:
+                - /url: https://partners.shopify.com/org/189899333/org_apps/360504393729/embedded_app_navigation
+                - generic [ref=e195]:
+                  - text: Manage
+                  - img "Open in new tab" [ref=e196]
+          - generic [ref=e199]:
+            - generic [ref=e200]:
+              - paragraph [ref=e201]: Storefront API
+              - link "Docs Open in new tab" [ref=e202] [cursor=pointer]:
+                - /url: https://shopify.dev/docs/storefront-api
+                - generic [ref=e203]: Docs
+                - img "Open in new tab" [ref=e204]
+            - generic [ref=e207]:
+              - paragraph [ref=e209]: Only available to custom apps
+              - link "Manage Open in new tab" [ref=e210] [cursor=pointer]:
+                - /url: https://partners.shopify.com/org/189899333/org_apps/360504393729/api_access
+                - generic [ref=e212]:
+                  - text: Manage
+                  - img "Open in new tab" [ref=e213]
+          - generic [ref=e217]:
+            - generic [ref=e218]: App icon
+            - generic [ref=e219]:
+              - img "App icon" [ref=e221]
+              - generic [ref=e222]: Image must be saved as PNG or JPG · 1200px × 1200px · 1MB max
+              - button "Add image Upload icon" [ref=e223] [cursor=pointer]:
+                - generic [ref=e225]:
+                  - img "Add image" [ref=e226]
+                  - text: Upload icon
+          - button "Delete app" [disabled] [ref=e233]:
+            - generic [ref=e235]: Delete app

@@ -1,0 +1,157 @@
+- generic [ref=e3]:
+  - generic:
+    - link "Skip to content":
+      - /url: "#AppFrameMain"
+  - generic [ref=e5]:
+    - link "Return to home page" [ref=e7] [cursor=pointer]:
+      - /url: /4581855
+      - img "Return to home page" [ref=e8]
+    - generic [ref=e9]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: Search
+        - searchbox "Search" [ref=e13]
+        - generic:
+          - generic:
+            - img
+      - button "Notifications 1" [ref=e18] [cursor=pointer]:
+        - link "Notifications 1" [ref=e19]:
+          - /url: /4581855/notifications
+          - generic [ref=e20]:
+            - generic [ref=e21]: Notifications
+            - img [ref=e22]
+          - generic [ref=e24]: "1"
+      - button "Avatar with initials P A Pac Technologies Kasper Simonsen" [ref=e27] [cursor=pointer]:
+        - img "Avatar with initials P A" [ref=e29]:
+          - img [ref=e31]:
+            - generic [ref=e32]: PA
+        - generic [ref=e33]:
+          - paragraph [ref=e34]: Pac Technologies
+          - paragraph [ref=e35]: Kasper Simonsen
+  - generic "Navigation" [ref=e36]:
+    - navigation [ref=e37]:
+      - generic [ref=e38]:
+        - list [ref=e40]:
+          - listitem [ref=e41]:
+            - link "ALL APPS" [ref=e44] [cursor=pointer]:
+              - /url: /4581855/apps
+              - img [ref=e48]
+              - generic [ref=e50]: ALL APPS
+        - heading "Manuva" [level=2] [ref=e52]
+        - list [ref=e54]:
+          - listitem [ref=e55]:
+            - link "Overview" [ref=e58] [cursor=pointer]:
+              - /url: /4581855/apps/360504393729/overview
+              - generic [ref=e59]: Overview
+          - listitem [ref=e60]:
+            - link "API access requests" [ref=e63] [cursor=pointer]:
+              - /url: /4581855/apps/360504393729/api_access
+              - generic [ref=e64]: API access requests
+          - listitem [ref=e65]:
+            - link "Admin performance" [ref=e68] [cursor=pointer]:
+              - /url: /4581855/apps/360504393729/admin_performance
+              - generic [ref=e69]: Admin performance
+          - listitem [ref=e70]:
+            - link "Distribution" [ref=e73] [cursor=pointer]:
+              - /url: /4581855/apps/360504393729/distribution
+              - generic [ref=e74]: Distribution
+          - listitem [ref=e75]:
+            - link "App history" [ref=e78] [cursor=pointer]:
+              - /url: /4581855/apps/360504393729/history
+              - generic [ref=e79]: App history
+  - main [ref=e83]:
+    - generic [ref=e96]:
+      - generic [ref=e99]:
+        - navigation [ref=e102]:
+          - link "Click to go back" [ref=e103] [cursor=pointer]:
+            - /url: /4581855/apps/360504393729/overview
+            - img [ref=e107]
+            - generic [ref=e109]: Click to go back
+        - heading "App Store review" [level=1] [ref=e111]
+      - generic [ref=e112]:
+        - generic [ref=e114]:
+          - generic [ref=e116]:
+            - generic [ref=e117]: Attention
+            - generic [ref=e118]: Draft
+          - generic [ref=e119]:
+            - paragraph [ref=e121]: Complete preliminary steps to prepare your submission
+            - generic [ref=e122]:
+              - button "Submit for review" [disabled]:
+                - generic:
+                  - generic: Submit for review
+        - generic [ref=e123]:
+          - heading "Preliminary steps" [level=2] [ref=e125]
+          - generic [ref=e127]:
+            - generic [ref=e130]:
+              - img [ref=e134]
+              - heading "Queries supported API versions" [level=3] [ref=e142]
+            - generic [ref=e145]:
+              - img [ref=e149]
+              - heading "Fixed requirement issues with configuration" [level=3] [ref=e157]
+            - generic [ref=e160]:
+              - img [ref=e164]
+              - heading "Added an emergency contact for your account" [level=3] [ref=e172]
+            - generic [ref=e175]:
+              - img [ref=e179]
+              - generic [ref=e185]:
+                - heading "Created listing (English)" [level=3] [ref=e187]
+                - link "Edit" [ref=e189] [cursor=pointer]:
+                  - /url: /4581855/apps/360504393729/edit_listing/en
+            - generic [ref=e192]:
+              - img [ref=e196]
+              - generic [ref=e200]:
+                - heading "Recommended changes for Shopify App Store listing" [level=3] [ref=e204]
+                - generic [ref=e205]: An AI check recommended changes for your listing.
+                - button "View suggestions" [ref=e208] [cursor=pointer]:
+                  - generic [ref=e210]: View suggestions
+            - generic [ref=e213]:
+              - img [ref=e217]
+              - generic [ref=e223]:
+                - heading "Doesn't need access to protected customer data" [level=3] [ref=e225]
+                - link "Change" [ref=e227] [cursor=pointer]:
+                  - /url: /4581855/apps/360504393729/customer_data
+            - generic [ref=e228]:
+              - generic [ref=e229]: Passed automated check for common errors
+              - generic [ref=e231]:
+                - img [ref=e235]
+                - heading "Automated checks for common errors" [level=3] [ref=e243]
+            - generic [ref=e246]:
+              - img [ref=e476]
+              - generic [ref=e255]:
+                - 'heading "Selected app capabilities: embedded" [level=3] [ref=e479]'
+                - button "Change" [ref=e481] [cursor=pointer]
+            - generic [ref=e267]:
+              - img [ref=e271]
+              - heading "Embedded app checks" [level=3] [ref=e279]
+            - generic [ref=e282]:
+              - img [ref=e286]
+              - generic [ref=e289]:
+                - heading "Run a self review of your submission with AI" [level=3] [ref=e293]
+                - paragraph [ref=e295]:
+                  - generic [ref=e296]:
+                    - generic [ref=e297]: Use your AI assistant to run through the app review checks and get feedback before you submit. This can reduce review time and increase your chances of approval.
+                    - generic [ref=e298]:
+                      - text: Install the
+                      - link "Shopify AI Toolkit" [ref=e299] [cursor=pointer]:
+                        - /url: https://shopify.dev/docs/apps/build/ai-toolkit
+                      - text: "if you haven't already, then run this command:"
+                - generic [ref=e301]:
+                  - generic [ref=e304]:
+                    - generic [ref=e307]: Shopify AI Toolkit command
+                    - generic [ref=e310]:
+                      - alert "Shopify AI Toolkit command Copy text to clipboard" [ref=e311]: /shopify-app-store-review
+                      - button "Copy text to clipboard" [ref=e314] [cursor=pointer]:
+                        - img [ref=e319]
+                  - button "Mark as done" [ref=e322] [cursor=pointer]
+        - generic [ref=e484]:
+          - generic [ref=e486]:
+            - heading "Review requirements" [level=2] [ref=e488]
+            - paragraph [ref=e490]: These are what we'll review your submission on based on the app capabilities you selected. Make sure they're met before submitting.
+          - generic [ref=e492]:
+            - button "Functionality" [ref=e495] [cursor=pointer]:
+              - generic [ref=e497]:
+                - img [ref=e501]
+                - heading "Functionality" [level=3] [ref=e504]
+            - button "App Store listing" [ref=e507] [cursor=pointer]:
+              - generic [ref=e509]:
+                - img [ref=e513]
+                - heading "App Store listing" [level=3] [ref=e516]

@@ -22,6 +22,7 @@ export async function allocateOrder(formData: FormData) {
   const context = await getServerTenantContext();
   if (!context) return;
   const { supabase, tenantId } = context;
+  if (!tenantId) return; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const returnTo = sanitizeReturnPath(
     formData.get("return_to")?.toString() ?? null

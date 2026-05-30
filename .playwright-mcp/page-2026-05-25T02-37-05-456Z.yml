@@ -1,0 +1,152 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - img "Manuva" [ref=e5]
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - paragraph [ref=e8]: Operations
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /app
+            - img [ref=e11]
+            - text: Dashboard
+          - link "Products" [ref=e16] [cursor=pointer]:
+            - /url: /app/products
+            - img [ref=e18]
+            - text: Products
+          - link "Components" [ref=e22] [cursor=pointer]:
+            - /url: /app/components
+            - img [ref=e24]
+            - text: Components
+          - link "Goods Inwards" [ref=e28] [cursor=pointer]:
+            - /url: /app/goods-inwards
+            - img [ref=e30]
+            - text: Goods Inwards
+          - link "Orders" [ref=e34] [cursor=pointer]:
+            - /url: /app/orders
+            - img [ref=e36]
+            - text: Orders
+          - link "Stocktake" [ref=e39] [cursor=pointer]:
+            - /url: /app/stocktake
+            - img [ref=e41]
+            - text: Stocktake
+          - link "Suppliers" [ref=e43] [cursor=pointer]:
+            - /url: /app/suppliers
+            - img [ref=e45]
+            - text: Suppliers
+          - link "Reports" [ref=e49] [cursor=pointer]:
+            - /url: /app/reports
+            - img [ref=e51]
+            - text: Reports
+        - generic [ref=e52]:
+          - paragraph [ref=e53]: Warehouse
+          - link "Locations" [ref=e54] [cursor=pointer]:
+            - /url: /app/warehouse/locations
+            - img [ref=e56]
+            - text: Locations
+        - generic [ref=e59]:
+          - paragraph [ref=e60]: Planning
+          - link "Production Planning" [ref=e61] [cursor=pointer]:
+            - /url: /app/planning/floor
+            - img [ref=e63]
+            - text: Production Planning
+          - link "Departments" [ref=e67] [cursor=pointer]:
+            - /url: /app/departments
+            - img [ref=e69]
+            - text: Departments
+        - generic [ref=e71]:
+          - paragraph [ref=e72]: Workspace
+          - link "Activity Log" [ref=e73] [cursor=pointer]:
+            - /url: /app/activity-log
+            - img [ref=e75]
+            - text: Activity Log
+          - link "Trash" [ref=e78] [cursor=pointer]:
+            - /url: /app/trash
+            - img [ref=e80]
+            - text: Trash
+    - generic [ref=e83]:
+      - banner [ref=e84]:
+        - generic [ref=e85]:
+          - generic [ref=e86]:
+            - link "Orders" [ref=e88] [cursor=pointer]:
+              - /url: /app/orders
+            - generic [ref=e89]: /Order Detail
+          - generic [ref=e90]:
+            - paragraph [ref=e91]: Order Detail
+            - paragraph [ref=e92]: Allocation, costing, and labor planning for a single order.
+        - button "User menu" [ref=e95] [cursor=pointer]: K
+      - generic [ref=e97]:
+        - link "← Back to orders" [ref=e99] [cursor=pointer]:
+          - /url: /app/orders
+        - generic [ref=e100]:
+          - generic [ref=e101]:
+            - generic [ref=e102]: Order detail
+            - heading "#1130" [level=1] [ref=e103]
+            - paragraph [ref=e104]: Created 07/05/2026
+          - generic [ref=e106]:
+            - generic [ref=e107]: open
+            - button "Re-run allocation" [ref=e109] [cursor=pointer]
+        - generic [ref=e110]:
+          - generic [ref=e111]:
+            - generic [ref=e112]: Order value
+            - strong [ref=e113]: $284,000
+            - paragraph [ref=e114]: 2 lines in this order
+          - generic [ref=e115]:
+            - generic [ref=e116]: Planned margin
+            - strong [ref=e117]: $43,155
+            - paragraph [ref=e118]: 2 lines have a cost snapshot
+          - generic [ref=e119]:
+            - generic [ref=e120]: Lines allocated
+            - strong [ref=e121]: 2 / 2
+            - paragraph [ref=e122]: All lines allocated
+          - generic [ref=e123]:
+            - generic [ref=e124]: Labor scheduled
+            - strong [ref=e125]: 223.0 hrs
+            - paragraph [ref=e126]: $0 actual margin recorded
+        - generic [ref=e127]:
+          - generic [ref=e129]:
+            - paragraph [ref=e130]: Order lines
+            - heading "Components reserved · BOM · Labor" [level=2] [ref=e131]
+          - generic [ref=e132]:
+            - article [ref=e133]:
+              - generic [ref=e134]:
+                - img "Robotic Palletizing Cell" [ref=e135]
+                - generic [ref=e136]:
+                  - generic [ref=e137]:
+                    - heading "Robotic Palletizing Cell" [level=3] [ref=e138]
+                    - generic [ref=e139]: ✓ Allocated
+                  - paragraph [ref=e140]:
+                    - text: CELL-PAL-50 · Qty 2 · $85,000 each ·
+                    - link "BOM v3 →" [ref=e141] [cursor=pointer]:
+                      - /url: /app/bom
+                    - text: ·
+                    - link "Shopify ↗" [ref=e142] [cursor=pointer]:
+                      - /url: https://pactechdevtemp.myshopify.com/admin/products/9317787795699
+                - generic [ref=e143]:
+                  - generic [ref=e144]: Planned margin
+                  - strong [ref=e145]: $16,748 (9.8%)
+              - group [ref=e146]:
+                - generic "▶ BOM v3 · 28 components · ×2 ordered" [ref=e147] [cursor=pointer]
+              - group [ref=e148]:
+                - 'generic "Labor: 5 operations · 170.0 hrs" [ref=e149] [cursor=pointer]'
+            - article [ref=e150]:
+              - generic [ref=e151]:
+                - img "Print & Apply Labeling Cell" [ref=e152]
+                - generic [ref=e153]:
+                  - generic [ref=e154]:
+                    - heading "Print & Apply Labeling Cell" [level=3] [ref=e155]
+                    - generic [ref=e156]: ✓ Allocated
+                  - paragraph [ref=e157]:
+                    - text: SYS-PNA-PAL2 · Qty 3 · $38,000 each ·
+                    - link "BOM v3 →" [ref=e158] [cursor=pointer]:
+                      - /url: /app/bom
+                    - text: ·
+                    - link "Shopify ↗" [ref=e159] [cursor=pointer]:
+                      - /url: https://pactechdevtemp.myshopify.com/admin/products/9317787599091
+                - generic [ref=e160]:
+                  - generic [ref=e161]: Planned margin
+                  - strong [ref=e162]: $26,406 (23.2%)
+              - group [ref=e163]:
+                - generic "▶ BOM v3 · 23 components · ×3 ordered" [ref=e164] [cursor=pointer]
+              - group [ref=e165]:
+                - 'generic "Labor: 4 operations · 53.0 hrs" [ref=e166] [cursor=pointer]'
+  - alert [ref=e167]

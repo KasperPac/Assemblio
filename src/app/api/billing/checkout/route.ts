@@ -42,12 +42,17 @@ export async function POST(req: Request) {
     );
   }
 
+  if (!ctx.tenantId) {
+    return NextResponse.json({ error: "no active tenant" }, { status: 403 });
+  }
+  const tenantId = ctx.tenantId;
+
   const admin = createSupabaseAdminClient();
 
   const { data: sub, error: subError } = await admin
     .from("tenant_subscription")
     .select("stripe_customer_id")
-    .eq("tenant_id", ctx.tenantId)
+    .eq("tenant_id", tenantId)
     .maybeSingle();
   if (subError) {
     console.error("[billing/checkout] tenant_subscription lookup failed", subError);
@@ -60,7 +65,7 @@ export async function POST(req: Request) {
   // Over-limit pre-check against the requested target tier (not the effective
   // tier — we don't want to let a trialing tenant downgrade into a tier they
   // currently exceed).
-  const usage = await countTenantUsage(admin, ctx.tenantId);
+  const usage = await countTenantUsage(admin, tenantId);
   for (const kind of LIMIT_KINDS) {
     const limit = computeLimit(tier, kind);
     if (limit !== Infinity && usage[kind] > limit) {
@@ -95,20 +100,20 @@ export async function POST(req: Request) {
       admin
         .from("tenant")
         .select("name")
-        .eq("id", ctx.tenantId)
+        .eq("id", tenantId)
         .maybeSingle(),
       admin.auth.admin.getUserById(ctx.userId),
     ]);
     const customer = await stripe.customers.create({
       email: userResult?.user?.email ?? undefined,
       name: tenantRow?.name ?? undefined,
-      metadata: { tenant_id: ctx.tenantId },
+      metadata: { tenant_id: tenantId },
     });
     customerId = customer.id;
     await admin
       .from("tenant_subscription")
       .update({ stripe_customer_id: customerId })
-      .eq("tenant_id", ctx.tenantId);
+      .eq("tenant_id", tenantId);
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -118,9 +123,9 @@ export async function POST(req: Request) {
     line_items: [{ price: priceId, quantity: 1 }],
     success_url: `${baseUrl}/app/billing/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/app/billing/paywall`,
-    metadata: { tenant_id: ctx.tenantId, tier, billing },
+    metadata: { tenant_id: tenantId, tier, billing },
     subscription_data: {
-      metadata: { tenant_id: ctx.tenantId, tier, billing },
+      metadata: { tenant_id: tenantId, tier, billing },
     },
   });
 

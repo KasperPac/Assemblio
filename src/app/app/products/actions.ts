@@ -33,7 +33,11 @@ async function requireBomEditor() {
     return { error: "Missing tenant context." };
   }
 
-  const { supabase, tenantId } = context;
+  const { supabase, tenantId: _tenantId } = context;
+  if (!_tenantId) {
+    return { error: "Missing tenant context." };
+  }
+  const tenantId: string = _tenantId;
   const {
     data: { user },
   } = await supabase.auth.getUser();

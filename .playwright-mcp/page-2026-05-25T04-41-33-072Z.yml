@@ -1,0 +1,493 @@
+- generic [ref=e2]:
+  - generic [ref=e7]:
+    - link "Skip to content":
+      - /url: "#AppFrameMain"
+    - generic [ref=e12]:
+      - generic [ref=e17] [cursor=pointer]:
+        - img "Shopify" [ref=e18]
+        - img "Shopify" [ref=e19]
+      - button "Search CTRL K" [ref=e27] [cursor=pointer]:
+        - generic [ref=e28]:
+          - generic [ref=e29]:
+            - generic:
+              - generic:
+                - generic:
+                  - img
+            - generic "Search" [ref=e30]
+          - generic [ref=e31]:
+            - generic [ref=e32]: CTRL
+            - generic [ref=e33]: K
+      - generic [ref=e34]:
+        - generic [ref=e36]:
+          - button "Sidekick" [ref=e40] [cursor=pointer]:
+            - img [ref=e44]
+          - button "Alerts Feed - 0 unseen alerts" [ref=e54] [cursor=pointer]:
+            - img [ref=e58]
+        - button "Kasper Simonsen" [ref=e69] [cursor=pointer]:
+          - generic [ref=e72]:
+            - img "PacTechDevTemp" [ref=e76]:
+              - generic [ref=e77]: PAC
+            - paragraph [ref=e79]: PacTechDevTemp
+    - generic [ref=e81]:
+      - generic "Navigation" [ref=e82]:
+        - navigation [ref=e84]:
+          - generic [ref=e85]:
+            - generic [ref=e86]:
+              - list [ref=e88]:
+                - listitem [ref=e89]:
+                  - link "Home" [ref=e92] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp
+                    - generic [ref=e93]:
+                      - img [ref=e96]
+                      - img [ref=e100]
+                    - generic [ref=e102]: Home
+                - listitem [ref=e103]:
+                  - link "Orders 1" [ref=e106] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/orders
+                    - generic [ref=e107]:
+                      - img [ref=e110]
+                      - img [ref=e114]
+                    - generic [ref=e116]: Orders
+                    - generic [ref=e119]:
+                      - generic: "1"
+                - listitem [ref=e120]:
+                  - link "Products" [ref=e123] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/products
+                    - generic [ref=e124]:
+                      - img [ref=e127]
+                      - img [ref=e131]
+                    - generic [ref=e134]: Products
+                - listitem [ref=e135]:
+                  - link "Customers" [ref=e138] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/customers
+                    - generic [ref=e139]:
+                      - img [ref=e142]
+                      - img [ref=e147]
+                    - generic [ref=e150]: Customers
+                - listitem [ref=e151]:
+                  - link "Marketing" [ref=e154] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/marketing
+                    - generic [ref=e155]:
+                      - img [ref=e158]
+                      - img [ref=e164]
+                    - generic [ref=e168]: Marketing
+                - listitem [ref=e169]:
+                  - link "Discounts" [ref=e172] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/discounts
+                    - generic [ref=e173]:
+                      - img [ref=e176]
+                      - img [ref=e180]
+                    - generic [ref=e185]: Discounts
+                - listitem [ref=e186]:
+                  - link "Content" [ref=e189] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/content/metaobjects
+                    - generic [ref=e190]:
+                      - img [ref=e193]
+                      - img [ref=e200]
+                    - generic [ref=e205]: Content
+                - listitem [ref=e206]:
+                  - link "Markets" [ref=e209] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/markets
+                    - generic [ref=e210]:
+                      - img [ref=e213]
+                      - img [ref=e218]
+                    - generic [ref=e221]: Markets
+                - listitem [ref=e222]:
+                  - link "Finance" [ref=e225] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/credit
+                    - generic [ref=e226]:
+                      - img [ref=e229]
+                      - img [ref=e233]
+                    - generic [ref=e235]: Finance
+                - listitem [ref=e236]:
+                  - link "Analytics" [ref=e239] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/analytics
+                    - generic [ref=e240]:
+                      - img [ref=e243]
+                      - img [ref=e249]
+                    - generic [ref=e253]: Analytics
+              - list [ref=e254]:
+                - listitem [ref=e255]:
+                  - button "Sales channels" [ref=e257] [cursor=pointer]:
+                    - strong [ref=e259]:
+                      - generic: Sales channels
+                - listitem [ref=e261]:
+                  - button "Apps" [ref=e263] [cursor=pointer]:
+                    - strong [ref=e265]:
+                      - generic: Apps
+            - list [ref=e268]:
+              - listitem [ref=e269]:
+                - link "Settings" [ref=e272] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings
+                  - img [ref=e276]
+                  - generic [ref=e278]: Settings
+      - main [ref=e279]
+  - generic:
+    - generic:
+      - generic:
+        - generic: General shortcuts
+        - generic: Adding items to your store
+        - generic: Navigating your admin panel
+        - generic: Navigating settings
+    - generic:
+      - generic:
+        - generic: Close
+    - dialog "Settings" [ref=e285]:
+      - button "Close" [ref=e286] [cursor=pointer]:
+        - img [ref=e289]
+      - generic [ref=e294]:
+        - generic [ref=e298]:
+          - generic [ref=e301]:
+            - heading "Pac Technologies Temp" [level=3] [ref=e302]:
+              - generic [ref=e303]: Pac Technologies Temp
+            - generic [ref=e304]: 2 stores
+          - generic [ref=e308]:
+            - img [ref=e312]
+            - combobox "Search" [ref=e315]
+          - navigation "Organization settings menu" [ref=e317]:
+            - list [ref=e318]:
+              - listitem [ref=e319]:
+                - link "Users" [ref=e321] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/organization-account
+                  - generic [ref=e322]:
+                    - img [ref=e326]
+                    - generic [ref=e328]: Users
+          - navigation "Shop settings menu" [ref=e329]:
+            - generic [ref=e331]:
+              - button "Update internal icon" [ref=e333] [cursor=pointer]:
+                - generic [ref=e334]:
+                  - img "PacTechDevTemp" [ref=e337]:
+                    - generic [ref=e338]: PAC
+                  - img [ref=e342]
+              - generic [ref=e345]:
+                - heading "PacTechDevTemp" [level=3] [ref=e346]:
+                  - generic [ref=e347]: PacTechDevTemp
+                - link "pactechdevtemp.myshopify.com" [ref=e350] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/domains
+                  - generic [ref=e353]: pactechdevtemp.myshopify.com
+            - list [ref=e354]:
+              - listitem [ref=e355]:
+                - link "General" [ref=e357] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/general
+                  - generic [ref=e358]:
+                    - img [ref=e362]
+                    - generic [ref=e365]: General
+              - listitem [ref=e366]:
+                - generic [ref=e369]:
+                  - img [ref=e373]
+                  - generic [ref=e376]: Plan
+              - listitem [ref=e377]:
+                - generic [ref=e380]:
+                  - img [ref=e384]
+                  - generic [ref=e386]: Billing
+              - listitem [ref=e387]:
+                - link "Payments" [ref=e389] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/payments
+                  - generic [ref=e390]:
+                    - img [ref=e394]
+                    - generic [ref=e397]: Payments
+              - listitem [ref=e398]:
+                - link "Checkout" [ref=e400] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/checkout
+                  - generic [ref=e401]:
+                    - img [ref=e405]
+                    - generic [ref=e409]: Checkout
+              - listitem [ref=e410]:
+                - link "Customer accounts" [ref=e412] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/customer_accounts
+                  - generic [ref=e413]:
+                    - img [ref=e417]
+                    - generic [ref=e420]: Customer accounts
+              - listitem [ref=e421]:
+                - link "Shipping and delivery" [ref=e423] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/shipping
+                  - generic [ref=e424]:
+                    - img [ref=e428]
+                    - generic [ref=e430]: Shipping and delivery
+              - listitem [ref=e431]:
+                - link "Taxes and duties" [ref=e433] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/taxes
+                  - generic [ref=e434]:
+                    - img [ref=e438]
+                    - generic [ref=e440]: Taxes and duties
+              - listitem [ref=e441]:
+                - link "Locations" [ref=e443] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/locations
+                  - generic [ref=e444]:
+                    - img [ref=e448]
+                    - generic [ref=e450]: Locations
+              - listitem [ref=e451]:
+                - link "Markets" [ref=e453] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/markets
+                  - generic [ref=e454]:
+                    - img [ref=e458]
+                    - generic [ref=e461]: Markets
+              - listitem [ref=e462]:
+                - link "Apps" [ref=e464] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/apps
+                  - generic [ref=e465]:
+                    - img [ref=e469]
+                    - generic [ref=e474]: Apps
+              - listitem [ref=e475]:
+                - link "Sales channels" [ref=e477] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/sales_channels
+                  - generic [ref=e478]:
+                    - img [ref=e482]
+                    - generic [ref=e484]: Sales channels
+              - listitem [ref=e485]:
+                - link "Domains" [ref=e487] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/domains
+                  - generic [ref=e488]:
+                    - img [ref=e492]
+                    - generic [ref=e496]: Domains
+              - listitem [ref=e497]:
+                - link "Customer events" [ref=e499] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/customer_events
+                  - generic [ref=e500]:
+                    - img [ref=e504]
+                    - generic [ref=e511]: Customer events
+              - listitem [ref=e512]:
+                - link "Notifications" [ref=e514] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/notifications
+                  - generic [ref=e515]:
+                    - img [ref=e519]
+                    - generic [ref=e521]: Notifications
+              - listitem [ref=e522]:
+                - link "Metafields and metaobjects" [ref=e524] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/custom_data
+                  - generic [ref=e525]:
+                    - img [ref=e529]
+                    - generic [ref=e531]: Metafields and metaobjects
+              - listitem [ref=e532]:
+                - link "Languages" [ref=e534] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/languages
+                  - generic [ref=e535]:
+                    - img [ref=e539]
+                    - generic [ref=e543]: Languages
+              - listitem [ref=e544]:
+                - link "Customer privacy" [ref=e546] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/privacy
+                  - generic [ref=e547]:
+                    - img [ref=e551]
+                    - generic [ref=e553]: Customer privacy
+              - listitem [ref=e554]:
+                - link "Policies" [ref=e556] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/legal
+                  - generic [ref=e557]:
+                    - img [ref=e561]
+                    - generic [ref=e563]: Policies
+          - link "Kasper Simonsen kasper.simonsen@pac-technologies.com.au" [ref=e565] [cursor=pointer]:
+            - /url: https://accounts.shopify.com/accounts/2174da06-88d4-416c-9dd3-fa470aebaaba/redirect
+            - generic [ref=e566]:
+              - img "KS" [ref=e569]:
+                - generic [ref=e570]: KS
+              - generic [ref=e571]:
+                - heading "Kasper Simonsen" [level=6] [ref=e573]:
+                  - generic [ref=e574]: Kasper Simonsen
+                - heading "kasper.simonsen@pac-technologies.com.au" [level=6] [ref=e575]:
+                  - generic [ref=e577]: kasper.simonsen@pac-technologies.com.au
+        - generic [ref=e581]:
+          - generic [ref=e582]:
+            - status:
+              - paragraph [ref=e583]: ManuvaCustom. This page is ready
+            - generic [ref=e584]:
+              - generic [ref=e585]:
+                - generic [ref=e587]:
+                  - navigation "Breadcrumbs for Apps" [ref=e588]:
+                    - generic [ref=e589]:
+                      - link "Apps" [ref=e590] [cursor=pointer]:
+                        - /url: /store/pactechdevtemp/settings/apps
+                        - img [ref=e594]
+                      - img [ref=e599]
+                      - heading "ManuvaCustom" [level=1] [ref=e602]
+                  - generic [ref=e607]:
+                    - generic: Custom
+                - generic [ref=e608]:
+                  - button "Uninstall app" [ref=e613] [cursor=pointer]:
+                    - generic [ref=e614]: Uninstall app
+                  - link "Open app" [ref=e617] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/apps/manuvacustom
+                    - generic [ref=e618]: Open app
+              - paragraph [ref=e623]: by Pac Technologies
+          - generic [ref=e624]:
+            - generic [ref=e626]:
+              - generic [ref=e627]:
+                - generic [ref=e629]:
+                  - generic:
+                    - generic [ref=e630]:
+                      - generic [ref=e631]:
+                        - region "View details for the app" [ref=e632]:
+                          - img "App icon" [ref=e633]
+                        - generic [ref=e634]:
+                          - heading "ManuvaCustom" [level=2] [ref=e635]:
+                            - generic: ManuvaCustom
+                          - paragraph [ref=e636]:
+                            - generic: Installed 1 week ago
+                      - paragraph [ref=e637]:
+                        - generic: This custom app was built by a Shopify partner for your store. Contact Pac Technologies for support.
+                    - link "Learn more about custom apps" [ref=e639] [cursor=pointer]:
+                      - /url: https://help.shopify.com/en/manual/apps/app-types#custom-apps
+                      - generic: Learn more about custom apps
+                - generic [ref=e644]:
+                  - strong [ref=e646]:
+                    - generic: Activity and permissions
+                  - table [ref=e650]:
+                    - rowgroup [ref=e654]:
+                      - row "Sort this table by area in ascending order View Edit Sort this table by recentActivity in ascending order" [ref=e655]:
+                        - columnheader "Sort this table by area in ascending order" [ref=e656]:
+                          - button "Sort this table by area in ascending order" [ref=e657] [cursor=pointer]:
+                            - text: Area
+                            - img [ref=e661]
+                        - columnheader "View" [ref=e663]
+                        - columnheader "Edit" [ref=e664]
+                        - columnheader "Sort this table by recentActivity in ascending order" [ref=e665]:
+                          - button "Sort this table by recentActivity in ascending order" [ref=e666] [cursor=pointer]:
+                            - text: Recent activity
+                            - img [ref=e670]
+                    - rowgroup [ref=e674]:
+                      - row "Orders View recent activity" [ref=e675]:
+                        - cell "Orders" [ref=e676]:
+                          - generic [ref=e680]:
+                            - generic: Orders
+                        - cell [ref=e681]:
+                          - img [ref=e685]
+                        - cell [ref=e687]:
+                          - img [ref=e691]
+                        - cell "View recent activity" [ref=e693]:
+                          - generic [ref=e694]:
+                            - button "View recent activity" [ref=e696] [cursor=pointer]:
+                              - paragraph [ref=e699]:
+                                - generic: 1 week ago
+                            - generic: Edit
+                            - generic: 4 requests
+                            - generic: "Last: May 12, 2026"
+                            - generic: View
+                            - generic: 1 requests
+                            - generic: "Last: May 12, 2026"
+                            - generic: Past 30 days
+                      - row "Products View recent activity" [ref=e700]:
+                        - cell "Products" [ref=e701]:
+                          - generic [ref=e705]:
+                            - generic: Products
+                        - cell [ref=e706]:
+                          - img [ref=e710]
+                        - cell [ref=e712]:
+                          - img [ref=e716]
+                        - cell "View recent activity" [ref=e718]:
+                          - generic [ref=e719]:
+                            - button "View recent activity" [ref=e721] [cursor=pointer]:
+                              - paragraph [ref=e724]:
+                                - generic: 1 week ago
+                            - generic: Edit
+                            - generic: 2 requests
+                            - generic: "Last: May 12, 2026"
+                            - generic: View
+                            - generic: 2 requests
+                            - generic: "Last: May 12, 2026"
+                            - generic: Past 30 days
+                - generic [ref=e728]:
+                  - generic [ref=e732]:
+                    - heading "Privacy" [level=2] [ref=e734]
+                    - generic [ref=e735]:
+                      - generic: This app can access personal data in your store
+                  - generic [ref=e740]:
+                    - generic [ref=e742]:
+                      - heading "Customers" [level=2] [ref=e743]:
+                        - button "Customers" [expanded] [ref=e746] [cursor=pointer]:
+                          - generic [ref=e747]:
+                            - generic [ref=e749]: Customers
+                            - img [ref=e755]
+                      - list [ref=e758]:
+                        - separator [ref=e760]
+                        - listitem [ref=e761]:
+                          - generic [ref=e768]:
+                            - generic [ref=e769]:
+                              - generic [ref=e771]:
+                                - generic: Sensitive data includes customer contact details that have special data protection requirements
+                                - heading "Sensitive data" [level=2] [ref=e773]:
+                                  - generic [ref=e774]:
+                                    - generic: Sensitive data
+                                - generic [ref=e775]:
+                                  - generic [ref=e776]:
+                                    - generic: Name
+                                  - generic [ref=e777]:
+                                    - generic: Email address
+                                  - generic [ref=e778]:
+                                    - generic: Phone number
+                                  - generic [ref=e779]:
+                                    - generic: Physical address
+                              - generic [ref=e781]:
+                                - heading "Device and activity data" [level=2] [ref=e782]:
+                                  - generic: Device and activity data
+                                - generic [ref=e783]:
+                                  - generic [ref=e784]:
+                                    - generic: Geolocation
+                                  - generic [ref=e785]:
+                                    - generic: IP address
+                                  - generic [ref=e786]:
+                                    - generic: Browser and operating system
+                            - generic [ref=e787]:
+                              - generic: Shopify has confirmed this app meets data handling and privacy requirements
+                    - heading "Staff and contributors" [level=2] [ref=e790]:
+                      - button "Staff and contributors" [ref=e793] [cursor=pointer]:
+                        - generic [ref=e794]:
+                          - generic [ref=e796]: Staff and contributors
+                          - img [ref=e802]
+                - generic [ref=e807]:
+                  - heading "App history" [level=2] [ref=e813]
+                  - generic [ref=e823]:
+                    - heading "May 12" [level=3] [ref=e825]
+                    - list [ref=e826]:
+                      - listitem [ref=e827]:
+                        - generic [ref=e832]:
+                          - paragraph [ref=e834]: App installed by Kasper Simonsen
+                          - paragraph [ref=e835]: 7:03 AM
+              - button "Uninstall app" [ref=e839] [cursor=pointer]:
+                - generic [ref=e840]: Uninstall app
+            - paragraph [ref=e842]:
+              - button "Learn more about apps" [ref=e843] [cursor=pointer]:
+                - generic [ref=e845]:
+                  - generic: Learn more about apps
+      - button "Close" [ref=e848] [cursor=pointer]:
+        - generic [ref=e849]:
+          - img [ref=e852]
+          - generic [ref=e854]:
+            - generic: Close
+    - dialog "Sidekick" [ref=e855]:
+      - button "Resize Sidebar" [ref=e856]:
+        - generic [ref=e857]:
+          - generic: Resize Sidebar
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - dialog "Uninstall ManuvaCustom?" [active]:
+              - generic [ref=e859]:
+                - generic [ref=e861]:
+                  - heading "Uninstall ManuvaCustom?" [level=2] [ref=e863]
+                  - button "Close" [ref=e864] [cursor=pointer]:
+                    - img [ref=e868]
+                - generic [ref=e874]:
+                  - status [ref=e875]:
+                    - generic [ref=e876]:
+                      - img [ref=e880]
+                      - paragraph [ref=e885]:
+                        - generic:
+                          - generic: You won't be able to reinstall this app without help from the developer who made it.
+                  - generic [ref=e886]:
+                    - generic [ref=e887]:
+                      - generic: You’ll no longer be able to use the app. After uninstalling, any data managed by the app, such as discounts, will be deleted.
+                    - generic [ref=e888]:
+                      - generic: Contact the developer for data deletion requests.
+                  - paragraph [ref=e890]:
+                    - generic:
+                      - text: Learn more about
+                      - link "third-party deletion" [ref=e891] [cursor=pointer]:
+                        - /url: https://help.shopify.com/en/manual/your-account/privacy/GDPR/GDPR-merchants#third-party-apps
+                        - generic: third-party deletion
+                      - text: .
+                - generic [ref=e898]:
+                  - button "Cancel" [ref=e899] [cursor=pointer]:
+                    - generic [ref=e900]: Cancel
+                  - button "Uninstall" [ref=e901] [cursor=pointer]:
+                    - generic [ref=e902]: Uninstall

@@ -8,11 +8,12 @@ export const dynamic = "force-dynamic";
 export default async function PastDuePage() {
   const ctx = await getServerTenantContext();
   if (!ctx) redirect("/login");
+  const tenantId = ctx.tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   // We render this page regardless of access.state so users in the soft-warn
   // window who click the banner CTA still see it. The gate in the app shell
   // is what forces hard-locked tenants here.
-  await getSubscriptionAccess(ctx.supabase, ctx.tenantId);
+  await getSubscriptionAccess(ctx.supabase, tenantId);
 
   return (
     <main className={styles.page}>

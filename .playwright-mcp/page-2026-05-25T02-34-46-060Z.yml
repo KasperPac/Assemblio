@@ -1,0 +1,210 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - img "Manuva" [ref=e5]
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - paragraph [ref=e8]: Operations
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /app
+            - img [ref=e11]
+            - text: Dashboard
+          - link "Products" [ref=e16] [cursor=pointer]:
+            - /url: /app/products
+            - img [ref=e18]
+            - text: Products
+          - link "Components" [ref=e22] [cursor=pointer]:
+            - /url: /app/components
+            - img [ref=e24]
+            - text: Components
+          - link "Goods Inwards" [ref=e28] [cursor=pointer]:
+            - /url: /app/goods-inwards
+            - img [ref=e30]
+            - text: Goods Inwards
+          - link "Orders" [ref=e34] [cursor=pointer]:
+            - /url: /app/orders
+            - img [ref=e36]
+            - text: Orders
+          - link "Stocktake" [ref=e39] [cursor=pointer]:
+            - /url: /app/stocktake
+            - img [ref=e41]
+            - text: Stocktake
+          - link "Suppliers" [ref=e43] [cursor=pointer]:
+            - /url: /app/suppliers
+            - img [ref=e45]
+            - text: Suppliers
+          - link "Reports" [ref=e49] [cursor=pointer]:
+            - /url: /app/reports
+            - img [ref=e51]
+            - text: Reports
+        - generic [ref=e52]:
+          - paragraph [ref=e53]: Warehouse
+          - link "Locations" [ref=e54] [cursor=pointer]:
+            - /url: /app/warehouse/locations
+            - img [ref=e56]
+            - text: Locations
+        - generic [ref=e59]:
+          - paragraph [ref=e60]: Planning
+          - link "Production Planning" [ref=e61] [cursor=pointer]:
+            - /url: /app/planning/floor
+            - img [ref=e63]
+            - text: Production Planning
+          - link "Departments" [ref=e67] [cursor=pointer]:
+            - /url: /app/departments
+            - img [ref=e69]
+            - text: Departments
+        - generic [ref=e71]:
+          - paragraph [ref=e72]: Workspace
+          - link "Activity Log" [ref=e73] [cursor=pointer]:
+            - /url: /app/activity-log
+            - img [ref=e75]
+            - text: Activity Log
+          - link "Trash" [ref=e78] [cursor=pointer]:
+            - /url: /app/trash
+            - img [ref=e80]
+            - text: Trash
+    - generic [ref=e83]:
+      - banner [ref=e84]:
+        - generic [ref=e86]:
+          - paragraph [ref=e87]: Products
+          - paragraph [ref=e88]: Browse Shopify products, variants, and BOM readiness.
+        - button "User menu" [ref=e91] [cursor=pointer]: K
+      - generic [ref=e93]:
+        - generic [ref=e94]:
+          - paragraph [ref=e96]: 12 of 12 Products
+          - button "Import Products" [ref=e98] [cursor=pointer]
+        - generic [ref=e99]:
+          - textbox "Search by name or SKU" [ref=e100]
+          - combobox [ref=e101]:
+            - option "All" [selected]
+            - option "With variants"
+            - option "Without variants"
+        - generic [ref=e102]:
+          - generic [ref=e103]:
+            - generic [ref=e104]: Products
+            - generic [ref=e105]: Variants
+            - generic [ref=e106]: Status
+            - generic [ref=e107]: Sell Price
+            - generic [ref=e108]: Material GP %
+            - generic [ref=e109]: Actual GP %
+          - generic [ref=e110]:
+            - link "Automated Case Packing Cell Automated Case Packing Cell" [ref=e111] [cursor=pointer]:
+              - /url: /app/products/2255b9d8-3a7e-4874-8c3e-1de809c9ef16
+              - img "Automated Case Packing Cell" [ref=e113]
+              - generic [ref=e114]: Automated Case Packing Cell
+            - generic [ref=e115]: "2"
+            - generic [ref=e116]: ACTIVE
+            - generic [ref=e117]: $259,000
+            - generic [ref=e118]: 78%
+            - generic [ref=e119]: 75%
+          - generic [ref=e120]:
+            - link "Pac-Technologies Car Sticker Pac-Technologies Car Sticker" [ref=e121] [cursor=pointer]:
+              - /url: /app/products/2825b52e-c679-4587-9cd5-eeb978af6689
+              - img "Pac-Technologies Car Sticker" [ref=e123]
+              - generic [ref=e124]: Pac-Technologies Car Sticker
+            - generic [ref=e125]: "4"
+            - generic [ref=e126]: ACTIVE
+            - generic [ref=e127]: $3
+            - generic [ref=e128]: "-8317%"
+            - generic [ref=e129]: "-9092%"
+          - generic [ref=e130]:
+            - link "Bottle Labeling Line Bottle Labeling Line" [ref=e131] [cursor=pointer]:
+              - /url: /app/products/35cb020c-2398-413d-826e-f2b2fb02bc05
+              - img "Bottle Labeling Line" [ref=e133]
+              - generic [ref=e134]: Bottle Labeling Line
+            - generic [ref=e135]: "3"
+            - generic [ref=e136]: ACTIVE
+            - generic [ref=e137]: $149,000
+            - generic [ref=e138]: 88%
+            - generic [ref=e139]: 87%
+          - generic [ref=e140]:
+            - link "Conveyor Line Integration Package Conveyor Line Integration Package" [ref=e141] [cursor=pointer]:
+              - /url: /app/products/9d8ff818-93f8-4288-a09f-5d700cb0c188
+              - img "Conveyor Line Integration Package" [ref=e143]
+              - generic [ref=e144]: Conveyor Line Integration Package
+            - generic [ref=e145]: "3"
+            - generic [ref=e146]: ACTIVE
+            - generic [ref=e147]: $79,000
+            - generic [ref=e148]: 81%
+            - generic [ref=e149]: 77%
+          - generic [ref=e150]:
+            - link "Test Product Test Product" [ref=e151] [cursor=pointer]:
+              - /url: /app/products/ef86d0b0-8b32-4776-aceb-dcd5bb91a73f
+              - img "Test Product" [ref=e153]
+              - generic [ref=e154]: Test Product
+            - generic [ref=e155]: "3"
+            - generic [ref=e156]: ACTIVE
+            - generic [ref=e157]: $1,500,000
+            - generic [ref=e158]: 100%
+            - generic [ref=e159]: 100%
+          - generic [ref=e160]:
+            - link "Inline Checkweigher with Reject Inline Checkweigher with Reject" [ref=e161] [cursor=pointer]:
+              - /url: /app/products/a40dcb88-d979-4f20-abdc-b36ecab506ac
+              - img "Inline Checkweigher with Reject" [ref=e163]
+              - generic [ref=e164]: Inline Checkweigher with Reject
+            - generic [ref=e165]: "2"
+            - generic [ref=e166]: ACTIVE
+            - generic [ref=e167]: $58,900
+            - generic [ref=e168]: 69%
+            - generic [ref=e169]: 62%
+          - generic [ref=e170]:
+            - link "Inline Vision Inspection System Inline Vision Inspection System" [ref=e171] [cursor=pointer]:
+              - /url: /app/products/db2acfcc-e138-44c4-8c6a-72698a5e56c6
+              - img "Inline Vision Inspection System" [ref=e173]
+              - generic [ref=e174]: Inline Vision Inspection System
+            - generic [ref=e175]: "3"
+            - generic [ref=e176]: ACTIVE
+            - generic [ref=e177]: $17,900
+            - generic [ref=e178]: 12%
+            - generic [ref=e179]: "-7%"
+          - generic [ref=e180]:
+            - link "Robotic Palletizing Cell Robotic Palletizing Cell" [ref=e181] [cursor=pointer]:
+              - /url: /app/products/5b245e04-2b33-4691-bf48-dcf9f217465b
+              - img "Robotic Palletizing Cell" [ref=e183]
+              - generic [ref=e184]: Robotic Palletizing Cell
+            - generic [ref=e185]: "2"
+            - generic [ref=e186]: ACTIVE
+            - generic [ref=e187]: $429,000
+            - generic [ref=e188]: 86%
+            - generic [ref=e189]: 84%
+          - generic [ref=e190]:
+            - link "Barcode Verification & Grading Station Barcode Verification & Grading Station" [ref=e191] [cursor=pointer]:
+              - /url: /app/products/a6081be4-3486-4c39-8090-d0d3eee6a7c2
+              - img "Barcode Verification & Grading Station" [ref=e193]
+              - generic [ref=e194]: Barcode Verification & Grading Station
+            - generic [ref=e195]: "1"
+            - generic [ref=e196]: ACTIVE
+            - generic [ref=e197]: $14,900
+            - generic [ref=e198]: "-48%"
+            - generic [ref=e199]: "-80%"
+          - generic [ref=e200]:
+            - link "Print & Apply Labeling Cell Print & Apply Labeling Cell" [ref=e201] [cursor=pointer]:
+              - /url: /app/products/eadfb3cf-f9c9-4353-8729-a603ceeb5648
+              - img "Print & Apply Labeling Cell" [ref=e203]
+              - generic [ref=e204]: Print & Apply Labeling Cell
+            - generic [ref=e205]: "3"
+            - generic [ref=e206]: ACTIVE
+            - generic [ref=e207]: $34,900
+            - generic [ref=e208]: 38%
+            - generic [ref=e209]: 33%
+          - generic [ref=e210]:
+            - link "SCADA & Production Reporting Deployment SCADA & Production Reporting Deployment" [ref=e211] [cursor=pointer]:
+              - /url: /app/products/eee1e467-cab0-4026-bdc5-54c0c36fc0d3
+              - img "SCADA & Production Reporting Deployment" [ref=e213]
+              - generic [ref=e214]: SCADA & Production Reporting Deployment
+            - generic [ref=e215]: "3"
+            - generic [ref=e216]: ACTIVE
+            - generic [ref=e217]: $24,900
+            - generic [ref=e218]: 38%
+            - generic [ref=e219]: 13%
+          - generic [ref=e220]:
+            - link "Stand Alone Labeling System Stand Alone Labeling System" [ref=e221] [cursor=pointer]:
+              - /url: /app/products/d8f252a5-3d81-455d-a1a7-745213377d51
+              - img "Stand Alone Labeling System" [ref=e223]
+              - generic [ref=e224]: Stand Alone Labeling System
+            - generic [ref=e225]: "2"
+            - generic [ref=e226]: ACTIVE
+            - generic [ref=e227]: $25,000
+            - generic [ref=e228]: 84%
+            - generic [ref=e229]: 75%
+  - alert [ref=e230]

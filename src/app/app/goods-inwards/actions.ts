@@ -27,7 +27,8 @@ export type DeliveryReceiptLineInput = {
 export async function createDeliveryReceipt(formData: FormData) {
   const ctx = await getServerTenantContext();
   if (!ctx) redirect("/auth/login");
-  const { supabase, tenantId } = ctx;
+  const { supabase, tenantId: _tenantId } = ctx;
+  const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const { data: authData } = await supabase.auth.getUser();
   if (!authData.user) redirect("/auth/login");

@@ -88,7 +88,8 @@ function sourceChipText(source: string): string {
 export default async function OrdersPage({ searchParams }: Props) {
   const context = await getServerTenantContext();
   if (!context) redirect("/auth/login");
-  const { supabase, tenantId } = context;
+  const { supabase, tenantId: _tenantId } = context;
+  const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
   const params = (await searchParams) ?? {};
   const activeTab = parseTab(params.tab);
 

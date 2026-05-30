@@ -1,0 +1,152 @@
+- generic [active] [ref=e152]:
+  - banner [ref=e153]:
+    - generic [ref=e155]:
+      - link "Skip to main content" [ref=e156] [cursor=pointer]:
+        - /url: "#main"
+      - link "Dev Dashboard logo" [ref=e158] [cursor=pointer]:
+        - /url: /dashboard/189899333
+        - img "Dev Dashboard logo" [ref=e159]
+    - button "Settings" [ref=e162] [cursor=pointer]:
+      - img "View code" [ref=e164]
+      - paragraph [ref=e168]: Pac Technologies
+  - generic [ref=e169]:
+    - navigation "Primary" [ref=e173]:
+      - generic [ref=e175]:
+        - list [ref=e177]:
+          - listitem [ref=e178]:
+            - link "Apps Apps" [ref=e179] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps
+              - img "Apps" [ref=e181]
+              - text: Apps
+          - listitem [ref=e186]:
+            - link "Dev Stores icon Stores" [ref=e187] [cursor=pointer]:
+              - /url: /dashboard/189899333/stores
+              - img "Dev Stores icon" [ref=e189]
+              - text: Stores
+          - listitem [ref=e191]:
+            - link "Catalogs icon Catalogs" [ref=e192] [cursor=pointer]:
+              - /url: /dashboard/189899333/catalogs
+              - img "Catalogs icon" [ref=e194]
+              - text: Catalogs
+        - list [ref=e200]:
+          - listitem [ref=e201]:
+            - link "Default app icon ManuvaCustom" [ref=e202] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps/361221685249
+              - img "Default app icon" [ref=e203]
+              - generic [ref=e208]: ManuvaCustom
+          - listitem [ref=e209]:
+            - list [ref=e210]:
+              - listitem [ref=e211]:
+                - link "Monitoring" [ref=e212] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/361221685249/monitoring
+              - listitem [ref=e213]:
+                - link "Logs" [ref=e214] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/361221685249/logs
+              - listitem [ref=e215]:
+                - link "Versions" [ref=e216] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/361221685249/versions
+              - listitem [ref=e217]:
+                - link "Settings" [ref=e218] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/361221685249/settings
+      - list [ref=e220]:
+        - listitem [ref=e221]:
+          - link "Organization icon Organization" [ref=e222] [cursor=pointer]:
+            - /url: https://admin.shopify.com/organization/189899333/settings/organization-account?from=dev
+            - img "Organization icon" [ref=e224]
+            - text: Organization
+    - main [ref=e230]:
+      - generic [ref=e232]:
+        - heading "Overview" [level=1] [ref=e235]
+        - generic [ref=e237]:
+          - generic [ref=e238]:
+            - generic [ref=e239]:
+              - paragraph [ref=e241]: API health
+              - link "Success OK No calls with breaking changes detected in the last 14 days Arrow" [ref=e243] [cursor=pointer]:
+                - /url: /dashboard/189899333/apps/361221685249/monitoring/api_health
+                - generic [ref=e244]:
+                  - generic [ref=e245]:
+                    - img "Success" [ref=e247]
+                    - generic [ref=e249]:
+                      - paragraph [ref=e250]: OK
+                      - paragraph [ref=e251]: No calls with breaking changes detected in the last 14 days
+                  - img "Arrow" [ref=e253]
+            - generic [ref=e258]:
+              - generic [ref=e259]:
+                - img "Calendar" [ref=e260]
+                - paragraph [ref=e262]: 7 days
+              - link "Webhook failure rate No data" [ref=e265] [cursor=pointer]:
+                - /url: /dashboard/189899333/apps/361221685249/monitoring/webhooks
+                - generic [ref=e266]:
+                  - paragraph [ref=e267]: Webhook failure rate
+                  - paragraph [ref=e269]: No data
+              - link "Removed subscriptions No data" [ref=e272] [cursor=pointer]:
+                - /url: /dashboard/189899333/apps/361221685249/monitoring/webhooks
+                - generic [ref=e273]:
+                  - paragraph [ref=e274]: Removed subscriptions
+                  - paragraph [ref=e276]: No data
+              - link "Function error rate No data" [ref=e279] [cursor=pointer]:
+                - /url: /dashboard/189899333/apps/361221685249/monitoring/function
+                - generic [ref=e280]:
+                  - paragraph [ref=e281]: Function error rate
+                  - paragraph [ref=e283]: No data
+            - generic [ref=e285]:
+              - paragraph [ref=e287]: Activity
+              - generic [ref=e288]:
+                - paragraph [ref=e291]: May 12, 2026
+                - link "manuvacustom-2 released • 10:57 am" [ref=e295] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/361221685249/versions/959634800641
+                  - paragraph [ref=e296]: manuvacustom-2 released • 10:57 am
+              - generic [ref=e297]:
+                - link "manuvacustom-1 released • 10:55 am" [ref=e301] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/361221685249/versions/959631228929
+                  - paragraph [ref=e302]: manuvacustom-1 released • 10:55 am
+                - paragraph [ref=e305]:
+                  - link "View all versions" [ref=e306] [cursor=pointer]:
+                    - /url: /dashboard/189899333/apps/361221685249/versions
+          - generic [ref=e307]:
+            - generic [ref=e309]:
+              - generic [ref=e310]:
+                - paragraph [ref=e311]: Installs
+                - generic [ref=e312]:
+                  - link "Install app" [ref=e313] [cursor=pointer]:
+                    - /url: https://admin.shopify.com/?organization_id=189899333&no_redirect=true&redirect=/oauth/redirect_from_developer_dashboard?client_id%3D5cdcffcafe3d1b91043637596ed4e636
+                    - generic [ref=e315]: Install app
+                  - button "Copy to clipboard" [ref=e317] [cursor=pointer]:
+                    - img "Copy to clipboard" [ref=e320]
+              - link "1 Arrow" [ref=e324] [cursor=pointer]:
+                - /url: /dashboard/189899333/apps/361221685249/installs
+                - generic [ref=e326]:
+                  - paragraph [ref=e327]: "1"
+                  - img "Arrow" [ref=e329]
+            - generic [ref=e333]:
+              - paragraph [ref=e336]: Distribution
+              - link "Manage custom install link Open in new tab" [ref=e338] [cursor=pointer]:
+                - /url: https://partners.shopify.com/org/189899333/org_apps/361221685249/distribution
+                - generic [ref=e340]:
+                  - paragraph [ref=e341]: Manage custom install link
+                  - img "Open in new tab" [ref=e343]
+            - generic [ref=e347]:
+              - generic [ref=e348]:
+                - paragraph [ref=e349]: Versions
+                - link "New version" [ref=e351] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/361221685249/versions/new
+                  - generic [ref=e353]: New version
+              - generic [ref=e354]: Update your configuration by creating a new version
+              - link "manuvacustom-2 Active Arrow" [ref=e357] [cursor=pointer]:
+                - /url: /dashboard/189899333/apps/361221685249/versions/959634800641
+                - generic [ref=e359]:
+                  - paragraph [ref=e360]: manuvacustom-2
+                  - generic [ref=e361]: Active
+                  - img "Arrow" [ref=e363]
+            - generic [ref=e366]:
+              - generic [ref=e367]:
+                - paragraph [ref=e368]: Preview app with Shopify CLI
+                - link "Docs Open in new tab" [ref=e369] [cursor=pointer]:
+                  - /url: https://shopify.dev/docs/api/shopify-cli/app/app-dev
+                  - generic [ref=e370]: Docs
+                  - img "Open in new tab" [ref=e371]
+              - generic [ref=e376]:
+                - generic [ref=e377]: $
+                - generic [ref=e378]: shopify app dev
+                - button "Copy to clipboard" [ref=e380] [cursor=pointer]:
+                  - img "Copy to clipboard" [ref=e383]

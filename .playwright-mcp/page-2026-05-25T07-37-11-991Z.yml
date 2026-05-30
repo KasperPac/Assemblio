@@ -1,0 +1,1150 @@
+- generic [ref=e3]:
+  - generic:
+    - link "Skip to content":
+      - /url: "#AppFrameMain"
+  - link [ref=e9] [cursor=pointer]:
+    - /url: /services/partner-app-submissions/923db8d97db22d30c0517520f1498933/en
+  - generic "Navigation" [ref=e13]:
+    - navigation [ref=e14]:
+      - list [ref=e16]:
+        - listitem [ref=e17]:
+          - button "Basic app information" [ref=e20] [cursor=pointer]:
+            - generic [ref=e21]: Basic app information
+        - listitem [ref=e22]:
+          - button "App store listing content" [ref=e25] [cursor=pointer]:
+            - generic [ref=e26]: App store listing content
+        - listitem [ref=e27]:
+          - button "Pricing details" [ref=e30] [cursor=pointer]:
+            - generic [ref=e31]: Pricing details
+        - listitem [ref=e32]:
+          - button "App discovery content" [ref=e35] [cursor=pointer]:
+            - generic [ref=e36]: App discovery content
+        - listitem [ref=e37]:
+          - button "Install requirements" [ref=e40] [cursor=pointer]:
+            - generic [ref=e41]: Install requirements
+        - listitem [ref=e42]:
+          - button "Tracking information" [ref=e45] [cursor=pointer]:
+            - generic [ref=e46]: Tracking information
+        - listitem [ref=e47]:
+          - button "Contact information" [ref=e50] [cursor=pointer]:
+            - generic [ref=e51]: Contact information
+        - listitem [ref=e52]:
+          - button "App testing information" [ref=e55] [cursor=pointer]:
+            - generic [ref=e56]: App testing information
+  - generic [ref=e1966]:
+    - heading "Unsaved changes" [level=2] [ref=e1967]
+    - generic [ref=e1969]:
+      - button "Discard" [ref=e1971] [cursor=pointer]:
+        - generic [ref=e1973]: Discard
+      - button "Save" [ref=e1975] [cursor=pointer]:
+        - generic [ref=e1977]: Save
+  - main [ref=e57]:
+    - generic [ref=e59]:
+      - generic [ref=e62]:
+        - navigation [ref=e65]:
+          - link "Back to submission summary" [ref=e66] [cursor=pointer]:
+            - /url: https://partners.shopify.com/4581855/apps/redirect_to/app-store/923db8d97db22d30c0517520f1498933
+            - img [ref=e70]
+        - generic [ref=e73]:
+          - generic [ref=e74]:
+            - heading "English listing" [level=1] [ref=e75]
+            - generic [ref=e78]: Draft
+          - paragraph [ref=e80]: Primary
+        - generic [ref=e84]:
+          - button "Preview listing" [ref=e87] [cursor=pointer]:
+            - generic [ref=e88]:
+              - img [ref=e92]
+              - generic [ref=e95]: Preview listing
+          - generic [ref=e97]:
+            - button "Delete English listing" [disabled]:
+              - generic:
+                - generic:
+                  - generic:
+                    - img
+                - generic: Delete English listing
+      - generic [ref=e98]:
+        - heading "Welcome back to your app submission form" [level=2] [ref=e101]
+        - generic [ref=e102]:
+          - generic [ref=e104]:
+            - paragraph [ref=e105]: The content you previously added is saved. When you’re ready, pick up where you left off.
+            - paragraph [ref=e106]:
+              - generic [ref=e107]:
+                - text: Make sure that your app and content meet all the
+                - link "Shopify App Requirements" [ref=e108] [cursor=pointer]:
+                  - /url: https://shopify.dev/docs/apps/store/requirements#general-requirements-for-all-apps
+                - text: .
+          - generic [ref=e110]:
+            - heading "Review tips" [level=2] [ref=e112]
+            - generic [ref=e114]:
+              - img [ref=e118]
+              - generic [ref=e125]: Remember, we’ll leave you personalized tips about things that will help your app get approved in review. Use them as guidance as you work through the form.
+        - generic [ref=e127]:
+          - heading "Basic app information" [level=2] [ref=e128]
+          - paragraph [ref=e129]:
+            - generic [ref=e130]:
+              - text: Once submitted and approved, this app listing information will be translated into the top languages for the Shopify App Store.
+              - link "Learn more" [ref=e131] [cursor=pointer]:
+                - /url: https://shopify.dev/docs/apps/store/requirements#translate-your-app-listing
+              - text: about primary listings and translations.
+        - generic [ref=e132]:
+          - generic [ref=e134]:
+            - generic [ref=e136]:
+              - heading "App name" [level=2] [ref=e137]
+              - generic [ref=e139]:
+                - generic [ref=e140]:
+                  - text: This is how your app's name will show up on the Shopify App Store. Make sure it's similar to the name you chose during
+                  - link "app setup" [ref=e141] [cursor=pointer]:
+                    - /url: https://partners.shopify.com/4581855/apps/redirect_to/app_setup/923db8d97db22d30c0517520f1498933
+                  - text: ", and be sure to follow all"
+                  - link "naming guidelines" [ref=e142] [cursor=pointer]:
+                    - /url: https://shopify.dev/apps/store/requirements#1-app-name
+                  - text: .
+                - heading "DO" [level=3] [ref=e143]
+                - list [ref=e145]:
+                  - listitem [ref=e146]: Start with a unique brand name to differentiate your app
+                  - listitem [ref=e147]: Ensure this app name is similar to the one you chose when creating it
+                - heading "DON'T" [level=3] [ref=e148]
+                - list [ref=e150]:
+                  - listitem [ref=e151]: Use a generic description of your app’s functionality
+            - generic [ref=e157]:
+              - generic [ref=e160]: App name
+              - generic [ref=e163]:
+                - textbox "App name" [ref=e164]: Manuva
+                - generic "6 of 30 characters used": 6/30
+          - generic [ref=e166]:
+            - heading "App icon" [level=2] [ref=e169]
+            - generic [ref=e174]:
+              - generic [ref=e181]:
+                - paragraph [ref=e183]: App icon
+                - generic [ref=e185]:
+                  - img [ref=e188]
+                  - link "Change in Partner Dashboard" [ref=e191] [cursor=pointer]:
+                    - /url: https://dev.shopify.com/dashboard/189899333/apps/360504393729/settings
+              - paragraph [ref=e193]: This icon is synced from your Partner Dashboard. To update it, upload a new icon there.
+          - generic [ref=e195]:
+            - generic [ref=e197]:
+              - heading "App category" [level=2] [ref=e198]
+              - generic [ref=e200]:
+                - paragraph [ref=e202]: Select the category that best describes your app’s main purpose. This helps merchants discover relevant apps for their needs.
+                - heading "DO" [level=3] [ref=e203]
+                - list [ref=e205]:
+                  - listitem [ref=e206]:
+                    - text: Check the full
+                    - link "list of categories" [ref=e207] [cursor=pointer]:
+                      - /url: https://shopify.dev/apps/store/categories#list-of-app-categories-subcategories-and-tags
+                  - listitem [ref=e208]:
+                    - text: Follow the
+                    - link "category guidelines" [ref=e209] [cursor=pointer]:
+                      - /url: https://shopify.dev/apps/store/categories#categorize-your-app
+            - generic [ref=e212]:
+              - status [ref=e214]:
+                - img [ref=e218]
+                - generic [ref=e223]: Make sure your category is accurate. After submitting your app, you can’t edit unless you send an appeal.
+              - generic [ref=e224]:
+                - heading "Primary category" [level=3] [ref=e225]
+                - generic [ref=e226]:
+                  - heading "Commandes et expéditions › Stock › Optimisation des stocks" [level=4] [ref=e227]
+                  - text: Applications qui facilitent l’optimisation des niveaux de stock et des inventaires
+              - button "Edit" [ref=e229] [cursor=pointer]:
+                - generic [ref=e231]: Edit
+              - separator [ref=e233]
+              - paragraph [ref=e235]:
+                - generic [ref=e236]:
+                  - text: If needed, you may add a
+                  - button "secondary category" [ref=e237] [cursor=pointer]:
+                    - generic [ref=e239]: secondary category
+                  - text: . This is subject to review.
+          - generic [ref=e241]:
+            - generic [ref=e243]:
+              - heading "App category details" [level=2] [ref=e244]
+              - generic [ref=e246]:
+                - generic [ref=e247]:
+                  - paragraph [ref=e248]: List your app’s functionality. This helps merchants further discover and compare similar apps in the same category.
+                  - paragraph [ref=e249]: This will be used on your listing page and other surfaces on the Shopify App Store.
+                - heading "DO" [level=3] [ref=e250]
+                - list [ref=e252]:
+                  - listitem [ref=e253]: Add a minimum of 1 tag, maximum of 25 per field
+            - generic [ref=e257]:
+              - heading "Primary category details" [level=3] [ref=e258]
+              - heading "Commandes et expéditions › Stock › Optimisation des stocks" [level=4] [ref=e260]
+              - generic [ref=e261]:
+                - generic [ref=e262]:
+                  - generic [ref=e266]:
+                    - generic [ref=e269]: Inventory management
+                    - generic [ref=e273]:
+                      - generic [ref=e274]:
+                        - generic [ref=e276]:
+                          - generic "Inventory tracking" [ref=e277]
+                          - button "Remove Inventory tracking" [ref=e278] [cursor=pointer]:
+                            - img [ref=e281]
+                        - generic [ref=e284]:
+                          - generic "Inventory planning" [ref=e285]
+                          - button "Remove Inventory planning" [ref=e286] [cursor=pointer]:
+                            - img [ref=e289]
+                      - combobox "Inventory management Inventory tracking Remove Inventory tracking Inventory planning Remove Inventory planning" [ref=e291]
+                  - generic [ref=e293] [cursor=pointer]:
+                    - generic [ref=e295]:
+                      - checkbox "Not applicable for this app" [ref=e296]
+                      - generic:
+                        - generic:
+                          - img
+                    - generic [ref=e298]: Not applicable for this app
+                - generic [ref=e299]:
+                  - generic [ref=e303]:
+                    - generic [ref=e306]: Order management
+                    - generic [ref=e310]:
+                      - generic [ref=e313]:
+                        - generic "Purchase orders" [ref=e314]
+                        - button "Remove Purchase orders" [ref=e315] [cursor=pointer]:
+                          - img [ref=e318]
+                      - combobox "Order management Purchase orders Remove Purchase orders" [ref=e320]
+                  - generic [ref=e322] [cursor=pointer]:
+                    - generic [ref=e324]:
+                      - checkbox "Not applicable for this app" [ref=e325]
+                      - generic:
+                        - generic:
+                          - img
+                    - generic [ref=e327]: Not applicable for this app
+                - generic [ref=e328]:
+                  - generic [ref=e332]:
+                    - generic [ref=e335]: Notifications and analytics
+                    - generic [ref=e339]:
+                      - generic [ref=e340]:
+                        - generic [ref=e342]:
+                          - generic "Analytics" [ref=e343]
+                          - button "Remove Analytics" [ref=e344] [cursor=pointer]:
+                            - img [ref=e347]
+                        - generic [ref=e350]:
+                          - generic "Insights" [ref=e351]
+                          - button "Remove Insights" [ref=e352] [cursor=pointer]:
+                            - img [ref=e355]
+                        - generic [ref=e358]:
+                          - generic "Low stock alerts" [ref=e359]
+                          - button "Remove Low stock alerts" [ref=e360] [cursor=pointer]:
+                            - img [ref=e363]
+                        - generic [ref=e366]:
+                          - generic "Out of stock notifications" [ref=e367]
+                          - button "Remove Out of stock notifications" [ref=e368] [cursor=pointer]:
+                            - img [ref=e371]
+                        - generic [ref=e374]:
+                          - generic "Replenishment reminders" [ref=e375]
+                          - button "Remove Replenishment reminders" [ref=e376] [cursor=pointer]:
+                            - img [ref=e379]
+                        - generic [ref=e382]:
+                          - generic "Restock notifications" [ref=e383]
+                          - button "Remove Restock notifications" [ref=e384] [cursor=pointer]:
+                            - img [ref=e387]
+                        - generic [ref=e390]:
+                          - generic "Threshold alerts" [ref=e391]
+                          - button "Remove Threshold alerts" [ref=e392] [cursor=pointer]:
+                            - img [ref=e395]
+                      - combobox "Notifications and analytics Analytics Remove Analytics Insights Remove Insights Low stock alerts Remove Low stock alerts Out of stock notifications Remove Out of stock notifications Replenishment reminders Remove Replenishment reminders Restock notifications Remove Restock notifications Threshold alerts Remove Threshold alerts" [ref=e397]
+                  - generic [ref=e399] [cursor=pointer]:
+                    - generic [ref=e401]:
+                      - checkbox "Not applicable for this app" [ref=e402]
+                      - generic:
+                        - generic:
+                          - img
+                    - generic [ref=e404]: Not applicable for this app
+          - generic [ref=e406]:
+            - generic [ref=e408]:
+              - heading "Languages" [level=2] [ref=e409]
+              - generic [ref=e411]:
+                - generic [ref=e412]: Select each of the languages your app is fully available in.
+                - heading "DO" [level=3] [ref=e413]
+                - list [ref=e415]:
+                  - listitem [ref=e416]: Create a translated listing for each language
+                  - listitem [ref=e417]:
+                    - text: Follow the
+                    - link "language guidelines" [ref=e418] [cursor=pointer]:
+                      - /url: https://shopify.dev/apps/store/requirements#5-languages
+            - generic [ref=e422]:
+              - generic [ref=e424]: Languages
+              - button "anglais" [ref=e428] [cursor=pointer]:
+                - paragraph [ref=e429]: anglais
+                - generic [ref=e430]:
+                  - img [ref=e434]
+                  - img [ref=e440]
+        - generic [ref=e444]:
+          - heading "App store listing content" [level=2] [ref=e445]
+          - paragraph [ref=e446]: This is how merchants learn about your app. It helps them understand how your app can benefit their businesses. Your listing content should clearly communicate how your app can add value to Shopify stores.
+        - generic [ref=e447]:
+          - generic [ref=e449]:
+            - generic [ref=e451]:
+              - heading "App introduction" [level=2] [ref=e452]
+              - generic [ref=e454]:
+                - generic [ref=e455]: Introduce your app with two brief sentences that clearly summarize your app’s purpose and main merchant benefit. This will display in prominently placed text on your listing.
+                - heading "DO" [level=3] [ref=e456]
+                - list [ref=e458]:
+                  - listitem [ref=e459]:
+                    - text: Follow the
+                    - link "introduction guidelines" [ref=e460] [cursor=pointer]:
+                      - /url: https://shopify.dev/apps/store/requirements#4-app-introduction
+                - heading "DON'T" [level=3] [ref=e461]
+                - list [ref=e463]:
+                  - listitem [ref=e464]: Add unnecessary keywords
+                  - listitem [ref=e465]: Use generic marketing language
+            - generic [ref=e471]:
+              - generic [ref=e474]: Introduction
+              - generic [ref=e477]:
+                - textbox "Introduction" [ref=e478]:
+                  - /placeholder: What does your app do? How will your app benefit merchants?
+                  - text: Manufacturing operations platform. Manage production, inventory, and suppliers in one place
+                - generic "91 of 100 characters used": 91/100
+          - generic [ref=e480]:
+            - generic [ref=e482]:
+              - heading "App details" [level=2] [ref=e483]
+              - generic [ref=e485]:
+                - generic [ref=e486]:
+                  - text: Explain how your app solves problems and helps merchants run their businesses better. Keep it brief, informative, and factual. Make sure to follow the
+                  - link "complete guidelines" [ref=e487] [cursor=pointer]:
+                    - /url: https://shopify.dev/apps/store/requirements#5-app-details
+                  - text: .
+                - heading "DO" [level=3] [ref=e488]
+                - list [ref=e490]:
+                  - listitem [ref=e491]: Be clear and concise, using full sentences
+                  - listitem [ref=e492]:
+                    - text: Use the
+                    - strong [ref=e493]: Features
+                    - text: section below to list out specific app capabilities
+                - heading "DON'T" [level=3] [ref=e494]
+                - list [ref=e496]:
+                  - listitem [ref=e497]: Include links, URLs, or text formatting
+                  - listitem [ref=e498]: Use jargon, generic marketing language, or testimonials
+                  - listitem [ref=e499]: Add statistics or unverifiable claims
+            - generic [ref=e505]:
+              - generic [ref=e508]: App details
+              - generic [ref=e511]:
+                - textbox "App details" [ref=e512]:
+                  - /placeholder: "What makes your app unique? Why will merchants like it? What problem does it solve? How does it help merchants? "
+                  - text: Manuva bridges your store and manufacturing operations. Orders automatically sync from your store to your production system, eliminating manual data entry and reducing errors. Define Bills of Materials for complex products. Track inventory across warehouse locations and coordinate with suppliers. This integration helps you fulfill orders faste while maintaining accurate stock levels and reducing operational overhead
+                - generic "419 of 500 characters used": 419/500
+          - generic [ref=e514]:
+            - generic [ref=e516]:
+              - heading "Features" [level=2] [ref=e517]
+              - generic [ref=e519]:
+                - generic [ref=e520]:
+                  - paragraph [ref=e521]: Provide a feature set here. These should be high-level descriptions of your app’s capabilities.
+                  - paragraph [ref=e522]: Focus on unique features that set your app apart from others.
+                - heading "DO" [level=3] [ref=e523]
+                - list [ref=e525]:
+                  - listitem [ref=e526]: Describe the functionality that’s meaningful to merchants
+                  - listitem [ref=e527]: Use plain language that is readable
+                  - listitem [ref=e528]: Add a minimum of 3 features, maximum of 5
+                  - listitem [ref=e529]:
+                    - text: Follow the
+                    - link "feature list guidelines" [ref=e530] [cursor=pointer]:
+                      - /url: https://shopify.dev/apps/store/requirements#6-feature-list
+                - heading "DON'T" [level=3] [ref=e531]
+                - list [ref=e533]:
+                  - listitem [ref=e534]: Use generic marketing language
+                  - listitem [ref=e535]: Describe the mechanics behind the features
+            - generic [ref=e538]:
+              - generic [ref=e540]:
+                - heading "Features" [level=2] [ref=e542]
+                - button "Add" [ref=e544] [cursor=pointer]:
+                  - generic [ref=e545]:
+                    - img [ref=e549]
+                    - generic [ref=e551]: Add
+              - generic [ref=e555]:
+                - generic [ref=e557]:
+                  - generic [ref=e560]: Feature 1
+                  - generic [ref=e563]:
+                    - textbox "Feature 1" [ref=e564]: Sync customer orders directly to your production workflow
+                    - generic "57 of 80 characters used": 57/80
+                - button "Delete" [ref=e570] [cursor=pointer]:
+                  - generic [ref=e572]: Delete
+              - generic [ref=e576]:
+                - generic [ref=e578]:
+                  - generic [ref=e581]: Feature 2
+                  - generic [ref=e584]:
+                    - textbox "Feature 2" [ref=e585]: Build and manage Bills of Materials for complex products
+                    - generic "56 of 80 characters used": 56/80
+                - button "Delete" [ref=e591] [cursor=pointer]:
+                  - generic [ref=e593]: Delete
+              - generic [ref=e597]:
+                - generic [ref=e599]:
+                  - generic [ref=e602]: Feature 3
+                  - generic [ref=e605]:
+                    - textbox "Feature 3" [ref=e606]: Manage supplier orders and coordinate stock replenishment
+                    - generic "57 of 80 characters used": 57/80
+                - button "Delete" [ref=e612] [cursor=pointer]:
+                  - generic [ref=e614]: Delete
+          - generic [ref=e616]:
+            - generic [ref=e618]:
+              - heading "Demo store URL (optional)" [level=2] [ref=e619]
+              - generic [ref=e621]:
+                - generic [ref=e622]: Merchants like to see app demos to get a sense of app benefits. They’re also more likely to install apps that have good demo stores. Consider creating a demo store if you haven’t, to invest in the success of your app.
+                - heading "DO" [level=3] [ref=e623]
+                - list [ref=e625]:
+                  - listitem [ref=e626]: Link to the relevant part of the store
+                  - listitem [ref=e627]: Provide contextual instructions in the store
+                  - listitem [ref=e628]:
+                    - text: Follow the
+                    - link "demo URL guidelines" [ref=e629] [cursor=pointer]:
+                      - /url: https://shopify.dev/apps/store/requirements#2-demo-store-url
+                - heading "DON'T" [level=3] [ref=e630]
+                - list [ref=e632]:
+                  - listitem [ref=e633]: Include non-Shopify store URLs
+                  - listitem [ref=e634]: Include marketing videos
+                  - listitem [ref=e635]: Use a Shopify development store that you don't own
+            - generic [ref=e639]:
+              - generic [ref=e642]: Demo store URL
+              - generic [ref=e645]:
+                - textbox "Demo store URL" [ref=e646]:
+                  - /placeholder: https://store.example.com
+                - generic "0 of 255 characters used": 0/255
+          - generic [ref=e648]:
+            - generic [ref=e650]:
+              - heading "Feature media" [level=2] [ref=e651]
+              - generic [ref=e653]:
+                - generic [ref=e654]:
+                  - paragraph [ref=e655]: Upload a video or image that highlights the impact of your app.
+                  - paragraph [ref=e656]: Videos are best to showcase the buyer experience or how the app influences the merchant’s business. Static images are best to show a specific impactful part of the app, or how a merchant’s workflow can be improved.
+                  - paragraph [ref=e657]: Media will display in the header area of the listing page.
+                - heading "DO" [level=3] [ref=e658]
+                - list [ref=e660]:
+                  - listitem [ref=e661]: Consider using a video rather than image
+                  - listitem [ref=e662]: Visually highlight your app’s benefits
+                  - listitem [ref=e663]: Use dimensions 1600px by 900px for image
+                  - listitem [ref=e664]: Use dimensions 1600px by 900px for video thumbnail
+                  - listitem [ref=e665]: Use a .jpg or .png for image
+                  - listitem [ref=e666]:
+                    - text: Follow the
+                    - link "feature media guidelines" [ref=e667] [cursor=pointer]:
+                      - /url: https://shopify.dev/apps/store/requirements#1-feature-media
+                - heading "DON'T" [level=3] [ref=e668]
+                - list [ref=e670]:
+                  - listitem [ref=e671]: Exceed 3 minutes in video length
+                  - listitem [ref=e672]: Use the Shopify logo in images
+                  - listitem [ref=e673]: Use heavy patterns or textured background images
+                  - listitem [ref=e674]: Use screenshots with a lot of text
+            - group [ref=e678]:
+              - generic [ref=e681]:
+                - generic [ref=e683] [cursor=pointer]:
+                  - radio "Video" [ref=e686]
+                  - generic [ref=e689]: Video
+                - separator [ref=e691]
+                - generic [ref=e693] [cursor=pointer]:
+                  - radio "Image" [checked] [ref=e696]
+                  - generic [ref=e699]: Image
+                - generic [ref=e703]:
+                  - generic [ref=e705]:
+                    - generic [ref=e708]: Upload image
+                    - generic [ref=e709]:
+                      - button "Upload image" [disabled] [ref=e711]
+                      - button [disabled] [ref=e716] [cursor=pointer]:
+                        - img [ref=e721]
+                  - generic [ref=e727]:
+                    - generic [ref=e730]: Image alt text (image description)
+                    - generic [ref=e733]:
+                      - textbox "Image alt text (image description)" [ref=e734]: "Manuva headline: manufacturing operations for Shopify brands"
+                      - generic "60 of 64 characters used": 60/64
+          - generic [ref=e736]:
+            - generic [ref=e738]:
+              - heading "Screenshots" [level=2] [ref=e739]
+              - generic [ref=e741]:
+                - generic [ref=e742]:
+                  - text: Provide useful screenshots that show how your app works. Be sure to follow all
+                  - link "screenshot guidelines" [ref=e743] [cursor=pointer]:
+                    - /url: https://shopify.dev/apps/store/requirements#3-screenshots
+                  - text: . To ensure your screenshots are correctly sized, you can
+                  - link "download preformatted templates" [ref=e744] [cursor=pointer]:
+                    - /url: https://shopify.dev/zip/SubmissionTemplates.zip
+                  - text: .
+                - heading "DO" [level=3] [ref=e745]
+                - list [ref=e747]:
+                  - listitem [ref=e748]: Consider adding mobile screenshots. Most Shopify App Store visitors browse on mobile.
+                  - listitem [ref=e749]: Include POS screenshots if your app integrates with POS.
+                - heading "DON'T" [level=3] [ref=e750]
+                - list [ref=e752]:
+                  - listitem [ref=e753]:
+                    - text: Display any
+                    - link "personally identifiable information" [ref=e754] [cursor=pointer]:
+                      - /url: https://shopify.dev/docs/apps/launch/app-requirements-checklist#3-screenshots:~:text=Avoid%20using%20any,verifiable%20contact%20information.
+                    - text: in screenshots.
+                  - listitem [ref=e755]: Include browser UI or desktop backgrounds. Crop these out to focus on your app.
+            - generic [ref=e756]:
+              - generic [ref=e757]:
+                - generic [ref=e761]:
+                  - generic [ref=e762]:
+                    - heading "Desktop screenshots" [level=3] [ref=e764]
+                    - button "Add" [ref=e766] [cursor=pointer]:
+                      - generic [ref=e767]:
+                        - img [ref=e771]
+                        - generic [ref=e773]: Add
+                  - generic [ref=e775]:
+                    - heading "SCREENSHOT 1" [level=4] [ref=e777]
+                    - generic [ref=e778]:
+                      - generic [ref=e780]:
+                        - generic [ref=e783]: Upload image
+                        - generic [ref=e784]:
+                          - button "Upload image" [disabled] [ref=e786]
+                          - button [disabled] [ref=e791] [cursor=pointer]:
+                            - img [ref=e796]
+                      - generic [ref=e800]:
+                        - generic [ref=e802]:
+                          - generic [ref=e805]: Image alt text (image description)
+                          - generic [ref=e808]:
+                            - textbox "Image alt text (image description)" [ref=e809]: "Manuva embedded in Shopify Admin: sync status and actions"
+                            - generic "57 of 64 characters used": 57/64
+                        - button "Delete" [ref=e811] [cursor=pointer]:
+                          - generic [ref=e813]: Delete
+                  - generic [ref=e815]:
+                    - heading "SCREENSHOT 2" [level=4] [ref=e817]
+                    - generic [ref=e818]:
+                      - generic [ref=e820]:
+                        - generic [ref=e823]: Upload image
+                        - generic [ref=e824]:
+                          - button "Upload image" [disabled] [ref=e826]
+                          - button [disabled] [ref=e831] [cursor=pointer]:
+                            - img [ref=e836]
+                      - generic [ref=e840]:
+                        - generic [ref=e842]:
+                          - generic [ref=e845]: Image alt text (image description)
+                          - generic [ref=e848]:
+                            - textbox "Image alt text (image description)" [ref=e849]: "Bill of Materials detail: components, SKUs, costs"
+                            - generic "49 of 64 characters used": 49/64
+                        - button "Delete" [ref=e851] [cursor=pointer]:
+                          - generic [ref=e853]: Delete
+                  - generic [ref=e855]:
+                    - heading "SCREENSHOT 3" [level=4] [ref=e857]
+                    - generic [ref=e858]:
+                      - generic [ref=e860]:
+                        - generic [ref=e863]: Upload image
+                        - generic [ref=e864]:
+                          - button "Upload image" [disabled] [ref=e866]
+                          - button [disabled] [ref=e871] [cursor=pointer]:
+                            - img [ref=e876]
+                      - generic [ref=e880]:
+                        - generic [ref=e882]:
+                          - generic [ref=e885]: Image alt text (image description)
+                          - generic [ref=e888]:
+                            - textbox "Image alt text (image description)" [ref=e889]: "Order detail: planned margin, allocation, labor scheduled"
+                            - generic "57 of 64 characters used": 57/64
+                        - button "Delete" [ref=e891] [cursor=pointer]:
+                          - generic [ref=e893]: Delete
+                  - generic [ref=e895]:
+                    - heading "SCREENSHOT 4" [level=4] [ref=e897]
+                    - generic [ref=e898]:
+                      - generic [ref=e900]:
+                        - generic [ref=e903]: Upload image
+                        - generic [ref=e904]:
+                          - button "Upload image" [disabled] [ref=e906]
+                          - button [disabled] [ref=e911] [cursor=pointer]:
+                            - img [ref=e916]
+                      - generic [ref=e920]:
+                        - generic [ref=e922]:
+                          - generic [ref=e925]: Image alt text (image description)
+                          - generic [ref=e928]:
+                            - textbox "Image alt text (image description)" [ref=e929]: "Components inventory: on hand, available, reorder point"
+                            - generic "55 of 64 characters used": 55/64
+                        - button "Delete" [ref=e931] [cursor=pointer]:
+                          - generic [ref=e933]: Delete
+                  - generic [ref=e935]:
+                    - heading "SCREENSHOT 5" [level=4] [ref=e937]
+                    - generic [ref=e938]:
+                      - generic [ref=e940]:
+                        - generic [ref=e943]: Upload image
+                        - generic [ref=e944]:
+                          - button "Upload image" [disabled] [ref=e946]
+                          - button [disabled] [ref=e951] [cursor=pointer]:
+                            - img [ref=e956]
+                      - generic [ref=e960]:
+                        - generic [ref=e962]:
+                          - generic [ref=e965]: Image alt text (image description)
+                          - generic [ref=e968]:
+                            - textbox "Image alt text (image description)" [ref=e969]: "Integrations: Shopify Connected with per-store sync stats"
+                            - generic "57 of 64 characters used": 57/64
+                        - button "Delete" [ref=e971] [cursor=pointer]:
+                          - generic [ref=e973]: Delete
+                - generic [ref=e978]:
+                  - heading "Mobile screenshots (optional)" [level=3] [ref=e980]
+                  - button "Add" [ref=e982] [cursor=pointer]:
+                    - generic [ref=e983]:
+                      - img [ref=e987]
+                      - generic [ref=e989]: Add
+                - generic [ref=e994]:
+                  - heading "Point of Sale screenshots (optional)" [level=3] [ref=e996]
+                  - button "Add" [ref=e998] [cursor=pointer]:
+                    - generic [ref=e999]:
+                      - img [ref=e1003]
+                      - generic [ref=e1005]: Add
+              - paragraph [ref=e1007]: By uploading an image, you confirm that you have the rights to use all materials in your app icons, screenshots, and previews, and any account information displayed is fictional and not data from a real person.
+          - generic [ref=e1009]:
+            - generic [ref=e1011]:
+              - heading "Integrations (optional)" [level=2] [ref=e1012]
+              - generic [ref=e1014]:
+                - generic [ref=e1015]: List any services or devices that your app integrates with.
+                - heading "DO" [level=3] [ref=e1016]
+                - list [ref=e1018]:
+                  - listitem [ref=e1019]: Include a maximum of 6
+                  - listitem [ref=e1020]:
+                    - text: Follow the
+                    - link "integrations guidelines" [ref=e1021] [cursor=pointer]:
+                      - /url: https://shopify.dev/apps/store/requirements#7-integrations
+                - heading "DON'T" [level=3] [ref=e1022]
+                - list [ref=e1024]:
+                  - listitem [ref=e1025]: Include Shopify
+            - generic [ref=e1028]:
+              - generic [ref=e1031]:
+                - generic [ref=e1034]: Integrations
+                - generic [ref=e1035]:
+                  - generic [ref=e1037]:
+                    - textbox "Integrations" [ref=e1038]
+                    - generic "0 of 30 characters used": 0/30
+                  - generic [ref=e1039]:
+                    - button "Add" [disabled]:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - img
+                        - generic: Add
+              - generic [ref=e1041]:
+                - generic [ref=e1978]:
+                  - generic "Amazon" [ref=e1979]
+                  - button "Remove Amazon" [ref=e1980] [cursor=pointer]:
+                    - img [ref=e1983]
+                - generic [ref=e1985]:
+                  - generic "WooCommerce" [ref=e1986]
+                  - button "Remove WooCommerce" [ref=e1987] [cursor=pointer]:
+                    - img [ref=e1990]
+                - generic [ref=e1992]:
+                  - generic "MYOB" [ref=e1993]
+                  - button "Remove MYOB" [ref=e1994] [cursor=pointer]:
+                    - img [ref=e1997]
+                - generic [ref=e1999]:
+                  - generic "Xero" [ref=e2000]
+                  - button "Remove Xero" [ref=e2001] [cursor=pointer]:
+                    - img [ref=e2004]
+                - generic [ref=e2006]:
+                  - generic "Etsy" [ref=e2007]
+                  - button "Remove Etsy" [ref=e2008] [cursor=pointer]:
+                    - img [ref=e2011]
+                - generic [ref=e2013]:
+                  - generic "QuickBooks" [ref=e2014]
+                  - button "Remove QuickBooks" [ref=e2015] [cursor=pointer]:
+                    - img [ref=e2018]
+          - generic [ref=e1091]:
+            - generic [ref=e1093]:
+              - heading "Support" [level=2] [ref=e1094]
+              - paragraph [ref=e1098]:
+                - text: Let merchants know how to get in touch. Certain contact information is also used for your
+                - link "business imprint" [ref=e1099] [cursor=pointer]:
+                  - /url: https://help.shopify.com/en/partners/faq/business-imprint
+                - text: .
+            - generic [ref=e1102]:
+              - generic [ref=e1103]:
+                - generic [ref=e1105]:
+                  - paragraph [ref=e1107]: Preferred support channel
+                  - paragraph [ref=e1109]: Will be linked prominently from your app listing and the Shopify admin
+                - group "Preferred support channel" [ref=e1110]:
+                  - generic [ref=e1111]: Preferred support channel
+                  - list [ref=e1112]:
+                    - listitem [ref=e1113]:
+                      - generic [ref=e1115] [cursor=pointer]:
+                        - radio "Support email address" [checked] [ref=e1118]
+                        - generic [ref=e1120]: Support email address
+                    - listitem [ref=e1121]:
+                      - generic [ref=e1123] [cursor=pointer]:
+                        - radio "Support portal" [ref=e1126]
+                        - generic [ref=e1128]: Support portal
+                - separator [ref=e1129]
+              - generic [ref=e1132]:
+                - generic [ref=e1135]: Support email address
+                - textbox "Support email address" [ref=e1139]:
+                  - /placeholder: support@example.com
+                  - text: hello@manuva.app
+              - generic [ref=e1142]:
+                - generic [ref=e1145]: Support portal URL (optional)
+                - textbox "Support portal URL (optional)" [ref=e1149]:
+                  - /placeholder: https://store.example.com
+              - generic [ref=e1152]:
+                - generic [ref=e1155]: Support phone number (optional)
+                - textbox "Support phone number (optional)" [ref=e1159]:
+                  - /placeholder: 1-555-555-5555
+          - generic [ref=e1161]:
+            - generic [ref=e1163]:
+              - heading "Resources" [level=2] [ref=e1164]
+              - generic [ref=e1166]:
+                - generic [ref=e1167]:
+                  - paragraph [ref=e1168]: Share a link to your privacy policy so merchants can learn how their data is being used.
+                  - paragraph [ref=e1169]: Include links to additional resources (like FAQs, articles, and tutorials) to help merchants self-serve issues.
+                - heading "DO" [level=3] [ref=e1170]
+                - list [ref=e1172]:
+                  - listitem [ref=e1173]: Make sure links are up-to-date and functional
+                  - listitem [ref=e1174]:
+                    - text: Use the
+                    - link "privacy policy guidelines" [ref=e1175] [cursor=pointer]:
+                      - /url: https://shopify.dev/apps/store/requirements#privacy-policy-url-required
+            - generic [ref=e1178]:
+              - generic [ref=e1181]:
+                - generic [ref=e1184]: Privacy policy URL
+                - generic [ref=e1187]:
+                  - textbox "Privacy policy URL" [ref=e1188]:
+                    - /placeholder: https://example.com/privacy
+                    - text: https://manuva.app/privacy
+                  - generic "26 of 255 characters used": 26/255
+              - generic [ref=e1191]:
+                - generic [ref=e1194]: Developer website (optional)
+                - textbox "Developer website (optional)" [ref=e1198]:
+                  - /placeholder: https://example.com
+                  - text: https://kaspersimonsen.dev
+              - generic [ref=e1201]:
+                - generic [ref=e1204]: FAQ (optional)
+                - textbox "FAQ (optional)" [ref=e1208]:
+                  - /placeholder: https://faq.example.com
+              - generic [ref=e1211]:
+                - generic [ref=e1214]: Changelog (optional)
+                - textbox "Changelog (optional)" [ref=e1218]:
+                  - /placeholder: https://store.example.com
+              - generic [ref=e1221]:
+                - generic [ref=e1224]: Tutorial (optional)
+                - textbox "Tutorial (optional)" [ref=e1228]:
+                  - /placeholder: https://store.example.com
+              - generic [ref=e1231]:
+                - generic [ref=e1234]: Additional app documentation (optional)
+                - textbox "Additional app documentation (optional)" [ref=e1238]:
+                  - /placeholder: https://store.example.com
+        - generic [ref=e1240]:
+          - heading "Pricing details" [level=2] [ref=e1241]
+          - paragraph
+        - generic [ref=e1244]:
+          - generic [ref=e1246]:
+            - heading [level=2]
+            - paragraph [ref=e1249]: For each public plan, add a descriptive display name and briefly describe its top features.
+          - generic [ref=e1250]:
+            - generic [ref=e1254]:
+              - generic [ref=e1255]:
+                - paragraph [ref=e1257]: 3 public plans
+                - paragraph [ref=e1258]: Changes to prices and billing cycles will be updated automatically
+              - button "Manage" [ref=e1259] [cursor=pointer]:
+                - generic [ref=e1261]: Manage
+            - generic [ref=e1264]:
+              - generic [ref=e1266]:
+                - generic [ref=e1267]:
+                  - paragraph [ref=e1269]: growth
+                  - button "Edit" [ref=e1270] [cursor=pointer]:
+                    - generic [ref=e1272]: Edit
+                - paragraph [ref=e1273]: $299/month or $2,988/year, 14-day trial
+              - generic [ref=e1276]:
+                - generic [ref=e1279]: Display name
+                - generic [ref=e1282]:
+                  - textbox "Display name" [ref=e1283]: Growth
+                  - generic "6 of 18 characters used": 6/18
+              - generic [ref=e1288]:
+                - heading "0 top features (8 remaining, optional)" [level=3] [ref=e1290]
+                - button "Add" [ref=e1291] [cursor=pointer]:
+                  - generic [ref=e1292]:
+                    - img [ref=e1296]
+                    - generic [ref=e1298]: Add
+            - generic [ref=e1301]:
+              - generic [ref=e1303]:
+                - generic [ref=e1304]:
+                  - paragraph [ref=e1306]: pro
+                  - button "Edit" [ref=e1307] [cursor=pointer]:
+                    - generic [ref=e1309]: Edit
+                - paragraph [ref=e1310]: $599/month or $5,988/year, 14-day trial
+              - generic [ref=e1313]:
+                - generic [ref=e1316]: Display name
+                - generic [ref=e1319]:
+                  - textbox "Display name" [active] [ref=e1320]: Turn storefront or
+                  - generic "18 of 18 characters used": 18/18
+              - generic [ref=e1325]:
+                - heading "0 top features (8 remaining, optional)" [level=3] [ref=e1327]
+                - button "Add" [ref=e1328] [cursor=pointer]:
+                  - generic [ref=e1329]:
+                    - img [ref=e1333]
+                    - generic [ref=e1335]: Add
+            - generic [ref=e1338]:
+              - generic [ref=e1340]:
+                - generic [ref=e1341]:
+                  - paragraph [ref=e1343]: starter
+                  - button "Edit" [ref=e1344] [cursor=pointer]:
+                    - generic [ref=e1346]: Edit
+                - paragraph [ref=e1347]: $119/month or $1,188/year, 14-day trial
+              - generic [ref=e1350]:
+                - generic [ref=e1353]: Display name
+                - generic [ref=e1356]:
+                  - textbox "Display name" [ref=e1357]: Starter
+                  - generic "7 of 18 characters used": 7/18
+              - generic [ref=e1362]:
+                - heading "0 top features (8 remaining, optional)" [level=3] [ref=e1364]
+                - button "Add" [ref=e1365] [cursor=pointer]:
+                  - generic [ref=e1366]:
+                    - img [ref=e1370]
+                    - generic [ref=e1372]: Add
+            - generic [ref=e1376]:
+              - generic [ref=e1379]: Provide a URL where merchants can find more pricing information (optional)
+              - textbox "Provide a URL where merchants can find more pricing information (optional)" [ref=e1383]:
+                - /placeholder: https://example.com/pricing
+                - text: https://manuva.app/pricing
+            - generic [ref=e1390] [cursor=pointer]:
+              - generic [ref=e1392]:
+                - checkbox "I have approval to charge merchants outside of the Shopify Billing API" [ref=e1393]
+                - generic:
+                  - generic:
+                    - img
+              - generic [ref=e1395]: I have approval to charge merchants outside of the Shopify Billing API
+        - generic [ref=e1397]:
+          - heading "App discovery content" [level=2] [ref=e1398]
+          - paragraph [ref=e1399]: This content supports discoverability of your app outside of your listing page. It’ll also help merchants compare their options in places where your app might appear alongside similar apps - such as in search results or among featured apps.
+        - generic [ref=e1400]:
+          - generic [ref=e1402]:
+            - generic [ref=e1404]:
+              - heading "App card subtitle" [level=2] [ref=e1405]
+              - generic [ref=e1407]:
+                - generic [ref=e1408]:
+                  - paragraph [ref=e1409]: Your app card appears in Shopify App Store search results and app recommendations.
+                  - paragraph [ref=e1410]: These are almost always viewed alongside other apps. A subtitle helps merchants quickly understand your app and what sets it apart from others. It should encourage merchants to want to visit your listing page to learn more.
+                  - paragraph [ref=e1411]: "Note: Your app card title will be your app name."
+                - heading "DO" [level=3] [ref=e1412]
+                - list [ref=e1414]:
+                  - listitem [ref=e1415]: Briefly summarize your app and unique benefits
+                  - listitem [ref=e1416]: Craft it as a sentence so it’s easy to read
+                  - listitem [ref=e1417]:
+                    - text: Follow the
+                    - link "app card subtitle guidelines" [ref=e1418] [cursor=pointer]:
+                      - /url: https://shopify.dev/apps/store/requirements#1-app-card-subtitle
+                - heading "DON'T" [level=3] [ref=e1419]
+                - list [ref=e1421]:
+                  - listitem [ref=e1422]: Use generic marketing language
+                  - listitem [ref=e1423]: Add unnecessary keywords
+            - generic [ref=e1429]:
+              - generic [ref=e1432]: Subtitle
+              - generic [ref=e1435]:
+                - textbox "Subtitle" [ref=e1436]:
+                  - /placeholder: What sets your app apart?
+                  - text: BOMs, inventory, and production for makers and assemblers
+                - generic "57 of 62 characters used": 57/62
+          - generic [ref=e1438]:
+            - generic [ref=e1440]:
+              - heading "App store search terms" [level=2] [ref=e1441]
+              - generic [ref=e1443]:
+                - generic [ref=e1444]: Add search terms that fit your app’s description. This makes it easier for merchants to find your app in a Shopify App Store search.
+                - heading "DO" [level=3] [ref=e1445]
+                - list [ref=e1447]:
+                  - listitem [ref=e1448]: Add a minimum of 1 term, maximum of 5
+                  - listitem [ref=e1449]: Use complete words
+                  - listitem [ref=e1450]:
+                    - text: Follow the
+                    - link "search terms guidelines" [ref=e1451] [cursor=pointer]:
+                      - /url: https://shopify.dev/apps/store/requirements#2-search-terms
+                - heading "DON'T" [level=3] [ref=e1452]
+                - list [ref=e1454]:
+                  - listitem [ref=e1455]: Include “Shopify” in your terms
+                  - listitem [ref=e1456]: List your competitors as a term
+                  - listitem [ref=e1457]: Convey more than one idea in a single term
+            - generic [ref=e1460]:
+              - generic [ref=e1463]:
+                - generic [ref=e1466]: Search terms
+                - generic [ref=e1467]:
+                  - generic [ref=e1469]:
+                    - textbox "Search terms" [ref=e1470]
+                    - generic "0 of 20 characters used": 0/20
+                  - generic [ref=e1471]:
+                    - button "Add" [disabled]:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - img
+                        - generic: Add
+              - generic [ref=e1473]:
+                - generic [ref=e1475]:
+                  - generic "bom" [ref=e1476]
+                  - button "Remove bom" [ref=e1477] [cursor=pointer]:
+                    - img [ref=e1480]
+                - generic [ref=e1483]:
+                  - generic "manufacturing" [ref=e1484]
+                  - button "Remove manufacturing" [ref=e1485] [cursor=pointer]:
+                    - img [ref=e1488]
+                - generic [ref=e1491]:
+                  - generic "production" [ref=e1492]
+                  - button "Remove production" [ref=e1493] [cursor=pointer]:
+                    - img [ref=e1496]
+                - generic [ref=e1499]:
+                  - generic "inventory" [ref=e1500]
+                  - button "Remove inventory" [ref=e1501] [cursor=pointer]:
+                    - img [ref=e1504]
+                - generic [ref=e1507]:
+                  - generic "MRP" [ref=e1508]
+                  - button "Remove MRP" [ref=e1509] [cursor=pointer]:
+                    - img [ref=e1512]
+          - generic [ref=e1515]:
+            - generic [ref=e1517]:
+              - heading "Web search content (optional)" [level=2] [ref=e1518]
+              - generic [ref=e1520]:
+                - generic [ref=e1521]: Provide SEO content that you want to feed to Google and other search engines. This content helps the search engines to understand the purpose of your app listing page and to connect it to relevant search questions.
+                - heading "DO" [level=3] [ref=e1522]
+                - list [ref=e1524]:
+                  - listitem [ref=e1525]:
+                    - text: Follow the
+                    - link "web search content guidelines" [ref=e1526] [cursor=pointer]:
+                      - /url: https://shopify.dev/apps/store/requirements#3-web-search-content
+            - generic [ref=e1529]:
+              - generic [ref=e1532]:
+                - generic [ref=e1535]: Title tag
+                - generic [ref=e1538]:
+                  - textbox "Title tag" [ref=e1539]: Manuva — Manufacturing operations for Shopify
+                  - generic "45 of 60 characters used": 45/60
+              - generic [ref=e1542]:
+                - generic [ref=e1545]: Meta description
+                - generic [ref=e1548]:
+                  - textbox "Meta description" [ref=e1549]
+                  - generic "0 of 160 characters used": 0/160
+        - generic [ref=e1551]:
+          - heading "Install requirements" [level=2] [ref=e1552]
+          - paragraph [ref=e1553]:
+            - generic [ref=e1554]:
+              - text: If your app only works for certain merchants, clarify
+              - link "those specifications" [ref=e1555] [cursor=pointer]:
+                - /url: https://shopify.dev/docs/apps/store/requirements#f-merchant-install-requirements
+              - text: . This will help you reduce uninstalls and negative reviews from merchants who can’t benefit from your app.
+        - generic [ref=e1556]:
+          - generic [ref=e1558]:
+            - generic [ref=e1560]:
+              - heading "Sales channel requirements" [level=2] [ref=e1561]
+              - generic [ref=e1563]:
+                - paragraph [ref=e1564]:
+                  - text: Specify if your app requires the
+                  - link "Online Store" [ref=e1565] [cursor=pointer]:
+                    - /url: https://shopify.dev/docs/apps/build/online-store
+                  - text: or
+                  - link "Shopify POS" [ref=e1566] [cursor=pointer]:
+                    - /url: https://shopify.dev/docs/apps/build/pos
+                  - text: sales channels to work.
+                - heading "DO" [level=3] [ref=e1567]
+                - list [ref=e1569]:
+                  - listitem [ref=e1570]:
+                    - text: Select Online Store if your app includes
+                    - link "theme app extensions" [ref=e1571] [cursor=pointer]:
+                      - /url: https://shopify.dev/docs/apps/build/online-store/theme-app-extensions
+                  - listitem [ref=e1572]:
+                    - text: Select Online Store if your app involves
+                    - link "editing theme assets" [ref=e1573] [cursor=pointer]:
+                      - /url: https://shopify.dev/docs/api/admin-graphql/latest/mutations/themeFilesUpsert
+            - generic [ref=e1578]:
+              - generic [ref=e1580] [cursor=pointer]:
+                - radio "My app requires" [ref=e1583]
+                - generic [ref=e1585]: My app requires
+              - generic [ref=e1588]:
+                - generic [ref=e1590]:
+                  - generic [ref=e1592]:
+                    - checkbox "Shopify Online Store" [disabled] [ref=e1593]
+                    - generic:
+                      - generic:
+                        - img
+                  - link "Shopify Online Store" [ref=e1597] [cursor=pointer]:
+                    - /url: https://shopify.dev/docs/apps/online-store
+                - generic [ref=e1599]:
+                  - generic [ref=e1601]:
+                    - checkbox "Shopify POS" [disabled] [ref=e1602]
+                    - generic:
+                      - generic:
+                        - img
+                  - link "Shopify POS" [ref=e1606] [cursor=pointer]:
+                    - /url: https://shopify.dev/docs/apps/pos
+              - generic [ref=e1608] [cursor=pointer]:
+                - radio "My app doesn't require the Shopify Online Store or Shopify POS" [checked] [ref=e1611]
+                - generic [ref=e1613]: My app doesn't require the Shopify Online Store or Shopify POS
+          - generic [ref=e1615]:
+            - generic [ref=e1617]:
+              - heading "Geographic requirements (optional)" [level=2] [ref=e1618]
+              - generic [ref=e1620]:
+                - text: If your app only works in specific geographic regions or with specific currencies, specify the list of countries/regions or currencies that are supported.
+                - heading "DO" [level=3] [ref=e1621]
+                - list [ref=e1623]:
+                  - listitem [ref=e1624]:
+                    - text: Follow the
+                    - link "geographic requirements guidelines" [ref=e1625] [cursor=pointer]:
+                      - /url: https://shopify.dev/apps/store/requirements#2-geography-requirements
+            - generic [ref=e1631]:
+              - generic [ref=e1633] [cursor=pointer]:
+                - generic [ref=e1635]:
+                  - checkbox "Merchant's business address must be in a specific country/region" [ref=e1636]
+                  - generic:
+                    - generic:
+                      - img
+                - generic [ref=e1638]: Merchant's business address must be in a specific country/region
+              - generic [ref=e1640] [cursor=pointer]:
+                - generic [ref=e1642]:
+                  - checkbox "Merchant must ship to a specific country/region" [ref=e1643]
+                  - generic:
+                    - generic:
+                      - img
+                - generic [ref=e1645]: Merchant must ship to a specific country/region
+              - generic [ref=e1647] [cursor=pointer]:
+                - generic [ref=e1649]:
+                  - checkbox "Merchant must accept specific currencies" [ref=e1650]
+                  - generic:
+                    - generic:
+                      - img
+                - generic [ref=e1652]: Merchant must accept specific currencies
+        - generic [ref=e1654]:
+          - heading "Tracking information" [level=2] [ref=e1655]
+          - paragraph [ref=e1656]:
+            - generic [ref=e1657]:
+              - text: Provide tracking information to understand engagement on your app listing.
+              - link "Learn more about tracking your app listing traffic" [ref=e1658] [cursor=pointer]:
+                - /url: https://shopify.dev/docs/apps/store/success/marketing/marketing-internally/tracking-your-listing-traffic
+        - generic [ref=e1659]:
+          - generic [ref=e1661]:
+            - generic [ref=e1663]:
+              - heading "Google analytics code (optional)" [level=2] [ref=e1664]
+              - generic [ref=e1666]:
+                - generic [ref=e1667]: To track page views for your app listing enter your Measurement ID. To track both listing and app installs enter Measurement ID and API Secret.
+                - link "Learn how to setup Google Analytics for an app" [ref=e1669] [cursor=pointer]:
+                  - /url: https://support.google.com/analytics/answer/9304153#add-tag&zippy=%2Cadd-the-google-tag-directly-to-your-web-pages
+            - generic [ref=e1672]:
+              - generic [ref=e1677]:
+                - generic [ref=e1680]: Measurement ID
+                - textbox "Measurement ID" [ref=e1684]:
+                  - /placeholder: G-xxx
+              - generic [ref=e1687]:
+                - generic [ref=e1690]: API Secret
+                - textbox "API Secret" [ref=e1694]
+          - generic [ref=e1696]:
+            - generic [ref=e1698]:
+              - heading "Google remarketing code (optional)" [level=2] [ref=e1699]
+              - generic [ref=e1701]:
+                - text: To add Google remarketing code to your app listing, enter the number that follows "var google_conversion_id = " in the remarketing tag you received from Google. We do not currently support specific-tag remarketing lists.
+                - link "Learn about Google remarketing" [ref=e1702] [cursor=pointer]:
+                  - /url: https://support.google.com/google-ads/answer/2453998
+            - generic [ref=e1710]:
+              - generic [ref=e1713]: Google conversion ID
+              - textbox "Google conversion ID" [ref=e1717]:
+                - /placeholder: google_conversion_id
+          - generic [ref=e1719]:
+            - generic [ref=e1721]:
+              - heading "Facebook Pixel (optional)" [level=2] [ref=e1722]
+              - generic [ref=e1724]:
+                - text: To add Facebook Pixel tracking to your app listing, enter the ID number for your app from the Facebook Event Manager. To track both listing and app installs, enter the Pixel ID and Access Token.
+                - link "Learn about Facebook pixels" [ref=e1725] [cursor=pointer]:
+                  - /url: https://www.facebook.com/business/help/952192354843755?id=1205376682832142
+            - generic [ref=e1728]:
+              - generic [ref=e1733]:
+                - generic [ref=e1736]: Pixel ID
+                - textbox "Pixel ID" [ref=e1740]:
+                  - /placeholder: facebook_pixel_id
+              - generic [ref=e1743]:
+                - generic [ref=e1746]: Access Token
+                - textbox "Access Token" [ref=e1750]
+        - generic [ref=e1752]:
+          - heading "Contact information" [level=2] [ref=e1753]
+          - paragraph
+        - generic [ref=e1754]:
+          - generic [ref=e1756]:
+            - generic [ref=e1758]:
+              - heading "Merchant review email" [level=2] [ref=e1759]
+              - generic [ref=e1761]: When a merchant reviews your app or updates an existing review, you’ll be notified at this email address.
+            - generic [ref=e1767]:
+              - generic [ref=e1770]: Email address
+              - textbox "Email address" [ref=e1774]: kasper.simonsen@pac-technologies.com.au
+          - generic [ref=e1776]:
+            - generic [ref=e1778]:
+              - heading "App submission email" [level=2] [ref=e1779]
+              - generic [ref=e1781]:
+                - generic [ref=e1782]: We’ll communicate with you at this email address during the app testing process.
+                - heading "DO" [level=3] [ref=e1783]
+                - list [ref=e1785]:
+                  - listitem [ref=e1786]: "Prevent our emails from going to spam by adding the following to your allowlist: noreply@shopify.com"
+            - generic [ref=e1790]:
+              - generic [ref=e1793]: Email address
+              - textbox "Email address" [ref=e1797]: kasper.simonsen@pac-technologies.com.au
+        - generic [ref=e1799]:
+          - heading "App testing information" [level=2] [ref=e1800]
+          - paragraph [ref=e1801]: This allows us to test your app to make sure it’s reliable, performs as expected, and meets our guidelines.
+        - generic [ref=e1802]:
+          - generic [ref=e1804]:
+            - generic [ref=e1806]:
+              - heading "Test account" [level=2] [ref=e1807]
+              - generic [ref=e1809]:
+                - paragraph [ref=e1810]: Provide login information for a test account that gives us end-to-end access to your app.
+                - paragraph [ref=e1811]: If your app includes features that require separate login (like access to a marketplace), include account information for those.
+                - heading "DO" [level=3] [ref=e1812]
+                - list [ref=e1814]:
+                  - listitem [ref=e1815]: Provide login information for all accounts needed to access the app
+                  - listitem [ref=e1816]: Add as many accounts as you need to
+                - heading "DON'T" [level=3] [ref=e1817]
+                - list [ref=e1819]:
+                  - listitem [ref=e1820]: Provide accounts that require Google single sign-on
+                  - listitem [ref=e1821]: Provide accounts that require two factor authentication, unless it's unavoidable
+            - generic [ref=e1824]:
+              - generic [ref=e1828] [cursor=pointer]:
+                - generic [ref=e1830]:
+                  - checkbox "My app doesn't require an account to use it" [ref=e1831]
+                  - generic:
+                    - generic:
+                      - img
+                - generic [ref=e1833]: My app doesn't require an account to use it
+              - generic [ref=e1834]:
+                - separator [ref=e1835]
+                - generic [ref=e1836]:
+                  - generic [ref=e1838]:
+                    - heading "Login details" [level=2] [ref=e1840]
+                    - button "Add account" [ref=e1842] [cursor=pointer]:
+                      - generic [ref=e1843]:
+                        - img [ref=e1847]
+                        - generic [ref=e1849]: Add account
+                  - generic [ref=e1852]:
+                    - generic [ref=e1855]:
+                      - generic [ref=e1858]: Username
+                      - textbox "Username" [ref=e1862]: reviewer@manuva.app
+                    - generic [ref=e1865]:
+                      - generic [ref=e1868]: Password
+                      - generic [ref=e1871]:
+                        - textbox "Password Hide text" [ref=e1872]: REVIEWER_PASSWORD_PLACEHOLDER
+                        - button "Hide text" [ref=e1875] [cursor=pointer]:
+                          - img [ref=e1880]
+                    - generic [ref=e1885]:
+                      - generic [ref=e1888]: Account description
+                      - generic [ref=e1891]:
+                        - textbox "Account description" [ref=e1892]:
+                          - /placeholder: Indicate if this is to access the app, or a feature in the app
+                          - text: Reviewer account for the Manuva web app at app.manuva.app. The embedded Shopify surface does not require a login. Use these credentials to test the full Manuva workspace after clicking "Open Manuva" from the embedded surface.
+                        - generic "225 of 255 characters used": 225/255
+                    - button "Delete account" [ref=e1898] [cursor=pointer]:
+                      - generic [ref=e1900]: Delete account
+          - generic [ref=e1902]:
+            - generic [ref=e1904]:
+              - heading "Screencast URL" [level=2] [ref=e1905]
+              - generic [ref=e1907]:
+                - generic [ref=e1908]: Video demo that shows how to use your app, including onboarding flow and core functionality.
+                - heading "DO" [level=3] [ref=e1909]
+                - list [ref=e1911]:
+                  - listitem [ref=e1912]: Demonstrate main features
+                  - listitem [ref=e1913]: Show the customer flow and the merchant flow
+                  - listitem [ref=e1914]: Aim for a 3 to 8 minute video
+                - heading "DON'T" [level=3] [ref=e1915]
+                - list [ref=e1917]:
+                  - listitem [ref=e1918]: Include loud background noises
+            - generic [ref=e1922]:
+              - generic [ref=e1925]: URL
+              - generic [ref=e1928]:
+                - textbox "URL" [ref=e1929]:
+                  - /placeholder: https://example.com/screencast
+                  - text: https://manuva.app
+                - generic "18 of 255 characters used": 18/255
+          - generic [ref=e1931]:
+            - generic [ref=e1933]:
+              - heading "Testing instructions" [level=2] [ref=e1934]
+              - generic [ref=e1936]:
+                - generic [ref=e1937]: Any additional information to help us successfully test the full app.
+                - heading "DO" [level=3] [ref=e1938]
+                - list [ref=e1940]:
+                  - listitem [ref=e1941]: Provide step-by-step instructions
+                  - listitem [ref=e1942]: Use bullet points or numbered steps
+                  - listitem [ref=e1943]: Provide any app-specific settings
+                  - listitem [ref=e1944]: Be concise and clear
+                - heading "DON'T" [level=3] [ref=e1945]
+                - list [ref=e1947]:
+                  - listitem [ref=e1948]: Submit a long block of text
+            - generic [ref=e1952]:
+              - generic [ref=e1955]: Instruction notes
+              - generic [ref=e1958]:
+                - textbox "Instruction notes" [ref=e1959]:
+                  - /placeholder: "Example: \n\nTo test this app:\n 1. Log in to https://example.com/app\n 2. Enter test app credentials\n 3. Click 'Get Started'\n 4. Enter the following URL: https://example.com/url"
+                  - text: "Testing Manuva (Free to install, requires a Manuva subscription billed externally at manuva.app/pricing). PREREQUISITE: A Manuva account associated with this test store. The reviewer can sign up at https://manuva.app/signup or use the credentials provided below (if any). INSTALL FLOW 1. Install the app from the Shopify App Store install URL. Approve the OAuth consent screen (read_orders, read_products). 2. After OAuth, you'll land in the embedded Manuva surface inside Shopify Admin. EMBEDDED SURFACE 3. The embedded card shows your store domain, last sync time, and \"Sync now\" + \"Open Manuva\" buttons. 4. Click \"Sync now\" — products and orders sync from Shopify into Manuva. Wait for the sync to complete. 5. Click \"Open Manuva\" — opens app.manuva.app in a new tab where the full Manuva workspace is available. FULL WORKSPACE (app.manuva.app) 6. Sign in to Manuva using the account associated with this store. 7. Navigate to Products — synced products from Shopify appear with their variants. 8. Click any product → Variant Detail → Bill of Materials tab to see/edit the BOM. 9. Navigate to Orders — synced Shopify orders appear with allocation status. 10. Click any allocated order to see components reserved, planned margin, and labor. 11. Navigate to Components — multi-location inventory view with reorder points. 12. Navigate to Settings → Integrations → Shopify card shows Connected with per-store sync stats. DISCONNECT 13. From Settings → Integrations → Manage, click Disconnect to revoke. Or uninstall via Shopify Admin → Apps; the app/uninstalled webhook will fire and the store's access token will be removed from Manuva's database. GDPR WEBHOOKS 14. Mandatory privacy webhooks (customers/data_request, customers/redact, shop/redact) are declared in the app config and audited in Manuva's shopify_gdpr_request table. They can be triggered via Shopify CLI: shopify webhook trigger --topic customers/redact --address https://app.manuva.app/api/shopify/webhooks/gdpr/customers-redact --client-secret <secret>. NO INVENTORY WRITES Manuva is read-only on the Shopify side: it never writes back to product, variant, or inventory. The connected store's data in Shopify is never modified by Manuva. SUPPORT Email: hello@manuva.app (response within one business day)."
+                - generic "2282 of 2800 characters used": 2282/2800
+        - button "Save" [ref=e2020] [cursor=pointer]:
+          - generic [ref=e2022]: Save

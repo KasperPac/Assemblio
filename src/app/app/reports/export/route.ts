@@ -36,7 +36,8 @@ function csvCell(value: unknown) {
 export async function GET() {
   const ctx = await getServerTenantContext();
   if (!ctx) return new NextResponse("Unauthorized", { status: 401 });
-  const { supabase, tenantId } = ctx;
+  const { supabase, tenantId: _tenantId } = ctx;
+  const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const [
     { data: balances, error: balancesError },

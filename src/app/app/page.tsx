@@ -35,7 +35,8 @@ export default async function DashboardPage() {
     );
   }
 
-  const { supabase, tenantId } = context;
+  const { supabase, tenantId: _tenantId } = context;
+  const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   const sixMonthsAgo = new Date();
