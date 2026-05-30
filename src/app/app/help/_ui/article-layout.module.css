@@ -14,3 +14,15 @@
   color: var(--ink-strong);
   line-height: var(--lh-normal);
 }
+
+.body h3 {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-bold);
+  margin: var(--space-2) 0 var(--space-1);
+}
+
+.body ul {
+  padding-left: var(--space-5);
+  line-height: var(--lh-normal);
+  margin: 0;
+}

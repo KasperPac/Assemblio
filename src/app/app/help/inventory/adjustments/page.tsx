@@ -21,7 +21,7 @@ export default function AdjustmentsPage() {
         <Step>Click the component row to open its detail view, then click <strong>Log movement</strong>.</Step>
         <Step>
           Select a <strong>reason code</strong>:
-          <ul style={{ marginTop: 6, paddingLeft: 20, lineHeight: 2 }}>
+          <ul>
             <li><strong>Received</strong> — stock that arrived outside a PO</li>
             <li><strong>Consumed</strong> — used in production without a formal order</li>
             <li><strong>Damaged</strong> — stock written off</li>

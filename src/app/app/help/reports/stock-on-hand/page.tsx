@@ -11,8 +11,8 @@ export default function StockOnHandPage() {
     >
       <p>The Stock on hand report gives you a snapshot of current inventory levels across all components and locations.</p>
       <div>
-        <h3 style={{ fontSize: "var(--fs-md)", fontWeight: "var(--fw-bold)", margin: "8px 0 4px" }}>Columns</h3>
-        <ul style={{ paddingLeft: 20, lineHeight: 2, margin: 0 }}>
+        <h3>Columns</h3>
+        <ul>
           <li><strong>On hand</strong> — total physical quantity in stock</li>
           <li><strong>Allocated</strong> — reserved for confirmed orders</li>
           <li><strong>Available</strong> — on hand minus allocated</li>
@@ -21,7 +21,7 @@ export default function StockOnHandPage() {
         </ul>
       </div>
       <div>
-        <h3 style={{ fontSize: "var(--fs-md)", fontWeight: "var(--fw-bold)", margin: "8px 0 4px" }}>Filtering</h3>
+        <h3>Filtering</h3>
         <p>Filter by location, category, or low-stock status. Sort by <strong>Available ascending</strong> to see the components closest to running out at the top.</p>
       </div>
       <Callout type="tip">

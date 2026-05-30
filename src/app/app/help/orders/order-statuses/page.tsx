@@ -11,8 +11,8 @@ export default function OrderStatusesPage() {
     >
       <p>Every order has an overall status, and each line item has its own status. These update automatically as the order moves through the fulfilment flow.</p>
       <div>
-        <h3 style={{ fontSize: "var(--fs-md)", fontWeight: "var(--fw-bold)", margin: "8px 0 4px" }}>Order statuses</h3>
-        <ul style={{ paddingLeft: 20, lineHeight: 2.2, margin: 0 }}>
+        <h3>Order statuses</h3>
+        <ul>
           <li><strong>Pending</strong> — imported but not yet confirmed or processed</li>
           <li><strong>Awaiting Stock</strong> — confirmed but insufficient components available</li>
           <li><strong>In Production</strong> — production order created and in progress</li>
@@ -22,8 +22,8 @@ export default function OrderStatusesPage() {
         </ul>
       </div>
       <div>
-        <h3 style={{ fontSize: "var(--fs-md)", fontWeight: "var(--fw-bold)", margin: "8px 0 4px" }}>Line item statuses</h3>
-        <ul style={{ paddingLeft: 20, lineHeight: 2.2, margin: 0 }}>
+        <h3>Line item statuses</h3>
+        <ul>
           <li><strong>Unmatched</strong> — SKU not found in Manuva; requires manual resolution</li>
           <li><strong>Allocated</strong> — components fully reserved</li>
           <li><strong>Short</strong> — allocated partially; awaiting more stock</li>

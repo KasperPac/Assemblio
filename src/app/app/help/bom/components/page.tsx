@@ -11,15 +11,15 @@ export default function ComponentsPage() {
     >
       <p>Manuva distinguishes between two types of items in your inventory:</p>
       <div>
-        <h3 style={{ fontSize: "var(--fs-md)", fontWeight: "var(--fw-bold)", margin: "8px 0 4px" }}>Components</h3>
+        <h3>Components</h3>
         <p>Components are raw materials or sub-assemblies that go <em>into</em> a product. They are tracked by quantity in Inventory. Examples: aluminium sheet, M6 bolts, a printed circuit board.</p>
       </div>
       <div>
-        <h3 style={{ fontSize: "var(--fs-md)", fontWeight: "var(--fw-bold)", margin: "8px 0 4px" }}>Products</h3>
+        <h3>Products</h3>
         <p>Products are finished goods that you sell. They are linked to your Shopify catalogue via SKU. A product has a BOM that defines which components are consumed to make it.</p>
       </div>
       <div>
-        <h3 style={{ fontSize: "var(--fs-md)", fontWeight: "var(--fw-bold)", margin: "8px 0 4px" }}>Sub-assemblies</h3>
+        <h3>Sub-assemblies</h3>
         <p>A sub-assembly is a component that is itself made from other components. It has its own BOM and can appear as a line item in a parent BOM.</p>
       </div>
       <Callout type="tip">

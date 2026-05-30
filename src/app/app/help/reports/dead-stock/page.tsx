@@ -11,12 +11,12 @@ export default function DeadStockPage() {
     >
       <p>Dead stock is inventory that has had no movements in a defined number of days. Holding dead stock ties up capital and warehouse space.</p>
       <div>
-        <h3 style={{ fontSize: "var(--fs-md)", fontWeight: "var(--fw-bold)", margin: "8px 0 4px" }}>Using the report</h3>
+        <h3>Using the report</h3>
         <p>Open <strong>Reports → Dead stock</strong>. Set the <strong>days with no movement</strong> threshold (default: 90 days). The report lists all components that have not moved in that window, with their on-hand quantity and value.</p>
       </div>
       <div>
-        <h3 style={{ fontSize: "var(--fs-md)", fontWeight: "var(--fw-bold)", margin: "8px 0 4px" }}>What to do with dead stock</h3>
-        <ul style={{ paddingLeft: 20, lineHeight: 2, margin: 0 }}>
+        <h3>What to do with dead stock</h3>
+        <ul>
           <li>Reduce or pause reorder quantities for slow-moving items</li>
           <li>Investigate whether the component is still used in any active BOM</li>
           <li>Write off genuinely obsolete stock with a Damaged adjustment</li>

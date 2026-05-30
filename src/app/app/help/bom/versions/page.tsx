@@ -14,15 +14,15 @@ export default function VersionsPage() {
         existing one. This gives you a complete history of how a product&apos;s recipe has changed over time.
       </p>
       <div>
-        <h3 style={{ fontSize: "var(--fs-md)", fontWeight: "var(--fw-bold)", margin: "8px 0 4px" }}>Active version</h3>
+        <h3>Active version</h3>
         <p>Only one version is active at a time. The active version is used when allocating stock to new orders and when creating production orders. Previous versions are preserved for reference.</p>
       </div>
       <div>
-        <h3 style={{ fontSize: "var(--fs-md)", fontWeight: "var(--fw-bold)", margin: "8px 0 4px" }}>Creating a new version</h3>
+        <h3>Creating a new version</h3>
         <p>Open a BOM and click <strong>Edit</strong>. Make your changes and click <strong>Save as new version</strong>. The new version is saved and set as active.</p>
       </div>
       <div>
-        <h3 style={{ fontSize: "var(--fs-md)", fontWeight: "var(--fw-bold)", margin: "8px 0 4px" }}>Comparing versions</h3>
+        <h3>Comparing versions</h3>
         <p>In the BOM versions tab, select two versions to see a side-by-side diff showing which components were added, removed, or had their quantities changed.</p>
       </div>
       <Callout type="info">

@@ -15,14 +15,14 @@ export default function MovementsPage() {
         complete, tamper-proof audit trail.
       </p>
       <div>
-        <h3 style={{ fontSize: "var(--fs-md)", fontWeight: "var(--fw-bold)", margin: "8px 0 4px" }}>Viewing movements</h3>
+        <h3>Viewing movements</h3>
         <p>
           Open <strong>Inventory</strong>, select a component, and scroll to <strong>Recent movements</strong>.
           Each entry shows: date and time, movement type, quantity delta, reason code, and who recorded it.
         </p>
       </div>
       <div>
-        <h3 style={{ fontSize: "var(--fs-md)", fontWeight: "var(--fw-bold)", margin: "8px 0 4px" }}>Filtering and export</h3>
+        <h3>Filtering and export</h3>
         <p>
           Use the date range filter to narrow the list. Click <strong>Export</strong> to download movements as a CSV for use in spreadsheets or accounting software.
         </p>
