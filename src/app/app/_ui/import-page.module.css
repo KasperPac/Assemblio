@@ -1,0 +1,256 @@
+/* Shared styles for /components/import and /suppliers/import pages */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 900px;
+}
+
+.back {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  text-decoration: none;
+}
+.back:hover { color: var(--ink-strong); }
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ink-strong);
+  margin: 0;
+}
+
+/* ── Step indicator ── */
+.stepBar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.stepItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+}
+
+.stepActive {
+  color: var(--brand-1);
+  font-weight: 600;
+}
+
+.stepDone {
+  color: var(--ok, #2e7d32);
+}
+
+.stepNum {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1.5px solid var(--stroke-strong);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.stepActive .stepNum {
+  background: var(--brand-1);
+  border-color: var(--brand-1);
+  color: #fff;
+}
+
+.stepDone .stepNum {
+  background: var(--ok, #2e7d32);
+  border-color: var(--ok, #2e7d32);
+  color: #fff;
+}
+
+.stepConnector {
+  width: 32px;
+  height: 1px;
+  background: var(--stroke-strong);
+  margin: 0 4px;
+}
+
+/* ── Upload step ── */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.dropZone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 40px 24px;
+  border: 2px dashed var(--stroke-strong);
+  border-radius: var(--radius-lg);
+  background: var(--bg-page);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 140ms ease, background 140ms ease;
+}
+.dropZone:hover {
+  border-color: var(--brand-1);
+  background: var(--surface-hover);
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.dropIcon { font-size: 2rem; }
+
+.dropTitle {
+  font-weight: 600;
+  color: var(--ink-strong);
+  font-size: 0.95rem;
+}
+
+.dropSub {
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+}
+
+.templateBox {
+  padding: 12px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-lg);
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.templateBox code {
+  font-size: 0.75rem;
+  color: var(--ink-strong);
+}
+
+.templateLink {
+  all: unset;
+  color: var(--brand-1);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+.templateLink:hover { opacity: 0.8; }
+
+/* ── Error banner ── */
+.errorBanner {
+  padding: 10px 14px;
+  background: var(--danger-dim);
+  border: 1px solid var(--danger-dim);
+  border-radius: var(--radius-lg);
+  color: var(--danger);
+  font-size: 0.83rem;
+  margin: 0;
+}
+
+/* ── Preview table ── */
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-lg);
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.previewTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.previewTable thead th {
+  padding: 8px 10px;
+  text-align: left;
+  background: var(--bg-page);
+  border-bottom: 1px solid var(--stroke-strong);
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+
+.previewTable tbody td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--stroke-soft, #eee);
+  color: var(--ink-strong);
+}
+
+.rowError td {
+  background: var(--danger-dim);
+}
+
+.errorLabel {
+  color: var(--danger);
+  font-size: 0.77rem;
+  font-weight: 600;
+}
+
+.okLabel {
+  color: var(--ok, #2e7d32);
+  font-size: 0.77rem;
+}
+
+.missing { color: var(--ink-muted); }
+
+.previewMeta {
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+  text-align: right;
+}
+
+/* ── Actions row ── */
+.actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.primaryBtn {
+  composes: primary from "./buttons.module.css";
+}
+
+.primaryBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: none;
+}
+
+.secondaryBtn {
+  composes: secondary from "./buttons.module.css";
+}
+
+/* ── Done step ── */
+.doneSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-lg);
+}
+
+.doneIcon { font-size: 2rem; }
+
+.doneMsg {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink-strong);
+  margin: 0;
+}
