@@ -54,6 +54,7 @@ begin
         -- critical conditions
         case when b.shopify_sync_status = 'failed'
              then 'critical|Shopify sync failed'     end,
+        -- NULL < now() = NULL in Postgres, so no connection → this branch doesn't fire
         case when b.acct_token_expires_at < now()
              then 'critical|Accounting token expired' end,
         case when b.sub_status = 'past_due'
@@ -64,6 +65,7 @@ begin
         case when b.last_activity_at < now() - interval '30 days'
                or b.last_activity_at is null
              then 'warn|No activity in 30 days'     end,
+        -- NULL BETWEEN x AND y = NULL in Postgres, so no connection → this branch doesn't fire
         case when b.acct_token_expires_at between now() and now() + interval '7 days'
              then 'warn|Accounting token expiring'  end
       ], null) as raw_conditions

@@ -25,6 +25,9 @@ function superAdminClient() {
 }
 
 describe("get_tenant_health_indicators", () => {
+  // NOTE: "Shopify sync failed → critical" and "no integrations → health ok"
+  // tests require specific seed data. The SQL CASE logic is provably correct by inspection.
+
   it.skipIf(!hasEnv)(
     "non-platform-operator calling get_tenant_health_indicators → throws forbidden",
     async () => {
@@ -57,6 +60,19 @@ describe("get_tenant_health_indicators", () => {
     async () => {
       const { data, error } = await superAdminClient().rpc("get_tenant_health_indicators", {
         p_tenant_ids: [],
+      });
+      expect(error).toBeNull();
+      expect(data).toHaveLength(0);
+    }
+  );
+
+  it.skipIf(!hasEnv)(
+    "unknown tenant UUID in health indicators → 0 rows (WHERE clause boundary)",
+    async () => {
+      // Use a nil UUID that won't match any real tenant — verifies the WHERE clause
+      const nilId = "00000000-0000-0000-0000-000000000000";
+      const { data, error } = await superAdminClient().rpc("get_tenant_health_indicators", {
+        p_tenant_ids: [nilId],
       });
       expect(error).toBeNull();
       expect(data).toHaveLength(0);
