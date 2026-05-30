@@ -1,10 +1,10 @@
 .callout {
   display: flex;
-  gap: 10px;
-  padding: 12px 14px;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
-  font-size: 0.875rem;
-  line-height: 1.6;
+  font-size: var(--fs-md);
+  line-height: var(--lh-normal);
   border-left: 3px solid transparent;
 }
 
@@ -19,16 +19,16 @@
 }
 
 .tip {
-  background: #f0fdf4;
-  border-left-color: #16a34a;
+  background: var(--ok-dim);
+  border-left-color: var(--ok);
 }
 
 .warning {
-  background: #fffbeb;
-  border-left-color: #d97706;
+  background: var(--warning-dim);
+  border-left-color: var(--warning);
 }
 
 .info {
-  background: #eff6ff;
-  border-left-color: var(--brand-1);
+  background: var(--info-dim);
+  border-left-color: var(--info);
 }
