@@ -134,7 +134,7 @@ export default function VitalsPanel({ vitals }: { vitals: TenantVitals }) {
                       )}
                     </span>
                     <br />
-                    <span style={{ color: "var(--ink-faint)", fontSize: "0.78rem" }}>
+                    <span className={styles.metaNote}>
                       {vitals.accounting_thirty_day_synced} synced /{" "}
                       {vitals.accounting_thirty_day_failed} failed (30d)
                     </span>
