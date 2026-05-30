@@ -129,8 +129,9 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
   const query = (await searchParams) ?? {};
   const activeTab = parseDetailTab(query.tab);
   const context = await getServerTenantContext();
-  if (!context || !context.tenantId) notFound();
-  const { supabase, tenantId } = context;
+  if (!context) notFound();
+  const { supabase, tenantId: _tenantId } = context;
+  const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const [{ data: order }, { data: orderLines }] = await Promise.all([
     supabase

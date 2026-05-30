@@ -1,0 +1,13 @@
+[127796897ms] [WARNING] Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.youtube.com') does not match the recipient window's origin ('https://www.google.com'). @ https://www.youtube.com/s/player/c2f7551f/www-widgetapi.vflset/www-widgetapi.js:209
+[127801686ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://cdn.cookielaw.org/consent/019aa62f-261a-7e0f-9ddd-0bcb01f18035/OtAutoBlock.js:0
+[127802217ms] [VERBOSE] [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o @ https://www.mayrhofen.at/en/stories/via-ferratas:0
+[127807192ms] [INFO] 65 JSHandle@node @ https://www.mayrhofen.at/_nuxt/header-switch.APigE-Jp.js:0
+[127807223ms] [LOG] %c%c trying to record event 
+      background: #7f8c8d;
+      border-radius: 0.5em;
+      color: white;
+      font-weight: bold;
+      padding: 2px 0.5em;
+      @ https://www.mayrhofen.at/_nuxt/entry.cwMQ73qD.js:58
+[127807814ms] [INFO] ✨ JAMES version: ada/ada-web:release-james-1-31-403160 @ https://www.mayrhofen.at/_nuxt/base-page.Hu2jTBAO.js:0
+[127812812ms] [LOG] Download the Apollo DevTools for a better development experience: %s https://chrome.google.com/webstore/detail/apollo-client-developer-t/jdkknkkbebbapilgoeccciglkfbmbnfm @ https://www.mayrhofen.at/_nuxt/base-graphql-client.9apQiwbh.js:0

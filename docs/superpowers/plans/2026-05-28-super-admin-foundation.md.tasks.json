@@ -4,79 +4,79 @@
     {
       "id": 9,
       "subject": "Task 1: Schema migration (forward + rollback)",
-      "status": "pending",
+      "status": "completed",
       "description": "**Goal:** Apply all DB-level changes: nullable tenant_id, is_platform_operator() helper, tightened business-table RLS, extended observer grants, and rollback file.\n\n**Files:**\n- Create: `supabase/patches/super_admin_foundation.sql`\n- Create: `supabase/patches/super_admin_foundation_rollback.sql`\n\n**Verify:** Apply forward migration; confirm is_platform_operator() correct.\n\n```json:metadata\n{\"files\": [\"supabase/patches/super_admin_foundation.sql\", \"supabase/patches/super_admin_foundation_rollback.sql\"], \"verifyCommand\": \"supabase db push\", \"acceptanceCriteria\": [\"profiles.tenant_id nullable for platform operators\", \"is_platform_operator() correct\", \"22 business tables deny super_admin without active tenant\", \"observer can read platform tables\", \"rollback file committed\"]}\n```"
     },
     {
       "id": 10,
       "subject": "Task 2: Extend getServerTenantContext() for tenant-less operators",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [9],
       "description": "**Goal:** Make tenantId nullable in TenantContext; add tenant-less branch for platform operators.\n\n**Files:**\n- Modify: `src/lib/tenant/context.ts`\n- Create: `src/lib/tenant/context.test.ts`\n\n**Verify:** `npx vitest run src/lib/tenant/context.test.ts`\n\n```json:metadata\n{\"files\": [\"src/lib/tenant/context.ts\", \"src/lib/tenant/context.test.ts\"], \"verifyCommand\": \"npx vitest run src/lib/tenant/context.test.ts\", \"acceptanceCriteria\": [\"tenantId typed string | null\", \"platform operators with null tenant_id get valid context\", \"7 test cases pass\"]}\n```"
     },
     {
       "id": 11,
       "subject": "Task 3: Add requirePlatformOperator guard + extend audit action type",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [10],
       "description": "**Goal:** Add weaker guard helper; extend SuperAdminAction with new keys.\n\n**Files:**\n- Modify: `src/lib/super-admin/guard.ts`\n- Create: `src/lib/super-admin/guard.test.ts`\n- Modify: `src/lib/super-admin/audit.ts`\n\n**Verify:** `npx vitest run src/lib/super-admin/guard.test.ts`\n\n```json:metadata\n{\"files\": [\"src/lib/super-admin/guard.ts\", \"src/lib/super-admin/guard.test.ts\", \"src/lib/super-admin/audit.ts\"], \"verifyCommand\": \"npx vitest run src/lib/super-admin/guard.test.ts\", \"acceptanceCriteria\": [\"requirePlatformOperator passes for both roles\", \"requireSuperAdmin blocks observer\", \"SuperAdminAction extended\"]}\n```"
     },
     {
       "id": 12,
       "subject": "Task 4: Fix /app/layout.tsx for tenant-less operators",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [11],
       "description": "**Goal:** Redirect platform operators with no active tenant to /app/super-admin; extend suspension lockout to exclude platform_observer.\n\n**Files:**\n- Modify: `src/app/app/layout.tsx`\n\n**Verify:** `npx tsc --noEmit 2>&1 | grep layout`\n\n```json:metadata\n{\"files\": [\"src/app/app/layout.tsx\"], \"verifyCommand\": \"npx tsc --noEmit 2>&1 | grep layout\", \"acceptanceCriteria\": [\"tenant-less platform operator redirected\", \"observer exempt from suspension lockout\", \"view-as banner null-safe\"]}\n```"
     },
     {
       "id": 13,
       "subject": "Task 5: Update SidebarNav for platform_observer",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [12],
       "description": "**Goal:** Extend Platform sidebar section to render for both roles; add Team link.\n\n**Files:**\n- Modify: `src/app/app/sidebar-nav.tsx`\n\n**Verify:** `npx tsc --noEmit 2>&1 | grep sidebar-nav`\n\n```json:metadata\n{\"files\": [\"src/app/app/sidebar-nav.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Platform section renders for observer\", \"Team link added\", \"isPlatformOperator prop accepted\"]}\n```"
     },
     {
       "id": 14,
       "subject": "Task 6: Make /app/super-admin/layout.tsx standalone + extend to observer",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [13],
       "description": "**Goal:** Platform module layout accepts both roles; works without a tenantId.\n\n**Files:**\n- Modify: `src/app/app/super-admin/layout.tsx`\n\n**Verify:** `npx tsc --noEmit 2>&1 | grep super-admin/layout`\n\n```json:metadata\n{\"files\": [\"src/app/app/super-admin/layout.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"observer allowed into platform module\", \"layout works with null tenantId\"]}\n```"
     },
     {
       "id": 15,
       "subject": "Task 7: Update super-admin actions (exitViewAs, createTenant, viewAsTenant)",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [11, 12],
       "description": "**Goal:** Rewrite exitViewAs for null home tenant; remove auto-member insert from createTenant; promote viewAsTenant to requirePlatformOperator.\n\n**Files:**\n- Modify: `src/app/app/super-admin/actions.ts`\n- Modify: `src/app/app/super-admin/actions.test.ts`\n\n**Verify:** `npx vitest run src/app/app/super-admin/actions.test.ts`\n\n```json:metadata\n{\"files\": [\"src/app/app/super-admin/actions.ts\", \"src/app/app/super-admin/actions.test.ts\"], \"verifyCommand\": \"npx vitest run src/app/app/super-admin/actions.test.ts\", \"acceptanceCriteria\": [\"exitViewAs handles null home tenant\", \"createTenant no auto-member insert\", \"viewAsTenant allows observer\"]}\n```"
     },
     {
       "id": 16,
       "subject": "Task 8: Observer mutation gating on tenant list + detail pages",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [15],
       "description": "**Goal:** Disable mutating UI controls for platform_observer; buttons remain visible with tooltip.\n\n**Files:**\n- Modify: `src/app/app/super-admin/page.tsx`\n- Modify: `src/app/app/super-admin/tenants/[tenantId]/page.tsx`\n- Modify: `src/app/app/super-admin/tenants/[tenantId]/_components/lifecycle-controls.tsx`\n- Modify: `src/app/app/super-admin/tenants/[tenantId]/_components/members-panel.tsx`\n\n**Verify:** `npx tsc --noEmit`\n\n```json:metadata\n{\"files\": [\"src/app/app/super-admin/page.tsx\", \"src/app/app/super-admin/tenants/[tenantId]/page.tsx\", \"src/app/app/super-admin/tenants/[tenantId]/_components/lifecycle-controls.tsx\", \"src/app/app/super-admin/tenants/[tenantId]/_components/members-panel.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"+ New tenant disabled for observer\", \"View as not disabled\", \"lifecycle and members buttons disabled for observer\"]}\n```"
     },
     {
       "id": 17,
       "subject": "Task 9: Team management page + actions",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [11, 12],
       "description": "**Goal:** New /app/super-admin/team page with add/promote/demote/remove platform users.\n\n**Files:**\n- Create: `supabase/patches/super_admin_get_profile_by_email.sql`\n- Create: `src/app/app/super-admin/team/page.tsx`\n- Create: `src/app/app/super-admin/team/actions.ts`\n- Create: `src/app/app/super-admin/team/actions.test.ts`\n- Create: `src/app/app/super-admin/team/team.module.css`\n- Create: `src/app/app/super-admin/team/_components/add-platform-user-modal.tsx`\n- Create: `src/app/app/super-admin/team/_components/team-client.tsx`\n\n**Verify:** `npx vitest run src/app/app/super-admin/team/actions.test.ts`\n\n```json:metadata\n{\"files\": [\"src/app/app/super-admin/team/page.tsx\", \"src/app/app/super-admin/team/actions.ts\", \"src/app/app/super-admin/team/actions.test.ts\"], \"verifyCommand\": \"npx vitest run src/app/app/super-admin/team/actions.test.ts\", \"acceptanceCriteria\": [\"team page renders platform users\", \"all action guards enforced\", \"last super_admin guard enforced\", \"null tenant_id guard enforced\"]}\n```"
     },
     {
       "id": 18,
       "subject": "Task 10: RLS integration tests",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [9],
       "description": "**Goal:** Prove RLS privacy boundary holds at DB level.\n\n**Files:**\n- Create: `supabase/__tests__/rls_business_tables.test.ts`\n- Create: `supabase/__tests__/rls_platform_tables.test.ts`\n\n**Verify:** `npx vitest run supabase/__tests__/`\n\n```json:metadata\n{\"files\": [\"supabase/__tests__/rls_business_tables.test.ts\", \"supabase/__tests__/rls_platform_tables.test.ts\"], \"verifyCommand\": \"npx vitest run supabase/__tests__/\", \"acceptanceCriteria\": [\"super_admin without active tenant reads zero business rows\", \"observer can read platform tables\", \"observer cannot write platform tables\", \"member blocked from audit log\"]}\n```"
     },
     {
       "id": 19,
       "subject": "Task 11: Full type-check and smoke-test pass",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [14, 15, 16, 17, 18],
       "description": "**Goal:** Resolve all TypeScript errors; app compiles; smoke-tests pass locally.\n\n**Files:** Various app route files using ctx.tenantId as string.\n\n**Verify:** `npx tsc --noEmit && npx vitest run`\n\n```json:metadata\n{\"files\": [], \"verifyCommand\": \"npx tsc --noEmit && npx vitest run\", \"acceptanceCriteria\": [\"tsc --noEmit exits 0\", \"all vitest tests pass\", \"smoke checklist passes\"]}\n```"
     }
   ],
-  "lastUpdated": "2026-05-28T00:00:00.000Z"
+  "lastUpdated": "2026-05-30T12:10:00.000Z"
 }

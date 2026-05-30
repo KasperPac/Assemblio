@@ -89,7 +89,8 @@ export async function inviteTeammate(input: {
   role: "admin" | "member";
 }): Promise<ActionResult> {
   const ctx = await getServerTenantContext();
-  if (!ctx || !ctx.tenantId) return { ok: false, error: "unauthorized" };
+  if (!ctx) return { ok: false, error: "unauthorized" };
+  if (!ctx.tenantId) return { ok: false, error: "unauthorized" }; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
   if (!isAdmin(ctx.role)) return { ok: false, error: "forbidden" };
 
   const email = input.email.trim().toLowerCase();
@@ -176,7 +177,8 @@ export async function revokeInvitation(
   invitationId: string
 ): Promise<ActionResult> {
   const ctx = await getServerTenantContext();
-  if (!ctx || !ctx.tenantId) return { ok: false, error: "unauthorized" };
+  if (!ctx) return { ok: false, error: "unauthorized" };
+  if (!ctx.tenantId) return { ok: false, error: "unauthorized" }; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
   if (!isAdmin(ctx.role)) return { ok: false, error: "forbidden" };
 
   const admin = createSupabaseAdminClient();
@@ -193,7 +195,8 @@ export async function resendInvitation(
   invitationId: string
 ): Promise<ActionResult> {
   const ctx = await getServerTenantContext();
-  if (!ctx || !ctx.tenantId) return { ok: false, error: "unauthorized" };
+  if (!ctx) return { ok: false, error: "unauthorized" };
+  if (!ctx.tenantId) return { ok: false, error: "unauthorized" }; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
   if (!isAdmin(ctx.role)) return { ok: false, error: "forbidden" };
 
   const admin = createSupabaseAdminClient();

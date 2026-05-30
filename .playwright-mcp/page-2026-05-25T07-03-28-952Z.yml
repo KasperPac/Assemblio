@@ -1,0 +1,63 @@
+- generic [ref=e3]:
+  - generic:
+    - link "Skip to content":
+      - /url: "#AppFrameMain"
+  - generic [ref=e5]:
+    - link "Return to home page" [ref=e7] [cursor=pointer]:
+      - /url: /4581855
+      - img "Return to home page" [ref=e8]
+    - generic [ref=e9]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: Search
+        - searchbox "Search" [ref=e13]
+        - generic:
+          - generic:
+            - img
+      - button "Notifications 1" [ref=e18] [cursor=pointer]:
+        - link "Notifications 1" [ref=e19]:
+          - /url: /4581855/notifications
+          - generic [ref=e20]:
+            - generic [ref=e21]: Notifications
+            - img [ref=e22]
+          - generic [ref=e24]: "1"
+      - button "Avatar with initials P A Pac Technologies Kasper Simonsen" [ref=e27] [cursor=pointer]:
+        - img "Avatar with initials P A" [ref=e29]:
+          - img [ref=e31]:
+            - generic [ref=e32]: PA
+        - generic [ref=e33]:
+          - paragraph [ref=e34]: Pac Technologies
+          - paragraph [ref=e35]: Kasper Simonsen
+  - generic "Navigation" [ref=e36]:
+    - navigation [ref=e37]:
+      - generic [ref=e38]:
+        - list [ref=e40]:
+          - listitem [ref=e41]:
+            - link "ALL APPS" [ref=e44] [cursor=pointer]:
+              - /url: /4581855/apps
+              - img [ref=e48]
+              - generic [ref=e50]: ALL APPS
+        - heading "Manuva" [level=2] [ref=e52]
+        - list [ref=e54]:
+          - listitem [ref=e55]:
+            - link "Overview" [ref=e58] [cursor=pointer]:
+              - /url: /4581855/apps/360504393729/overview
+              - generic [ref=e59]: Overview
+          - listitem [ref=e60]:
+            - link "API access requests" [ref=e63] [cursor=pointer]:
+              - /url: /4581855/apps/360504393729/api_access
+              - generic [ref=e64]: API access requests
+          - listitem [ref=e65]:
+            - link "Admin performance" [ref=e68] [cursor=pointer]:
+              - /url: /4581855/apps/360504393729/admin_performance
+              - generic [ref=e69]: Admin performance
+          - listitem [ref=e70]:
+            - link "Distribution" [ref=e73] [cursor=pointer]:
+              - /url: /4581855/apps/360504393729/distribution
+              - generic [ref=e74]: Distribution
+          - listitem [ref=e75]:
+            - link "App history" [ref=e78] [cursor=pointer]:
+              - /url: /4581855/apps/360504393729/history
+              - generic [ref=e79]: App history
+  - progressbar "Page loading bar" [ref=e81]
+  - main [ref=e82]:
+    - status "Page loading" [ref=e85]

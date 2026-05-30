@@ -46,7 +46,7 @@ export default function TeamClient({ rows, canMutate, superAdminCount }: TeamCli
 
   return (
     <>
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+      <div className={styles.addBar}>
         <button
           onClick={() => setAddOpen(true)}
           disabled={!canMutate}
@@ -124,7 +124,7 @@ export default function TeamClient({ rows, canMutate, superAdminCount }: TeamCli
                         </button>
                       </div>
                     ) : (
-                      <span style={{ color: "var(--ink-muted)", fontSize: "var(--text-sm)" }}>
+                      <span className={styles.selfLabel}>
                         {row.isSelf ? "(you)" : "—"}
                       </span>
                     )}

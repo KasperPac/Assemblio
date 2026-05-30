@@ -1,0 +1,816 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - img "Manuva" [ref=e5]
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - paragraph [ref=e8]: Operations
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /app
+            - img [ref=e11]
+            - text: Dashboard
+          - link "Products" [ref=e16] [cursor=pointer]:
+            - /url: /app/products
+            - img [ref=e18]
+            - text: Products
+          - link "Components" [ref=e22] [cursor=pointer]:
+            - /url: /app/components
+            - img [ref=e24]
+            - text: Components
+          - link "Goods Inwards" [ref=e28] [cursor=pointer]:
+            - /url: /app/goods-inwards
+            - img [ref=e30]
+            - text: Goods Inwards
+          - link "Orders" [ref=e34] [cursor=pointer]:
+            - /url: /app/orders
+            - img [ref=e36]
+            - text: Orders
+          - link "Stocktake" [ref=e39] [cursor=pointer]:
+            - /url: /app/stocktake
+            - img [ref=e41]
+            - text: Stocktake
+          - link "Suppliers" [ref=e43] [cursor=pointer]:
+            - /url: /app/suppliers
+            - img [ref=e45]
+            - text: Suppliers
+          - link "Reports" [ref=e49] [cursor=pointer]:
+            - /url: /app/reports
+            - img [ref=e51]
+            - text: Reports
+        - generic [ref=e52]:
+          - paragraph [ref=e53]: Warehouse
+          - link "Locations" [ref=e54] [cursor=pointer]:
+            - /url: /app/warehouse/locations
+            - img [ref=e56]
+            - text: Locations
+        - generic [ref=e59]:
+          - paragraph [ref=e60]: Planning
+          - link "Production Planning" [ref=e61] [cursor=pointer]:
+            - /url: /app/planning/floor
+            - img [ref=e63]
+            - text: Production Planning
+          - link "Departments" [ref=e67] [cursor=pointer]:
+            - /url: /app/departments
+            - img [ref=e69]
+            - text: Departments
+        - generic [ref=e71]:
+          - paragraph [ref=e72]: Workspace
+          - link "Activity Log" [ref=e73] [cursor=pointer]:
+            - /url: /app/activity-log
+            - img [ref=e75]
+            - text: Activity Log
+          - link "Trash" [ref=e78] [cursor=pointer]:
+            - /url: /app/trash
+            - img [ref=e80]
+            - text: Trash
+    - generic [ref=e83]:
+      - banner [ref=e84]:
+        - generic [ref=e86]:
+          - paragraph [ref=e87]: Inventory
+          - paragraph [ref=e88]: Review balances, post movements, and audit stock position.
+        - button "User menu" [ref=e91] [cursor=pointer]: K
+      - generic [ref=e93]:
+        - generic [ref=e94]:
+          - paragraph [ref=e96]: Record movements, monitor component availability, and inspect the latest ledger activity without leaving the operator flow.
+          - link "Export CSV" [ref=e98] [cursor=pointer]:
+            - /url: /app/inventory/export
+        - generic [ref=e99]:
+          - generic [ref=e100]:
+            - generic [ref=e101]: On hand units
+            - strong [ref=e102]: 3,897
+            - paragraph [ref=e103]: 60 balance rows
+          - generic [ref=e104]:
+            - generic [ref=e105]: Reserved units
+            - strong [ref=e106]: "0"
+            - paragraph [ref=e107]: 3 low stock alerts
+          - generic [ref=e108]:
+            - generic [ref=e109]: In production
+            - strong [ref=e110]: "663"
+            - paragraph [ref=e111]: 1 default location
+        - generic [ref=e112]:
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - generic [ref=e115]:
+                - generic [ref=e116]:
+                  - paragraph [ref=e117]: Movement entry
+                  - heading "Log inventory movement" [level=2] [ref=e118]
+                - generic [ref=e119]: Append-only ledger
+              - paragraph [ref=e120]: Every adjustment should be captured here so movement history and live balances remain aligned.
+              - generic [ref=e121]:
+                - generic [ref=e122]:
+                  - generic [ref=e123]:
+                    - text: Component
+                    - combobox "Component" [ref=e124]:
+                      - option "Select component" [selected]
+                      - option "24VDC Power Supply 20A (CMP-PSU-24V20)"
+                      - option "Air Preparation Unit (FRL) (CMP-FRL-01)"
+                      - option "Aluminium Extrusion 40x40 2m (CMP-ALU-4040)"
+                      - option "Angle Bracket 40x40 (CMP-BRKT-40)"
+                      - option "Application Transfer Tape Roll (CMP-XFER-TAPE)"
+                      - option "Ball Screw Assembly 500mm (CMP-BSCR-500)"
+                      - option "Barcode Scanner Fixed Mount (CMP-BCODE-FX)"
+                      - option "Cable Tray 200mm 2m Section (CMP-CTRAY-200)"
+                      - option "CAT6 Industrial Ethernet Cable 10m (CMP-CAT6-10M)"
+                      - option "Circuit Breaker 16A (CMP-MCB-16A)"
+                      - option "Clear Overlaminate Roll (CMP-LAM-CLR)"
+                      - option "Control Cabinet 800x600x300 (CMP-CAB-800)"
+                      - option "Conveyor Roller 500mm (CMP-ROLL-500)"
+                      - option "E-Stop Mushroom Button (CMP-ESTOP-01)"
+                      - option "FANUC CRX-10iA Cobot (CMP-COBOT-CRX10)"
+                      - option "Gearbox 10:1 Ratio (CMP-GBOX-10)"
+                      - option "Historian Gateway License (CMP-SCADA-HIST)"
+                      - option "Industrial Ethernet Switch 8-Port (CMP-ETH-SW8)"
+                      - option "Industrial Panel PC (CMP-IPC-PANELPC)"
+                      - option "Industrial Vision Camera (GigE) (CMP-CAM-GIGE)"
+                      - option "Label Applicator Tamp Pad (CMP-TAMP-01)"
+                      - option "Label Design Software License (CMP-LABEL-SW)"
+                      - option "Label Roll 100x50mm (2000pc) (CMP-LBL-100X50)"
+                      - option "Linear Guide Rail 1m (CMP-LGR-1M)"
+                      - option "Load Cell 50kg (CMP-LOAD-50)"
+                      - option "Machine Guarding Panel 1200x800 (CMP-GUARD-1200)"
+                      - option "Machine Vision Lens 16mm (CMP-LENS-16)"
+                      - option "Modular Belt 1m Section (CMP-BELT-1M)"
+                      - option "OEE & Reporting Module License (CMP-SCADA-OEE)"
+                      - option "Photoelectric Sensor (CMP-PE-SENS)"
+                      - option "Pneumatic Cylinder 100mm Stroke (CMP-CYL-100)"
+                      - option "Pneumatic Gripper (CMP-GRIP-PN)"
+                      - option "Print Head Assembly (CMP-PHEAD-01)"
+                      - option "Printable Vinyl Roll - Black (CMP-VINYL-BLK)"
+                      - option "Printable Vinyl Roll - Blue (CMP-VINYL-BLU)"
+                      - option "Printable Vinyl Roll - Gold (CMP-VINYL-GLD)"
+                      - option "Printable Vinyl Roll - Green (CMP-VINYL-GRN)"
+                      - option "Printable Vinyl Roll - Yellow (CMP-VINYL-YLW)"
+                      - option "PROFINET Cable 5m (CMP-PNET-5M)"
+                      - option "Proximity Sensor Inductive (CMP-PROX-IND)"
+                      - option "Ribbon 110mm x 300m (CMP-RBN-110)"
+                      - option "Robot Gripper Plate (CMP-GRIP-PLT)"
+                      - option "Safety Door Switch (CMP-SDOOR-01)"
+                      - option "Safety Laser Scanner (CMP-LASER-SCAN)"
+                      - option "Safety Light Curtain Type 4 (CMP-LCURT-T4)"
+                      - option "Safety Relay Module (CMP-SREL-01)"
+                      - option "SCADA Runtime License (CMP-SCADA-RUNTIME)"
+                      - option "Servo Drive 1.5kW (CMP-DRV-1500)"
+                      - option "Servo Motor 1.5kW (CMP-MOT-1500)"
+                      - option "Siemens HMI KTP700 Touch Panel (CMP-HMI-KTP700)"
+                      - option "Siemens S7-1500 Safety PLC (CMP-PLC-S71500)"
+                      - option "Solenoid Valve 24VDC (CMP-SOL-24V)"
+                      - option "Suction Cup 30mm (CMP-CUP-30)"
+                      - option "Terminal Blocks Set (50pc) (CMP-TERM-50)"
+                      - option "Thermal Transfer Print Engine (CMP-PRINT-TT)"
+                      - option "Timing Belt GT3 5m (CMP-TBELT-GT3)"
+                      - option "Tool Changer QC-10 (CMP-TC-QC10)"
+                      - option "Vacuum Generator (CMP-VAC-GEN)"
+                      - option "VFD 2.2kW (CMP-VFD-2200)"
+                      - option "Wireless Access Point Industrial (CMP-WAP-IND)"
+                  - generic [ref=e125]:
+                    - text: Location
+                    - combobox "Location" [ref=e126]:
+                      - option "Select location" [selected]
+                      - option "Main Warehouse - default"
+                  - generic [ref=e127]:
+                    - text: Reason
+                    - combobox "Reason" [ref=e128]:
+                      - option "Receipt" [selected]
+                      - option "Allocation"
+                      - option "Adjustment"
+                      - option "Production"
+                - generic [ref=e129]:
+                  - generic [ref=e130]:
+                    - text: Delta on-hand
+                    - spinbutton "Delta on-hand" [ref=e131]: "0"
+                  - generic [ref=e132]:
+                    - text: Delta in-prod
+                    - spinbutton "Delta in-prod" [ref=e133]: "0"
+                  - generic [ref=e134]:
+                    - text: Reference type
+                    - textbox "Reference type" [ref=e135]:
+                      - /placeholder: order
+                  - generic [ref=e136]:
+                    - text: Reference id
+                    - textbox "Reference id" [ref=e137]:
+                      - /placeholder: uuid
+                - button "Save movement" [ref=e139] [cursor=pointer]
+            - generic [ref=e140]:
+              - generic [ref=e141]:
+                - generic [ref=e142]:
+                  - paragraph [ref=e143]: Balance view
+                  - heading "Component positions by location" [level=2] [ref=e144]
+                - generic [ref=e145]: 3 alerts
+              - generic [ref=e146]:
+                - generic [ref=e147]:
+                  - generic [ref=e148]: Component
+                  - generic [ref=e149]: Location
+                  - generic [ref=e150]: On hand
+                  - generic [ref=e151]: In prod
+                  - generic [ref=e152]: Reserved
+                - generic [ref=e153]:
+                  - generic [ref=e154]:
+                    - strong [ref=e155]: Label Roll 100x50mm (2000pc)
+                    - generic [ref=e156]: CMP-LBL-100X50
+                  - generic [ref=e158]: Main Warehouse
+                  - strong [ref=e160]: "290"
+                  - strong [ref=e162]: "12"
+                  - strong [ref=e164]: "0"
+                - generic [ref=e165]:
+                  - generic [ref=e166]:
+                    - strong [ref=e167]: PROFINET Cable 5m
+                    - generic [ref=e168]: CMP-PNET-5M
+                  - generic [ref=e170]: Main Warehouse
+                  - strong [ref=e172]: "235"
+                  - strong [ref=e174]: "0"
+                  - strong [ref=e176]: "0"
+                - generic [ref=e177]:
+                  - generic [ref=e178]:
+                    - strong [ref=e179]: Suction Cup 30mm
+                    - generic [ref=e180]: CMP-CUP-30
+                  - generic [ref=e182]: Main Warehouse
+                  - strong [ref=e184]: "226"
+                  - strong [ref=e186]: "8"
+                  - strong [ref=e188]: "0"
+                - generic [ref=e189]:
+                  - generic [ref=e190]:
+                    - strong [ref=e191]: Terminal Blocks Set (50pc)
+                    - generic [ref=e192]: CMP-TERM-50
+                  - generic [ref=e194]: Main Warehouse
+                  - strong [ref=e196]: "208"
+                  - strong [ref=e198]: "8"
+                  - strong [ref=e200]: "0"
+                - generic [ref=e201]:
+                  - generic [ref=e202]:
+                    - strong [ref=e203]: Circuit Breaker 16A
+                    - generic [ref=e204]: CMP-MCB-16A
+                  - generic [ref=e206]: Main Warehouse
+                  - strong [ref=e208]: "158"
+                  - strong [ref=e210]: "32"
+                  - strong [ref=e212]: "0"
+                - generic [ref=e213]:
+                  - generic [ref=e214]:
+                    - strong [ref=e215]: Angle Bracket 40x40
+                    - generic [ref=e216]: CMP-BRKT-40
+                  - generic [ref=e218]: Main Warehouse
+                  - strong [ref=e220]: "150"
+                  - strong [ref=e222]: "116"
+                  - strong [ref=e224]: "0"
+                - generic [ref=e225]:
+                  - generic [ref=e226]:
+                    - strong [ref=e227]: Ribbon 110mm x 300m
+                    - generic [ref=e228]: CMP-RBN-110
+                  - generic [ref=e230]: Main Warehouse
+                  - strong [ref=e232]: "140"
+                  - strong [ref=e234]: "12"
+                  - strong [ref=e236]: "0"
+                - generic [ref=e237]:
+                  - generic [ref=e238]:
+                    - strong [ref=e239]: Cable Tray 200mm 2m Section
+                    - generic [ref=e240]: CMP-CTRAY-200
+                  - generic [ref=e242]: Main Warehouse
+                  - strong [ref=e244]: "126"
+                  - strong [ref=e246]: "0"
+                  - strong [ref=e248]: "0"
+                - generic [ref=e249]:
+                  - generic [ref=e250]:
+                    - strong [ref=e251]: Printable Vinyl Roll - Green
+                    - generic [ref=e252]: CMP-VINYL-GRN
+                  - generic [ref=e254]: Main Warehouse
+                  - strong [ref=e256]: "119"
+                  - strong [ref=e258]: "3"
+                  - strong [ref=e260]: "0"
+                - generic [ref=e261]:
+                  - generic [ref=e262]:
+                    - strong [ref=e263]: Printable Vinyl Roll - Yellow
+                    - generic [ref=e264]: CMP-VINYL-YLW
+                  - generic [ref=e266]: Main Warehouse
+                  - strong [ref=e268]: "104"
+                  - strong [ref=e270]: "2"
+                  - strong [ref=e272]: "0"
+                - generic [ref=e273]:
+                  - generic [ref=e274]:
+                    - strong [ref=e275]: CAT6 Industrial Ethernet Cable 10m
+                    - generic [ref=e276]: CMP-CAT6-10M
+                  - generic [ref=e278]: Main Warehouse
+                  - strong [ref=e280]: "97"
+                  - strong [ref=e282]: "6"
+                  - strong [ref=e284]: "0"
+                - generic [ref=e285]:
+                  - generic [ref=e286]:
+                    - strong [ref=e287]: Air Preparation Unit (FRL)
+                    - generic [ref=e288]: CMP-FRL-01
+                  - generic [ref=e290]: Main Warehouse
+                  - strong [ref=e292]: "97"
+                  - strong [ref=e294]: "5"
+                  - strong [ref=e296]: "0"
+                - generic [ref=e297]:
+                  - generic [ref=e298]:
+                    - strong [ref=e299]: Aluminium Extrusion 40x40 2m
+                    - generic [ref=e300]: CMP-ALU-4040
+                  - generic [ref=e302]: Main Warehouse
+                  - strong [ref=e304]: "90"
+                  - strong [ref=e306]: "58"
+                  - strong [ref=e308]: "0"
+                - generic [ref=e309]:
+                  - generic [ref=e310]:
+                    - strong [ref=e311]: Printable Vinyl Roll - Blue
+                    - generic [ref=e312]: CMP-VINYL-BLU
+                  - generic [ref=e314]: Main Warehouse
+                  - strong [ref=e316]: "88"
+                  - strong [ref=e318]: "0"
+                  - strong [ref=e320]: "0"
+                - generic [ref=e321]:
+                  - generic [ref=e322]:
+                    - strong [ref=e323]: Ball Screw Assembly 500mm
+                    - generic [ref=e324]: CMP-BSCR-500
+                  - generic [ref=e326]: Main Warehouse
+                  - strong [ref=e328]: "85"
+                  - strong [ref=e330]: "0"
+                  - strong [ref=e332]: "0"
+                - generic [ref=e333]:
+                  - generic [ref=e334]:
+                    - strong [ref=e335]: Printable Vinyl Roll - Black
+                    - generic [ref=e336]: CMP-VINYL-BLK
+                  - generic [ref=e338]: Main Warehouse
+                  - strong [ref=e340]: "83"
+                  - strong [ref=e342]: "1"
+                  - strong [ref=e344]: "0"
+                - generic [ref=e345]:
+                  - generic [ref=e346]:
+                    - strong [ref=e347]: Printable Vinyl Roll - Gold
+                    - generic [ref=e348]: CMP-VINYL-GLD
+                  - generic [ref=e350]: Main Warehouse
+                  - strong [ref=e352]: "82"
+                  - strong [ref=e354]: "0"
+                  - strong [ref=e356]: "0"
+                - generic [ref=e357]:
+                  - generic [ref=e358]:
+                    - strong [ref=e359]: Clear Overlaminate Roll
+                    - generic [ref=e360]: CMP-LAM-CLR
+                  - generic [ref=e362]: Main Warehouse
+                  - strong [ref=e364]: "81"
+                  - strong [ref=e366]: "4"
+                  - strong [ref=e368]: "0"
+                - generic [ref=e369]:
+                  - generic [ref=e370]:
+                    - strong [ref=e371]: Pneumatic Gripper
+                    - generic [ref=e372]: CMP-GRIP-PN
+                  - generic [ref=e374]: Main Warehouse
+                  - strong [ref=e376]: "77"
+                  - strong [ref=e378]: "2"
+                  - strong [ref=e380]: "0"
+                - generic [ref=e381]:
+                  - generic [ref=e382]:
+                    - strong [ref=e383]: Application Transfer Tape Roll
+                    - generic [ref=e384]: CMP-XFER-TAPE
+                  - generic [ref=e386]: Main Warehouse
+                  - strong [ref=e388]: "77"
+                  - strong [ref=e390]: "4"
+                  - strong [ref=e392]: "0"
+                - generic [ref=e393]:
+                  - generic [ref=e394]:
+                    - strong [ref=e395]: Timing Belt GT3 5m
+                    - generic [ref=e396]: CMP-TBELT-GT3
+                  - generic [ref=e398]: Main Warehouse
+                  - strong [ref=e400]: "75"
+                  - strong [ref=e402]: "0"
+                  - strong [ref=e404]: "0"
+                - generic [ref=e405]:
+                  - generic [ref=e406]:
+                    - strong [ref=e407]: Wireless Access Point Industrial
+                    - generic [ref=e408]: CMP-WAP-IND
+                  - generic [ref=e410]: Main Warehouse
+                  - strong [ref=e412]: "73"
+                  - strong [ref=e414]: "0"
+                  - strong [ref=e416]: "0"
+                - generic [ref=e417]:
+                  - generic [ref=e418]:
+                    - strong [ref=e419]: Safety Laser Scanner
+                    - generic [ref=e420]: CMP-LASER-SCAN
+                  - generic [ref=e422]: Main Warehouse
+                  - strong [ref=e424]: "71"
+                  - strong [ref=e426]: "0"
+                  - strong [ref=e428]: "0"
+                - generic [ref=e429]:
+                  - generic [ref=e430]:
+                    - strong [ref=e431]: E-Stop Mushroom Button
+                    - generic [ref=e432]: CMP-ESTOP-01
+                  - generic [ref=e434]: Main Warehouse
+                  - strong [ref=e436]: "67"
+                  - strong [ref=e438]: "10"
+                  - strong [ref=e440]: "0"
+                - generic [ref=e441]:
+                  - generic [ref=e442]:
+                    - strong [ref=e443]: Industrial Vision Camera (GigE)
+                    - generic [ref=e444]: CMP-CAM-GIGE
+                  - generic [ref=e446]: Main Warehouse
+                  - strong [ref=e448]: "61"
+                  - strong [ref=e450]: "0"
+                  - strong [ref=e452]: "0"
+                - generic [ref=e453]:
+                  - generic [ref=e454]:
+                    - strong [ref=e455]: Pneumatic Cylinder 100mm Stroke
+                    - generic [ref=e456]: CMP-CYL-100
+                  - generic [ref=e458]: Main Warehouse
+                  - strong [ref=e460]: "51"
+                  - strong [ref=e462]: "7"
+                  - strong [ref=e464]: "0"
+                - generic [ref=e465]:
+                  - generic [ref=e466]:
+                    - strong [ref=e467]: Print Head Assembly
+                    - generic [ref=e468]: CMP-PHEAD-01
+                  - generic [ref=e470]: Main Warehouse
+                  - strong [ref=e472]: "50"
+                  - strong [ref=e474]: "0"
+                  - strong [ref=e476]: "0"
+                - generic [ref=e477]:
+                  - generic [ref=e478]:
+                    - strong [ref=e479]: Label Design Software License
+                    - generic [ref=e480]: CMP-LABEL-SW
+                  - generic [ref=e482]: Main Warehouse
+                  - strong [ref=e484]: "50"
+                  - strong [ref=e486]: "0"
+                  - strong [ref=e488]: "0"
+                - generic [ref=e489]:
+                  - generic [ref=e490]:
+                    - strong [ref=e491]: Tool Changer QC-10
+                    - generic [ref=e492]: CMP-TC-QC10
+                  - generic [ref=e494]: Main Warehouse
+                  - strong [ref=e496]: "48"
+                  - strong [ref=e498]: "2"
+                  - strong [ref=e500]: "0"
+                - generic [ref=e501]:
+                  - generic [ref=e502]:
+                    - strong [ref=e503]: Conveyor Roller 500mm
+                    - generic [ref=e504]: CMP-ROLL-500
+                  - generic [ref=e506]: Main Warehouse
+                  - strong [ref=e508]: "45"
+                  - strong [ref=e510]: "48"
+                  - strong [ref=e512]: "0"
+                - generic [ref=e513]:
+                  - generic [ref=e514]:
+                    - strong [ref=e515]: Historian Gateway License
+                    - generic [ref=e516]: CMP-SCADA-HIST
+                  - generic [ref=e518]: Main Warehouse
+                  - strong [ref=e520]: "45"
+                  - strong [ref=e522]: "3"
+                  - strong [ref=e524]: "0"
+                - generic [ref=e525]:
+                  - generic [ref=e526]:
+                    - strong [ref=e527]: Vacuum Generator
+                    - generic [ref=e528]: CMP-VAC-GEN
+                  - generic [ref=e530]: Main Warehouse
+                  - strong [ref=e532]: "44"
+                  - strong [ref=e534]: "2"
+                  - strong [ref=e536]: "0"
+                - generic [ref=e537]:
+                  - generic [ref=e538]:
+                    - strong [ref=e539]: Robot Gripper Plate
+                    - generic [ref=e540]: CMP-GRIP-PLT
+                  - generic [ref=e542]: Main Warehouse
+                  - strong [ref=e544]: "44"
+                  - strong [ref=e546]: "0"
+                  - strong [ref=e548]: "0"
+                - generic [ref=e549]:
+                  - generic [ref=e550]:
+                    - strong [ref=e551]: Proximity Sensor Inductive
+                    - generic [ref=e552]: CMP-PROX-IND
+                  - generic [ref=e554]: Main Warehouse
+                  - strong [ref=e556]: "41"
+                  - strong [ref=e558]: "22"
+                  - strong [ref=e560]: "0"
+                - generic [ref=e561]:
+                  - generic [ref=e562]:
+                    - strong [ref=e563]: Photoelectric Sensor
+                    - generic [ref=e564]: CMP-PE-SENS
+                  - generic [ref=e566]: Main Warehouse
+                  - strong [ref=e568]: "38"
+                  - strong [ref=e570]: "42"
+                  - strong [ref=e572]: "0"
+                - generic [ref=e573]:
+                  - generic [ref=e574]:
+                    - strong [ref=e575]: FANUC CRX-10iA Cobot
+                    - generic [ref=e576]: CMP-COBOT-CRX10
+                  - generic [ref=e578]: Main Warehouse
+                  - strong [ref=e580]: "35"
+                  - strong [ref=e582]: "2"
+                  - strong [ref=e584]: "0"
+                - generic [ref=e585]:
+                  - generic [ref=e586]:
+                    - strong [ref=e587]: SCADA Runtime License
+                    - generic [ref=e588]: CMP-SCADA-RUNTIME
+                  - generic [ref=e590]: Main Warehouse
+                  - strong [ref=e592]: "32"
+                  - strong [ref=e594]: "3"
+                  - strong [ref=e596]: "0"
+                - generic [ref=e597]:
+                  - generic [ref=e598]:
+                    - strong [ref=e599]: Barcode Scanner Fixed Mount
+                    - generic [ref=e600]: CMP-BCODE-FX
+                  - generic [ref=e602]: Main Warehouse
+                  - strong [ref=e604]: "32"
+                  - strong [ref=e606]: "5"
+                  - strong [ref=e608]: "0"
+                - generic [ref=e609]:
+                  - generic [ref=e610]:
+                    - strong [ref=e611]: OEE & Reporting Module License
+                    - generic [ref=e612]: CMP-SCADA-OEE
+                  - generic [ref=e614]: Main Warehouse
+                  - strong [ref=e616]: "32"
+                  - strong [ref=e618]: "3"
+                  - strong [ref=e620]: "0"
+                - generic [ref=e621]:
+                  - generic [ref=e622]:
+                    - strong [ref=e623]: 24VDC Power Supply 20A
+                    - generic [ref=e624]: CMP-PSU-24V20
+                  - generic [ref=e626]: Main Warehouse
+                  - strong [ref=e628]: "31"
+                  - strong [ref=e630]: "8"
+                  - strong [ref=e632]: "0"
+                - generic [ref=e633]:
+                  - generic [ref=e634]:
+                    - strong [ref=e635]: Modular Belt 1m Section
+                    - generic [ref=e636]: CMP-BELT-1M
+                  - generic [ref=e638]: Main Warehouse
+                  - strong [ref=e640]: "30"
+                  - strong [ref=e642]: "80"
+                  - strong [ref=e644]: "0"
+                - generic [ref=e645]:
+                  - generic [ref=e646]:
+                    - strong [ref=e647]: Label Applicator Tamp Pad
+                    - generic [ref=e648]: CMP-TAMP-01
+                  - generic [ref=e650]: Main Warehouse
+                  - strong [ref=e652]: "28"
+                  - strong [ref=e654]: "6"
+                  - strong [ref=e656]: "0"
+                - generic [ref=e657]:
+                  - generic [ref=e658]:
+                    - strong [ref=e659]: Industrial Panel PC
+                    - generic [ref=e660]: CMP-IPC-PANELPC
+                  - generic [ref=e662]: Main Warehouse
+                  - strong [ref=e664]: "27"
+                  - strong [ref=e666]: "3"
+                  - strong [ref=e668]: "0"
+                - generic [ref=e669]:
+                  - generic [ref=e670]:
+                    - strong [ref=e671]: Machine Vision Lens 16mm
+                    - generic [ref=e672]: CMP-LENS-16
+                  - generic [ref=e674]: Main Warehouse
+                  - strong [ref=e676]: "26"
+                  - strong [ref=e678]: "0"
+                  - strong [ref=e680]: "0"
+                - generic [ref=e681]:
+                  - generic [ref=e682]:
+                    - strong [ref=e683]: Industrial Ethernet Switch 8-Port
+                    - generic [ref=e684]: CMP-ETH-SW8
+                  - generic [ref=e686]: Main Warehouse
+                  - strong [ref=e688]: "22"
+                  - strong [ref=e690]: "3"
+                  - strong [ref=e692]: "0"
+                - generic [ref=e693]:
+                  - generic [ref=e694]:
+                    - strong [ref=e695]: Control Cabinet 800x600x300
+                    - generic [ref=e696]: CMP-CAB-800
+                  - generic [ref=e698]: Main Warehouse
+                  - strong [ref=e700]: "18"
+                  - strong [ref=e702]: "8"
+                  - strong [ref=e704]: "0"
+                - generic [ref=e705]:
+                  - generic [ref=e706]:
+                    - strong [ref=e707]: Safety Door Switch
+                    - generic [ref=e708]: CMP-SDOOR-01
+                  - generic [ref=e710]: Main Warehouse
+                  - strong [ref=e712]: "18"
+                  - strong [ref=e714]: "4"
+                  - strong [ref=e716]: "0"
+                - generic [ref=e717]:
+                  - generic [ref=e718]:
+                    - strong [ref=e719]: Safety Relay Module
+                    - generic [ref=e720]: CMP-SREL-01
+                  - generic [ref=e722]: Main Warehouse
+                  - strong [ref=e724]: "18"
+                  - strong [ref=e726]: "5"
+                  - strong [ref=e728]: "0"
+                - generic [ref=e729]:
+                  - generic [ref=e730]:
+                    - strong [ref=e731]: Linear Guide Rail 1m
+                    - generic [ref=e732]: CMP-LGR-1M
+                  - generic [ref=e734]: Main Warehouse
+                  - strong [ref=e736]: "15"
+                  - strong [ref=e738]: "0"
+                  - strong [ref=e740]: "0"
+                - generic [ref=e741]:
+                  - generic [ref=e742]:
+                    - strong [ref=e743]: Load Cell 50kg
+                    - generic [ref=e744]: CMP-LOAD-50
+                  - generic [ref=e746]: Main Warehouse
+                  - strong [ref=e748]: "15"
+                  - strong [ref=e750]: "6"
+                  - strong [ref=e752]: "0"
+                - generic [ref=e753]:
+                  - generic [ref=e754]:
+                    - strong [ref=e755]: Machine Guarding Panel 1200x800
+                    - generic [ref=e756]: CMP-GUARD-1200
+                  - generic [ref=e758]: Main Warehouse
+                  - strong [ref=e760]: "15"
+                  - strong [ref=e762]: "32"
+                  - strong [ref=e764]: "0"
+                - generic [ref=e765]:
+                  - generic [ref=e766]:
+                    - strong [ref=e767]: Servo Motor 1.5kW
+                    - generic [ref=e768]: CMP-MOT-1500
+                  - generic [ref=e770]: Main Warehouse
+                  - strong [ref=e772]: "15"
+                  - strong [ref=e774]: "8"
+                  - strong [ref=e776]: "0"
+                - generic [ref=e777]:
+                  - generic [ref=e778]:
+                    - strong [ref=e779]: Servo Drive 1.5kW
+                    - generic [ref=e780]: CMP-DRV-1500
+                  - generic [ref=e782]: Main Warehouse
+                  - strong [ref=e784]: "15"
+                  - strong [ref=e786]: "8"
+                  - strong [ref=e788]: "0"
+                - generic [ref=e789]:
+                  - generic [ref=e790]:
+                    - strong [ref=e791]: Solenoid Valve 24VDC
+                    - generic [ref=e792]: CMP-SOL-24V
+                  - generic [ref=e794]: Main Warehouse
+                  - generic [ref=e795]:
+                    - strong [ref=e796]: "10"
+                    - generic [ref=e797]: Below reorder
+                  - strong [ref=e799]: "14"
+                  - strong [ref=e801]: "0"
+                - generic [ref=e802]:
+                  - generic [ref=e803]:
+                    - strong [ref=e804]: Thermal Transfer Print Engine
+                    - generic [ref=e805]: CMP-PRINT-TT
+                  - generic [ref=e807]: Main Warehouse
+                  - strong [ref=e809]: "10"
+                  - strong [ref=e811]: "6"
+                  - strong [ref=e813]: "0"
+                - generic [ref=e814]:
+                  - generic [ref=e815]:
+                    - strong [ref=e816]: Siemens S7-1500 Safety PLC
+                    - generic [ref=e817]: CMP-PLC-S71500
+                  - generic [ref=e819]: Main Warehouse
+                  - strong [ref=e821]: "10"
+                  - strong [ref=e823]: "11"
+                  - strong [ref=e825]: "0"
+                - generic [ref=e826]:
+                  - generic [ref=e827]:
+                    - strong [ref=e828]: Safety Light Curtain Type 4
+                    - generic [ref=e829]: CMP-LCURT-T4
+                  - generic [ref=e831]: Main Warehouse
+                  - strong [ref=e833]: "10"
+                  - strong [ref=e835]: "15"
+                  - strong [ref=e837]: "0"
+                - generic [ref=e838]:
+                  - generic [ref=e839]:
+                    - strong [ref=e840]: Gearbox 10:1 Ratio
+                    - generic [ref=e841]: CMP-GBOX-10
+                  - generic [ref=e843]: Main Warehouse
+                  - strong [ref=e845]: "10"
+                  - strong [ref=e847]: "8"
+                  - strong [ref=e849]: "0"
+                - generic [ref=e850]:
+                  - generic [ref=e851]:
+                    - strong [ref=e852]: VFD 2.2kW
+                    - generic [ref=e853]: CMP-VFD-2200
+                  - generic [ref=e855]: Main Warehouse
+                  - generic [ref=e856]:
+                    - strong [ref=e857]: "7"
+                    - generic [ref=e858]: Below reorder
+                  - strong [ref=e860]: "8"
+                  - strong [ref=e862]: "0"
+                - generic [ref=e863]:
+                  - generic [ref=e864]:
+                    - strong [ref=e865]: Siemens HMI KTP700 Touch Panel
+                    - generic [ref=e866]: CMP-HMI-KTP700
+                  - generic [ref=e868]: Main Warehouse
+                  - generic [ref=e869]:
+                    - strong [ref=e870]: "0"
+                    - generic [ref=e871]: Below reorder
+                  - strong [ref=e873]: "8"
+                  - strong [ref=e875]: "0"
+          - generic [ref=e876]:
+            - generic [ref=e877]:
+              - generic [ref=e879]:
+                - paragraph [ref=e880]: Latest ledger events
+                - heading "Recent movements" [level=2] [ref=e881]
+              - generic [ref=e882]:
+                - generic [ref=e883]:
+                  - generic [ref=e884]:
+                    - generic [ref=e885]:
+                      - strong [ref=e886]: Servo Drive 1.5kW
+                      - paragraph [ref=e887]: Main Warehouse · 17/05/2026, 11:17:57 am
+                    - generic [ref=e888]: order_fulfillment
+                  - generic [ref=e889]:
+                    - generic [ref=e890]:
+                      - text: On hand
+                      - strong [ref=e891]: "-1"
+                    - generic [ref=e892]:
+                      - text: In prod
+                      - strong [ref=e893]: "0"
+                - generic [ref=e894]:
+                  - generic [ref=e895]:
+                    - generic [ref=e896]:
+                      - strong [ref=e897]: FANUC CRX-10iA Cobot
+                      - paragraph [ref=e898]: Main Warehouse · 17/05/2026, 11:17:57 am
+                    - generic [ref=e899]: order_fulfillment
+                  - generic [ref=e900]:
+                    - generic [ref=e901]:
+                      - text: On hand
+                      - strong [ref=e902]: "-1"
+                    - generic [ref=e903]:
+                      - text: In prod
+                      - strong [ref=e904]: "0"
+                - generic [ref=e905]:
+                  - generic [ref=e906]:
+                    - generic [ref=e907]:
+                      - strong [ref=e908]: Control Cabinet 800x600x300
+                      - paragraph [ref=e909]: Main Warehouse · 17/05/2026, 11:17:57 am
+                    - generic [ref=e910]: order_fulfillment
+                  - generic [ref=e911]:
+                    - generic [ref=e912]:
+                      - text: On hand
+                      - strong [ref=e913]: "-1"
+                    - generic [ref=e914]:
+                      - text: In prod
+                      - strong [ref=e915]: "0"
+                - generic [ref=e916]:
+                  - generic [ref=e917]:
+                    - generic [ref=e918]:
+                      - strong [ref=e919]: Pneumatic Cylinder 100mm Stroke
+                      - paragraph [ref=e920]: Main Warehouse · 17/05/2026, 11:17:57 am
+                    - generic [ref=e921]: order_fulfillment
+                  - generic [ref=e922]:
+                    - generic [ref=e923]:
+                      - text: On hand
+                      - strong [ref=e924]: "-1"
+                    - generic [ref=e925]:
+                      - text: In prod
+                      - strong [ref=e926]: "0"
+                - generic [ref=e927]:
+                  - generic [ref=e928]:
+                    - generic [ref=e929]:
+                      - strong [ref=e930]: Angle Bracket 40x40
+                      - paragraph [ref=e931]: Main Warehouse · 17/05/2026, 11:17:57 am
+                    - generic [ref=e932]: order_fulfillment
+                  - generic [ref=e933]:
+                    - generic [ref=e934]:
+                      - text: On hand
+                      - strong [ref=e935]: "-16"
+                    - generic [ref=e936]:
+                      - text: In prod
+                      - strong [ref=e937]: "0"
+                - generic [ref=e938]:
+                  - generic [ref=e939]:
+                    - generic [ref=e940]:
+                      - strong [ref=e941]: Modular Belt 1m Section
+                      - paragraph [ref=e942]: Main Warehouse · 17/05/2026, 11:17:57 am
+                    - generic [ref=e943]: order_fulfillment
+                  - generic [ref=e944]:
+                    - generic [ref=e945]:
+                      - text: On hand
+                      - strong [ref=e946]: "-10"
+                    - generic [ref=e947]:
+                      - text: In prod
+                      - strong [ref=e948]: "0"
+                - generic [ref=e949]:
+                  - generic [ref=e950]:
+                    - generic [ref=e951]:
+                      - strong [ref=e952]: Aluminium Extrusion 40x40 2m
+                      - paragraph [ref=e953]: Main Warehouse · 17/05/2026, 11:17:57 am
+                    - generic [ref=e954]: order_fulfillment
+                  - generic [ref=e955]:
+                    - generic [ref=e956]:
+                      - text: On hand
+                      - strong [ref=e957]: "-8"
+                    - generic [ref=e958]:
+                      - text: In prod
+                      - strong [ref=e959]: "0"
+                - generic [ref=e960]:
+                  - generic [ref=e961]:
+                    - generic [ref=e962]:
+                      - strong [ref=e963]: E-Stop Mushroom Button
+                      - paragraph [ref=e964]: Main Warehouse · 17/05/2026, 11:17:57 am
+                    - generic [ref=e965]: order_fulfillment
+                  - generic [ref=e966]:
+                    - generic [ref=e967]:
+                      - text: On hand
+                      - strong [ref=e968]: "-2"
+                    - generic [ref=e969]:
+                      - text: In prod
+                      - strong [ref=e970]: "0"
+            - generic [ref=e971]:
+              - generic [ref=e973]:
+                - paragraph [ref=e974]: Current posture
+                - heading "Inventory summary" [level=2] [ref=e975]
+              - generic [ref=e976]:
+                - generic [ref=e979]:
+                  - strong [ref=e980]: 3,897
+                  - paragraph [ref=e981]: Units physically on hand across tracked locations.
+                - generic [ref=e984]:
+                  - strong [ref=e985]: "663"
+                  - paragraph [ref=e986]: Units committed to work in production.
+                - generic [ref=e989]:
+                  - strong [ref=e990]: "0"
+                  - paragraph [ref=e991]: Units reserved by order demand and not freely available.
+  - alert [ref=e992]

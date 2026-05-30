@@ -8,9 +8,10 @@ export const dynamic = "force-dynamic";
 
 export default async function PaywallPage() {
   const ctx = await getServerTenantContext();
-  if (!ctx || !ctx.tenantId) redirect("/login");
+  if (!ctx) redirect("/login");
+  const tenantId = ctx.tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
-  const access = await getSubscriptionAccess(ctx.supabase, ctx.tenantId);
+  const access = await getSubscriptionAccess(ctx.supabase, tenantId);
   const sub = access.sub;
   const selectedTier = sub?.selected_tier ?? "growth";
   const initialBilling = sub?.billing_interval ?? "annual";

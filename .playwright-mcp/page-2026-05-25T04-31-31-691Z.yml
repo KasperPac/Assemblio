@@ -1,0 +1,349 @@
+- generic [ref=e2]:
+  - generic [ref=e7]:
+    - link "Skip to content":
+      - /url: "#AppFrameMain"
+    - generic [ref=e12]:
+      - generic [ref=e17] [cursor=pointer]:
+        - img "Shopify" [ref=e18]
+        - img "Shopify" [ref=e19]
+      - button "Search CTRL K" [ref=e27] [cursor=pointer]:
+        - generic [ref=e28]:
+          - generic [ref=e29]:
+            - generic:
+              - generic:
+                - generic:
+                  - img
+            - generic "Search" [ref=e30]
+          - generic [ref=e31]:
+            - generic [ref=e32]: CTRL
+            - generic [ref=e33]: K
+      - generic [ref=e34]:
+        - generic [ref=e36]:
+          - button "Sidekick" [ref=e40] [cursor=pointer]:
+            - img [ref=e44]
+          - button "Alerts Feed - 0 unseen alerts" [ref=e54] [cursor=pointer]:
+            - img [ref=e58]
+        - button "Kasper Simonsen" [ref=e69] [cursor=pointer]:
+          - generic [ref=e72]:
+            - img "PacTechDevTemp" [ref=e76]:
+              - generic [ref=e77]: PAC
+            - paragraph [ref=e79]: PacTechDevTemp
+    - generic [ref=e81]:
+      - generic "Navigation" [ref=e82]:
+        - navigation [ref=e84]:
+          - generic [ref=e85]:
+            - generic [ref=e86]:
+              - list [ref=e88]:
+                - listitem [ref=e89]:
+                  - link "Home" [ref=e92] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp
+                    - generic [ref=e93]:
+                      - img [ref=e96]
+                      - img [ref=e100]
+                    - generic [ref=e102]: Home
+                - listitem [ref=e103]:
+                  - link "Orders 1" [ref=e106] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/orders
+                    - generic [ref=e107]:
+                      - img [ref=e110]
+                      - img [ref=e114]
+                    - generic [ref=e116]: Orders
+                    - generic [ref=e119]:
+                      - generic: "1"
+                - listitem [ref=e120]:
+                  - link "Products" [ref=e123] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/products
+                    - generic [ref=e124]:
+                      - img [ref=e127]
+                      - img [ref=e131]
+                    - generic [ref=e134]: Products
+                - listitem [ref=e135]:
+                  - link "Customers" [ref=e138] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/customers
+                    - generic [ref=e139]:
+                      - img [ref=e142]
+                      - img [ref=e147]
+                    - generic [ref=e150]: Customers
+                - listitem [ref=e151]:
+                  - link "Marketing" [ref=e154] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/marketing
+                    - generic [ref=e155]:
+                      - img [ref=e158]
+                      - img [ref=e164]
+                    - generic [ref=e168]: Marketing
+                - listitem [ref=e169]:
+                  - link "Discounts" [ref=e172] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/discounts
+                    - generic [ref=e173]:
+                      - img [ref=e176]
+                      - img [ref=e180]
+                    - generic [ref=e185]: Discounts
+                - listitem [ref=e186]:
+                  - link "Content" [ref=e189] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/content/metaobjects
+                    - generic [ref=e190]:
+                      - img [ref=e193]
+                      - img [ref=e200]
+                    - generic [ref=e205]: Content
+                - listitem [ref=e206]:
+                  - link "Markets" [ref=e209] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/markets
+                    - generic [ref=e210]:
+                      - img [ref=e213]
+                      - img [ref=e218]
+                    - generic [ref=e221]: Markets
+                - listitem [ref=e222]:
+                  - link "Finance" [ref=e225] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/credit
+                    - generic [ref=e226]:
+                      - img [ref=e229]
+                      - img [ref=e233]
+                    - generic [ref=e235]: Finance
+                - listitem [ref=e236]:
+                  - link "Analytics" [ref=e239] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/analytics
+                    - generic [ref=e240]:
+                      - img [ref=e243]
+                      - img [ref=e249]
+                    - generic [ref=e253]: Analytics
+              - list [ref=e254]:
+                - listitem [ref=e255]:
+                  - button "Sales channels" [ref=e257] [cursor=pointer]:
+                    - strong [ref=e259]:
+                      - generic: Sales channels
+                - listitem [ref=e261]:
+                  - button "Apps" [ref=e263] [cursor=pointer]:
+                    - strong [ref=e265]:
+                      - generic: Apps
+            - list [ref=e268]:
+              - listitem [ref=e269]:
+                - link "Settings" [ref=e272] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings
+                  - img [ref=e276]
+                  - generic [ref=e278]: Settings
+      - main [ref=e279]
+  - generic:
+    - generic:
+      - generic:
+        - generic: General shortcuts
+        - generic: Adding items to your store
+        - generic: Navigating your admin panel
+        - generic: Navigating settings
+    - dialog "Sidekick" [ref=e284]:
+      - button "Resize Sidebar" [ref=e285]:
+        - generic [ref=e286]:
+          - generic: Resize Sidebar
+    - dialog "Settings" [ref=e289]:
+      - button "Close" [ref=e290] [cursor=pointer]:
+        - img [ref=e293]
+      - generic [ref=e298]:
+        - generic [ref=e302]:
+          - generic [ref=e305]:
+            - heading "Pac Technologies Temp" [level=3] [ref=e306]:
+              - generic [ref=e307]: Pac Technologies Temp
+            - generic [ref=e308]: 2 stores
+          - generic [ref=e312]:
+            - img [ref=e316]
+            - combobox "Search" [ref=e319]
+          - navigation "Organization settings menu" [ref=e321]:
+            - list [ref=e322]:
+              - listitem [ref=e323]:
+                - link "Users" [ref=e325] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/organization-account
+                  - generic [ref=e326]:
+                    - img [ref=e330]
+                    - generic [ref=e332]: Users
+          - navigation "Shop settings menu" [ref=e333]:
+            - generic [ref=e335]:
+              - button "Update internal icon" [ref=e337] [cursor=pointer]:
+                - generic [ref=e338]:
+                  - img "PacTechDevTemp" [ref=e341]:
+                    - generic [ref=e342]: PAC
+                  - img [ref=e346]
+              - generic [ref=e349]:
+                - heading "PacTechDevTemp" [level=3] [ref=e350]:
+                  - generic [ref=e351]: PacTechDevTemp
+                - link "pactechdevtemp.myshopify.com" [ref=e354] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/domains
+                  - generic [ref=e357]: pactechdevtemp.myshopify.com
+            - list [ref=e358]:
+              - listitem [ref=e359]:
+                - link "General" [ref=e361] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/general
+                  - generic [ref=e362]:
+                    - img [ref=e366]
+                    - generic [ref=e369]: General
+              - listitem [ref=e370]:
+                - generic [ref=e373]:
+                  - img [ref=e377]
+                  - generic [ref=e380]: Plan
+              - listitem [ref=e381]:
+                - generic [ref=e384]:
+                  - img [ref=e388]
+                  - generic [ref=e390]: Billing
+              - listitem [ref=e391]:
+                - link "Payments" [ref=e393] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/payments
+                  - generic [ref=e394]:
+                    - img [ref=e398]
+                    - generic [ref=e401]: Payments
+              - listitem [ref=e402]:
+                - link "Checkout" [ref=e404] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/checkout
+                  - generic [ref=e405]:
+                    - img [ref=e409]
+                    - generic [ref=e413]: Checkout
+              - listitem [ref=e414]:
+                - link "Customer accounts" [ref=e416] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/customer_accounts
+                  - generic [ref=e417]:
+                    - img [ref=e421]
+                    - generic [ref=e424]: Customer accounts
+              - listitem [ref=e425]:
+                - link "Shipping and delivery" [ref=e427] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/shipping
+                  - generic [ref=e428]:
+                    - img [ref=e432]
+                    - generic [ref=e434]: Shipping and delivery
+              - listitem [ref=e435]:
+                - link "Taxes and duties" [ref=e437] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/taxes
+                  - generic [ref=e438]:
+                    - img [ref=e442]
+                    - generic [ref=e444]: Taxes and duties
+              - listitem [ref=e445]:
+                - link "Locations" [ref=e447] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/locations
+                  - generic [ref=e448]:
+                    - img [ref=e452]
+                    - generic [ref=e454]: Locations
+              - listitem [ref=e455]:
+                - link "Markets" [ref=e457] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/markets
+                  - generic [ref=e458]:
+                    - img [ref=e462]
+                    - generic [ref=e465]: Markets
+              - listitem [ref=e466]:
+                - link "Apps" [ref=e468] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/apps
+                  - generic [ref=e469]:
+                    - img [ref=e473]
+                    - generic [ref=e478]: Apps
+              - listitem [ref=e479]:
+                - link "Sales channels" [ref=e481] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/sales_channels
+                  - generic [ref=e482]:
+                    - img [ref=e486]
+                    - generic [ref=e488]: Sales channels
+              - listitem [ref=e489]:
+                - link "Domains" [ref=e491] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/domains
+                  - generic [ref=e492]:
+                    - img [ref=e496]
+                    - generic [ref=e500]: Domains
+              - listitem [ref=e501]:
+                - link "Customer events" [ref=e503] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/customer_events
+                  - generic [ref=e504]:
+                    - img [ref=e508]
+                    - generic [ref=e515]: Customer events
+              - listitem [ref=e516]:
+                - link "Notifications" [ref=e518] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/notifications
+                  - generic [ref=e519]:
+                    - img [ref=e523]
+                    - generic [ref=e525]: Notifications
+              - listitem [ref=e526]:
+                - link "Metafields and metaobjects" [ref=e528] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/custom_data
+                  - generic [ref=e529]:
+                    - img [ref=e533]
+                    - generic [ref=e535]: Metafields and metaobjects
+              - listitem [ref=e536]:
+                - link "Languages" [ref=e538] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/languages
+                  - generic [ref=e539]:
+                    - img [ref=e543]
+                    - generic [ref=e547]: Languages
+              - listitem [ref=e548]:
+                - link "Customer privacy" [ref=e550] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/privacy
+                  - generic [ref=e551]:
+                    - img [ref=e555]
+                    - generic [ref=e557]: Customer privacy
+              - listitem [ref=e558]:
+                - link "Policies" [ref=e560] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/legal
+                  - generic [ref=e561]:
+                    - img [ref=e565]
+                    - generic [ref=e567]: Policies
+          - link "Kasper Simonsen kasper.simonsen@pac-technologies.com.au" [ref=e569] [cursor=pointer]:
+            - /url: https://accounts.shopify.com/accounts/2174da06-88d4-416c-9dd3-fa470aebaaba/redirect
+            - generic [ref=e570]:
+              - img "KS" [ref=e573]:
+                - generic [ref=e574]: KS
+              - generic [ref=e575]:
+                - heading "Kasper Simonsen" [level=6] [ref=e577]:
+                  - generic [ref=e578]: Kasper Simonsen
+                - heading "kasper.simonsen@pac-technologies.com.au" [level=6] [ref=e579]:
+                  - generic [ref=e581]: kasper.simonsen@pac-technologies.com.au
+        - generic [ref=e585]:
+          - generic [ref=e586]:
+            - status:
+              - paragraph [ref=e587]: Apps. This page is ready
+            - generic [ref=e589]:
+              - navigation "Breadcrumbs for Apps" [ref=e592]:
+                - generic [ref=e593]:
+                  - link "Apps" [ref=e594] [cursor=pointer]:
+                    - /url: /store/pactechdevtemp/settings/apps/
+                    - img [ref=e598]
+                  - img [ref=e603]
+                  - heading "Apps" [level=1] [ref=e606]
+              - generic [ref=e607]:
+                - link "Link to develop apps" [ref=e612] [cursor=pointer]:
+                  - /url: /store/pactechdevtemp/settings/apps/development
+                  - generic [ref=e613]: Develop apps
+                - link "Shopify App Store" [ref=e616] [cursor=pointer]:
+                  - /url: https://apps.shopify.com/login/authenticate?shop=pactechdevtemp&login_hint=kasper.simonsen%40pac-technologies.com.au&url=https%3A%2F%2Fapps.shopify.com%3Fst_campaign%3Dapp-index%26st_source%3Dadmin-web%26utm_campaign%3Dapp-index%26utm_source%3Dshopify
+                  - generic [ref=e617]: Shopify App Store
+          - generic [ref=e618]:
+            - generic [ref=e746]:
+              - generic [ref=e751]:
+                - tablist [ref=e758]:
+                  - tab "Installed apps" [ref=e759] [cursor=pointer]:
+                    - generic [ref=e761]: Installed
+                  - tab "Uninstalled apps" [selected] [ref=e762] [cursor=pointer]:
+                    - generic [ref=e764]: Uninstalled
+                - button "Sort the results" [ref=e768] [cursor=pointer]:
+                  - img [ref=e772]
+              - list [ref=e776]:
+                - listitem [ref=e777] [cursor=pointer]:
+                  - generic [ref=e781]:
+                    - generic [ref=e783]:
+                      - generic:
+                        - generic:
+                          - img "Assembliov4 Logo"
+                    - link "Assembliov4" [ref=e788]:
+                      - /url: /store/pactechdevtemp/settings/apps/app_uninstallations/app/assembliov4
+                    - button "More actions" [ref=e793]:
+                      - img [ref=e797]
+                - separator [ref=e802]
+                - listitem [ref=e803] [cursor=pointer]:
+                  - generic [ref=e807]:
+                    - generic [ref=e809]:
+                      - generic:
+                        - generic:
+                          - img "PacTechDevTemp Logo"
+                    - link "PacTechDevTemp" [ref=e814]:
+                      - /url: /store/pactechdevtemp/settings/apps/app_uninstallations/app/pactechdevtemp
+                    - button "More actions" [ref=e819]:
+                      - img [ref=e823]
+            - paragraph [ref=e732]:
+              - button "Learn more about apps" [ref=e733] [cursor=pointer]:
+                - generic [ref=e735]:
+                  - generic: Learn more about apps
+      - button "Close" [ref=e738] [cursor=pointer]:
+        - generic [ref=e739]:
+          - img [ref=e742]
+          - generic [ref=e744]:
+            - generic: Close

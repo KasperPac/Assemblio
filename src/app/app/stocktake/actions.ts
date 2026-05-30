@@ -54,6 +54,7 @@ export async function createStocktakeSession(formData: FormData): Promise<void> 
   const context = await getServerTenantContext();
   if (!context || !context.tenantId) throw new Error("Missing tenant context.");
   const { supabase, tenantId } = context;
+  if (!tenantId) throw new Error("Missing tenant context."); // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   await seedVarianceReasonsIfNeeded(supabase, tenantId);
 

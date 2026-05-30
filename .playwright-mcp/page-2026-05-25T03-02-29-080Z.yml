@@ -1,0 +1,102 @@
+- generic [active] [ref=e373]:
+  - banner [ref=e374]:
+    - generic [ref=e376]:
+      - link "Skip to main content" [ref=e377] [cursor=pointer]:
+        - /url: "#main"
+      - link "Dev Dashboard logo" [ref=e379] [cursor=pointer]:
+        - /url: /dashboard/189899333
+        - img "Dev Dashboard logo" [ref=e380]
+    - button "Settings" [ref=e383] [cursor=pointer]:
+      - img "View code" [ref=e385]
+      - paragraph [ref=e389]: Pac Technologies
+  - generic [ref=e390]:
+    - navigation "Primary" [ref=e394]:
+      - generic [ref=e396]:
+        - list [ref=e398]:
+          - listitem [ref=e399]:
+            - link "Apps Apps" [ref=e400] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps
+              - img "Apps" [ref=e402]
+              - text: Apps
+          - listitem [ref=e407]:
+            - link "Dev Stores icon Stores" [ref=e408] [cursor=pointer]:
+              - /url: /dashboard/189899333/stores
+              - img "Dev Stores icon" [ref=e410]
+              - text: Stores
+          - listitem [ref=e412]:
+            - link "Catalogs icon Catalogs" [ref=e413] [cursor=pointer]:
+              - /url: /dashboard/189899333/catalogs
+              - img "Catalogs icon" [ref=e415]
+              - text: Catalogs
+        - list [ref=e421]:
+          - listitem [ref=e422]:
+            - link "App icon Manuva" [ref=e423] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps/360504393729
+              - img "App icon" [ref=e424]
+              - generic [ref=e425]: Manuva
+          - listitem [ref=e426]:
+            - list [ref=e427]:
+              - listitem [ref=e428]:
+                - img
+                - link "Monitoring" [ref=e429] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/monitoring
+              - listitem [ref=e430]:
+                - link "Logs" [ref=e431] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/logs
+              - listitem [ref=e432]:
+                - link "Versions" [ref=e433] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/versions
+              - listitem [ref=e434]:
+                - link "Settings" [ref=e435] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/settings
+      - list [ref=e437]:
+        - listitem [ref=e438]:
+          - link "Organization icon Organization" [ref=e439] [cursor=pointer]:
+            - /url: https://admin.shopify.com/organization/189899333/settings/organization-account?from=dev
+            - img "Organization icon" [ref=e441]
+            - text: Organization
+    - main [ref=e447]:
+      - generic [ref=e449]:
+        - heading "Monitoring" [level=1] [ref=e452]
+        - generic [ref=e453]:
+          - generic [ref=e454]:
+            - link "All" [ref=e455] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps/360504393729/monitoring
+            - link "API health" [ref=e456] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps/360504393729/monitoring/api_health
+            - link "Webhooks" [ref=e457] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps/360504393729/monitoring/webhooks
+            - link "Functions" [ref=e458] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps/360504393729/monitoring/function
+          - generic [ref=e459]:
+            - button "Last 7 days Expand" [ref=e461] [cursor=pointer]:
+              - paragraph [ref=e462]: Last 7 days
+              - img "Expand" [ref=e463]
+            - button "Topic Add" [ref=e467] [cursor=pointer]:
+              - paragraph [ref=e468]: Topic
+              - img "Add" [ref=e469]
+            - button "Submit" [ref=e471] [cursor=pointer]:
+              - generic [ref=e473]: Submit
+          - generic [ref=e474]:
+            - generic [ref=e475]:
+              - generic [ref=e478]:
+                - paragraph [ref=e480]: Deliveries
+                - generic [ref=e482]:
+                  - img "Empty state image" [ref=e483]
+                  - paragraph [ref=e484]: No data for the last 7 days
+              - generic [ref=e487]:
+                - paragraph [ref=e489]: Response time
+                - generic [ref=e491]:
+                  - img "Empty state image" [ref=e492]
+                  - paragraph [ref=e493]: No data for the last 7 days
+            - table [ref=e496]:
+              - rowgroup [ref=e497]:
+                - row "Topic Removed webhooks Failed delivery rate Total deliveries Response time" [ref=e498]:
+                  - columnheader "Topic" [ref=e499]
+                  - columnheader "Removed webhooks" [ref=e500]
+                  - columnheader "Failed delivery rate" [ref=e501]
+                  - columnheader "Total deliveries" [ref=e502]
+                  - columnheader "Response time" [ref=e503]
+              - rowgroup [ref=e504]:
+                - row "No data to display" [ref=e505]:
+                  - cell "No data to display" [ref=e506]

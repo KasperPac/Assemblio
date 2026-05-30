@@ -36,8 +36,9 @@ type Props = { params: Promise<{ supplierId: string }> };
 export default async function SupplierDetailPage({ params }: Props) {
   const { supplierId } = await params;
   const context = await getServerTenantContext();
-  if (!context || !context.tenantId) notFound();
-  const { supabase, tenantId } = context;
+  if (!context) notFound();
+  const { supabase, tenantId: _tenantId } = context;
+  const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const [
     { data: supplier },

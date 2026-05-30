@@ -1,0 +1,101 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - link "Skip to main content" [ref=e5] [cursor=pointer]:
+        - /url: "#main"
+      - link "Dev Dashboard logo" [ref=e7] [cursor=pointer]:
+        - /url: /dashboard/189899333
+        - img "Dev Dashboard logo" [ref=e8]
+    - button "Settings" [ref=e11] [cursor=pointer]:
+      - img "View code" [ref=e13]
+      - paragraph [ref=e17]: Pac Technologies
+  - generic [ref=e18]:
+    - navigation "Primary" [ref=e22]:
+      - generic [ref=e24]:
+        - list [ref=e26]:
+          - listitem [ref=e27]:
+            - link "Apps Apps" [ref=e28] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps
+              - img "Apps" [ref=e30]
+              - text: Apps
+          - listitem [ref=e35]:
+            - link "Dev Stores icon Stores" [ref=e36] [cursor=pointer]:
+              - /url: /dashboard/189899333/stores
+              - img "Dev Stores icon" [ref=e38]
+              - text: Stores
+          - listitem [ref=e40]:
+            - link "Catalogs icon Catalogs" [ref=e41] [cursor=pointer]:
+              - /url: /dashboard/189899333/catalogs
+              - img "Catalogs icon" [ref=e43]
+              - text: Catalogs
+        - list [ref=e49]:
+          - listitem [ref=e50]:
+            - link "App icon Manuva" [ref=e51] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps/360504393729
+              - img "App icon" [ref=e52]
+              - generic [ref=e53]: Manuva
+          - listitem [ref=e54]:
+            - list [ref=e55]:
+              - listitem [ref=e56]:
+                - img
+                - link "Monitoring" [ref=e57] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/monitoring
+              - listitem [ref=e58]:
+                - img
+                - link "Logs" [ref=e59] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/logs
+              - listitem [ref=e60]:
+                - img
+                - link "Versions" [ref=e61] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/versions
+              - listitem [ref=e62]:
+                - link "Settings" [ref=e63] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/settings
+      - list [ref=e65]:
+        - listitem [ref=e66]:
+          - link "Organization icon Organization" [ref=e67] [cursor=pointer]:
+            - /url: https://admin.shopify.com/organization/189899333/settings/organization-account?from=dev
+            - img "Organization icon" [ref=e69]
+            - text: Organization
+    - main [ref=e75]:
+      - generic [ref=e77]:
+        - generic [ref=e78]:
+          - heading "Versions" [level=1] [ref=e80]
+          - link "Create version" [ref=e82] [cursor=pointer]:
+            - /url: /dashboard/189899333/apps/360504393729/versions/new
+            - generic [ref=e84]: Create version
+        - generic [ref=e85]:
+          - generic [ref=e86]:
+            - generic [ref=e90]: Created on May 25, 2026
+            - generic [ref=e94]:
+              - generic [ref=e95]:
+                - generic [ref=e96]:
+                  - link "manuva-4" [ref=e97] [cursor=pointer]:
+                    - /url: /dashboard/189899333/apps/360504393729/versions/984373428225
+                  - generic [ref=e98]: Active
+                - paragraph [ref=e99]: embedded surface + GDPR webhooks + scope cleanup
+              - paragraph [ref=e101]: 7 minutes ago
+          - generic [ref=e102]:
+            - generic [ref=e107]: Created on May 11, 2026
+            - generic [ref=e108]:
+              - generic [ref=e111]:
+                - link "app-subdomain-fix" [ref=e114] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/versions/957820796929
+                - generic [ref=e115]:
+                  - paragraph
+                  - generic [ref=e117]: 5:03 am
+                  - paragraph
+              - generic [ref=e120]:
+                - link "initial-config" [ref=e123] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/versions/957791371265
+                - generic [ref=e124]:
+                  - paragraph
+                  - generic [ref=e126]: 4:41 am
+                  - paragraph
+              - generic [ref=e129]:
+                - link "manuva-1" [ref=e132] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/versions/957776789505
+                - generic [ref=e133]:
+                  - paragraph
+                  - generic [ref=e135]: 4:30 am
+                  - paragraph

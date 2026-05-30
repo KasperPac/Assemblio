@@ -87,29 +87,6 @@ describe("changePlatformUserRole", () => {
   it("throws when demoting the last super_admin", async () => {
     const ctx = makeCtx();
     ctx.supabase.from = vi.fn((table: string) => {
-      if (table === "profiles") {
-        let callCount = 0;
-        return {
-          select: vi.fn().mockImplementation(() => {
-            callCount++;
-            return {
-              eq: vi.fn().mockImplementation(() => ({
-                single: vi.fn().mockResolvedValue({ data: { role: "super_admin" } }),
-                // for count query
-                then: undefined,
-              })),
-              // count result when called with { count: "exact", head: true }
-              then: undefined,
-            };
-          }),
-          // simulate count = 1
-          count: vi.fn().mockResolvedValue({ count: 1, error: null }),
-        };
-      }
-      return {};
-    });
-    // Override to return count: 1 for super_admin
-    ctx.supabase.from = vi.fn((table: string) => {
       if (table !== "profiles") return {};
       return {
         select: vi.fn((col?: string, opts?: any) => {

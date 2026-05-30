@@ -1,0 +1,30 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - heading "Welcome back" [level=1] [ref=e6]
+        - paragraph [ref=e7]: Sign in with your workspace email and password.
+      - generic [ref=e8]:
+        - generic [ref=e9]:
+          - text: Email
+          - textbox "Email" [ref=e10]:
+            - /placeholder: you@company.com
+        - generic [ref=e11]:
+          - text: Password
+          - textbox "Password" [ref=e12]:
+            - /placeholder: ••••••••
+        - button "Sign in" [ref=e13] [cursor=pointer]
+      - paragraph [ref=e14]:
+        - text: New here?
+        - link "Apply for early access →" [ref=e15] [cursor=pointer]:
+          - /url: /apply
+      - paragraph [ref=e16]: Manufacturing operations by Manuva
+    - complementary [ref=e17]:
+      - generic [ref=e18]:
+        - img [ref=e19]
+        - heading [level=2] [ref=e20]: Manufacturing operations, finally simple.
+        - paragraph [ref=e21]: Inventory, BOMs, orders, and production — one workspace, no spreadsheets.
+        - generic [ref=e22]:
+          - paragraph [ref=e23]: “Manuva replaced four tools and a small mountain of spreadsheets. We ship faster and know exactly what's in stock.”
+          - text: Operations Lead · Pac Technologies
+  - alert [ref=e24]

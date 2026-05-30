@@ -178,6 +178,7 @@ export async function createStaffMember(formData: FormData) {
   }
 
   const { supabase, tenantId } = context;
+  if (!tenantId) redirect(staffingPath(weekStart, { error: "Missing+tenant+context." })); // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
   const { data: staffMember, error } = await supabase
     .from("staff_member")
     .insert({
@@ -251,6 +252,7 @@ export async function updateStaffMember(formData: FormData) {
   }
 
   const { supabase, tenantId } = context;
+  if (!tenantId) redirect(staffingPath(weekStart, { error: "Missing+tenant+context." })); // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
   const { error } = await supabase
     .from("staff_member")
     .update({

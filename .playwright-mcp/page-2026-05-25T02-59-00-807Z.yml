@@ -1,0 +1,396 @@
+- generic [active] [ref=e1]:
+  - generic:
+    - link "Skip to Content":
+      - /url: "#main"
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - link "Shopify" [ref=e6] [cursor=pointer]:
+          - /url: /au/partners
+          - img "Shopify" [ref=e7]
+        - navigation "Main" [ref=e8]:
+          - list [ref=e9]:
+            - listitem [ref=e10]:
+              - link "Find a partner" [ref=e12] [cursor=pointer]:
+                - /url: /au/partners/directory
+        - list [ref=e14]:
+          - listitem [ref=e15]:
+            - 'link "External source: Log in" [ref=e16] [cursor=pointer]':
+              - /url: https://partners.shopify.com/organizations
+              - text: Log in
+          - listitem [ref=e17]:
+            - link "Sign up" [ref=e18] [cursor=pointer]:
+              - /url: https://partners.shopify.com/signup?locale=en-AU
+    - main [ref=e19]:
+      - generic [ref=e21]:
+        - generic [ref=e23]:
+          - generic [ref=e24]:
+            - heading "Shopify partner program" [level=1] [ref=e25]
+            - paragraph [ref=e26]:
+              - text: Build fast.
+              - text: Earn more.
+              - text: Grow together.
+            - generic [ref=e27]: From your first app to your hundredth store, Shopify helps turn your best work into lasting income.
+          - 'link "External source: Become a partner (Opens in a new window)" [ref=e31] [cursor=pointer]':
+            - /url: https://partners.shopify.com/signup?locale=en-AU
+            - text: Become a partner
+        - img "Compilation of screenshots showing using Cursor AI to create a Shopify Hydrogen project" [ref=e34]
+      - generic [ref=e36]:
+        - generic [ref=e38]:
+          - heading "Get paid" [level=2] [ref=e39]
+          - paragraph [ref=e40]: $1,300,000,000 USD paid to partners in 2025
+        - generic [ref=e44]: Earn on apps, themes, store builds, referrals and more. Multiple revenue streams mean you control how you grow.
+      - generic [ref=e47]:
+        - generic [ref=e48]:
+          - 'generic "Partner feature demonstration: <a href=\"https://shopify.dev/docs/apps/build\" target=\"_blank\" rel=\"noopener noreferrer\">Build apps</a>" [ref=e50]'
+          - generic [ref=e51]:
+            - heading "Build apps" [level=3] [ref=e53]:
+              - link "Build apps" [ref=e54] [cursor=pointer]:
+                - /url: https://shopify.dev/docs/apps/build
+            - link "Shape how the world shops and sells. Build for buyers, merchants, or POS users and deploy your app across checkout, storefronts, and beyond." [ref=e57] [cursor=pointer]:
+              - /url: https://shopify.dev/docs/apps/build
+          - link "Link to the Shopify App documentation" [ref=e58] [cursor=pointer]:
+            - /url: https://shopify.dev/docs/apps/build
+        - generic [ref=e59]:
+          - 'generic "Partner feature demonstration: <a href=\"https://shopify.dev/docs/storefronts\" target=\"_blank\" rel=\"noopener noreferrer\">Build stores</a>" [ref=e61]'
+          - generic [ref=e62]:
+            - heading "Build stores" [level=3] [ref=e64]:
+              - link "Build stores" [ref=e65] [cursor=pointer]:
+                - /url: https://shopify.dev/docs/storefronts
+            - link "Transform how brands show up online. Create bespoke storefronts for merchants or sell public themes using Shopify’s flexible frameworks and APIs." [ref=e68] [cursor=pointer]:
+              - /url: https://shopify.dev/docs/storefronts
+          - link "Link to the Storefront documentation" [ref=e69] [cursor=pointer]:
+            - /url: https://shopify.dev/docs/storefronts
+        - generic [ref=e70]:
+          - 'generic "Partner feature demonstration: <a href=\"https://help.shopify.com/en/partners/partner-program/how-to-earn\" target=\"_blank\" rel=\"noopener noreferrer\">Build businesses</a>" [ref=e72]'
+          - generic [ref=e73]:
+            - heading "Build businesses" [level=3] [ref=e75]:
+              - link "Build businesses" [ref=e76] [cursor=pointer]:
+                - /url: https://help.shopify.com/en/partners/partner-program/how-to-earn
+            - link "Deliver expert services that help merchants grow. Launch stores, migrate platforms, drive traffic, and everything in between." [ref=e79] [cursor=pointer]:
+              - /url: https://help.shopify.com/en/partners/partner-program/how-to-earn
+          - link "Link to the Shopify Partner Program" [ref=e80] [cursor=pointer]:
+            - /url: https://help.shopify.com/en/partners/partner-program/how-to-earn
+      - generic [ref=e82]:
+        - heading "Build for millions of merchants worldwide" [level=2] [ref=e84]
+        - group "Logos" [ref=e85]:
+          - list [ref=e86]:
+            - listitem [ref=e87]:
+              - img "Alo" [ref=e89]
+            - listitem [ref=e90]:
+              - img "vuori" [ref=e92]
+            - listitem [ref=e93]:
+              - img "AllBirds" [ref=e95]
+            - listitem [ref=e96]:
+              - img "MUJI" [ref=e98]
+            - listitem [ref=e99]:
+              - img "Glossier" [ref=e101]
+            - listitem [ref=e102]:
+              - img "Mattel" [ref=e104]
+            - listitem [ref=e105]:
+              - img "Gymshark" [ref=e107]
+            - listitem [ref=e108]:
+              - img "Poppi" [ref=e110]
+            - listitem [ref=e111]:
+              - img "Brooklinen" [ref=e113]
+            - listitem [ref=e114]:
+              - img "Dr Squatch" [ref=e116]
+            - listitem [ref=e117]:
+              - img "Leesa" [ref=e119]
+            - listitem [ref=e120]:
+              - img "Monos" [ref=e122]
+            - listitem [ref=e123]:
+              - img "Ruggable" [ref=e125]
+          - list [ref=e126]:
+            - listitem [ref=e127]:
+              - img [ref=e129]
+            - listitem [ref=e130]:
+              - img [ref=e132]
+            - listitem [ref=e133]:
+              - img [ref=e135]
+            - listitem [ref=e136]:
+              - img [ref=e138]
+            - listitem [ref=e139]:
+              - img [ref=e141]
+            - listitem [ref=e142]:
+              - img [ref=e144]
+            - listitem [ref=e145]:
+              - img [ref=e147]
+            - listitem [ref=e148]:
+              - img [ref=e150]
+            - listitem [ref=e151]:
+              - img [ref=e153]
+            - listitem [ref=e154]:
+              - img [ref=e156]
+            - listitem [ref=e157]:
+              - img [ref=e159]
+            - listitem [ref=e160]:
+              - img [ref=e162]
+            - listitem [ref=e163]:
+              - img [ref=e165]
+      - generic [ref=e166]:
+        - generic [ref=e167]:
+          - generic [ref=e171]:
+            - heading "When merchants win, you win" [level=3] [ref=e172]
+            - generic [ref=e173]:
+              - text: Shopify converts up to 36% better than competitors
+              - superscript [ref=e174]: "1"
+              - text: . Better results drive higher retention, referrals, and recurring revenue.
+          - generic [ref=e178]:
+            - heading "Endless opportunity" [level=3] [ref=e179]
+            - generic [ref=e180]:
+              - text: Merchants make their first sale every 26 seconds
+              - superscript [ref=e181]: "2"
+              - text: . We ship 100s of new features every six months. Unlimited ways to earn.
+          - generic [ref=e185]:
+            - heading "Ship faster, earn sooner" [level=3] [ref=e186]
+            - generic [ref=e187]: Modern APIs, complete docs, and CLI tools get you from idea to launch in days, not weeks.
+        - paragraph [ref=e189]:
+          - superscript [ref=e190]: "1"
+          - text: Based on a study completed in April 2023 in partnership with a Big Three global management consulting company.
+          - superscript [ref=e191]: "2"
+          - text: On average, based on Shopify data from January to September 2025
+      - generic [ref=e192]:
+        - heading "Real partners. Real wins." [level=2] [ref=e197]
+        - region "Testimonials" [ref=e198]:
+          - group "Navigate testimonials" [ref=e199]:
+            - button "Previous Testimonial" [ref=e200] [cursor=pointer]
+            - button "Play Testimonial" [ref=e202] [cursor=pointer]:
+              - img [ref=e205]
+            - button "Next Testimonial" [ref=e207] [cursor=pointer]
+          - group "1 of 5" [ref=e209]:
+            - img "Image of Emili Horncastle, Co-founder of Zapiet." [ref=e212]
+            - blockquote [ref=e214]:
+              - paragraph [ref=e215]: Shopify’s powerful APIs and world class documentation have helped us ship exceptional products at light speed, unlocking growth for our team and our merchants.
+              - generic [ref=e216]:
+                - paragraph [ref=e217]: Zapiet
+                - generic [ref=e218]:
+                  - strong [ref=e219]: Emili Horncastle
+                  - text: — Co-founder
+          - group [ref=e220]:
+            - img [ref=e223]
+            - generic [ref=e224]:
+              - blockquote:
+                - paragraph: We see higher win rates, stronger market demand, and stronger retention because we invest in the platform that is building exclusively for commerce.
+                - generic:
+                  - paragraph: Domaine
+                  - generic:
+                    - strong: Marko Bon
+                    - text: — Co-founder
+                  - link:
+                    - /url: /partners/blog/domaine-doubles-their-client-base-and-team-by-building-a-shopify-practice
+                    - text: Case study
+          - group [ref=e225]:
+            - img [ref=e228]
+            - generic [ref=e229]:
+              - blockquote:
+                - paragraph: Aligning closely with Shopify’s standards and product direction helped us create a faster, smoother app experience for merchants, and gave us more room to grow together.
+                - generic:
+                  - paragraph: Judge.me
+                  - generic:
+                    - strong: PJ Cellis
+                    - text: — Founder and CEO
+          - group [ref=e230]:
+            - img [ref=e233]
+            - generic [ref=e234]:
+              - blockquote:
+                - paragraph: One of the best things about the Shopify community is that it’s genuinely collaborative and open. There’s a ‘blue ocean’ of opportunity to build and partner as the market keeps expanding.
+                - generic:
+                  - paragraph: The Working Party
+                  - generic:
+                    - strong: Cal Wilson
+                    - text: — Founder and CEO
+          - group [ref=e235]:
+            - img [ref=e238]
+            - generic [ref=e239]:
+              - blockquote:
+                - paragraph: Shopify’s developer-friendly tools and active community make it easy to get started and keep building. If you want to build serious commerce features, this is the place.
+                - generic:
+                  - paragraph: Loop
+                  - generic:
+                    - strong: Hannah Bravo
+                    - text: — Founder and CEO
+      - generic [ref=e240]:
+        - generic [ref=e244]:
+          - heading "Community & Resources" [level=2] [ref=e245]
+          - paragraph [ref=e246]: Built to help you build.
+        - generic [ref=e247]:
+          - generic [ref=e248]:
+            - generic [ref=e252]:
+              - heading "Dev Docs" [level=3] [ref=e253]:
+                - link "Dev Docs" [ref=e254] [cursor=pointer]:
+                  - /url: https://shopify.dev/docs
+              - generic [ref=e255]: Get unstuck fast. Complete API references, guides, and code samples for every use case.
+            - generic [ref=e259]:
+              - heading "Dev Community Forum" [level=3] [ref=e260]:
+                - link "Dev Community Forum" [ref=e261] [cursor=pointer]:
+                  - /url: https://community.shopify.dev
+              - generic [ref=e262]: 100,000+ builders. Get help, swap solutions, and meet builders like you.
+            - generic [ref=e266]:
+              - heading "Partner Blog" [level=3] [ref=e267]:
+                - link "Partner Blog" [ref=e268] [cursor=pointer]:
+                  - /url: /partners/blog
+              - generic [ref=e269]: Partner success stories, best practices, and announcements to help you grow your business.
+            - generic [ref=e273]:
+              - heading "Shopify Devs on X" [level=3] [ref=e274]:
+                - link "Shopify Devs on X" [ref=e275] [cursor=pointer]:
+                  - /url: https://x.com/ShopifyDevs
+              - generic [ref=e276]: New features, launches, and community highlights. Straight from @ShopifyDevs.
+            - generic [ref=e280]:
+              - heading "Built for Shopify" [level=3] [ref=e281]:
+                - link "Built for Shopify" [ref=e282] [cursor=pointer]:
+                  - /url: https://shopify.dev/docs/built-for-shopify
+              - generic [ref=e283]: Build apps to Shopify’s highest quality standards and unlock exclusive growth opportunities.
+            - generic [ref=e287]:
+              - heading "Shopify Academy" [level=3] [ref=e288]:
+                - link "Shopify Academy" [ref=e289] [cursor=pointer]:
+                  - /url: https://www.shopifyacademy.com
+              - generic [ref=e290]: Level up with courses, training, and certifications. Build the expertise merchants look for.
+          - generic [ref=e291]:
+            - generic [ref=e295]:
+              - heading "Shopify Editions" [level=3] [ref=e296]:
+                - link "Shopify Editions" [ref=e297] [cursor=pointer]:
+                  - /url: /au/editions
+              - generic [ref=e298]: Every 6 months, Shopify rolls out 100s of new features and updates.
+            - generic [ref=e301]:
+              - heading "dot dev" [level=3] [ref=e302]:
+                - link "dot dev" [ref=e303] [cursor=pointer]:
+                  - /url: https://www.youtube.com/watch?v=IRuQRRc8Npo&list=PLvQF73bM4-5Wr_LdFZkrXqD9hpGhl8pjo&index=16
+              - generic [ref=e304]: Join us IRL. New features, live demos, and thousands of partners building on Shopify.
+      - generic [ref=e307]:
+        - generic [ref=e308]:
+          - heading "Shopify Partner Program" [level=2] [ref=e309]
+          - paragraph [ref=e310]: Ready to grow with Shopify?
+          - generic [ref=e311]: Join 100,000+ partners turning apps, storefronts, and services into lasting revenue.
+        - 'link "External source: Become a partner (Opens in a new window)" [ref=e315] [cursor=pointer]':
+          - /url: https://partners.shopify.com/signup?locale=en-AU
+          - text: Become a partner
+    - contentinfo [ref=e316]:
+      - link "Back to the top" [ref=e317] [cursor=pointer]:
+        - /url: "#main"
+        - img
+      - list [ref=e318]:
+        - listitem [ref=e319]:
+          - heading "Shopify" [level=3] [ref=e320]
+          - list [ref=e321]:
+            - listitem [ref=e322]:
+              - link "What is Shopify?" [ref=e323] [cursor=pointer]:
+                - /url: /au/blog/what-is-shopify
+            - listitem [ref=e324]:
+              - link "Shopify Editions" [ref=e325] [cursor=pointer]:
+                - /url: /editions
+            - listitem [ref=e326]:
+              - link "Investors" [ref=e327] [cursor=pointer]:
+                - /url: https://www.shopify.com/investors
+            - listitem [ref=e328]:
+              - link "Sustainability" [ref=e329] [cursor=pointer]:
+                - /url: /au/climate
+        - listitem [ref=e330]:
+          - heading "Ecosystem" [level=3] [ref=e331]
+          - list [ref=e332]:
+            - listitem [ref=e333]:
+              - link "Developer Docs" [ref=e334] [cursor=pointer]:
+                - /url: https://shopify.dev/docs
+            - listitem [ref=e335]:
+              - link "Theme Store" [ref=e336] [cursor=pointer]:
+                - /url: https://themes.shopify.com/
+            - listitem [ref=e337]:
+              - link "App Store" [ref=e338] [cursor=pointer]:
+                - /url: https://apps.shopify.com/
+            - listitem [ref=e339]:
+              - link "Partners" [ref=e340] [cursor=pointer]:
+                - /url: /au/partners
+            - listitem [ref=e341]:
+              - link "Affiliates" [ref=e342] [cursor=pointer]:
+                - /url: /au/affiliates
+        - listitem [ref=e343]:
+          - heading "Resources" [level=3] [ref=e344]
+          - list [ref=e345]:
+            - listitem [ref=e346]:
+              - link "Blog" [ref=e347] [cursor=pointer]:
+                - /url: /au/blog
+            - listitem [ref=e348]:
+              - link "Compare Shopify" [ref=e349] [cursor=pointer]:
+                - /url: /au/compare
+            - listitem [ref=e350]:
+              - link "Guides" [ref=e351] [cursor=pointer]:
+                - /url: /au/blog/topics/guides
+            - listitem [ref=e352]:
+              - link "Courses" [ref=e353] [cursor=pointer]:
+                - /url: https://www.shopifyacademy.com
+            - listitem [ref=e354]:
+              - link "Free Tools" [ref=e355] [cursor=pointer]:
+                - /url: /au/tools
+            - listitem [ref=e356]:
+              - link "Changelog" [ref=e357] [cursor=pointer]:
+                - /url: https://changelog.shopify.com
+        - listitem [ref=e358]:
+          - heading "Support" [level=3] [ref=e359]
+          - list [ref=e360]:
+            - listitem [ref=e361]:
+              - link "Shopify Help Center" [ref=e362] [cursor=pointer]:
+                - /url: https://help.shopify.com/en
+            - listitem [ref=e363]:
+              - link "Community Forum" [ref=e364] [cursor=pointer]:
+                - /url: https://community.shopify.com/
+            - listitem [ref=e365]:
+              - link "Hire a Partner" [ref=e366] [cursor=pointer]:
+                - /url: /au/partners/directory
+            - listitem [ref=e367]:
+              - link "Service Status" [ref=e368] [cursor=pointer]:
+                - /url: https://shopifystatus.com
+      - generic [ref=e369]:
+        - 'button "Region Navigation. Current: Australia" [ref=e371] [cursor=pointer]':
+          - generic [ref=e372]:
+            - img [ref=e373]
+            - generic [ref=e375]: Australia | English
+            - img
+        - list [ref=e376]:
+          - listitem [ref=e377]:
+            - link "Terms of Service" [ref=e378] [cursor=pointer]:
+              - /url: /au/legal/terms
+          - listitem [ref=e379]:
+            - link "Legal" [ref=e380] [cursor=pointer]:
+              - /url: /au/legal
+          - listitem [ref=e381]:
+            - link "Privacy Policy" [ref=e382] [cursor=pointer]:
+              - /url: /au/legal/privacy
+          - listitem [ref=e383]:
+            - link "Sitemap" [ref=e384] [cursor=pointer]:
+              - /url: /au/sitemap
+          - listitem [ref=e385]:
+            - link "Your Privacy Choices California Consumer Privacy Act (CCPA) Opt-Out Icon" [ref=e386] [cursor=pointer]:
+              - /url: https://privacy.shopify.com/en
+              - generic [ref=e387]:
+                - text: Your Privacy Choices
+                - img "California Consumer Privacy Act (CCPA) Opt-Out Icon" [ref=e388]
+        - list [ref=e389]:
+          - listitem [ref=e390]:
+            - 'link "External source: Facebook (Opens in a new window)" [ref=e391] [cursor=pointer]':
+              - /url: https://www.facebook.com/shopify
+              - img
+          - listitem [ref=e392]:
+            - 'link "External source: Twitter (Opens in a new window)" [ref=e393] [cursor=pointer]':
+              - /url: https://twitter.com/shopify
+              - img
+          - listitem [ref=e394]:
+            - 'link "External source: YouTube (Opens in a new window)" [ref=e395] [cursor=pointer]':
+              - /url: https://www.youtube.com/user/shopify
+              - img
+          - listitem [ref=e396]:
+            - 'link "External source: Instagram (Opens in a new window)" [ref=e397] [cursor=pointer]':
+              - /url: https://www.instagram.com/shopify/
+              - img
+          - listitem [ref=e398]:
+            - 'link "External source: TikTok (Opens in a new window)" [ref=e399] [cursor=pointer]':
+              - /url: https://www.tiktok.com/@shopify
+              - img
+          - listitem [ref=e400]:
+            - 'link "External source: LinkedIn (Opens in a new window)" [ref=e401] [cursor=pointer]':
+              - /url: https://www.linkedin.com/company/shopify
+              - img
+          - listitem [ref=e402]:
+            - 'link "External source: Pinterest (Opens in a new window)" [ref=e403] [cursor=pointer]':
+              - /url: https://www.pinterest.com/shopify/
+              - img
+  - img

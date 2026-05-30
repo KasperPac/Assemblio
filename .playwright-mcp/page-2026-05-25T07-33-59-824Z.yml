@@ -1,0 +1,272 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - generic:
+      - link "Skip to content":
+        - /url: "#AppFrameMain"
+    - generic [ref=e5]:
+      - link "Return to home page" [ref=e7] [cursor=pointer]:
+        - /url: /4581855
+        - img "Return to home page" [ref=e8]
+      - generic [ref=e9]:
+        - generic [ref=e11]:
+          - generic [ref=e12]: Search
+          - searchbox "Search" [ref=e13]
+          - generic:
+            - generic:
+              - img
+        - button "Notifications 1" [ref=e18] [cursor=pointer]:
+          - link "Notifications 1" [ref=e19]:
+            - /url: /4581855/notifications
+            - generic [ref=e20]:
+              - generic [ref=e21]: Notifications
+              - img [ref=e22]
+            - generic [ref=e24]: "1"
+        - button "Avatar with initials P A Pac Technologies Kasper Simonsen" [ref=e27] [cursor=pointer]:
+          - img "Avatar with initials P A" [ref=e29]:
+            - img [ref=e31]:
+              - generic [ref=e32]: PA
+          - generic [ref=e33]:
+            - paragraph [ref=e34]: Pac Technologies
+            - paragraph [ref=e35]: Kasper Simonsen
+    - generic "Navigation" [ref=e36]:
+      - navigation [ref=e37]:
+        - generic [ref=e38]:
+          - list [ref=e40]:
+            - listitem [ref=e41]:
+              - link "ALL APPS" [ref=e44] [cursor=pointer]:
+                - /url: /4581855/apps
+                - img [ref=e48]
+                - generic [ref=e50]: ALL APPS
+          - heading "Manuva" [level=2] [ref=e52]
+          - list [ref=e54]:
+            - listitem [ref=e55]:
+              - link "Overview" [ref=e58] [cursor=pointer]:
+                - /url: /4581855/apps/360504393729/overview
+                - generic [ref=e59]: Overview
+            - listitem [ref=e60]:
+              - link "API access requests" [ref=e63] [cursor=pointer]:
+                - /url: /4581855/apps/360504393729/api_access
+                - generic [ref=e64]: API access requests
+            - listitem [ref=e65]:
+              - link "Admin performance" [ref=e68] [cursor=pointer]:
+                - /url: /4581855/apps/360504393729/admin_performance
+                - generic [ref=e69]: Admin performance
+            - listitem [ref=e70]:
+              - link "Distribution" [ref=e73] [cursor=pointer]:
+                - /url: /4581855/apps/360504393729/distribution
+                - generic [ref=e74]: Distribution
+            - listitem [ref=e75]:
+              - link "App history" [ref=e78] [cursor=pointer]:
+                - /url: /4581855/apps/360504393729/history
+                - generic [ref=e79]: App history
+    - main [ref=e83]:
+      - generic [ref=e96]:
+        - generic [ref=e99]:
+          - navigation [ref=e102]:
+            - link "Click to go back" [ref=e103] [cursor=pointer]:
+              - /url: /4581855/apps/360504393729/overview
+              - img [ref=e107]
+              - generic [ref=e109]: Click to go back
+          - heading "App Store review" [level=1] [ref=e111]
+        - generic [ref=e112]:
+          - generic [ref=e114]:
+            - generic [ref=e116]:
+              - generic [ref=e117]: Attention
+              - generic [ref=e118]: Draft
+            - generic [ref=e119]:
+              - paragraph [ref=e121]: Complete preliminary steps to prepare your submission
+              - generic [ref=e122]:
+                - button "Submit for review" [disabled]:
+                  - generic:
+                    - generic: Submit for review
+          - generic [ref=e123]:
+            - heading "Preliminary steps" [level=2] [ref=e125]
+            - generic [ref=e127]:
+              - generic [ref=e130]:
+                - img [ref=e134]
+                - heading "Queries supported API versions" [level=3] [ref=e142]
+              - generic [ref=e145]:
+                - img [ref=e149]
+                - heading "Fixed requirement issues with configuration" [level=3] [ref=e157]
+              - generic [ref=e160]:
+                - img [ref=e164]
+                - heading "Added an emergency contact for your account" [level=3] [ref=e172]
+              - generic [ref=e175]:
+                - img [ref=e179]
+                - generic [ref=e185]:
+                  - heading "Created listing (English)" [level=3] [ref=e187]
+                  - link "Edit" [ref=e189] [cursor=pointer]:
+                    - /url: /4581855/apps/360504393729/edit_listing/en
+              - generic [ref=e192]:
+                - img [ref=e196]
+                - generic [ref=e200]:
+                  - heading "Recommended changes for Shopify App Store listing" [level=3] [ref=e204]
+                  - generic [ref=e205]: An AI check recommended changes for your listing.
+                  - button "View suggestions" [ref=e208] [cursor=pointer]:
+                    - generic [ref=e210]: View suggestions
+              - generic [ref=e213]:
+                - img [ref=e217]
+                - generic [ref=e223]:
+                  - heading "Doesn't need access to protected customer data" [level=3] [ref=e225]
+                  - link "Change" [ref=e227] [cursor=pointer]:
+                    - /url: /4581855/apps/360504393729/customer_data
+              - generic [ref=e228]:
+                - generic [ref=e229]: Passed automated check for common errors
+                - generic [ref=e231]:
+                  - img [ref=e235]
+                  - heading "Automated checks for common errors" [level=3] [ref=e243]
+              - generic [ref=e246]:
+                - img [ref=e250]
+                - generic [ref=e253]:
+                  - heading "Select your app's capabilities to show personalized review requirements" [level=3] [ref=e257]
+                  - paragraph [ref=e259]: Some apps may have special requirements based on how they'll help merchants.
+                  - button "Select" [ref=e262] [cursor=pointer]:
+                    - generic [ref=e264]: Select
+              - generic [ref=e267]:
+                - img [ref=e271]
+                - heading "Embedded app checks" [level=3] [ref=e279]
+              - generic [ref=e282]:
+                - img [ref=e286]
+                - generic [ref=e289]:
+                  - heading "Run a self review of your submission with AI" [level=3] [ref=e293]
+                  - paragraph [ref=e295]:
+                    - generic [ref=e296]:
+                      - generic [ref=e297]: Use your AI assistant to run through the app review checks and get feedback before you submit. This can reduce review time and increase your chances of approval.
+                      - generic [ref=e298]:
+                        - text: Install the
+                        - link "Shopify AI Toolkit" [ref=e299] [cursor=pointer]:
+                          - /url: https://shopify.dev/docs/apps/build/ai-toolkit
+                        - text: "if you haven't already, then run this command:"
+                  - generic [ref=e301]:
+                    - generic [ref=e304]:
+                      - generic [ref=e307]: Shopify AI Toolkit command
+                      - generic [ref=e310]:
+                        - alert "Shopify AI Toolkit command Copy text to clipboard" [ref=e311]: /shopify-app-store-review
+                        - button "Copy text to clipboard" [ref=e314] [cursor=pointer]:
+                          - img [ref=e319]
+                    - button "Mark as done" [ref=e322] [cursor=pointer]
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - dialog "What capabilities does your app have?" [active]:
+              - generic [ref=e324]:
+                - generic [ref=e326]:
+                  - heading "What capabilities does your app have?" [level=2] [ref=e328]
+                  - button "Close" [ref=e329] [cursor=pointer]:
+                    - img [ref=e332]
+                - generic [ref=e337]:
+                  - generic [ref=e339]:
+                    - generic [ref=e340] [cursor=pointer]:
+                      - generic [ref=e342]:
+                        - checkbox "Blockchain" [ref=e343]
+                        - generic:
+                          - generic:
+                            - img
+                      - generic [ref=e345]: Blockchain
+                    - generic [ref=e347]: Exposes merchants or their customers to blockchain-based assets or functionality.
+                  - generic [ref=e349]:
+                    - generic [ref=e350] [cursor=pointer]:
+                      - generic [ref=e352]:
+                        - checkbox "Checkout UI extension" [ref=e353]
+                        - generic:
+                          - generic:
+                            - img
+                      - generic [ref=e355]: Checkout UI extension
+                    - generic [ref=e357]: Lets merchants add custom UI or content to the checkout process.
+                  - generic [ref=e359]:
+                    - generic [ref=e360] [cursor=pointer]:
+                      - generic [ref=e362]:
+                        - checkbox "Donation distribution" [ref=e363]
+                        - generic:
+                          - generic:
+                            - img
+                      - generic [ref=e365]: Donation distribution
+                    - generic [ref=e367]: Collect funds for charitable causes and integrate donation options into a merchant's store.
+                  - generic [ref=e369]:
+                    - img [ref=e373]
+                    - generic [ref=e376]:
+                      - generic [ref=e377]: Embedded
+                      - generic [ref=e378]: Uses App Bridge to create an App Home which merchants can use directly in the Shopify admin, or the Shopify POS.
+                  - generic [ref=e380]:
+                    - generic [ref=e381] [cursor=pointer]:
+                      - generic [ref=e383]:
+                        - checkbox "Mobile app builder" [ref=e384]
+                        - generic:
+                          - generic:
+                            - img
+                      - generic [ref=e386]: Mobile app builder
+                    - generic [ref=e388]: Helps merchants transform their online stores into mobile apps for iOS and Android.
+                  - generic [ref=e390]:
+                    - generic [ref=e391] [cursor=pointer]:
+                      - generic [ref=e393]:
+                        - checkbox "Online store" [ref=e394]
+                        - generic:
+                          - generic:
+                            - img
+                      - generic [ref=e396]: Online store
+                    - generic [ref=e398]: Modifies a merchant's online store (theme) using Theme App Extensions or Shopify's APIs.
+                  - generic [ref=e400]:
+                    - generic [ref=e401] [cursor=pointer]:
+                      - generic [ref=e403]:
+                        - checkbox "Payment facilitator" [ref=e404]
+                        - generic:
+                          - generic:
+                            - img
+                      - generic [ref=e406]: Payment facilitator
+                    - generic [ref=e408]: Informs customers about payment options throughout the purchase journey, such as on product pages or at checkout.
+                  - generic [ref=e410]:
+                    - generic [ref=e411] [cursor=pointer]:
+                      - generic [ref=e413]:
+                        - checkbox "Payments" [ref=e414]
+                        - generic:
+                          - generic:
+                            - img
+                      - generic [ref=e416]: Payments
+                    - generic [ref=e418]: Integrates with the Shopify checkout to provide payment processing services.
+                  - generic [ref=e420]:
+                    - generic [ref=e421] [cursor=pointer]:
+                      - generic [ref=e423]:
+                        - checkbox "Post purchase" [ref=e424]
+                        - generic:
+                          - generic:
+                            - img
+                      - generic [ref=e426]: Post purchase
+                    - generic [ref=e428]: Allows merchants to add a post-purchase page, such as an upsell offer or surveys, to the checkout flow after the buyer completes the purchase.
+                  - generic [ref=e430]:
+                    - generic [ref=e431] [cursor=pointer]:
+                      - generic [ref=e433]:
+                        - checkbox "Product sourcing" [ref=e434]
+                        - generic:
+                          - generic:
+                            - img
+                      - generic [ref=e436]: Product sourcing
+                    - generic [ref=e438]: Supplies or connects merchants to diverse sources of inventory for their shops, such as dropshipping, wholesale, and print-on-demand products.
+                  - generic [ref=e440]:
+                    - generic [ref=e441] [cursor=pointer]:
+                      - generic [ref=e443]:
+                        - checkbox "Purchase option" [ref=e444]
+                        - generic:
+                          - generic:
+                            - img
+                      - generic [ref=e446]: Purchase option
+                    - generic [ref=e448]: Allows merchants and customers to sell and buy products as a one-time purchase, a recurring subscription, or a pre-order.
+                  - generic [ref=e450]:
+                    - generic [ref=e451] [cursor=pointer]:
+                      - generic [ref=e453]:
+                        - checkbox "Sales channel" [ref=e454]
+                        - generic:
+                          - generic:
+                            - img
+                      - generic [ref=e456]: Sales channel
+                    - generic [ref=e458]: Enables merchants to publish their products from their Shopify admin to your platform, whether they're marketing and selling online, on mobile apps, or through social media.
+                  - generic [ref=e460]:
+                    - generic [ref=e462]:
+                      - checkbox "My app doesn't have any of these capabilities" [disabled] [ref=e463]
+                      - generic:
+                        - generic:
+                          - img
+                    - generic [ref=e465]: My app doesn't have any of these capabilities
+                - button "Show review requirements" [ref=e470] [cursor=pointer]:
+                  - generic [ref=e472]: Show review requirements

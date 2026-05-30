@@ -1,0 +1,128 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - link "Skip to main content" [ref=e5] [cursor=pointer]:
+        - /url: "#main"
+      - link "Dev Dashboard logo" [ref=e7] [cursor=pointer]:
+        - /url: /dashboard/189899333
+        - img "Dev Dashboard logo" [ref=e8]
+    - button "Settings" [ref=e11] [cursor=pointer]:
+      - img "View code" [ref=e13]
+      - paragraph [ref=e17]: Pac Technologies
+  - generic [ref=e18]:
+    - navigation "Primary" [ref=e22]:
+      - generic [ref=e24]:
+        - list [ref=e26]:
+          - listitem [ref=e27]:
+            - link "Apps Apps" [ref=e28] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps
+              - img "Apps" [ref=e30]
+              - text: Apps
+          - listitem [ref=e35]:
+            - link "Dev Stores icon Stores" [ref=e36] [cursor=pointer]:
+              - /url: /dashboard/189899333/stores
+              - img "Dev Stores icon" [ref=e38]
+              - text: Stores
+          - listitem [ref=e40]:
+            - link "Catalogs icon Catalogs" [ref=e41] [cursor=pointer]:
+              - /url: /dashboard/189899333/catalogs
+              - img "Catalogs icon" [ref=e43]
+              - text: Catalogs
+        - list [ref=e49]:
+          - listitem [ref=e50]:
+            - link "App icon Manuva" [ref=e51] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps/360504393729
+              - img "App icon" [ref=e52]
+              - generic [ref=e53]: Manuva
+          - listitem [ref=e54]:
+            - list [ref=e55]:
+              - listitem [ref=e56]:
+                - img
+                - link "Monitoring" [ref=e57] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/monitoring
+              - listitem [ref=e58]:
+                - img
+                - link "Logs" [ref=e59] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/logs
+              - listitem [ref=e60]:
+                - img
+                - link "Versions" [ref=e61] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/versions
+              - listitem [ref=e62]:
+                - link "Settings" [ref=e63] [cursor=pointer]:
+                  - /url: /dashboard/189899333/apps/360504393729/settings
+      - list [ref=e65]:
+        - listitem [ref=e66]:
+          - link "Organization icon Organization" [ref=e67] [cursor=pointer]:
+            - /url: https://admin.shopify.com/organization/189899333/settings/organization-account?from=dev
+            - img "Organization icon" [ref=e69]
+            - text: Organization
+    - main [ref=e75]:
+      - generic [ref=e77]:
+        - generic [ref=e78]:
+          - generic [ref=e79]:
+            - link "Arrow Back to versions list page" [ref=e80] [cursor=pointer]:
+              - /url: /dashboard/189899333/apps/360504393729/versions
+              - img "Arrow" [ref=e81]
+              - generic [ref=e83]: Back to versions list page
+            - heading "manuva-4" [level=1] [ref=e84]
+          - button "Release" [ref=e88] [cursor=pointer]:
+            - generic [ref=e90]: Release
+        - generic [ref=e92]:
+          - generic [ref=e94]:
+            - generic [ref=e96]:
+              - paragraph [ref=e97]: App name
+              - paragraph [ref=e98]: Manuva
+              - paragraph [ref=e99]: Handle
+              - paragraph [ref=e100]: manuva
+            - generic [ref=e101]:
+              - paragraph [ref=e102]: Access
+              - generic [ref=e103]:
+                - paragraph [ref=e104]: Redirect URLs
+                - paragraph [ref=e105]: "[\"https://app.manuva.app/api/shopify/callback\"]"
+                - paragraph [ref=e106]: Scopes
+                - paragraph [ref=e107]: read_orders,read_products
+            - generic [ref=e108]:
+              - paragraph [ref=e109]: POS
+              - generic [ref=e110]:
+                - paragraph [ref=e111]:
+                  - code [ref=e112]: embedded
+                - paragraph [ref=e113]: "false"
+            - generic [ref=e114]:
+              - paragraph [ref=e115]: App URL
+              - generic [ref=e116]:
+                - paragraph [ref=e117]:
+                  - code [ref=e118]: app_url
+                - paragraph [ref=e119]: https://app.manuva.app/
+                - paragraph [ref=e120]:
+                  - code [ref=e121]: embedded
+                - paragraph [ref=e122]: "true"
+            - generic [ref=e123]:
+              - paragraph [ref=e124]: Webhooks
+              - generic [ref=e125]:
+                - paragraph [ref=e126]:
+                  - code [ref=e127]: api_version
+                - paragraph [ref=e128]: 2026-01
+            - button "Expand Webhook subscriptions 7" [ref=e131] [cursor=pointer]:
+              - img "Expand" [ref=e132]
+              - generic [ref=e135]:
+                - paragraph [ref=e136]: Webhook subscriptions
+                - generic [ref=e137]: "7"
+            - generic [ref=e138]:
+              - paragraph [ref=e139]: Privacy compliance webhook subscriptions
+              - generic [ref=e140]:
+                - paragraph [ref=e141]:
+                  - code [ref=e142]: api_version
+                - paragraph [ref=e143]: 2026-01
+                - paragraph [ref=e144]:
+                  - code [ref=e145]: customers_redact_url
+                - paragraph [ref=e146]: https://app.manuva.app/api/shopify/webhooks/gdpr/customers-redact
+                - paragraph [ref=e147]:
+                  - code [ref=e148]: customers_data_request_url
+                - paragraph [ref=e149]: https://app.manuva.app/api/shopify/webhooks/gdpr/customers-data-request
+                - paragraph [ref=e150]:
+                  - code [ref=e151]: shop_redact_url
+                - paragraph [ref=e152]: https://app.manuva.app/api/shopify/webhooks/gdpr/shop-redact
+          - generic [ref=e159]:
+            - generic [ref=e160]: Created
+            - generic [ref=e161]: May 25, 2026 at 4:22 am +0000

@@ -9,8 +9,9 @@ import styles from "./page.module.css";
 
 export default async function LocationsPage() {
   const context = await getServerTenantContext();
-  if (!context || !context.tenantId) redirect("/auth/login");
-  const { supabase, tenantId } = context;
+  if (!context) redirect("/auth/login");
+  const { supabase, tenantId: _tenantId } = context;
+  const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const access = await getSubscriptionAccess(supabase, tenantId);
   if (!access.sub || !hasFeature(access.sub, "binManagement")) {

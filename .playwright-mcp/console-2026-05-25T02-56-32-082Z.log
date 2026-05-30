@@ -1,0 +1,4 @@
+[     935ms] [LOG] https://gtm3.shopify.com/logging?container=GTM-TZ26LP8&c=AU&110=s-5&836=s-6&116=s-7&em= @ https://www.googletagmanager.com/gtm.js?id=GTM-TZ26LP8&dl=dataLayer:935
+[    1884ms] [ERROR] The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy. @ https://accounts.shopify.com/lookup?rid=b79745cb-2d32-4213-b703-c6735e1402c8&verify=1779677793-1S%2Bhg%2BhHHD7ualvpK7i3Y9IntK%2FLxnEkB4DtHpfgV9c%3D:0
+[    2542ms] [ERROR] The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy. @ https://hcaptcha.com/1/api.js?render=explicit&onload=simpleCaptchaReady:3
+[    2543ms] [ERROR] The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy. @ https://hcaptcha.com/1/api.js?render=explicit&onload=simpleCaptchaReady:3

@@ -163,8 +163,9 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
   const { variantId } = await params;
   const query = (await searchParams) ?? {};
   const context = await getServerTenantContext();
-  if (!context || !context.tenantId) notFound();
-  const { supabase, tenantId } = context;
+  if (!context) notFound();
+  const { supabase, tenantId: _tenantId } = context;
+  const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const subscriptionAccess = await getSubscriptionAccess(supabase, tenantId);
   const canEditYield = subscriptionAccess.sub

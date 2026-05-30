@@ -1,0 +1,636 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - img "Manuva" [ref=e5]
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - paragraph [ref=e8]: Operations
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /app
+            - img [ref=e11]
+            - text: Dashboard
+          - link "Products" [ref=e16] [cursor=pointer]:
+            - /url: /app/products
+            - img [ref=e18]
+            - text: Products
+          - link "Components" [ref=e22] [cursor=pointer]:
+            - /url: /app/components
+            - img [ref=e24]
+            - text: Components
+          - link "Goods Inwards" [ref=e28] [cursor=pointer]:
+            - /url: /app/goods-inwards
+            - img [ref=e30]
+            - text: Goods Inwards
+          - link "Orders" [ref=e34] [cursor=pointer]:
+            - /url: /app/orders
+            - img [ref=e36]
+            - text: Orders
+          - link "Stocktake" [ref=e39] [cursor=pointer]:
+            - /url: /app/stocktake
+            - img [ref=e41]
+            - text: Stocktake
+          - link "Suppliers" [ref=e43] [cursor=pointer]:
+            - /url: /app/suppliers
+            - img [ref=e45]
+            - text: Suppliers
+          - link "Reports" [ref=e49] [cursor=pointer]:
+            - /url: /app/reports
+            - img [ref=e51]
+            - text: Reports
+        - generic [ref=e52]:
+          - paragraph [ref=e53]: Warehouse
+          - link "Locations" [ref=e54] [cursor=pointer]:
+            - /url: /app/warehouse/locations
+            - img [ref=e56]
+            - text: Locations
+        - generic [ref=e59]:
+          - paragraph [ref=e60]: Planning
+          - link "Production Planning" [ref=e61] [cursor=pointer]:
+            - /url: /app/planning/floor
+            - img [ref=e63]
+            - text: Production Planning
+          - link "Departments" [ref=e67] [cursor=pointer]:
+            - /url: /app/departments
+            - img [ref=e69]
+            - text: Departments
+        - generic [ref=e71]:
+          - paragraph [ref=e72]: Workspace
+          - link "Activity Log" [ref=e73] [cursor=pointer]:
+            - /url: /app/activity-log
+            - img [ref=e75]
+            - text: Activity Log
+          - link "Trash" [ref=e78] [cursor=pointer]:
+            - /url: /app/trash
+            - img [ref=e80]
+            - text: Trash
+    - generic [ref=e83]:
+      - banner [ref=e84]:
+        - generic [ref=e86]:
+          - paragraph [ref=e87]: Components
+          - paragraph [ref=e88]: Manage stocked units, reorder points, and core inventory items.
+        - button "User menu" [ref=e91] [cursor=pointer]: K
+      - generic [ref=e93]:
+        - generic [ref=e94]:
+          - paragraph [ref=e96]: 60 of 60 components in the current catalog.
+          - button "+ Add Component" [ref=e98] [cursor=pointer]
+        - generic [ref=e99]:
+          - generic [ref=e100]:
+            - link "All 60" [ref=e101] [cursor=pointer]:
+              - /url: /app/components
+              - text: All
+              - generic [ref=e102]: "60"
+            - link "Low Stock 3" [ref=e103] [cursor=pointer]:
+              - /url: /app/components?filter=lowstock
+              - text: Low Stock
+              - generic [ref=e104]: "3"
+          - textbox "Search by name or SKU" [ref=e106]
+        - table [ref=e108]:
+          - rowgroup [ref=e109]:
+            - row "Component SKU On hand Available Reorder point" [ref=e110]:
+              - columnheader "Component" [ref=e111]
+              - columnheader "SKU" [ref=e112]
+              - columnheader "On hand" [ref=e113]
+              - columnheader "Available" [ref=e114]
+              - columnheader "Reorder point" [ref=e115]
+          - rowgroup [ref=e116]:
+            - row "24VDC Power Supply 20A CMP-PSU-24V20 31 31 15" [ref=e117]:
+              - cell "24VDC Power Supply 20A" [ref=e118]:
+                - link "24VDC Power Supply 20A" [ref=e119] [cursor=pointer]:
+                  - /url: /app/components/3eacc181-94c1-4130-8152-0ef55f06fba8
+                  - text: 24VDC Power Supply 20A
+              - cell "CMP-PSU-24V20" [ref=e121]
+              - cell "31" [ref=e122]
+              - cell "31" [ref=e123]
+              - cell "15" [ref=e124]
+            - row "Air Preparation Unit (FRL) CMP-FRL-01 97 97 10" [ref=e125]:
+              - cell "Air Preparation Unit (FRL)" [ref=e126]:
+                - link "Air Preparation Unit (FRL)" [ref=e127] [cursor=pointer]:
+                  - /url: /app/components/37c5eb04-8788-4d9a-9bbb-14893b7b9167
+                  - text: Air Preparation Unit (FRL)
+              - cell "CMP-FRL-01" [ref=e129]
+              - cell "97" [ref=e130]
+              - cell "97" [ref=e131]
+              - cell "10" [ref=e132]
+            - row "Aluminium Extrusion 40x40 2m CMP-ALU-4040 90 90 60" [ref=e133]:
+              - cell "Aluminium Extrusion 40x40 2m" [ref=e134]:
+                - link "Aluminium Extrusion 40x40 2m" [ref=e135] [cursor=pointer]:
+                  - /url: /app/components/4570b270-a9c0-43b5-902a-c3d1a2da6d01
+                  - text: Aluminium Extrusion 40x40 2m
+              - cell "CMP-ALU-4040" [ref=e137]
+              - cell "90" [ref=e138]
+              - cell "90" [ref=e139]
+              - cell "60" [ref=e140]
+            - row "Angle Bracket 40x40 CMP-BRKT-40 150 150 100" [ref=e141]:
+              - cell "Angle Bracket 40x40" [ref=e142]:
+                - link "Angle Bracket 40x40" [ref=e143] [cursor=pointer]:
+                  - /url: /app/components/6c36d37c-121a-430a-8fdc-848f9775dd28
+                  - text: Angle Bracket 40x40
+              - cell "CMP-BRKT-40" [ref=e145]
+              - cell "150" [ref=e146]
+              - cell "150" [ref=e147]
+              - cell "100" [ref=e148]
+            - row "Application Transfer Tape Roll CMP-XFER-TAPE 77 77 10" [ref=e149]:
+              - cell "Application Transfer Tape Roll" [ref=e150]:
+                - link "Application Transfer Tape Roll" [ref=e151] [cursor=pointer]:
+                  - /url: /app/components/23882885-b97b-4eba-aebb-546b7b2f9d1c
+                  - text: Application Transfer Tape Roll
+              - cell "CMP-XFER-TAPE" [ref=e153]
+              - cell "77" [ref=e154]
+              - cell "77" [ref=e155]
+              - cell "10" [ref=e156]
+            - row "Ball Screw Assembly 500mm CMP-BSCR-500 85 85 6" [ref=e157]:
+              - cell "Ball Screw Assembly 500mm" [ref=e158]:
+                - link "Ball Screw Assembly 500mm" [ref=e159] [cursor=pointer]:
+                  - /url: /app/components/6903c579-5083-47e2-bf3a-91616fffee82
+                  - text: Ball Screw Assembly 500mm
+              - cell "CMP-BSCR-500" [ref=e161]
+              - cell "85" [ref=e162]
+              - cell "85" [ref=e163]
+              - cell "6" [ref=e164]
+            - row "Barcode Scanner Fixed Mount CMP-BCODE-FX 32 32 6" [ref=e165]:
+              - cell "Barcode Scanner Fixed Mount" [ref=e166]:
+                - link "Barcode Scanner Fixed Mount" [ref=e167] [cursor=pointer]:
+                  - /url: /app/components/9199870b-e3e5-459a-adf1-59ee781cd2da
+                  - text: Barcode Scanner Fixed Mount
+              - cell "CMP-BCODE-FX" [ref=e169]
+              - cell "32" [ref=e170]
+              - cell "32" [ref=e171]
+              - cell "6" [ref=e172]
+            - row "Cable Tray 200mm 2m Section CMP-CTRAY-200 126 126 15" [ref=e173]:
+              - cell "Cable Tray 200mm 2m Section" [ref=e174]:
+                - link "Cable Tray 200mm 2m Section" [ref=e175] [cursor=pointer]:
+                  - /url: /app/components/2620e797-8e9e-44af-b2ba-ca013b5a0a60
+                  - text: Cable Tray 200mm 2m Section
+              - cell "CMP-CTRAY-200" [ref=e177]
+              - cell "126" [ref=e178]
+              - cell "126" [ref=e179]
+              - cell "15" [ref=e180]
+            - row "CAT6 Industrial Ethernet Cable 10m CMP-CAT6-10M 97 97 40" [ref=e181]:
+              - cell "CAT6 Industrial Ethernet Cable 10m" [ref=e182]:
+                - link "CAT6 Industrial Ethernet Cable 10m" [ref=e183] [cursor=pointer]:
+                  - /url: /app/components/42def97b-6901-47f0-9244-6f0cd35f2ba7
+                  - text: CAT6 Industrial Ethernet Cable 10m
+              - cell "CMP-CAT6-10M" [ref=e185]
+              - cell "97" [ref=e186]
+              - cell "97" [ref=e187]
+              - cell "40" [ref=e188]
+            - row "Circuit Breaker 16A CMP-MCB-16A 158 158 40" [ref=e189]:
+              - cell "Circuit Breaker 16A" [ref=e190]:
+                - link "Circuit Breaker 16A" [ref=e191] [cursor=pointer]:
+                  - /url: /app/components/b3b87680-ad23-4b9f-868c-e59fc385e0b8
+                  - text: Circuit Breaker 16A
+              - cell "CMP-MCB-16A" [ref=e193]
+              - cell "158" [ref=e194]
+              - cell "158" [ref=e195]
+              - cell "40" [ref=e196]
+            - row "Clear Overlaminate Roll CMP-LAM-CLR 81 81 8" [ref=e197]:
+              - cell "Clear Overlaminate Roll" [ref=e198]:
+                - link "Clear Overlaminate Roll" [ref=e199] [cursor=pointer]:
+                  - /url: /app/components/b1802538-a673-4d52-a05f-72f834e37f2f
+                  - text: Clear Overlaminate Roll
+              - cell "CMP-LAM-CLR" [ref=e201]
+              - cell "81" [ref=e202]
+              - cell "81" [ref=e203]
+              - cell "8" [ref=e204]
+            - row "Control Cabinet 800x600x300 CMP-CAB-800 18 18 5" [ref=e205]:
+              - cell "Control Cabinet 800x600x300" [ref=e206]:
+                - link "Control Cabinet 800x600x300" [ref=e207] [cursor=pointer]:
+                  - /url: /app/components/420d6c50-aab9-4a39-a5cd-2e4076d2bf4e
+                  - text: Control Cabinet 800x600x300
+              - cell "CMP-CAB-800" [ref=e209]
+              - cell "18" [ref=e210]
+              - cell "18" [ref=e211]
+              - cell "5" [ref=e212]
+            - row "Conveyor Roller 500mm CMP-ROLL-500 45 45 30" [ref=e213]:
+              - cell "Conveyor Roller 500mm" [ref=e214]:
+                - link "Conveyor Roller 500mm" [ref=e215] [cursor=pointer]:
+                  - /url: /app/components/b153ab15-6944-4dff-8ccc-0714248ae9c1
+                  - text: Conveyor Roller 500mm
+              - cell "CMP-ROLL-500" [ref=e217]
+              - cell "45" [ref=e218]
+              - cell "45" [ref=e219]
+              - cell "30" [ref=e220]
+            - row "E-Stop Mushroom Button CMP-ESTOP-01 67 67 20" [ref=e221]:
+              - cell "E-Stop Mushroom Button" [ref=e222]:
+                - link "E-Stop Mushroom Button" [ref=e223] [cursor=pointer]:
+                  - /url: /app/components/8254e777-e7a6-474c-9fde-cdb90cdd3bd4
+                  - text: E-Stop Mushroom Button
+              - cell "CMP-ESTOP-01" [ref=e225]
+              - cell "67" [ref=e226]
+              - cell "67" [ref=e227]
+              - cell "20" [ref=e228]
+            - row "FANUC CRX-10iA Cobot CMP-COBOT-CRX10 35 35 1" [ref=e229]:
+              - cell "FANUC CRX-10iA Cobot" [ref=e230]:
+                - link "FANUC CRX-10iA Cobot" [ref=e231] [cursor=pointer]:
+                  - /url: /app/components/e8b434f5-b1f4-416d-8219-db12676fe02a
+                  - text: FANUC CRX-10iA Cobot
+              - cell "CMP-COBOT-CRX10" [ref=e233]
+              - cell "35" [ref=e234]
+              - cell "35" [ref=e235]
+              - cell "1" [ref=e236]
+            - row "Gearbox 10:1 Ratio CMP-GBOX-10 10 10 6" [ref=e237]:
+              - cell "Gearbox 10:1 Ratio" [ref=e238]:
+                - link "Gearbox 10:1 Ratio" [ref=e239] [cursor=pointer]:
+                  - /url: /app/components/3c44de01-4209-4603-aff8-398a1c0dcdc1
+                  - text: Gearbox 10:1 Ratio
+              - cell "CMP-GBOX-10" [ref=e241]
+              - cell "10" [ref=e242]
+              - cell "10" [ref=e243]
+              - cell "6" [ref=e244]
+            - row "Historian Gateway License CMP-SCADA-HIST 45 45 1" [ref=e245]:
+              - cell "Historian Gateway License" [ref=e246]:
+                - link "Historian Gateway License" [ref=e247] [cursor=pointer]:
+                  - /url: /app/components/994097de-728a-425d-ad8c-2e9a5aed0d3f
+                  - text: Historian Gateway License
+              - cell "CMP-SCADA-HIST" [ref=e249]
+              - cell "45" [ref=e250]
+              - cell "45" [ref=e251]
+              - cell "1" [ref=e252]
+            - row "Industrial Ethernet Switch 8-Port CMP-ETH-SW8 22 22 6" [ref=e253]:
+              - cell "Industrial Ethernet Switch 8-Port" [ref=e254]:
+                - link "Industrial Ethernet Switch 8-Port" [ref=e255] [cursor=pointer]:
+                  - /url: /app/components/9f14ee01-9cdf-458b-8f39-4c560748f9a8
+                  - text: Industrial Ethernet Switch 8-Port
+              - cell "CMP-ETH-SW8" [ref=e257]
+              - cell "22" [ref=e258]
+              - cell "22" [ref=e259]
+              - cell "6" [ref=e260]
+            - row "Industrial Panel PC CMP-IPC-PANELPC 27 27 2" [ref=e261]:
+              - cell "Industrial Panel PC" [ref=e262]:
+                - link "Industrial Panel PC" [ref=e263] [cursor=pointer]:
+                  - /url: /app/components/907d14b9-aa96-407a-b5cd-db28b1c78d2e
+                  - text: Industrial Panel PC
+              - cell "CMP-IPC-PANELPC" [ref=e265]
+              - cell "27" [ref=e266]
+              - cell "27" [ref=e267]
+              - cell "2" [ref=e268]
+            - row "Industrial Vision Camera (GigE) CMP-CAM-GIGE 61 61 6" [ref=e269]:
+              - cell "Industrial Vision Camera (GigE)" [ref=e270]:
+                - link "Industrial Vision Camera (GigE)" [ref=e271] [cursor=pointer]:
+                  - /url: /app/components/bf8f3597-b47b-4124-ada4-1c7f7b009b82
+                  - text: Industrial Vision Camera (GigE)
+              - cell "CMP-CAM-GIGE" [ref=e273]
+              - cell "61" [ref=e274]
+              - cell "61" [ref=e275]
+              - cell "6" [ref=e276]
+            - row "Label Applicator Tamp Pad CMP-TAMP-01 28 28 8" [ref=e277]:
+              - cell "Label Applicator Tamp Pad" [ref=e278]:
+                - link "Label Applicator Tamp Pad" [ref=e279] [cursor=pointer]:
+                  - /url: /app/components/49713e3d-fa42-42d2-b620-97a98d956e6c
+                  - text: Label Applicator Tamp Pad
+              - cell "CMP-TAMP-01" [ref=e281]
+              - cell "28" [ref=e282]
+              - cell "28" [ref=e283]
+              - cell "8" [ref=e284]
+            - row "Label Design Software License CMP-LABEL-SW 50 50 3" [ref=e285]:
+              - cell "Label Design Software License" [ref=e286]:
+                - link "Label Design Software License" [ref=e287] [cursor=pointer]:
+                  - /url: /app/components/b7a55774-9d84-45b3-87e5-8107c978d7e1
+                  - text: Label Design Software License
+              - cell "CMP-LABEL-SW" [ref=e289]
+              - cell "50" [ref=e290]
+              - cell "50" [ref=e291]
+              - cell "3" [ref=e292]
+            - row "Label Roll 100x50mm (2000pc) CMP-LBL-100X50 290 290 80" [ref=e293]:
+              - cell "Label Roll 100x50mm (2000pc)" [ref=e294]:
+                - link "Label Roll 100x50mm (2000pc)" [ref=e295] [cursor=pointer]:
+                  - /url: /app/components/0fb65ddc-b382-43d1-8a3c-0adef00355c2
+                  - text: Label Roll 100x50mm (2000pc)
+              - cell "CMP-LBL-100X50" [ref=e297]
+              - cell "290" [ref=e298]
+              - cell "290" [ref=e299]
+              - cell "80" [ref=e300]
+            - row "Linear Guide Rail 1m CMP-LGR-1M 15 15 10" [ref=e301]:
+              - cell "Linear Guide Rail 1m" [ref=e302]:
+                - link "Linear Guide Rail 1m" [ref=e303] [cursor=pointer]:
+                  - /url: /app/components/c5e0d272-07dd-467b-a9ee-324a303e42df
+                  - text: Linear Guide Rail 1m
+              - cell "CMP-LGR-1M" [ref=e305]
+              - cell "15" [ref=e306]
+              - cell "15" [ref=e307]
+              - cell "10" [ref=e308]
+            - row "Load Cell 50kg CMP-LOAD-50 15 15 10" [ref=e309]:
+              - cell "Load Cell 50kg" [ref=e310]:
+                - link "Load Cell 50kg" [ref=e311] [cursor=pointer]:
+                  - /url: /app/components/13c2f1a9-e575-4bc3-8987-ee739455beee
+                  - text: Load Cell 50kg
+              - cell "CMP-LOAD-50" [ref=e313]
+              - cell "15" [ref=e314]
+              - cell "15" [ref=e315]
+              - cell "10" [ref=e316]
+            - row "Machine Guarding Panel 1200x800 CMP-GUARD-1200 15 15 10" [ref=e317]:
+              - cell "Machine Guarding Panel 1200x800" [ref=e318]:
+                - link "Machine Guarding Panel 1200x800" [ref=e319] [cursor=pointer]:
+                  - /url: /app/components/038a8f81-b6df-4c9f-a509-8f16cc574867
+                  - text: Machine Guarding Panel 1200x800
+              - cell "CMP-GUARD-1200" [ref=e321]
+              - cell "15" [ref=e322]
+              - cell "15" [ref=e323]
+              - cell "10" [ref=e324]
+            - row "Machine Vision Lens 16mm CMP-LENS-16 26 26 8" [ref=e325]:
+              - cell "Machine Vision Lens 16mm" [ref=e326]:
+                - link "Machine Vision Lens 16mm" [ref=e327] [cursor=pointer]:
+                  - /url: /app/components/e3b5f4fc-e413-46d2-88b9-3fc0dad26f00
+                  - text: Machine Vision Lens 16mm
+              - cell "CMP-LENS-16" [ref=e329]
+              - cell "26" [ref=e330]
+              - cell "26" [ref=e331]
+              - cell "8" [ref=e332]
+            - row "Modular Belt 1m Section CMP-BELT-1M 30 30 20" [ref=e333]:
+              - cell "Modular Belt 1m Section" [ref=e334]:
+                - link "Modular Belt 1m Section" [ref=e335] [cursor=pointer]:
+                  - /url: /app/components/9cf3f556-777e-49d5-8c6b-5ac6422edb16
+                  - text: Modular Belt 1m Section
+              - cell "CMP-BELT-1M" [ref=e337]
+              - cell "30" [ref=e338]
+              - cell "30" [ref=e339]
+              - cell "20" [ref=e340]
+            - row "OEE & Reporting Module License CMP-SCADA-OEE 32 32 1" [ref=e341]:
+              - cell "OEE & Reporting Module License" [ref=e342]:
+                - link "OEE & Reporting Module License" [ref=e343] [cursor=pointer]:
+                  - /url: /app/components/173a0b98-908e-4773-8362-70aef6adbe26
+                  - text: OEE & Reporting Module License
+              - cell "CMP-SCADA-OEE" [ref=e345]
+              - cell "32" [ref=e346]
+              - cell "32" [ref=e347]
+              - cell "1" [ref=e348]
+            - row "Photoelectric Sensor CMP-PE-SENS 38 38 25" [ref=e349]:
+              - cell "Photoelectric Sensor" [ref=e350]:
+                - link "Photoelectric Sensor" [ref=e351] [cursor=pointer]:
+                  - /url: /app/components/92852035-2cbb-4bf4-91f7-cbcf29cca2cc
+                  - text: Photoelectric Sensor
+              - cell "CMP-PE-SENS" [ref=e353]
+              - cell "38" [ref=e354]
+              - cell "38" [ref=e355]
+              - cell "25" [ref=e356]
+            - row "Pneumatic Cylinder 100mm Stroke CMP-CYL-100 51 51 15" [ref=e357]:
+              - cell "Pneumatic Cylinder 100mm Stroke" [ref=e358]:
+                - link "Pneumatic Cylinder 100mm Stroke" [ref=e359] [cursor=pointer]:
+                  - /url: /app/components/f8bd94fa-07bb-4d1e-bb9f-ca6e38c9741a
+                  - text: Pneumatic Cylinder 100mm Stroke
+              - cell "CMP-CYL-100" [ref=e361]
+              - cell "51" [ref=e362]
+              - cell "51" [ref=e363]
+              - cell "15" [ref=e364]
+            - row "Pneumatic Gripper CMP-GRIP-PN 77 77 6" [ref=e365]:
+              - cell "Pneumatic Gripper" [ref=e366]:
+                - link "Pneumatic Gripper" [ref=e367] [cursor=pointer]:
+                  - /url: /app/components/8b93eb1b-13c5-4749-b43f-09e972403167
+                  - text: Pneumatic Gripper
+              - cell "CMP-GRIP-PN" [ref=e369]
+              - cell "77" [ref=e370]
+              - cell "77" [ref=e371]
+              - cell "6" [ref=e372]
+            - row "Print Head Assembly CMP-PHEAD-01 50 50 4" [ref=e373]:
+              - cell "Print Head Assembly" [ref=e374]:
+                - link "Print Head Assembly" [ref=e375] [cursor=pointer]:
+                  - /url: /app/components/547bb68e-4b64-4651-afff-c741f36134a6
+                  - text: Print Head Assembly
+              - cell "CMP-PHEAD-01" [ref=e377]
+              - cell "50" [ref=e378]
+              - cell "50" [ref=e379]
+              - cell "4" [ref=e380]
+            - row "Printable Vinyl Roll - Black CMP-VINYL-BLK 83 83 10" [ref=e381]:
+              - cell "Printable Vinyl Roll - Black" [ref=e382]:
+                - link "Printable Vinyl Roll - Black" [ref=e383] [cursor=pointer]:
+                  - /url: /app/components/b0c4c068-8b3e-46b0-832a-d681063dc205
+                  - text: Printable Vinyl Roll - Black
+              - cell "CMP-VINYL-BLK" [ref=e385]
+              - cell "83" [ref=e386]
+              - cell "83" [ref=e387]
+              - cell "10" [ref=e388]
+            - row "Printable Vinyl Roll - Blue CMP-VINYL-BLU 88 88 10" [ref=e389]:
+              - cell "Printable Vinyl Roll - Blue" [ref=e390]:
+                - link "Printable Vinyl Roll - Blue" [ref=e391] [cursor=pointer]:
+                  - /url: /app/components/b04c6df5-3c61-498a-af48-ab0c80257808
+                  - text: Printable Vinyl Roll - Blue
+              - cell "CMP-VINYL-BLU" [ref=e393]
+              - cell "88" [ref=e394]
+              - cell "88" [ref=e395]
+              - cell "10" [ref=e396]
+            - row "Printable Vinyl Roll - Gold CMP-VINYL-GLD 82 82 8" [ref=e397]:
+              - cell "Printable Vinyl Roll - Gold" [ref=e398]:
+                - link "Printable Vinyl Roll - Gold" [ref=e399] [cursor=pointer]:
+                  - /url: /app/components/2899fe76-ab86-450f-89f0-9de0568bddfb
+                  - text: Printable Vinyl Roll - Gold
+              - cell "CMP-VINYL-GLD" [ref=e401]
+              - cell "82" [ref=e402]
+              - cell "82" [ref=e403]
+              - cell "8" [ref=e404]
+            - row "Printable Vinyl Roll - Green CMP-VINYL-GRN 119 119 10" [ref=e405]:
+              - cell "Printable Vinyl Roll - Green" [ref=e406]:
+                - link "Printable Vinyl Roll - Green" [ref=e407] [cursor=pointer]:
+                  - /url: /app/components/e5236dda-b195-4bd0-a299-9cc5a5411540
+                  - text: Printable Vinyl Roll - Green
+              - cell "CMP-VINYL-GRN" [ref=e409]
+              - cell "119" [ref=e410]
+              - cell "119" [ref=e411]
+              - cell "10" [ref=e412]
+            - row "Printable Vinyl Roll - Yellow CMP-VINYL-YLW 104 104 10" [ref=e413]:
+              - cell "Printable Vinyl Roll - Yellow" [ref=e414]:
+                - link "Printable Vinyl Roll - Yellow" [ref=e415] [cursor=pointer]:
+                  - /url: /app/components/5758ee5f-5b02-4a1e-a740-dbdf02a68f4c
+                  - text: Printable Vinyl Roll - Yellow
+              - cell "CMP-VINYL-YLW" [ref=e417]
+              - cell "104" [ref=e418]
+              - cell "104" [ref=e419]
+              - cell "10" [ref=e420]
+            - row "PROFINET Cable 5m CMP-PNET-5M 235 235 30" [ref=e421]:
+              - cell "PROFINET Cable 5m" [ref=e422]:
+                - link "PROFINET Cable 5m" [ref=e423] [cursor=pointer]:
+                  - /url: /app/components/91926c5a-7abb-4303-8575-d4bf6da4def7
+                  - text: PROFINET Cable 5m
+              - cell "CMP-PNET-5M" [ref=e425]
+              - cell "235" [ref=e426]
+              - cell "235" [ref=e427]
+              - cell "30" [ref=e428]
+            - row "Proximity Sensor Inductive CMP-PROX-IND 41 41 30" [ref=e429]:
+              - cell "Proximity Sensor Inductive" [ref=e430]:
+                - link "Proximity Sensor Inductive" [ref=e431] [cursor=pointer]:
+                  - /url: /app/components/56814d39-f30a-44b3-ac6e-3998a97b3105
+                  - text: Proximity Sensor Inductive
+              - cell "CMP-PROX-IND" [ref=e433]
+              - cell "41" [ref=e434]
+              - cell "41" [ref=e435]
+              - cell "30" [ref=e436]
+            - row "Ribbon 110mm x 300m CMP-RBN-110 140 140 50" [ref=e437]:
+              - cell "Ribbon 110mm x 300m" [ref=e438]:
+                - link "Ribbon 110mm x 300m" [ref=e439] [cursor=pointer]:
+                  - /url: /app/components/b6c07877-edbe-4093-a5b9-b5fd4a14bf23
+                  - text: Ribbon 110mm x 300m
+              - cell "CMP-RBN-110" [ref=e441]
+              - cell "140" [ref=e442]
+              - cell "140" [ref=e443]
+              - cell "50" [ref=e444]
+            - row "Robot Gripper Plate CMP-GRIP-PLT 44 44 4" [ref=e445]:
+              - cell "Robot Gripper Plate" [ref=e446]:
+                - link "Robot Gripper Plate" [ref=e447] [cursor=pointer]:
+                  - /url: /app/components/c44396c3-b889-43b1-990b-effc29e776a6
+                  - text: Robot Gripper Plate
+              - cell "CMP-GRIP-PLT" [ref=e449]
+              - cell "44" [ref=e450]
+              - cell "44" [ref=e451]
+              - cell "4" [ref=e452]
+            - row "Safety Door Switch CMP-SDOOR-01 18 18 12" [ref=e453]:
+              - cell "Safety Door Switch" [ref=e454]:
+                - link "Safety Door Switch" [ref=e455] [cursor=pointer]:
+                  - /url: /app/components/2b3f81ad-ec2f-4740-82e5-17f3709539e2
+                  - text: Safety Door Switch
+              - cell "CMP-SDOOR-01" [ref=e457]
+              - cell "18" [ref=e458]
+              - cell "18" [ref=e459]
+              - cell "12" [ref=e460]
+            - row "Safety Laser Scanner CMP-LASER-SCAN 71 71 4" [ref=e461]:
+              - cell "Safety Laser Scanner" [ref=e462]:
+                - link "Safety Laser Scanner" [ref=e463] [cursor=pointer]:
+                  - /url: /app/components/89d79a24-2ee7-47a1-ad4c-47631becc730
+                  - text: Safety Laser Scanner
+              - cell "CMP-LASER-SCAN" [ref=e465]
+              - cell "71" [ref=e466]
+              - cell "71" [ref=e467]
+              - cell "4" [ref=e468]
+            - row "Safety Light Curtain Type 4 CMP-LCURT-T4 10 10 4" [ref=e469]:
+              - cell "Safety Light Curtain Type 4" [ref=e470]:
+                - link "Safety Light Curtain Type 4" [ref=e471] [cursor=pointer]:
+                  - /url: /app/components/58ba0708-9ecf-4059-8957-8cd801734058
+                  - text: Safety Light Curtain Type 4
+              - cell "CMP-LCURT-T4" [ref=e473]
+              - cell "10" [ref=e474]
+              - cell "10" [ref=e475]
+              - cell "4" [ref=e476]
+            - row "Safety Relay Module CMP-SREL-01 18 18 8" [ref=e477]:
+              - cell "Safety Relay Module" [ref=e478]:
+                - link "Safety Relay Module" [ref=e479] [cursor=pointer]:
+                  - /url: /app/components/772d6291-afea-42a7-af91-56fa086bffff
+                  - text: Safety Relay Module
+              - cell "CMP-SREL-01" [ref=e481]
+              - cell "18" [ref=e482]
+              - cell "18" [ref=e483]
+              - cell "8" [ref=e484]
+            - row "SCADA Runtime License CMP-SCADA-RUNTIME 32 32 1" [ref=e485]:
+              - cell "SCADA Runtime License" [ref=e486]:
+                - link "SCADA Runtime License" [ref=e487] [cursor=pointer]:
+                  - /url: /app/components/80f64597-557a-4d09-a863-eae6ccbc0b23
+                  - text: SCADA Runtime License
+              - cell "CMP-SCADA-RUNTIME" [ref=e489]
+              - cell "32" [ref=e490]
+              - cell "32" [ref=e491]
+              - cell "1" [ref=e492]
+            - row "Servo Drive 1.5kW CMP-DRV-1500 15 15 10" [ref=e493]:
+              - cell "Servo Drive 1.5kW" [ref=e494]:
+                - link "Servo Drive 1.5kW" [ref=e495] [cursor=pointer]:
+                  - /url: /app/components/23f643d8-bc52-4958-8967-3776e5e125c6
+                  - text: Servo Drive 1.5kW
+              - cell "CMP-DRV-1500" [ref=e497]
+              - cell "15" [ref=e498]
+              - cell "15" [ref=e499]
+              - cell "10" [ref=e500]
+            - row "Servo Motor 1.5kW CMP-MOT-1500 15 15 10" [ref=e501]:
+              - cell "Servo Motor 1.5kW" [ref=e502]:
+                - link "Servo Motor 1.5kW" [ref=e503] [cursor=pointer]:
+                  - /url: /app/components/8911030b-3b2d-4abc-b6fa-7fc8a62ba2c5
+                  - text: Servo Motor 1.5kW
+              - cell "CMP-MOT-1500" [ref=e505]
+              - cell "15" [ref=e506]
+              - cell "15" [ref=e507]
+              - cell "10" [ref=e508]
+            - row "Siemens HMI KTP700 Touch Panel CMP-HMI-KTP700 0 0 8" [ref=e509]:
+              - cell "Siemens HMI KTP700 Touch Panel" [ref=e510]:
+                - link "Siemens HMI KTP700 Touch Panel" [ref=e511] [cursor=pointer]:
+                  - /url: /app/components/3b53c3e9-5fff-449a-8d9d-1e0c6120462a
+                  - text: Siemens HMI KTP700 Touch Panel
+              - cell "CMP-HMI-KTP700" [ref=e513]
+              - cell "0" [ref=e514]
+              - cell "0" [ref=e515]
+              - cell "8" [ref=e516]
+            - row "Siemens S7-1500 Safety PLC CMP-PLC-S71500 10 10 5" [ref=e517]:
+              - cell "Siemens S7-1500 Safety PLC" [ref=e518]:
+                - link "Siemens S7-1500 Safety PLC" [ref=e519] [cursor=pointer]:
+                  - /url: /app/components/6f7f2b6f-2be6-4219-87a8-c0ce28e79ff1
+                  - text: Siemens S7-1500 Safety PLC
+              - cell "CMP-PLC-S71500" [ref=e521]
+              - cell "10" [ref=e522]
+              - cell "10" [ref=e523]
+              - cell "5" [ref=e524]
+            - row "Solenoid Valve 24VDC CMP-SOL-24V 10 10 20" [ref=e525]:
+              - cell "Solenoid Valve 24VDC" [ref=e526]:
+                - link "Solenoid Valve 24VDC" [ref=e527] [cursor=pointer]:
+                  - /url: /app/components/e1281500-73da-4d54-b14e-30632e0a51f5
+                  - text: Solenoid Valve 24VDC
+              - cell "CMP-SOL-24V" [ref=e529]
+              - cell "10" [ref=e530]
+              - cell "10" [ref=e531]
+              - cell "20" [ref=e532]
+            - row "Suction Cup 30mm CMP-CUP-30 226 226 50" [ref=e533]:
+              - cell "Suction Cup 30mm" [ref=e534]:
+                - link "Suction Cup 30mm" [ref=e535] [cursor=pointer]:
+                  - /url: /app/components/ed3e691a-1653-4833-8a79-f6c2fc849146
+                  - text: Suction Cup 30mm
+              - cell "CMP-CUP-30" [ref=e537]
+              - cell "226" [ref=e538]
+              - cell "226" [ref=e539]
+              - cell "50" [ref=e540]
+            - row "Terminal Blocks Set (50pc) CMP-TERM-50 208 208 30" [ref=e541]:
+              - cell "Terminal Blocks Set (50pc)" [ref=e542]:
+                - link "Terminal Blocks Set (50pc)" [ref=e543] [cursor=pointer]:
+                  - /url: /app/components/d9712d61-6358-4d91-80d8-988b11a20da5
+                  - text: Terminal Blocks Set (50pc)
+              - cell "CMP-TERM-50" [ref=e545]
+              - cell "208" [ref=e546]
+              - cell "208" [ref=e547]
+              - cell "30" [ref=e548]
+            - row "Thermal Transfer Print Engine CMP-PRINT-TT 10 10 4" [ref=e549]:
+              - cell "Thermal Transfer Print Engine" [ref=e550]:
+                - link "Thermal Transfer Print Engine" [ref=e551] [cursor=pointer]:
+                  - /url: /app/components/9479dc40-cfdb-4fe0-b33a-32cf460110f9
+                  - text: Thermal Transfer Print Engine
+              - cell "CMP-PRINT-TT" [ref=e553]
+              - cell "10" [ref=e554]
+              - cell "10" [ref=e555]
+              - cell "4" [ref=e556]
+            - row "Timing Belt GT3 5m CMP-TBELT-GT3 75 75 15" [ref=e557]:
+              - cell "Timing Belt GT3 5m" [ref=e558]:
+                - link "Timing Belt GT3 5m" [ref=e559] [cursor=pointer]:
+                  - /url: /app/components/633261d6-03fb-4ba1-b5fc-fbf3b751d480
+                  - text: Timing Belt GT3 5m
+              - cell "CMP-TBELT-GT3" [ref=e561]
+              - cell "75" [ref=e562]
+              - cell "75" [ref=e563]
+              - cell "15" [ref=e564]
+            - row "Tool Changer QC-10 CMP-TC-QC10 48 48 2" [ref=e565]:
+              - cell "Tool Changer QC-10" [ref=e566]:
+                - link "Tool Changer QC-10" [ref=e567] [cursor=pointer]:
+                  - /url: /app/components/d775d68d-fddb-4422-b5fa-58709bfb77cd
+                  - text: Tool Changer QC-10
+              - cell "CMP-TC-QC10" [ref=e569]
+              - cell "48" [ref=e570]
+              - cell "48" [ref=e571]
+              - cell "2" [ref=e572]
+            - row "Vacuum Generator CMP-VAC-GEN 44 44 8" [ref=e573]:
+              - cell "Vacuum Generator" [ref=e574]:
+                - link "Vacuum Generator" [ref=e575] [cursor=pointer]:
+                  - /url: /app/components/2a3a061f-6fe9-4c21-b687-4953184224ad
+                  - text: Vacuum Generator
+              - cell "CMP-VAC-GEN" [ref=e577]
+              - cell "44" [ref=e578]
+              - cell "44" [ref=e579]
+              - cell "8" [ref=e580]
+            - row "VFD 2.2kW CMP-VFD-2200 7 7 8" [ref=e581]:
+              - cell "VFD 2.2kW" [ref=e582]:
+                - link "VFD 2.2kW" [ref=e583] [cursor=pointer]:
+                  - /url: /app/components/a3667d3d-f8a8-49fc-b21f-c0ab76549a97
+                  - text: VFD 2.2kW
+              - cell "CMP-VFD-2200" [ref=e585]
+              - cell "7" [ref=e586]
+              - cell "7" [ref=e587]
+              - cell "8" [ref=e588]
+            - row "Wireless Access Point Industrial CMP-WAP-IND 73 73 3" [ref=e589]:
+              - cell "Wireless Access Point Industrial" [ref=e590]:
+                - link "Wireless Access Point Industrial" [ref=e591] [cursor=pointer]:
+                  - /url: /app/components/4ccc18b4-f05d-45a2-81d9-07d37bd43b8a
+                  - text: Wireless Access Point Industrial
+              - cell "CMP-WAP-IND" [ref=e593]
+              - cell "73" [ref=e594]
+              - cell "73" [ref=e595]
+              - cell "3" [ref=e596]
+  - alert [ref=e597]

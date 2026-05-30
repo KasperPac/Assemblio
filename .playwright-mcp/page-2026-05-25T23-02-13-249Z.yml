@@ -1,0 +1,7 @@
+- generic [ref=e3]:
+  - generic:
+    - link "Skip to content":
+      - /url: "#AppFrameMain"
+  - link [ref=e9] [cursor=pointer]:
+    - /url: /services/partner-app-submissions/923db8d97db22d30c0517520f1498933/en
+  - main [ref=e13]

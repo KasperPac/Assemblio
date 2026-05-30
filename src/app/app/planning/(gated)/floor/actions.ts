@@ -119,6 +119,7 @@ export async function completeStep(stepId: string) {
   const ctx = await getServerTenantContext();
   if (!ctx || !ctx.tenantId) return;
   const { supabase, tenantId } = ctx;
+  if (!tenantId) return; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const { data: tenant } = await supabase
     .from("tenant")

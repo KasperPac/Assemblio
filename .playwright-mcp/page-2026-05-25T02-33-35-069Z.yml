@@ -1,0 +1,201 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - img "Manuva" [ref=e5]
+      - navigation [ref=e6]:
+        - generic [ref=e7]:
+          - paragraph [ref=e8]: Operations
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: /app
+            - img [ref=e11]
+            - text: Dashboard
+          - link "Products" [ref=e16] [cursor=pointer]:
+            - /url: /app/products
+            - img [ref=e18]
+            - text: Products
+          - link "Components" [ref=e22] [cursor=pointer]:
+            - /url: /app/components
+            - img [ref=e24]
+            - text: Components
+          - link "Goods Inwards" [ref=e28] [cursor=pointer]:
+            - /url: /app/goods-inwards
+            - img [ref=e30]
+            - text: Goods Inwards
+          - link "Orders" [ref=e34] [cursor=pointer]:
+            - /url: /app/orders
+            - img [ref=e36]
+            - text: Orders
+          - link "Stocktake" [ref=e39] [cursor=pointer]:
+            - /url: /app/stocktake
+            - img [ref=e41]
+            - text: Stocktake
+          - link "Suppliers" [ref=e43] [cursor=pointer]:
+            - /url: /app/suppliers
+            - img [ref=e45]
+            - text: Suppliers
+          - link "Reports" [ref=e49] [cursor=pointer]:
+            - /url: /app/reports
+            - img [ref=e51]
+            - text: Reports
+        - generic [ref=e52]:
+          - paragraph [ref=e53]: Warehouse
+          - link "Locations" [ref=e54] [cursor=pointer]:
+            - /url: /app/warehouse/locations
+            - img [ref=e56]
+            - text: Locations
+        - generic [ref=e59]:
+          - paragraph [ref=e60]: Planning
+          - link "Production Planning" [ref=e61] [cursor=pointer]:
+            - /url: /app/planning/floor
+            - img [ref=e63]
+            - text: Production Planning
+          - link "Departments" [ref=e67] [cursor=pointer]:
+            - /url: /app/departments
+            - img [ref=e69]
+            - text: Departments
+        - generic [ref=e71]:
+          - paragraph [ref=e72]: Workspace
+          - link "Activity Log" [ref=e73] [cursor=pointer]:
+            - /url: /app/activity-log
+            - img [ref=e75]
+            - text: Activity Log
+          - link "Trash" [ref=e78] [cursor=pointer]:
+            - /url: /app/trash
+            - img [ref=e80]
+            - text: Trash
+    - generic [ref=e83]:
+      - banner [ref=e84]:
+        - generic [ref=e86]:
+          - paragraph [ref=e87]: Overview
+          - paragraph [ref=e88]: Inventory, demand, and workflow risk across the workspace.
+        - button "User menu" [ref=e91] [cursor=pointer]: K
+      - generic [ref=e93]:
+        - navigation [ref=e94]:
+          - link "Products 12" [ref=e95] [cursor=pointer]:
+            - /url: /app/products
+            - generic [ref=e96]: Products
+            - generic [ref=e97]: "12"
+          - link "Components 60" [ref=e98] [cursor=pointer]:
+            - /url: /app/components
+            - generic [ref=e99]: Components
+            - generic [ref=e100]: "60"
+          - link "Suppliers 21" [ref=e101] [cursor=pointer]:
+            - /url: /app/suppliers
+            - generic [ref=e102]: Suppliers
+            - generic [ref=e103]: "21"
+          - link "Open orders 15" [ref=e104] [cursor=pointer]:
+            - /url: /app/orders
+            - generic [ref=e105]: Open orders
+            - generic [ref=e106]: "15"
+          - link "Low stock 3" [ref=e107] [cursor=pointer]:
+            - /url: /app/components
+            - generic [ref=e108]: Low stock
+            - generic [ref=e109]: "3"
+        - generic [ref=e110]:
+          - generic [ref=e111]:
+            - generic [ref=e112]: Inventory value
+            - generic [ref=e113]: $2,978,623
+            - generic [ref=e114]: On hand
+          - generic [ref=e115]:
+            - generic [ref=e116]: Fulfillment rate
+            - generic [ref=e117]: 70%
+            - generic [ref=e118]: 6-month avg
+          - generic [ref=e119]:
+            - generic [ref=e120]: This week
+            - generic [ref=e121]: "0"
+            - generic [ref=e122]: No change from last week
+          - generic [ref=e123]:
+            - generic [ref=e124]: Open orders
+            - generic [ref=e125]: "15"
+            - generic [ref=e126]: Awaiting fulfillment
+        - generic [ref=e127]:
+          - generic [ref=e128]:
+            - generic [ref=e129]:
+              - generic [ref=e130]:
+                - paragraph [ref=e131]: Finance
+                - heading "Inventory trends" [level=3] [ref=e132]
+              - generic [ref=e133]:
+                - button "Inventory" [ref=e134] [cursor=pointer]
+                - button "Stocktake" [ref=e135] [cursor=pointer]
+            - generic [ref=e138]:
+              - generic [ref=e139]: Received
+              - generic [ref=e141]: Consumed
+          - generic [ref=e143]:
+            - generic [ref=e144]:
+              - generic [ref=e145]:
+                - paragraph [ref=e146]: Operations
+                - heading "Order metrics" [level=3] [ref=e147]
+              - generic [ref=e148]:
+                - button "Orders" [ref=e149] [cursor=pointer]
+                - button "Revenue" [ref=e150] [cursor=pointer]
+                - button "Avg Order" [ref=e151] [cursor=pointer]
+                - button "Lead Time" [ref=e152] [cursor=pointer]
+            - generic [ref=e155]:
+              - generic [ref=e156]: Placed
+              - generic [ref=e158]: Fulfilled
+        - generic [ref=e160]:
+          - generic [ref=e161]:
+            - generic [ref=e162]:
+              - generic [ref=e163]:
+                - paragraph [ref=e164]: Live queue
+                - heading "Open orders" [level=3] [ref=e165]
+              - link "View all" [ref=e166] [cursor=pointer]:
+                - /url: /app/orders
+            - generic [ref=e167]:
+              - link "##1126 11/05/2026 open" [ref=e168] [cursor=pointer]:
+                - /url: /app/orders/d2059957-f509-4c9d-957a-a2a5518b4ec6
+                - generic [ref=e169]: "##1126"
+                - generic [ref=e170]: 11/05/2026
+                - generic [ref=e171]: open
+              - link "##1127 10/05/2026 open" [ref=e172] [cursor=pointer]:
+                - /url: /app/orders/5e1ffc4d-2e53-469f-9ab7-358b8a611f98
+                - generic [ref=e173]: "##1127"
+                - generic [ref=e174]: 10/05/2026
+                - generic [ref=e175]: open
+              - link "##1128 09/05/2026 open" [ref=e176] [cursor=pointer]:
+                - /url: /app/orders/2be96fee-267c-4dc3-9364-c8c22371f998
+                - generic [ref=e177]: "##1128"
+                - generic [ref=e178]: 09/05/2026
+                - generic [ref=e179]: open
+              - link "##1129 08/05/2026 open" [ref=e180] [cursor=pointer]:
+                - /url: /app/orders/b7f8b06c-eb31-45d1-95d4-a0ed1412b674
+                - generic [ref=e181]: "##1129"
+                - generic [ref=e182]: 08/05/2026
+                - generic [ref=e183]: open
+              - link "##1130 07/05/2026 open" [ref=e184] [cursor=pointer]:
+                - /url: /app/orders/97af7cf0-74b4-4fae-9d45-20555498a23c
+                - generic [ref=e185]: "##1130"
+                - generic [ref=e186]: 07/05/2026
+                - generic [ref=e187]: open
+              - link "##1131 06/05/2026 open" [ref=e188] [cursor=pointer]:
+                - /url: /app/orders/7d6bb90c-a93c-4b80-a151-518b5453b45c
+                - generic [ref=e189]: "##1131"
+                - generic [ref=e190]: 06/05/2026
+                - generic [ref=e191]: open
+              - link "##1132 05/05/2026 open" [ref=e192] [cursor=pointer]:
+                - /url: /app/orders/bb4b48ff-6de7-4c36-aa5a-80aad91b95ce
+                - generic [ref=e193]: "##1132"
+                - generic [ref=e194]: 05/05/2026
+                - generic [ref=e195]: open
+              - link "##1133 04/05/2026 open" [ref=e196] [cursor=pointer]:
+                - /url: /app/orders/a981ac3a-157a-4a34-a920-bab7de136ebe
+                - generic [ref=e197]: "##1133"
+                - generic [ref=e198]: 04/05/2026
+                - generic [ref=e199]: open
+          - generic [ref=e200]:
+            - generic [ref=e201]:
+              - generic [ref=e202]:
+                - paragraph [ref=e203]: Stock risk
+                - heading "Low stock alerts" [level=3] [ref=e204]
+              - generic [ref=e205]: 3 at risk
+            - generic [ref=e206]:
+              - generic [ref=e207]:
+                - generic [ref=e209]: Siemens HMI KTP700 Touch Panel
+                - generic [ref=e211]: 0 avail
+              - generic [ref=e212]:
+                - generic [ref=e214]: VFD 2.2kW
+                - generic [ref=e216]: 7 avail
+              - generic [ref=e217]:
+                - generic [ref=e219]: Solenoid Valve 24VDC
+                - generic [ref=e221]: 10 avail
+  - alert [ref=e222]

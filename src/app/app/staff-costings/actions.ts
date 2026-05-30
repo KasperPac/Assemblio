@@ -42,6 +42,7 @@ export async function addDepartment(
   const context = await getServerTenantContext();
   if (!context || !context.tenantId) return { error: "Missing tenant context." };
   const { supabase, tenantId } = context;
+  if (!tenantId) return { error: "Missing tenant context." }; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const groupId = await ensureLabourGroup(supabase, tenantId);
 
