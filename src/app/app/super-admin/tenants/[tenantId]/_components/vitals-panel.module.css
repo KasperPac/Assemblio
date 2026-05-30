@@ -87,3 +87,18 @@
 }
 
 .statValueWarn { font-weight: 600; color: var(--warning); text-align: right; }
+
+.sectionHeading {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 14px;
+}
+
+.metaNote {
+  color: var(--ink-faint);
+  font-size: 0.78rem;
+  font-weight: 400;
+}

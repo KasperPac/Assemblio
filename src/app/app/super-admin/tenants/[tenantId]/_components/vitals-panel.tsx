@@ -1,5 +1,3 @@
-"use client";
-
 import styles from "./vitals-panel.module.css";
 
 export type TenantVitals = {
@@ -70,18 +68,7 @@ export default function VitalsPanel({ vitals }: { vitals: TenantVitals }) {
 
   return (
     <div>
-      <h2
-        style={{
-          fontSize: "0.78rem",
-          fontWeight: 700,
-          letterSpacing: "0.05em",
-          textTransform: "uppercase",
-          color: "var(--ink-muted)",
-          marginBottom: 14,
-        }}
-      >
-        Vitals
-      </h2>
+      <h2 className={styles.sectionHeading}>Vitals</h2>
       <div className={styles.grid}>
         {/* ── Card 1: Integrations ── */}
         <div className={styles.card}>
@@ -111,7 +98,7 @@ export default function VitalsPanel({ vitals }: { vitals: TenantVitals }) {
                     {vitals.shopify_store_domain && (
                       <>
                         <br />
-                        <span style={{ color: "var(--ink-faint)", fontSize: "0.78rem" }}>
+                        <span className={styles.metaNote}>
                           {vitals.shopify_store_domain}
                         </span>
                       </>
@@ -184,12 +171,7 @@ export default function VitalsPanel({ vitals }: { vitals: TenantVitals }) {
             <span className={styles.statLabel}>Write events</span>
             <span className={styles.statValue}>
               {vitals.seven_day_event_count.toLocaleString()}
-              <span
-                style={{ color: "var(--ink-faint)", fontSize: "0.78rem", fontWeight: 400 }}
-              >
-                {" "}
-                (7d)
-              </span>
+              <span className={styles.metaNote}>{" "}(7d)</span>
             </span>
           </div>
         </div>
