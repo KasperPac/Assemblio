@@ -20,7 +20,7 @@ const TEMPLATE_CSV = [
 export default function SuppliersImportPage() {
   const [step, setStep] = useState<Step>("upload");
   const [rows, setRows] = useState<PreviewRow[]>([]);
-  const [fileRef, setFileRef] = useState<File | null>(null);
+  const fileRef = useRef<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [fileError, setFileError] = useState<string | null>(null);
   const [importedCount, setImportedCount] = useState(0);
@@ -39,7 +39,7 @@ export default function SuppliersImportPage() {
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    setFileRef(file);
+    fileRef.current = file;
     setFileError(null);
     setLoading(true);
     const fd = new FormData();
@@ -61,10 +61,10 @@ export default function SuppliersImportPage() {
   }
 
   async function handleImport() {
-    if (!fileRef) return;
+    if (!fileRef.current) return;
     setLoading(true);
     const fd = new FormData();
-    fd.append("file", fileRef);
+    fd.append("file", fileRef.current);
     fd.append("dry_run", "false");
     try {
       const res = await fetch("/api/import/suppliers", { method: "POST", body: fd });
@@ -86,7 +86,7 @@ export default function SuppliersImportPage() {
   function resetToUpload() {
     setStep("upload");
     setRows([]);
-    setFileRef(null);
+    fileRef.current = null;
     setFileError(null);
     if (inputRef.current) inputRef.current.value = "";
   }
@@ -181,8 +181,8 @@ export default function SuppliersImportPage() {
                 </tr>
               </thead>
               <tbody>
-                {rows.map((row) => (
-                  <tr key={row.rowIndex} className={row.error ? styles.rowError : ""}>
+                {rows.map((row, idx) => (
+                  <tr key={`${row.rowIndex}-${idx}`} className={row.error ? styles.rowError : ""}>
                     <td>{row.rowIndex}</td>
                     <td>{row.raw["name"] || <em className={styles.missing}>—</em>}</td>
                     <td>{row.raw["website"] || "—"}</td>
