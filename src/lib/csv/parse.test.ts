@@ -21,6 +21,10 @@ describe("parseCSVLine", () => {
   it("returns a single-element array for a line with no commas", () => {
     expect(parseCSVLine("hello")).toEqual(["hello"]);
   });
+
+  it("preserves leading/trailing whitespace inside a quoted field", () => {
+    expect(parseCSVLine('" hello "')).toEqual([" hello "]);
+  });
 });
 
 describe("parseCSV", () => {
@@ -46,5 +50,9 @@ describe("parseCSV", () => {
   it("defaults missing columns to empty string", () => {
     const result = parseCSV("name,sku,unit\nBolt,BOLT-01");
     expect(result[0].unit).toBe("");
+  });
+
+  it("returns empty array for an empty string", () => {
+    expect(parseCSV("")).toEqual([]);
   });
 });
