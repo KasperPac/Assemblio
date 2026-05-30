@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { findArticle } from "../_registry";
+import { findArticle, type HelpArticle } from "../_registry";
 import styles from "./related-articles.module.css";
 
 type Props = { slugs: string[] };
 
 export function RelatedArticles({ slugs }: Props) {
-  const articles = slugs.map((s) => findArticle(s)).filter(Boolean) as NonNullable<ReturnType<typeof findArticle>>[];
+  const articles = slugs.map((s) => findArticle(s)).filter((a): a is HelpArticle => a !== undefined);
   if (!articles.length) return null;
 
   return (
