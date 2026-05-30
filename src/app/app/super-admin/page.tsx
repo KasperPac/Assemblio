@@ -6,6 +6,7 @@ import PageHeader from "../_ui/page-header";
 import NewTenantModal from "./_components/new-tenant-modal";
 
 type StatusFilter = "all" | "trialing" | "active" | "past_due" | "suspended" | "deleted";
+type HealthLevel = "ok" | "warn" | "critical";
 
 const FILTER_LABELS: Record<StatusFilter, string> = {
   all: "All",
@@ -61,6 +62,19 @@ export default async function SuperAdminTenantsPage({
     memberCountByTenant.set(row.tenant_id, (memberCountByTenant.get(row.tenant_id) ?? 0) + 1);
   }
 
+  // Fetch health indicators for all tenant IDs in one RPC call
+  const tenantIds = (tenants ?? []).map((t) => t.id);
+  const { data: healthRows } = tenantIds.length > 0
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ? await (supabase.rpc as any)("get_tenant_health_indicators", { p_tenant_ids: tenantIds })
+    : { data: [] };
+
+  const healthByTenant = new Map(
+    ((healthRows ?? []) as Array<{ tenant_id: string; health: string; reasons: string[] }>).map(
+      (r) => [r.tenant_id, r]
+    )
+  );
+
   const allRows = (tenants ?? []).map((t) => {
     const sub = subByTenant.get(t.id);
     const derivedStatus: StatusFilter = t.deleted_at
@@ -68,6 +82,7 @@ export default async function SuperAdminTenantsPage({
       : t.suspended_at
       ? "suspended"
       : ((sub?.status as StatusFilter) ?? "all");
+    const health = healthByTenant.get(t.id);
     return {
       id: t.id,
       name: t.name,
@@ -76,6 +91,8 @@ export default async function SuperAdminTenantsPage({
       trial_ends_at: sub?.trial_ends_at ?? null,
       members: memberCountByTenant.get(t.id) ?? 0,
       derivedStatus,
+      healthLevel: (health?.health ?? "ok") as HealthLevel,
+      healthReasons: (health?.reasons ?? []) as string[],
     };
   });
 
@@ -141,6 +158,7 @@ export default async function SuperAdminTenantsPage({
             <thead>
               <tr>
                 <th>Name</th>
+                <th>Health</th>
                 <th>Status</th>
                 <th>Plan</th>
                 <th>Trial ends</th>
@@ -149,26 +167,37 @@ export default async function SuperAdminTenantsPage({
               </tr>
             </thead>
             <tbody>
-              {filtered.map((r) => (
-                <tr key={r.id}>
-                  <td>
-                    <Link href={`/app/super-admin/tenants/${r.id}`} className={styles.nameCell}>
-                      {r.name}
-                    </Link>
-                  </td>
-                  <td>
-                    <span className={`${styles.statusPill} ${styles[`status_${r.derivedStatus}`]}`}>
-                      {FILTER_LABELS[r.derivedStatus] ?? r.derivedStatus}
-                    </span>
-                  </td>
-                  <td>{r.tier}</td>
-                  <td className={styles.meta}>
-                    {r.trial_ends_at ? new Date(r.trial_ends_at).toLocaleDateString() : "—"}
-                  </td>
-                  <td>{r.members}</td>
-                  <td className={styles.meta}>{new Date(r.created_at).toLocaleDateString()}</td>
-                </tr>
-              ))}
+              {filtered.map((r) => {
+                const tooltipText =
+                  r.healthReasons.length > 0 ? r.healthReasons.join(" · ") : "Healthy";
+                return (
+                  <tr key={r.id}>
+                    <td>
+                      <Link href={`/app/super-admin/tenants/${r.id}`} className={styles.nameCell}>
+                        {r.name}
+                      </Link>
+                    </td>
+                    <td>
+                      <span
+                        className={`${styles.healthDot} ${styles[`healthDot_${r.healthLevel}`]}`}
+                        title={tooltipText}
+                        aria-label={`Health: ${r.healthLevel}. ${tooltipText}`}
+                      />
+                    </td>
+                    <td>
+                      <span className={`${styles.statusPill} ${styles[`status_${r.derivedStatus}`]}`}>
+                        {FILTER_LABELS[r.derivedStatus] ?? r.derivedStatus}
+                      </span>
+                    </td>
+                    <td>{r.tier}</td>
+                    <td className={styles.meta}>
+                      {r.trial_ends_at ? new Date(r.trial_ends_at).toLocaleDateString() : "—"}
+                    </td>
+                    <td>{r.members}</td>
+                    <td className={styles.meta}>{new Date(r.created_at).toLocaleDateString()}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
