@@ -32,6 +32,10 @@ describe("HELP_ARTICLES", () => {
       expect(CATEGORY_META[article.category]).toBeDefined();
     }
   });
+
+  it("has 26 articles", () => {
+    expect(HELP_ARTICLES).toHaveLength(26);
+  });
 });
 
 describe("findArticle", () => {
