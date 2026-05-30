@@ -1,0 +1,18 @@
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.link:hover {
+  color: var(--brand-1);
+}
+
+.icon {
+  font-size: var(--fs-md);
+  line-height: 1;
+}
