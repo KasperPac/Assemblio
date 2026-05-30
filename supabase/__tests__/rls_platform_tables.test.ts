@@ -55,6 +55,21 @@ describe("RLS — platform tables (observer)", () => {
     expect(error, "observer UPDATE on tenant should be blocked by RLS").not.toBeNull();
   });
 
+  it("platform_observer cannot DELETE from tenant table", async () => {
+    if (!OBSERVER_JWT || !ANON_KEY) {
+      console.warn("TEST_OBSERVER_JWT or SUPABASE_TEST_ANON_KEY not set — skipping");
+      return;
+    }
+    const client = createClient(SUPABASE_URL, ANON_KEY, {
+      global: { headers: { Authorization: `Bearer ${OBSERVER_JWT}` } },
+    });
+    const { error } = await client
+      .from("tenant")
+      .delete()
+      .eq("id", "00000000-0000-0000-0000-000000000000");
+    expect(error, "observer DELETE on tenant should be blocked by RLS").not.toBeNull();
+  });
+
   it("member cannot SELECT from super_admin_audit_log", async () => {
     if (!MEMBER_JWT || !ANON_KEY) {
       console.warn("TEST_MEMBER_JWT or SUPABASE_TEST_ANON_KEY not set — skipping");
