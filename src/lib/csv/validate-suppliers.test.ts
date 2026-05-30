@@ -39,6 +39,12 @@ describe("validateSupplierRows", () => {
     expect(results[0].error).toBe("default_lead_time_days must be a non-negative integer");
   });
 
+  it("fails when default_lead_time_days is non-numeric", () => {
+    const rows = [{ name: "Omron", website: "", default_lead_time_days: "abc", contact_name: "", contact_email: "", contact_phone: "", address: "", payment_terms: "", default_currency: "" }];
+    const results = validateSupplierRows(rows, noExisting);
+    expect(results[0].error).toBe("default_lead_time_days must be a non-negative integer");
+  });
+
   it("fails when default_lead_time_days is negative", () => {
     const rows = [{ name: "Omron", website: "", default_lead_time_days: "-1", contact_name: "", contact_email: "", contact_phone: "", address: "", payment_terms: "", default_currency: "" }];
     const results = validateSupplierRows(rows, noExisting);

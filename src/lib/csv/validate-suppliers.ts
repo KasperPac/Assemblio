@@ -11,7 +11,7 @@ export type ValidatedSupplierRow = {
 
 /**
  * @param rows       Parsed CSV rows (from parseCSV)
- * @param existingNames  Lowercase supplier names already in the DB for this tenant
+ * @param existingNames  Supplier names already in the DB for this tenant — MUST be pre-lowercased by the caller
  */
 export function validateSupplierRows(
   rows: Record<string, string>[],
