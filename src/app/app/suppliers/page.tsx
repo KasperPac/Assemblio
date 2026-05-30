@@ -75,7 +75,14 @@ export default async function SuppliersPage({
     <div className={styles.page}>
       <PageHeader
         description="Manage suppliers used throughout purchasing and inbound stock workflows."
-        actions={<SupplierCreateForm action={createSupplier} />}
+        actions={
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <Link href="/app/suppliers/import" className={styles.importLink}>
+              Import CSV
+            </Link>
+            <SupplierCreateForm action={createSupplier} />
+          </div>
+        }
       />
 
       <div className={styles.toolbar}>

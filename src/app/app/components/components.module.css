@@ -269,3 +269,7 @@
     flex-direction: column;
   }
 }
+
+.importLink {
+  composes: secondary from "../_ui/buttons.module.css";
+}

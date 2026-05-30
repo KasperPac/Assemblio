@@ -201,3 +201,7 @@
   composes: primary from "../_ui/buttons.module.css";
   flex: 1;
 }
+
+.importLink {
+  composes: secondary from "../_ui/buttons.module.css";
+}

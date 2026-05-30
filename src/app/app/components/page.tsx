@@ -87,7 +87,14 @@ export default async function ComponentsPage({ searchParams }: Props) {
     <div className={styles.page}>
       <PageHeader
         description={`${filtered.length} of ${allComponents.length} components in the current catalog.`}
-        actions={<ComponentCreateForm action={createComponent} lookups={lookups} />}
+        actions={
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <Link href="/app/components/import" className={styles.importLink}>
+              Import CSV
+            </Link>
+            <ComponentCreateForm action={createComponent} lookups={lookups} />
+          </div>
+        }
       />
 
       <div className={styles.toolbar}>
