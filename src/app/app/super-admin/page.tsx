@@ -62,7 +62,10 @@ export default async function SuperAdminTenantsPage({
     memberCountByTenant.set(row.tenant_id, (memberCountByTenant.get(row.tenant_id) ?? 0) + 1);
   }
 
-  // Fetch health indicators for all tenant IDs in one RPC call
+  // Fetch health indicators for all tenant IDs in one RPC call.
+  // Error is intentionally not captured — if the RPC fails, healthRows is null
+  // and all tenants default to health="ok". This is a known trade-off: a failed
+  // health fetch shows green dots rather than an error state.
   const tenantIds = (tenants ?? []).map((t) => t.id);
   const { data: healthRows } = tenantIds.length > 0
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -179,6 +182,7 @@ export default async function SuperAdminTenantsPage({
                     </td>
                     <td>
                       <span
+                        role="img"
                         className={`${styles.healthDot} ${styles[`healthDot_${r.healthLevel}`]}`}
                         title={tooltipText}
                         aria-label={`Health: ${r.healthLevel}. ${tooltipText}`}
