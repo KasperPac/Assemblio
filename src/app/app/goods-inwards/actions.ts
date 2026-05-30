@@ -150,7 +150,8 @@ export async function createDeliveryReceipt(formData: FormData) {
 export async function linkReceiptToPo(formData: FormData) {
   const ctx = await getServerTenantContext();
   if (!ctx) redirect("/auth/login");
-  const { supabase, tenantId } = ctx;
+  const { supabase, tenantId: _tenantId } = ctx;
+  const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const receiptId = formData.get("receipt_id") as string;
   const purchaseOrderId = formData.get("purchase_order_id") as string;
@@ -261,7 +262,8 @@ export async function linkReceiptToPo(formData: FormData) {
 export async function updateDeliveryReceipt(formData: FormData) {
   const ctx = await getServerTenantContext();
   if (!ctx) redirect("/auth/login");
-  const { supabase, tenantId } = ctx;
+  const { supabase, tenantId: _tenantId } = ctx;
+  const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const receiptId = formData.get("receipt_id") as string;
 
@@ -329,6 +331,7 @@ export async function updateComponentCosts(
   const ctx = await getServerTenantContext();
   if (!ctx) return { error: "Not authenticated" };
   const { supabase, tenantId } = ctx;
+  if (!tenantId) return { error: "Missing tenant context." };
 
   for (const u of updates) {
     if (!Number.isFinite(u.cost_per_unit) || u.cost_per_unit < 0) {

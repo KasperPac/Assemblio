@@ -103,7 +103,8 @@ export async function updateJobLaborPlanWeek(formData: FormData) {
     );
   }
 
-  const { supabase, tenantId } = context;
+  const { supabase, tenantId: _tenantId } = context;
+  const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
   const { data: existingPlan, error: existingPlanError } = await supabase
     .from("job_labor_plan")
     .select("week_start")
