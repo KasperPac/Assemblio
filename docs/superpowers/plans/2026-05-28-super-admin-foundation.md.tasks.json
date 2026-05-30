@@ -73,10 +73,10 @@
     {
       "id": 19,
       "subject": "Task 11: Full type-check and smoke-test pass",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [14, 15, 16, 17, 18],
       "description": "**Goal:** Resolve all TypeScript errors; app compiles; smoke-tests pass locally.\n\n**Files:** Various app route files using ctx.tenantId as string.\n\n**Verify:** `npx tsc --noEmit && npx vitest run`\n\n```json:metadata\n{\"files\": [], \"verifyCommand\": \"npx tsc --noEmit && npx vitest run\", \"acceptanceCriteria\": [\"tsc --noEmit exits 0\", \"all vitest tests pass\", \"smoke checklist passes\"]}\n```"
     }
   ],
-  "lastUpdated": "2026-05-30T11:39:00.000Z"
+  "lastUpdated": "2026-05-30T12:10:00.000Z"
 }
