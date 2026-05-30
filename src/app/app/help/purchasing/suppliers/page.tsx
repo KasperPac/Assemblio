@@ -8,7 +8,7 @@ export default function SuppliersPage() {
       title="Managing suppliers"
       description="Add suppliers, set lead times, and link them to components."
       category="purchasing"
-      relatedSlugs={["purchasing/purchase-orders"]}
+      relatedSlugs={["purchasing/purchase-orders", "purchasing/goods-inwards"]}
     >
       <Steps>
         <Step>Open <strong>Suppliers</strong> in the sidebar and click <strong>New supplier</strong>.</Step>
