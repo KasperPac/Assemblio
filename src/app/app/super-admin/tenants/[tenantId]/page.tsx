@@ -4,6 +4,8 @@ import styles from "./tenant-detail.module.css";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import LifecycleControls from "./_components/lifecycle-controls";
 import MembersPanel from "./_components/members-panel";
+import VitalsPanel from "./_components/vitals-panel";
+import type { TenantVitals } from "./_components/vitals-panel";
 import { viewAsTenant } from "../../actions";
 import PageHeader from "../../../_ui/page-header";
 
@@ -18,7 +20,13 @@ export default async function TenantDetailPage({
   const { supabase } = ctx;
   const canMutate = ctx.role === "super_admin";
 
-  const [{ data: tenant }, { data: sub }, { data: members }, { data: audit }] = await Promise.all([
+  const [
+    { data: tenant },
+    { data: sub },
+    { data: members },
+    { data: audit },
+    { data: vitalsRows },
+  ] = await Promise.all([
     supabase
       .from("tenant")
       .select("id, name, timezone, currency, created_at, suspended_at, suspended_reason, deleted_at")
@@ -39,6 +47,8 @@ export default async function TenantDetailPage({
       .eq("target_tenant_id", tenantId)
       .order("created_at", { ascending: false })
       .limit(20),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (supabase.rpc as any)("get_tenant_vitals", { p_tenant_id: tenantId }),
   ]);
 
   if (!tenant) notFound();
@@ -58,6 +68,33 @@ export default async function TenantDetailPage({
     role: m.role,
     email: emailById.get(m.profile_id) ?? null,
   }));
+
+  // vitalsRows is an array with one element (single-row return from the RPC)
+  const rawVitals = (vitalsRows as unknown[] | null)?.[0] as Record<string, unknown> | undefined;
+  const vitals: TenantVitals | null = rawVitals
+    ? {
+        last_activity_at: (rawVitals.last_activity_at as string | null) ?? null,
+        seven_day_event_count: (rawVitals.seven_day_event_count as number) ?? 0,
+        seven_day_active_members: (rawVitals.seven_day_active_members as number) ?? 0,
+        member_last_sign_in_at: (rawVitals.member_last_sign_in_at as string | null) ?? null,
+        member_count: memberRows.length,
+        component_count: (rawVitals.component_count as number) ?? 0,
+        bom_count: (rawVitals.bom_count as number) ?? 0,
+        open_order_count: (rawVitals.open_order_count as number) ?? 0,
+        supplier_count: (rawVitals.supplier_count as number) ?? 0,
+        shopify_connected: (rawVitals.shopify_connected as boolean) ?? false,
+        shopify_store_domain: (rawVitals.shopify_store_domain as string | null) ?? null,
+        shopify_last_synced_at: (rawVitals.shopify_last_synced_at as string | null) ?? null,
+        shopify_last_sync_status: (rawVitals.shopify_last_sync_status as string | null) ?? null,
+        shopify_last_sync_error: (rawVitals.shopify_last_sync_error as string | null) ?? null,
+        accounting_provider: (rawVitals.accounting_provider as string | null) ?? null,
+        accounting_account_name: (rawVitals.accounting_account_name as string | null) ?? null,
+        accounting_token_expires_at: (rawVitals.accounting_token_expires_at as string | null) ?? null,
+        accounting_token_expired: (rawVitals.accounting_token_expired as boolean | null) ?? null,
+        accounting_thirty_day_synced: (rawVitals.accounting_thirty_day_synced as number) ?? 0,
+        accounting_thirty_day_failed: (rawVitals.accounting_thirty_day_failed as number) ?? 0,
+      }
+    : null;
 
   return (
     <div className={styles.page}>
@@ -112,6 +149,12 @@ export default async function TenantDetailPage({
       <section className={styles.card}>
         <MembersPanel tenantId={tenant.id} members={memberRows} canMutate={canMutate} />
       </section>
+
+      {vitals && (
+        <section className={styles.card}>
+          <VitalsPanel vitals={vitals} />
+        </section>
+      )}
 
       <section className={styles.card}>
         <h2 className={styles.cardTitle}>Recent audit</h2>
