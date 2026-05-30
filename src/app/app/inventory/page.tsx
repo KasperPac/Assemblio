@@ -127,8 +127,6 @@ export default async function InventoryPage() {
           </a>
         }
       />
-      <HelpLink slug="inventory/adjustments" label="How do inventory adjustments work?" />
-
       <div className={styles.metricGrid}>
         {metrics.map((metric) => (
           <div key={metric.label} className={styles.metricCard}>
@@ -148,6 +146,7 @@ export default async function InventoryPage() {
                 <h2>Log inventory movement</h2>
               </div>
               <StatusBadge variant="info">Append-only ledger</StatusBadge>
+              <HelpLink slug="inventory/adjustments" label="How do inventory adjustments work?" />
             </div>
             <p className={styles.panelIntro}>
               Every adjustment should be captured here so movement history and
