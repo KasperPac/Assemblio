@@ -7,7 +7,8 @@ as $$
   select p.id
   from public.profiles p
   join auth.users u on u.id = p.id
-  where u.email = p_email
+  where lower(u.email) = lower(p_email)
+    and public.is_platform_operator()
   limit 1
 $$;
 
