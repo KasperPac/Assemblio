@@ -5,6 +5,7 @@ import MovementForm from "./movement-form";
 import PageHeader from "../_ui/page-header";
 import EmptyState from "../_ui/empty-state";
 import StatusBadge from "../_ui/status-badge";
+import HelpLink from "../_ui/help-link";
 
 type InventoryRow = {
   id: string;
@@ -126,6 +127,7 @@ export default async function InventoryPage() {
           </a>
         }
       />
+      <HelpLink slug="inventory/adjustments" label="How do inventory adjustments work?" />
 
       <div className={styles.metricGrid}>
         {metrics.map((metric) => (

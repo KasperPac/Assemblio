@@ -4,6 +4,7 @@ import styles from "./floor.module.css";
 import { FloorBoard, type DepartmentColumn, type DrawerStep } from "./floor-board";
 import type { JobCardData } from "./job-card";
 import { UnstartedPanel, type UnstartedLine } from "./unstarted-panel";
+import HelpLink from "../../../_ui/help-link";
 
 // ── Raw DB row shapes ──────────────────────────────────────────────────────────
 
@@ -201,6 +202,7 @@ export default async function FloorPage() {
 
   return (
     <div className={styles.page}>
+      <HelpLink slug="production/planning-overview" label="How the planning module works" />
       {unstartedLines.length > 0 && (
         <UnstartedPanel lines={unstartedLines} />
       )}

@@ -14,6 +14,7 @@ import PageHeader from "../_ui/page-header";
 import StatusBadge from "../_ui/status-badge";
 import EmptyState from "../_ui/empty-state";
 import ListPanel, { ListRow } from "../_ui/list-panel";
+import HelpLink from "../_ui/help-link";
 
 type BomRow = {
   id: string;
@@ -76,6 +77,7 @@ export default async function BomPage() {
       <PageHeader
         description="Maintain versioned bills of materials per Shopify variant and keep component quantities editable in one place."
       />
+      <HelpLink slug="bom/allocation" label="How does allocation work?" />
 
       <BomCreateForm
         variants={

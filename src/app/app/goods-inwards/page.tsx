@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import ReceiptList from "./receipt-list";
+import HelpLink from "../_ui/help-link";
 
 export default async function GoodsInwardsPage() {
   const ctx = await getServerTenantContext();
@@ -19,5 +20,10 @@ export default async function GoodsInwardsPage() {
     .eq("tenant_id", tenantId)
     .order("received_at", { ascending: false });
 
-  return <ReceiptList receipts={receipts ?? []} />;
+  return (
+    <>
+      <HelpLink slug="purchasing/goods-inwards" label="How to receive goods" />
+      <ReceiptList receipts={receipts ?? []} />
+    </>
+  );
 }

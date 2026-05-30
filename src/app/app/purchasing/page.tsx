@@ -13,6 +13,7 @@ import PageHeader from "../_ui/page-header";
 import StatusBadge from "../_ui/status-badge";
 import EmptyState from "../_ui/empty-state";
 import ListPanel, { ListRow } from "../_ui/list-panel";
+import HelpLink from "../_ui/help-link";
 
 type PurchaseOrderRow = {
   id: string;
@@ -73,6 +74,7 @@ export default async function PurchasingPage() {
       <PageHeader
         description="Create inbound purchase orders, manage status changes, and keep received quantities aligned with component demand."
       />
+      <HelpLink slug="purchasing/purchase-orders" label="How to create a purchase order" />
 
       <PurchaseOrderCreateForm
         suppliers={(suppliers ?? []) as Array<{ id: string; name: string | null }>}

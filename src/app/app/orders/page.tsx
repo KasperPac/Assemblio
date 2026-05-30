@@ -5,6 +5,7 @@ import styles from "./orders.module.css";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import PageHeader from "../_ui/page-header";
 import EmptyState from "../_ui/empty-state";
+import HelpLink from "../_ui/help-link";
 import { getOrdersPipelineRollup } from "@/lib/orders/pipeline-rollup";
 import { daysLate } from "@/lib/orders/target-ship";
 import {
@@ -167,6 +168,7 @@ export default async function OrdersPage({ searchParams }: Props) {
           </form>
         }
       />
+      <HelpLink slug="orders/order-statuses" label="What do order statuses mean?" />
 
       {params.shopify === "sync-ok" ? (
         <p className={styles.syncMeta}>

@@ -5,6 +5,7 @@ import PageHeader from "../_ui/page-header";
 import StatusBadge from "../_ui/status-badge";
 import EmptyState from "../_ui/empty-state";
 import { createStocktakeSession } from "./actions";
+import HelpLink from "../_ui/help-link";
 
 type SessionRow = {
   id: string;
@@ -82,6 +83,7 @@ export default async function StocktakePage() {
           </button>
         }
       />
+      <HelpLink slug="stocktake/running-a-stocktake" label="How to run a stocktake" />
 
       {showBanner && (
         <div className={styles.banner}>
