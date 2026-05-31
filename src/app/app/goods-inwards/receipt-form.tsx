@@ -98,19 +98,22 @@ export default function ReceiptForm({
     // Auto-fill supplier from PO
     setSupplierId(po.supplier_id ?? "");
     setShowSupplierOverride(false);
+    setParsedBadge(false);
     // Pre-populate lines from remaining PO quantities
-    const poLines = po.lines.map((l) => {
-      const remaining = l.quantity - l.quantity_received;
-      return {
-        key: crypto.randomUUID(),
-        component_id: l.component_id,
-        quantity_delivered: String(Math.max(0, remaining)),
-        cost_per_unit: "",
-        notes: "",
-        quantity_expected: Math.max(0, remaining),
-        purchase_order_line_id: l.id,
-      };
-    });
+    const poLines = po.lines
+      .filter((l) => l.quantity - l.quantity_received > 0)
+      .map((l) => {
+        const remaining = l.quantity - l.quantity_received;
+        return {
+          key: crypto.randomUUID(),
+          component_id: l.component_id,
+          quantity_delivered: String(remaining),
+          cost_per_unit: "",
+          notes: "",
+          quantity_expected: remaining,
+          purchase_order_line_id: l.id,
+        };
+      });
     setLines(poLines.length > 0 ? poLines : [blankLine()]);
   }
 
@@ -548,14 +551,16 @@ export default function ReceiptForm({
             ))}
           </tbody>
         </table>
-        <button
-          type="button"
-          onClick={() => setLines((prev) => [...prev, blankLine()])}
-          className={styles.secondary}
-          style={{ alignSelf: "flex-start" }}
-        >
-          + Add line
-        </button>
+        {!selectedPoId && (
+          <button
+            type="button"
+            onClick={() => setLines((prev) => [...prev, blankLine()])}
+            className={styles.secondary}
+            style={{ alignSelf: "flex-start" }}
+          >
+            + Add line
+          </button>
+        )}
       </div>
 
       <div className={styles.actions}>
