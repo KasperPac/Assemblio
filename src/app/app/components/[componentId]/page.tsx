@@ -6,6 +6,7 @@ import styles from "./component-detail.module.css";
 import { getStockStatus } from "../helpers";
 import { getAvgActualLeadTimesForComponent } from "@/lib/suppliers/catalog";
 import ComponentEditForm from "../component-edit-form";
+import ArchiveButton from "./archive-button";
 
 type Props = {
   params: Promise<{ componentId: string }>;
@@ -320,6 +321,7 @@ export default async function ComponentDetailPage({ params }: Props) {
         <Link href="/app/components" className={styles.backButton}>
           &larr; Back
         </Link>
+        {isAdmin && <ArchiveButton componentId={componentId} />}
       </div>
 
       <div className={styles.layout}>

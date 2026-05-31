@@ -214,3 +214,89 @@ export async function updateBinLocation(_prevState: { error?: string }, formData
   revalidatePath("/app/activity-log");
   return {};
 }
+
+type ArchiveResult =
+  | { success: true }
+  | { error: string; conflicts: string[] };
+
+export async function archiveComponent(componentId: string): Promise<ArchiveResult> {
+  const context = await getServerTenantContext();
+  if (!context) return { error: "Unauthorized", conflicts: [] };
+  const { supabase, tenantId: _tenantId, role } = context;
+  const tenantId = _tenantId!;
+
+  if (role !== "admin" && role !== "super_admin") {
+    return { error: "Only managers and above can archive components.", conflicts: [] };
+  }
+
+  // Run conflict checks in parallel
+  const [
+    { data: activeBoms },
+    { data: stockRows },
+    { data: openPoLines },
+    { data: openAllocations },
+  ] = await Promise.all([
+    supabase
+      .from("product_bom_component")
+      .select("product_bom_id, product_bom:product_bom_id!inner(is_active, variant:variant_id(product:product_id(title)))")
+      .eq("component_id", componentId)
+      .eq("product_bom.is_active", true),
+    supabase
+      .from("inventory_balance")
+      .select("on_hand")
+      .eq("component_id", componentId)
+      .eq("tenant_id", tenantId)
+      .gt("on_hand", 0),
+    supabase
+      .from("purchase_order_line")
+      .select("id, purchase_order:purchase_order_id!inner(status)")
+      .eq("component_id", componentId)
+      .eq("tenant_id", tenantId)
+      .not("purchase_order.status", "in", '("received","cancelled")'),
+    supabase
+      .from("order_component_allocation")
+      .select("id, order_line:order_line_id!inner(order:order_id!inner(status))")
+      .eq("component_id", componentId)
+      .eq("tenant_id", tenantId)
+      .not("order_line.order.status", "in", '("complete","cancelled")'),
+  ]);
+
+  const conflicts: string[] = [];
+
+  if ((activeBoms ?? []).length > 0) {
+    const bomCount = (activeBoms ?? []).length;
+    conflicts.push(`Used in ${bomCount} active BOM${bomCount !== 1 ? "s" : ""}`);
+  }
+  if ((stockRows ?? []).length > 0) {
+    const totalOnHand = (stockRows ?? []).reduce((s, r) => s + (r.on_hand ?? 0), 0);
+    conflicts.push(`Has ${totalOnHand} unit${totalOnHand !== 1 ? "s" : ""} on hand`);
+  }
+  if ((openPoLines ?? []).length > 0) {
+    conflicts.push(`Has ${openPoLines!.length} open purchase order line${openPoLines!.length !== 1 ? "s" : ""}`);
+  }
+  if ((openAllocations ?? []).length > 0) {
+    conflicts.push(`Allocated to ${openAllocations!.length} open order${openAllocations!.length !== 1 ? "s" : ""}`);
+  }
+
+  if (conflicts.length > 0) {
+    return { error: "Cannot archive: resolve the following first.", conflicts };
+  }
+
+  const { error } = await supabase
+    .from("component")
+    .update({ archived_at: new Date().toISOString() })
+    .eq("id", componentId)
+    .eq("tenant_id", tenantId);
+
+  if (error) return { error: error.message, conflicts: [] };
+
+  await supabase.from("activity_log").insert({
+    tenant_id: tenantId,
+    event: "component_archived",
+    metadata: { component_id: componentId },
+  });
+
+  revalidatePath("/app/components");
+  revalidatePath("/app/activity-log");
+  return { success: true };
+}
