@@ -24,7 +24,7 @@ export default async function SuppliersPage({
   const { filter = "active" } = await searchParams;
   const context = await getServerTenantContext();
   if (!context) return <p className={styles.errorMsg}>Missing tenant context.</p>;
-  const { supabase, tenantId } = context;
+  const { supabase, tenantId, role } = context;
 
   let query = supabase
     .from("suppliers")
@@ -77,9 +77,11 @@ export default async function SuppliersPage({
         description="Manage suppliers used throughout purchasing and inbound stock workflows."
         actions={
           <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-            <Link href="/app/suppliers/import" className={styles.importLink}>
-              Import CSV
-            </Link>
+            {(role === "admin" || role === "super_admin") && (
+              <Link href="/app/suppliers/import" className={styles.importLink}>
+                Import CSV
+              </Link>
+            )}
             <SupplierCreateForm action={createSupplier} />
           </div>
         }

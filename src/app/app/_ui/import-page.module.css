@@ -62,13 +62,13 @@
 .stepActive .stepNum {
   background: var(--brand-1);
   border-color: var(--brand-1);
-  color: #fff;
+  color: var(--ink-on-brand);
 }
 
 .stepDone .stepNum {
   background: var(--ok, #2e7d32);
   border-color: var(--ok, #2e7d32);
-  color: #fff;
+  color: var(--ink-on-brand);
 }
 
 .stepConnector {
@@ -186,7 +186,7 @@
 
 .previewTable tbody td {
   padding: 6px 10px;
-  border-bottom: 1px solid var(--stroke-soft, #eee);
+  border-bottom: 1px solid var(--stroke-card);
   color: var(--ink-strong);
 }
 

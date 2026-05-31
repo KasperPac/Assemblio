@@ -33,7 +33,7 @@ export default async function ComponentsPage({ searchParams }: Props) {
 
   const context = await getServerTenantContext();
   if (!context) redirect("/auth/login");
-  const { supabase, tenantId } = context;
+  const { supabase, tenantId, role } = context;
 
   const [
     { data: components, error },
@@ -89,9 +89,11 @@ export default async function ComponentsPage({ searchParams }: Props) {
         description={`${filtered.length} of ${allComponents.length} components in the current catalog.`}
         actions={
           <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-            <Link href="/app/components/import" className={styles.importLink}>
-              Import CSV
-            </Link>
+            {(role === "admin" || role === "super_admin") && (
+              <Link href="/app/components/import" className={styles.importLink}>
+                Import CSV
+              </Link>
+            )}
             <ComponentCreateForm action={createComponent} lookups={lookups} />
           </div>
         }
