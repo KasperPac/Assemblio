@@ -5,6 +5,7 @@ import DetailTabs from "./detail-tabs";
 import styles from "./component-detail.module.css";
 import { getStockStatus } from "../helpers";
 import { getAvgActualLeadTimesForComponent } from "@/lib/suppliers/catalog";
+import ComponentEditForm from "../component-edit-form";
 
 type Props = {
   params: Promise<{ componentId: string }>;
@@ -151,6 +152,7 @@ export default async function ComponentDetailPage({ params }: Props) {
     { data: recentReceiptLines },
     { data: supplierCatalogRaw },
     { data: allSuppliersRaw },
+    { data: groupsRaw },
   ] = await Promise.all([
     supabase
       .from("inventory_balance")
@@ -187,6 +189,11 @@ export default async function ComponentDetailPage({ params }: Props) {
       .select("id, name")
       .eq("tenant_id", tenantId)
       .eq("is_active", true)
+      .order("name"),
+    supabase
+      .from("component_group")
+      .select("id, name")
+      .eq("tenant_id", tenantId)
       .order("name"),
   ]);
 
@@ -376,6 +383,25 @@ export default async function ComponentDetailPage({ params }: Props) {
           </div>
 
           <div className={styles.cardActions}>
+            {isAdmin && (
+              <ComponentEditForm
+                componentId={componentId}
+                initialValues={{
+                  name: c.name,
+                  sku: c.sku,
+                  unit: c.unit,
+                  costPerUnit: c.cost_per_unit,
+                  reorderPoint: c.reorder_point,
+                  lowStockLevel: c.low_stock_level,
+                  supplierId: c.supplier_id,
+                  groupId: c.group_id,
+                }}
+                lookups={{
+                  suppliers: (allSuppliersRaw ?? []) as Array<{ id: string; name: string }>,
+                  groups: (groupsRaw ?? []) as Array<{ id: string; name: string }>,
+                }}
+              />
+            )}
             <Link href={`/app/goods-inwards/new?component_id=${componentId}`} className={styles.btnSecondary}>
               Receive stock
             </Link>

@@ -70,6 +70,89 @@ export async function createComponent(
   return { success: "Component created." };
 }
 
+export async function updateComponent(
+  componentId: string,
+  _prevState: ComponentState,
+  formData: FormData
+): Promise<ComponentState> {
+  const name = formData.get("name")?.toString().trim() ?? "";
+  const sku = formData.get("sku")?.toString().trim() ?? "";
+  const unit = formData.get("unit")?.toString().trim() ?? "";
+  const reorderPoint = parseNumber(formData.get("reorder_point")) ?? 0;
+  const lowStockLevel = parseNumber(formData.get("low_stock_level")) ?? 0;
+  const costPerUnit = parseNumber(formData.get("cost_per_unit")) ?? 0;
+  const supplierId = parseUuid(formData.get("supplier_id"));
+  const groupId = parseUuid(formData.get("group_id"));
+
+  if (!name) return { error: "Component name is required." };
+
+  const context = await getServerTenantContext();
+  if (!context) return { error: "Missing tenant context." };
+  const { supabase, tenantId, role } = context;
+
+  if (role !== "admin" && role !== "super_admin") {
+    return { error: "Only managers and above can edit components." };
+  }
+
+  const { data: current } = await supabase
+    .from("component")
+    .select("name, sku, unit, cost_per_unit, reorder_point, low_stock_level, supplier_id, group_id")
+    .eq("id", componentId)
+    .eq("tenant_id", tenantId)
+    .maybeSingle();
+
+  if (!current) return { error: "Component not found." };
+
+  const { error } = await supabase
+    .from("component")
+    .update({
+      name,
+      sku: sku || null,
+      unit: unit || null,
+      cost_per_unit: costPerUnit,
+      reorder_point: reorderPoint,
+      low_stock_level: lowStockLevel,
+      supplier_id: supplierId,
+      group_id: groupId,
+    })
+    .eq("id", componentId)
+    .eq("tenant_id", tenantId);
+
+  if (error) return { error: error.message };
+
+  await supabase.from("activity_log").insert({
+    tenant_id: tenantId,
+    event: "component_updated",
+    metadata: {
+      component_id: componentId,
+      before: {
+        name: current.name,
+        sku: current.sku,
+        unit: current.unit,
+        cost_per_unit: current.cost_per_unit,
+        reorder_point: current.reorder_point,
+        low_stock_level: current.low_stock_level,
+        supplier_id: current.supplier_id,
+        group_id: current.group_id,
+      },
+      after: {
+        name,
+        sku: sku || null,
+        unit: unit || null,
+        cost_per_unit: costPerUnit,
+        reorder_point: reorderPoint,
+        low_stock_level: lowStockLevel,
+        supplier_id: supplierId,
+        group_id: groupId,
+      },
+    },
+  });
+
+  revalidatePath(`/app/components/${componentId}`);
+  revalidatePath("/app/components");
+  return { success: "Component updated." };
+}
+
 export async function updateBinLocation(_prevState: { error?: string }, formData: FormData): Promise<{ error?: string }> {
   const componentId = formData.get("component_id")?.toString().trim() ?? "";
   const binSubLocationId = formData.get("bin_sub_location_id")?.toString().trim() || null;
