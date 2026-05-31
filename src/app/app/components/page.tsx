@@ -42,7 +42,7 @@ export default async function ComponentsPage({ searchParams }: Props) {
     { data: locations },
     { data: groups },
   ] = await Promise.all([
-    supabase.from("component").select("id,name,sku,reorder_point").eq("tenant_id", tenantId).order("name"),
+    supabase.from("component").select("id,name,sku,reorder_point").eq("tenant_id", tenantId).is("archived_at", null).order("name"),
     supabase.from("inventory_balance").select("component_id,on_hand,reserved").eq("tenant_id", tenantId),
     supabase.from("suppliers").select("id,name").eq("tenant_id", tenantId).order("name"),
     supabase.from("location").select("id,name").eq("tenant_id", tenantId).order("name"),

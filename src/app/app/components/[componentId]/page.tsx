@@ -17,6 +17,10 @@ type ComponentRecord = {
   unit: string | null;
   cost_per_unit: number;
   reorder_point: number;
+  low_stock_level: number;
+  archived_at: string | null;
+  supplier_id: string | null;
+  group_id: string | null;
   created_at: string | null;
   bin_sub_location_id: string | null;
   bin_aisle_id: string | null;
@@ -112,7 +116,7 @@ export default async function ComponentDetailPage({ params }: Props) {
 
   const { data: component } = await supabase
     .from("component")
-    .select("id,name,sku,unit,cost_per_unit,reorder_point,created_at,tenant_id,bin_sub_location_id,bin_aisle_id,bin_bay_id,supplier:supplier_id(name),location:location_id(name),group:group_id(name)")
+    .select("id,name,sku,unit,cost_per_unit,reorder_point,low_stock_level,archived_at,created_at,tenant_id,bin_sub_location_id,bin_aisle_id,bin_bay_id,supplier_id,group_id,supplier:supplier_id(name),location:location_id(name),group:group_id(name)")
     .eq("id", componentId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
