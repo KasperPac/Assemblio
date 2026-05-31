@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "./products.module.css";
+import PageHeader from "@/app/app/_ui/page-header";
 
 type ProductRow = {
   id: string;
@@ -285,18 +286,17 @@ export default async function ProductsPage({ searchParams }: Props) {
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <div>
-          <p>
-            {filteredProducts.length} of {products.length} Products
-          </p>
-        </div>
-        <form method="post" action="/api/shopify/sync">
-          <button type="submit" className={styles.importButton}>
-            Import Products
-          </button>
-        </form>
-      </div>
+      <PageHeader
+        title="Products"
+        description={`${filteredProducts.length} of ${products.length} products`}
+        actions={
+          <form method="post" action="/api/shopify/sync">
+            <button type="submit" className={styles.importButton}>
+              Import Products
+            </button>
+          </form>
+        }
+      />
 
       <form className={styles.filters} method="get">
         <input
