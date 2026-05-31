@@ -67,7 +67,12 @@ async function upsertProducts(
     image_url: string | null;
   }>
 ) {
-  const sourcedRows = rows.map((row) => ({ ...row, source: "shopify" as const }));
+  const now = new Date().toISOString();
+  const sourcedRows = rows.map((row) => ({
+    ...row,
+    source: "shopify" as const,
+    last_synced_at: now,
+  }));
   const { error } = await admin
     .from("product")
     .upsert(sourcedRows, { onConflict: "tenant_id,shopify_id" });
