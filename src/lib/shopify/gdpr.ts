@@ -152,7 +152,7 @@ export async function handleCustomersRedact(
   if (tenantId && customerEmail) {
     const { data: ordersUpdated } = await admin
       .from("orders")
-      .update({ customer_email: null })
+      .update({ customer_email: null, customer_first_name: null })
       .eq("tenant_id", tenantId)
       .eq("customer_email", customerEmail)
       .select("id");

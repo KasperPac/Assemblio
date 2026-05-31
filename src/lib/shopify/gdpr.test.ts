@@ -172,9 +172,9 @@ function makeAdmin() {
     { id: "store_1", tenant_id: "tenant_1", store_domain: "demo.myshopify.com" },
   ]);
   fake.seed("orders", [
-    { id: "ord_1", tenant_id: "tenant_1", shopify_order_id: "1001", customer_email: "alice@example.com" },
-    { id: "ord_2", tenant_id: "tenant_1", shopify_order_id: "1002", customer_email: "bob@example.com" },
-    { id: "ord_3", tenant_id: "tenant_1", shopify_order_id: null, customer_email: "manual@example.com" },
+    { id: "ord_1", tenant_id: "tenant_1", shopify_order_id: "1001", customer_email: "alice@example.com", customer_first_name: "Alice" },
+    { id: "ord_2", tenant_id: "tenant_1", shopify_order_id: "1002", customer_email: "bob@example.com", customer_first_name: "Bob" },
+    { id: "ord_3", tenant_id: "tenant_1", shopify_order_id: null, customer_email: "manual@example.com", customer_first_name: null },
   ]);
   fake.seed("order_line", [
     { id: "ol_1", order_id: "ord_1", tenant_id: "tenant_1", variant_id: "v1" },
@@ -257,8 +257,10 @@ describe("handleCustomersRedact", () => {
 
     const ord1 = admin.tables.get("orders")!.rows.find((r) => r.id === "ord_1");
     expect(ord1!.customer_email).toBeNull();
+    expect(ord1!.customer_first_name).toBeNull();
     const ord2 = admin.tables.get("orders")!.rows.find((r) => r.id === "ord_2");
     expect(ord2!.customer_email).toBe("bob@example.com");
+    expect(ord2!.customer_first_name).toBe("Bob");
 
     const evt1 = admin.tables.get("shopify_webhook_event")!.rows.find((r) => r.id === "evt_1");
     expect(evt1!.payload).toEqual({ redacted: true, reason: "customers/redact" });
