@@ -360,8 +360,8 @@ export default function ReceiptDetail({
       {receipt.status === "unmatched" && (
         <div
           style={{
-            background: "var(--warn-bg, #fffbeb)",
-            border: "1.5px solid var(--warn, #f59e0b)",
+            background: "var(--warning-dim)",
+            border: "1.5px solid var(--warning)",
             borderRadius: 8,
             padding: "12px 16px",
             display: "flex",
@@ -369,14 +369,16 @@ export default function ReceiptDetail({
             gap: 8,
           }}
         >
-          <p style={{ margin: 0, fontWeight: 700, color: "var(--warn-ink, #92400e)", fontSize: "0.9rem" }}>
+          <p style={{ margin: 0, fontWeight: 700, color: "var(--ink-strong)", fontSize: "0.9rem" }}>
             ⚠ This receipt isn&apos;t linked to a PO
           </p>
           <form ref={linkFormRef} onSubmit={handleLinkPo}>
             <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
               <select
                 name="purchase_order_id"
+                aria-label="Purchase order"
                 required
+                disabled={availablePOs.length === 0}
                 style={{ flex: 1, maxWidth: 380 }}
               >
                 <option value="">Select a purchase order…</option>
@@ -402,13 +404,13 @@ export default function ReceiptDetail({
               </button>
             </div>
             {availablePOs.length > 0 && (
-              <p style={{ margin: 0, fontSize: "0.8rem", color: "var(--warn-ink, #92400e)" }}>
+              <p style={{ margin: 0, fontSize: "0.8rem", color: "var(--ink-muted)" }}>
                 Showing open and in-transit POs for {resolveSupplier(receipt)}
               </p>
             )}
           </form>
           {linkError && (
-            <p style={{ margin: 0, fontSize: "0.85rem", color: "var(--error, red)" }}>
+            <p style={{ margin: 0, fontSize: "0.85rem", color: "var(--danger)" }}>
               {linkError}
             </p>
           )}
