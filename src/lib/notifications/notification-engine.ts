@@ -27,7 +27,7 @@ export async function fireNotificationIfConfigured({
       sequence, operation_name,
       bom_labor:bom_labor_id ( product_bom_id ),
       order_line:order_line_id (
-        orders:order_id ( id, order_number, customer_email ),
+        orders:order_id ( id, order_number, customer_email, customer_first_name ),
         variant:variant_id ( title, product:product_id ( title ) )
       )
     `)
@@ -76,7 +76,7 @@ export async function fireNotificationIfConfigured({
     product_name: product?.title ?? variant?.title ?? "your product",
     order_number: order?.order_number ?? "",
     department_name: step.operation_name,
-    customer_first_name: "",
+    customer_first_name: order?.customer_first_name ?? "",
   };
   const body = renderTemplate(trigger.message_template, vars);
   const subject = `Update on your order ${order?.order_number ?? ""}`;
