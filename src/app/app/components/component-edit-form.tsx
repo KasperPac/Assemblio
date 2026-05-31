@@ -44,7 +44,7 @@ export default function ComponentEditForm({ componentId, initialValues, lookups 
     const dialog = dialogRef.current;
     if (!dialog) return;
     if (open) dialog.showModal();
-    else dialog.close();
+    else if (dialog.open) dialog.close();
   }, [open]);
 
   return (

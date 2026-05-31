@@ -150,6 +150,7 @@ export async function updateComponent(
 
   revalidatePath(`/app/components/${componentId}`);
   revalidatePath("/app/components");
+  revalidatePath("/app/activity-log");
   return { success: "Component updated." };
 }
 
