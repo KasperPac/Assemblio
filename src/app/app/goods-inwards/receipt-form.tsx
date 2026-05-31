@@ -47,18 +47,24 @@ export default function ReceiptForm({
   components,
   locations,
   supplierComponentMap,
+  initialComponentId,
 }: {
   suppliers: Supplier[];
   components: Component[];
   locations: Location[];
   supplierComponentMap: Record<string, string[]>;
+  initialComponentId?: string | null;
 }) {
   const defaultLocation = locations.find((l) => l.is_default) ?? locations[0];
 
   const [supplierId, setSupplierId] = useState<string>("");
   const [showSupplierOverride, setShowSupplierOverride] = useState(false);
   const [locationId, setLocationId] = useState(defaultLocation?.id ?? "");
-  const [lines, setLines] = useState<LineState[]>([blankLine()]);
+  const [lines, setLines] = useState<LineState[]>([
+    initialComponentId
+      ? { ...blankLine(), component_id: initialComponentId }
+      : blankLine(),
+  ]);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [pickerLineKey, setPickerLineKey] = useState<string | null>(null);

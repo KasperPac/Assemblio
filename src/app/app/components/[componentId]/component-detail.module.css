@@ -405,6 +405,11 @@
   color: var(--ink-muted);
 }
 
+.refLink {
+  color: var(--brand-1);
+  text-decoration: underline;
+}
+
 .empty {
   color: var(--ink-muted);
   font-size: 13px;

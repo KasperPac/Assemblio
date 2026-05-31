@@ -56,6 +56,7 @@ type MovementRecord = {
   delta_in_prod: number;
   reason: string | null;
   reference_type: string | null;
+  reference_id: string | null;
   created_at: string;
 };
 
@@ -81,9 +82,11 @@ type BomUsageRecord = {
     version: number;
     is_active: boolean;
     variant: {
+      id: string | null;
       title: string | null;
       product: { title: string } | Array<{ title: string }> | null;
     } | Array<{
+      id: string | null;
       title: string | null;
       product: { title: string } | Array<{ title: string }> | null;
     }> | null;
@@ -91,9 +94,11 @@ type BomUsageRecord = {
     version: number;
     is_active: boolean;
     variant: {
+      id: string | null;
       title: string | null;
       product: { title: string } | Array<{ title: string }> | null;
     } | Array<{
+      id: string | null;
       title: string | null;
       product: { title: string } | Array<{ title: string }> | null;
     }> | null;
@@ -153,13 +158,13 @@ export default async function ComponentDetailPage({ params }: Props) {
       .eq("component_id", componentId),
     supabase
       .from("inventory_movement")
-      .select("id,delta_on_hand,delta_in_prod,reason,reference_type,created_at")
+      .select("id,delta_on_hand,delta_in_prod,reason,reference_type,reference_id,created_at")
       .eq("component_id", componentId)
       .order("created_at", { ascending: false })
       .limit(50),
     supabase
       .from("product_bom_component")
-      .select("quantity,product_bom_id,product_bom:product_bom_id(version,is_active,variant:variant_id(title,product:product_id(title)))")
+      .select("quantity,product_bom_id,product_bom:product_bom_id(version,is_active,variant:variant_id(id,title,product:product_id(title)))")
       .eq("component_id", componentId),
     supabase
       .from("delivery_receipt_line")
@@ -284,6 +289,7 @@ export default async function ComponentDetailPage({ params }: Props) {
     deltaInProd: m.delta_in_prod,
     reason: m.reason ?? "--",
     refType: m.reference_type ?? "--",
+    refId: m.reference_id ?? null,
   }));
 
   const bomRows = typedBomUsage.map((row) => {
@@ -292,6 +298,7 @@ export default async function ComponentDetailPage({ params }: Props) {
     const product = variant ? unwrap(variant.product) : null;
     return {
       bomId: row.product_bom_id as string,
+      variantId: (variant as { id?: string | null } | null)?.id ?? null,
       product: product?.title ?? "--",
       variant: variant?.title ?? "--",
       version: bom?.version ?? 0,
@@ -369,7 +376,7 @@ export default async function ComponentDetailPage({ params }: Props) {
           </div>
 
           <div className={styles.cardActions}>
-            <Link href="/app/goods-inwards/new" className={styles.btnSecondary}>
+            <Link href={`/app/goods-inwards/new?component_id=${componentId}`} className={styles.btnSecondary}>
               Receive stock
             </Link>
           </div>

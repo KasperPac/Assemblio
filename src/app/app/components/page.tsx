@@ -86,6 +86,8 @@ export default async function ComponentsPage({ searchParams }: Props) {
   return (
     <div className={styles.page}>
       <PageHeader
+        eyebrow="Inventory"
+        title="Components"
         description={`${filtered.length} of ${allComponents.length} components in the current catalog.`}
         actions={
           <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>

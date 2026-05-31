@@ -21,10 +21,12 @@ type MovementRow = {
   deltaInProd: number;
   reason: string;
   refType: string;
+  refId: string | null;
 };
 
 type BomRow = {
   bomId: string;
+  variantId: string | null;
   product: string;
   variant: string;
   version: number;
@@ -73,6 +75,11 @@ type Props = {
   currentSubLocationId: string | null;
   currentAisleId: string | null;
   currentBayId: string | null;
+};
+
+const REF_ROUTES: Partial<Record<string, (id: string) => string>> = {
+  goods_receipt: (id) => `/app/goods-inwards/${id}`,
+  production_order: (id) => `/app/orders/${id}`,
 };
 
 type Tab = "Overview" | "Movements" | "BOM Usage" | "Suppliers" | "Location";
@@ -189,7 +196,15 @@ export default function DetailTabs({
                     {m.deltaInProd > 0 ? "+" : ""}{m.deltaInProd}
                   </span>
                   <span>{m.reason}</span>
-                  <span className={styles.refCell}>{m.refType}</span>
+                  <span className={styles.refCell}>
+                    {m.refId && REF_ROUTES[m.refType] ? (
+                      <a href={REF_ROUTES[m.refType]!(m.refId)} className={styles.refLink}>
+                        {m.refType}
+                      </a>
+                    ) : (
+                      m.refType
+                    )}
+                  </span>
                 </div>
               ))}
             </div>
@@ -229,10 +244,17 @@ export default function DetailTabs({
                 {bomUsage.map((row) => (
                   <div key={row.bomId} className={`${styles.miniRow} ${styles.bomTableCols}`}>
                     <span>
-                      <a href="/app/bom" className={styles.bomLink}>
-                        {row.product}
-                        {row.variant && row.variant !== "--" ? ` — ${row.variant}` : ""}
-                      </a>
+                      {row.variantId ? (
+                        <a href={`/app/products/variants/${row.variantId}`} className={styles.bomLink}>
+                          {row.product}
+                          {row.variant && row.variant !== "--" ? ` — ${row.variant}` : ""}
+                        </a>
+                      ) : (
+                        <span>
+                          {row.product}
+                          {row.variant && row.variant !== "--" ? ` — ${row.variant}` : ""}
+                        </span>
+                      )}
                       {row.version > 0 && (
                         <span className={styles.bomVersion}> v{row.version}</span>
                       )}
@@ -252,6 +274,14 @@ export default function DetailTabs({
       )}
       {active === "Location" && isAdmin && (
         <div className={styles.tabContent}>
+          <p className={styles.locationTabDesc}>
+            Assign a default storage location for this component. When stock is
+            received, it will be directed to this bin. Locations are managed in{" "}
+            <a href="/app/warehouse/locations" className={styles.refLink}>
+              Warehouse → Locations
+            </a>
+            .
+          </p>
           <div className={styles.binCard}>
             <BinLocationSelect
               componentId={componentId}
