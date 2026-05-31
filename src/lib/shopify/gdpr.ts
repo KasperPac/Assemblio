@@ -81,7 +81,7 @@ export async function markGdprRequestProcessed(
 
 /**
  * customers/data_request handler.
- * We don't currently persist customer-scoped data outside of webhook payloads and `orders.customer_email`.
+ * We don't currently persist customer-scoped data outside of webhook payloads, `orders.customer_email`, and `orders.customer_first_name`.
  * For MVP we record the request and surface it via activity_log so the platform owner can compile + email
  * the export to the merchant within the 30-day window.
  */
