@@ -254,7 +254,7 @@ export default function ReceiptForm({
         <div
           className={styles.formCard}
           style={{
-            background: "var(--bg-subtle, #f8fafc)",
+            background: "var(--bg-card-alt)",
             borderColor: "var(--brand-1, #3b82f6)",
             borderWidth: "1.5px",
           }}
