@@ -25,7 +25,7 @@ export default async function TenantDetailPage({
     { data: sub },
     { data: members },
     { data: audit },
-    { data: vitalsRows },
+    { data: vitalsRows, error: vitalsError },
   ] = await Promise.all([
     supabase
       .from("tenant")
@@ -70,6 +70,7 @@ export default async function TenantDetailPage({
   }));
 
   // vitalsRows is an array with one element (single-row return from the RPC)
+  if (vitalsError) console.error("[vitals RPC error]", vitalsError);
   const rawVitals = (vitalsRows as unknown[] | null)?.[0] as Record<string, unknown> | undefined;
   const vitals: TenantVitals | null = rawVitals
     ? {
@@ -150,6 +151,13 @@ export default async function TenantDetailPage({
         <MembersPanel tenantId={tenant.id} members={memberRows} canMutate={canMutate} />
       </section>
 
+      {vitalsError && (
+        <section className={styles.card}>
+          <p style={{ color: "var(--danger)", fontFamily: "monospace", fontSize: "0.82rem" }}>
+            Vitals RPC error: {vitalsError.message} (code: {vitalsError.code})
+          </p>
+        </section>
+      )}
       {vitals && (
         <section className={styles.card}>
           <VitalsPanel vitals={vitals} />
