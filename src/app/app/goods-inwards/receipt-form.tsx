@@ -10,6 +10,20 @@ type Supplier = { id: string; name: string };
 type Component = PickerComponent;
 type Location = { id: string; name: string; is_default: boolean };
 
+type POLine = {
+  id: string;
+  component_id: string;
+  quantity: number;
+  quantity_received: number;
+};
+
+type AvailablePO = {
+  id: string;
+  supplier_id: string | null;
+  supplier_name: string | null;
+  lines: POLine[];
+};
+
 type LineState = {
   key: string;
   component_id: string;
@@ -17,6 +31,8 @@ type LineState = {
   cost_per_unit: string;
   notes: string;
   extractedName?: string;
+  quantity_expected?: number | null;
+  purchase_order_line_id?: string | null;
 };
 
 const REASONS = [
@@ -47,11 +63,13 @@ export default function ReceiptForm({
   components,
   locations,
   supplierComponentMap,
+  availablePOs,
 }: {
   suppliers: Supplier[];
   components: Component[];
   locations: Location[];
   supplierComponentMap: Record<string, string[]>;
+  availablePOs: AvailablePO[];
 }) {
   const defaultLocation = locations.find((l) => l.is_default) ?? locations[0];
 
@@ -63,6 +81,38 @@ export default function ReceiptForm({
   const [isPending, startTransition] = useTransition();
   const [pickerLineKey, setPickerLineKey] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+
+  const [selectedPoId, setSelectedPoId] = useState<string>("");
+
+  function handlePoSelect(poId: string) {
+    setSelectedPoId(poId);
+    if (!poId) {
+      // Cleared — reset supplier and lines
+      setSupplierId("");
+      setShowSupplierOverride(false);
+      setLines([blankLine()]);
+      return;
+    }
+    const po = availablePOs.find((p) => p.id === poId);
+    if (!po) return;
+    // Auto-fill supplier from PO
+    setSupplierId(po.supplier_id ?? "");
+    setShowSupplierOverride(false);
+    // Pre-populate lines from remaining PO quantities
+    const poLines = po.lines.map((l) => {
+      const remaining = l.quantity - l.quantity_received;
+      return {
+        key: crypto.randomUUID(),
+        component_id: l.component_id,
+        quantity_delivered: String(Math.max(0, remaining)),
+        cost_per_unit: "",
+        notes: "",
+        quantity_expected: Math.max(0, remaining),
+        purchase_order_line_id: l.id,
+      };
+    });
+    setLines(poLines.length > 0 ? poLines : [blankLine()]);
+  }
 
   const preferredIds = useMemo<Set<string> | undefined>(() => {
     if (!supplierId) return undefined;
@@ -162,15 +212,24 @@ export default function ReceiptForm({
 
     if (!formRef.current) return;
     const fd = new FormData(formRef.current);
+
     if (showSupplierOverride) fd.set("supplier_id", "");
+
+    // When a PO is selected, supplier select is disabled (won't appear in FormData)
+    // so we explicitly set both fields.
+    if (selectedPoId) {
+      fd.set("purchase_order_id", selectedPoId);
+      fd.set("supplier_id", supplierId);
+    }
+
     fd.set(
       "lines",
       JSON.stringify(
         filledLines.map((l) => ({
           component_id: l.component_id,
-          purchase_order_line_id: null,
+          purchase_order_line_id: l.purchase_order_line_id ?? null,
           quantity_delivered: parseFloat(l.quantity_delivered),
-          quantity_expected: null,
+          quantity_expected: l.quantity_expected ?? null,
           cost_per_unit: l.cost_per_unit ? parseFloat(l.cost_per_unit) : null,
           notes: l.notes || null,
         }))
@@ -186,6 +245,48 @@ export default function ReceiptForm({
   return (
     <form ref={formRef} onSubmit={handleSubmit} className={styles.page}>
       {error && <div className={styles.errorNotice}>{error}</div>}
+
+      {/* PO linking banner */}
+      {availablePOs.length > 0 && (
+        <div
+          className={styles.formCard}
+          style={{
+            background: "var(--bg-subtle, #f8fafc)",
+            borderColor: "var(--brand-1, #3b82f6)",
+            borderWidth: "1.5px",
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <label htmlFor="po_select" style={{ fontWeight: 700, fontSize: "0.9rem" }}>
+              Link to Purchase Order{" "}
+              <span style={{ fontWeight: 400, color: "var(--ink-muted)" }}>(optional)</span>
+            </label>
+            <select
+              id="po_select"
+              value={selectedPoId}
+              onChange={(e) => handlePoSelect(e.target.value)}
+              style={{ maxWidth: 420 }}
+            >
+              <option value="">Select a PO to pre-fill this receipt…</option>
+              {availablePOs.map((po) => (
+                <option key={po.id} value={po.id}>
+                  PO-{po.id.slice(0, 8).toUpperCase()} &middot; {po.supplier_name ?? "Unknown supplier"} &middot;{" "}
+                  {po.lines.length} line{po.lines.length !== 1 ? "s" : ""}
+                </option>
+              ))}
+            </select>
+            {selectedPoId ? (
+              <p style={{ margin: 0, fontSize: "0.8rem", color: "var(--ok, green)" }}>
+                ✓ Supplier and lines pre-filled from PO — adjust delivered quantities below.
+              </p>
+            ) : (
+              <p style={{ margin: 0, fontSize: "0.8rem", color: "var(--ink-muted)" }}>
+                Fills supplier, lines &amp; quantities automatically.
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* PDF parse section */}
       <div className={styles.formCard}>
@@ -234,6 +335,7 @@ export default function ReceiptForm({
               name="supplier_id"
               value={showSupplierOverride ? "__other__" : supplierId}
               onChange={(e) => handleSupplierChange(e.target.value)}
+              disabled={!!selectedPoId}
             >
               <option value="">Select supplier…</option>
               {suppliers.map((s) => (
@@ -297,15 +399,17 @@ export default function ReceiptForm({
             </select>
           </div>
 
-          <div className={styles.field}>
-            <label htmlFor="stock_in_reason">Reason</label>
-            <select id="stock_in_reason" name="stock_in_reason" required>
-              <option value="">Select reason…</option>
-              {REASONS.map((r) => (
-                <option key={r.value} value={r.value}>{r.label}</option>
-              ))}
-            </select>
-          </div>
+          {!selectedPoId && (
+            <div className={styles.field}>
+              <label htmlFor="stock_in_reason">Reason</label>
+              <select id="stock_in_reason" name="stock_in_reason" required>
+                <option value="">Select reason…</option>
+                {REASONS.map((r) => (
+                  <option key={r.value} value={r.value}>{r.label}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className={styles.fieldFull}>
             <label htmlFor="notes">Notes (optional)</label>
@@ -320,6 +424,7 @@ export default function ReceiptForm({
           <thead>
             <tr>
               <th>Component</th>
+              {selectedPoId && <th>Expected</th>}
               <th>Qty delivered</th>
               <th>Cost / unit (optional)</th>
               <th>Note</th>
@@ -335,53 +440,69 @@ export default function ReceiptForm({
                       From PDF: {line.extractedName}
                     </div>
                   )}
-                  <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                    <select
-                      value={line.component_id}
-                      onChange={(e) => updateLine(line.key, { component_id: e.target.value })}
-                      style={{ flex: 1, minWidth: 0 }}
-                    >
-                      <option value="">Select component…</option>
-                      {preferredIds && preferredCount > 0 ? (
-                        <>
-                          <optgroup label={`From ${supplierName ?? "supplier"}`}>
-                            {sortedComponents
-                              .filter((c) => preferredIds.has(c.id))
-                              .map((c) => (
-                                <option key={c.id} value={c.id}>
-                                  {componentLabel(c)}
-                                </option>
-                              ))}
-                          </optgroup>
-                          <optgroup label="Other components">
-                            {sortedComponents
-                              .filter((c) => !preferredIds.has(c.id))
-                              .map((c) => (
-                                <option key={c.id} value={c.id}>
-                                  {componentLabel(c)}
-                                </option>
-                              ))}
-                          </optgroup>
-                        </>
-                      ) : (
-                        sortedComponents.map((c) => (
-                          <option key={c.id} value={c.id}>
-                            {componentLabel(c)}
-                          </option>
-                        ))
-                      )}
-                    </select>
-                    <button
-                      type="button"
-                      className={styles.secondary}
-                      onClick={() => setPickerLineKey(line.key)}
-                      style={{ padding: "4px 10px", whiteSpace: "nowrap" }}
-                      title="Browse all components"
-                    >
-                      Browse…
-                    </button>
-                  </div>
+                  {line.purchase_order_line_id ? (
+                    // PO-sourced line: component is locked
+                    <span style={{ fontSize: "0.9rem" }}>
+                      {(() => {
+                        const c = components.find((c) => c.id === line.component_id);
+                        return c ? componentLabel(c) : line.component_id;
+                      })()}
+                    </span>
+                  ) : (
+                    // Free line: editable component select + picker
+                    <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                      <select
+                        value={line.component_id}
+                        onChange={(e) => updateLine(line.key, { component_id: e.target.value })}
+                        style={{ flex: 1, minWidth: 0 }}
+                      >
+                        <option value="">Select component…</option>
+                        {preferredIds && preferredCount > 0 ? (
+                          <>
+                            <optgroup label={`From ${supplierName ?? "supplier"}`}>
+                              {sortedComponents
+                                .filter((c) => preferredIds.has(c.id))
+                                .map((c) => (
+                                  <option key={c.id} value={c.id}>
+                                    {componentLabel(c)}
+                                  </option>
+                                ))}
+                            </optgroup>
+                            <optgroup label="Other components">
+                              {sortedComponents
+                                .filter((c) => !preferredIds.has(c.id))
+                                .map((c) => (
+                                  <option key={c.id} value={c.id}>
+                                    {componentLabel(c)}
+                                  </option>
+                                ))}
+                            </optgroup>
+                          </>
+                        ) : (
+                          sortedComponents.map((c) => (
+                            <option key={c.id} value={c.id}>
+                              {componentLabel(c)}
+                            </option>
+                          ))
+                        )}
+                      </select>
+                      <button
+                        type="button"
+                        className={styles.secondary}
+                        onClick={() => setPickerLineKey(line.key)}
+                        style={{ padding: "4px 10px", whiteSpace: "nowrap" }}
+                        title="Browse all components"
+                      >
+                        Browse…
+                      </button>
+                    </div>
+                  )}
                 </td>
+                {selectedPoId && (
+                  <td style={{ color: "var(--ink-muted)" }}>
+                    {line.quantity_expected != null ? line.quantity_expected : "—"}
+                  </td>
+                )}
                 <td>
                   <input
                     type="number"
