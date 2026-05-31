@@ -1,7 +1,7 @@
 -- super_admin_tenant_vitals.sql
 -- Two security-definer RPCs for platform operator observability.
 -- Neither touches business data directly — they aggregate it on behalf of
--- the caller after verifying is_platform_operator().
+-- the caller after verifying is_super_admin().
 
 -- ──────────────────────────────────────────────────────────────────────
 -- 1. get_tenant_health_indicators(p_tenant_ids uuid[])
@@ -15,7 +15,7 @@ security definer
 set search_path = public
 as $$
 begin
-  if not public.is_platform_operator() then
+  if not public.is_super_admin() then
     raise exception 'forbidden' using errcode = 'PT403';
   end if;
 
@@ -131,7 +131,7 @@ as $$
 declare
   v_acct_conn_id uuid;
 begin
-  if not public.is_platform_operator() then
+  if not public.is_super_admin() then
     raise exception 'forbidden' using errcode = 'PT403';
   end if;
 
