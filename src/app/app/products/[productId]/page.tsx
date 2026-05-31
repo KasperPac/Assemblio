@@ -15,6 +15,7 @@ type ProductRecord = {
   title: string;
   shopify_id: string;
   created_at: string | null;
+  last_synced_at: string | null;
   image_url: string | null;
   description: string | null;
 };
@@ -90,7 +91,7 @@ export default async function ProductDetailPage({ params }: Props) {
   // Fetch product
   const { data: productData } = await supabase
     .from("product")
-    .select("id,title,shopify_id,created_at,image_url,description")
+    .select("id,title,shopify_id,created_at,last_synced_at,image_url,description")
     .eq("id", productId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
@@ -307,13 +308,14 @@ export default async function ProductDetailPage({ params }: Props) {
         : null;
 
   // Header meta
-  const lastSync = product.created_at;
+  const lastSync = product.last_synced_at ?? product.created_at;
+  const syncLabel = product.last_synced_at ? "Last sync" : "Added";
 
   return (
     <div className={styles.page}>
       <PageHeader
         title={product.title}
-        description={`Shopify ID: ${product.shopify_id} · ${variants.length} variant${variants.length === 1 ? "" : "s"} · Last sync ${timeAgo(lastSync)}`}
+        description={`Shopify ID: ${product.shopify_id} · ${variants.length} variant${variants.length === 1 ? "" : "s"} · ${syncLabel} ${timeAgo(lastSync)}`}
       />
 
       {/* Product image + description */}
