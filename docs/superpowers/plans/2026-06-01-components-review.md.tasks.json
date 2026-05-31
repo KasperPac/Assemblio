@@ -1,0 +1,55 @@
+{
+  "planPath": "docs/superpowers/plans/2026-06-01-components-review.md",
+  "tasks": [
+    {
+      "id": 3,
+      "subject": "Task 1: DB migration — add archived_at to component table",
+      "status": "pending",
+      "description": "**Goal:** Add `archived_at timestamptz` to the `component` table and filter archived rows from all list queries.\n\n**Files:**\n- Create: `supabase/patches/component_archive.sql`\n- Modify: `src/app/app/components/page.tsx`\n- Modify: `src/app/app/components/[componentId]/page.tsx`\n\n**Acceptance Criteria:**\n- [ ] `archived_at timestamptz` column added to `component` table\n- [ ] Component list query filters `archived_at IS NULL`\n- [ ] Detail page select includes `archived_at`, `low_stock_level`, `supplier_id`, `group_id`\n\n**Verify:** `npx tsc --noEmit` → no errors\n\n```json:metadata\n{\"files\": [\"supabase/patches/component_archive.sql\", \"src/app/app/components/page.tsx\", \"src/app/app/components/[componentId]/page.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"archived_at column added\", \"list filters archived_at IS NULL\", \"detail page selects new fields\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 2: Sidebar navigation — add Purchasing and Inventory entries",
+      "status": "pending",
+      "description": "**Goal:** Add Purchasing (F-01) and Inventory (F-02) to the Operations section of the sidebar.\n\n**Files:**\n- Modify: `src/app/app/sidebar-nav.tsx`\n\n**Acceptance Criteria:**\n- [ ] Purchasing appears in Operations section\n- [ ] Inventory appears in Operations section\n- [ ] Both highlight as active on their routes\n\n**Verify:** `npx tsc --noEmit` → no errors\n\n```json:metadata\n{\"files\": [\"src/app/app/sidebar-nav.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Purchasing in sidebar\", \"Inventory in sidebar\"]}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 3: Link fixes, page title, and location tab copy (F-03–F-05, F-07, F-10)",
+      "status": "pending",
+      "description": "**Goal:** Fix BOM deep-links, Receive Stock context, movement ref links; add page h1 and location tab copy.\n\n**Files:**\n- Modify: `src/app/app/components/[componentId]/page.tsx`\n- Modify: `src/app/app/components/[componentId]/detail-tabs.tsx`\n- Modify: `src/app/app/components/page.tsx`\n- Modify: `src/app/app/goods-inwards/new/page.tsx`\n- Modify: `src/app/app/goods-inwards/receipt-form.tsx`\n\n**Acceptance Criteria:**\n- [ ] BOM links go to `/app/products/variants/[variantId]`\n- [ ] Receive Stock link includes `?component_id=[id]`\n- [ ] Goods-inwards form pre-selects component from URL param\n- [ ] Movement refs are clickable links\n- [ ] List page has h1 \"Components\"\n- [ ] Location tab has explanatory copy\n\n**Verify:** `npx tsc --noEmit` → no errors\n\n```json:metadata\n{\"files\": [\"src/app/app/components/[componentId]/page.tsx\", \"src/app/app/components/[componentId]/detail-tabs.tsx\", \"src/app/app/components/page.tsx\", \"src/app/app/goods-inwards/new/page.tsx\", \"src/app/app/goods-inwards/receipt-form.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"BOM links resolve\", \"Receive Stock passes component_id\", \"movement refs linked\", \"h1 present\", \"location copy present\"]}\n```"
+    },
+    {
+      "id": 6,
+      "subject": "Task 4: Edit component modal (F-06)",
+      "status": "pending",
+      "description": "**Goal:** Add updateComponent server action and ComponentEditForm modal.\n\n**Files:**\n- Modify: `src/app/app/components/actions.ts`\n- Create: `src/app/app/components/component-edit-form.tsx`\n- Modify: `src/app/app/components/[componentId]/page.tsx`\n\n**Acceptance Criteria:**\n- [ ] Edit button (admin-only) in info card header\n- [ ] Dialog pre-fills with current values\n- [ ] Save updates DB row\n- [ ] Close button has aria-label\n\n**Verify:** `npx tsc --noEmit` → no errors\n\n```json:metadata\n{\"files\": [\"src/app/app/components/actions.ts\", \"src/app/app/components/component-edit-form.tsx\", \"src/app/app/components/[componentId]/page.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"updateComponent action exists\", \"edit modal pre-fills\", \"admin-only\"]}\n```"
+    },
+    {
+      "id": 7,
+      "subject": "Task 5: Archive component with conflict checks (F-08)",
+      "status": "pending",
+      "blockedBy": [3],
+      "description": "**Goal:** Add archiveComponent action with blocking conflict checks and Archive button UI.\n\n**Files:**\n- Modify: `src/app/app/components/actions.ts`\n- Create: `src/app/app/components/[componentId]/archive-button.tsx`\n- Modify: `src/app/app/components/[componentId]/page.tsx`\n\n**Acceptance Criteria:**\n- [ ] Archive button (admin-only, destructive) in detail page header\n- [ ] Conflict check blocks archive when in use\n- [ ] Clean archive sets archived_at and redirects\n\n**Verify:** `npx tsc --noEmit` → no errors\n\n```json:metadata\n{\"files\": [\"src/app/app/components/actions.ts\", \"src/app/app/components/[componentId]/archive-button.tsx\", \"src/app/app/components/[componentId]/page.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"conflict check blocks archive\", \"clean archive redirects\", \"admin-only\"]}\n```"
+    },
+    {
+      "id": 8,
+      "subject": "Task 6: Supplier link editing and unlinking (F-09)",
+      "status": "pending",
+      "description": "**Goal:** Allow admins to edit supplier link fields inline and unlink suppliers from the Suppliers tab.\n\n**Files:**\n- Modify: `src/app/app/components/actions.ts`\n- Modify: `src/app/app/components/[componentId]/detail-tabs.tsx`\n\n**Acceptance Criteria:**\n- [ ] Edit and Unlink buttons per row (admin-only)\n- [ ] Inline edit expands with pre-filled fields\n- [ ] One row editable at a time\n- [ ] Unlink confirms then deletes\n\n**Verify:** `npx tsc --noEmit` → no errors\n\n```json:metadata\n{\"files\": [\"src/app/app/components/actions.ts\", \"src/app/app/components/[componentId]/detail-tabs.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"updateComponentSupplier action exists\", \"inline edit works\", \"unlink works\"]}\n```"
+    },
+    {
+      "id": 9,
+      "subject": "Task 7: Accessibility fixes (F-11–F-14)",
+      "status": "pending",
+      "description": "**Goal:** Fix stat card labels, tab ARIA roles, dialog close button, color-only status dots.\n\n**Files:**\n- Modify: `src/app/app/components/[componentId]/detail-tabs.tsx`\n- Modify: `src/app/app/components/component-create-form.tsx`\n- Modify: `src/app/app/components/page.tsx`\n- Modify: `src/app/app/components/components.module.css`\n\n**Acceptance Criteria:**\n- [ ] Stat values have aria-labelledby\n- [ ] Tab bar has correct ARIA roles\n- [ ] Create dialog close has aria-label\n- [ ] Status dots have sr-only text\n\n**Verify:** `npx tsc --noEmit` → no errors\n\n```json:metadata\n{\"files\": [\"src/app/app/components/[componentId]/detail-tabs.tsx\", \"src/app/app/components/component-create-form.tsx\", \"src/app/app/components/page.tsx\", \"src/app/app/components/components.module.css\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"aria-labelledby on stats\", \"tablist/tab/tabpanel roles\", \"close button labelled\", \"sr-only dots\"]}\n```"
+    },
+    {
+      "id": 10,
+      "subject": "Task 8: UX polish — dates, aisle bug, search, ref labels, sort (F-15–F-19)",
+      "status": "pending",
+      "description": "**Goal:** Five UX fixes: date format, aisle dropdown, search preservation, ref labels, sort controls.\n\n**Files:**\n- Modify: `src/app/app/components/[componentId]/detail-tabs.tsx`\n- Modify: `src/app/app/components/[componentId]/bin-location-select.tsx`\n- Modify: `src/app/app/components/page.tsx`\n\n**Acceptance Criteria:**\n- [ ] Movements dates use en-AU format\n- [ ] Aisles selectable without sub-location\n- [ ] Search preserved on tab switch\n- [ ] Ref types show human-readable labels\n- [ ] Column headers sort the list\n\n**Verify:** `npx tsc --noEmit` → no errors\n\n```json:metadata\n{\"files\": [\"src/app/app/components/[componentId]/detail-tabs.tsx\", \"src/app/app/components/[componentId]/bin-location-select.tsx\", \"src/app/app/components/page.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"en-AU dates\", \"aisle dropdown fixed\", \"search preserved\", \"human-readable refs\", \"sort works\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-06-01T00:00:00.000Z"
+}
