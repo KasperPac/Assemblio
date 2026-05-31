@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import { updateDeliveryReceipt, updateComponentCosts } from "./actions";
+import { updateDeliveryReceipt, updateComponentCosts, linkReceiptToPo } from "./actions";
 import { computeVariance } from "./helpers";
 import type { ReceiptStatus } from "./helpers";
 import styles from "./goods-inwards.module.css";
@@ -37,6 +37,17 @@ type Receipt = {
 
 type SupplierOption = { id: string; name: string };
 type LocationOption = { id: string; name: string; is_default: boolean };
+type AvailablePO = {
+  id: string;
+  supplier_id: string | null;
+  supplier_name: string | null;
+  lines: Array<{
+    id: string;
+    component_id: string;
+    quantity: number;
+    quantity_received: number;
+  }>;
+};
 
 const REASONS = [
   { value: "supplier_delivery", label: "Supplier delivery" },
@@ -78,10 +89,12 @@ export default function ReceiptDetail({
   receipt,
   suppliers,
   locations,
+  availablePOs,
 }: {
   receipt: Receipt;
   suppliers: SupplierOption[];
   locations: LocationOption[];
+  availablePOs: AvailablePO[];
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
@@ -95,6 +108,22 @@ export default function ReceiptDetail({
   );
   const editFormRef = useRef<HTMLFormElement>(null);
   const [isPending, startTransition] = useTransition();
+
+  const linkFormRef = useRef<HTMLFormElement>(null);
+  const [linkError, setLinkError] = useState<string | null>(null);
+  const [isLinkPending, startLinkTransition] = useTransition();
+
+  function handleLinkPo(e: React.FormEvent) {
+    e.preventDefault();
+    setLinkError(null);
+    if (!linkFormRef.current) return;
+    const fd = new FormData(linkFormRef.current);
+    fd.set("receipt_id", receipt.id);
+    startLinkTransition(async () => {
+      const result = await linkReceiptToPo(fd);
+      if (result?.error) setLinkError(result.error);
+    });
+  }
 
   const linesWithCost = receipt.delivery_receipt_line.filter(
     (l): l is ReceiptLine & { cost_per_unit: number } => l.cost_per_unit !== null
@@ -324,6 +353,65 @@ export default function ReceiptDetail({
             )}
           </div>
 
+        </div>
+      )}
+
+      {/* Link-to-PO banner — only when unmatched */}
+      {receipt.status === "unmatched" && (
+        <div
+          style={{
+            background: "var(--warn-bg, #fffbeb)",
+            border: "1.5px solid var(--warn, #f59e0b)",
+            borderRadius: 8,
+            padding: "12px 16px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+          }}
+        >
+          <p style={{ margin: 0, fontWeight: 700, color: "var(--warn-ink, #92400e)", fontSize: "0.9rem" }}>
+            ⚠ This receipt isn&apos;t linked to a PO
+          </p>
+          <form ref={linkFormRef} onSubmit={handleLinkPo}>
+            <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+              <select
+                name="purchase_order_id"
+                required
+                style={{ flex: 1, maxWidth: 380 }}
+              >
+                <option value="">Select a purchase order…</option>
+                {availablePOs.length === 0 ? (
+                  <option value="" disabled>
+                    No open POs for this supplier
+                  </option>
+                ) : (
+                  availablePOs.map((po) => (
+                    <option key={po.id} value={po.id}>
+                      PO-{po.id.slice(0, 8).toUpperCase()} &middot; {po.supplier_name ?? "Unknown"} &middot;{" "}
+                      {po.lines.length} line{po.lines.length !== 1 ? "s" : ""}
+                    </option>
+                  ))
+                )}
+              </select>
+              <button
+                type="submit"
+                className={styles.primary}
+                disabled={isLinkPending || availablePOs.length === 0}
+              >
+                {isLinkPending ? "Linking…" : "Link PO"}
+              </button>
+            </div>
+            {availablePOs.length > 0 && (
+              <p style={{ margin: 0, fontSize: "0.8rem", color: "var(--warn-ink, #92400e)" }}>
+                Showing open and in-transit POs for {resolveSupplier(receipt)}
+              </p>
+            )}
+          </form>
+          {linkError && (
+            <p style={{ margin: 0, fontSize: "0.85rem", color: "var(--error, red)" }}>
+              {linkError}
+            </p>
+          )}
         </div>
       )}
 
