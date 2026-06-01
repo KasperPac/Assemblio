@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import * as React from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "./purchasing.module.css";
 
 type FormState = {
@@ -21,36 +22,80 @@ type Props = {
 const initialState: FormState = {};
 
 export default function PurchaseOrderCreateForm({ suppliers, action }: Props) {
-  const [state, formAction] = useActionState(action, initialState);
+  const [open, setOpen] = useState(false);
+  const [state, formAction] = React.useActionState(action, initialState);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    if (state.success) setOpen(false);
+  }, [state.success]);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (open) dialog.showModal();
+    else dialog.close();
+  }, [open]);
 
   return (
-    <form className={styles.formCard} action={formAction}>
-      <div className={styles.formRow}>
-        <label>
-          Supplier
-          <select name="supplier_id" required defaultValue="">
-            <option value="">Select supplier</option>
-            {suppliers.map((supplier) => (
-              <option key={supplier.id} value={supplier.id}>
-                {supplier.name ?? "Unnamed supplier"}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Status
-          <select name="status" defaultValue="open">
-            <option value="open">Open</option>
-            <option value="in_transit">In Transit</option>
-            <option value="received">Received</option>
-          </select>
-        </label>
-        <button className={styles.primary} type="submit">
-          New PO
-        </button>
-      </div>
-      {state.error ? <p className={styles.error}>{state.error}</p> : null}
-      {state.success ? <p className={styles.success}>{state.success}</p> : null}
-    </form>
+    <>
+      <button
+        type="button"
+        className={styles.primaryBtn}
+        onClick={() => setOpen(true)}
+      >
+        New PO +
+      </button>
+
+      <dialog ref={dialogRef} className={styles.dialog} onClose={() => setOpen(false)}>
+        <div className={styles.dialogInner}>
+          <div className={styles.dialogHeader}>
+            <h2>New Purchase Order</h2>
+            <button
+              type="button"
+              className={styles.dialogClose}
+              aria-label="Close dialog"
+              onClick={() => setOpen(false)}
+            >
+              &times;
+            </button>
+          </div>
+          <form action={formAction} className={styles.dialogForm}>
+            <label className={styles.field}>
+              <span>Supplier *</span>
+              <select name="supplier_id" required defaultValue="">
+                <option value="">Select supplier</option>
+                {suppliers.map((supplier) => (
+                  <option key={supplier.id} value={supplier.id}>
+                    {supplier.name ?? "Unnamed supplier"}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className={styles.field}>
+              <span>Status</span>
+              <select name="status" defaultValue="open">
+                <option value="open">Open</option>
+                <option value="in_transit">In Transit</option>
+                <option value="received">Received</option>
+              </select>
+            </label>
+            {state.error && <p className={styles.error}>{state.error}</p>}
+            <div className={styles.dialogActions}>
+              <button
+                type="button"
+                className={styles.btnCancel}
+                onClick={() => setOpen(false)}
+              >
+                Cancel
+              </button>
+              <button type="submit" className={styles.btnSubmit}>
+                Create PO
+              </button>
+            </div>
+          </form>
+        </div>
+      </dialog>
+    </>
   );
 }

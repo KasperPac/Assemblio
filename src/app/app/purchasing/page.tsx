@@ -28,10 +28,7 @@ type PurchaseOrderLineRow = {
   id: string;
   quantity: number;
   quantity_received: number;
-  purchase_order:
-    | { id: string }
-    | Array<{ id: string }>
-    | null;
+  purchase_order: { id: string } | Array<{ id: string }> | null;
   component:
     | { name: string | null; sku: string | null }
     | Array<{ name: string | null; sku: string | null }>
@@ -69,28 +66,31 @@ export default async function PurchasingPage() {
         eyebrow="Operations"
         title="Purchasing"
         description="Create inbound purchase orders, manage status changes, and keep received quantities aligned with component demand."
+        actions={
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <PurchaseOrderLineForm
+              purchaseOrders={(data ?? []).map((po) => ({
+                id: po.id,
+                label: `PO-${po.id.slice(0, 6)} (${po.status})`,
+              }))}
+              components={(
+                (components ?? []) as Array<{ id: string; name: string | null; sku: string | null }>
+              ).map((c) => ({
+                id: c.id,
+                label: `${c.name ?? "Unnamed"}${c.sku ? ` (${c.sku})` : ""}`,
+              }))}
+              action={createPurchaseOrderLine}
+            />
+            <PurchaseOrderCreateForm
+              suppliers={
+                (suppliers ?? []) as Array<{ id: string; name: string | null }>
+              }
+              action={createPurchaseOrder}
+            />
+          </div>
+        }
       />
       <HelpLink slug="purchasing/purchase-orders" label="How to create a purchase order" />
-
-      <PurchaseOrderCreateForm
-        suppliers={(suppliers ?? []) as Array<{ id: string; name: string | null }>}
-        action={createPurchaseOrder}
-      />
-      <PurchaseOrderLineForm
-        purchaseOrders={(data ?? []).map((po) => ({
-          id: po.id,
-          label: `PO-${po.id.slice(0, 6)} (${po.status})`,
-        }))}
-        components={
-          ((components ?? []) as Array<{ id: string; name: string | null; sku: string | null }>).map(
-            (c) => ({
-              id: c.id,
-              label: `${c.name ?? "Unnamed"}${c.sku ? ` (${c.sku})` : ""}`,
-            })
-          )
-        }
-        action={createPurchaseOrderLine}
-      />
 
       <ListPanel
         eyebrow="Orders"
@@ -123,8 +123,12 @@ export default async function PurchasingPage() {
                 <Link href={`/app/purchasing/${row.id}`} className={styles.poLink}>
                   PO-{row.id.slice(0, 6)}
                 </Link>
-                <span className={styles.meta}>{supplier?.name ?? "Unknown supplier"}</span>
-                <StatusBadge variant={getStatusVariant(row.status)}>{row.status}</StatusBadge>
+                <span className={styles.meta}>
+                  {supplier?.name ?? "Unknown supplier"}
+                </span>
+                <StatusBadge variant={getStatusVariant(row.status)}>
+                  {row.status}
+                </StatusBadge>
                 <span className={styles.meta}>
                   {new Date(row.created_at).toLocaleDateString("en-GB")}
                 </span>
@@ -137,7 +141,9 @@ export default async function PurchasingPage() {
                     <option value="cancelled">Cancelled</option>
                     <option value="archived">Archived</option>
                   </select>
-                  <button type="submit">Update</button>
+                  <button type="submit" className={styles.inlineFormBtn}>
+                    Update
+                  </button>
                 </form>
               </ListRow>
             );
@@ -181,7 +187,7 @@ export default async function PurchasingPage() {
                 <div className={styles.cellStack}>
                   <strong>{component?.name ?? "Unknown"}</strong>
                   <span className={styles.meta}>
-                    {component?.sku ? component.sku : "No SKU"}
+                    {component?.sku ?? "No SKU"}
                   </span>
                 </div>
                 <div className={styles.cellStack}>
@@ -199,7 +205,9 @@ export default async function PurchasingPage() {
                     min="0.01"
                     defaultValue={line.quantity}
                   />
-                  <button type="submit">Save</button>
+                  <button type="submit" className={styles.inlineFormBtn}>
+                    Save
+                  </button>
                 </form>
               </ListRow>
             );

@@ -4,63 +4,56 @@
   gap: 18px;
 }
 
+/* ── Trigger buttons ── */
+
+.primaryBtn {
+  composes: primary from "../_ui/buttons.module.css";
+}
+
+.secondaryBtn {
+  composes: secondary from "../_ui/buttons.module.css";
+}
+
+/* ── Used by purchasing/[id]/page.tsx for the "Receive Goods" button ── */
+
 .primary {
   composes: primary from "../_ui/buttons.module.css";
 }
 
-.formCard {
-  border: 1px solid var(--stroke-card);
-  border-radius: var(--radius-xl);
-  background: var(--bg-card);
-  box-shadow: var(--shadow-card);
-  padding: 18px;
+/* ── Inline status update form inside ListRow ── */
+
+.inlineForm {
   display: grid;
-  gap: 10px;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
 }
 
-.formRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 12px;
-  align-items: end;
-}
-
-.formRowWide {
-  display: grid;
-  grid-template-columns: 1.2fr 1.2fr 0.8fr auto;
-  gap: 12px;
-  align-items: end;
-}
-
-.formRow label,
-.formRowWide label {
-  display: grid;
-  gap: 6px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
-
-.formRow select,
-.formRowWide select,
-.formRowWide input,
-.inlineForm select,
-.inlineForm input {
-  border: 1px solid var(--stroke);
+.inlineForm select {
+  border: 1px solid var(--stroke-strong);
   border-radius: var(--radius-lg);
-  min-height: 42px;
+  min-height: 38px;
   padding: 0 12px;
   background: var(--surface-1);
   color: var(--ink-strong);
 }
 
+.inlineFormBtn {
+  composes: secondary from "../_ui/buttons.module.css";
+}
+
+@media (max-width: 860px) {
+  .inlineForm {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Shared text styles ── */
+
 .error,
 .success,
 .meta {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   color: var(--ink-muted);
 }
 
@@ -72,40 +65,10 @@
   color: var(--ok);
 }
 
-.row strong {
-  color: var(--ink-strong);
-}
-
 .cellStack {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-}
-
-.inlineForm {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 8px;
-}
-
-.inlineForm button {
-  border: 1px solid var(--stroke-strong);
-  background: var(--surface-1);
-  border-radius: 999px;
-  min-height: 38px;
-  padding: 0 14px;
-  font-size: 0.84rem;
-  font-weight: 700;
-  cursor: pointer;
-  color: var(--ink-strong);
-}
-
-@media (max-width: 860px) {
-  .formRow,
-  .formRowWide,
-  .inlineForm {
-    grid-template-columns: 1fr;
-  }
+  gap: 4px;
 }
 
 .poLink {
@@ -118,7 +81,114 @@
   text-decoration: underline;
 }
 
+/* ── Row alignment ── */
+
+.row {
+  align-items: center;
+}
+
+/* ── Dialog ── */
+
+.dialog {
+  border: none;
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+  padding: 0;
+  max-width: 480px;
+  width: 92vw;
+}
+
+.dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.dialogInner {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dialogHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dialogHeader h2 {
+  font-size: 20px;
+}
+
+.dialogClose {
+  border: none;
+  background: none;
+  color: var(--ink-muted);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.dialogForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.field input,
+.field select {
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-lg);
+  min-height: 42px;
+  padding: 0 12px;
+  background: var(--surface-1);
+  color: var(--ink-strong);
+  font-size: 0.95rem;
+}
+
+.dialogActions {
+  display: flex;
+  gap: 10px;
+  padding-top: 6px;
+}
+
+.btnCancel {
+  composes: secondary from "../_ui/buttons.module.css";
+  flex: 1;
+}
+
+.btnSubmit {
+  composes: primary from "../_ui/buttons.module.css";
+  flex: 1;
+}
+
 /* ── PO detail page ── */
+
+.formCard {
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  padding: 18px;
+  display: grid;
+  gap: 10px;
+}
 
 .infoRow {
   display: flex;
