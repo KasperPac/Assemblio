@@ -215,17 +215,22 @@ export async function updateBinLocation(_prevState: { error?: string }, formData
   return {};
 }
 
-export async function updateComponentSupplier(formData: FormData): Promise<void> {
+export async function updateComponentSupplier(
+  _prevState: ComponentState,
+  formData: FormData
+): Promise<ComponentState> {
   const supplierComponentId = formData.get("supplier_component_id")?.toString() ?? "";
   const componentId = formData.get("component_id")?.toString() ?? "";
 
-  if (!supplierComponentId || !componentId) return;
+  if (!supplierComponentId || !componentId) return { error: "Missing required fields." };
 
   const context = await getServerTenantContext();
-  if (!context) return;
+  if (!context) return { error: "Missing tenant context." };
   const { supabase, tenantId, role } = context;
 
-  if (role !== "admin" && role !== "super_admin") return;
+  if (role !== "admin" && role !== "super_admin") {
+    return { error: "Only managers and above can edit supplier links." };
+  }
 
   const unitCost = parseNumber(formData.get("unit_cost"));
   const leadTimeDays = parseNumber(formData.get("lead_time_days"));
@@ -243,7 +248,7 @@ export async function updateComponentSupplier(formData: FormData): Promise<void>
     .eq("id", supplierComponentId)
     .eq("tenant_id", tenantId);
 
-  if (error) return;
+  if (error) return { error: error.message };
 
   await supabase.from("activity_log").insert({
     tenant_id: tenantId,
@@ -253,6 +258,7 @@ export async function updateComponentSupplier(formData: FormData): Promise<void>
 
   revalidatePath(`/app/components/${componentId}`);
   revalidatePath("/app/activity-log");
+  return { success: "Supplier link updated." };
 }
 
 type ArchiveResult =

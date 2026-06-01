@@ -618,7 +618,7 @@
 }
 .iconBtnDanger {
   background: none;
-  border: 1px solid var(--stroke);
+  border: 1px solid var(--danger);
   border-radius: 4px;
   width: 24px;
   height: 24px;

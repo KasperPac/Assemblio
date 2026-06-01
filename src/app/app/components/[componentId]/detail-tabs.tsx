@@ -317,6 +317,11 @@ function ComponentSuppliersTab({
   const [linkOpen, setLinkOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [unlinkConfirmId, setUnlinkConfirmId] = useState<string | null>(null);
+  const [editState, editAction] = React.useActionState(updateComponentSupplier, {});
+
+  React.useEffect(() => {
+    if (editState.success) setEditingId(null);
+  }, [editState.success]);
 
   const minCost = catalog.length > 0 ? Math.min(...catalog.filter(r => r.unitCost != null).map((r) => r.unitCost!)) : Infinity;
   const minLt = catalog.length > 0 ? Math.min(...catalog.filter(r => r.leadTimeDays != null).map((r) => r.leadTimeDays!)) : Infinity;
@@ -430,9 +435,8 @@ function ComponentSuppliersTab({
 
                 {isEditing && (
                   <form
-                    action={updateComponentSupplier}
+                    action={editAction}
                     className={styles.supplierEditRow}
-                    onSubmit={() => setEditingId(null)}
                   >
                     <input type="hidden" name="supplier_component_id" value={row.id} />
                     <input type="hidden" name="component_id" value={componentId} />
@@ -456,6 +460,11 @@ function ComponentSuppliersTab({
                       <button type="submit" className={styles.btnSmall}>Save</button>
                       <button type="button" className={styles.btnSmall} onClick={() => setEditingId(null)}>Cancel</button>
                     </div>
+                    {editState.error && (
+                      <p style={{ color: "var(--danger)", fontSize: "0.8rem", margin: "0", width: "100%" }}>
+                        {editState.error}
+                      </p>
+                    )}
                   </form>
                 )}
 
