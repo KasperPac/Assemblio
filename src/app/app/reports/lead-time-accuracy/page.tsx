@@ -1,21 +1,25 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { resolveDateRange } from "../_lib/date-range";
 import { ReportShell } from "../_components/report-shell";
 import { ReportStatCards } from "../_components/report-stat-cards";
-import { ReportTable } from "../_components/report-table";
+import { SortableReportTable } from "../_components/sortable-report-table";
 import type { TableColumn } from "../_components/report-table";
+import styles from "./lead-time-accuracy.module.css";
 
 type ReceiptRow = {
   id: string;
   received_at: string;
   purchase_order: {
     expected_date?: string | null;
+    supplier_id?: string | null;
     supplier?: { name: string } | null;
   } | null;
 };
 
 interface SupplierAccuracy extends Record<string, unknown> {
+  supplierId: string;
   supplier: string;
   received: number;
   onTime: number;
@@ -43,6 +47,7 @@ export default async function LeadTimeAccuracyPage({
       received_at,
       purchase_order:purchase_order_id(
         expected_date,
+        supplier_id,
         supplier:supplier_id(name)
       )
     `)
@@ -56,20 +61,20 @@ export default async function LeadTimeAccuracyPage({
   // Group by supplier
   const supplierMap = new Map<
     string,
-    { received: number; onTime: number; late: number; lateDaysTotal: number }
+    { name: string; received: number; onTime: number; late: number; lateDaysTotal: number }
   >();
 
   for (const receipt of receiptData) {
+    const supplierId = receipt.purchase_order?.supplier_id ?? "unknown";
     const supplierName = receipt.purchase_order?.supplier?.name ?? "Unknown";
-    if (!supplierMap.has(supplierName)) {
-      supplierMap.set(supplierName, { received: 0, onTime: 0, late: 0, lateDaysTotal: 0 });
+    if (!supplierMap.has(supplierId)) {
+      supplierMap.set(supplierId, { name: supplierName, received: 0, onTime: 0, late: 0, lateDaysTotal: 0 });
     }
-    const entry = supplierMap.get(supplierName)!;
+    const entry = supplierMap.get(supplierId)!;
     entry.received += 1;
 
     const expectedDate = receipt.purchase_order?.expected_date;
     if (!expectedDate) {
-      // Treat as on time when no expected date
       entry.onTime += 1;
     } else {
       const receivedAt = new Date(receipt.received_at);
@@ -85,8 +90,9 @@ export default async function LeadTimeAccuracyPage({
   }
 
   const rows: SupplierAccuracy[] = Array.from(supplierMap.entries())
-    .map(([supplier, entry]) => ({
-      supplier,
+    .map(([supplierId, entry]) => ({
+      supplierId,
+      supplier: entry.name,
       received: entry.received,
       onTime: entry.onTime,
       late: entry.late,
@@ -105,7 +111,9 @@ export default async function LeadTimeAccuracyPage({
   const belowVariant = belowThreshold > 0 ? "red" : "default";
 
   const columns: TableColumn<SupplierAccuracy>[] = [
-    { key: "supplier", header: "Supplier", render: (r) => r.supplier },
+    { key: "supplier", header: "Supplier", render: (r) => (
+      <Link href={`/app/suppliers/${r.supplierId}`} className={styles.reportLink}>{r.supplier}</Link>
+    )},
     { key: "received", header: "POs Received", align: "right", render: (r) => r.received },
     { key: "onTime", header: "On time", align: "right", render: (r) => r.onTime },
     {
@@ -162,10 +170,10 @@ export default async function LeadTimeAccuracyPage({
           },
         ]}
       />
-      <ReportTable
+      <SortableReportTable
         columns={columns}
         rows={rows}
-        rowKey={(r) => r.supplier}
+        rowKey={(r) => r.supplierId}
       />
     </ReportShell>
   );
