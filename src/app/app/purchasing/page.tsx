@@ -67,7 +67,7 @@ export default async function PurchasingPage() {
         title="Purchasing"
         description="Create inbound purchase orders, manage status changes, and keep received quantities aligned with component demand."
         actions={
-          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+          <div className={styles.headerActions}>
             <PurchaseOrderLineForm
               purchaseOrders={(data ?? []).map((po) => ({
                 id: po.id,
