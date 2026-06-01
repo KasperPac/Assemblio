@@ -1,12 +1,24 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { resolveDateRange } from "../_lib/date-range";
 import { ReportShell } from "../_components/report-shell";
 import { ReportStatCards } from "../_components/report-stat-cards";
-import { ReportTable, Badge } from "../_components/report-table";
+import { SortableReportTable } from "../_components/sortable-report-table";
+import { Badge } from "../_components/report-table";
 import type { TableColumn, BadgeVariant } from "../_components/report-table";
+import styles from "./po-summary.module.css";
 
-interface Row { id: string; poNumber: string; supplier: string; status: string; expectedDate: string | null; totalValue: number; lineCount: number; overdue: boolean; }
+interface Row extends Record<string, unknown> {
+  id: string;
+  poNumber: string;
+  supplier: string;
+  status: string;
+  expectedDate: string | null;
+  totalValue: number;
+  lineCount: number;
+  overdue: boolean;
+}
 
 type PORaw = {
   id: string;
@@ -65,7 +77,11 @@ export default async function POSummaryPage({
   const fmtCurrency = (n: number) => new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
 
   const columns: TableColumn<Row>[] = [
-    { key: "poNumber", header: "PO #", render: (r) => r.poNumber },
+    { key: "poNumber", header: "PO #", render: (r) => (
+      <Link href={`/app/purchasing/${r.id}`} className={styles.reportLink}>
+        PO-{r.poNumber}
+      </Link>
+    )},
     { key: "supplier", header: "Supplier", render: (r) => r.supplier },
     { key: "status", header: "Status", render: (r) => <Badge variant={STATUS_VARIANT[r.status] ?? "gray"}>{r.status}</Badge> },
     { key: "expectedDate", header: "Expected date", render: (r) => <span style={{ color: r.overdue ? "var(--danger)" : "inherit" }}>{r.expectedDate ?? "—"}{r.overdue ? " ⚠" : ""}</span> },
@@ -88,7 +104,7 @@ export default async function POSummaryPage({
           { label: "Overdue POs", value: overdueCount, variant: overdueCount > 0 ? "red" : "default" },
         ]}
       />
-      <ReportTable columns={columns} rows={rows} rowKey={(r) => r.id} />
+      <SortableReportTable columns={columns} rows={rows} rowKey={(r) => r.id} />
     </ReportShell>
   );
 }
