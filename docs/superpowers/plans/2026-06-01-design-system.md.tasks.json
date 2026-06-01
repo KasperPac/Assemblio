@@ -1,0 +1,12 @@
+{
+  "planPath": "docs/superpowers/plans/2026-06-01-design-system.md",
+  "tasks": [
+    {
+      "id": 11,
+      "subject": "Task 1: Write docs/design-system.md and update CLAUDE.md",
+      "status": "pending",
+      "description": "**Goal:** Create the design system doc with all four sections, add it to CLAUDE.md, and commit.\n\n**Files:**\n- Create: `docs/design-system.md`\n- Modify: `CLAUDE.md` — add `@docs/design-system.md` line after the existing `@colors_and_type.css` reference\n\n**Acceptance Criteria:**\n- [ ] `docs/design-system.md` exists with all four sections (Token Rules, Page Layout Pattern, _ui/ Component Reference, Anti-Patterns)\n- [ ] `CLAUDE.md` has `@docs/design-system.md` under the Design system section\n- [ ] No invented token names in the doc\n\n**Verify:** `cat docs/design-system.md && grep design-system CLAUDE.md`\n\n```json:metadata\n{\"files\": [\"docs/design-system.md\", \"CLAUDE.md\"], \"verifyCommand\": \"cat docs/design-system.md && grep design-system CLAUDE.md\", \"acceptanceCriteria\": [\"docs/design-system.md exists with all four sections\", \"CLAUDE.md references @docs/design-system.md\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-06-01T00:00:00.000Z"
+}
