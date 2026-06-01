@@ -86,6 +86,14 @@ export function VariantCoverageTable({ summaries, avgMargin, avgActualMargin, wo
                 className={noBom ? styles.rowNoBom : styles.row}
                 onClick={() => router.push(`/app/products/variants/${v.id}`)}
                 style={{ cursor: "pointer" }}
+                tabIndex={0}
+                role="link"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    router.push(`/app/products/variants/${v.id}`);
+                  }
+                }}
               >
                 <td>
                   <Link
