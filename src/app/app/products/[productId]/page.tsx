@@ -315,7 +315,7 @@ export default async function ProductDetailPage({ params }: Props) {
     <div className={styles.page}>
       <PageHeader
         title={product.title}
-        description={`Shopify ID: ${product.shopify_id} · ${variants.length} variant${variants.length === 1 ? "" : "s"} · ${syncLabel} ${timeAgo(lastSync)}`}
+        description={`${variants.length} variant${variants.length === 1 ? "" : "s"} · ${syncLabel} ${timeAgo(lastSync)}`}
       />
 
       {/* Product image + description */}

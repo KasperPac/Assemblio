@@ -535,7 +535,6 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
       <section className={styles.card}>
         <h3>{variantTitle}</h3>
         <p className={styles.meta}>{typedVariant.sku ? `SKU ${typedVariant.sku}` : "No SKU"}</p>
-        <p className={styles.meta}>Shopify ID: {typedVariant.shopify_id}</p>
       </section>
 
       <VariantTabs
