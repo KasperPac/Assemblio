@@ -4,13 +4,16 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
 
-export async function updateSupplier(formData: FormData) {
+export async function updateSupplier(
+  _prevState: { success?: boolean; error?: string },
+  formData: FormData
+): Promise<{ success?: boolean; error?: string }> {
   const supplierId = formData.get("supplier_id")?.toString() ?? "";
   const context = await getServerTenantContext();
-  if (!context || !supplierId) return;
+  if (!context || !supplierId) return { error: "Missing context or supplier ID." };
   const { supabase, tenantId } = context;
 
-  await supabase
+  const { error } = await supabase
     .from("suppliers")
     .update({
       contact_name: formData.get("contact_name")?.toString() ?? null,
@@ -28,7 +31,10 @@ export async function updateSupplier(formData: FormData) {
     .eq("tenant_id", tenantId)
     .eq("id", supplierId);
 
+  if (error) return { error: error.message };
+
   revalidatePath(`/app/suppliers/${supplierId}`);
+  return { success: true };
 }
 
 export async function archiveSupplier(formData: FormData) {
@@ -82,14 +88,17 @@ export async function removeContact(formData: FormData) {
   revalidatePath(`/app/suppliers/${supplierId}`);
 }
 
-export async function linkComponent(formData: FormData) {
+export async function linkComponent(
+  _prevState: { success?: boolean; error?: string },
+  formData: FormData
+): Promise<{ success?: boolean; error?: string }> {
   const supplierId = formData.get("supplier_id")?.toString() ?? "";
   const componentId = formData.get("component_id")?.toString() ?? "";
   const context = await getServerTenantContext();
-  if (!context || !supplierId || !componentId) return;
+  if (!context || !supplierId || !componentId) return { error: "Missing context or IDs." };
   const { supabase, tenantId } = context;
 
-  await supabase.from("supplier_components").upsert(
+  const { error } = await supabase.from("supplier_components").upsert(
     {
       tenant_id: tenantId,
       supplier_id: supplierId,
@@ -105,8 +114,11 @@ export async function linkComponent(formData: FormData) {
     { onConflict: "tenant_id,supplier_id,component_id" }
   );
 
+  if (error) return { error: error.message };
+
   revalidatePath(`/app/suppliers/${supplierId}`);
   revalidatePath(`/app/components/${componentId}`);
+  return { success: true };
 }
 
 export async function unlinkComponent(formData: FormData) {

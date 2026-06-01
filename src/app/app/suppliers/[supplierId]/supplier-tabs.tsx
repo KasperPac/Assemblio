@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { useState } from "react";
+import React, { useActionState, useEffect, useState } from "react";
 import type {
   Supplier,
   SupplierContact,
@@ -9,6 +8,7 @@ import type {
   SupplierComponentPriceBreak,
   AvgLeadTime,
 } from "@/lib/suppliers/types";
+import StatusBadge from "../../_ui/status-badge";
 import styles from "./supplier-tabs.module.css";
 
 type PoRow = {
@@ -25,11 +25,13 @@ type CatalogRow = SupplierComponent & {
   component: { id: string; name: string; unit: string | null } | null;
 };
 
+type ActionResult = { success?: boolean; error?: string };
+
 type Actions = {
-  updateSupplier: (formData: FormData) => Promise<void>;
+  updateSupplier: (prevState: ActionResult, formData: FormData) => Promise<ActionResult>;
   addContact: (formData: FormData) => Promise<void>;
   removeContact: (formData: FormData) => Promise<void>;
-  linkComponent: (formData: FormData) => Promise<void>;
+  linkComponent: (prevState: ActionResult, formData: FormData) => Promise<ActionResult>;
   unlinkComponent: (formData: FormData) => Promise<void>;
   togglePreferred: (formData: FormData) => Promise<void>;
   addPriceBreak: (formData: FormData) => Promise<void>;
@@ -49,16 +51,6 @@ type Props = {
 const TABS = ["Overview", "Components", "Purchase Orders"] as const;
 type Tab = (typeof TABS)[number];
 
-function getPoStatusClass(
-  status: string,
-  s: { readonly [key: string]: string }
-): string {
-  if (status === "received") return s.badgeReceived;
-  if (status === "in_transit") return s.badgeInTransit;
-  if (status === "cancelled" || status === "archived") return s.badgeCancelled;
-  return s.badgeOpen;
-}
-
 export default function SupplierTabs({
   supplier,
   contacts,
@@ -73,6 +65,16 @@ export default function SupplierTabs({
   const [linkComponentOpen, setLinkComponentOpen] = useState(false);
   const [poFilter, setPoFilter] = useState<"all" | "open" | "received">("all");
   const filteredPos = pos.filter((p) => poFilter === "all" || p.status === poFilter);
+
+  const [updateState, updateAction] = useActionState(actions.updateSupplier, {});
+  useEffect(() => {
+    if (updateState.success) setEditMode(false);
+  }, [updateState.success]);
+
+  const [linkState, linkAction] = useActionState(actions.linkComponent, {});
+  useEffect(() => {
+    if (linkState.success) setLinkComponentOpen(false);
+  }, [linkState.success]);
 
   return (
     <div className={styles.tabsContainer}>
@@ -92,10 +94,7 @@ export default function SupplierTabs({
       {active === "Overview" && (
         <div className={styles.tabContent}>
           {editMode ? (
-            <form
-              action={actions.updateSupplier}
-              onSubmit={() => setEditMode(false)}
-            >
+            <form action={updateAction}>
               <input type="hidden" name="supplier_id" value={supplier.id} />
               <div className={styles.editGrid}>
                 {(
@@ -263,11 +262,7 @@ export default function SupplierTabs({
           </div>
 
           {linkComponentOpen && (
-            <form
-              action={actions.linkComponent}
-              onSubmit={() => setLinkComponentOpen(false)}
-              className={styles.linkForm}
-            >
+            <form action={linkAction} className={styles.linkForm}>
               <input type="hidden" name="supplier_id" value={supplier.id} />
               <select name="component_id" required className={styles.editInput}>
                 <option value="">Select component…</option>
@@ -295,7 +290,7 @@ export default function SupplierTabs({
               <span>MOQ</span>
               <span>Lead Time</span>
               <span>Avg Actual</span>
-              <span style={{ textAlign: "center" }}>Pref</span>
+              <span className={styles.centerCell}>Pref</span>
               <span />
             </div>
             {catalog.map((row) => {
@@ -387,9 +382,15 @@ export default function SupplierTabs({
                       })}
                     </span>
                     <span>
-                      <span className={getPoStatusClass(po.status, styles)}>
-                        {po.status.charAt(0).toUpperCase() + po.status.slice(1)}
-                      </span>
+                      {po.status === "received" ? (
+                        <StatusBadge variant="success">Received</StatusBadge>
+                      ) : po.status === "in_transit" ? (
+                        <StatusBadge variant="info">In transit</StatusBadge>
+                      ) : po.status === "cancelled" || po.status === "archived" ? (
+                        <StatusBadge>{po.status.charAt(0).toUpperCase() + po.status.slice(1)}</StatusBadge>
+                      ) : (
+                        <StatusBadge variant="info">Open</StatusBadge>
+                      )}
                     </span>
                     <span>
                       {po.expected_date
@@ -469,7 +470,7 @@ function CatalogRowItem({
         <span>{row.moq != null ? String(row.moq) : "—"}</span>
         <span>{row.lead_time_days != null ? `${row.lead_time_days}d` : "—"}</span>
         <span className={ltColor}>{avgDaysDisplay}</span>
-        <form action={actions.togglePreferred} style={{ textAlign: "center" }}>
+        <form action={actions.togglePreferred} className={styles.centerCell}>
           <input type="hidden" name="supplier_component_id" value={row.id} />
           <input type="hidden" name="component_id" value={row.component_id} />
           <input type="hidden" name="supplier_id" value={supplierId} />
@@ -512,8 +513,7 @@ function CatalogRowItem({
               step="0.01"
               placeholder="Min qty"
               required
-              className={styles.editInput}
-              style={{ width: "80px" }}
+              className={`${styles.editInput} ${styles.inputSm}`}
             />
             <input
               name="unit_cost"
@@ -521,10 +521,9 @@ function CatalogRowItem({
               step="0.01"
               placeholder="Unit cost"
               required
-              className={styles.editInput}
-              style={{ width: "90px" }}
+              className={`${styles.editInput} ${styles.inputMd}`}
             />
-            <button type="submit" className={styles.btnPrimary} style={{ fontSize: "0.78rem", padding: "0.25rem 0.6rem" }}>
+            <button type="submit" className={styles.btnAddBreak}>
               + Add break
             </button>
           </form>

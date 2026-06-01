@@ -17,20 +17,8 @@
 }
 
 .btnDanger {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 999px;
-  min-height: 38px;
-  padding: 0 16px;
-  background: rgba(239, 68, 68, 0.12);
-  color: var(--danger);
-  font-size: 0.88rem;
-  font-weight: 600;
-  cursor: pointer;
+  composes: danger from "../../_ui/buttons.module.css";
 }
-.btnDanger:hover { background: rgba(239, 68, 68, 0.22); }
 
 .backLink {
   font-size: var(--fs-sm);
@@ -75,7 +63,7 @@
 
 .tabActive {
   background: var(--brand-1);
-  color: #0b0f19;
+  color: var(--ink-strong);
 }
 
 .tabContent {
@@ -93,7 +81,7 @@
 
 .editInput,
 .editTextarea {
-  border: 1px solid var(--stroke);
+  border: 1px solid var(--stroke-strong);
   border-radius: var(--radius-md);
   min-height: 38px;
   padding: 0 10px;
@@ -337,7 +325,7 @@
   border: none;
   cursor: pointer;
   font-size: 1.1rem;
-  color: #f5c542;
+  color: var(--warning);
 }
 
 .ltGreen { color: var(--ok); }
@@ -403,42 +391,6 @@
   color: var(--ink-muted);
 }
 
-.badgeOpen {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: var(--radius-lg);
-  font-size: 12px;
-  background: rgba(79, 142, 247, 0.2);
-  color: #4f8ef7;
-}
-
-.badgeReceived {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: var(--radius-lg);
-  font-size: 12px;
-  background: rgba(72, 199, 116, 0.2);
-  color: #48c774;
-}
-
-.badgeInTransit {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: var(--radius-lg);
-  font-size: 12px;
-  background: rgba(255, 165, 0, 0.18);
-  color: #f5a623;
-}
-
-.badgeCancelled {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: var(--radius-lg);
-  font-size: 12px;
-  background: var(--surface-1);
-  color: var(--ink-faint);
-}
-
 .onTimeTag {
   font-size: 12px;
   color: var(--ok);
@@ -449,4 +401,15 @@
   font-size: 12px;
   color: var(--danger);
   margin-left: 6px;
+}
+
+/* ── CatalogRowItem utility classes ──────── */
+
+.centerCell { text-align: center; }
+.inputSm { width: 80px; }
+.inputMd { width: 90px; }
+.btnAddBreak {
+  composes: primary from "../../_ui/buttons.module.css";
+  font-size: var(--fs-xs);
+  padding: 0.25rem 0.6rem;
 }
