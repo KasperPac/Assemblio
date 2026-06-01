@@ -13,19 +13,19 @@ async function ctx() {
 
 // ── Warehouse ────────────────────────────────────────────────
 
-export async function addWarehouse(formData: FormData) {
+export async function addWarehouse(formData: FormData): Promise<{ error: string } | void> {
   const name = formData.get("name")?.toString().trim();
-  if (!name) return;
+  if (!name) return { error: "Name is required" };
   const { supabase, tenantId } = await ctx();
   const { error } = await supabase.from("location").insert({ tenant_id: tenantId, name, is_default: false });
   if (error) throw new Error(error.message);
   revalidatePath(REVALIDATE);
 }
 
-export async function editWarehouse(formData: FormData) {
+export async function editWarehouse(formData: FormData): Promise<{ error: string } | void> {
   const id = formData.get("id")?.toString();
   const name = formData.get("name")?.toString().trim();
-  if (!id || !name) return;
+  if (!id || !name) return { error: "Name is required" };
   const { supabase, tenantId } = await ctx();
   const { error } = await supabase.from("location").update({ name }).eq("id", id).eq("tenant_id", tenantId);
   if (error) throw new Error(error.message);
@@ -34,20 +34,20 @@ export async function editWarehouse(formData: FormData) {
 
 // ── Sub-location ─────────────────────────────────────────────
 
-export async function addSubLocation(formData: FormData) {
+export async function addSubLocation(formData: FormData): Promise<{ error: string } | void> {
   const warehouseId = formData.get("warehouse_id")?.toString();
   const name = formData.get("name")?.toString().trim();
-  if (!warehouseId || !name) return;
+  if (!warehouseId || !name) return { error: "Name is required" };
   const { supabase, tenantId } = await ctx();
   const { error } = await supabase.from("bin_sub_location").insert({ tenant_id: tenantId, warehouse_id: warehouseId, name });
   if (error) throw new Error(error.message);
   revalidatePath(REVALIDATE);
 }
 
-export async function editSubLocation(formData: FormData) {
+export async function editSubLocation(formData: FormData): Promise<{ error: string } | void> {
   const id = formData.get("id")?.toString();
   const name = formData.get("name")?.toString().trim();
-  if (!id || !name) return;
+  if (!id || !name) return { error: "Name is required" };
   const { supabase, tenantId } = await ctx();
   const { error } = await supabase.from("bin_sub_location").update({ name }).eq("id", id).eq("tenant_id", tenantId);
   if (error) throw new Error(error.message);
@@ -72,11 +72,11 @@ export async function deleteSubLocation(formData: FormData): Promise<{ error?: s
 
 // ── Aisle ────────────────────────────────────────────────────
 
-export async function addAisle(formData: FormData) {
+export async function addAisle(formData: FormData): Promise<{ error: string } | void> {
   const warehouseId = formData.get("warehouse_id")?.toString();
   const name = formData.get("name")?.toString().trim();
   const subLocationId = formData.get("sub_location_id")?.toString() || null;
-  if (!warehouseId || !name) return;
+  if (!warehouseId || !name) return { error: "Name is required" };
   const { supabase, tenantId } = await ctx();
   const { error } = await supabase.from("bin_aisle").insert({
     tenant_id: tenantId, warehouse_id: warehouseId, name, sub_location_id: subLocationId,
@@ -85,11 +85,11 @@ export async function addAisle(formData: FormData) {
   revalidatePath(REVALIDATE);
 }
 
-export async function editAisle(formData: FormData) {
+export async function editAisle(formData: FormData): Promise<{ error: string } | void> {
   const id = formData.get("id")?.toString();
   const name = formData.get("name")?.toString().trim();
   const subLocationId = formData.get("sub_location_id")?.toString() || null;
-  if (!id || !name) return;
+  if (!id || !name) return { error: "Name is required" };
   const { supabase, tenantId } = await ctx();
   const { error } = await supabase
     .from("bin_aisle")
@@ -130,20 +130,20 @@ export async function deleteAisle(formData: FormData): Promise<{ error?: string;
 
 // ── Bay ──────────────────────────────────────────────────────
 
-export async function addBay(formData: FormData) {
+export async function addBay(formData: FormData): Promise<{ error: string } | void> {
   const aisleId = formData.get("aisle_id")?.toString();
   const name = formData.get("name")?.toString().trim();
-  if (!aisleId || !name) return;
+  if (!aisleId || !name) return { error: "Name is required" };
   const { supabase, tenantId } = await ctx();
   const { error } = await supabase.from("bin_bay").insert({ tenant_id: tenantId, aisle_id: aisleId, name });
   if (error) throw new Error(error.message);
   revalidatePath(REVALIDATE);
 }
 
-export async function editBay(formData: FormData) {
+export async function editBay(formData: FormData): Promise<{ error: string } | void> {
   const id = formData.get("id")?.toString();
   const name = formData.get("name")?.toString().trim();
-  if (!id || !name) return;
+  if (!id || !name) return { error: "Name is required" };
   const { supabase, tenantId } = await ctx();
   const { error } = await supabase.from("bin_bay").update({ name }).eq("id", id).eq("tenant_id", tenantId);
   if (error) throw new Error(error.message);
