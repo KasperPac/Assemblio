@@ -35,7 +35,7 @@ export function ReportTable<T>({
         <thead>
           <tr>
             {columns.map((c) => (
-              <th key={c.key} className={c.align === "right" ? styles.right : ""}>
+              <th key={c.key} scope="col" className={c.align === "right" ? styles.right : ""}>
                 {c.header}
               </th>
             ))}
