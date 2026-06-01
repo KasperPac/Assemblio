@@ -1,13 +1,23 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { resolveDateRange } from "../_lib/date-range";
 import { ReportShell } from "../_components/report-shell";
 import { ReportStatCards } from "../_components/report-stat-cards";
 import { ReportChart } from "../_components/report-chart";
-import { ReportTable, Badge } from "../_components/report-table";
+import { SortableReportTable } from "../_components/sortable-report-table";
+import { Badge } from "../_components/report-table";
 import type { TableColumn, BadgeVariant } from "../_components/report-table";
+import styles from "./movements.module.css";
 
-interface Row { id: string; date: string; component: string; type: string; reference: string; qty: number; }
+interface Row extends Record<string, unknown> {
+  id: string;
+  date: string;
+  componentId: string | null;
+  component: string;
+  type: string;
+  qty: number;
+}
 interface ChartPoint extends Record<string, unknown> { day: string; in: number; out: number; }
 
 type MovementRaw = {
@@ -16,7 +26,7 @@ type MovementRaw = {
   delta_on_hand: number;
   reason: string | null;
   reference_type: string | null;
-  component: { name: string } | null;
+  component: { id: string; name: string } | null;
 };
 
 const TYPE_VARIANT: Record<string, BadgeVariant> = {
@@ -37,7 +47,7 @@ export default async function MovementsPage({
 
   const { data } = await supabase
     .from("inventory_movement")
-    .select("id,created_at,delta_on_hand,reason,reference_type,component:component_id(name)")
+    .select("id,created_at,delta_on_hand,reason,reference_type,component:component_id(id,name)")
     .eq("tenant_id", tenantId)
     .gte("created_at", range.from.toISOString())
     .lte("created_at", range.to.toISOString())
@@ -62,17 +72,21 @@ export default async function MovementsPage({
   const rows: Row[] = movements.map((m) => ({
     id: m.id,
     date: new Date(m.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" }),
+    componentId: m.component?.id ?? null,
     component: m.component?.name ?? "—",
     type: m.reason ?? m.reference_type ?? "adjustment",
-    reference: m.reference_type ?? "—",
     qty: m.delta_on_hand,
   }));
 
   const columns: TableColumn<Row>[] = [
     { key: "date", header: "Date", render: (r) => <span style={{ color: "var(--ink-muted)" }}>{r.date}</span> },
-    { key: "component", header: "Component", render: (r) => r.component },
+    {
+      key: "component", header: "Component",
+      render: (r) => r.componentId
+        ? <Link href={`/app/components/${r.componentId}`} className={styles.reportLink}>{r.component}</Link>
+        : <span>{r.component}</span>,
+    },
     { key: "type", header: "Type", render: (r) => <Badge variant={TYPE_VARIANT[r.type] ?? "gray"}>{r.type}</Badge> },
-    { key: "ref", header: "Reference", render: (r) => r.reference },
     {
       key: "qty", header: "Qty", align: "right",
       render: (r) => (
@@ -110,7 +124,7 @@ export default async function MovementsPage({
           ]}
         />
       )}
-      <ReportTable columns={columns} rows={rows} rowKey={(r) => r.id} />
+      <SortableReportTable columns={columns} rows={rows} rowKey={(r) => r.id} />
     </ReportShell>
   );
 }
