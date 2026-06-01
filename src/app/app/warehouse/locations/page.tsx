@@ -24,17 +24,31 @@ export default async function LocationsPage() {
     );
   }
 
-  const { data: warehouses, error } = await supabase
-    .from("location")
-    .select(`
-      id, name, is_default,
-      sub_locations:bin_sub_location(id, name),
-      aisles:bin_aisle(id, name, sub_location_id, bays:bin_bay(id, name, aisle_id))
-    `)
-    .eq("tenant_id", tenantId)
-    .order("name");
+  const [warehousesResult, compLocResult] = await Promise.all([
+    supabase
+      .from("location")
+      .select(`
+        id, name, is_default,
+        sub_locations:bin_sub_location(id, name),
+        aisles:bin_aisle(id, name, sub_location_id, bays:bin_bay(id, name, aisle_id))
+      `)
+      .eq("tenant_id", tenantId)
+      .order("name"),
+    supabase
+      .from("component")
+      .select("bin_sub_location_id, bin_aisle_id, bin_bay_id")
+      .eq("tenant_id", tenantId)
+      .is("archived_at", null),
+  ]);
 
-  if (error) return <p className={styles.error}>Failed to load locations: {error.message}</p>;
+  if (warehousesResult.error) return <p className={styles.error}>Failed to load locations: {warehousesResult.error.message}</p>;
+
+  const componentCounts: Record<string, number> = {};
+  for (const row of compLocResult.data ?? []) {
+    if (row.bin_sub_location_id) componentCounts[row.bin_sub_location_id] = (componentCounts[row.bin_sub_location_id] ?? 0) + 1;
+    if (row.bin_aisle_id) componentCounts[row.bin_aisle_id] = (componentCounts[row.bin_aisle_id] ?? 0) + 1;
+    if (row.bin_bay_id) componentCounts[row.bin_bay_id] = (componentCounts[row.bin_bay_id] ?? 0) + 1;
+  }
 
   return (
     <div className={styles.page}>
@@ -47,7 +61,7 @@ export default async function LocationsPage() {
         Default location is set in{" "}
         <Link href="/app/settings/locations">Settings → Locations</Link>.
       </p>
-      <LocationsTree warehouses={(warehouses ?? []) as Warehouse[]} />
+      <LocationsTree warehouses={(warehousesResult.data ?? []) as Warehouse[]} componentCounts={componentCounts} />
     </div>
   );
 }

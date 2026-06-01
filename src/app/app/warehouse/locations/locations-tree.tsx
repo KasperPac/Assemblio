@@ -185,7 +185,7 @@ function SimpleDeleteButton({ id, entityName, entityType, action }: {
   );
 }
 
-export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
+export function LocationsTree({ warehouses, componentCounts = {} }: { warehouses: Warehouse[]; componentCounts?: Record<string, number> }) {
   const [addingWh, setAddingWh] = useState(false);
   const [editingWh, setEditingWh] = useState<string | null>(null);
   const [addingSl, setAddingSl] = useState<string | null>(null);    // warehouse id
@@ -299,6 +299,9 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                           <span className={styles.levelTagSl}>Sub-loc</span>
                           <span className={styles.entityName}>{sl.name}</span>
                           <span className={styles.countTag}>{aisles.length} aisle{aisles.length !== 1 ? "s" : ""}</span>
+                          {(componentCounts[sl.id] ?? 0) > 0 && (
+                            <span className={styles.countTag}>{componentCounts[sl.id]} component{componentCounts[sl.id] !== 1 ? "s" : ""}</span>
+                          )}
                           <span className={styles.shortCode}>{shortCode(sl.id)}</span>
                           <button className={styles.btnIcon} aria-label={`Add aisle to ${sl.name}`} onClick={() => { setAddingAisle(sl.id); setCollapsedSl(s => { const n = new Set(s); n.delete(sl.id); return n; }); }}><span aria-hidden="true">⊕</span> Aisle</button>
                           <button className={styles.btnIcon} aria-label={`Print barcode for ${sl.name}`} onClick={() => setBarcode({ id: sl.id, type: "Sub-location", name: sl.name, path: `${wh.name} · ${sl.name}` })}><span aria-hidden="true">▦</span> Barcode</button>
@@ -353,6 +356,9 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                                     <span className={styles.levelTagAisle}>Aisle</span>
                                     <span className={styles.entityName}>{aisle.name}</span>
                                     <span className={styles.countTag}>{bays.length} bay{bays.length !== 1 ? "s" : ""}</span>
+                                    {(componentCounts[aisle.id] ?? 0) > 0 && (
+                                      <span className={styles.countTag}>{componentCounts[aisle.id]} component{componentCounts[aisle.id] !== 1 ? "s" : ""}</span>
+                                    )}
                                     <span className={styles.shortCode}>{shortCode(aisle.id)}</span>
                                     <button className={styles.btnIcon} aria-label={`Add bay to ${aisle.name}`} onClick={() => { setAddingBay(aisle.id); setCollapsedAisle(s => { const n = new Set(s); n.delete(aisle.id); return n; }); }}><span aria-hidden="true">⊕</span> Bay</button>
                                     <button className={styles.btnIcon} aria-label={`Print barcode for ${aisle.name}`} onClick={() => setBarcode({ id: aisle.id, type: "Aisle", name: aisle.name, path: `${wh.name} · ${sl.name} · ${aisle.name}` })}><span aria-hidden="true">▦</span> Barcode</button>
@@ -383,6 +389,9 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                                       <>
                                         <span className={styles.levelTagBay}>Bay</span>
                                         <span className={styles.entityName}>{bay.name}</span>
+                                        {(componentCounts[bay.id] ?? 0) > 0 && (
+                                          <span className={styles.countTag}>{componentCounts[bay.id]} component{componentCounts[bay.id] !== 1 ? "s" : ""}</span>
+                                        )}
                                         <span className={styles.shortCode}>{shortCode(bay.id)}</span>
                                         <button className={styles.btnIcon} aria-label={`Print barcode for ${bay.name}`} onClick={() => setBarcode({ id: bay.id, type: "Bay", name: bay.name, path: `${wh.name} · ${sl.name} · ${aisle.name} · ${bay.name}` })}><span aria-hidden="true">▦</span> Barcode</button>
                                         <button className={styles.btnIcon} aria-label={`Edit bay ${bay.name}`} onClick={() => setEditingBay(bay.id)}><span aria-hidden="true">✎</span> Edit</button>
