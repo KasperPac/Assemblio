@@ -1,11 +1,15 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { ReportShell } from "../_components/report-shell";
 import { ReportStatCards } from "../_components/report-stat-cards";
-import { ReportTable } from "../_components/report-table";
+import { SortableReportTable } from "../_components/sortable-report-table";
 import type { TableColumn } from "../_components/report-table";
+import { IdleThresholdControl } from "./idle-threshold-control";
+import styles from "./dead-stock.module.css";
 
-interface Row { id: string; name: string; sku: string | null; on_hand: number; value: number; daysIdle: number; }
+interface Row extends Record<string, unknown> { id: string; name: string; sku: string | null; on_hand: number; value: number; daysIdle: number; }
 
 type BalanceRaw = {
   component_id: string;
@@ -79,7 +83,9 @@ export default async function DeadStockPage({
   const fmtCurrency = (n: number) => new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
 
   const columns: TableColumn<Row>[] = [
-    { key: "name", header: "Component", render: (r) => r.name },
+    { key: "name", header: "Component", render: (r) => (
+      <Link href={`/app/components/${r.id}`} className={styles.reportLink}>{r.name}</Link>
+    )},
     { key: "sku", header: "SKU", render: (r) => r.sku ?? "—" },
     { key: "on_hand", header: "On hand", align: "right", render: (r) => r.on_hand.toLocaleString() },
     { key: "value", header: "Value", align: "right", render: (r) => fmtCurrency(r.value) },
@@ -108,7 +114,15 @@ export default async function DeadStockPage({
           { label: "Longest idle", value: longestIdle === 999 ? "—" : `${longestIdle}d` },
         ]}
       />
-      <ReportTable columns={columns} rows={rows} rowKey={(r) => r.id} emptyMessage={`No components idle for ${idleThreshold}+ days.`} />
+      <Suspense fallback={null}>
+        <IdleThresholdControl current={idleThreshold} />
+      </Suspense>
+      <SortableReportTable
+        columns={columns}
+        rows={rows}
+        rowKey={(r) => r.id}
+        emptyMessage={`No components idle for ${idleThreshold}+ days.`}
+      />
     </ReportShell>
   );
 }
