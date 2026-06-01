@@ -69,12 +69,12 @@ export default function SupplierTabs({
   const [updateState, updateAction] = useActionState(actions.updateSupplier, {});
   useEffect(() => {
     if (updateState.success) setEditMode(false);
-  }, [updateState.success]);
+  }, [updateState]);
 
   const [linkState, linkAction] = useActionState(actions.linkComponent, {});
   useEffect(() => {
     if (linkState.success) setLinkComponentOpen(false);
-  }, [linkState.success]);
+  }, [linkState]);
 
   return (
     <div className={styles.tabsContainer}>
@@ -389,7 +389,7 @@ export default function SupplierTabs({
                       ) : po.status === "cancelled" || po.status === "archived" ? (
                         <StatusBadge>{po.status.charAt(0).toUpperCase() + po.status.slice(1)}</StatusBadge>
                       ) : (
-                        <StatusBadge variant="info">Open</StatusBadge>
+                        <StatusBadge>Open</StatusBadge>
                       )}
                     </span>
                     <span>
