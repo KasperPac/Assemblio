@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
+import { createComponentGroup } from "./actions";
 import styles from "./components.module.css";
 
 type FormState = {
@@ -27,8 +28,19 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
   const [state, formAction] = React.useActionState(action, initialState);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
+  // Group state
+  const [groups, setGroups] = useState<LookupItem[]>(lookups.groups);
+  const [selectedGroupId, setSelectedGroupId] = useState("");
+  const [showNewGroup, setShowNewGroup] = useState(false);
+  const [newGroupName, setNewGroupName] = useState("");
+  const [newGroupPending, setNewGroupPending] = useState(false);
+  const [newGroupError, setNewGroupError] = useState<string | null>(null);
+
   useEffect(() => {
-    if (state.success) setOpen(false);
+    if (state.success) {
+      setOpen(false);
+      resetNewGroupForm();
+    }
   }, [state.success]);
 
   useEffect(() => {
@@ -37,6 +49,33 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
     if (open) dialog.showModal();
     else dialog.close();
   }, [open]);
+
+  function resetNewGroupForm() {
+    setShowNewGroup(false);
+    setNewGroupName("");
+    setNewGroupError(null);
+  }
+
+  function handleClose() {
+    setOpen(false);
+    resetNewGroupForm();
+  }
+
+  async function handleCreateGroup() {
+    const trimmed = newGroupName.trim();
+    if (!trimmed) return;
+    setNewGroupPending(true);
+    setNewGroupError(null);
+    const result = await createComponentGroup(trimmed);
+    setNewGroupPending(false);
+    if ("error" in result) {
+      setNewGroupError(result.error);
+    } else {
+      setGroups((prev) => [...prev, result.group]);
+      setSelectedGroupId(result.group.id);
+      resetNewGroupForm();
+    }
+  }
 
   return (
     <>
@@ -51,7 +90,7 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
       <dialog
         ref={dialogRef}
         className={styles.dialog}
-        onClose={() => setOpen(false)}
+        onClose={handleClose}
       >
         <div className={styles.dialogInner}>
           <div className={styles.dialogHeader}>
@@ -60,7 +99,7 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
               type="button"
               className={styles.dialogClose}
               aria-label="Close dialog"
-              onClick={() => setOpen(false)}
+              onClick={handleClose}
             >
               &times;
             </button>
@@ -93,15 +132,57 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
                   ))}
                 </select>
               </label>
-              <label className={styles.field}>
+              <div className={styles.field}>
                 <span>Group</span>
-                <select name="group_id">
+                <select
+                  name="group_id"
+                  value={selectedGroupId}
+                  onChange={(e) => setSelectedGroupId(e.target.value)}
+                >
                   <option value="">-- None --</option>
-                  {lookups.groups.map((g) => (
+                  {groups.map((g) => (
                     <option key={g.id} value={g.id}>{g.name}</option>
                   ))}
                 </select>
-              </label>
+                {!showNewGroup ? (
+                  <button
+                    type="button"
+                    className={styles.newGroupLink}
+                    onClick={() => setShowNewGroup(true)}
+                  >
+                    + New group
+                  </button>
+                ) : (
+                  <div className={styles.newGroupForm}>
+                    <input
+                      value={newGroupName}
+                      onChange={(e) => setNewGroupName(e.target.value)}
+                      placeholder="e.g. Pneumatics"
+                      autoFocus
+                    />
+                    {newGroupError && (
+                      <p className={styles.newGroupError}>{newGroupError}</p>
+                    )}
+                    <div className={styles.newGroupActions}>
+                      <button
+                        type="button"
+                        className={styles.btnSubmit}
+                        disabled={newGroupPending || !newGroupName.trim()}
+                        onClick={handleCreateGroup}
+                      >
+                        {newGroupPending ? "Creating…" : "Create"}
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.btnCancel}
+                        onClick={resetNewGroupForm}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             <label className={styles.field}>
@@ -157,7 +238,7 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
               <button
                 type="button"
                 className={styles.btnCancel}
-                onClick={() => setOpen(false)}
+                onClick={handleClose}
               >
                 Cancel
               </button>
