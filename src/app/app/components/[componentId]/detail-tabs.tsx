@@ -96,23 +96,33 @@ export default function DetailTabs({
 
   return (
     <div className={styles.tabsContainer}>
-      <div className={styles.tabBar}>
-        {tabs.map((tab) => (
-          <button
-            key={tab}
-            type="button"
-            className={`${styles.tab} ${active === tab ? styles.tabActive : ""}`}
-            onClick={() => setActive(tab)}
-          >
-            {tab === "Suppliers" ? `Suppliers (${supplierCatalog.length})` : tab}
-          </button>
-        ))}
+      <div className={styles.tabBar} role="tablist">
+        {tabs.map((tab) => {
+          const tabId = `tab-${tab.toLowerCase().replace(/\s+/g, "-")}`;
+          const panelId = `panel-${tab.toLowerCase().replace(/\s+/g, "-")}`;
+          return (
+            <button
+              key={tab}
+              id={tabId}
+              type="button"
+              role="tab"
+              aria-selected={active === tab}
+              aria-controls={panelId}
+              className={`${styles.tab} ${active === tab ? styles.tabActive : ""}`}
+              onClick={() => setActive(tab)}
+            >
+              {tab === "Suppliers" ? `Suppliers (${supplierCatalog.length})` : tab}
+            </button>
+          );
+        })}
       </div>
 
       {active === "Overview" && (
-        <div className={styles.overviewContent}>
+        <div className={styles.overviewContent} id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
           <div className={styles.statsGrid}>
-            {stats.map((s) => (
+            {stats.map((s) => {
+              const labelId = `stat-label-${s.label.toLowerCase().replace(/\s+/g, "-")}`;
+              return (
               <div
                 key={s.label}
                 className={`${styles.statCard} ${
@@ -123,8 +133,9 @@ export default function DetailTabs({
                       : ""
                   }`}
               >
-                <span className={styles.statLabel}>{s.label}</span>
+                <span id={labelId} className={styles.statLabel}>{s.label}</span>
                 <span
+                  aria-labelledby={labelId}
                   className={`${styles.statValue} ${
                     s.color === "green"
                       ? styles.statGreen
@@ -147,7 +158,8 @@ export default function DetailTabs({
                   </span>
                 )}
               </div>
-            ))}
+              );
+            })}
           </div>
 
           {recentReceipts.length > 0 && (
@@ -175,7 +187,7 @@ export default function DetailTabs({
       )}
 
       {active === "Movements" && (
-        <div className={styles.tabContent}>
+        <div className={styles.tabContent} id="panel-movements" role="tabpanel" aria-labelledby="tab-movements">
           {movements.length === 0 ? (
             <p className={styles.empty}>No inventory movements recorded.</p>
           ) : (
@@ -214,7 +226,7 @@ export default function DetailTabs({
       )}
 
       {active === "Suppliers" && (
-        <div className={styles.tabContent}>
+        <div className={styles.tabContent} id="panel-suppliers" role="tabpanel" aria-labelledby="tab-suppliers">
           <ComponentSuppliersTab
             componentId={componentId}
             catalog={supplierCatalog}
@@ -225,7 +237,7 @@ export default function DetailTabs({
       )}
 
       {active === "BOM Usage" && (
-        <div className={styles.tabContent}>
+        <div className={styles.tabContent} id="panel-bom-usage" role="tabpanel" aria-labelledby="tab-bom-usage">
           {bomUsage.length === 0 ? (
             <p className={styles.empty}>Not used in any BOMs.</p>
           ) : (
@@ -275,7 +287,7 @@ export default function DetailTabs({
         </div>
       )}
       {active === "Location" && isAdmin && (
-        <div className={styles.tabContent}>
+        <div className={styles.tabContent} id="panel-location" role="tabpanel" aria-labelledby="tab-location">
           <p className={styles.locationTabDesc}>
             Assign a default storage location for this component. When stock is
             received, it will be directed to this bin. Locations are managed in{" "}

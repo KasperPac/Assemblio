@@ -59,6 +59,7 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
             <button
               type="button"
               className={styles.dialogClose}
+              aria-label="Close dialog"
               onClick={() => setOpen(false)}
             >
               &times;

@@ -177,7 +177,11 @@ export default async function ComponentsPage({ searchParams }: Props) {
                             ? styles.dotLow
                             : styles.dotOk
                         }`}
-                      />
+                      >
+                        <span className={styles.srOnly}>
+                          {component.status === "critical" ? "Critical" : component.status === "low" ? "Low" : "OK"}
+                        </span>
+                      </span>
                       {component.name}
                     </Link>
                   </td>
