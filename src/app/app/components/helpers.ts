@@ -5,3 +5,9 @@ export function getStockStatus(available: number, reorderPoint: number): StockSt
   if (reorderPoint > 0 && available < reorderPoint) return "low";
   return "ok";
 }
+
+/** Returns an error message if the group name is invalid, otherwise null. */
+export function validateGroupName(name: string): string | null {
+  if (!name.trim()) return "Group name is required.";
+  return null;
+}
