@@ -369,15 +369,19 @@ export async function createComponentGroup(
 
   const context = await getServerTenantContext();
   if (!context) return { error: "Missing tenant context." };
-  const { supabase, tenantId, role } = context;
+  const { supabase, tenantId: _tenantId, role } = context;
+  const tenantId = _tenantId!;
 
+  // Group management is admin-only; component creation is open to all members
   if (role !== "admin" && role !== "super_admin") {
     return { error: "Only managers and above can create groups." };
   }
 
+  const trimmedName = name.trim();
+
   const { data, error } = await supabase
     .from("component_group")
-    .insert({ tenant_id: tenantId, name: name.trim() })
+    .insert({ tenant_id: tenantId, name: trimmedName })
     .select("id, name")
     .single();
 
@@ -386,9 +390,10 @@ export async function createComponentGroup(
   await supabase.from("activity_log").insert({
     tenant_id: tenantId,
     event: "component_group_created",
-    metadata: { name: name.trim() },
+    metadata: { name: trimmedName },
   });
 
   revalidatePath("/app/components");
+  revalidatePath("/app/activity-log");
   return { group: { id: data.id, name: data.name } };
 }

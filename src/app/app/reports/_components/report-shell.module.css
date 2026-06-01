@@ -12,3 +12,10 @@
     display: none !important;
   }
 }
+
+.refreshed {
+  font-size: var(--fs-xs);
+  color: var(--ink-faint);
+  text-align: right;
+  margin: 0 0 4px 0;
+}

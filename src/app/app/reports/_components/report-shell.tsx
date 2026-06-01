@@ -27,12 +27,23 @@ export function ReportShell({
   if (typeof searchParams.to === "string") sp.set("to", searchParams.to);
   const csvHref = `/app/reports/${csvSlug}/export?${sp.toString()}`;
 
+  const refreshed = new Date().toLocaleString("en-AU", {
+    dateStyle: "short",
+    timeStyle: "short",
+  });
+
   return (
     <div className={styles.shell}>
-      <PageHeader eyebrow={eyebrow} title={title} description={description} />
+      <PageHeader
+        eyebrow={eyebrow}
+        title={title}
+        description={description}
+        breadcrumbs={[{ label: "Reports", href: "/app/reports" }, { label: title }]}
+      />
       <Suspense fallback={null}>
         <DatePresetBar csvHref={csvHref} hideDateRange={hideDateRange} />
       </Suspense>
+      <p className={styles.refreshed}>as of {refreshed}</p>
       {children}
     </div>
   );
