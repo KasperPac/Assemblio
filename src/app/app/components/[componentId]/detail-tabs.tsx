@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import styles from "./component-detail.module.css";
-import { togglePreferred, linkComponent } from "@/app/app/suppliers/[supplierId]/actions";
+import { togglePreferred, linkComponent, unlinkComponent } from "@/app/app/suppliers/[supplierId]/actions";
+import { updateComponentSupplier } from "../actions";
 import { BinLocationSelect } from "./bin-location-select";
 
 type StatCard = {
@@ -218,6 +219,7 @@ export default function DetailTabs({
             componentId={componentId}
             catalog={supplierCatalog}
             allSuppliers={allSuppliers}
+            isAdmin={isAdmin}
           />
         </div>
       )}
@@ -305,12 +307,16 @@ function ComponentSuppliersTab({
   componentId,
   catalog,
   allSuppliers,
+  isAdmin,
 }: {
   componentId: string;
   catalog: SupplierCatalogItem[];
   allSuppliers: Array<{ id: string; name: string }>;
+  isAdmin: boolean;
 }) {
   const [linkOpen, setLinkOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [unlinkConfirmId, setUnlinkConfirmId] = useState<string | null>(null);
 
   const minCost = catalog.length > 0 ? Math.min(...catalog.filter(r => r.unitCost != null).map((r) => r.unitCost!)) : Infinity;
   const minLt = catalog.length > 0 ? Math.min(...catalog.filter(r => r.leadTimeDays != null).map((r) => r.leadTimeDays!)) : Infinity;
@@ -321,9 +327,11 @@ function ComponentSuppliersTab({
         <span className={styles.tabCount}>
           {catalog.length} supplier{catalog.length !== 1 ? "s" : ""}
         </span>
-        <button type="button" className={styles.btnSmall} onClick={() => setLinkOpen(true)}>
-          + Link Supplier
-        </button>
+        {isAdmin && (
+          <button type="button" className={styles.btnSmall} onClick={() => setLinkOpen(true)}>
+            + Link Supplier
+          </button>
+        )}
       </div>
 
       {linkOpen && (
@@ -345,7 +353,7 @@ function ComponentSuppliersTab({
       )}
 
       <div className={styles.suppliersTable}>
-        <div className={styles.suppliersHeader}>
+        <div className={`${styles.suppliersHeader} ${isAdmin ? styles.suppliersHeaderAdmin : ""}`}>
           <span>Supplier</span>
           <span>Part #</span>
           <span>Unit Cost</span>
@@ -353,6 +361,7 @@ function ComponentSuppliersTab({
           <span>Lead Time</span>
           <span>Avg Actual</span>
           <span style={{ textAlign: "center" }}>Pref</span>
+          {isAdmin && <span />}
         </div>
         {catalog.length === 0 ? (
           <p className={styles.empty}>No suppliers linked to this component yet.</p>
@@ -366,29 +375,103 @@ function ComponentSuppliersTab({
                   ? styles.ltGreen
                   : styles.ltRed
                 : "";
+            const isEditing = editingId === row.id;
+            const isUnlinkConfirm = unlinkConfirmId === row.id;
             return (
-              <div key={row.id} className={styles.suppliersRow}>
-                <div>
-                  <span className={styles.supplierLink}>{row.supplierName}</span>
-                  {isBestPrice && <span className={styles.tagGreen}>best price</span>}
-                  {isFastest && !isBestPrice && <span className={styles.tagBlue}>fastest</span>}
+              <React.Fragment key={row.id}>
+                <div className={`${styles.suppliersRow} ${isAdmin ? styles.suppliersRowAdmin : ""}`}>
+                  <div>
+                    <span className={styles.supplierLink}>{row.supplierName}</span>
+                    {isBestPrice && <span className={styles.tagGreen}>best price</span>}
+                    {isFastest && !isBestPrice && <span className={styles.tagBlue}>fastest</span>}
+                  </div>
+                  <span className={styles.catalogPartNum}>{row.partNumber ?? "—"}</span>
+                  <span>{row.unitCost != null ? `$${row.unitCost.toFixed(2)}` : "—"}</span>
+                  <span>{row.moq != null ? String(row.moq) : "—"}</span>
+                  <span>{row.leadTimeDays != null ? `${row.leadTimeDays}d` : "—"}</span>
+                  <span className={ltColor}>
+                    {row.avgActualDays != null ? `${row.avgActualDays.toFixed(1)}d` : "—"}
+                  </span>
+                  <form action={togglePreferred} style={{ textAlign: "center" }}>
+                    <input type="hidden" name="supplier_component_id" value={row.id} />
+                    <input type="hidden" name="component_id" value={componentId} />
+                    <input type="hidden" name="supplier_id" value={row.supplierId} />
+                    <button type="submit" className={styles.starBtn}>
+                      {row.isPreferred ? "★" : "☆"}
+                    </button>
+                  </form>
+                  {isAdmin && (
+                    <div className={styles.supplierRowActions}>
+                      <button
+                        type="button"
+                        className={styles.iconBtn}
+                        aria-label="Edit supplier link"
+                        onClick={() => {
+                          setUnlinkConfirmId(null);
+                          setEditingId(isEditing ? null : row.id);
+                        }}
+                      >
+                        ✎
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.iconBtnDanger}
+                        aria-label="Unlink supplier"
+                        onClick={() => {
+                          setEditingId(null);
+                          setUnlinkConfirmId(isUnlinkConfirm ? null : row.id);
+                        }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <span className={styles.catalogPartNum}>{row.partNumber ?? "—"}</span>
-                <span>{row.unitCost != null ? `$${row.unitCost.toFixed(2)}` : "—"}</span>
-                <span>{row.moq != null ? String(row.moq) : "—"}</span>
-                <span>{row.leadTimeDays != null ? `${row.leadTimeDays}d` : "—"}</span>
-                <span className={ltColor}>
-                  {row.avgActualDays != null ? `${row.avgActualDays.toFixed(1)}d` : "—"}
-                </span>
-                <form action={togglePreferred} style={{ textAlign: "center" }}>
-                  <input type="hidden" name="supplier_component_id" value={row.id} />
-                  <input type="hidden" name="component_id" value={componentId} />
-                  <input type="hidden" name="supplier_id" value={row.supplierId} />
-                  <button type="submit" className={styles.starBtn}>
-                    {row.isPreferred ? "★" : "☆"}
-                  </button>
-                </form>
-              </div>
+
+                {isEditing && (
+                  <form
+                    action={updateComponentSupplier}
+                    className={styles.supplierEditRow}
+                    onSubmit={() => setEditingId(null)}
+                  >
+                    <input type="hidden" name="supplier_component_id" value={row.id} />
+                    <input type="hidden" name="component_id" value={componentId} />
+                    <label className={styles.supplierEditField}>
+                      <span>Unit cost</span>
+                      <input name="unit_cost" type="number" step="0.01" defaultValue={row.unitCost ?? ""} className={styles.miniInput} />
+                    </label>
+                    <label className={styles.supplierEditField}>
+                      <span>Lead time (days)</span>
+                      <input name="lead_time_days" type="number" defaultValue={row.leadTimeDays ?? ""} className={styles.miniInput} />
+                    </label>
+                    <label className={styles.supplierEditField}>
+                      <span>MOQ</span>
+                      <input name="moq" type="number" defaultValue={row.moq ?? ""} className={styles.miniInput} />
+                    </label>
+                    <label className={styles.supplierEditField}>
+                      <span>Part #</span>
+                      <input name="supplier_part_number" defaultValue={row.partNumber ?? ""} className={styles.miniInput} />
+                    </label>
+                    <div className={styles.supplierEditActions}>
+                      <button type="submit" className={styles.btnSmall}>Save</button>
+                      <button type="button" className={styles.btnSmall} onClick={() => setEditingId(null)}>Cancel</button>
+                    </div>
+                  </form>
+                )}
+
+                {isUnlinkConfirm && (
+                  <div className={styles.supplierUnlinkConfirm}>
+                    <span>Remove {row.supplierName} from this component?</span>
+                    <form action={unlinkComponent} onSubmit={() => setUnlinkConfirmId(null)}>
+                      <input type="hidden" name="supplier_component_id" value={row.id} />
+                      <input type="hidden" name="component_id" value={componentId} />
+                      <input type="hidden" name="supplier_id" value={row.supplierId} />
+                      <button type="submit" className={styles.btnSmall} style={{ color: "var(--danger)" }}>Remove</button>
+                      <button type="button" className={styles.btnSmall} onClick={() => setUnlinkConfirmId(null)}>Cancel</button>
+                    </form>
+                  </div>
+                )}
+              </React.Fragment>
             );
           })
         )}

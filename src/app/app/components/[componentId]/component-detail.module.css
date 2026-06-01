@@ -588,6 +588,10 @@
   align-items: center;
   border-bottom: 1px solid var(--stroke);
 }
+.suppliersHeaderAdmin,
+.suppliersRowAdmin {
+  grid-template-columns: 2fr 1.1fr 1fr 0.8fr 0.9fr 0.9fr 60px 56px;
+}
 .suppliersHeader { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.4; border-bottom: 1px solid var(--stroke-strong); }
 .supplierLink { font-weight: 500; }
 .catalogPartNum { font-family: monospace; font-size: 0.8rem; opacity: 0.6; }
@@ -596,6 +600,66 @@
 .ltGreen { color: #48c774; }
 .ltRed { color: #ff6b6b; }
 .starBtn { background: none; border: none; cursor: pointer; font-size: 1.1rem; color: #f5c542; }
+
+.supplierRowActions {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+.iconBtn {
+  background: none;
+  border: 1px solid var(--stroke);
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+}
+.iconBtnDanger {
+  background: none;
+  border: 1px solid var(--stroke);
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--danger);
+}
+.supplierEditRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  padding: 8px 12px;
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--stroke);
+}
+.supplierEditField {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+}
+.supplierEditActions {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+}
+.supplierUnlinkConfirm {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--stroke);
+  font-size: 0.85rem;
+}
+.supplierUnlinkConfirm form {
+  display: flex;
+  gap: 6px;
+}
 
 /* ── Archive button + dialog ──────────── */
 

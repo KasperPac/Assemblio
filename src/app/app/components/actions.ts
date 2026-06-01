@@ -215,6 +215,46 @@ export async function updateBinLocation(_prevState: { error?: string }, formData
   return {};
 }
 
+export async function updateComponentSupplier(formData: FormData): Promise<void> {
+  const supplierComponentId = formData.get("supplier_component_id")?.toString() ?? "";
+  const componentId = formData.get("component_id")?.toString() ?? "";
+
+  if (!supplierComponentId || !componentId) return;
+
+  const context = await getServerTenantContext();
+  if (!context) return;
+  const { supabase, tenantId, role } = context;
+
+  if (role !== "admin" && role !== "super_admin") return;
+
+  const unitCost = parseNumber(formData.get("unit_cost"));
+  const leadTimeDays = parseNumber(formData.get("lead_time_days"));
+  const moq = parseNumber(formData.get("moq"));
+  const partNumber = formData.get("supplier_part_number")?.toString().trim() || null;
+
+  const { error } = await supabase
+    .from("supplier_components")
+    .update({
+      unit_cost: unitCost,
+      lead_time_days: leadTimeDays,
+      moq,
+      supplier_part_number: partNumber,
+    })
+    .eq("id", supplierComponentId)
+    .eq("tenant_id", tenantId);
+
+  if (error) return;
+
+  await supabase.from("activity_log").insert({
+    tenant_id: tenantId,
+    event: "component_supplier_updated",
+    metadata: { supplier_component_id: supplierComponentId, component_id: componentId },
+  });
+
+  revalidatePath(`/app/components/${componentId}`);
+  revalidatePath("/app/activity-log");
+}
+
 type ArchiveResult =
   | { success: true }
   | { error: string; conflicts: string[] };
