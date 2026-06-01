@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import { BarcodeModal } from "./barcode-modal";
@@ -59,53 +59,128 @@ function InlineForm({ action, fields, onDone, label = "item" }: {
   );
 }
 
-function AisleDeleteButton({ aisleId }: { aisleId: string }) {
+function ConfirmDialog({
+  dialogRef,
+  message,
+  confirmLabel = "Delete",
+  onConfirm,
+}: {
+  dialogRef: React.RefObject<HTMLDialogElement | null>;
+  message: string;
+  confirmLabel?: string;
+  onConfirm: () => void;
+}) {
+  return (
+    <dialog ref={dialogRef} className={styles.confirmDialog}>
+      <p>{message}</p>
+      <div className={styles.confirmActions}>
+        <button
+          type="button"
+          className={styles.btnCancel}
+          onClick={() => dialogRef.current?.close()}
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          className={styles.btnDanger}
+          onClick={() => {
+            dialogRef.current?.close();
+            onConfirm();
+          }}
+        >
+          {confirmLabel}
+        </button>
+      </div>
+    </dialog>
+  );
+}
+
+function AisleDeleteButton({ aisleId, aisleName }: { aisleId: string; aisleName: string }) {
   const router = useRouter();
   const [err, setErr] = useState<string | null>(null);
-  async function submit(fd: FormData) {
+  const [bayCount, setBayCount] = useState<number>(0);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  async function handleDelete() {
     setErr(null);
+    const fd = new FormData();
+    fd.append("id", aisleId);
     const result = await deleteAisle(fd) as { error?: string; bayCount?: number };
     if (result?.error) { setErr(result.error); return; }
     if (result?.bayCount) {
-      if (!window.confirm(`This aisle has ${result.bayCount} bay(s) that will also be deleted. Continue?`)) return;
-      const fd2 = new FormData();
-      fd2.append("id", aisleId);
-      fd2.append("confirmed", "true");
-      const r2 = await deleteAisle(fd2) as { error?: string };
-      if (r2?.error) { setErr(r2.error); return; }
+      setBayCount(result.bayCount);
+      dialogRef.current?.showModal();
+      return;
     }
     router.refresh();
   }
+
+  async function confirmCascade() {
+    const fd = new FormData();
+    fd.append("id", aisleId);
+    fd.append("confirmed", "true");
+    const result = await deleteAisle(fd) as { error?: string };
+    if (result?.error) { setErr(result.error); return; }
+    router.refresh();
+  }
+
   return (
     <span>
-      <form action={submit} style={{ display: "inline" }}>
-        <input type="hidden" name="id" value={aisleId} />
-        <button type="submit" className={styles.btnDelete}>✕ Delete</button>
-      </form>
+      <button
+        type="button"
+        className={styles.btnDelete}
+        aria-label={`Delete aisle ${aisleName}`}
+        onClick={handleDelete}
+      >
+        <span aria-hidden="true">✕</span> Delete
+      </button>
       {err && <span className={styles.deleteError}>{err}</span>}
+      <ConfirmDialog
+        dialogRef={dialogRef}
+        message={`This aisle has ${bayCount} bay(s) that will also be deleted. Continue?`}
+        confirmLabel="Delete aisle and bays"
+        onConfirm={confirmCascade}
+      />
     </span>
   );
 }
 
-function SimpleDeleteButton({ id, action }: {
+function SimpleDeleteButton({ id, entityName, entityType, action }: {
   id: string;
+  entityName: string;
+  entityType: string;
   action: (fd: FormData) => Promise<{ error?: string }>;
 }) {
   const router = useRouter();
   const [err, setErr] = useState<string | null>(null);
-  async function submit(fd: FormData) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  async function handleConfirm() {
     setErr(null);
+    const fd = new FormData();
+    fd.append("id", id);
     const result = await action(fd);
     if (result?.error) { setErr(result.error); return; }
     router.refresh();
   }
+
   return (
     <span>
-      <form action={submit} style={{ display: "inline" }}>
-        <input type="hidden" name="id" value={id} />
-        <button type="submit" className={styles.btnDelete}>✕ Delete</button>
-      </form>
+      <button
+        type="button"
+        className={styles.btnDelete}
+        aria-label={`Delete ${entityType} ${entityName}`}
+        onClick={() => dialogRef.current?.showModal()}
+      >
+        <span aria-hidden="true">✕</span> Delete
+      </button>
       {err && <span className={styles.deleteError}>{err}</span>}
+      <ConfirmDialog
+        dialogRef={dialogRef}
+        message={`Delete this ${entityType}? This cannot be undone.`}
+        onConfirm={handleConfirm}
+      />
     </span>
   );
 }
@@ -228,7 +303,7 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                           <button className={styles.btnIcon} aria-label={`Add aisle to ${sl.name}`} onClick={() => { setAddingAisle(sl.id); setCollapsedSl(s => { const n = new Set(s); n.delete(sl.id); return n; }); }}><span aria-hidden="true">⊕</span> Aisle</button>
                           <button className={styles.btnIcon} aria-label={`Print barcode for ${sl.name}`} onClick={() => setBarcode({ id: sl.id, type: "Sub-location", name: sl.name, path: `${wh.name} · ${sl.name}` })}><span aria-hidden="true">▦</span> Barcode</button>
                           <button className={styles.btnIcon} aria-label={`Edit sub-location ${sl.name}`} onClick={() => setEditingSl(sl.id)}><span aria-hidden="true">✎</span> Edit</button>
-                          <SimpleDeleteButton id={sl.id} action={deleteSubLocation} />
+                          <SimpleDeleteButton id={sl.id} entityName={sl.name} entityType="sub-location" action={deleteSubLocation} />
                         </div>
                       )}
 
@@ -282,7 +357,7 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                                     <button className={styles.btnIcon} aria-label={`Add bay to ${aisle.name}`} onClick={() => { setAddingBay(aisle.id); setCollapsedAisle(s => { const n = new Set(s); n.delete(aisle.id); return n; }); }}><span aria-hidden="true">⊕</span> Bay</button>
                                     <button className={styles.btnIcon} aria-label={`Print barcode for ${aisle.name}`} onClick={() => setBarcode({ id: aisle.id, type: "Aisle", name: aisle.name, path: `${wh.name} · ${sl.name} · ${aisle.name}` })}><span aria-hidden="true">▦</span> Barcode</button>
                                     <button className={styles.btnIcon} aria-label={`Edit aisle ${aisle.name}`} onClick={() => setEditingAisle(aisle.id)}><span aria-hidden="true">✎</span> Edit</button>
-                                    <AisleDeleteButton aisleId={aisle.id} />
+                                    <AisleDeleteButton aisleId={aisle.id} aisleName={aisle.name} />
                                   </div>
                                 )}
 
@@ -311,7 +386,7 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                                         <span className={styles.shortCode}>{shortCode(bay.id)}</span>
                                         <button className={styles.btnIcon} aria-label={`Print barcode for ${bay.name}`} onClick={() => setBarcode({ id: bay.id, type: "Bay", name: bay.name, path: `${wh.name} · ${sl.name} · ${aisle.name} · ${bay.name}` })}><span aria-hidden="true">▦</span> Barcode</button>
                                         <button className={styles.btnIcon} aria-label={`Edit bay ${bay.name}`} onClick={() => setEditingBay(bay.id)}><span aria-hidden="true">✎</span> Edit</button>
-                                        <SimpleDeleteButton id={bay.id} action={deleteBay} />
+                                        <SimpleDeleteButton id={bay.id} entityName={bay.name} entityType="bay" action={deleteBay} />
                                       </>
                                     )}
                                   </div>

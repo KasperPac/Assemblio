@@ -429,3 +429,41 @@
   transition: color 0.15s;
 }
 .btnCopyCode:hover { color: var(--ink-strong); }
+
+/* ── Confirmation dialogs ─────────────────────────────── */
+
+.confirmDialog {
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  box-shadow: var(--shadow-lg);
+  padding: 24px;
+  max-width: 380px;
+  width: 92vw;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.confirmDialog::backdrop {
+  background: var(--bg-overlay, rgba(0, 0, 0, 0.45));
+}
+
+.confirmActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.btnDanger {
+  background: var(--danger);
+  border: 1px solid var(--danger);
+  color: #fff;
+  border-radius: 5px;
+  padding: 5px 14px;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  font-family: inherit;
+}
+.btnDanger:hover { opacity: 0.85; }
