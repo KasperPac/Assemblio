@@ -65,6 +65,7 @@ export default function ReceiptForm({
   supplierComponentMap,
   availablePOs,
   initialPoId,
+  initialComponentId,
 }: {
   suppliers: Supplier[];
   components: Component[];
@@ -72,6 +73,7 @@ export default function ReceiptForm({
   supplierComponentMap: Record<string, string[]>;
   availablePOs: AvailablePO[];
   initialPoId?: string;
+  initialComponentId?: string | null;
 }) {
   const defaultLocation = locations.find((l) => l.is_default) ?? locations[0];
 
@@ -83,22 +85,28 @@ export default function ReceiptForm({
   const [showSupplierOverride, setShowSupplierOverride] = useState(false);
   const [locationId, setLocationId] = useState(defaultLocation?.id ?? "");
   const [lines, setLines] = useState<LineState[]>(() => {
-    if (!initialPo) return [blankLine()];
-    const poLines = initialPo.lines
-      .filter((l) => l.quantity - l.quantity_received > 0)
-      .map((l) => {
-        const remaining = l.quantity - l.quantity_received;
-        return {
-          key: crypto.randomUUID(),
-          component_id: l.component_id,
-          quantity_delivered: String(remaining),
-          cost_per_unit: "",
-          notes: "",
-          quantity_expected: remaining,
-          purchase_order_line_id: l.id,
-        };
-      });
-    return poLines.length > 0 ? poLines : [blankLine()];
+    if (initialPo) {
+      const poLines = initialPo.lines
+        .filter((l) => l.quantity - l.quantity_received > 0)
+        .map((l) => {
+          const remaining = l.quantity - l.quantity_received;
+          return {
+            key: crypto.randomUUID(),
+            component_id: l.component_id,
+            quantity_delivered: String(remaining),
+            cost_per_unit: "",
+            notes: "",
+            quantity_expected: remaining,
+            purchase_order_line_id: l.id,
+          };
+        });
+      if (poLines.length > 0) return poLines;
+    }
+    return [
+      initialComponentId
+        ? { ...blankLine(), component_id: initialComponentId }
+        : blankLine(),
+    ];
   });
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();

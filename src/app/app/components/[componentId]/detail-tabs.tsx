@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import styles from "./component-detail.module.css";
-import { togglePreferred, linkComponent } from "@/app/app/suppliers/[supplierId]/actions";
+import { togglePreferred, linkComponent, unlinkComponent } from "@/app/app/suppliers/[supplierId]/actions";
+import { updateComponentSupplier } from "../actions";
 import { BinLocationSelect } from "./bin-location-select";
 
 type StatCard = {
@@ -21,10 +22,12 @@ type MovementRow = {
   deltaInProd: number;
   reason: string;
   refType: string;
+  refId: string | null;
 };
 
 type BomRow = {
   bomId: string;
+  variantId: string | null;
   product: string;
   variant: string;
   version: number;
@@ -75,6 +78,18 @@ type Props = {
   currentBayId: string | null;
 };
 
+const REF_ROUTES: Partial<Record<string, (id: string) => string>> = {
+  goods_receipt: (id) => `/app/goods-inwards/${id}`,
+  production_order: (id) => `/app/orders/${id}`,
+};
+
+const REF_TYPE_LABELS: Record<string, string> = {
+  production_order: "Production Order",
+  goods_receipt: "Goods Receipt",
+  manual_adjustment: "Manual Adjustment",
+  stocktake: "Stocktake",
+};
+
 type Tab = "Overview" | "Movements" | "BOM Usage" | "Suppliers" | "Location";
 const baseTabs: Tab[] = ["Overview", "Movements", "BOM Usage", "Suppliers"];
 
@@ -88,23 +103,33 @@ export default function DetailTabs({
 
   return (
     <div className={styles.tabsContainer}>
-      <div className={styles.tabBar}>
-        {tabs.map((tab) => (
-          <button
-            key={tab}
-            type="button"
-            className={`${styles.tab} ${active === tab ? styles.tabActive : ""}`}
-            onClick={() => setActive(tab)}
-          >
-            {tab === "Suppliers" ? `Suppliers (${supplierCatalog.length})` : tab}
-          </button>
-        ))}
+      <div className={styles.tabBar} role="tablist">
+        {tabs.map((tab) => {
+          const tabId = `tab-${tab.toLowerCase().replace(/\s+/g, "-")}`;
+          const panelId = `panel-${tab.toLowerCase().replace(/\s+/g, "-")}`;
+          return (
+            <button
+              key={tab}
+              id={tabId}
+              type="button"
+              role="tab"
+              aria-selected={active === tab}
+              aria-controls={panelId}
+              className={`${styles.tab} ${active === tab ? styles.tabActive : ""}`}
+              onClick={() => setActive(tab)}
+            >
+              {tab === "Suppliers" ? `Suppliers (${supplierCatalog.length})` : tab}
+            </button>
+          );
+        })}
       </div>
 
       {active === "Overview" && (
-        <div className={styles.overviewContent}>
+        <div className={styles.overviewContent} id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
           <div className={styles.statsGrid}>
-            {stats.map((s) => (
+            {stats.map((s) => {
+              const labelId = `stat-label-${s.label.toLowerCase().replace(/\s+/g, "-")}`;
+              return (
               <div
                 key={s.label}
                 className={`${styles.statCard} ${
@@ -115,8 +140,9 @@ export default function DetailTabs({
                       : ""
                   }`}
               >
-                <span className={styles.statLabel}>{s.label}</span>
+                <span id={labelId} className={styles.statLabel}>{s.label}</span>
                 <span
+                  aria-labelledby={labelId}
                   className={`${styles.statValue} ${
                     s.color === "green"
                       ? styles.statGreen
@@ -139,7 +165,8 @@ export default function DetailTabs({
                   </span>
                 )}
               </div>
-            ))}
+              );
+            })}
           </div>
 
           {recentReceipts.length > 0 && (
@@ -167,7 +194,7 @@ export default function DetailTabs({
       )}
 
       {active === "Movements" && (
-        <div className={styles.tabContent}>
+        <div className={styles.tabContent} id="panel-movements" role="tabpanel" aria-labelledby="tab-movements">
           {movements.length === 0 ? (
             <p className={styles.empty}>No inventory movements recorded.</p>
           ) : (
@@ -189,7 +216,15 @@ export default function DetailTabs({
                     {m.deltaInProd > 0 ? "+" : ""}{m.deltaInProd}
                   </span>
                   <span>{m.reason}</span>
-                  <span className={styles.refCell}>{m.refType}</span>
+                  <span className={styles.refCell}>
+                    {m.refId && REF_ROUTES[m.refType] ? (
+                      <a href={REF_ROUTES[m.refType]!(m.refId)} className={styles.refLink}>
+                        {REF_TYPE_LABELS[m.refType] ?? m.refType}
+                      </a>
+                    ) : (
+                      REF_TYPE_LABELS[m.refType] ?? m.refType
+                    )}
+                  </span>
                 </div>
               ))}
             </div>
@@ -198,17 +233,18 @@ export default function DetailTabs({
       )}
 
       {active === "Suppliers" && (
-        <div className={styles.tabContent}>
+        <div className={styles.tabContent} id="panel-suppliers" role="tabpanel" aria-labelledby="tab-suppliers">
           <ComponentSuppliersTab
             componentId={componentId}
             catalog={supplierCatalog}
             allSuppliers={allSuppliers}
+            isAdmin={isAdmin}
           />
         </div>
       )}
 
       {active === "BOM Usage" && (
-        <div className={styles.tabContent}>
+        <div className={styles.tabContent} id="panel-bom-usage" role="tabpanel" aria-labelledby="tab-bom-usage">
           {bomUsage.length === 0 ? (
             <p className={styles.empty}>Not used in any BOMs.</p>
           ) : (
@@ -229,10 +265,17 @@ export default function DetailTabs({
                 {bomUsage.map((row) => (
                   <div key={row.bomId} className={`${styles.miniRow} ${styles.bomTableCols}`}>
                     <span>
-                      <a href="/app/bom" className={styles.bomLink}>
-                        {row.product}
-                        {row.variant && row.variant !== "--" ? ` — ${row.variant}` : ""}
-                      </a>
+                      {row.variantId ? (
+                        <a href={`/app/products/variants/${row.variantId}`} className={styles.bomLink}>
+                          {row.product}
+                          {row.variant && row.variant !== "--" ? ` — ${row.variant}` : ""}
+                        </a>
+                      ) : (
+                        <span>
+                          {row.product}
+                          {row.variant && row.variant !== "--" ? ` — ${row.variant}` : ""}
+                        </span>
+                      )}
                       {row.version > 0 && (
                         <span className={styles.bomVersion}> v{row.version}</span>
                       )}
@@ -251,7 +294,15 @@ export default function DetailTabs({
         </div>
       )}
       {active === "Location" && isAdmin && (
-        <div className={styles.tabContent}>
+        <div className={styles.tabContent} id="panel-location" role="tabpanel" aria-labelledby="tab-location">
+          <p className={styles.locationTabDesc}>
+            Assign a default storage location for this component. When stock is
+            received, it will be directed to this bin. Locations are managed in{" "}
+            <a href="/app/warehouse/locations" className={styles.refLink}>
+              Warehouse → Locations
+            </a>
+            .
+          </p>
           <div className={styles.binCard}>
             <BinLocationSelect
               componentId={componentId}
@@ -271,16 +322,76 @@ export default function DetailTabs({
   );
 }
 
+function SupplierEditForm({
+  rowId,
+  componentId,
+  unitCost,
+  leadTimeDays,
+  moq,
+  partNumber,
+  onClose,
+}: {
+  rowId: string;
+  componentId: string;
+  unitCost: number | null;
+  leadTimeDays: number | null;
+  moq: number | null;
+  partNumber: string | null;
+  onClose: () => void;
+}) {
+  const [editState, editAction] = React.useActionState(updateComponentSupplier, {});
+
+  React.useEffect(() => {
+    if (editState.success) onClose();
+  }, [editState.success, onClose]);
+
+  return (
+    <form action={editAction} className={styles.supplierEditRow}>
+      <input type="hidden" name="supplier_component_id" value={rowId} />
+      <input type="hidden" name="component_id" value={componentId} />
+      <label className={styles.supplierEditField}>
+        <span>Unit cost</span>
+        <input name="unit_cost" type="number" step="0.01" defaultValue={unitCost ?? ""} className={styles.miniInput} />
+      </label>
+      <label className={styles.supplierEditField}>
+        <span>Lead time (days)</span>
+        <input name="lead_time_days" type="number" defaultValue={leadTimeDays ?? ""} className={styles.miniInput} />
+      </label>
+      <label className={styles.supplierEditField}>
+        <span>MOQ</span>
+        <input name="moq" type="number" defaultValue={moq ?? ""} className={styles.miniInput} />
+      </label>
+      <label className={styles.supplierEditField}>
+        <span>Part #</span>
+        <input name="supplier_part_number" defaultValue={partNumber ?? ""} className={styles.miniInput} />
+      </label>
+      <div className={styles.supplierEditActions}>
+        <button type="submit" className={styles.btnSmall}>Save</button>
+        <button type="button" className={styles.btnSmall} onClick={onClose}>Cancel</button>
+      </div>
+      {editState.error && (
+        <p style={{ color: "var(--danger)", fontSize: "0.8rem", margin: "0", width: "100%" }}>
+          {editState.error}
+        </p>
+      )}
+    </form>
+  );
+}
+
 function ComponentSuppliersTab({
   componentId,
   catalog,
   allSuppliers,
+  isAdmin,
 }: {
   componentId: string;
   catalog: SupplierCatalogItem[];
   allSuppliers: Array<{ id: string; name: string }>;
+  isAdmin: boolean;
 }) {
   const [linkOpen, setLinkOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [unlinkConfirmId, setUnlinkConfirmId] = useState<string | null>(null);
 
   const minCost = catalog.length > 0 ? Math.min(...catalog.filter(r => r.unitCost != null).map((r) => r.unitCost!)) : Infinity;
   const minLt = catalog.length > 0 ? Math.min(...catalog.filter(r => r.leadTimeDays != null).map((r) => r.leadTimeDays!)) : Infinity;
@@ -291,9 +402,11 @@ function ComponentSuppliersTab({
         <span className={styles.tabCount}>
           {catalog.length} supplier{catalog.length !== 1 ? "s" : ""}
         </span>
-        <button type="button" className={styles.btnSmall} onClick={() => setLinkOpen(true)}>
-          + Link Supplier
-        </button>
+        {isAdmin && (
+          <button type="button" className={styles.btnSmall} onClick={() => setLinkOpen(true)}>
+            + Link Supplier
+          </button>
+        )}
       </div>
 
       {linkOpen && (
@@ -315,7 +428,7 @@ function ComponentSuppliersTab({
       )}
 
       <div className={styles.suppliersTable}>
-        <div className={styles.suppliersHeader}>
+        <div className={`${styles.suppliersHeader} ${isAdmin ? styles.suppliersHeaderAdmin : ""}`}>
           <span>Supplier</span>
           <span>Part #</span>
           <span>Unit Cost</span>
@@ -323,6 +436,7 @@ function ComponentSuppliersTab({
           <span>Lead Time</span>
           <span>Avg Actual</span>
           <span style={{ textAlign: "center" }}>Pref</span>
+          {isAdmin && <span />}
         </div>
         {catalog.length === 0 ? (
           <p className={styles.empty}>No suppliers linked to this component yet.</p>
@@ -336,29 +450,84 @@ function ComponentSuppliersTab({
                   ? styles.ltGreen
                   : styles.ltRed
                 : "";
+            const isEditing = editingId === row.id;
+            const isUnlinkConfirm = unlinkConfirmId === row.id;
             return (
-              <div key={row.id} className={styles.suppliersRow}>
-                <div>
-                  <span className={styles.supplierLink}>{row.supplierName}</span>
-                  {isBestPrice && <span className={styles.tagGreen}>best price</span>}
-                  {isFastest && !isBestPrice && <span className={styles.tagBlue}>fastest</span>}
+              <React.Fragment key={row.id}>
+                <div className={`${styles.suppliersRow} ${isAdmin ? styles.suppliersRowAdmin : ""}`}>
+                  <div>
+                    <span className={styles.supplierLink}>{row.supplierName}</span>
+                    {isBestPrice && <span className={styles.tagGreen}>best price</span>}
+                    {isFastest && !isBestPrice && <span className={styles.tagBlue}>fastest</span>}
+                  </div>
+                  <span className={styles.catalogPartNum}>{row.partNumber ?? "—"}</span>
+                  <span>{row.unitCost != null ? `$${row.unitCost.toFixed(2)}` : "—"}</span>
+                  <span>{row.moq != null ? String(row.moq) : "—"}</span>
+                  <span>{row.leadTimeDays != null ? `${row.leadTimeDays}d` : "—"}</span>
+                  <span className={ltColor}>
+                    {row.avgActualDays != null ? `${row.avgActualDays.toFixed(1)}d` : "—"}
+                  </span>
+                  <form action={togglePreferred} style={{ textAlign: "center" }}>
+                    <input type="hidden" name="supplier_component_id" value={row.id} />
+                    <input type="hidden" name="component_id" value={componentId} />
+                    <input type="hidden" name="supplier_id" value={row.supplierId} />
+                    <button type="submit" className={styles.starBtn}>
+                      {row.isPreferred ? "★" : "☆"}
+                    </button>
+                  </form>
+                  {isAdmin && (
+                    <div className={styles.supplierRowActions}>
+                      <button
+                        type="button"
+                        className={styles.iconBtn}
+                        aria-label="Edit supplier link"
+                        onClick={() => {
+                          setUnlinkConfirmId(null);
+                          setEditingId(isEditing ? null : row.id);
+                        }}
+                      >
+                        ✎
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.iconBtnDanger}
+                        aria-label="Unlink supplier"
+                        onClick={() => {
+                          setEditingId(null);
+                          setUnlinkConfirmId(isUnlinkConfirm ? null : row.id);
+                        }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <span className={styles.catalogPartNum}>{row.partNumber ?? "—"}</span>
-                <span>{row.unitCost != null ? `$${row.unitCost.toFixed(2)}` : "—"}</span>
-                <span>{row.moq != null ? String(row.moq) : "—"}</span>
-                <span>{row.leadTimeDays != null ? `${row.leadTimeDays}d` : "—"}</span>
-                <span className={ltColor}>
-                  {row.avgActualDays != null ? `${row.avgActualDays.toFixed(1)}d` : "—"}
-                </span>
-                <form action={togglePreferred} style={{ textAlign: "center" }}>
-                  <input type="hidden" name="supplier_component_id" value={row.id} />
-                  <input type="hidden" name="component_id" value={componentId} />
-                  <input type="hidden" name="supplier_id" value={row.supplierId} />
-                  <button type="submit" className={styles.starBtn}>
-                    {row.isPreferred ? "★" : "☆"}
-                  </button>
-                </form>
-              </div>
+
+                {isEditing && (
+                  <SupplierEditForm
+                    rowId={row.id}
+                    componentId={componentId}
+                    unitCost={row.unitCost}
+                    leadTimeDays={row.leadTimeDays}
+                    moq={row.moq}
+                    partNumber={row.partNumber}
+                    onClose={() => setEditingId(null)}
+                  />
+                )}
+
+                {isUnlinkConfirm && (
+                  <div className={styles.supplierUnlinkConfirm}>
+                    <span>Remove {row.supplierName} from this component?</span>
+                    <form action={unlinkComponent} onSubmit={() => setUnlinkConfirmId(null)}>
+                      <input type="hidden" name="supplier_component_id" value={row.id} />
+                      <input type="hidden" name="component_id" value={componentId} />
+                      <input type="hidden" name="supplier_id" value={row.supplierId} />
+                      <button type="submit" className={styles.btnSmall} style={{ color: "var(--danger)" }}>Remove</button>
+                      <button type="button" className={styles.btnSmall} onClick={() => setUnlinkConfirmId(null)}>Cancel</button>
+                    </form>
+                  </div>
+                )}
+              </React.Fragment>
             );
           })
         )}

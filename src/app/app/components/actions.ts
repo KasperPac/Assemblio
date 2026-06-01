@@ -70,6 +70,90 @@ export async function createComponent(
   return { success: "Component created." };
 }
 
+export async function updateComponent(
+  componentId: string,
+  _prevState: ComponentState,
+  formData: FormData
+): Promise<ComponentState> {
+  const name = formData.get("name")?.toString().trim() ?? "";
+  const sku = formData.get("sku")?.toString().trim() ?? "";
+  const unit = formData.get("unit")?.toString().trim() ?? "";
+  const reorderPoint = parseNumber(formData.get("reorder_point")) ?? 0;
+  const lowStockLevel = parseNumber(formData.get("low_stock_level")) ?? 0;
+  const costPerUnit = parseNumber(formData.get("cost_per_unit")) ?? 0;
+  const supplierId = parseUuid(formData.get("supplier_id"));
+  const groupId = parseUuid(formData.get("group_id"));
+
+  if (!name) return { error: "Component name is required." };
+
+  const context = await getServerTenantContext();
+  if (!context) return { error: "Missing tenant context." };
+  const { supabase, tenantId, role } = context;
+
+  if (role !== "admin" && role !== "super_admin") {
+    return { error: "Only managers and above can edit components." };
+  }
+
+  const { data: current } = await supabase
+    .from("component")
+    .select("name, sku, unit, cost_per_unit, reorder_point, low_stock_level, supplier_id, group_id")
+    .eq("id", componentId)
+    .eq("tenant_id", tenantId)
+    .maybeSingle();
+
+  if (!current) return { error: "Component not found." };
+
+  const { error } = await supabase
+    .from("component")
+    .update({
+      name,
+      sku: sku || null,
+      unit: unit || null,
+      cost_per_unit: costPerUnit,
+      reorder_point: reorderPoint,
+      low_stock_level: lowStockLevel,
+      supplier_id: supplierId,
+      group_id: groupId,
+    })
+    .eq("id", componentId)
+    .eq("tenant_id", tenantId);
+
+  if (error) return { error: error.message };
+
+  await supabase.from("activity_log").insert({
+    tenant_id: tenantId,
+    event: "component_updated",
+    metadata: {
+      component_id: componentId,
+      before: {
+        name: current.name,
+        sku: current.sku,
+        unit: current.unit,
+        cost_per_unit: current.cost_per_unit,
+        reorder_point: current.reorder_point,
+        low_stock_level: current.low_stock_level,
+        supplier_id: current.supplier_id,
+        group_id: current.group_id,
+      },
+      after: {
+        name,
+        sku: sku || null,
+        unit: unit || null,
+        cost_per_unit: costPerUnit,
+        reorder_point: reorderPoint,
+        low_stock_level: lowStockLevel,
+        supplier_id: supplierId,
+        group_id: groupId,
+      },
+    },
+  });
+
+  revalidatePath(`/app/components/${componentId}`);
+  revalidatePath("/app/components");
+  revalidatePath("/app/activity-log");
+  return { success: "Component updated." };
+}
+
 export async function updateBinLocation(_prevState: { error?: string }, formData: FormData): Promise<{ error?: string }> {
   const componentId = formData.get("component_id")?.toString().trim() ?? "";
   const binSubLocationId = formData.get("bin_sub_location_id")?.toString().trim() || null;
@@ -129,4 +213,149 @@ export async function updateBinLocation(_prevState: { error?: string }, formData
   revalidatePath(`/app/components/${componentId}`);
   revalidatePath("/app/activity-log");
   return {};
+}
+
+export async function updateComponentSupplier(
+  _prevState: ComponentState,
+  formData: FormData
+): Promise<ComponentState> {
+  const supplierComponentId = formData.get("supplier_component_id")?.toString() ?? "";
+  const componentId = formData.get("component_id")?.toString() ?? "";
+
+  if (!supplierComponentId || !componentId) return { error: "Missing required fields." };
+
+  const context = await getServerTenantContext();
+  if (!context) return { error: "Missing tenant context." };
+  const { supabase, tenantId, role } = context;
+
+  if (role !== "admin" && role !== "super_admin") {
+    return { error: "Only managers and above can edit supplier links." };
+  }
+
+  const unitCost = parseNumber(formData.get("unit_cost"));
+  const leadTimeDays = parseNumber(formData.get("lead_time_days"));
+  const moq = parseNumber(formData.get("moq"));
+  const partNumber = formData.get("supplier_part_number")?.toString().trim() || null;
+
+  const { error } = await supabase
+    .from("supplier_components")
+    .update({
+      unit_cost: unitCost,
+      lead_time_days: leadTimeDays,
+      moq,
+      supplier_part_number: partNumber,
+    })
+    .eq("id", supplierComponentId)
+    .eq("tenant_id", tenantId);
+
+  if (error) return { error: error.message };
+
+  await supabase.from("activity_log").insert({
+    tenant_id: tenantId,
+    event: "component_supplier_updated",
+    metadata: { supplier_component_id: supplierComponentId, component_id: componentId },
+  });
+
+  revalidatePath(`/app/components/${componentId}`);
+  revalidatePath("/app/activity-log");
+  return { success: "Supplier link updated." };
+}
+
+type ArchiveResult =
+  | { success: true }
+  | { error: string; conflicts: string[] };
+
+export async function archiveComponent(componentId: string): Promise<ArchiveResult> {
+  const context = await getServerTenantContext();
+  if (!context) return { error: "Unauthorized", conflicts: [] };
+  const { supabase, tenantId: _tenantId, role } = context;
+  const tenantId = _tenantId!;
+
+  if (role !== "admin" && role !== "super_admin") {
+    return { error: "Only managers and above can archive components.", conflicts: [] };
+  }
+
+  // Run conflict checks in parallel
+  const [
+    bomComponentsResult,
+    { data: stockRows },
+    { data: openPoLines },
+    { data: openAllocations },
+  ] = await Promise.all([
+    supabase
+      .from("product_bom_component")
+      .select("product_bom_id")
+      .eq("component_id", componentId)
+      .eq("tenant_id", tenantId),
+    supabase
+      .from("inventory_balance")
+      .select("on_hand")
+      .eq("component_id", componentId)
+      .eq("tenant_id", tenantId)
+      .gt("on_hand", 0),
+    supabase
+      .from("purchase_order_line")
+      .select("id, purchase_order:purchase_order_id!inner(status)")
+      .eq("component_id", componentId)
+      .eq("tenant_id", tenantId)
+      .not("purchase_order.status", "in", '("received","cancelled")'),
+    supabase
+      .from("order_component_allocation")
+      .select("id, order_line:order_line_id!inner(order:order_id!inner(status))")
+      .eq("component_id", componentId)
+      .eq("tenant_id", tenantId)
+      .not("order_line.order.status", "in", '("complete","cancelled")'),
+  ]);
+
+  const bomComponentRows = bomComponentsResult?.data ?? [];
+  let activeBomCount = 0;
+  if (bomComponentRows.length > 0) {
+    const bomIds = bomComponentRows.map((r: { product_bom_id: string }) => r.product_bom_id);
+    const { data: activeBomsData } = await supabase
+      .from("product_bom")
+      .select("id")
+      .in("id", bomIds)
+      .eq("is_active", true)
+      .eq("tenant_id", tenantId);
+    activeBomCount = (activeBomsData ?? []).length;
+  }
+
+  const conflicts: string[] = [];
+
+  if (activeBomCount > 0) {
+    conflicts.push(`Used in ${activeBomCount} active BOM${activeBomCount !== 1 ? "s" : ""}`);
+  }
+  if ((stockRows ?? []).length > 0) {
+    const totalOnHand = (stockRows ?? []).reduce((s, r) => s + (r.on_hand ?? 0), 0);
+    conflicts.push(`Has ${totalOnHand} unit${totalOnHand !== 1 ? "s" : ""} on hand`);
+  }
+  if ((openPoLines ?? []).length > 0) {
+    conflicts.push(`Has ${openPoLines!.length} open purchase order line${openPoLines!.length !== 1 ? "s" : ""}`);
+  }
+  if ((openAllocations ?? []).length > 0) {
+    conflicts.push(`Allocated to ${openAllocations!.length} open order${openAllocations!.length !== 1 ? "s" : ""}`);
+  }
+
+  if (conflicts.length > 0) {
+    return { error: "Cannot archive: resolve the following first.", conflicts };
+  }
+
+  const { error } = await supabase
+    .from("component")
+    .update({ archived_at: new Date().toISOString() })
+    .eq("id", componentId)
+    .eq("tenant_id", tenantId);
+
+  if (error) return { error: error.message, conflicts: [] };
+
+  await supabase.from("activity_log").insert({
+    tenant_id: tenantId,
+    event: "component_archived",
+    metadata: { component_id: componentId },
+  });
+
+  revalidatePath("/app/components");
+  revalidatePath(`/app/components/${componentId}`);
+  revalidatePath("/app/activity-log");
+  return { success: true };
 }

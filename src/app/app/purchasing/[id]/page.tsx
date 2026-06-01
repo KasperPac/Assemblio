@@ -140,7 +140,7 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
                   <tr
                     key={line.id}
                     style={{
-                      borderBottom: "1px solid var(--stroke-faint, var(--stroke))",
+                      borderBottom: "1px solid var(--stroke)",
                       opacity: fullyReceived ? 0.45 : 1,
                     }}
                   >

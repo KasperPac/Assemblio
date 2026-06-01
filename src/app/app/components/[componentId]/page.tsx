@@ -5,6 +5,8 @@ import DetailTabs from "./detail-tabs";
 import styles from "./component-detail.module.css";
 import { getStockStatus } from "../helpers";
 import { getAvgActualLeadTimesForComponent } from "@/lib/suppliers/catalog";
+import ComponentEditForm from "../component-edit-form";
+import ArchiveButton from "./archive-button";
 
 type Props = {
   params: Promise<{ componentId: string }>;
@@ -17,6 +19,10 @@ type ComponentRecord = {
   unit: string | null;
   cost_per_unit: number;
   reorder_point: number;
+  low_stock_level: number;
+  archived_at: string | null;
+  supplier_id: string | null;
+  group_id: string | null;
   created_at: string | null;
   bin_sub_location_id: string | null;
   bin_aisle_id: string | null;
@@ -52,6 +58,7 @@ type MovementRecord = {
   delta_in_prod: number;
   reason: string | null;
   reference_type: string | null;
+  reference_id: string | null;
   created_at: string;
 };
 
@@ -77,9 +84,11 @@ type BomUsageRecord = {
     version: number;
     is_active: boolean;
     variant: {
+      id: string | null;
       title: string | null;
       product: { title: string } | Array<{ title: string }> | null;
     } | Array<{
+      id: string | null;
       title: string | null;
       product: { title: string } | Array<{ title: string }> | null;
     }> | null;
@@ -87,9 +96,11 @@ type BomUsageRecord = {
     version: number;
     is_active: boolean;
     variant: {
+      id: string | null;
       title: string | null;
       product: { title: string } | Array<{ title: string }> | null;
     } | Array<{
+      id: string | null;
       title: string | null;
       product: { title: string } | Array<{ title: string }> | null;
     }> | null;
@@ -112,7 +123,7 @@ export default async function ComponentDetailPage({ params }: Props) {
 
   const { data: component } = await supabase
     .from("component")
-    .select("id,name,sku,unit,cost_per_unit,reorder_point,created_at,tenant_id,bin_sub_location_id,bin_aisle_id,bin_bay_id,supplier:supplier_id(name),location:location_id(name),group:group_id(name)")
+    .select("id,name,sku,unit,cost_per_unit,reorder_point,low_stock_level,archived_at,created_at,tenant_id,bin_sub_location_id,bin_aisle_id,bin_bay_id,supplier_id,group_id,supplier:supplier_id(name),location:location_id(name),group:group_id(name)")
     .eq("id", componentId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
@@ -142,6 +153,7 @@ export default async function ComponentDetailPage({ params }: Props) {
     { data: recentReceiptLines },
     { data: supplierCatalogRaw },
     { data: allSuppliersRaw },
+    { data: groupsRaw },
   ] = await Promise.all([
     supabase
       .from("inventory_balance")
@@ -149,13 +161,13 @@ export default async function ComponentDetailPage({ params }: Props) {
       .eq("component_id", componentId),
     supabase
       .from("inventory_movement")
-      .select("id,delta_on_hand,delta_in_prod,reason,reference_type,created_at")
+      .select("id,delta_on_hand,delta_in_prod,reason,reference_type,reference_id,created_at")
       .eq("component_id", componentId)
       .order("created_at", { ascending: false })
       .limit(50),
     supabase
       .from("product_bom_component")
-      .select("quantity,product_bom_id,product_bom:product_bom_id(version,is_active,variant:variant_id(title,product:product_id(title)))")
+      .select("quantity,product_bom_id,product_bom:product_bom_id(version,is_active,variant:variant_id(id,title,product:product_id(title)))")
       .eq("component_id", componentId),
     supabase
       .from("delivery_receipt_line")
@@ -178,6 +190,11 @@ export default async function ComponentDetailPage({ params }: Props) {
       .select("id, name")
       .eq("tenant_id", tenantId)
       .eq("is_active", true)
+      .order("name"),
+    supabase
+      .from("component_group")
+      .select("id, name")
+      .eq("tenant_id", tenantId)
       .order("name"),
   ]);
 
@@ -275,11 +292,16 @@ export default async function ComponentDetailPage({ params }: Props) {
 
   const movementRows = typedMovements.map((m) => ({
     id: m.id,
-    date: new Date(m.created_at).toLocaleDateString("en-GB"),
+    date: new Date(m.created_at).toLocaleDateString("en-AU", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    }),
     deltaOnHand: m.delta_on_hand,
     deltaInProd: m.delta_in_prod,
     reason: m.reason ?? "--",
     refType: m.reference_type ?? "--",
+    refId: m.reference_id ?? null,
   }));
 
   const bomRows = typedBomUsage.map((row) => {
@@ -288,6 +310,7 @@ export default async function ComponentDetailPage({ params }: Props) {
     const product = variant ? unwrap(variant.product) : null;
     return {
       bomId: row.product_bom_id as string,
+      variantId: (variant as { id?: string | null } | null)?.id ?? null,
       product: product?.title ?? "--",
       variant: variant?.title ?? "--",
       version: bom?.version ?? 0,
@@ -302,6 +325,7 @@ export default async function ComponentDetailPage({ params }: Props) {
         <Link href="/app/components" className={styles.backButton}>
           &larr; Back
         </Link>
+        {isAdmin && <ArchiveButton componentId={componentId} />}
       </div>
 
       <div className={styles.layout}>
@@ -365,7 +389,26 @@ export default async function ComponentDetailPage({ params }: Props) {
           </div>
 
           <div className={styles.cardActions}>
-            <Link href="/app/goods-inwards/new" className={styles.btnSecondary}>
+            {isAdmin && (
+              <ComponentEditForm
+                componentId={componentId}
+                initialValues={{
+                  name: c.name,
+                  sku: c.sku,
+                  unit: c.unit,
+                  costPerUnit: c.cost_per_unit,
+                  reorderPoint: c.reorder_point,
+                  lowStockLevel: c.low_stock_level,
+                  supplierId: c.supplier_id,
+                  groupId: c.group_id,
+                }}
+                lookups={{
+                  suppliers: (allSuppliersRaw ?? []) as Array<{ id: string; name: string }>,
+                  groups: (groupsRaw ?? []) as Array<{ id: string; name: string }>,
+                }}
+              />
+            )}
+            <Link href={`/app/goods-inwards/new?component_id=${componentId}`} className={styles.btnSecondary}>
               Receive stock
             </Link>
           </div>

@@ -2,29 +2,38 @@
 
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
+import { updateComponent } from "./actions";
 import styles from "./components.module.css";
 
-type FormState = {
-  error?: string;
-  success?: string;
-};
-
+type FormState = { error?: string; success?: string };
 type LookupItem = { id: string; name: string };
 
+type InitialValues = {
+  name: string;
+  sku: string | null;
+  unit: string | null;
+  costPerUnit: number;
+  reorderPoint: number;
+  lowStockLevel: number;
+  supplierId: string | null;
+  groupId: string | null;
+};
+
 type Props = {
-  action: (state: FormState, formData: FormData) => Promise<FormState>;
+  componentId: string;
+  initialValues: InitialValues;
   lookups: {
     suppliers: LookupItem[];
-    locations: LookupItem[];
     groups: LookupItem[];
   };
 };
 
 const initialState: FormState = {};
 
-export default function ComponentCreateForm({ action, lookups }: Props) {
+export default function ComponentEditForm({ componentId, initialValues, lookups }: Props) {
   const [open, setOpen] = useState(false);
-  const [state, formAction] = React.useActionState(action, initialState);
+  const boundAction = updateComponent.bind(null, componentId);
+  const [state, formAction] = React.useActionState(boundAction, initialState);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -35,17 +44,18 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
     const dialog = dialogRef.current;
     if (!dialog) return;
     if (open) dialog.showModal();
-    else dialog.close();
+    else if (dialog.open) dialog.close();
   }, [open]);
 
   return (
     <>
       <button
         type="button"
-        className={styles.addButton}
+        className={styles.editButton}
         onClick={() => setOpen(true)}
+        aria-label="Edit component"
       >
-        + Add Component
+        ✎ Edit
       </button>
 
       <dialog
@@ -55,12 +65,12 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
       >
         <div className={styles.dialogInner}>
           <div className={styles.dialogHeader}>
-            <h2>Add Component</h2>
+            <h2>Edit Component</h2>
             <button
               type="button"
               className={styles.dialogClose}
-              aria-label="Close dialog"
               onClick={() => setOpen(false)}
+              aria-label="Close dialog"
             >
               &times;
             </button>
@@ -69,24 +79,24 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
           <form action={formAction} className={styles.dialogForm}>
             <label className={styles.field}>
               <span>Name *</span>
-              <input name="name" required placeholder="e.g. Safety Laser Scanner" />
+              <input name="name" required defaultValue={initialValues.name} />
             </label>
 
             <div className={styles.fieldRow}>
               <label className={styles.field}>
                 <span>SKU</span>
-                <input name="sku" placeholder="e.g. CMP-LASER-001" />
+                <input name="sku" defaultValue={initialValues.sku ?? ""} />
               </label>
               <label className={styles.field}>
                 <span>Unit</span>
-                <input name="unit" placeholder="ea" />
+                <input name="unit" defaultValue={initialValues.unit ?? ""} placeholder="ea" />
               </label>
             </div>
 
             <div className={styles.fieldRow}>
               <label className={styles.field}>
                 <span>Supplier</span>
-                <select name="supplier_id">
+                <select name="supplier_id" defaultValue={initialValues.supplierId ?? ""}>
                   <option value="">-- None --</option>
                   {lookups.suppliers.map((s) => (
                     <option key={s.id} value={s.id}>{s.name}</option>
@@ -95,7 +105,7 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
               </label>
               <label className={styles.field}>
                 <span>Group</span>
-                <select name="group_id">
+                <select name="group_id" defaultValue={initialValues.groupId ?? ""}>
                   <option value="">-- None --</option>
                   {lookups.groups.map((g) => (
                     <option key={g.id} value={g.id}>{g.name}</option>
@@ -104,66 +114,30 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
               </label>
             </div>
 
-            <label className={styles.field}>
-              <span>Location</span>
-              <select name="location_id">
-                <option value="">-- None --</option>
-                {lookups.locations.map((l) => (
-                  <option key={l.id} value={l.id}>{l.name}</option>
-                ))}
-              </select>
-            </label>
-
             <div className={styles.fieldRow}>
               <label className={styles.field}>
                 <span>Cost per Unit</span>
-                <input
-                  name="cost_per_unit"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  defaultValue="0"
-                />
+                <input name="cost_per_unit" type="number" step="0.01" min="0" defaultValue={initialValues.costPerUnit} />
               </label>
               <label className={styles.field}>
                 <span>Reorder Point</span>
-                <input
-                  name="reorder_point"
-                  type="number"
-                  step="1"
-                  min="0"
-                  defaultValue="0"
-                />
+                <input name="reorder_point" type="number" step="1" min="0" defaultValue={initialValues.reorderPoint} />
               </label>
             </div>
 
             <label className={styles.field}>
               <span>Low Stock Level</span>
-              <input
-                name="low_stock_level"
-                type="number"
-                step="1"
-                min="0"
-                defaultValue="0"
-              />
-              <span className={styles.fieldHint}>
-                Triggers a low stock alarm. Should be lower than the reorder point.
-              </span>
+              <input name="low_stock_level" type="number" step="1" min="0" defaultValue={initialValues.lowStockLevel} />
+              <span className={styles.fieldHint}>Should be lower than the reorder point.</span>
             </label>
 
             {state.error && <p className={styles.error}>{state.error}</p>}
 
             <div className={styles.dialogActions}>
-              <button
-                type="button"
-                className={styles.btnCancel}
-                onClick={() => setOpen(false)}
-              >
+              <button type="button" className={styles.btnCancel} onClick={() => setOpen(false)}>
                 Cancel
               </button>
-              <button type="submit" className={styles.btnSubmit}>
-                Create Component
-              </button>
+              <button type="submit" className={styles.btnSubmit}>Save Changes</button>
             </div>
           </form>
         </div>
