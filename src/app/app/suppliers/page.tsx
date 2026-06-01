@@ -3,7 +3,19 @@ import styles from "./suppliers.module.css";
 import { createSupplier } from "./actions";
 import SupplierCreateForm from "./supplier-create-form";
 import PageHeader from "../_ui/page-header";
+import EmptyState from "../_ui/empty-state";
+import StatusBadge from "../_ui/status-badge";
 import Link from "next/link";
+
+type RawRow = {
+  id: string;
+  name: string;
+  website: string | null;
+  default_lead_time_days: number | null;
+  is_active: boolean;
+  supplier_components: Array<{ id: string }>;
+  purchase_order: Array<{ id: string; status: string; created_at: string }>;
+};
 
 type SupplierRow = {
   id: string;
@@ -41,7 +53,7 @@ export default async function SuppliersPage({
 
   const { data, error } = await query;
 
-  const rows: SupplierRow[] = (data ?? []).map((s: any) => {
+  const rows: SupplierRow[] = (data ?? []).map((s: RawRow) => {
     const pos = (s.purchase_order ?? []) as Array<{
       id: string;
       status: string;
@@ -74,6 +86,8 @@ export default async function SuppliersPage({
   return (
     <div className={styles.page}>
       <PageHeader
+        eyebrow="Logistics"
+        title="Suppliers"
         description="Manage suppliers used throughout purchasing and inbound stock workflows."
         actions={
           <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
@@ -104,7 +118,7 @@ export default async function SuppliersPage({
       {error ? (
         <p className={styles.errorMsg}>Failed to load suppliers.</p>
       ) : rows.length === 0 ? (
-        <p className={styles.empty}>No suppliers found.</p>
+        <EmptyState title="No suppliers yet" message="Add your first supplier to start tracking purchasing." />
       ) : (
         <div className={styles.tableCard}>
           <table className={styles.table}>
@@ -147,7 +161,7 @@ export default async function SuppliersPage({
                   </td>
                   <td>
                     {row.open_po_count > 0 ? (
-                      <span className={styles.openPoBadge}>{row.open_po_count} open</span>
+                      <StatusBadge variant="info">{row.open_po_count} open</StatusBadge>
                     ) : (
                       <span className={styles.meta}>—</span>
                     )}
