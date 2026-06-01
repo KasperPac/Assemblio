@@ -4,71 +4,63 @@
   gap: 18px;
 }
 
-.primary {
+/* ── PageHeader actions wrapper ── */
+
+.headerActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* ── Trigger buttons ── */
+
+.primaryBtn {
   composes: primary from "../_ui/buttons.module.css";
 }
 
-.formCard {
-  border: 1px solid var(--stroke-strong);
-  border-radius: var(--radius-xl);
-  background: var(--surface-1);
-  box-shadow: var(--shadow-card);
-  padding: 18px;
-  display: grid;
-  gap: 10px;
+.secondaryBtn {
+  composes: secondary from "../_ui/buttons.module.css";
 }
 
-.formRow {
-  display: grid;
-  grid-template-columns: 1.4fr 0.5fr 0.7fr auto auto;
-  gap: 12px;
-  align-items: end;
-}
+/* ── Inline status update / quantity forms inside ListRow ── */
 
-.formRowWide {
+.inlineForm {
   display: grid;
-  grid-template-columns: 1.2fr 1.2fr 0.8fr auto;
-  gap: 12px;
-  align-items: end;
-}
-
-.formRow label,
-.formRowWide label,
-.checkboxLabel {
-  display: grid;
-  gap: 6px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
-
-.checkboxLabel {
-  display: flex;
-  align-items: center;
+  grid-template-columns: 1fr auto;
   gap: 8px;
 }
 
-.formRow select,
-.formRow input[type="number"],
-.formRowWide select,
-.formRowWide input,
 .inlineForm select,
 .inlineForm input {
-  border: 1px solid var(--stroke);
+  border: 1px solid var(--stroke-strong);
   border-radius: var(--radius-lg);
-  min-height: 42px;
+  min-height: 38px;
   padding: 0 12px;
   background: var(--surface-1);
   color: var(--ink-strong);
 }
 
+.inlineFormBtn {
+  composes: secondary from "../_ui/buttons.module.css";
+}
+
+.ghostBtn {
+  composes: secondary from "../_ui/buttons.module.css";
+}
+
+@media (max-width: 860px) {
+  .inlineForm {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Shared text styles ── */
+
 .error,
 .success,
 .meta {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   color: var(--ink-muted);
 }
 
@@ -78,6 +70,10 @@
 
 .success {
   color: var(--ok);
+}
+
+.row {
+  align-items: center;
 }
 
 .row strong {
@@ -95,29 +91,101 @@
   gap: 8px;
 }
 
-.inlineForm {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 8px;
+/* ── Dialog ── */
+
+.dialog {
+  border: none;
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  box-shadow: var(--shadow-lg);
+  padding: 0;
+  max-width: 480px;
+  width: 92vw;
 }
 
-.inlineForm button,
-.ghostBtn {
-  border: 1px solid var(--stroke-strong);
-  background: var(--surface-1);
-  border-radius: 999px;
-  min-height: 38px;
-  padding: 0 14px;
-  font-size: 0.84rem;
-  font-weight: 700;
+.dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.dialogInner {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dialogHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dialogHeader h2 {
+  font-size: var(--fs-lg);
+}
+
+.dialogClose {
+  border: none;
+  background: none;
+  color: var(--ink-muted);
+  font-size: 24px;
   cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.dialogForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field span {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.field input,
+.field select {
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-lg);
+  min-height: 42px;
+  padding: 0 12px;
+  background: var(--surface-1);
+  color: var(--ink-strong);
+  font-size: 0.95rem;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-sm);
   color: var(--ink-strong);
 }
 
-@media (max-width: 860px) {
-  .formRow,
-  .formRowWide,
-  .inlineForm {
-    grid-template-columns: 1fr;
-  }
+.dialogActions {
+  display: flex;
+  gap: 10px;
+  padding-top: 6px;
+}
+
+.btnCancel {
+  composes: secondary from "../_ui/buttons.module.css";
+  flex: 1;
+}
+
+.btnSubmit {
+  composes: primary from "../_ui/buttons.module.css";
+  flex: 1;
 }

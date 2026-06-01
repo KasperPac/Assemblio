@@ -75,36 +75,41 @@ export default async function BomPage() {
   return (
     <div className={styles.page}>
       <PageHeader
-        description="Maintain versioned bills of materials per Shopify variant and keep component quantities editable in one place."
+        eyebrow="Products"
+        title="Bills of Materials"
+        description="Maintain versioned bills of materials per product variant and keep component quantities aligned with production demand."
+        actions={
+          <div className={styles.headerActions}>
+            <BomComponentLineForm
+              boms={(data ?? []).map((bom) => {
+                const variant = Array.isArray(bom.variant)
+                  ? bom.variant[0] ?? null
+                  : bom.variant;
+                return {
+                  id: bom.id,
+                  label: `v${bom.version} - ${variant?.title ?? "Untitled variant"}`,
+                };
+              })}
+              components={
+                ((components ?? []) as Array<{ id: string; name: string | null; sku: string | null }>).map(
+                  (c) => ({
+                    id: c.id,
+                    label: `${c.name ?? "Unnamed"}${c.sku ? ` (${c.sku})` : ""}`,
+                  })
+                )
+              }
+              action={createBomComponentLine}
+            />
+            <BomCreateForm
+              variants={
+                (variants ?? []) as Array<{ id: string; title: string | null; sku: string | null }>
+              }
+              action={createBom}
+            />
+          </div>
+        }
       />
       <HelpLink slug="bom/allocation" label="How does allocation work?" />
-
-      <BomCreateForm
-        variants={
-          (variants ?? []) as Array<{ id: string; title: string | null; sku: string | null }>
-        }
-        action={createBom}
-      />
-      <BomComponentLineForm
-        boms={(data ?? []).map((bom) => {
-          const variant = Array.isArray(bom.variant)
-            ? bom.variant[0] ?? null
-            : bom.variant;
-          return {
-            id: bom.id,
-            label: `v${bom.version} - ${variant?.title ?? "Untitled variant"}`,
-          };
-        })}
-        components={
-          ((components ?? []) as Array<{ id: string; name: string | null; sku: string | null }>).map(
-            (c) => ({
-              id: c.id,
-              label: `${c.name ?? "Unnamed"}${c.sku ? ` (${c.sku})` : ""}`,
-            })
-          )
-        }
-        action={createBomComponentLine}
-      />
 
       <ListPanel
         eyebrow="Versions"
@@ -151,7 +156,7 @@ export default async function BomPage() {
                       <option value="active">Active</option>
                       <option value="archived">Archived</option>
                     </select>
-                    <button type="submit">Update</button>
+                    <button type="submit" className={styles.inlineFormBtn}>Update</button>
                   </form>
                   {!row.is_active && row.status !== "archived" ? (
                     <form action={setBomActive}>
@@ -211,7 +216,7 @@ export default async function BomPage() {
                     min="0.01"
                     defaultValue={line.quantity}
                   />
-                  <button type="submit">Save</button>
+                  <button type="submit" className={styles.inlineFormBtn}>Save</button>
                 </form>
               </ListRow>
             );
