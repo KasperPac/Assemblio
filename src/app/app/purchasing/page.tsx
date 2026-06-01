@@ -176,7 +176,13 @@ export default async function PurchasingPage() {
                 columnsTemplate="0.85fr 1.5fr 0.8fr 1.2fr"
                 className={styles.row}
               >
-                <strong>PO-{po?.id?.slice(0, 6) ?? "???"}</strong>
+                {po?.id ? (
+                  <Link href={`/app/purchasing/${po.id}`} style={{ fontWeight: 700, color: "var(--brand-1)", textDecoration: "none" }}>
+                    PO-{po.id.slice(0, 6)}
+                  </Link>
+                ) : (
+                  <strong>???</strong>
+                )}
                 <div className={styles.cellStack}>
                   <strong>{component?.name ?? "Unknown"}</strong>
                   <span className={styles.meta}>
