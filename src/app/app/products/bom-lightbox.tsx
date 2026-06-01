@@ -250,6 +250,45 @@ function ComponentPicker({
 
   return (
     <div className={styles.pickerLayout}>
+      {!bomId && (templates.length > 0 || sourceBoms.length > 0) && (
+        <div className={styles.startFromBar}>
+          <span className={styles.startFromLabel}>Start from:</span>
+          {templates.length > 0 && (
+            <form action={templateAction} className={styles.startFromForm}>
+              <input type="hidden" name="target_variant_id" value={variantId} />
+              <select name="template_id" required className={styles.startFromSelect}>
+                <option value="">Choose template…</option>
+                {templates.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name} ({t.lineCount} line{t.lineCount === 1 ? "" : "s"})
+                  </option>
+                ))}
+              </select>
+              <button type="submit" className={styles.startFromBtn}>Use template</button>
+            </form>
+          )}
+          {sourceBoms.length > 0 && (
+            <form action={copyAction} className={styles.startFromForm}>
+              <input type="hidden" name="target_variant_id" value={variantId} />
+              <select name="source_bom_id" required className={styles.startFromSelect}>
+                <option value="">Copy from variant…</option>
+                {sourceBoms.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.label}
+                  </option>
+                ))}
+              </select>
+              <button type="submit" className={styles.startFromBtn}>Copy</button>
+            </form>
+          )}
+        </div>
+      )}
+      {(templateState?.error || copyState?.error) && (
+        <p className={styles.startFromError}>
+          {templateState?.error ?? copyState?.error}
+        </p>
+      )}
+
       {/* Search bar — full width */}
       <div className={styles.searchRow}>
         <input
@@ -401,38 +440,6 @@ function ComponentPicker({
                 : ""}
           </span>
           <div className={styles.footerActions}>
-            {!bomId && sourceBoms.length > 0 && (
-              <form action={copyAction} style={{ display: "inline" }}>
-                <input type="hidden" name="target_variant_id" value={variantId} />
-                <select name="source_bom_id" required className={styles.footerSelect}>
-                  <option value="">copy from variant…</option>
-                  {sourceBoms.map((b) => (
-                    <option key={b.id} value={b.id}>
-                      {b.label}
-                    </option>
-                  ))}
-                </select>
-                <button type="submit" className={styles.linkBtn}>
-                  copy
-                </button>
-              </form>
-            )}
-            {!bomId && templates.length > 0 && (
-              <form action={templateAction} style={{ display: "inline" }}>
-                <input type="hidden" name="target_variant_id" value={variantId} />
-                <select name="template_id" required className={styles.footerSelect}>
-                  <option value="">from template…</option>
-                  {templates.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.name}
-                    </option>
-                  ))}
-                </select>
-                <button type="submit" className={styles.linkBtn}>
-                  use
-                </button>
-              </form>
-            )}
             <button
               type="button"
               disabled={saving || selectionCount === 0}
@@ -444,10 +451,8 @@ function ComponentPicker({
                 : `Save BOM (${selectionCount} item${selectionCount !== 1 ? "s" : ""})`}
             </button>
           </div>
-          {(error || templateState.error || copyState.error) && (
-            <p className={styles.err}>
-              {error ?? templateState.error ?? copyState.error}
-            </p>
+          {error && (
+            <p className={styles.err}>{error}</p>
           )}
         </div>
       </div>

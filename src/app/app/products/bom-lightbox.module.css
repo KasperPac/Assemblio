@@ -802,3 +802,61 @@
     padding: 18px;
   }
 }
+
+/* ── Start-from bar ─────────────────────────────────── */
+
+.startFromBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  background: var(--bg-card-2);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--stroke);
+  margin-bottom: 4px;
+}
+
+.startFromLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.startFromForm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.startFromSelect {
+  font-size: 13px;
+  padding: 4px 8px;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-xs);
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  font-family: inherit;
+}
+
+.startFromBtn {
+  font-size: 13px;
+  padding: 4px 10px;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-xs);
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.startFromBtn:hover {
+  background: var(--bg-card-2);
+}
+
+.startFromError {
+  font-size: 12px;
+  color: var(--danger);
+  padding: 0 14px 6px;
+}
