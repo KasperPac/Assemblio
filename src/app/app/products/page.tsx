@@ -369,25 +369,26 @@ export default async function ProductsPage({ searchParams }: Props) {
                   <span className={styles.productTitle}>{product.title}</span>
                 </Link>
 
-                <span className={styles.variantCount}>{productVariants.length}</span>
+                <span className={styles.variantCount} data-label="Variants">{productVariants.length}</span>
 
                 <span
                   className={`${styles.statusBadge} ${
                     productVariants.length > 0 ? styles.statusActive : styles.statusPending
                   }`}
+                  data-label="Status"
                 >
                   {statusLabel}
                 </span>
 
-                <span className={styles.sellPriceCell}>
+                <span className={styles.sellPriceCell} data-label="Sell Price">
                   {sellPrice != null ? formatCurrency(sellPrice) : "—"}
                 </span>
 
-                <span className={`${styles.gpCell} ${gpClassFor(avgMatGpPct)}`}>
+                <span className={`${styles.gpCell} ${gpClassFor(avgMatGpPct)}`} data-label="Mat. GP %">
                   {avgMatGpPct != null ? `${(avgMatGpPct * 100).toFixed(0)}%` : "—"}
                 </span>
 
-                <span className={`${styles.gpCell} ${gpClassFor(avgActualGpPct)}`}>
+                <span className={`${styles.gpCell} ${gpClassFor(avgActualGpPct)}`} data-label="Actual GP %">
                   {avgActualGpPct != null ? `${(avgActualGpPct * 100).toFixed(0)}%` : "—"}
                 </span>
               </div>
