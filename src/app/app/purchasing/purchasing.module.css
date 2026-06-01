@@ -9,9 +9,9 @@
 }
 
 .formCard {
-  border: 1px solid var(--stroke-strong);
+  border: 1px solid var(--stroke-card);
   border-radius: var(--radius-xl);
-  background: var(--surface-1);
+  background: var(--bg-card);
   box-shadow: var(--shadow-card);
   padding: 18px;
   display: grid;
@@ -116,4 +116,68 @@
 
 .poLink:hover {
   text-decoration: underline;
+}
+
+/* ── PO detail page ── */
+
+.infoRow {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.infoField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.linesTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+
+.linesTable th {
+  text-align: left;
+  padding: 8px 0;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  color: var(--ink-muted);
+  border-bottom: 1px solid var(--stroke);
+}
+
+.linesTable td {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--stroke);
+  color: var(--ink-strong);
+  vertical-align: middle;
+}
+
+.linesTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.alignRight {
+  text-align: right;
+}
+
+.faint {
+  color: var(--ink-faint);
+}
+
+.backLink {
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.backLink:hover {
+  color: var(--ink-strong);
 }

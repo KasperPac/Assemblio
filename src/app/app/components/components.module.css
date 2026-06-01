@@ -286,14 +286,15 @@
 .editButton {
   font-size: 0.8rem;
   padding: 4px 10px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-sm);
   background: var(--bg-card);
-  color: var(--ink-base);
+  color: var(--ink-strong);
   cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out);
 }
 .editButton:hover {
-  background: var(--bg-hover);
+  background: var(--surface-hover);
 }
 
 .srOnly {

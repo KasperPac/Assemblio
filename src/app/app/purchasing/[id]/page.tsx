@@ -69,25 +69,19 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
 
       {/* Info card */}
       <div className={styles.formCard}>
-        <div style={{ display: "flex", gap: 24, flexWrap: "wrap", alignItems: "center" }}>
-          <div>
-            <p className={styles.meta} style={{ marginBottom: 4 }}>
-              Supplier
-            </p>
+        <div className={styles.infoRow}>
+          <div className={styles.infoField}>
+            <p className={styles.meta}>Supplier</p>
             <strong>{supplierName}</strong>
           </div>
-          <div>
-            <p className={styles.meta} style={{ marginBottom: 4 }}>
-              Status
-            </p>
+          <div className={styles.infoField}>
+            <p className={styles.meta}>Status</p>
             <StatusBadge variant={getStatusVariant(po.status as string)}>
               {(po.status as string).replace(/_/g, " ")}
             </StatusBadge>
           </div>
-          <div>
-            <p className={styles.meta} style={{ marginBottom: 4 }}>
-              Created
-            </p>
+          <div className={styles.infoField}>
+            <p className={styles.meta}>Created</p>
             <span>
               {new Date(po.created_at as string).toLocaleDateString("en-AU", {
                 day: "numeric",
@@ -101,27 +95,17 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
 
       {/* Lines card */}
       <div className={styles.formCard}>
-        <h2 style={{ margin: 0, fontSize: "1rem", fontWeight: 700 }}>Lines</h2>
+        <h2>Lines</h2>
         {lines.length === 0 ? (
           <p className={styles.meta}>No lines on this PO.</p>
         ) : (
-          <table
-            style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.9rem" }}
-          >
+          <table className={styles.linesTable}>
             <thead>
-              <tr style={{ borderBottom: "1px solid var(--stroke)" }}>
-                <th style={{ textAlign: "left", padding: "6px 0", fontWeight: 600 }}>
-                  Component
-                </th>
-                <th style={{ textAlign: "right", padding: "6px 8px", fontWeight: 600 }}>
-                  Ordered
-                </th>
-                <th style={{ textAlign: "right", padding: "6px 8px", fontWeight: 600 }}>
-                  Received
-                </th>
-                <th style={{ textAlign: "right", padding: "6px 0", fontWeight: 600 }}>
-                  Outstanding
-                </th>
+              <tr>
+                <th>Component</th>
+                <th className={styles.alignRight}>Ordered</th>
+                <th className={styles.alignRight}>Received</th>
+                <th className={styles.alignRight}>Outstanding</th>
               </tr>
             </thead>
             <tbody>
@@ -139,35 +123,18 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
                 return (
                   <tr
                     key={line.id}
-                    style={{
-                      borderBottom: "1px solid var(--stroke)",
-                      opacity: fullyReceived ? 0.45 : 1,
-                    }}
+                    style={{ opacity: fullyReceived ? 0.45 : 1 }}
                   >
-                    <td style={{ padding: "8px 0" }}>{compName}</td>
-                    <td
-                      style={{
-                        textAlign: "right",
-                        padding: "8px",
-                        color: "var(--ink-muted)",
-                      }}
-                    >
+                    <td>{compName}</td>
+                    <td className={`${styles.alignRight} ${styles.meta}`}>
                       {line.quantity}
                     </td>
-                    <td
-                      style={{
-                        textAlign: "right",
-                        padding: "8px",
-                        color: "var(--ink-muted)",
-                      }}
-                    >
+                    <td className={`${styles.alignRight} ${styles.meta}`}>
                       {line.quantity_received}
                     </td>
-                    <td style={{ textAlign: "right", padding: "8px 0" }}>
+                    <td className={styles.alignRight}>
                       {fullyReceived ? (
-                        <span style={{ color: "var(--ink-faint, var(--ink-muted))" }}>
-                          —
-                        </span>
+                        <span className={styles.faint}>—</span>
                       ) : (
                         outstanding
                       )}
@@ -181,7 +148,7 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
       </div>
 
       <div>
-        <Link href="/app/purchasing" className={styles.poLink}>
+        <Link href="/app/purchasing" className={styles.backLink}>
           ← Back to purchase orders
         </Link>
       </div>

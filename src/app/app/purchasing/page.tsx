@@ -66,6 +66,8 @@ export default async function PurchasingPage() {
   return (
     <div className={styles.page}>
       <PageHeader
+        eyebrow="Operations"
+        title="Purchasing"
         description="Create inbound purchase orders, manage status changes, and keep received quantities aligned with component demand."
       />
       <HelpLink slug="purchasing/purchase-orders" label="How to create a purchase order" />

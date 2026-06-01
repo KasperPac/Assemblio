@@ -12,11 +12,16 @@
   padding: 0 18px;
   border-radius: 999px;
   border: 1px solid var(--stroke-strong);
-  background: var(--surface-1);
+  background: var(--bg-card);
   color: var(--ink-strong);
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 600;
   text-decoration: none;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.export:hover {
+  background: var(--surface-hover);
 }
 
 .metricGrid {
@@ -29,9 +34,9 @@
 .panel,
 .movementForm,
 .deltaCard {
-  border: 1px solid var(--stroke-strong);
+  border: 1px solid var(--stroke-card);
   border-radius: var(--radius-xl);
-  background: var(--surface-1);
+  background: var(--bg-card);
   box-shadow: var(--shadow-card);
 }
 
@@ -238,11 +243,11 @@
 }
 
 .deltaPositive {
-  color: #4ade80;
+  color: var(--ok);
 }
 
 .deltaNegative {
-  color: #fb7185;
+  color: var(--danger);
 }
 
 .deltaNeutral {
@@ -258,16 +263,16 @@
   width: 12px;
   height: 12px;
   border-radius: 999px;
-  background: #4ade80;
+  background: var(--ok);
   margin-top: 6px;
 }
 
 .summaryDotBlue {
-  background: #60a5fa;
+  background: var(--info);
 }
 
 .summaryDotAmber {
-  background: #fbbf24;
+  background: var(--warning);
 }
 
 @media (max-width: 1120px) {
