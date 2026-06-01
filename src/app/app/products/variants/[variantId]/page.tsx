@@ -222,6 +222,8 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
     ? typedVariant.product[0] ?? null
     : typedVariant.product;
   const typedBoms = (boms ?? []) as BomRecord[];
+  const editableBoms = typedBoms.filter((b) => b.status !== "archived");
+  const archivedBoms = typedBoms.filter((b) => b.status === "archived");
   const hasBom = typedBoms.length > 0;
   const canManageBom = ["admin", "super_admin"].includes(profile?.role ?? "member");
   const bomIds = typedBoms.map((bom) => bom.id);
@@ -611,12 +613,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                   </p>
                 ) : (
                   <>
-                  {(() => {
-                    const editableBoms = typedBoms.filter((b) => b.status !== "archived");
-                    const archivedBoms = typedBoms.filter((b) => b.status === "archived");
-                    return (
-                      <>
-                        {editableBoms.map((bom) => {
+                    {editableBoms.map((bom) => {
                     const laborRows = laborLinesByBom[bom.id] ?? [];
                     const showCostSummary =
                       routingCosts !== null && editorBom?.id === bom.id;
@@ -938,9 +935,6 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                             })}
                           </details>
                         )}
-                      </>
-                    );
-                  })()}
                   </>
                 )}
               </div>

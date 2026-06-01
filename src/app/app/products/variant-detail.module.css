@@ -674,9 +674,9 @@
   grid-template-columns: 1fr auto auto;
   gap: 8px 16px;
   font-size: 13px;
-  color: var(--ink-secondary);
+  color: var(--ink-muted);
   padding: 4px 0;
-  border-bottom: 1px solid var(--stroke-faint, var(--stroke));
+  border-bottom: 1px solid var(--stroke);
 }
 
 .archivedRow:last-child { border-bottom: none; }
