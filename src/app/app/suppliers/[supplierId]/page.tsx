@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import PageHeader from "../../_ui/page-header";
 import SupplierTabs from "./supplier-tabs";
 import styles from "./supplier-tabs.module.css";
 import {
@@ -37,7 +38,7 @@ export default async function SupplierDetailPage({ params }: Props) {
   const { supplierId } = await params;
   const context = await getServerTenantContext();
   if (!context) notFound();
-  const { supabase, tenantId: _tenantId } = context;
+  const { supabase, tenantId: _tenantId, role } = context;
   const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const [
@@ -100,25 +101,23 @@ export default async function SupplierDetailPage({ params }: Props) {
 
   return (
     <div className={styles.page}>
-      <div className={styles.topRow}>
-        <Link href="/app/suppliers" className={styles.backButton}>&larr; Suppliers</Link>
-      </div>
-
-      <div className={styles.supplierHeader}>
-        <div>
-          <h1 className={styles.supplierName}>{s.name}</h1>
-          <span className={styles.supplierMeta}>
-            {s.website ? `${s.website} · ` : ""}
-            {s.is_active ? "Active" : "Archived"}
-          </span>
-        </div>
-        <form action={archiveSupplier}>
-          <input type="hidden" name="supplier_id" value={s.id} />
-          <button type="submit" className={styles.btnDanger}>
-            Archive
-          </button>
-        </form>
-      </div>
+      <PageHeader
+        title={s.name}
+        breadcrumbs={[
+          { label: "Suppliers", href: "/app/suppliers" },
+          { label: s.name },
+        ]}
+        actions={
+          (role === "admin" || role === "super_admin") ? (
+            <form action={archiveSupplier}>
+              <input type="hidden" name="supplier_id" value={s.id} />
+              <button type="submit" className={styles.btnDanger}>
+                Archive
+              </button>
+            </form>
+          ) : undefined
+        }
+      />
 
       <SupplierTabs
         supplier={s}
@@ -138,6 +137,7 @@ export default async function SupplierDetailPage({ params }: Props) {
           removePriceBreak,
         }}
       />
+      <Link href="/app/suppliers" className={styles.backLink}>← Suppliers</Link>
     </div>
   );
 }

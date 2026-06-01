@@ -10,6 +10,12 @@
   composes: primary from "../_ui/buttons.module.css";
 }
 
+.headerActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
 /* ── Toolbar ────────────────────────────── */
 
 .toolbar {
@@ -75,34 +81,19 @@
 }
 
 .website {
-  font-size: 0.78rem;
+  font-size: var(--fs-xs);
   color: var(--ink-faint);
   margin-top: 2px;
 }
 
 .meta {
   color: var(--ink-muted);
-  font-size: 0.88rem;
-}
-
-.openPoBadge {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: var(--radius-lg);
-  font-size: 0.78rem;
-  background: rgba(79, 142, 247, 0.2);
-  color: #4f8ef7;
-}
-
-.empty {
-  color: var(--ink-muted);
-  font-size: 0.9rem;
-  padding: 8px 0;
+  font-size: var(--fs-sm);
 }
 
 .errorMsg {
   color: var(--danger);
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
 }
 
 /* ── Create dialog ──────────────────────── */
@@ -163,7 +154,7 @@
 }
 
 .field span {
-  font-size: 0.72rem;
+  font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -171,18 +162,18 @@
 }
 
 .field input {
-  border: 1px solid var(--stroke);
+  border: 1px solid var(--stroke-strong);
   border-radius: var(--radius-lg);
   min-height: 42px;
   padding: 0 12px;
   background: var(--surface-1);
   color: var(--ink-strong);
-  font-size: 0.95rem;
+  font-size: var(--fs-base);
 }
 
 .fieldError {
   color: var(--danger);
-  font-size: 0.84rem;
+  font-size: var(--fs-sm);
   margin: 0;
 }
 
