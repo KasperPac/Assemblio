@@ -160,6 +160,7 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
                 ) : (
                   <div className={styles.newGroupForm}>
                     <input
+                      aria-label="New group name"
                       value={newGroupName}
                       onChange={(e) => setNewGroupName(e.target.value)}
                       onKeyDown={(e) => {
