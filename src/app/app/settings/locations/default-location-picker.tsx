@@ -3,6 +3,8 @@
 import { useActionState } from "react";
 import { setDefaultLocation } from "./actions";
 import styles from "./locations.module.css";
+import EmptyState from "../../_ui/empty-state";
+import StatusBadge from "../../_ui/status-badge";
 
 type Location = { id: string; name: string; is_default: boolean };
 
@@ -22,7 +24,7 @@ export function DefaultLocationPicker({ locations }: { locations: Location[] }) 
           <div className={styles.rowInfo}>
             <span className={styles.name}>{loc.name}</span>
             {loc.is_default && (
-              <span className={styles.defaultBadge}>Default</span>
+              <StatusBadge variant="info">Default</StatusBadge>
             )}
           </div>
           {!loc.is_default && (
@@ -36,12 +38,10 @@ export function DefaultLocationPicker({ locations }: { locations: Location[] }) 
         </div>
       ))}
       {locations.length === 0 && (
-        <p className={styles.empty}>
-          No locations yet.{" "}
-          <a href="/app/warehouse/locations" className={styles.emptyLink}>
-            Create locations →
-          </a>
-        </p>
+        <EmptyState
+          title="No locations yet"
+          message="Create locations in the Locations module before setting a default."
+        />
       )}
     </div>
   );

@@ -32,16 +32,6 @@
   color: var(--ink-strong);
 }
 
-.defaultBadge {
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-medium);
-  color: var(--brand-1);
-  background: var(--bg-card);
-  border: 1px solid var(--brand-dim);
-  border-radius: var(--radius-pill);
-  padding: 2px var(--space-2);
-}
-
 .setDefaultButton {
   font-family: var(--font-body);
   font-size: var(--fs-sm);
@@ -61,23 +51,11 @@
   color: var(--brand-1);
 }
 
-.empty {
-  font-size: var(--fs-base);
-  color: var(--ink-muted);
-  margin: 0;
-}
-
-.emptyLink {
-  color: var(--ink-muted);
-  text-decoration: underline;
-}
-.emptyLink:hover { color: var(--ink-strong); }
-
 .actionError {
   font-size: var(--fs-sm);
   color: var(--danger);
   padding: 8px 12px;
-  background: var(--danger-dim, color-mix(in srgb, var(--danger) 10%, transparent));
+  background: var(--danger-dim);
   border-radius: var(--radius-md);
 }
 
