@@ -1,12 +1,16 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { ReportShell } from "../_components/report-shell";
 import { ReportStatCards } from "../_components/report-stat-cards";
-import { ReportTable, Badge } from "../_components/report-table";
+import { SortableReportTable } from "../_components/sortable-report-table";
+import { Badge } from "../_components/report-table";
 import type { TableColumn } from "../_components/report-table";
+import styles from "./stock-on-hand.module.css";
 
-interface Row {
+interface Row extends Record<string, unknown> {
   id: string;
+  componentId: string;
   name: string;
   sku: string | null;
   location: string;
@@ -53,6 +57,7 @@ export default async function StockOnHandPage({
     const loc = r.location;
     return {
       id: `${r.component_id}-${r.location_id}`,
+      componentId: r.component_id,
       name: c?.name ?? "—",
       sku: c?.sku ?? null,
       location: loc?.name ?? "—",
@@ -73,7 +78,9 @@ export default async function StockOnHandPage({
     new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
 
   const columns: TableColumn<Row>[] = [
-    { key: "name", header: "Component", render: (r) => r.name },
+    { key: "name", header: "Component", render: (r) => (
+      <Link href={`/app/components/${r.componentId}`} className={styles.reportLink}>{r.name}</Link>
+    )},
     { key: "sku", header: "SKU", render: (r) => r.sku ?? "—" },
     { key: "location", header: "Location", render: (r) => r.location },
     { key: "on_hand", header: "On hand", align: "right", render: (r) => r.on_hand.toLocaleString() },
@@ -98,6 +105,7 @@ export default async function StockOnHandPage({
       description="Current on-hand quantities and values across all locations."
       csvSlug="stock-on-hand"
       searchParams={sp}
+      hideDateRange={true}
     >
       <ReportStatCards
         cards={[
@@ -106,7 +114,7 @@ export default async function StockOnHandPage({
           { label: "Below reorder point", value: belowReorder, variant: belowReorder > 0 ? "amber" : "default" },
         ]}
       />
-      <ReportTable columns={columns} rows={rows} rowKey={(r) => r.id} />
+      <SortableReportTable columns={columns} rows={rows} rowKey={(r) => r.id} />
     </ReportShell>
   );
 }
