@@ -2,10 +2,14 @@ import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import ReceiptForm from "../receipt-form";
 
-export default async function NewReceiptPage() {
+type Props = { searchParams: Promise<{ po?: string }> };
+
+export default async function NewReceiptPage({ searchParams }: Props) {
   const ctx = await getServerTenantContext();
   if (!ctx) redirect("/auth/login");
   const { supabase, tenantId } = ctx;
+
+  const { po: initialPoId } = await searchParams;
 
   const [
     suppliersResult,
@@ -96,6 +100,7 @@ export default async function NewReceiptPage() {
       locations={locations}
       supplierComponentMap={supplierComponentMap}
       availablePOs={availablePOs}
+      initialPoId={initialPoId}
     />
   );
 }
