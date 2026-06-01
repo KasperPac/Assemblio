@@ -173,3 +173,23 @@
     gap: 8px;
   }
 }
+
+/* ── Sync result banner ────────────────────────────── */
+
+.syncBanner {
+  padding: 10px 16px;
+  background: var(--ok-dim);
+  color: var(--ok);
+  border: 1px solid var(--ok-dim);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+}
+
+.syncBannerError {
+  padding: 10px 16px;
+  background: var(--danger-dim);
+  color: var(--danger);
+  border: 1px solid var(--danger-dim);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+}

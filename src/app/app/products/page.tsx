@@ -54,6 +54,10 @@ type Props = {
   searchParams?: Promise<{
     q?: string;
     filter?: string;
+    shopify?: string;
+    products?: string;
+    orders?: string;
+    sync_error?: string;
   }>;
 };
 
@@ -61,6 +65,10 @@ export default async function ProductsPage({ searchParams }: Props) {
   const params = (await searchParams) ?? {};
   const q = (params.q ?? "").trim().toLowerCase();
   const filter = (params.filter ?? "all").toLowerCase();
+  const syncStatus = params.shopify ?? null;
+  const syncProducts = params.products ?? "0";
+  const syncOrders = params.orders ?? "0";
+  const syncError = params.sync_error ?? "";
   const ctx = await getServerTenantContext();
   const supabase = ctx?.supabase;
   const tenantId = ctx?.tenantId;
@@ -290,13 +298,24 @@ export default async function ProductsPage({ searchParams }: Props) {
         title="Products"
         description={`${filteredProducts.length} of ${products.length} products`}
         actions={
-          <form method="post" action="/api/shopify/sync">
+          <form method="post" action="/api/shopify/sync?return_to=/app/products">
             <button type="submit" className={styles.importButton}>
               Import Products
             </button>
           </form>
         }
       />
+
+      {syncStatus === "sync-ok" && (
+        <div className={styles.syncBanner} role="status">
+          Synced {syncProducts} products and {syncOrders} orders.
+        </div>
+      )}
+      {syncStatus === "sync-failed" && (
+        <div className={styles.syncBannerError} role="alert">
+          Sync failed: {syncError}
+        </div>
+      )}
 
       <form className={styles.filters} method="get">
         <input
