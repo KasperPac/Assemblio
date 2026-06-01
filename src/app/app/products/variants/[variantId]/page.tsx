@@ -566,6 +566,17 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                   {new Date(typedVariant.created_at).toLocaleDateString("en-AU")}
                 </dd>
               </div>
+              <div>
+                <dt className={styles.overviewLabel}>BOM</dt>
+                <dd className={styles.overviewValue}>
+                  {activeBom
+                    ? `v${activeBom.version} active · ${linesByBom[activeBom.id]?.length ?? 0} component${(linesByBom[activeBom.id]?.length ?? 0) === 1 ? "" : "s"}${draftBom ? ` · v${draftBom.version} draft in progress` : ""}`
+                    : draftBom
+                      ? `v${draftBom.version} draft · ${linesByBom[draftBom.id]?.length ?? 0} component${(linesByBom[draftBom.id]?.length ?? 0) === 1 ? "" : "s"} · not yet active`
+                      : "No BOM created"
+                  }
+                </dd>
+              </div>
             </dl>
           </div>
         }
