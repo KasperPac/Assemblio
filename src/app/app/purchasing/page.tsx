@@ -125,7 +125,7 @@ export default async function PurchasingPage() {
                 columnsTemplate="0.8fr 1.1fr 0.8fr 0.8fr 1.2fr"
                 className={styles.row}
               >
-                <Link href={`/app/purchasing/${row.id}`} style={{ fontWeight: 700, color: "var(--brand-1)", textDecoration: "none" }}>
+                <Link href={`/app/purchasing/${row.id}`} className={styles.poLink}>
                   PO-{row.id.slice(0, 6)}
                 </Link>
                 <span className={styles.meta}>{supplier?.name ?? "Unknown supplier"}</span>
@@ -177,7 +177,7 @@ export default async function PurchasingPage() {
                 className={styles.row}
               >
                 {po?.id ? (
-                  <Link href={`/app/purchasing/${po.id}`} style={{ fontWeight: 700, color: "var(--brand-1)", textDecoration: "none" }}>
+                  <Link href={`/app/purchasing/${po.id}`} className={styles.poLink}>
                     PO-{po.id.slice(0, 6)}
                   </Link>
                 ) : (

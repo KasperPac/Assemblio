@@ -107,3 +107,13 @@
     grid-template-columns: 1fr;
   }
 }
+
+.poLink {
+  font-weight: 700;
+  color: var(--brand-1);
+  text-decoration: none;
+}
+
+.poLink:hover {
+  text-decoration: underline;
+}
