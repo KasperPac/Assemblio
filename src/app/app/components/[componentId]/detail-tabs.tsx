@@ -410,7 +410,7 @@ function ComponentSuppliersTab({
       </div>
 
       {linkOpen && (
-        <form action={linkComponent} className={styles.linkForm}>
+        <form action={async (fd) => { await linkComponent({}, fd); }} className={styles.linkForm}>
           <input type="hidden" name="component_id" value={componentId} />
           <select name="supplier_id" required className={styles.miniInput}>
             <option value="">Select supplier…</option>
