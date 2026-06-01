@@ -1,3 +1,4 @@
+import Link from "next/link";
 import styles from "./purchasing.module.css";
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
@@ -124,7 +125,9 @@ export default async function PurchasingPage() {
                 columnsTemplate="0.8fr 1.1fr 0.8fr 0.8fr 1.2fr"
                 className={styles.row}
               >
-                <strong>PO-{row.id.slice(0, 6)}</strong>
+                <Link href={`/app/purchasing/${row.id}`} style={{ fontWeight: 700, color: "var(--brand-1)", textDecoration: "none" }}>
+                  PO-{row.id.slice(0, 6)}
+                </Link>
                 <span className={styles.meta}>{supplier?.name ?? "Unknown supplier"}</span>
                 <StatusBadge variant={getStatusVariant(row.status)}>{row.status}</StatusBadge>
                 <span className={styles.meta}>
