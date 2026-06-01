@@ -661,7 +661,7 @@
   border-radius: var(--radius-sm);
   border: none;
   background: var(--danger);
-  color: white;
+  color: var(--ink-on-brand);
   cursor: pointer;
 }
 .archiveConfirmBtn:hover {
@@ -675,7 +675,7 @@
   margin: 8px 0 0 0;
   padding-left: 20px;
   font-size: 0.875rem;
-  color: var(--ink-base);
+  color: var(--ink-strong);
 }
 .conflictList li {
   margin-bottom: 4px;

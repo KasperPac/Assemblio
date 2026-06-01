@@ -231,16 +231,16 @@ export async function archiveComponent(componentId: string): Promise<ArchiveResu
 
   // Run conflict checks in parallel
   const [
-    { data: activeBoms },
+    bomComponentsResult,
     { data: stockRows },
     { data: openPoLines },
     { data: openAllocations },
   ] = await Promise.all([
     supabase
       .from("product_bom_component")
-      .select("product_bom_id, product_bom:product_bom_id!inner(is_active, variant:variant_id(product:product_id(title)))")
+      .select("product_bom_id")
       .eq("component_id", componentId)
-      .eq("product_bom.is_active", true),
+      .eq("tenant_id", tenantId),
     supabase
       .from("inventory_balance")
       .select("on_hand")
@@ -261,11 +261,23 @@ export async function archiveComponent(componentId: string): Promise<ArchiveResu
       .not("order_line.order.status", "in", '("complete","cancelled")'),
   ]);
 
+  const bomComponentRows = bomComponentsResult?.data ?? [];
+  let activeBomCount = 0;
+  if (bomComponentRows.length > 0) {
+    const bomIds = bomComponentRows.map((r: { product_bom_id: string }) => r.product_bom_id);
+    const { data: activeBomsData } = await supabase
+      .from("product_bom")
+      .select("id")
+      .in("id", bomIds)
+      .eq("is_active", true)
+      .eq("tenant_id", tenantId);
+    activeBomCount = (activeBomsData ?? []).length;
+  }
+
   const conflicts: string[] = [];
 
-  if ((activeBoms ?? []).length > 0) {
-    const bomCount = (activeBoms ?? []).length;
-    conflicts.push(`Used in ${bomCount} active BOM${bomCount !== 1 ? "s" : ""}`);
+  if (activeBomCount > 0) {
+    conflicts.push(`Used in ${activeBomCount} active BOM${activeBomCount !== 1 ? "s" : ""}`);
   }
   if ((stockRows ?? []).length > 0) {
     const totalOnHand = (stockRows ?? []).reduce((s, r) => s + (r.on_hand ?? 0), 0);
@@ -297,6 +309,7 @@ export async function archiveComponent(componentId: string): Promise<ArchiveResu
   });
 
   revalidatePath("/app/components");
+  revalidatePath(`/app/components/${componentId}`);
   revalidatePath("/app/activity-log");
   return { success: true };
 }

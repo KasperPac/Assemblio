@@ -26,9 +26,8 @@ export default function ArchiveButton({ componentId }: Props) {
       const result = await archiveComponent(componentId);
       if ("success" in result && result.success) {
         router.push("/app/components");
-      } else {
-        const r = result as { error: string; conflicts: string[] };
-        setDialog({ phase: "conflicts", error: r.error, conflicts: r.conflicts });
+      } else if ("error" in result) {
+        setDialog({ phase: "conflicts", error: result.error, conflicts: result.conflicts });
       }
     });
   }
