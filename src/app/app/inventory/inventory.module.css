@@ -4,18 +4,28 @@
   gap: 24px;
 }
 
+/* ── Header actions wrapper ── */
+
+.headerActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* ── Export button ── */
+
 .export {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-height: 42px;
   padding: 0 18px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   border: 1px solid var(--stroke-strong);
   background: var(--bg-card);
   color: var(--ink-strong);
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
   text-decoration: none;
   transition: background var(--dur-fast) var(--ease-out);
 }
@@ -24,97 +34,101 @@
   background: var(--surface-hover);
 }
 
+/* ── Metric strip ── */
+
 .metricGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
 }
 
-.metricCard,
-.panel,
-.movementForm,
-.deltaCard {
+.metricCard {
   border: 1px solid var(--stroke-card);
   border-radius: var(--radius-xl);
   background: var(--bg-card);
   box-shadow: var(--shadow-card);
-}
-
-.metricCard {
   display: flex;
   flex-direction: column;
   gap: 8px;
   padding: 18px;
 }
 
-.metricCard span,
-.eyebrow,
-.deltaCard span,
-.summaryItem p,
-.formRow label {
-  font-size: 0.74rem;
-  font-weight: 700;
+.metricCard span {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: var(--ls-caps);
   color: var(--ink-faint);
 }
 
-.metricCard strong,
-.summaryItem strong {
+.metricCard strong {
   font-size: clamp(1.25rem, 1.1vw + 1rem, 1.95rem);
   line-height: 1;
   color: var(--ink-strong);
 }
 
-.metricCard p,
-.panelIntro,
-.summaryItem p,
-.balanceCell span,
-.balanceCellMain span,
-.movementTop p,
-.success,
-.error {
+.metricCard p {
   margin: 0;
   color: var(--ink-muted);
 }
 
-.contentGrid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.95fr);
-  gap: 18px;
+/* ── Balance table ── */
+
+.tableCard {
+  composes: tableCard from "../_ui/table.module.css";
 }
 
-.primaryColumn,
-.secondaryColumn {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+.table {
+  composes: table from "../_ui/table.module.css";
 }
 
-.panel {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  padding: 24px;
+.alignRight {
+  text-align: right;
 }
 
-.panelHeader {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 14px;
+.sku {
+  display: block;
+  font-size: var(--fs-xs);
+  color: var(--ink-faint);
+  margin-top: 2px;
 }
 
-.panelHeader h2 {
-  margin: 6px 0 0;
-  font-size: clamp(1.2rem, 0.9vw + 1rem, 1.6rem);
-  color: var(--ink-strong);
+/* ── Delta colours (used in recent movements ListRow) ── */
+
+.deltaPositive {
+  color: var(--ok);
+  font-weight: var(--fw-semibold);
 }
 
-.panelIntro {
-  font-size: 0.96rem;
-  line-height: 1.6;
+.deltaNegative {
+  color: var(--danger);
+  font-weight: var(--fw-semibold);
 }
+
+.deltaNeutral {
+  color: var(--ink-muted);
+}
+
+/* ── Shared text styles ── */
+
+.meta {
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+}
+
+.error {
+  margin: 0;
+  color: var(--danger);
+  font-size: var(--fs-sm);
+}
+
+.success {
+  margin: 0;
+  color: var(--ok);
+  font-size: var(--fs-sm);
+}
+
+/* ── Error panel (full-page error state) ── */
 
 .errorPanel {
   padding: 24px;
@@ -123,188 +137,120 @@
   background: var(--danger-dim);
 }
 
-.movementForm {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 20px;
-}
-
-.formRow {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.formRow label {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.formRow input,
-.formRow select {
-  border: 1px solid var(--stroke);
-  border-radius: var(--radius-lg);
-  min-height: 44px;
-  padding: 0 14px;
-  font-size: 0.95rem;
-  font-family: inherit;
-  background: var(--surface-1);
-  color: var(--ink-strong);
-}
-
-.formActions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
+/* ── Primary action button ── */
 
 .primary {
   composes: primary from "../_ui/buttons.module.css";
 }
 
-.balanceTable,
-.movementList,
-.summaryList {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+/* ── Dialog ── */
+
+.dialog {
+  border: none;
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  box-shadow: var(--shadow-lg);
+  padding: 0;
+  max-width: 520px;
+  width: 92vw;
 }
 
-.balanceHeader,
-.balanceRow {
-  display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) repeat(3, minmax(110px, 0.7fr));
-  gap: 12px;
+.dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.dialogInner {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dialogHeader {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 
-.balanceHeader {
-  composes: headerCells from "../_ui/table.module.css";
-  padding: 10px 16px;
-  border-radius: var(--radius-lg);
+.dialogHeader h2 {
+  font-size: var(--fs-lg);
 }
 
-.balanceRow {
-  padding: 16px;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--stroke);
-  background: var(--surface-1);
+.dialogClose {
+  border: none;
+  background: none;
+  color: var(--ink-muted);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
 }
 
-.balanceCellMain,
-.balanceCell {
+.dialogForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.field {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.balanceCellMain strong,
-.movementTop strong {
-  color: var(--ink-strong);
+.field span {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--ink-faint);
 }
 
-.movementRow,
-.summaryItem {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 16px;
+.field input,
+.field select {
+  border: 1px solid var(--stroke-strong);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--stroke);
+  min-height: 42px;
+  padding: 0 12px;
   background: var(--surface-1);
+  color: var(--ink-strong);
+  font-size: 0.95rem;
+  font-family: inherit;
 }
 
-.movementTop {
+.dialogActions {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.deltaGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+  padding-top: 6px;
 }
 
-.deltaCard {
-  padding: 14px;
-  box-shadow: none;
+.btnCancel {
+  composes: secondary from "../_ui/buttons.module.css";
+  flex: 1;
 }
 
-.deltaCard strong {
-  display: block;
-  margin-top: 8px;
-  font-size: 1.05rem;
+.btnSubmit {
+  composes: primary from "../_ui/buttons.module.css";
+  flex: 1;
 }
 
-.deltaPositive {
-  color: var(--ok);
-}
-
-.deltaNegative {
-  color: var(--danger);
-}
-
-.deltaNeutral {
-  color: var(--ink-muted);
-}
-
-.summaryItem {
-  flex-direction: row;
-  align-items: flex-start;
-}
-
-.summaryDot {
-  width: 12px;
-  height: 12px;
-  border-radius: 999px;
-  background: var(--ok);
-  margin-top: 6px;
-}
-
-.summaryDotBlue {
-  background: var(--info);
-}
-
-.summaryDotAmber {
-  background: var(--warning);
-}
+/* ── Responsive ── */
 
 @media (max-width: 1120px) {
-  .contentGrid,
   .metricGrid {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 860px) {
-  .panel,
-  .movementForm {
-    padding: 20px;
-    border-radius: var(--radius-lg);
-  }
-
-  .formRow,
-  .deltaGrid,
-  .balanceHeader,
-  .balanceRow {
+  .fieldRow {
     grid-template-columns: 1fr;
-  }
-
-  .balanceHeader {
-    display: none;
-  }
-
-  .panelHeader,
-  .movementTop,
-  .formActions,
-  .summaryItem {
-    flex-direction: column;
-    align-items: flex-start;
   }
 }

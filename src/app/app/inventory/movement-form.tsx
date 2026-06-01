@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import * as React from "react";
+import { useActionState, useState, useEffect, useRef } from "react";
 import { createMovement } from "./actions";
 import styles from "./inventory.module.css";
 
@@ -27,103 +28,145 @@ const movementPresets = {
 
 export default function MovementForm({ components, locations }: Props) {
   type MovementType = keyof typeof movementPresets;
+  const [open, setOpen] = useState(false);
   const [state, formAction] = useActionState(createMovement, initialState);
   const [movementType, setMovementType] = useState<MovementType>("receipt");
-  const [deltaOnHand, setDeltaOnHand] = useState<string>(
-    movementPresets.receipt.onHand
-  );
-  const [deltaInProd, setDeltaInProd] = useState<string>(
-    movementPresets.receipt.inProd
-  );
+  const [deltaOnHand, setDeltaOnHand] = useState<string>(movementPresets.receipt.onHand);
+  const [deltaInProd, setDeltaInProd] = useState<string>(movementPresets.receipt.inProd);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    if (state.success) setOpen(false);
+  }, [state.success]);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (open) dialog.showModal();
+    else dialog.close();
+  }, [open]);
 
   return (
-    <form className={styles.movementForm} action={formAction}>
-      <div className={styles.formRow}>
-        <label>
-          Component
-          <select name="component_id" required>
-            <option value="">Select component</option>
-            {components.map((component) => (
-              <option key={component.id} value={component.id}>
-                {component.name ?? "Unnamed"}
-                {component.sku ? ` (${component.sku})` : ""}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Location
-          <select name="location_id" required>
-            <option value="">Select location</option>
-            {locations.map((location) => (
-              <option key={location.id} value={location.id}>
-                {location.name ?? "Unnamed"}
-                {location.is_default ? " - default" : ""}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Reason
-          <select
-            name="reason"
-            value={movementType}
-            onChange={(event) => {
-              const nextType = event.target.value as MovementType;
-              const preset = movementPresets[nextType];
-              setMovementType(nextType);
-              setDeltaOnHand(preset.onHand);
-              setDeltaInProd(preset.inProd);
-            }}
-          >
-            <option value="receipt">Receipt</option>
-            <option value="allocation">Allocation</option>
-            <option value="adjustment">Adjustment</option>
-            <option value="production">Production</option>
-          </select>
-        </label>
-      </div>
-      <div className={styles.formRow}>
-        <label>
-          Delta on-hand
-          <input
-            name="delta_on_hand"
-            type="number"
-            step="0.01"
-            required
-            min="-999999"
-            value={deltaOnHand}
-            onChange={(event) => setDeltaOnHand(event.target.value)}
-          />
-        </label>
-        <label>
-          Delta in-prod
-          <input
-            name="delta_in_prod"
-            type="number"
-            step="0.01"
-            required
-            min="-999999"
-            value={deltaInProd}
-            onChange={(event) => setDeltaInProd(event.target.value)}
-          />
-        </label>
-        <label>
-          Reference type
-          <input name="reference_type" type="text" placeholder="order" />
-        </label>
-        <label>
-          Reference id
-          <input name="reference_id" type="text" placeholder="uuid" />
-        </label>
-      </div>
-      <div className={styles.formActions}>
-        {state.error ? <p className={styles.error}>{state.error}</p> : null}
-        {state.success ? <p className={styles.success}>{state.success}</p> : null}
-        <button className={styles.primary} type="submit">
-          Save movement
-        </button>
-      </div>
-    </form>
+    <>
+      <button
+        type="button"
+        className={styles.primary}
+        onClick={() => setOpen(true)}
+      >
+        Log Movement +
+      </button>
+
+      <dialog ref={dialogRef} className={styles.dialog} onClose={() => setOpen(false)}>
+        <div className={styles.dialogInner}>
+          <div className={styles.dialogHeader}>
+            <h2>Log Inventory Movement</h2>
+            <button
+              type="button"
+              className={styles.dialogClose}
+              aria-label="Close dialog"
+              onClick={() => setOpen(false)}
+            >
+              &times;
+            </button>
+          </div>
+          <form action={formAction} className={styles.dialogForm}>
+            <div className={styles.fieldRow}>
+              <label className={styles.field}>
+                <span>Component *</span>
+                <select name="component_id" required>
+                  <option value="">Select component</option>
+                  {components.map((component) => (
+                    <option key={component.id} value={component.id}>
+                      {component.name ?? "Unnamed"}
+                      {component.sku ? ` (${component.sku})` : ""}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className={styles.field}>
+                <span>Location *</span>
+                <select name="location_id" required>
+                  <option value="">Select location</option>
+                  {locations.map((location) => (
+                    <option key={location.id} value={location.id}>
+                      {location.name ?? "Unnamed"}
+                      {location.is_default ? " — default" : ""}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div className={styles.fieldRow}>
+              <label className={styles.field}>
+                <span>Reason</span>
+                <select
+                  name="reason"
+                  value={movementType}
+                  onChange={(event) => {
+                    const nextType = event.target.value as MovementType;
+                    const preset = movementPresets[nextType];
+                    setMovementType(nextType);
+                    setDeltaOnHand(preset.onHand);
+                    setDeltaInProd(preset.inProd);
+                  }}
+                >
+                  <option value="receipt">Receipt</option>
+                  <option value="allocation">Allocation</option>
+                  <option value="adjustment">Adjustment</option>
+                  <option value="production">Production</option>
+                </select>
+              </label>
+              <label className={styles.field}>
+                <span>Delta on-hand</span>
+                <input
+                  name="delta_on_hand"
+                  type="number"
+                  step="0.01"
+                  required
+                  min="-999999"
+                  value={deltaOnHand}
+                  onChange={(event) => setDeltaOnHand(event.target.value)}
+                />
+              </label>
+            </div>
+            <div className={styles.fieldRow}>
+              <label className={styles.field}>
+                <span>Delta in-prod</span>
+                <input
+                  name="delta_in_prod"
+                  type="number"
+                  step="0.01"
+                  required
+                  min="-999999"
+                  value={deltaInProd}
+                  onChange={(event) => setDeltaInProd(event.target.value)}
+                />
+              </label>
+              <label className={styles.field}>
+                <span>Reference type</span>
+                <input name="reference_type" type="text" placeholder="order" />
+              </label>
+            </div>
+            <label className={styles.field}>
+              <span>Reference ID</span>
+              <input name="reference_id" type="text" placeholder="uuid" />
+            </label>
+            {state.error && <p className={styles.error}>{state.error}</p>}
+            <div className={styles.dialogActions}>
+              <button
+                type="button"
+                className={styles.btnCancel}
+                onClick={() => setOpen(false)}
+              >
+                Cancel
+              </button>
+              <button type="submit" className={styles.btnSubmit}>
+                Save Movement
+              </button>
+            </div>
+          </form>
+        </div>
+      </dialog>
+    </>
   );
 }
