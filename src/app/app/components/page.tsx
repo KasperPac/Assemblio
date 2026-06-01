@@ -24,12 +24,27 @@ type Props = {
   searchParams?: Promise<{
     q?: string;
     filter?: string;
+    sort?: string;
+    dir?: string;
   }>;
 };
 
+function sortHref(col: string, currentSort: string, currentDir: string, currentQ: string, isLowStock: boolean) {
+  const newDir = currentSort === col && currentDir === "asc" ? "desc" : "asc";
+  const urlParams = new URLSearchParams();
+  if (isLowStock) urlParams.set("filter", "lowstock");
+  if (currentQ) urlParams.set("q", currentQ);
+  urlParams.set("sort", col);
+  urlParams.set("dir", newDir);
+  return `/app/components?${urlParams.toString()}`;
+}
+
 export default async function ComponentsPage({ searchParams }: Props) {
   const params = (await searchParams) ?? {};
-  const q = (params.q ?? "").trim().toLowerCase();
+  const rawQ = params.q ?? "";
+  const q = rawQ.trim().toLowerCase();
+  const sortCol = (params.sort ?? "name") as "name" | "on_hand" | "available" | "reorder_point";
+  const sortDir = params.dir === "desc" ? "desc" : "asc";
 
   const context = await getServerTenantContext();
   if (!context) redirect("/auth/login");
@@ -66,9 +81,23 @@ export default async function ComponentsPage({ searchParams }: Props) {
     return { ...c, onHand, available, status };
   });
 
+  const sortedComponents = [...withStatus].sort((a, b) => {
+    let aVal: number | string;
+    let bVal: number | string;
+    switch (sortCol) {
+      case "on_hand":       aVal = a.onHand;                     bVal = b.onHand;                     break;
+      case "available":     aVal = a.available;                  bVal = b.available;                  break;
+      case "reorder_point": aVal = a.reorder_point ?? 0;         bVal = b.reorder_point ?? 0;         break;
+      default:              aVal = a.name.toLowerCase();         bVal = b.name.toLowerCase();
+    }
+    if (aVal < bVal) return sortDir === "asc" ? -1 : 1;
+    if (aVal > bVal) return sortDir === "asc" ? 1 : -1;
+    return 0;
+  });
+
   const lowStockCount = withStatus.filter((c) => c.status !== "ok").length;
 
-  const filtered = withStatus.filter((c) => {
+  const filtered = sortedComponents.filter((c) => {
     const matchesSearch =
       q.length === 0 ||
       c.name.toLowerCase().includes(q) ||
@@ -104,13 +133,13 @@ export default async function ComponentsPage({ searchParams }: Props) {
       <div className={styles.toolbar}>
         <div className={styles.tabs}>
           <a
-            href="/app/components"
+            href={rawQ ? `/app/components?q=${encodeURIComponent(rawQ)}` : "/app/components"}
             className={!filterLowStock ? styles.tabActive : styles.tab}
           >
             All <span className={styles.tabCount}>{allComponents.length}</span>
           </a>
           <a
-            href="/app/components?filter=lowstock"
+            href={rawQ ? `/app/components?filter=lowstock&q=${encodeURIComponent(rawQ)}` : "/app/components?filter=lowstock"}
             className={filterLowStock ? styles.tabActive : styles.tab}
           >
             Low Stock{" "}
@@ -145,11 +174,27 @@ export default async function ComponentsPage({ searchParams }: Props) {
           <table className={styles.table}>
             <thead>
               <tr>
-                <th>Component</th>
+                <th>
+                  <a href={sortHref("name", sortCol, sortDir, rawQ, filterLowStock)} className={styles.sortHeader}>
+                    Component {sortCol === "name" ? (sortDir === "asc" ? "▲" : "▼") : ""}
+                  </a>
+                </th>
                 <th>SKU</th>
-                <th>On hand</th>
-                <th>Available</th>
-                <th>Reorder point</th>
+                <th>
+                  <a href={sortHref("on_hand", sortCol, sortDir, rawQ, filterLowStock)} className={styles.sortHeader}>
+                    On hand {sortCol === "on_hand" ? (sortDir === "asc" ? "▲" : "▼") : ""}
+                  </a>
+                </th>
+                <th>
+                  <a href={sortHref("available", sortCol, sortDir, rawQ, filterLowStock)} className={styles.sortHeader}>
+                    Available {sortCol === "available" ? (sortDir === "asc" ? "▲" : "▼") : ""}
+                  </a>
+                </th>
+                <th>
+                  <a href={sortHref("reorder_point", sortCol, sortDir, rawQ, filterLowStock)} className={styles.sortHeader}>
+                    Reorder point {sortCol === "reorder_point" ? (sortDir === "asc" ? "▲" : "▼") : ""}
+                  </a>
+                </th>
               </tr>
             </thead>
             <tbody>

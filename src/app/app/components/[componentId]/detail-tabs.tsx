@@ -83,6 +83,13 @@ const REF_ROUTES: Partial<Record<string, (id: string) => string>> = {
   production_order: (id) => `/app/orders/${id}`,
 };
 
+const REF_TYPE_LABELS: Record<string, string> = {
+  production_order: "Production Order",
+  goods_receipt: "Goods Receipt",
+  manual_adjustment: "Manual Adjustment",
+  stocktake: "Stocktake",
+};
+
 type Tab = "Overview" | "Movements" | "BOM Usage" | "Suppliers" | "Location";
 const baseTabs: Tab[] = ["Overview", "Movements", "BOM Usage", "Suppliers"];
 
@@ -212,10 +219,10 @@ export default function DetailTabs({
                   <span className={styles.refCell}>
                     {m.refId && REF_ROUTES[m.refType] ? (
                       <a href={REF_ROUTES[m.refType]!(m.refId)} className={styles.refLink}>
-                        {m.refType}
+                        {REF_TYPE_LABELS[m.refType] ?? m.refType}
                       </a>
                     ) : (
-                      m.refType
+                      REF_TYPE_LABELS[m.refType] ?? m.refType
                     )}
                   </span>
                 </div>

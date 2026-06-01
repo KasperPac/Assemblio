@@ -48,7 +48,9 @@ export function BinLocationSelect({
   }
 
   const filteredSl = subLocations.filter((s) => s.warehouse_id === whId);
-  const filteredAisles = slId ? aisles.filter((a) => a.sub_location_id === slId) : [];
+  const filteredAisles = slId
+    ? aisles.filter((a) => a.sub_location_id === slId)
+    : aisles.filter((a) => a.sub_location_id === null);
   const filteredBays = bays.filter((b) => b.aisle_id === aisleId);
 
   const currentWh = warehouses.find((w) => w.id === whId);
@@ -96,7 +98,7 @@ export function BinLocationSelect({
           <select
             className={styles.binInput}
             value={aisleId}
-            disabled={!slId}
+            disabled={filteredAisles.length === 0}
             onChange={(e) => { setAisleId(e.target.value); setBayId(""); }}
           >
             <option value="">— None —</option>
