@@ -1,0 +1,37 @@
+# Shopify CLI configuration for the Manuva UNLISTED app (Manuva Fab).
+# Used to serve a specific client while the public app is pending review.
+# When the public app is approved, migrate the client and delete this file.
+#
+# Deploy with: `shopify app deploy --config shopify.app.unlisted.toml`
+
+client_id = "e81bcf21209faeb1ba587ae571df61ee"
+name = "Manuva Fab"
+handle = "manuva-client"
+application_url = "https://app.manuva.app/shopify/embedded"
+embedded = true
+
+[access_scopes]
+scopes = "read_products,read_orders,read_customers"
+
+[auth]
+redirect_urls = [
+  "https://app.manuva.app/api/shopify/callback",
+]
+
+[webhooks]
+api_version = "2026-01"
+
+  [webhooks.privacy_compliance]
+  customer_data_request_url = "https://app.manuva.app/api/shopify/webhooks/gdpr/customers-data-request"
+  customer_deletion_url     = "https://app.manuva.app/api/shopify/webhooks/gdpr/customers-redact"
+  shop_deletion_url         = "https://app.manuva.app/api/shopify/webhooks/gdpr/shop-redact"
+
+# Operational webhooks (app/uninstalled, orders/*, products/*) are registered
+# dynamically at install time via registerRequiredWebhooks() in
+# src/lib/shopify/client.ts — not declared here to avoid scope validation on
+# first deploy of a new app.
+
+[pos]
+embedded = false
+
+[build]

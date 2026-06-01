@@ -2,6 +2,8 @@ import { createHmac, timingSafeEqual, randomBytes } from "crypto";
 
 const SHOP_REGEX = /^[a-z0-9][a-z0-9-]*\.myshopify\.com$/i;
 
+export type ShopifyAppId = "public" | "unlisted";
+
 export function isValidShopDomain(shop: string) {
   return SHOP_REGEX.test(shop);
 }
@@ -51,7 +53,7 @@ export function isAcceptableAppUrl(appUrl: string): boolean {
 export function getShopifyOAuthConfig() {
   const apiKey = process.env.SHOPIFY_API_KEY ?? "";
   const apiSecret = process.env.SHOPIFY_API_SECRET ?? "";
-  const scopes = process.env.SHOPIFY_SCOPES ?? "read_products,read_orders";
+  const scopes = process.env.SHOPIFY_SCOPES ?? "read_products,read_orders,read_customers";
   const appUrlRaw = process.env.NEXT_PUBLIC_APP_URL ?? "";
   const appUrl = appUrlRaw.trim().replace(/\/+$/, "");
 
@@ -82,16 +84,50 @@ export function getShopifyOAuthConfig() {
   };
 }
 
-export function buildShopifyAuthUrl(shop: string, state: string) {
-  const config = getShopifyOAuthConfig();
-  if (!config.ok) {
-    throw new Error("Shopify OAuth config is missing required environment variables.");
+/**
+ * Returns OAuth credentials for the given app. Use "unlisted" while the public
+ * app is pending Shopify review. Requires SHOPIFY_UNLISTED_API_KEY and
+ * SHOPIFY_UNLISTED_API_SECRET to be set in env for the unlisted app.
+ */
+export function getShopifyOAuthConfigForApp(appId: ShopifyAppId) {
+  if (appId === "unlisted") {
+    const apiKey = process.env.SHOPIFY_UNLISTED_API_KEY ?? "";
+    const apiSecret = process.env.SHOPIFY_UNLISTED_API_SECRET ?? "";
+    const scopes =
+      process.env.SHOPIFY_UNLISTED_SCOPES ??
+      process.env.SHOPIFY_SCOPES ??
+      "read_products,read_orders";
+    const appUrlRaw = process.env.NEXT_PUBLIC_APP_URL ?? "";
+    const appUrl = appUrlRaw.trim().replace(/\/+$/, "");
+
+    if (!apiKey || !apiSecret || !appUrl) {
+      return { ok: false as const, error: "missing-config" as const };
+    }
+    if (!isAcceptableAppUrl(appUrl)) {
+      return { ok: false as const, error: "invalid-app-url" as const };
+    }
+    return { ok: true as const, apiKey, apiSecret, scopes, appUrl };
   }
-  const { apiKey, scopes, appUrl } = config;
-  const redirectUri = `${appUrl}/api/shopify/callback`;
+
+  return getShopifyOAuthConfig();
+}
+
+export function buildShopifyAuthUrl(
+  shop: string,
+  state: string,
+  config?: { apiKey: string; scopes: string; appUrl: string }
+) {
+  const c = config ?? (() => {
+    const cfg = getShopifyOAuthConfig();
+    if (!cfg.ok) {
+      throw new Error("Shopify OAuth config is missing required environment variables.");
+    }
+    return cfg;
+  })();
+  const redirectUri = `${c.appUrl}/api/shopify/callback`;
   const params = new URLSearchParams({
-    client_id: apiKey,
-    scope: scopes,
+    client_id: c.apiKey,
+    scope: c.scopes,
     redirect_uri: redirectUri,
     state,
   });
@@ -115,7 +151,7 @@ export function verifySignedPayload(payload: string, signature: string) {
   return timingSafeEqual(a, b);
 }
 
-export function verifyShopifyCallbackHmac(url: URL) {
+export function verifyShopifyCallbackHmac(url: URL, secret?: string) {
   const hmac = url.searchParams.get("hmac");
   if (!hmac) return false;
 
@@ -126,14 +162,32 @@ export function verifyShopifyCallbackHmac(url: URL) {
   });
   pairs.sort();
   const message = pairs.join("&");
-  return verifySignedPayload(message, hmac);
+
+  const s = secret ?? (process.env.SHOPIFY_API_SECRET ?? "");
+  const digest = createHmac("sha256", s).update(message).digest("hex");
+  const a = Buffer.from(digest);
+  const b = Buffer.from(hmac);
+  if (a.length !== b.length) return false;
+  return timingSafeEqual(a, b);
 }
 
-export function verifyWebhookHmac(rawBody: string, receivedHmac: string) {
-  const secret = process.env.SHOPIFY_API_SECRET ?? "";
-  const digest = createHmac("sha256", secret).update(rawBody).digest("base64");
+export function verifyWebhookHmac(rawBody: string, receivedHmac: string, secret?: string) {
+  const s = secret ?? (process.env.SHOPIFY_API_SECRET ?? "");
+  const digest = createHmac("sha256", s).update(rawBody).digest("base64");
   const a = Buffer.from(digest);
   const b = Buffer.from(receivedHmac);
   if (a.length !== b.length) return false;
   return timingSafeEqual(a, b);
+}
+
+/**
+ * Verifies a webhook HMAC against all configured app secrets. Tries the public
+ * app secret first, then the unlisted app secret if set. Use this on all
+ * incoming webhook routes so both apps' webhooks are accepted simultaneously.
+ */
+export function verifyWebhookHmacAny(rawBody: string, receivedHmac: string): boolean {
+  if (verifyWebhookHmac(rawBody, receivedHmac)) return true;
+  const unlistedSecret = process.env.SHOPIFY_UNLISTED_API_SECRET;
+  if (!unlistedSecret) return false;
+  return verifyWebhookHmac(rawBody, receivedHmac, unlistedSecret);
 }
