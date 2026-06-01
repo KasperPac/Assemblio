@@ -1,10 +1,12 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { resolveDateRange } from "../_lib/date-range";
 import { ReportShell } from "../_components/report-shell";
 import { ReportStatCards } from "../_components/report-stat-cards";
-import { ReportTable } from "../_components/report-table";
+import { SortableReportTable } from "../_components/sortable-report-table";
 import type { TableColumn } from "../_components/report-table";
+import styles from "./po-variance.module.css";
 
 type DeliveryReceiptLineRaw = {
   id: string;
@@ -20,6 +22,7 @@ type DeliveryReceiptLineRaw = {
 
 interface VarianceRow extends Record<string, unknown> {
   id: string;
+  poId: string | null;
   poNumber: string;
   supplier: string;
   component: string;
@@ -91,6 +94,7 @@ export default async function POVariancePage({
 
     return {
       id: l.id,
+      poId: poObj?.id ?? null,
       poNumber,
       supplier,
       component,
@@ -110,7 +114,10 @@ export default async function POVariancePage({
     .reduce((s, r) => s + Math.abs(r.variance), 0);
 
   const columns: TableColumn<VarianceRow>[] = [
-    { key: "poNumber", header: "PO #", render: (r) => r.poNumber },
+    { key: "poNumber", header: "PO #", render: (r) => r.poId
+      ? <Link href={`/app/purchasing/${r.poId}`} className={styles.reportLink}>PO-{r.poNumber}</Link>
+      : <span>PO-{r.poNumber}</span>
+    },
     { key: "supplier", header: "Supplier", render: (r) => r.supplier },
     { key: "component", header: "Component", render: (r) => r.component },
     { key: "ordered", header: "Ordered", align: "right", render: (r) => r.ordered },
@@ -162,7 +169,7 @@ export default async function POVariancePage({
           },
         ]}
       />
-      <ReportTable columns={columns} rows={rows} rowKey={(r) => r.id} />
+      <SortableReportTable columns={columns} rows={rows} rowKey={(r) => r.id} />
     </ReportShell>
   );
 }

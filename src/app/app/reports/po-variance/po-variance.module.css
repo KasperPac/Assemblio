@@ -1,0 +1,9 @@
+.reportLink {
+  color: var(--brand-1);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.reportLink:hover {
+  text-decoration: underline;
+}
