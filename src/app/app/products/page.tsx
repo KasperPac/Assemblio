@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "./products.module.css";
 import PageHeader from "@/app/app/_ui/page-header";
+import ProductFilters from "./product-filters";
 
 type ProductRow = {
   id: string;
@@ -317,19 +318,7 @@ export default async function ProductsPage({ searchParams }: Props) {
         </div>
       )}
 
-      <form className={styles.filters} method="get">
-        <input
-          name="q"
-          defaultValue={params.q ?? ""}
-          placeholder="Search by name or SKU"
-          aria-label="Search by name or SKU"
-        />
-        <select name="filter" defaultValue={filter}>
-          <option value="all">All</option>
-          <option value="with-variants">With variants</option>
-          <option value="without-variants">Without variants</option>
-        </select>
-      </form>
+      <ProductFilters defaultQ={params.q} defaultFilter={filter} />
 
       <div className={styles.table}>
         <div className={styles.tableHeader}>
