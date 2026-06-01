@@ -636,3 +636,53 @@
     display: none;
   }
 }
+
+/* ── Archived BOM history ───────────────────────────── */
+
+.archivedSection {
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.archivedSummary {
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--ink-muted);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.archivedSummary::-webkit-details-marker { display: none; }
+
+.archivedBomBlock {
+  border-top: 1px solid var(--stroke);
+  padding: 12px 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.archivedBomLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.archivedRow {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px 16px;
+  font-size: 13px;
+  color: var(--ink-secondary);
+  padding: 4px 0;
+  border-bottom: 1px solid var(--stroke-faint, var(--stroke));
+}
+
+.archivedRow:last-child { border-bottom: none; }
+
+.archivedRowEmpty {
+  font-size: 13px;
+  color: var(--ink-faint);
+  font-style: italic;
+}

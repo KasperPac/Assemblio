@@ -610,7 +610,13 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                     No routing yet.
                   </p>
                 ) : (
-                  typedBoms.map((bom) => {
+                  <>
+                  {(() => {
+                    const editableBoms = typedBoms.filter((b) => b.status !== "archived");
+                    const archivedBoms = typedBoms.filter((b) => b.status === "archived");
+                    return (
+                      <>
+                        {editableBoms.map((bom) => {
                     const laborRows = laborLinesByBom[bom.id] ?? [];
                     const showCostSummary =
                       routingCosts !== null && editorBom?.id === bom.id;
@@ -891,7 +897,51 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                         </div>
                       </div>
                     );
-                  })
+                        })}
+                        {archivedBoms.length > 0 && (
+                          <details className={styles.archivedSection}>
+                            <summary className={styles.archivedSummary}>
+                              Show historical routing ({archivedBoms.length} version{archivedBoms.length === 1 ? "" : "s"})
+                            </summary>
+                            {archivedBoms.map((bom) => {
+                              const laborRows = laborLinesByBom[bom.id] ?? [];
+                              return (
+                                <div key={bom.id} className={styles.archivedBomBlock}>
+                                  <div className={styles.archivedBomLabel}>
+                                    Version {bom.version} · archived{" "}
+                                    {new Date(bom.created_at).toLocaleDateString("en-AU", {
+                                      day: "numeric",
+                                      month: "short",
+                                      year: "numeric",
+                                    })}
+                                  </div>
+                                  {laborRows.length === 0 ? (
+                                    <span className={styles.archivedRowEmpty}>No labor operations.</span>
+                                  ) : (
+                                    laborRows.map((line) => {
+                                      const dept = Array.isArray(line.department)
+                                        ? line.department[0] ?? null
+                                        : line.department;
+                                      return (
+                                        <div key={line.id} className={styles.archivedRow}>
+                                          <span>{line.sequence}. {line.operation_name}{dept?.name ? ` · ${dept.name}` : ""}</span>
+                                          <span>{line.run_hours_per_unit}h run</span>
+                                          <span>{(line.electricity_kwh_per_unit > 0 || line.gas_units_per_unit > 0)
+                                            ? `${line.electricity_kwh_per_unit}kWh · ${line.gas_units_per_unit} gas`
+                                            : "no utilities"}</span>
+                                        </div>
+                                      );
+                                    })
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </details>
+                        )}
+                      </>
+                    );
+                  })()}
+                  </>
                 )}
               </div>
         }
