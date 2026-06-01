@@ -5,6 +5,7 @@ import {
   loadInventoryIntegrityAudit,
   type AuditClient,
 } from "@/lib/inventory/audit";
+import PageHeader from "@/app/app/_ui/page-header";
 import styles from "./reports.module.css";
 
 export default async function ReportsHubPage() {
@@ -173,9 +174,11 @@ export default async function ReportsHubPage() {
 
   return (
     <div className={styles.page}>
-      <p className={styles.pageDesc}>
-        Live data across inventory, purchasing, and system health.
-      </p>
+      <PageHeader
+        eyebrow="Operations"
+        title="Reports"
+        description="Live data across inventory, purchasing, and system health."
+      />
 
       {/* INVENTORY */}
       <div className={styles.section}>

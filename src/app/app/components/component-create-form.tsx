@@ -25,6 +25,7 @@ const initialState: FormState = {};
 
 export default function ComponentCreateForm({ action, lookups }: Props) {
   const [open, setOpen] = useState(false);
+  const [formKey, setFormKey] = useState(0);
   const [state, formAction] = React.useActionState(action, initialState);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -66,14 +67,17 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
     if (!trimmed) return;
     setNewGroupPending(true);
     setNewGroupError(null);
-    const result = await createComponentGroup(trimmed);
-    setNewGroupPending(false);
-    if ("error" in result) {
-      setNewGroupError(result.error);
-    } else {
-      setGroups((prev) => [...prev, result.group]);
-      setSelectedGroupId(result.group.id);
-      resetNewGroupForm();
+    try {
+      const result = await createComponentGroup(trimmed);
+      if ("error" in result) {
+        setNewGroupError(result.error);
+      } else {
+        setGroups((prev) => [...prev, result.group]);
+        setSelectedGroupId(result.group.id);
+        resetNewGroupForm();
+      }
+    } finally {
+      setNewGroupPending(false);
     }
   }
 
@@ -82,7 +86,7 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
       <button
         type="button"
         className={styles.addButton}
-        onClick={() => setOpen(true)}
+        onClick={() => { setOpen(true); setFormKey((k) => k + 1); }}
       >
         + Add Component
       </button>
@@ -105,7 +109,7 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
             </button>
           </div>
 
-          <form action={formAction} className={styles.dialogForm}>
+          <form key={formKey} action={formAction} className={styles.dialogForm}>
             <label className={styles.field}>
               <span>Name *</span>
               <input name="name" required placeholder="e.g. Safety Laser Scanner" />
@@ -133,8 +137,9 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
                 </select>
               </label>
               <div className={styles.field}>
-                <span>Group</span>
+                <label htmlFor="group_id">Group</label>
                 <select
+                  id="group_id"
                   name="group_id"
                   value={selectedGroupId}
                   onChange={(e) => setSelectedGroupId(e.target.value)}
@@ -157,6 +162,12 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
                     <input
                       value={newGroupName}
                       onChange={(e) => setNewGroupName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleCreateGroup();
+                        }
+                      }}
                       placeholder="e.g. Pneumatics"
                       autoFocus
                     />

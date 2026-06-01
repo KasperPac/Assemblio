@@ -82,7 +82,8 @@
   gap: 6px;
 }
 
-.field span {
+.field span,
+.field > label {
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.14em;
