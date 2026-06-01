@@ -1,11 +1,13 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { ReportShell } from "../_components/report-shell";
 import { ReportStatCards } from "../_components/report-stat-cards";
-import { ReportTable } from "../_components/report-table";
+import { SortableReportTable } from "../_components/sortable-report-table";
 import type { TableColumn } from "../_components/report-table";
+import styles from "./valuation.module.css";
 
-interface Row {
+interface Row extends Record<string, unknown> {
   id: string; name: string; sku: string | null;
   on_hand: number; in_prod: number; reserved: number;
   cost: number; value: number; pct: number;
@@ -63,7 +65,9 @@ export default async function ValuationPage({
     new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
 
   const columns: TableColumn<Row>[] = [
-    { key: "name", header: "Component", render: (r) => r.name },
+    { key: "name", header: "Component", render: (r) => (
+      <Link href={`/app/components/${r.id}`} className={styles.reportLink}>{r.name}</Link>
+    )},
     { key: "sku", header: "SKU", render: (r) => r.sku ?? "—" },
     { key: "on_hand", header: "On hand", align: "right", render: (r) => r.on_hand.toLocaleString() },
     { key: "cost", header: "Cost / unit", align: "right", render: (r) => fmtCurrency(r.cost) },
@@ -78,6 +82,7 @@ export default async function ValuationPage({
       description="On-hand stock value broken down by component."
       csvSlug="valuation"
       searchParams={sp}
+      hideDateRange={true}
     >
       <ReportStatCards
         cards={[
@@ -86,7 +91,7 @@ export default async function ValuationPage({
           { label: "Reserved value", value: fmtCurrency(totalReservedValue) },
         ]}
       />
-      <ReportTable columns={columns} rows={rows} rowKey={(r) => r.id} />
+      <SortableReportTable columns={columns} rows={rows} rowKey={(r) => r.id} />
     </ReportShell>
   );
 }
