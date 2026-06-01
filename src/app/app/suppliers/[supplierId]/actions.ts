@@ -35,7 +35,8 @@ export async function archiveSupplier(formData: FormData) {
   const supplierId = formData.get("supplier_id")?.toString() ?? "";
   const context = await getServerTenantContext();
   if (!context || !supplierId) return;
-  const { supabase, tenantId } = context;
+  const { supabase, tenantId, role } = context;
+  if (role !== "admin" && role !== "super_admin") return;
 
   await supabase
     .from("suppliers")
