@@ -1,0 +1,46 @@
+.wrapper {
+  composes: wrapper from "./report-table.module.css";
+}
+
+.empty {
+  composes: empty from "./report-table.module.css";
+}
+
+.table {
+  composes: table from "../../_ui/table.module.css";
+}
+
+.table th {
+  white-space: nowrap;
+}
+
+.table th.right,
+.table td.right {
+  text-align: right;
+}
+
+.sortBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: inherit;
+  white-space: nowrap;
+  display: block;
+  width: 100%;
+}
+
+.sortBtnActive {
+  color: var(--brand-1);
+}
+
+@media print {
+  .wrapper {
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+  }
+}
