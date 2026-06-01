@@ -102,7 +102,6 @@ export default async function SupplierDetailPage({ params }: Props) {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Logistics"
         title={s.name}
         breadcrumbs={[
           { label: "Suppliers", href: "/app/suppliers" },
