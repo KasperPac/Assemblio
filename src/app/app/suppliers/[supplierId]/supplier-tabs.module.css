@@ -6,44 +6,6 @@
   gap: 18px;
 }
 
-.topRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.backButton {
-  border: 1px solid var(--stroke);
-  border-radius: var(--radius-md);
-  padding: 7px 14px;
-  text-decoration: none;
-  color: var(--ink-muted);
-  font-weight: 600;
-  font-size: 13px;
-  background: var(--bg-card);
-}
-
-.supplierHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.supplierName {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--ink-strong);
-  margin: 0;
-}
-
-.supplierMeta {
-  font-size: 13px;
-  color: var(--ink-muted);
-  margin: 4px 0 0;
-  display: block;
-}
-
 /* ── Buttons ─────────────────────────────── */
 
 .btnPrimary {
@@ -69,6 +31,18 @@
   cursor: pointer;
 }
 .btnDanger:hover { background: rgba(239, 68, 68, 0.22); }
+
+.backLink {
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.backLink:hover {
+  color: var(--ink-strong);
+}
 
 /* ── Tabs ────────────────────────────────── */
 
