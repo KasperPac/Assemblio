@@ -4,7 +4,7 @@
   padding: 20px 18px;
   border: 1px dashed var(--stroke);
   border-radius: var(--radius-lg);
-  background: var(--surface-1);
+  background: var(--bg-card);
 }
 
 .title {
