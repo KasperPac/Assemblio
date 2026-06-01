@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
-import { updateComponent } from "./actions";
+import { updateComponent, createComponentGroup } from "./actions";
 import styles from "./components.module.css";
 
 type FormState = { error?: string; success?: string };
@@ -36,8 +36,19 @@ export default function ComponentEditForm({ componentId, initialValues, lookups 
   const [state, formAction] = React.useActionState(boundAction, initialState);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
+  // Group state
+  const [groups, setGroups] = useState<LookupItem[]>(lookups.groups);
+  const [selectedGroupId, setSelectedGroupId] = useState(initialValues.groupId ?? "");
+  const [showNewGroup, setShowNewGroup] = useState(false);
+  const [newGroupName, setNewGroupName] = useState("");
+  const [newGroupPending, setNewGroupPending] = useState(false);
+  const [newGroupError, setNewGroupError] = useState<string | null>(null);
+
   useEffect(() => {
-    if (state.success) setOpen(false);
+    if (state.success) {
+      setOpen(false);
+      resetNewGroupForm();
+    }
   }, [state.success]);
 
   useEffect(() => {
@@ -46,6 +57,36 @@ export default function ComponentEditForm({ componentId, initialValues, lookups 
     if (open) dialog.showModal();
     else if (dialog.open) dialog.close();
   }, [open]);
+
+  function resetNewGroupForm() {
+    setShowNewGroup(false);
+    setNewGroupName("");
+    setNewGroupError(null);
+  }
+
+  function handleClose() {
+    setOpen(false);
+    resetNewGroupForm();
+  }
+
+  async function handleCreateGroup() {
+    const trimmed = newGroupName.trim();
+    if (!trimmed) return;
+    setNewGroupPending(true);
+    setNewGroupError(null);
+    try {
+      const result = await createComponentGroup(trimmed);
+      if ("error" in result) {
+        setNewGroupError(result.error);
+      } else {
+        setGroups((prev) => [...prev, result.group]);
+        setSelectedGroupId(result.group.id);
+        resetNewGroupForm();
+      }
+    } finally {
+      setNewGroupPending(false);
+    }
+  }
 
   return (
     <>
@@ -61,7 +102,7 @@ export default function ComponentEditForm({ componentId, initialValues, lookups 
       <dialog
         ref={dialogRef}
         className={styles.dialog}
-        onClose={() => setOpen(false)}
+        onClose={handleClose}
       >
         <div className={styles.dialogInner}>
           <div className={styles.dialogHeader}>
@@ -69,7 +110,7 @@ export default function ComponentEditForm({ componentId, initialValues, lookups 
             <button
               type="button"
               className={styles.dialogClose}
-              onClick={() => setOpen(false)}
+              onClick={handleClose}
               aria-label="Close dialog"
             >
               &times;
@@ -103,15 +144,64 @@ export default function ComponentEditForm({ componentId, initialValues, lookups 
                   ))}
                 </select>
               </label>
-              <label className={styles.field}>
-                <span>Group</span>
-                <select name="group_id" defaultValue={initialValues.groupId ?? ""}>
+              <div className={styles.field}>
+                <label htmlFor="group_id">Group</label>
+                <select
+                  id="group_id"
+                  name="group_id"
+                  value={selectedGroupId}
+                  onChange={(e) => setSelectedGroupId(e.target.value)}
+                >
                   <option value="">-- None --</option>
-                  {lookups.groups.map((g) => (
+                  {groups.map((g) => (
                     <option key={g.id} value={g.id}>{g.name}</option>
                   ))}
                 </select>
-              </label>
+                {!showNewGroup ? (
+                  <button
+                    type="button"
+                    className={styles.newGroupLink}
+                    onClick={() => setShowNewGroup(true)}
+                  >
+                    + New group
+                  </button>
+                ) : (
+                  <div className={styles.newGroupForm}>
+                    <input
+                      value={newGroupName}
+                      onChange={(e) => setNewGroupName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleCreateGroup();
+                        }
+                      }}
+                      placeholder="e.g. Pneumatics"
+                      autoFocus
+                    />
+                    {newGroupError && (
+                      <p className={styles.newGroupError}>{newGroupError}</p>
+                    )}
+                    <div className={styles.newGroupActions}>
+                      <button
+                        type="button"
+                        className={styles.btnSubmit}
+                        disabled={newGroupPending || !newGroupName.trim()}
+                        onClick={handleCreateGroup}
+                      >
+                        {newGroupPending ? "Creating…" : "Create"}
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.btnCancel}
+                        onClick={resetNewGroupForm}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className={styles.fieldRow}>
@@ -134,7 +224,7 @@ export default function ComponentEditForm({ componentId, initialValues, lookups 
             {state.error && <p className={styles.error}>{state.error}</p>}
 
             <div className={styles.dialogActions}>
-              <button type="button" className={styles.btnCancel} onClick={() => setOpen(false)}>
+              <button type="button" className={styles.btnCancel} onClick={handleClose}>
                 Cancel
               </button>
               <button type="submit" className={styles.btnSubmit}>Save Changes</button>
