@@ -121,6 +121,8 @@ export default function BomEditor({
   const menuRef = useRef<HTMLDivElement>(null);
   const saveBomDialogRef = useRef<HTMLDialogElement>(null);
   const saveBomFormRef = useRef<HTMLFormElement>(null);
+  const discardDialogRef = useRef<HTMLDialogElement>(null);
+  const discardFormRef = useRef<HTMLFormElement>(null);
   const [duplicateState, duplicateAction, isDuplicating] = useActionState(duplicateBomAsDraft, {});
   const [, startTransition] = useTransition();
   const router = useRouter();
@@ -226,10 +228,14 @@ export default function BomEditor({
                 buttonLabel="+ Add component"
                 buttonClassName={styles.btnSecondary}
               />
-              <form action={deleteBomDraft}>
+              <form action={deleteBomDraft} ref={discardFormRef}>
                 <input type="hidden" name="bom_id" value={bom.id} />
                 <input type="hidden" name="variant_id" value={variantId} />
-                <button type="submit" className={styles.btnDiscard}>
+                <button
+                  type="button"
+                  className={styles.btnDiscard}
+                  onClick={() => discardDialogRef.current?.showModal()}
+                >
                   Discard
                 </button>
               </form>
@@ -256,13 +262,17 @@ export default function BomEditor({
                 </button>
                 {menuOpen ? (
                   <div className={styles.menu} role="menu">
-                    <form action={deleteBomDraft} onSubmit={() => setMenuOpen(false)}>
-                      <input type="hidden" name="bom_id" value={bom.id} />
-                      <input type="hidden" name="variant_id" value={variantId} />
-                      <button type="submit" className={`${styles.menuItem} ${styles.menuItemDanger}`} role="menuitem">
-                        Delete draft
-                      </button>
-                    </form>
+                    <button
+                      type="button"
+                      className={`${styles.menuItem} ${styles.menuItemDanger}`}
+                      role="menuitem"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        discardDialogRef.current?.showModal();
+                      }}
+                    >
+                      Delete draft
+                    </button>
                   </div>
                 ) : null}
               </div>
@@ -538,6 +548,29 @@ export default function BomEditor({
           ) : null}
         </div>
       ) : null}
+
+      <dialog ref={discardDialogRef} className={styles.confirmDialog}>
+        <p>Delete this draft? This cannot be undone.</p>
+        <div className={styles.confirmActions}>
+          <button
+            type="button"
+            className={styles.btnDiscard}
+            onClick={() => discardDialogRef.current?.close()}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            className={styles.btnDanger}
+            onClick={() => {
+              discardDialogRef.current?.close();
+              discardFormRef.current?.requestSubmit();
+            }}
+          >
+            Delete
+          </button>
+        </div>
+      </dialog>
 
       <dialog ref={saveBomDialogRef} className={styles.confirmDialog}>
         <p>Activate this BOM? This will replace the current live version and cannot be undone.</p>
