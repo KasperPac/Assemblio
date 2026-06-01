@@ -5,6 +5,7 @@ import PageHeader from "@/app/app/_ui/page-header";
 import { VariantCoverageTable } from "./variant-coverage-table";
 import type { DisplayBom, VariantSummary } from "./variant-coverage-table";
 import { timeAgo } from "@/lib/utils/time";
+import { sanitizeProductHtml } from "@/lib/utils/sanitize";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -332,7 +333,7 @@ export default async function ProductDetailPage({ params }: Props) {
           {product.description && (
             <div
               className={styles.productDescription}
-              dangerouslySetInnerHTML={{ __html: product.description }}
+              dangerouslySetInnerHTML={{ __html: sanitizeProductHtml(product.description) }}
             />
           )}
         </div>
