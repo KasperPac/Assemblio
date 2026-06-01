@@ -38,7 +38,7 @@ export default async function LocationsPage() {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Warehouse"
+        eyebrow="Logistics"
         title="Locations"
         description="Manage warehouses, sub-locations, aisles, and bays."
       />
