@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { validateGroupName } from "./helpers";
 
 type ComponentState = {
   error?: string;
@@ -358,4 +359,36 @@ export async function archiveComponent(componentId: string): Promise<ArchiveResu
   revalidatePath(`/app/components/${componentId}`);
   revalidatePath("/app/activity-log");
   return { success: true };
+}
+
+export async function createComponentGroup(
+  name: string
+): Promise<{ group: { id: string; name: string } } | { error: string }> {
+  const validationError = validateGroupName(name);
+  if (validationError) return { error: validationError };
+
+  const context = await getServerTenantContext();
+  if (!context) return { error: "Missing tenant context." };
+  const { supabase, tenantId, role } = context;
+
+  if (role !== "admin" && role !== "super_admin") {
+    return { error: "Only managers and above can create groups." };
+  }
+
+  const { data, error } = await supabase
+    .from("component_group")
+    .insert({ tenant_id: tenantId, name: name.trim() })
+    .select("id, name")
+    .single();
+
+  if (error) return { error: error.message };
+
+  await supabase.from("activity_log").insert({
+    tenant_id: tenantId,
+    event: "component_group_created",
+    metadata: { name: name.trim() },
+  });
+
+  revalidatePath("/app/components");
+  return { group: { id: data.id, name: data.name } };
 }
