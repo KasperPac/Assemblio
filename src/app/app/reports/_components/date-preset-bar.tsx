@@ -31,6 +31,12 @@ export function DatePresetBar({ csvHref, hideDateRange }: Props) {
   function applyPreset(days: number) {
     const params = new URLSearchParams(sp.toString());
     if (days === -1) {
+      // Custom: navigate to today→today with no preset so isCustom becomes true
+      const today = fmtParam(new Date());
+      params.set("from", today);
+      params.set("to", today);
+      params.delete("preset");
+      router.push(`${pathname}?${params.toString()}`);
       return;
     }
     if (days === 365) {
@@ -87,19 +93,25 @@ export function DatePresetBar({ csvHref, hideDateRange }: Props) {
         })}
       {!hideDateRange && isCustom && (
         <div className={styles.customInputs}>
-          <input
-            type="date"
-            className={styles.dateInput}
-            value={currentFrom}
-            onChange={(e) => applyCustomDate("from", e.target.value)}
-          />
-          <span style={{ color: "var(--ink-muted)", fontSize: 13 }}>→</span>
-          <input
-            type="date"
-            className={styles.dateInput}
-            value={currentTo}
-            onChange={(e) => applyCustomDate("to", e.target.value)}
-          />
+          <label>
+            <span className={styles.srOnly}>From</span>
+            <input
+              type="date"
+              className={styles.dateInput}
+              value={currentFrom}
+              onChange={(e) => applyCustomDate("from", e.target.value)}
+            />
+          </label>
+          <span aria-hidden="true" style={{ color: "var(--ink-muted)", fontSize: 13 }}>→</span>
+          <label>
+            <span className={styles.srOnly}>To</span>
+            <input
+              type="date"
+              className={styles.dateInput}
+              value={currentTo}
+              onChange={(e) => applyCustomDate("to", e.target.value)}
+            />
+          </label>
         </div>
       )}
       <div className={styles.exports}>
