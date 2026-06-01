@@ -1,0 +1,18 @@
+{
+  "planPath": "docs/superpowers/plans/2026-06-01-purchasing-inventory-redesign.md",
+  "tasks": [
+    {
+      "id": 12,
+      "subject": "Task 1: Purchasing page redesign",
+      "status": "pending",
+      "description": "**Goal:** Convert both create forms to dialog modals, fix CSS token violations, remove embedded forms from page body.\n\n**Files:**\n- Modify: `src/app/app/purchasing/po-create-form.tsx`\n- Modify: `src/app/app/purchasing/po-line-form.tsx`\n- Modify: `src/app/app/purchasing/page.tsx`\n- Modify: `src/app/app/purchasing/purchasing.module.css`\n\n**Acceptance Criteria:**\n- [ ] Both create forms render as modal dialogs\n- [ ] Trigger buttons in PageHeader actions\n- [ ] No embedded forms in page body\n- [ ] Input borders use --stroke-strong\n- [ ] npx tsc --noEmit passes\n\n**Verify:** `npx tsc --noEmit`\n\n```json:metadata\n{\"files\": [\"src/app/app/purchasing/po-create-form.tsx\",\"src/app/app/purchasing/po-line-form.tsx\",\"src/app/app/purchasing/page.tsx\",\"src/app/app/purchasing/purchasing.module.css\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Both create forms render as modal dialogs\",\"Trigger buttons in PageHeader actions\",\"No embedded forms in page body\",\"Input borders use --stroke-strong\",\"tsc passes\"]}\n```"
+    },
+    {
+      "id": 13,
+      "subject": "Task 2: Inventory page redesign",
+      "status": "pending",
+      "description": "**Goal:** Single-column layout — movement form to dialog modal, balance view to tableCard/table, recent movements to ListPanel, summary panel removed.\n\n**Files:**\n- Modify: `src/app/app/inventory/movement-form.tsx`\n- Modify: `src/app/app/inventory/page.tsx`\n- Modify: `src/app/app/inventory/inventory.module.css`\n\n**Acceptance Criteria:**\n- [ ] No two-column layout\n- [ ] MovementForm is dialog modal in PageHeader actions\n- [ ] Balance view is tableCard/table\n- [ ] Recent movements is ListPanel\n- [ ] Summary panel removed\n- [ ] tsc passes\n\n**Verify:** `npx tsc --noEmit`\n\n```json:metadata\n{\"files\": [\"src/app/app/inventory/movement-form.tsx\",\"src/app/app/inventory/page.tsx\",\"src/app/app/inventory/inventory.module.css\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"No two-column layout\",\"MovementForm is dialog modal in PageHeader actions\",\"Balance view is tableCard/table\",\"Recent movements is ListPanel\",\"Summary panel removed\",\"tsc passes\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-06-01T00:00:00.000Z"
+}
