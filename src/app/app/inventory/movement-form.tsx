@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { useActionState, useState, useEffect, useRef } from "react";
 import { createMovement } from "./actions";
 import styles from "./inventory.module.css";
@@ -19,24 +18,26 @@ type Props = {
 
 const initialState = { error: "", success: "" };
 
-const movementPresets = {
-  receipt: { onHand: "0", inProd: "0" },
-  allocation: { onHand: "0", inProd: "0" },
-  adjustment: { onHand: "0", inProd: "0" },
-  production: { onHand: "0", inProd: "0" },
-} as const;
+type MovementType = "receipt" | "allocation" | "adjustment" | "production";
 
 export default function MovementForm({ components, locations }: Props) {
-  type MovementType = keyof typeof movementPresets;
   const [open, setOpen] = useState(false);
   const [state, formAction] = useActionState(createMovement, initialState);
   const [movementType, setMovementType] = useState<MovementType>("receipt");
-  const [deltaOnHand, setDeltaOnHand] = useState<string>(movementPresets.receipt.onHand);
-  const [deltaInProd, setDeltaInProd] = useState<string>(movementPresets.receipt.inProd);
+  const [deltaOnHand, setDeltaOnHand] = useState<string>("0");
+  const [deltaInProd, setDeltaInProd] = useState<string>("0");
   const dialogRef = useRef<HTMLDialogElement>(null);
 
+  const handleClose = () => {
+    setOpen(false);
+    setDeltaOnHand("0");
+    setDeltaInProd("0");
+    setMovementType("receipt");
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (state.success) setOpen(false);
+    if (state.success) handleClose();
   }, [state.success]);
 
   useEffect(() => {
@@ -56,7 +57,7 @@ export default function MovementForm({ components, locations }: Props) {
         Log Movement +
       </button>
 
-      <dialog ref={dialogRef} className={styles.dialog} onClose={() => setOpen(false)}>
+      <dialog ref={dialogRef} className={styles.dialog} onClose={handleClose}>
         <div className={styles.dialogInner}>
           <div className={styles.dialogHeader}>
             <h2>Log Inventory Movement</h2>
@@ -64,7 +65,7 @@ export default function MovementForm({ components, locations }: Props) {
               type="button"
               className={styles.dialogClose}
               aria-label="Close dialog"
-              onClick={() => setOpen(false)}
+              onClick={handleClose}
             >
               &times;
             </button>
@@ -103,11 +104,7 @@ export default function MovementForm({ components, locations }: Props) {
                   name="reason"
                   value={movementType}
                   onChange={(event) => {
-                    const nextType = event.target.value as MovementType;
-                    const preset = movementPresets[nextType];
-                    setMovementType(nextType);
-                    setDeltaOnHand(preset.onHand);
-                    setDeltaInProd(preset.inProd);
+                    setMovementType(event.target.value as MovementType);
                   }}
                 >
                   <option value="receipt">Receipt</option>
@@ -156,7 +153,7 @@ export default function MovementForm({ components, locations }: Props) {
               <button
                 type="button"
                 className={styles.btnCancel}
-                onClick={() => setOpen(false)}
+                onClick={handleClose}
               >
                 Cancel
               </button>
