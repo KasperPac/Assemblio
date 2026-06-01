@@ -1,6 +1,42 @@
 .page { display: flex; flex-direction: column; gap: 18px; }
 .error { color: var(--danger); font-size: 0.9rem; }
 
+.loadingHint {
+  font-size: var(--fs-sm);
+  color: var(--ink-faint);
+  padding: 12px 0;
+}
+
+.errorState {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+}
+
+.errorMessage {
+  font-size: var(--fs-sm);
+  color: var(--danger);
+}
+
+.btnRetry {
+  align-self: flex-start;
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+  background: none;
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-md);
+  padding: 4px 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btnRetry:hover {
+  color: var(--ink-strong);
+}
+
 /* ── Warehouse blocks ─── */
 
 .warehouseBlock {

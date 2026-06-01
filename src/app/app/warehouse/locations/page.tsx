@@ -39,6 +39,7 @@ export default async function LocationsPage() {
     <div className={styles.page}>
       <PageHeader
         eyebrow="Warehouse"
+        title="Locations"
         description="Manage warehouses, sub-locations, aisles, and bays."
       />
       <LocationsTree warehouses={(warehouses ?? []) as Warehouse[]} />
