@@ -405,3 +405,44 @@
   color: var(--ink-strong);
   font-weight: 500;
 }
+
+/* ── Confirmation dialogs ──────────────────────────── */
+
+.confirmDialog {
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  box-shadow: var(--shadow-lg);
+  padding: 24px;
+  max-width: 400px;
+  width: 92vw;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.confirmDialog::backdrop {
+  background: var(--bg-overlay);
+}
+
+.confirmActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.btnDanger {
+  background: var(--danger);
+  border: 1px solid var(--danger);
+  color: #fff;
+  border-radius: 5px;
+  padding: 5px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btnDanger:hover {
+  opacity: 0.85;
+}

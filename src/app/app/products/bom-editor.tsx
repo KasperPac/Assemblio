@@ -119,6 +119,8 @@ export default function BomEditor({
   );
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const saveBomDialogRef = useRef<HTMLDialogElement>(null);
+  const saveBomFormRef = useRef<HTMLFormElement>(null);
   const [duplicateState, duplicateAction, isDuplicating] = useActionState(duplicateBomAsDraft, {});
   const [, startTransition] = useTransition();
   const router = useRouter();
@@ -231,10 +233,14 @@ export default function BomEditor({
                   Discard
                 </button>
               </form>
-              <form action={setBomActive}>
+              <form action={setBomActive} ref={saveBomFormRef}>
                 <input type="hidden" name="bom_id" value={bom.id} />
-                <button type="submit" className={styles.btnPrimary}>
-                  Save BOM
+                <button
+                  type="button"
+                  className={styles.btnPrimary}
+                  onClick={() => saveBomDialogRef.current?.showModal()}
+                >
+                  Activate BOM
                 </button>
               </form>
               <div className={styles.menuWrap} ref={menuRef}>
@@ -532,6 +538,29 @@ export default function BomEditor({
           ) : null}
         </div>
       ) : null}
+
+      <dialog ref={saveBomDialogRef} className={styles.confirmDialog}>
+        <p>Activate this BOM? This will replace the current live version and cannot be undone.</p>
+        <div className={styles.confirmActions}>
+          <button
+            type="button"
+            className={styles.btnDiscard}
+            onClick={() => saveBomDialogRef.current?.close()}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            className={styles.btnPrimary}
+            onClick={() => {
+              saveBomDialogRef.current?.close();
+              saveBomFormRef.current?.requestSubmit();
+            }}
+          >
+            Activate BOM
+          </button>
+        </div>
+      </dialog>
     </div>
   );
 }
