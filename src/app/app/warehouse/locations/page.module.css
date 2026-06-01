@@ -307,16 +307,6 @@
 
 /* ── Barcode modal ─── */
 
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-
 .modal {
   background: var(--bg-card);
   border: 1px solid var(--stroke-card);
@@ -326,6 +316,10 @@
   max-width: 420px;
   position: relative;
   box-shadow: var(--shadow-card);
+}
+
+.modal::backdrop {
+  background: var(--bg-overlay, rgba(0, 0, 0, 0.45));
 }
 
 .modalClose {
@@ -359,9 +353,10 @@
 }
 
 .modalPath {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--ink-muted);
-  margin-bottom: 20px;
+  font-weight: var(--fw-semibold);
+  margin-bottom: 4px;
 }
 
 .barcodeBox {
@@ -410,3 +405,27 @@
   .printName { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
   .printCode { font-size: 13px; font-weight: 700; font-family: monospace; letter-spacing: 0.2em; margin-top: 4px; }
 }
+
+/* ── Barcode modal additions ──────────────────────────── */
+
+.barcodeFallback {
+  font-size: var(--fs-sm);
+  color: var(--ink-faint);
+  font-style: italic;
+  padding: 16px 0;
+  text-align: center;
+}
+
+.btnCopyCode {
+  margin-top: 6px;
+  font-size: var(--fs-xs);
+  color: var(--ink-muted);
+  background: none;
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-md);
+  padding: 3px 10px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.15s;
+}
+.btnCopyCode:hover { color: var(--ink-strong); }

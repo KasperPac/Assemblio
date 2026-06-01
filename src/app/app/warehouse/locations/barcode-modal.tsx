@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./page.module.css";
 
 interface Props {
@@ -12,50 +12,96 @@ interface Props {
 }
 
 export function BarcodeModal({ entityId, entityType, entityName, path, onClose }: Props) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const printSvgRef = useRef<SVGSVGElement>(null);
+  const [copied, setCopied] = useState(false);
+  const [barcodeError, setBarcodeError] = useState(false);
   const shortCode = entityId.replace(/-/g, "").slice(-6).toUpperCase();
 
+  // Open dialog on mount
   useEffect(() => {
-    import("jsbarcode").then((mod) => {
-      const JsBarcode = mod.default;
-      if (svgRef.current) JsBarcode(svgRef.current, shortCode, { format: "CODE128", displayValue: false, margin: 0, width: 2.5, height: 64 });
-      if (printSvgRef.current) JsBarcode(printSvgRef.current, shortCode, { format: "CODE128", displayValue: false, margin: 0, width: 2, height: 40 });
-    });
-  }, [shortCode]);
+    dialogRef.current?.showModal();
+  }, []);
 
+  // Wire native cancel event (Escape key) to onClose
   useEffect(() => {
-    function onKey(e: KeyboardEvent) { if (e.key === "Escape") onClose(); }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    const el = dialogRef.current;
+    if (!el) return;
+    const handler = () => onClose();
+    el.addEventListener("cancel", handler);
+    return () => el.removeEventListener("cancel", handler);
   }, [onClose]);
 
+  // Generate barcode
+  useEffect(() => {
+    setBarcodeError(false);
+    import("jsbarcode")
+      .then((mod) => {
+        const JsBarcode = mod.default;
+        try {
+          if (svgRef.current) JsBarcode(svgRef.current, shortCode, { format: "CODE128", displayValue: false, margin: 0, width: 2.5, height: 64 });
+          if (printSvgRef.current) JsBarcode(printSvgRef.current, shortCode, { format: "CODE128", displayValue: false, margin: 0, width: 2, height: 40 });
+        } catch {
+          setBarcodeError(true);
+        }
+      })
+      .catch(() => setBarcodeError(true));
+  }, [shortCode]);
+
+  function handleCopyCode() {
+    navigator.clipboard.writeText(shortCode).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  }
+
   return (
-    <div className={styles.modalOverlay} onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className={styles.modal}>
-        <button className={styles.modalClose} onClick={onClose}>✕</button>
-        <div className={styles.modalType}>{entityType}</div>
-        <div className={styles.modalName}>{entityName}</div>
-        <div className={styles.modalPath}>{path}</div>
+    <dialog
+      ref={dialogRef}
+      className={styles.modal}
+      aria-labelledby="barcode-modal-title"
+    >
+      <button
+        className={styles.modalClose}
+        aria-label="Close barcode modal"
+        onClick={onClose}
+      >
+        <span aria-hidden="true">✕</span>
+      </button>
+      <div className={styles.modalType}>{entityType}</div>
+      <div id="barcode-modal-title" className={styles.modalName}>{entityName}</div>
+      <div className={styles.modalPath}>{path}</div>
 
-        <div className={styles.barcodeBox}>
+      <div className={styles.barcodeBox}>
+        {barcodeError ? (
+          <p className={styles.barcodeFallback}>Could not generate barcode.</p>
+        ) : (
           <svg ref={svgRef} />
-          <div className={styles.shortCode2}>{shortCode}</div>
-          <div className={styles.shortCodeLabel}>location code</div>
-        </div>
-
-        <div className={styles.modalActions}>
-          <button className={styles.btnSave} onClick={() => window.print()}>Print Label</button>
-        </div>
-
-        {/* Print-only label */}
-        <div className={styles.printLabel}>
-          <div className={styles.printPath}>{path}</div>
-          <div className={styles.printName}>{entityName}</div>
-          <svg ref={printSvgRef} />
-          <div className={styles.printCode}>{shortCode}</div>
-        </div>
+        )}
+        <div className={styles.shortCode2}>{shortCode}</div>
+        <div className={styles.shortCodeLabel}>location code</div>
+        <button
+          type="button"
+          className={styles.btnCopyCode}
+          aria-label="Copy location code to clipboard"
+          onClick={handleCopyCode}
+        >
+          {copied ? "Copied!" : "Copy code"}
+        </button>
       </div>
-    </div>
+
+      <div className={styles.modalActions}>
+        <button className={styles.btnSave} onClick={() => window.print()}>Print Label</button>
+      </div>
+
+      {/* Print-only label */}
+      <div className={styles.printLabel}>
+        <div className={styles.printPath}>{path}</div>
+        <div className={styles.printName}>{entityName}</div>
+        {!barcodeError && <svg ref={printSvgRef} />}
+        <div className={styles.printCode}>{shortCode}</div>
+      </div>
+    </dialog>
   );
 }
