@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { verifyWebhookHmac } from "@/lib/shopify/auth";
+import { verifyWebhookHmacAny } from "@/lib/shopify/auth";
 import { parseWebhookPayload } from "@/lib/shopify/webhook";
 import {
   handleShopRedact,
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
   const webhookId = request.headers.get("x-shopify-webhook-id") ?? "";
   const rawBody = await request.text();
 
-  if (!hmac || !verifyWebhookHmac(rawBody, hmac)) {
+  if (!hmac || !verifyWebhookHmacAny(rawBody, hmac)) {
     return new NextResponse("Invalid webhook signature", { status: 401 });
   }
   if (topic !== "shop/redact" || !shop) {

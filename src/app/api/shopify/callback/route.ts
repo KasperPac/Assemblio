@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
-  getShopifyOAuthConfig,
+  getShopifyOAuthConfigForApp,
   isValidShopDomain,
   normalizeShopDomain,
   verifyShopifyCallbackHmac,
   verifySignedPayload,
+  type ShopifyAppId,
 } from "@/lib/shopify/auth";
 import { registerRequiredWebhooks } from "@/lib/shopify/client";
 import { signPendingInstall } from "@/lib/shopify/pending-install";
@@ -16,6 +17,7 @@ type OAuthState = {
   shop: string;
   tenantId: string | null;
   exp: number;
+  appId?: ShopifyAppId;
 };
 
 function clearStateCookie(response: NextResponse) {
@@ -82,19 +84,7 @@ async function upsertStoreAndToken(
 }
 
 export async function GET(request: NextRequest) {
-  const oauthConfig = getShopifyOAuthConfig();
-  if (!oauthConfig.ok) {
-    return NextResponse.redirect(
-      new URL("/app/settings/integrations?shopify=config-missing", request.url)
-    );
-  }
-
-  if (!verifyShopifyCallbackHmac(request.nextUrl)) {
-    return NextResponse.redirect(
-      new URL("/app/settings/integrations?shopify=invalid-hmac", request.url)
-    );
-  }
-
+  // Basic param validation — no secret needed yet.
   const shop = normalizeShopDomain(
     request.nextUrl.searchParams.get("shop") ?? ""
   );
@@ -106,7 +96,8 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // Verify and decode the state cookie.
+  // Verify and decode the state cookie first so we know which app secret to use
+  // for HMAC verification. The cookie is signed with SHOPIFY_API_SECRET (our key).
   const signedCookie = request.cookies.get("shopify_oauth_state")?.value ?? "";
   const dotIndex = signedCookie.lastIndexOf(".");
   if (dotIndex === -1) {
@@ -146,6 +137,22 @@ export async function GET(request: NextRequest) {
     mismatchUrl.searchParams.set("expected_shop", parsed.shop);
     mismatchUrl.searchParams.set("returned_shop", shop);
     return NextResponse.redirect(mismatchUrl);
+  }
+
+  // Now that we know the app that initiated the flow, load the right credentials
+  // and verify Shopify's HMAC on the callback URL with the matching secret.
+  const appId: ShopifyAppId = parsed.appId ?? "public";
+  const oauthConfig = getShopifyOAuthConfigForApp(appId);
+  if (!oauthConfig.ok) {
+    return NextResponse.redirect(
+      new URL("/app/settings/integrations?shopify=config-missing", request.url)
+    );
+  }
+
+  if (!verifyShopifyCallbackHmac(request.nextUrl, oauthConfig.apiSecret)) {
+    return NextResponse.redirect(
+      new URL("/app/settings/integrations?shopify=invalid-hmac", request.url)
+    );
   }
 
   // ── PATH A: tenantId was embedded at install time (user was logged in) ──────

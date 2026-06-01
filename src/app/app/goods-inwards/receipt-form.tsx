@@ -64,25 +64,48 @@ export default function ReceiptForm({
   locations,
   supplierComponentMap,
   availablePOs,
+  initialPoId,
 }: {
   suppliers: Supplier[];
   components: Component[];
   locations: Location[];
   supplierComponentMap: Record<string, string[]>;
   availablePOs: AvailablePO[];
+  initialPoId?: string;
 }) {
   const defaultLocation = locations.find((l) => l.is_default) ?? locations[0];
 
-  const [supplierId, setSupplierId] = useState<string>("");
+  const initialPo = initialPoId
+    ? (availablePOs.find((p) => p.id === initialPoId) ?? null)
+    : null;
+
+  const [supplierId, setSupplierId] = useState<string>(initialPo?.supplier_id ?? "");
   const [showSupplierOverride, setShowSupplierOverride] = useState(false);
   const [locationId, setLocationId] = useState(defaultLocation?.id ?? "");
-  const [lines, setLines] = useState<LineState[]>([blankLine()]);
+  const [lines, setLines] = useState<LineState[]>(() => {
+    if (!initialPo) return [blankLine()];
+    const poLines = initialPo.lines
+      .filter((l) => l.quantity - l.quantity_received > 0)
+      .map((l) => {
+        const remaining = l.quantity - l.quantity_received;
+        return {
+          key: crypto.randomUUID(),
+          component_id: l.component_id,
+          quantity_delivered: String(remaining),
+          cost_per_unit: "",
+          notes: "",
+          quantity_expected: remaining,
+          purchase_order_line_id: l.id,
+        };
+      });
+    return poLines.length > 0 ? poLines : [blankLine()];
+  });
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [pickerLineKey, setPickerLineKey] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const [selectedPoId, setSelectedPoId] = useState<string>("");
+  const [selectedPoId, setSelectedPoId] = useState<string>(initialPo?.id ?? "");
 
   function handlePoSelect(poId: string) {
     setSelectedPoId(poId);

@@ -16,6 +16,21 @@
 -- is null. Task 2 adds the tenant-less branch that handles this case.
 
 -- 1. Allow tenant_id to be null for platform operators.
+
+-- Pre-flight: abort if any non-operator profiles have null tenant_id.
+-- A partially-onboarded user or legacy test row with (tenant_id IS NULL, role = 'member')
+-- would cause ADD CONSTRAINT to fail and roll back the entire patch.
+do $$
+begin
+  if exists (
+    select 1 from public.profiles
+    where tenant_id is null
+      and role not in ('super_admin', 'platform_observer')
+  ) then
+    raise exception 'super_admin_foundation pre-flight failed: profiles with null tenant_id exist for non-operator roles — clean them up before applying this patch';
+  end if;
+end $$;
+
 alter table public.profiles alter column tenant_id drop not null;
 
 alter table public.profiles
@@ -52,8 +67,8 @@ begin
     'location',
     'shopify_store',
     'shopify_install_tokens',
-    'shopify_product',
-    'shopify_variant',
+    'product',          -- was shopify_product (renamed by generalize_variant_schema.sql)
+    'product_variant',  -- was shopify_variant  (renamed by generalize_variant_schema.sql)
     'product_bom',
     'product_bom_component',
     'inventory_balance',
@@ -280,6 +295,7 @@ begin
   select id into v_actor_id from public.profiles where role = 'super_admin' limit 1;
   -- Fall back to a nil UUID in CI/staging environments with no super_admin profile yet.
   if v_actor_id is null then
+    raise notice 'super_admin_foundation: no super_admin profile found — audit marker written with sentinel actor_id (CI/staging environment)';
     v_actor_id := '00000000-0000-0000-0000-000000000000'::uuid;
   end if;
   insert into public.super_admin_audit_log (actor_id, action, metadata)

@@ -130,6 +130,22 @@ Or use a hardcoded `actor_id` (e.g., a sentinel UUID) instead of looking one up.
 
 ---
 
+## Resolution Status (2026-06-01)
+
+| Finding | Severity | Fix | Patch |
+|---------|----------|-----|-------|
+| 1. `has_tenant_access()` not updated | 🔴 P0 | `is_super_admin()` → `is_platform_operator()` | `super_admin_platform_observer_fixes.sql` |
+| 2. `current_tenant_id()` bypass not updated | 🔴 P0 | `is_super_admin()` → `is_platform_operator()` | `super_admin_platform_observer_fixes.sql` |
+| 3. `ADD CONSTRAINT` migration risk | 🟠 P1 | Pre-flight DO block added | `super_admin_foundation.sql` (edited in-place) |
+| 4. `get_user_emails()` not updated | 🟡 P2 | `is_super_admin()` → `is_platform_operator()` | `super_admin_platform_observer_fixes.sql` |
+| 5. `super_admin_audit_log_insert` policy | 🟡 P2 | Policy recreated with `is_platform_operator()` | `super_admin_platform_observer_fixes.sql` |
+| 6. Audit marker silent on CI | 🟢 P3 | `RAISE NOTICE` added; sentinel UUID already in place | `super_admin_foundation.sql` (edited in-place) |
+| Bonus: `get_tenant_vitals` / `get_tenant_health_indicators` | — | `is_super_admin()` → `is_platform_operator()` (reverts commit 7b973c3a) | `super_admin_platform_observer_fixes.sql` |
+
+**Application order:** `super_admin_foundation.sql` → `super_admin_platform_observer_fixes.sql`
+
+---
+
 ## Items Verified Safe
 
 | Item | Verdict |

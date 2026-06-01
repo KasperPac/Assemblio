@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
   buildShopifyAuthUrl,
-  getShopifyOAuthConfig,
   generateStateNonce,
+  getShopifyOAuthConfigForApp,
   isValidShopDomain,
   normalizeShopDomain,
   signPayload,
+  type ShopifyAppId,
 } from "@/lib/shopify/auth";
 
 type OAuthState = {
@@ -14,12 +15,16 @@ type OAuthState = {
   shop: string;
   tenantId: string;
   exp: number;
+  appId: ShopifyAppId;
 };
 
 export async function GET(request: NextRequest) {
   const shopParam = request.nextUrl.searchParams.get("shop") ?? "";
   const shop = normalizeShopDomain(shopParam);
-  const oauthConfig = getShopifyOAuthConfig();
+
+  const appParam = request.nextUrl.searchParams.get("app");
+  const appId: ShopifyAppId = appParam === "unlisted" ? "unlisted" : "public";
+  const oauthConfig = getShopifyOAuthConfigForApp(appId);
 
   if (!oauthConfig.ok) {
     return NextResponse.redirect(
@@ -57,12 +62,13 @@ export async function GET(request: NextRequest) {
     shop,
     tenantId: profile.tenant_id,
     exp: Date.now() + 10 * 60 * 1000,
+    appId,
   };
   const encoded = Buffer.from(JSON.stringify(state)).toString("base64url");
   const sig = signPayload(encoded);
   const cookieValue = `${encoded}.${sig}`;
 
-  const redirectUrl = buildShopifyAuthUrl(shop, state.nonce);
+  const redirectUrl = buildShopifyAuthUrl(shop, state.nonce, oauthConfig);
   const response = NextResponse.redirect(redirectUrl);
   response.cookies.set("shopify_oauth_state", cookieValue, {
     httpOnly: true,
