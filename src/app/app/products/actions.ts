@@ -475,9 +475,6 @@ export async function createBomLaborLine(formData: FormData) {
 
   revalidatePath(`/app/products/variants/${variantId}`);
   revalidatePath("/app/costing");
-  redirectVariantResult(variantId, {
-    laborSuccess: encodeMessage(`Added labor operation "${operationName}".`),
-  });
 }
 
 export async function updateBomLaborLine(formData: FormData) {
@@ -578,9 +575,6 @@ export async function updateBomLaborLine(formData: FormData) {
 
   revalidatePath(`/app/products/variants/${variantId}`);
   revalidatePath("/app/costing");
-  redirectVariantResult(variantId, {
-    laborSuccess: encodeMessage(`Updated labor operation "${operationName}".`),
-  });
 }
 
 export async function deleteBomLaborLine(formData: FormData) {
@@ -617,9 +611,6 @@ export async function deleteBomLaborLine(formData: FormData) {
 
   revalidatePath(`/app/products/variants/${variantId}`);
   revalidatePath("/app/costing");
-  redirectVariantResult(variantId, {
-    laborSuccess: encodeMessage("Removed labor operation."),
-  });
 }
 
 export async function duplicateBomAsDraft(

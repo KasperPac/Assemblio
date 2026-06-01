@@ -145,7 +145,6 @@ type Props = {
     variantId: string;
   }>;
   searchParams?: Promise<{
-    laborSuccess?: string;
     laborError?: string;
     tab?: string;
     notifSuccess?: string;
@@ -513,7 +512,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
     requestedTab === "versions" ||
     requestedTab === "notifications"
       ? requestedTab
-      : query.laborSuccess || query.laborError
+      : query.laborError
         ? "routing"
         : query.notifSuccess || query.notifError
           ? "notifications"
@@ -573,7 +572,6 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
         }
         bom={
           <>
-            {query.laborSuccess ? <p className={styles.success}>{query.laborSuccess}</p> : null}
             {query.laborError ? <p className={styles.error}>{query.laborError}</p> : null}
             {hasBom && editorBomWithLines ? (
               <BomEditor
