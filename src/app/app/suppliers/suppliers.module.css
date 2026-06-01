@@ -10,6 +10,12 @@
   composes: primary from "../_ui/buttons.module.css";
 }
 
+.headerActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
 /* ── Toolbar ────────────────────────────── */
 
 .toolbar {
@@ -83,12 +89,6 @@
 .meta {
   color: var(--ink-muted);
   font-size: var(--fs-sm);
-}
-
-.empty {
-  color: var(--ink-muted);
-  font-size: var(--fs-sm);
-  padding: 8px 0;
 }
 
 .errorMsg {

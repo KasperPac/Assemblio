@@ -90,7 +90,7 @@ export default async function SuppliersPage({
         title="Suppliers"
         description="Manage suppliers used throughout purchasing and inbound stock workflows."
         actions={
-          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+          <div className={styles.headerActions}>
             {(role === "admin" || role === "super_admin") && (
               <Link href="/app/suppliers/import" className={styles.importLink}>
                 Import CSV
