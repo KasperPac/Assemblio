@@ -199,6 +199,26 @@ export function LocationsTree({ warehouses, componentCounts = {} }: { warehouses
   const [collapsedSl, setCollapsedSl] = useState<Set<string>>(new Set());
   const [collapsedAisle, setCollapsedAisle] = useState<Set<string>>(new Set());
 
+  function expandAll(wh: Warehouse) {
+    setCollapsedWh(s => { const n = new Set(s); n.delete(wh.id); return n; });
+    setCollapsedSl(s => {
+      const n = new Set(s);
+      wh.sub_locations.forEach(sl => n.delete(sl.id));
+      return n;
+    });
+    setCollapsedAisle(s => {
+      const n = new Set(s);
+      wh.aisles.forEach(a => n.delete(a.id));
+      return n;
+    });
+  }
+
+  function collapseAll(wh: Warehouse) {
+    setCollapsedWh(s => new Set([...s, wh.id]));
+    setCollapsedSl(s => new Set([...s, ...wh.sub_locations.map(sl => sl.id)]));
+    setCollapsedAisle(s => new Set([...s, ...wh.aisles.map(a => a.id)]));
+  }
+
   return (
     <div>
       {barcode && (
@@ -250,6 +270,8 @@ export function LocationsTree({ warehouses, componentCounts = {} }: { warehouses
                 <button className={styles.btnIcon} aria-label={`Add sub-location to ${wh.name}`} onClick={() => { setAddingSl(wh.id); setCollapsedWh(s => { const n = new Set(s); n.delete(wh.id); return n; }); }}><span aria-hidden="true">⊕</span> Sub-loc</button>
                 <button className={styles.btnIcon} aria-label={`Print barcode for ${wh.name}`} onClick={() => setBarcode({ id: wh.id, type: "Warehouse", name: wh.name, path: wh.name })}><span aria-hidden="true">▦</span> Barcode</button>
                 <button className={styles.btnIcon} aria-label={`Edit warehouse ${wh.name}`} onClick={() => setEditingWh(wh.id)}><span aria-hidden="true">✎</span> Edit</button>
+                <button className={styles.btnExpandCollapse} onClick={() => expandAll(wh)}>Expand all</button>
+                <button className={styles.btnExpandCollapse} onClick={() => collapseAll(wh)}>Collapse all</button>
               </div>
             )}
 

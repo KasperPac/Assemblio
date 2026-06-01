@@ -467,3 +467,18 @@
   font-family: inherit;
 }
 .btnDanger:hover { opacity: 0.85; }
+
+/* ── Expand / Collapse all ────────────────────────────── */
+
+.btnExpandCollapse {
+  font-size: var(--fs-xs);
+  color: var(--ink-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 4px;
+  font-family: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.btnExpandCollapse:hover { color: var(--ink-strong); }
