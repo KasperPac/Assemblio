@@ -30,10 +30,11 @@ function toggle(set: Set<string>, id: string): Set<string> {
   return next;
 }
 
-function InlineForm({ action, fields, onDone }: {
+function InlineForm({ action, fields, onDone, label = "item" }: {
   action: (fd: FormData) => Promise<unknown>;
   fields: React.ReactNode;
   onDone: () => void;
+  label?: string;
 }) {
   const router = useRouter();
   const [err, setErr] = useState<string | null>(null);
@@ -52,8 +53,8 @@ function InlineForm({ action, fields, onDone }: {
     <form action={submit} className={styles.inlineForm}>
       {fields}
       {err && <span className={styles.formError}>{err}</span>}
-      <button type="submit" className={styles.btnSave}>Save</button>
-      <button type="button" className={styles.btnCancel} onClick={onDone}>Cancel</button>
+      <button type="submit" className={styles.btnSave} aria-label={`Save ${label}`}>Save</button>
+      <button type="button" className={styles.btnCancel} onClick={onDone} aria-label={`Cancel editing ${label}`}>Cancel</button>
     </form>
   );
 }
@@ -154,7 +155,7 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
             {/* ── Warehouse row ── */}
             {editingWh === wh.id ? (
               <div className={styles.warehouseRow}>
-                <InlineForm action={editWarehouse} onDone={() => setEditingWh(null)} fields={<>
+                <InlineForm action={editWarehouse} onDone={() => setEditingWh(null)} label={`warehouse ${wh.name}`} fields={<>
                   <input type="hidden" name="id" value={wh.id} />
                   <input name="name" defaultValue={wh.name} className={styles.inlineInput} autoFocus />
                 </>} />
@@ -171,9 +172,9 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                 <span className={styles.levelTagWh}>Warehouse</span>
                 <span className={styles.warehouseName}>{wh.name}</span>
                 <span className={styles.shortCode}>{shortCode(wh.id)}</span>
-                <button className={styles.btnIcon} onClick={() => { setAddingSl(wh.id); setCollapsedWh(s => { const n = new Set(s); n.delete(wh.id); return n; }); }}>⊕ Sub-loc</button>
-                <button className={styles.btnIcon} onClick={() => setBarcode({ id: wh.id, type: "Warehouse", name: wh.name, path: wh.name })}>▦ Barcode</button>
-                <button className={styles.btnIcon} onClick={() => setEditingWh(wh.id)}>✎ Edit</button>
+                <button className={styles.btnIcon} aria-label={`Add sub-location to ${wh.name}`} onClick={() => { setAddingSl(wh.id); setCollapsedWh(s => { const n = new Set(s); n.delete(wh.id); return n; }); }}><span aria-hidden="true">⊕</span> Sub-loc</button>
+                <button className={styles.btnIcon} aria-label={`Print barcode for ${wh.name}`} onClick={() => setBarcode({ id: wh.id, type: "Warehouse", name: wh.name, path: wh.name })}><span aria-hidden="true">▦</span> Barcode</button>
+                <button className={styles.btnIcon} aria-label={`Edit warehouse ${wh.name}`} onClick={() => setEditingWh(wh.id)}><span aria-hidden="true">✎</span> Edit</button>
               </div>
             )}
 
@@ -184,7 +185,7 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                 {/* Add sub-location form */}
                 {addingSl === wh.id && (
                   <div className={styles.addSlRow}>
-                    <InlineForm action={addSubLocation} onDone={() => setAddingSl(null)} fields={<>
+                    <InlineForm action={addSubLocation} onDone={() => setAddingSl(null)} label="new sub-location" fields={<>
                       <input type="hidden" name="warehouse_id" value={wh.id} />
                       <input name="name" placeholder="Sub-location name" className={styles.inlineInput} autoFocus />
                     </>} />
@@ -206,7 +207,7 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                       {/* Sub-location row */}
                       {editingSl === sl.id ? (
                         <div className={styles.subLocRow}>
-                          <InlineForm action={editSubLocation} onDone={() => setEditingSl(null)} fields={<>
+                          <InlineForm action={editSubLocation} onDone={() => setEditingSl(null)} label={`sub-location ${sl.name}`} fields={<>
                             <input type="hidden" name="id" value={sl.id} />
                             <input name="name" defaultValue={sl.name} className={styles.inlineInput} autoFocus />
                           </>} />
@@ -224,9 +225,9 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                           <span className={styles.entityName}>{sl.name}</span>
                           <span className={styles.countTag}>{aisles.length} aisle{aisles.length !== 1 ? "s" : ""}</span>
                           <span className={styles.shortCode}>{shortCode(sl.id)}</span>
-                          <button className={styles.btnIcon} onClick={() => { setAddingAisle(sl.id); setCollapsedSl(s => { const n = new Set(s); n.delete(sl.id); return n; }); }}>⊕ Aisle</button>
-                          <button className={styles.btnIcon} onClick={() => setBarcode({ id: sl.id, type: "Sub-location", name: sl.name, path: `${wh.name} · ${sl.name}` })}>▦ Barcode</button>
-                          <button className={styles.btnIcon} onClick={() => setEditingSl(sl.id)}>✎ Edit</button>
+                          <button className={styles.btnIcon} aria-label={`Add aisle to ${sl.name}`} onClick={() => { setAddingAisle(sl.id); setCollapsedSl(s => { const n = new Set(s); n.delete(sl.id); return n; }); }}><span aria-hidden="true">⊕</span> Aisle</button>
+                          <button className={styles.btnIcon} aria-label={`Print barcode for ${sl.name}`} onClick={() => setBarcode({ id: sl.id, type: "Sub-location", name: sl.name, path: `${wh.name} · ${sl.name}` })}><span aria-hidden="true">▦</span> Barcode</button>
+                          <button className={styles.btnIcon} aria-label={`Edit sub-location ${sl.name}`} onClick={() => setEditingSl(sl.id)}><span aria-hidden="true">✎</span> Edit</button>
                           <SimpleDeleteButton id={sl.id} action={deleteSubLocation} />
                         </div>
                       )}
@@ -238,7 +239,7 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                           {/* Add aisle form — sub_location_id is implicit */}
                           {addingAisle === sl.id && (
                             <div className={styles.aisleRow}>
-                              <InlineForm action={addAisle} onDone={() => setAddingAisle(null)} fields={<>
+                              <InlineForm action={addAisle} onDone={() => setAddingAisle(null)} label="new aisle" fields={<>
                                 <input type="hidden" name="warehouse_id" value={wh.id} />
                                 <input type="hidden" name="sub_location_id" value={sl.id} />
                                 <input name="name" placeholder="Aisle name" className={styles.inlineInput} autoFocus />
@@ -247,7 +248,7 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                           )}
 
                           {aisles.length === 0 && addingAisle !== sl.id && (
-                            <p className={styles.emptyHintSl}>No aisles — click ⊕ Aisle to add one.</p>
+                            <p className={styles.emptyHintSl}>No aisles — click <span aria-hidden="true">⊕</span> Aisle to add one.</p>
                           )}
 
                           {/* ── Aisle rows ── */}
@@ -259,7 +260,7 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                               <div key={aisle.id}>
                                 {editingAisle === aisle.id ? (
                                   <div className={styles.aisleRow}>
-                                    <InlineForm action={editAisle} onDone={() => setEditingAisle(null)} fields={<>
+                                    <InlineForm action={editAisle} onDone={() => setEditingAisle(null)} label={`aisle ${aisle.name}`} fields={<>
                                       <input type="hidden" name="id" value={aisle.id} />
                                       <input type="hidden" name="sub_location_id" value={sl.id} />
                                       <input name="name" defaultValue={aisle.name} className={styles.inlineInput} autoFocus />
@@ -278,9 +279,9 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                                     <span className={styles.entityName}>{aisle.name}</span>
                                     <span className={styles.countTag}>{bays.length} bay{bays.length !== 1 ? "s" : ""}</span>
                                     <span className={styles.shortCode}>{shortCode(aisle.id)}</span>
-                                    <button className={styles.btnIcon} onClick={() => { setAddingBay(aisle.id); setCollapsedAisle(s => { const n = new Set(s); n.delete(aisle.id); return n; }); }}>⊕ Bay</button>
-                                    <button className={styles.btnIcon} onClick={() => setBarcode({ id: aisle.id, type: "Aisle", name: aisle.name, path: `${wh.name} · ${sl.name} · ${aisle.name}` })}>▦ Barcode</button>
-                                    <button className={styles.btnIcon} onClick={() => setEditingAisle(aisle.id)}>✎ Edit</button>
+                                    <button className={styles.btnIcon} aria-label={`Add bay to ${aisle.name}`} onClick={() => { setAddingBay(aisle.id); setCollapsedAisle(s => { const n = new Set(s); n.delete(aisle.id); return n; }); }}><span aria-hidden="true">⊕</span> Bay</button>
+                                    <button className={styles.btnIcon} aria-label={`Print barcode for ${aisle.name}`} onClick={() => setBarcode({ id: aisle.id, type: "Aisle", name: aisle.name, path: `${wh.name} · ${sl.name} · ${aisle.name}` })}><span aria-hidden="true">▦</span> Barcode</button>
+                                    <button className={styles.btnIcon} aria-label={`Edit aisle ${aisle.name}`} onClick={() => setEditingAisle(aisle.id)}><span aria-hidden="true">✎</span> Edit</button>
                                     <AisleDeleteButton aisleId={aisle.id} />
                                   </div>
                                 )}
@@ -288,7 +289,7 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                                 {/* Add bay form and bay rows — hidden when aisle is collapsed */}
                                 {!aisleCollapsed && addingBay === aisle.id && (
                                   <div className={styles.bayRow}>
-                                    <InlineForm action={addBay} onDone={() => setAddingBay(null)} fields={<>
+                                    <InlineForm action={addBay} onDone={() => setAddingBay(null)} label="new bay" fields={<>
                                       <input type="hidden" name="aisle_id" value={aisle.id} />
                                       <input name="name" placeholder="Bay name" className={styles.inlineInput} autoFocus />
                                     </>} />
@@ -299,7 +300,7 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                                 {!aisleCollapsed && bays.map((bay) => (
                                   <div key={bay.id} className={styles.bayRow}>
                                     {editingBay === bay.id ? (
-                                      <InlineForm action={editBay} onDone={() => setEditingBay(null)} fields={<>
+                                      <InlineForm action={editBay} onDone={() => setEditingBay(null)} label={`bay ${bay.name}`} fields={<>
                                         <input type="hidden" name="id" value={bay.id} />
                                         <input name="name" defaultValue={bay.name} className={styles.inlineInput} autoFocus />
                                       </>} />
@@ -308,8 +309,8 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
                                         <span className={styles.levelTagBay}>Bay</span>
                                         <span className={styles.entityName}>{bay.name}</span>
                                         <span className={styles.shortCode}>{shortCode(bay.id)}</span>
-                                        <button className={styles.btnIcon} onClick={() => setBarcode({ id: bay.id, type: "Bay", name: bay.name, path: `${wh.name} · ${sl.name} · ${aisle.name} · ${bay.name}` })}>▦ Barcode</button>
-                                        <button className={styles.btnIcon} onClick={() => setEditingBay(bay.id)}>✎ Edit</button>
+                                        <button className={styles.btnIcon} aria-label={`Print barcode for ${bay.name}`} onClick={() => setBarcode({ id: bay.id, type: "Bay", name: bay.name, path: `${wh.name} · ${sl.name} · ${aisle.name} · ${bay.name}` })}><span aria-hidden="true">▦</span> Barcode</button>
+                                        <button className={styles.btnIcon} aria-label={`Edit bay ${bay.name}`} onClick={() => setEditingBay(bay.id)}><span aria-hidden="true">✎</span> Edit</button>
                                         <SimpleDeleteButton id={bay.id} action={deleteBay} />
                                       </>
                                     )}
@@ -332,12 +333,12 @@ export function LocationsTree({ warehouses }: { warehouses: Warehouse[] }) {
       {/* Add warehouse */}
       <div className={styles.addWarehouseRow}>
         {addingWh ? (
-          <InlineForm action={addWarehouse} onDone={() => setAddingWh(false)} fields={
+          <InlineForm action={addWarehouse} onDone={() => setAddingWh(false)} label="new warehouse" fields={
             <input name="name" placeholder="Warehouse name" className={styles.inlineInput} autoFocus />
           } />
         ) : (
           <>
-            <button className={styles.btnAddWarehouse} onClick={() => setAddingWh(true)}>⊕ Add Warehouse</button>
+            <button className={styles.btnAddWarehouse} aria-label="Add warehouse" onClick={() => setAddingWh(true)}><span aria-hidden="true">⊕</span> Add Warehouse</button>
             <span className={styles.addHint}>Multi-warehouse supported — add more any time</span>
           </>
         )}
