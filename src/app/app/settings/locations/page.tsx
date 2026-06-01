@@ -1,55 +1,51 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { getSubscriptionAccess } from "@/lib/subscription/access";
+import { hasFeature } from "@/lib/plans/features";
+import { FeatureUpsell } from "../../_components/feature-upsell";
 import PageHeader from "../../_ui/page-header";
-import { setDefaultLocation } from "./actions";
+import { DefaultLocationPicker } from "./default-location-picker";
 import styles from "./locations.module.css";
 
-export default async function LocationsPage() {
+export default async function LocationsSettingsPage() {
   const ctx = await getServerTenantContext();
   if (!ctx) redirect("/app/auth/login");
   if (ctx.role !== "admin" && ctx.role !== "super_admin") {
     redirect("/app/settings/profile");
   }
 
-  const { data: locations } = await ctx.supabase
+  const { supabase, tenantId } = ctx;
+
+  const access = await getSubscriptionAccess(supabase, tenantId!);
+  if (!access.sub || !hasFeature(access.sub, "binManagement")) {
+    return (
+      <FeatureUpsell
+        feature="Multi-location and bin management"
+        requiredTier="growth"
+      />
+    );
+  }
+
+  const { data: locations } = await supabase
     .from("location")
     .select("id, name, is_default")
+    .eq("tenant_id", tenantId!)
     .order("name", { ascending: true });
 
   return (
     <>
       <PageHeader
-        eyebrow="Workspace"
+        eyebrow="Admin"
+        title="Default Location"
         description="Set the default warehouse location used across the workspace."
+        actions={
+          <Link href="/app/warehouse/locations" className={styles.manageLink}>
+            Manage locations →
+          </Link>
+        }
       />
-      <div className={styles.list}>
-        {(locations ?? []).map((loc) => (
-          <div
-            key={loc.id}
-            className={`${styles.row} ${loc.is_default ? styles.rowDefault : ""}`}
-          >
-            <div className={styles.rowInfo}>
-              <span className={styles.name}>{loc.name}</span>
-              {loc.is_default && (
-                <span className={styles.defaultBadge}>Default</span>
-              )}
-            </div>
-            {!loc.is_default && (
-              <form action={setDefaultLocation}>
-                <input type="hidden" name="location_id" value={loc.id} />
-                <button type="submit" className={styles.setDefaultButton}>
-                  Set as default
-                </button>
-              </form>
-            )}
-          </div>
-        ))}
-        {(locations ?? []).length === 0 && (
-          <p className={styles.empty}>
-            No locations found. Create locations in the Locations module first.
-          </p>
-        )}
-      </div>
+      <DefaultLocationPicker locations={locations ?? []} />
     </>
   );
 }

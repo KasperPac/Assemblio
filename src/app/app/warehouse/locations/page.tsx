@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { getSubscriptionAccess } from "@/lib/subscription/access";
 import { hasFeature } from "@/lib/plans/features";
@@ -42,6 +43,10 @@ export default async function LocationsPage() {
         title="Locations"
         description="Manage warehouses, sub-locations, aisles, and bays."
       />
+      <p className={styles.settingsHint}>
+        Default location is set in{" "}
+        <Link href="/app/settings/locations">Settings → Locations</Link>.
+      </p>
       <LocationsTree warehouses={(warehouses ?? []) as Warehouse[]} />
     </div>
   );

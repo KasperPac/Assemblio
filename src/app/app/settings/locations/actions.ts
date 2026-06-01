@@ -1,40 +1,50 @@
 "use server";
 
-import { getServerTenantContext } from "@/lib/tenant/context";
 import { revalidatePath } from "next/cache";
+import { getServerTenantContext } from "@/lib/tenant/context";
 
-export async function setDefaultLocation(formData: FormData): Promise<void> {
-  const ctx = await getServerTenantContext();
-  if (!ctx) throw new Error("Not authenticated");
-  if (ctx.role !== "admin" && ctx.role !== "super_admin") {
-    throw new Error("Admin access required");
-  }
+export async function setDefaultLocation(
+  _prevState: { error?: string },
+  formData: FormData,
+): Promise<{ error?: string }> {
+  const locationId = formData.get("location_id")?.toString();
+  if (!locationId) return { error: "No location selected." };
 
-  const locationId = formData.get("location_id") as string;
   const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-  if (!locationId || !uuidRe.test(locationId)) throw new Error("Invalid location ID");
+  if (!uuidRe.test(locationId)) return { error: "Invalid location ID." };
 
-  // Verify location belongs to this tenant before the destructive clear step.
-  const { data: check } = await ctx.supabase
+  const ctx = await getServerTenantContext();
+  if (!ctx) return { error: "Unauthorized." };
+  if (ctx.role !== "admin" && ctx.role !== "super_admin") {
+    return { error: "Admin access required." };
+  }
+  const { supabase, tenantId } = ctx;
+
+  // Verify location belongs to this tenant before clearing.
+  const { data: check } = await supabase
     .from("location")
     .select("id")
     .eq("id", locationId)
+    .eq("tenant_id", tenantId!)
     .single();
-  if (!check) throw new Error("Location not found");
+  if (!check) return { error: "Location not found." };
 
-  const { error: clearError } = await ctx.supabase
+  // Clear existing default (for all locations except the new one)
+  const { error: clearError } = await supabase
     .from("location")
     .update({ is_default: false })
+    .eq("tenant_id", tenantId!)
     .neq("id", locationId);
+  if (clearError) return { error: clearError.message };
 
-  if (clearError) throw new Error(clearError.message);
-
-  const { error: setError } = await ctx.supabase
+  // Set new default
+  const { error: setError } = await supabase
     .from("location")
     .update({ is_default: true })
-    .eq("id", locationId);
-
-  if (setError) throw new Error(setError.message);
+    .eq("id", locationId)
+    .eq("tenant_id", tenantId!);
+  if (setError) return { error: setError.message };
 
   revalidatePath("/app/settings/locations");
+  return {};
 }

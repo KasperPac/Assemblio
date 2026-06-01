@@ -1,6 +1,14 @@
 .page { display: flex; flex-direction: column; gap: 18px; }
 .error { color: var(--danger); font-size: 0.9rem; }
 
+.settingsHint {
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+  margin: -8px 0 0;
+}
+.settingsHint a { color: var(--ink-muted); text-decoration: underline; }
+.settingsHint a:hover { color: var(--ink-strong); }
+
 .loadingHint {
   font-size: var(--fs-sm);
   color: var(--ink-faint);
