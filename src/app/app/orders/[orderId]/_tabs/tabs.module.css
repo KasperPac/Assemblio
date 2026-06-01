@@ -66,6 +66,11 @@
   font-size: 11px;
 }
 .dash { color: var(--ink-muted); }
+.shopifyNote {
+  color: var(--ink-muted);
+  font-size: 13px;
+  margin-top: 12px;
+}
 .markBtn {
   background: var(--brand-1);
   color: var(--ink-on-brand);

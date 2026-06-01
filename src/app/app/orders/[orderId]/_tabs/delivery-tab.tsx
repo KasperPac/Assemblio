@@ -70,7 +70,7 @@ export default function DeliveryTab({ orderId, orderSource, lines }: Props) {
         </tbody>
       </table>
       {orderSource === "shopify" ? (
-        <p className={styles.dash} style={{ marginTop: 12 }}>
+        <p className={styles.shopifyNote}>
           For Shopify orders, status auto-flips on next sync when fulfillment lands.
           Manual &ldquo;Mark shipped&rdquo; remains available as an override.
         </p>

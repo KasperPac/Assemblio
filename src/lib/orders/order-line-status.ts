@@ -1,5 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+const OPEN_PO_STATUSES = new Set(["draft", "sent", "partial"]);
+
 export type ComponentStatus = {
   componentId: string;
   name: string;
@@ -132,6 +134,7 @@ export async function getOrderLineStatus(
     supabase
       .from("order_component_allocation")
       .select("order_line_id,quantity")
+      .eq("tenant_id", tenantId)
       .in(
         "order_line_id",
         lines.map((l) => l.id)
@@ -184,7 +187,7 @@ export async function getOrderLineStatus(
     };
     const po = Array.isArray(r.purchase_order) ? r.purchase_order[0] : r.purchase_order;
     if (!po) continue;
-    if (po.status === "received" || po.status === "cancelled") continue;
+    if (!OPEN_PO_STATUSES.has(po.status)) continue;
     if (!po.expected_date) continue;
     const eta = new Date(po.expected_date);
     const existing = earliestEtaByComponent.get(r.component_id);
