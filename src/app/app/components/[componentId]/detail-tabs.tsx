@@ -303,6 +303,62 @@ export default function DetailTabs({
   );
 }
 
+function SupplierEditForm({
+  rowId,
+  componentId,
+  unitCost,
+  leadTimeDays,
+  moq,
+  partNumber,
+  onClose,
+}: {
+  rowId: string;
+  componentId: string;
+  unitCost: number | null;
+  leadTimeDays: number | null;
+  moq: number | null;
+  partNumber: string | null;
+  onClose: () => void;
+}) {
+  const [editState, editAction] = React.useActionState(updateComponentSupplier, {});
+
+  React.useEffect(() => {
+    if (editState.success) onClose();
+  }, [editState.success, onClose]);
+
+  return (
+    <form action={editAction} className={styles.supplierEditRow}>
+      <input type="hidden" name="supplier_component_id" value={rowId} />
+      <input type="hidden" name="component_id" value={componentId} />
+      <label className={styles.supplierEditField}>
+        <span>Unit cost</span>
+        <input name="unit_cost" type="number" step="0.01" defaultValue={unitCost ?? ""} className={styles.miniInput} />
+      </label>
+      <label className={styles.supplierEditField}>
+        <span>Lead time (days)</span>
+        <input name="lead_time_days" type="number" defaultValue={leadTimeDays ?? ""} className={styles.miniInput} />
+      </label>
+      <label className={styles.supplierEditField}>
+        <span>MOQ</span>
+        <input name="moq" type="number" defaultValue={moq ?? ""} className={styles.miniInput} />
+      </label>
+      <label className={styles.supplierEditField}>
+        <span>Part #</span>
+        <input name="supplier_part_number" defaultValue={partNumber ?? ""} className={styles.miniInput} />
+      </label>
+      <div className={styles.supplierEditActions}>
+        <button type="submit" className={styles.btnSmall}>Save</button>
+        <button type="button" className={styles.btnSmall} onClick={onClose}>Cancel</button>
+      </div>
+      {editState.error && (
+        <p style={{ color: "var(--danger)", fontSize: "0.8rem", margin: "0", width: "100%" }}>
+          {editState.error}
+        </p>
+      )}
+    </form>
+  );
+}
+
 function ComponentSuppliersTab({
   componentId,
   catalog,
@@ -317,11 +373,6 @@ function ComponentSuppliersTab({
   const [linkOpen, setLinkOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [unlinkConfirmId, setUnlinkConfirmId] = useState<string | null>(null);
-  const [editState, editAction] = React.useActionState(updateComponentSupplier, {});
-
-  React.useEffect(() => {
-    if (editState.success) setEditingId(null);
-  }, [editState.success]);
 
   const minCost = catalog.length > 0 ? Math.min(...catalog.filter(r => r.unitCost != null).map((r) => r.unitCost!)) : Infinity;
   const minLt = catalog.length > 0 ? Math.min(...catalog.filter(r => r.leadTimeDays != null).map((r) => r.leadTimeDays!)) : Infinity;
@@ -434,38 +485,15 @@ function ComponentSuppliersTab({
                 </div>
 
                 {isEditing && (
-                  <form
-                    action={editAction}
-                    className={styles.supplierEditRow}
-                  >
-                    <input type="hidden" name="supplier_component_id" value={row.id} />
-                    <input type="hidden" name="component_id" value={componentId} />
-                    <label className={styles.supplierEditField}>
-                      <span>Unit cost</span>
-                      <input name="unit_cost" type="number" step="0.01" defaultValue={row.unitCost ?? ""} className={styles.miniInput} />
-                    </label>
-                    <label className={styles.supplierEditField}>
-                      <span>Lead time (days)</span>
-                      <input name="lead_time_days" type="number" defaultValue={row.leadTimeDays ?? ""} className={styles.miniInput} />
-                    </label>
-                    <label className={styles.supplierEditField}>
-                      <span>MOQ</span>
-                      <input name="moq" type="number" defaultValue={row.moq ?? ""} className={styles.miniInput} />
-                    </label>
-                    <label className={styles.supplierEditField}>
-                      <span>Part #</span>
-                      <input name="supplier_part_number" defaultValue={row.partNumber ?? ""} className={styles.miniInput} />
-                    </label>
-                    <div className={styles.supplierEditActions}>
-                      <button type="submit" className={styles.btnSmall}>Save</button>
-                      <button type="button" className={styles.btnSmall} onClick={() => setEditingId(null)}>Cancel</button>
-                    </div>
-                    {editState.error && (
-                      <p style={{ color: "var(--danger)", fontSize: "0.8rem", margin: "0", width: "100%" }}>
-                        {editState.error}
-                      </p>
-                    )}
-                  </form>
+                  <SupplierEditForm
+                    rowId={row.id}
+                    componentId={componentId}
+                    unitCost={row.unitCost}
+                    leadTimeDays={row.leadTimeDays}
+                    moq={row.moq}
+                    partNumber={row.partNumber}
+                    onClose={() => setEditingId(null)}
+                  />
                 )}
 
                 {isUnlinkConfirm && (
