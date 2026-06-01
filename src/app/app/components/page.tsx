@@ -150,6 +150,8 @@ export default async function ComponentsPage({ searchParams }: Props) {
         </div>
         <form className={styles.search} method="get">
           {filterLowStock && <input type="hidden" name="filter" value="lowstock" />}
+          {sortCol !== "name" && <input type="hidden" name="sort" value={sortCol} />}
+          {sortCol !== "name" && sortDir === "desc" && <input type="hidden" name="dir" value={sortDir} />}
           <input
             name="q"
             defaultValue={params.q ?? ""}

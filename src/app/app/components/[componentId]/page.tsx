@@ -292,7 +292,11 @@ export default async function ComponentDetailPage({ params }: Props) {
 
   const movementRows = typedMovements.map((m) => ({
     id: m.id,
-    date: new Date(m.created_at).toLocaleDateString("en-GB"),
+    date: new Date(m.created_at).toLocaleDateString("en-AU", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    }),
     deltaOnHand: m.delta_on_hand,
     deltaInProd: m.delta_in_prod,
     reason: m.reason ?? "--",
