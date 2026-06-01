@@ -14,6 +14,7 @@ Manufacturing operations SaaS: inventory, BOMs, production orders, purchasing, s
 
 @C:\dev\manuva-tokens\Manuva Design System\README.md
 @C:\dev\manuva-tokens\Manuva Design System\colors_and_type.css
+@docs/design-system.md
 
 Always follow the Manuva design system when writing UI code. Use the token names from `colors_and_type.css` (`--brand-1`, `--bg-card`, `--ink-strong`, etc.). Do not invent new tokens or hardcode colors.
 
