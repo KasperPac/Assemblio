@@ -377,6 +377,7 @@ function ComponentPicker({
                         <button
                           type="button"
                           className={styles.removeBtn}
+                          aria-label={`Remove ${c.name}`}
                           onClick={() => toggleComponent(c.id)}
                         >
                           ✕

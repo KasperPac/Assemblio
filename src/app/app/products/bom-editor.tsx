@@ -424,7 +424,11 @@ export default function BomEditor({
                       <form action={removeBomComponentLine}>
                         <input type="hidden" name="line_id" value={line.id} />
                         <input type="hidden" name="variant_id" value={variantId} />
-                        <button type="submit" className={styles.removeBtn}>
+                        <button
+                          type="submit"
+                          className={styles.removeBtn}
+                          aria-label={`Remove ${line.component.name}`}
+                        >
                           ✕
                         </button>
                       </form>
