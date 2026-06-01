@@ -1,13 +1,15 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { resolveDateRange } from "../_lib/date-range";
 import { ReportShell } from "../_components/report-shell";
 import { ReportStatCards } from "../_components/report-stat-cards";
-import { ReportTable } from "../_components/report-table";
+import { SortableReportTable } from "../_components/sortable-report-table";
 import type { TableColumn } from "../_components/report-table";
 import { ReportChart } from "../_components/report-chart";
+import styles from "./spend-by-supplier.module.css";
 
-interface SupplierRow {
+interface SupplierRow extends Record<string, unknown> {
   supplierId: string;
   supplier: string;
   poCount: number;
@@ -104,7 +106,9 @@ export default async function SpendBySupplierPage({
     }).format(n);
 
   const columns: TableColumn<SupplierRow>[] = [
-    { key: "supplier", header: "Supplier", render: (r) => r.supplier },
+    { key: "supplier", header: "Supplier", render: (r) => (
+      <Link href={`/app/suppliers/${r.supplierId}`} className={styles.reportLink}>{r.supplier}</Link>
+    )},
     {
       key: "poCount",
       header: "POs",
@@ -158,7 +162,7 @@ export default async function SpendBySupplierPage({
         title="Top 10 Suppliers by Spend"
         series={[{ dataKey: "spend", color: "var(--brand-1)", name: "Spend (AUD)" }]}
       />
-      <ReportTable
+      <SortableReportTable
         columns={columns}
         rows={rows}
         rowKey={(r) => r.supplierId}
