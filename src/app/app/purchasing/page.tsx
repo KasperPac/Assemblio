@@ -2,6 +2,7 @@ import Link from "next/link";
 import styles from "./purchasing.module.css";
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { getStatusVariant } from "./status-utils";
 import PurchaseOrderCreateForm from "./po-create-form";
 import PurchaseOrderLineForm from "./po-line-form";
 import {
@@ -36,14 +37,6 @@ type PurchaseOrderLineRow = {
     | Array<{ name: string | null; sku: string | null }>
     | null;
 };
-
-function getStatusVariant(status: string) {
-  const normalized = status.toLowerCase();
-  if (normalized === "received") return "success";
-  if (normalized === "cancelled" || normalized === "archived") return "danger";
-  if (normalized === "in_transit") return "info";
-  return "warning";
-}
 
 export default async function PurchasingPage() {
   const context = await getServerTenantContext();

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import PageHeader from "../../_ui/page-header";
 import StatusBadge from "../../_ui/status-badge";
+import { getStatusVariant } from "../status-utils";
 import styles from "../purchasing.module.css";
 
 type Props = {
@@ -18,15 +19,6 @@ type POLine = {
     | Array<{ name: string; sku: string | null }>
     | null;
 };
-
-function getStatusVariant(
-  status: string
-): "default" | "success" | "warning" | "danger" | "info" {
-  if (status === "received") return "success";
-  if (status === "cancelled" || status === "archived") return "danger";
-  if (status === "in_transit") return "info";
-  return "warning";
-}
 
 export default async function PurchaseOrderDetailPage({ params }: Props) {
   const { id } = await params;
@@ -189,15 +181,7 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
       </div>
 
       <div>
-        <Link
-          href="/app/purchasing"
-          style={{
-            color: "var(--brand-1)",
-            textDecoration: "none",
-            fontWeight: 500,
-            fontSize: "0.9rem",
-          }}
-        >
+        <Link href="/app/purchasing" className={styles.poLink}>
           ← Back to purchase orders
         </Link>
       </div>
