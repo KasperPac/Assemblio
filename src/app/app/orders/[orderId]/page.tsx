@@ -174,6 +174,7 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
     { data: laborPlans },
     { data: utilizationRows },
     { data: storeRow },
+    { data: actualTimeRows },
   ] = await Promise.all([
     getOrdersPipelineRollup(supabase, tenantId, [
       {
@@ -207,16 +208,15 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
+    supabase
+      .from("job_actual_time_entry")
+      .select("job_labor_plan_id, hours")
+      .eq("tenant_id", tenantId)
+      .eq("order_id", typedOrder.id),
   ]);
 
   const { rollups, lineStatuses: lineStatusMap } = pipelineResult;
   const rollup = rollups.get(typedOrder.id);
-
-  const { data: actualTimeRows } = await supabase
-    .from("job_actual_time_entry")
-    .select("job_labor_plan_id, hours")
-    .eq("tenant_id", tenantId)
-    .eq("order_id", typedOrder.id);
   const actualHoursByPlan = new Map<string, number>();
   for (const r of (actualTimeRows ?? []) as Array<{
     job_labor_plan_id: string | null;
