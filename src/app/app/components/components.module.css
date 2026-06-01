@@ -84,22 +84,22 @@
 
 .field span,
 .field > label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-caps);
   text-transform: uppercase;
-  color: var(--ink-faint);
+  color: var(--ink-muted);
 }
 
 .field input,
 .field select {
-  border: 1px solid var(--stroke);
+  border: 1px solid var(--stroke-strong);
   border-radius: var(--radius-lg);
   min-height: 42px;
   padding: 0 12px;
-  background: var(--surface-1);
+  background: var(--bg-input);
   color: var(--ink-strong);
-  font-size: 0.95rem;
+  font-size: var(--fs-base);
 }
 
 .fieldHint {
