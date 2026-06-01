@@ -159,6 +159,8 @@ export default async function OrdersPage({ searchParams }: Props) {
   return (
     <div className={styles.page}>
       <PageHeader
+        eyebrow="Orders"
+        title="Orders"
         description="Pipeline view: component readiness, production state, and delivery state per order."
         actions={
           <form method="post" action="/api/shopify/sync?return_to=/app/orders">

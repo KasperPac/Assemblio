@@ -23,7 +23,11 @@ export default async function OrdersSettingsPage() {
 
   return (
     <div>
-      <PageHeader description="Configure default delivery targets per order source." />
+      <PageHeader
+        eyebrow="Admin"
+        title="Order settings"
+        description="Configure default delivery targets per order source."
+      />
       <SlaForm shopifyDays={shopifyDays} manualDays={manualDays} />
     </div>
   );
