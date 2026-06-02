@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { updateDeliveryReceipt, updateComponentCosts, linkReceiptToPo } from "./actions";
 import { computeVariance } from "./helpers";
@@ -348,6 +349,17 @@ export default function ReceiptDetail({
               <label>Location</label>
               <span>{resolveLocation(receipt)}</span>
             </div>
+            {receipt.purchase_order_id && (
+              <div className={styles.field}>
+                <label>Purchase Order</label>
+                <Link
+                  href={`/app/purchasing/${receipt.purchase_order_id}`}
+                  className={styles.poLink}
+                >
+                  PO-{receipt.purchase_order_id.slice(0, 8).toUpperCase()} →
+                </Link>
+              </div>
+            )}
             {receipt.stock_in_reason && (
               <div className={styles.field}>
                 <label>Reason</label>

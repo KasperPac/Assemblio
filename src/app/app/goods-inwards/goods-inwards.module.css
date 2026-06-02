@@ -182,3 +182,13 @@
   flex-direction: column;
   gap: 8px;
 }
+
+.poLink {
+  font-size: var(--fs-sm);
+  color: var(--brand-1);
+  text-decoration: none;
+}
+
+.poLink:hover {
+  text-decoration: underline;
+}
