@@ -13,6 +13,7 @@ type ComponentRow = {
   name: string;
   sku: string | null;
   reorder_point: number | null;
+  group_id: string | null;
 };
 
 type BalanceRow = {
@@ -44,7 +45,7 @@ export default async function ComponentsPage({ searchParams }: Props) {
   const params = (await searchParams) ?? {};
   const rawQ = params.q ?? "";
   const q = rawQ.trim().toLowerCase();
-  const sortCol = (params.sort ?? "name") as "name" | "on_hand" | "available" | "reorder_point";
+  const sortCol = (params.sort ?? "name") as "name" | "sku" | "on_hand" | "available" | "reorder_point";
   const sortDir = params.dir === "desc" ? "desc" : "asc";
 
   const context = await getServerTenantContext();
@@ -58,7 +59,7 @@ export default async function ComponentsPage({ searchParams }: Props) {
     { data: locations },
     { data: groups },
   ] = await Promise.all([
-    supabase.from("component").select("id,name,sku,reorder_point").eq("tenant_id", tenantId).is("archived_at", null).order("name"),
+    supabase.from("component").select("id,name,sku,reorder_point,group_id").eq("tenant_id", tenantId).is("archived_at", null).order("name"),
     supabase.from("inventory_balance").select("component_id,on_hand,reserved").eq("tenant_id", tenantId),
     supabase.from("suppliers").select("id,name").eq("tenant_id", tenantId).order("name"),
     supabase.from("location").select("id,name").eq("tenant_id", tenantId).order("name"),
@@ -86,6 +87,7 @@ export default async function ComponentsPage({ searchParams }: Props) {
     let aVal: number | string;
     let bVal: number | string;
     switch (sortCol) {
+      case "sku":           aVal = (a.sku ?? "").toLowerCase();   bVal = (b.sku ?? "").toLowerCase();   break;
       case "on_hand":       aVal = a.onHand;                     bVal = b.onHand;                     break;
       case "available":     aVal = a.available;                  bVal = b.available;                  break;
       case "reorder_point": aVal = a.reorder_point ?? 0;         bVal = b.reorder_point ?? 0;         break;
@@ -106,6 +108,17 @@ export default async function ComponentsPage({ searchParams }: Props) {
     const matchesFilter = !filterLowStock || c.status !== "ok";
     return matchesSearch && matchesFilter;
   });
+
+  // Group filtered components by their group, in group-name order, ungrouped last
+  type Section = { groupId: string | null; groupName: string | null; items: typeof filtered };
+  const knownGroupIds = new Set((groups ?? []).map((g) => g.id));
+  const groupedSections: Section[] = [];
+  for (const group of (groups ?? [])) {
+    const items = filtered.filter((c) => c.group_id === group.id);
+    if (items.length > 0) groupedSections.push({ groupId: group.id, groupName: group.name, items });
+  }
+  const ungrouped = filtered.filter((c) => !c.group_id || !knownGroupIds.has(c.group_id));
+  if (ungrouped.length > 0) groupedSections.push({ groupId: null, groupName: null, items: ungrouped });
 
   const lookups = {
     suppliers: (suppliers ?? []) as Array<{ id: string; name: string }>,
@@ -185,7 +198,11 @@ export default async function ComponentsPage({ searchParams }: Props) {
                     Component {sortCol === "name" ? (sortDir === "asc" ? "▲" : "▼") : ""}
                   </a>
                 </th>
-                <th>SKU</th>
+                <th>
+                  <a href={sortHref("sku", sortCol, sortDir, rawQ, filterLowStock)} className={styles.sortHeader}>
+                    SKU {sortCol === "sku" ? (sortDir === "asc" ? "▲" : "▼") : ""}
+                  </a>
+                </th>
                 <th>
                   <a href={sortHref("on_hand", sortCol, sortDir, rawQ, filterLowStock)} className={styles.sortHeader}>
                     On hand {sortCol === "on_hand" ? (sortDir === "asc" ? "▲" : "▼") : ""}
@@ -204,45 +221,54 @@ export default async function ComponentsPage({ searchParams }: Props) {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((component) => (
-                <tr
-                  key={component.id}
-                  className={
-                    component.status === "critical"
-                      ? styles.rowCritical
-                      : component.status === "low"
-                      ? styles.rowLow
-                      : ""
-                  }
-                >
-                  <td>
-                    <Link
-                      href={`/app/components/${component.id}`}
-                      className={styles.nameCell}
+              {groupedSections.map((section) => (
+                <>
+                  {section.groupName !== null && (
+                    <tr key={`group-${section.groupId}`}>
+                      <td colSpan={5} className={styles.groupHeader}>{section.groupName}</td>
+                    </tr>
+                  )}
+                  {section.items.map((component) => (
+                    <tr
+                      key={component.id}
+                      className={
+                        component.status === "critical"
+                          ? styles.rowCritical
+                          : component.status === "low"
+                          ? styles.rowLow
+                          : ""
+                      }
                     >
-                      <span
-                        className={`${styles.dot} ${
-                          component.status === "critical"
-                            ? styles.dotCritical
-                            : component.status === "low"
-                            ? styles.dotLow
-                            : styles.dotOk
-                        }`}
-                      >
-                        <span className={styles.srOnly}>
-                          {component.status === "critical" ? "Critical" : component.status === "low" ? "Low" : "OK"}
-                        </span>
-                      </span>
-                      {component.name}
-                    </Link>
-                  </td>
-                  <td className={styles.meta}>{component.sku ?? "—"}</td>
-                  <td>{component.onHand}</td>
-                  <td className={component.status !== "ok" ? styles.availableLow : ""}>
-                    {component.available}
-                  </td>
-                  <td className={styles.meta}>{component.reorder_point ?? 0}</td>
-                </tr>
+                      <td>
+                        <Link
+                          href={`/app/components/${component.id}`}
+                          className={styles.nameCell}
+                        >
+                          <span
+                            className={`${styles.dot} ${
+                              component.status === "critical"
+                                ? styles.dotCritical
+                                : component.status === "low"
+                                ? styles.dotLow
+                                : styles.dotOk
+                            }`}
+                          >
+                            <span className={styles.srOnly}>
+                              {component.status === "critical" ? "Critical" : component.status === "low" ? "Low" : "OK"}
+                            </span>
+                          </span>
+                          {component.name}
+                        </Link>
+                      </td>
+                      <td className={styles.meta}>{component.sku ?? "—"}</td>
+                      <td>{component.onHand}</td>
+                      <td className={component.status !== "ok" ? styles.availableLow : ""}>
+                        {component.available}
+                      </td>
+                      <td className={styles.meta}>{component.reorder_point ?? 0}</td>
+                    </tr>
+                  ))}
+                </>
               ))}
             </tbody>
           </table>

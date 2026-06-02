@@ -223,6 +223,19 @@
   box-shadow: var(--shadow-focus);
 }
 
+/* ── Group header rows ─── */
+
+.groupHeader {
+  background: var(--bg-card-alt);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  color: var(--ink-muted);
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
 /* ── Stock status indicators ─── */
 
 .nameCell {
