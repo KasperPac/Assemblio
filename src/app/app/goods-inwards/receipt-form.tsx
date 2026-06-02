@@ -286,7 +286,7 @@ export default function ReceiptForm({
           className={styles.formCard}
           style={{
             background: "var(--bg-card-alt)",
-            borderColor: "var(--brand-1, #3b82f6)",
+            borderColor: "var(--brand-1)",
             borderWidth: "1.5px",
           }}
         >

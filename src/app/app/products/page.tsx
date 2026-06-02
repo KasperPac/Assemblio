@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "./products.module.css";
 import PageHeader from "@/app/app/_ui/page-header";
+import EmptyState from "@/app/app/_ui/empty-state";
 import ProductFilters from "./product-filters";
 
 type ProductRow = {
@@ -296,6 +297,7 @@ export default async function ProductsPage({ searchParams }: Props) {
   return (
     <div className={styles.page}>
       <PageHeader
+        eyebrow="Products"
         title="Products"
         description={`${filteredProducts.length} of ${products.length} products`}
         actions={
@@ -330,9 +332,9 @@ export default async function ProductsPage({ searchParams }: Props) {
           <span>Actual GP %</span>
         </div>
         {productsError ? (
-          <div className={styles.empty}>Failed to load products: {productsError}</div>
+          <EmptyState title="Failed to load" message={`Could not load products: ${productsError}`} />
         ) : filteredProducts.length === 0 ? (
-          <div className={styles.empty}>No products match your filters.</div>
+          <EmptyState title="No results" message="No products match your filters." />
         ) : (
           filteredProducts.map((product) => {
             const productVariants = variantsByProduct[product.id] ?? [];

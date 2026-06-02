@@ -35,7 +35,7 @@
   background: var(--bg-card);
   color: var(--ink-strong);
   font-weight: 600;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  box-shadow: var(--shadow-card);
 }
 
 .primary {
@@ -154,7 +154,7 @@
 }
 
 .varianceOver {
-  color: #d97706;
+  color: var(--warning);
 }
 
 .secondary {

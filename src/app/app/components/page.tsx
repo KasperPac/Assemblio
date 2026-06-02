@@ -5,6 +5,7 @@ import styles from "./components.module.css";
 import ComponentCreateForm from "./component-create-form";
 import { createComponent } from "./actions";
 import PageHeader from "../_ui/page-header";
+import EmptyState from "../_ui/empty-state";
 import { getStockStatus } from "./helpers";
 
 type ComponentRow = {
@@ -162,15 +163,18 @@ export default async function ComponentsPage({ searchParams }: Props) {
       </div>
 
       {error ? (
-        <p className={styles.empty}>Failed to load components.</p>
+        <EmptyState title="Failed to load" message="Could not load components. Please refresh." />
       ) : filtered.length === 0 ? (
-        <p className={styles.empty}>
-          {filterLowStock
-            ? "All components have sufficient available stock."
-            : q.length > 0
-            ? "No components match that search."
-            : "No components yet. Add one above."}
-        </p>
+        <EmptyState
+          title={filterLowStock ? "All stocked up" : q.length > 0 ? "No results" : "No components yet"}
+          message={
+            filterLowStock
+              ? "All components have sufficient available stock."
+              : q.length > 0
+              ? "No components match that search."
+              : "Add your first component to get started."
+          }
+        />
       ) : (
         <div className={styles.tableCard}>
           <table className={styles.table}>
