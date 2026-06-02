@@ -136,7 +136,7 @@ export default function ComponentImage({
             disabled={isPending}
             aria-label="Find image from supplier catalog"
           >
-            {isPending ? "Searching…" : "🔍 Find image"}
+            {isPending ? "Searching…" : <><span aria-hidden="true">🔍</span> Find image</>}
           </button>
         )}
 
@@ -148,7 +148,7 @@ export default function ComponentImage({
             disabled={isPending}
             aria-label="Remove component image"
           >
-            🗑 Remove
+            <span aria-hidden="true">🗑</span> Remove
           </button>
         )}
       </div>
