@@ -123,12 +123,14 @@ export default async function ComponentDetailPage({ params }: Props) {
 
   // Fetch the component itself — no embedded joins to avoid PostgREST FK resolution issues.
   // Related names (supplier, location, group) are fetched in separate queries below.
-  const { data: component } = await supabase
+  const { data: component, error: componentError } = await supabase
     .from("component")
     .select("id,name,sku,unit,cost_per_unit,reorder_point,low_stock_level,archived_at,created_at,tenant_id,bin_sub_location_id,bin_aisle_id,bin_bay_id,supplier_id,group_id,image_url,description")
     .eq("id", componentId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
+
+  console.error("[ComponentDetail] id=%s tenantId=%s data=%s error=%s", componentId, tenantId, JSON.stringify(component), JSON.stringify(componentError));
 
   if (!component) notFound();
 
