@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "./components.module.css";
 import ComponentCreateForm from "./component-create-form";
+import ComponentTable, { type ComponentSection } from "./component-table";
 import { createComponent } from "./actions";
 import PageHeader from "../_ui/page-header";
 import EmptyState from "../_ui/empty-state";
@@ -31,15 +32,6 @@ type Props = {
   }>;
 };
 
-function sortHref(col: string, currentSort: string, currentDir: string, currentQ: string, isLowStock: boolean) {
-  const newDir = currentSort === col && currentDir === "asc" ? "desc" : "asc";
-  const urlParams = new URLSearchParams();
-  if (isLowStock) urlParams.set("filter", "lowstock");
-  if (currentQ) urlParams.set("q", currentQ);
-  urlParams.set("sort", col);
-  urlParams.set("dir", newDir);
-  return `/app/components?${urlParams.toString()}`;
-}
 
 export default async function ComponentsPage({ searchParams }: Props) {
   const params = (await searchParams) ?? {};
@@ -190,88 +182,13 @@ export default async function ComponentsPage({ searchParams }: Props) {
         />
       ) : (
         <div className={styles.tableCard}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>
-                  <a href={sortHref("name", sortCol, sortDir, rawQ, filterLowStock)} className={styles.sortHeader}>
-                    Component {sortCol === "name" ? (sortDir === "asc" ? "▲" : "▼") : ""}
-                  </a>
-                </th>
-                <th>
-                  <a href={sortHref("sku", sortCol, sortDir, rawQ, filterLowStock)} className={styles.sortHeader}>
-                    SKU {sortCol === "sku" ? (sortDir === "asc" ? "▲" : "▼") : ""}
-                  </a>
-                </th>
-                <th>
-                  <a href={sortHref("on_hand", sortCol, sortDir, rawQ, filterLowStock)} className={styles.sortHeader}>
-                    On hand {sortCol === "on_hand" ? (sortDir === "asc" ? "▲" : "▼") : ""}
-                  </a>
-                </th>
-                <th>
-                  <a href={sortHref("available", sortCol, sortDir, rawQ, filterLowStock)} className={styles.sortHeader}>
-                    Available {sortCol === "available" ? (sortDir === "asc" ? "▲" : "▼") : ""}
-                  </a>
-                </th>
-                <th>
-                  <a href={sortHref("reorder_point", sortCol, sortDir, rawQ, filterLowStock)} className={styles.sortHeader}>
-                    Reorder point {sortCol === "reorder_point" ? (sortDir === "asc" ? "▲" : "▼") : ""}
-                  </a>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {groupedSections.map((section) => (
-                <>
-                  {section.groupName !== null && (
-                    <tr key={`group-${section.groupId}`}>
-                      <td colSpan={5} className={styles.groupHeader}>{section.groupName}</td>
-                    </tr>
-                  )}
-                  {section.items.map((component) => (
-                    <tr
-                      key={component.id}
-                      className={
-                        component.status === "critical"
-                          ? styles.rowCritical
-                          : component.status === "low"
-                          ? styles.rowLow
-                          : ""
-                      }
-                    >
-                      <td>
-                        <Link
-                          href={`/app/components/${component.id}`}
-                          className={styles.nameCell}
-                        >
-                          <span
-                            className={`${styles.dot} ${
-                              component.status === "critical"
-                                ? styles.dotCritical
-                                : component.status === "low"
-                                ? styles.dotLow
-                                : styles.dotOk
-                            }`}
-                          >
-                            <span className={styles.srOnly}>
-                              {component.status === "critical" ? "Critical" : component.status === "low" ? "Low" : "OK"}
-                            </span>
-                          </span>
-                          {component.name}
-                        </Link>
-                      </td>
-                      <td className={styles.meta}>{component.sku ?? "—"}</td>
-                      <td>{component.onHand}</td>
-                      <td className={component.status !== "ok" ? styles.availableLow : ""}>
-                        {component.available}
-                      </td>
-                      <td className={styles.meta}>{component.reorder_point ?? 0}</td>
-                    </tr>
-                  ))}
-                </>
-              ))}
-            </tbody>
-          </table>
+          <ComponentTable
+            sections={groupedSections as ComponentSection[]}
+            sortCol={sortCol}
+            sortDir={sortDir}
+            rawQ={rawQ}
+            filterLowStock={filterLowStock}
+          />
         </div>
       )}
     </div>
