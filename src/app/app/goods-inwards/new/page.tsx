@@ -23,7 +23,7 @@ export default async function NewReceiptPage({ searchParams }: Props) {
     supabase.from("suppliers").select("id, name").eq("tenant_id", tenantId).order("name"),
     supabase
       .from("component")
-      .select("id, name, sku, unit, cost_per_unit, group:group_id(name)")
+      .select("id, name, sku, unit, cost_per_unit, image_url, group:group_id(name)")
       .eq("tenant_id", tenantId)
       .order("name"),
     supabase.from("location").select("id, name, is_default").eq("tenant_id", tenantId).order("name"),
@@ -64,6 +64,7 @@ export default async function NewReceiptPage({ searchParams }: Props) {
       sku: (c.sku as string | null) ?? null,
       unit: (c.unit as string | null) ?? null,
       cost_per_unit: (c.cost_per_unit as number | null) ?? null,
+      image_url: (c.image_url as string | null) ?? null,
       group: (rawGroup as { name: string } | null)?.name ?? null,
     };
   });

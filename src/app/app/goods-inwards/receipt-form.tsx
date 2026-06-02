@@ -58,6 +58,56 @@ function componentLabel(c: Component): string {
   return c.sku ? `${c.name} (${c.sku})` : c.name;
 }
 
+function ComponentThumbnail({
+  imageUrl,
+  name,
+}: {
+  imageUrl: string | null;
+  name: string;
+}) {
+  const slotStyle: React.CSSProperties = {
+    width: 36,
+    height: 36,
+    borderRadius: 6,
+    background: "var(--surface-1)",
+    border: "1px solid var(--stroke-card)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+    flexShrink: 0,
+  };
+
+  if (imageUrl) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={imageUrl}
+        alt={name}
+        style={{ ...slotStyle, objectFit: "contain" }}
+      />
+    );
+  }
+
+  return (
+    <div style={slotStyle} aria-hidden="true">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="var(--ink-faint)"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+        <circle cx="12" cy="13" r="4" />
+      </svg>
+    </div>
+  );
+}
+
 export default function ReceiptForm({
   suppliers,
   components,
@@ -457,6 +507,7 @@ export default function ReceiptForm({
         <table className={styles.linesTable}>
           <thead>
             <tr>
+              <th style={{ width: 40 }} aria-label="Image" />
               <th>Component</th>
               {selectedPoId && <th>Expected</th>}
               <th>Qty delivered</th>
@@ -468,6 +519,17 @@ export default function ReceiptForm({
           <tbody>
             {lines.map((line) => (
               <tr key={line.key}>
+                <td style={{ width: 40, paddingRight: 0, verticalAlign: "middle" }}>
+                  {(() => {
+                    const c = components.find((c) => c.id === line.component_id);
+                    return (
+                      <ComponentThumbnail
+                        imageUrl={c?.image_url ?? null}
+                        name={c?.name ?? ""}
+                      />
+                    );
+                  })()}
+                </td>
                 <td>
                   {line.extractedName && (
                     <div style={{ fontSize: "0.75rem", color: "var(--ink-muted)", marginBottom: 4 }}>
