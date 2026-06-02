@@ -23,7 +23,7 @@ export async function setDefaultLocation(
   // Verify location belongs to this tenant before clearing.
   const { data: check } = await supabase
     .from("location")
-    .select("id")
+    .select("id, name")
     .eq("id", locationId)
     .eq("tenant_id", tenantId!)
     .single();
@@ -44,6 +44,16 @@ export async function setDefaultLocation(
     .eq("id", locationId)
     .eq("tenant_id", tenantId!);
   if (setError) return { error: setError.message };
+
+  await supabase.from("activity_log").insert({
+    tenant_id: tenantId!,
+    actor_id: ctx.userId,
+    event: "default_location_changed",
+    metadata: {
+      location_id: locationId,
+      location_name: (check as { id: string; name: string }).name,
+    },
+  });
 
   revalidatePath("/app/settings/locations");
   return {};

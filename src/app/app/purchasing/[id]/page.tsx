@@ -31,7 +31,7 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
     .from("purchase_order")
     .select(
       `id, status, created_at,
-       suppliers(name),
+       supplier:supplier_id(name),
        purchase_order_line(id, quantity, quantity_received,
          component:component_id(name, sku))`
     )
@@ -41,7 +41,7 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
 
   if (error || !po) notFound();
 
-  const rawSupplier = Array.isArray(po.suppliers) ? po.suppliers[0] : po.suppliers;
+  const rawSupplier = Array.isArray(po.supplier) ? po.supplier[0] : po.supplier;
   const supplierName =
     (rawSupplier as { name: string } | null)?.name ?? "Unknown supplier";
   const canReceive = po.status === "open" || po.status === "in_transit";

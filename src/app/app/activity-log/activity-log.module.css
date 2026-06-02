@@ -12,11 +12,11 @@
 
 .filters input,
 .filters select {
-  border: 1px solid var(--stroke);
+  border: 1px solid var(--stroke-strong);
   border-radius: var(--radius-lg);
   min-height: 44px;
   padding: 0 14px;
-  background: var(--surface-1);
+  background: var(--bg-input);
   color: var(--ink-strong);
 }
 
@@ -28,9 +28,9 @@
 
 .tableCard,
 .detailCard {
-  border: 1px solid var(--stroke-strong);
+  border: 1px solid var(--stroke-card);
   border-radius: var(--radius-xl);
-  background: var(--surface-1);
+  background: var(--bg-card);
   box-shadow: var(--shadow-card);
 }
 

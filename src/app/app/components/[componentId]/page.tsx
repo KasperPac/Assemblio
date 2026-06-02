@@ -126,7 +126,7 @@ export default async function ComponentDetailPage({ params }: Props) {
 
   const { data: component } = await supabase
     .from("component")
-    .select("id,name,sku,unit,cost_per_unit,reorder_point,low_stock_level,archived_at,created_at,tenant_id,bin_sub_location_id,bin_aisle_id,bin_bay_id,supplier_id,group_id,image_url,description,supplier:suppliers(name),location:location(name),group:component_group(name)")
+    .select("id,name,sku,unit,cost_per_unit,reorder_point,low_stock_level,archived_at,created_at,tenant_id,bin_sub_location_id,bin_aisle_id,bin_bay_id,supplier_id,group_id,image_url,description,supplier:supplier_id(name),location:location_id(name),group:group_id(name)")
     .eq("id", componentId)
     .eq("tenant_id", tenantId)
     .maybeSingle();

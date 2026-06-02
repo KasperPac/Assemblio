@@ -109,6 +109,20 @@ export async function createStocktakeSession(formData: FormData): Promise<void> 
     }
   }
 
+  await supabase.from("activity_log").insert({
+    tenant_id: tenantId,
+    actor_id: context.userId,
+    event: "stocktake_session_created",
+    metadata: {
+      session_id: session.id,
+      location_id: locationId,
+      session_type: sessionType,
+      reference_number: referenceNumber,
+      blind_count: blindCount,
+      notes,
+    },
+  });
+
   revalidatePath("/app/stocktake");
   redirect(`/app/stocktake/${session.id}`);
 }
