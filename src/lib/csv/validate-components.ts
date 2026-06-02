@@ -14,14 +14,30 @@ export type ComponentLookups = {
   existingSkus: Set<string>;
 };
 
+export type RowError = {
+  message: string;
+  /** hard = must fix CSV and re-upload; soft = resolvable via the Resolve step */
+  type: "hard" | "soft";
+  /** Column name that caused the error — only set on soft errors */
+  field?: string;
+};
+
 export type ValidatedRow = {
   /** 1-indexed row number in the original file (row 1 = header, data starts at 2) */
   rowIndex: number;
   /** Original raw string values from the CSV */
   raw: Record<string, string>;
   /** Set when this row fails validation */
-  error?: string;
+  error?: RowError;
 };
+
+function hard(message: string): RowError {
+  return { message, type: "hard" };
+}
+
+function soft(message: string, field: string): RowError {
+  return { message, type: "soft", field };
+}
 
 /**
  * Validate an array of parsed CSV rows.
@@ -47,40 +63,40 @@ export function validateComponentRows(
     const locationName = (row["location_name"] ?? "").trim() || null;
     const groupName = (row["group_name"] ?? "").trim() || null;
 
-    if (!name) return { rowIndex, raw, error: "Name is required" };
+    if (!name) return { rowIndex, raw, error: hard("Name is required") };
 
     if (sku) {
-      if (seenSkus.has(sku)) return { rowIndex, raw, error: "Duplicate SKU in file" };
-      if (lookups.existingSkus.has(sku)) return { rowIndex, raw, error: "SKU already exists" };
+      if (seenSkus.has(sku)) return { rowIndex, raw, error: hard("Duplicate SKU in file") };
+      if (lookups.existingSkus.has(sku)) return { rowIndex, raw, error: hard("SKU already exists") };
       seenSkus.add(sku);
     }
 
     if (costRaw) {
       const n = Number(costRaw);
       if (!Number.isFinite(n) || n < 0)
-        return { rowIndex, raw, error: "cost_per_unit must be a non-negative number" };
+        return { rowIndex, raw, error: hard("cost_per_unit must be a non-negative number") };
     }
 
     if (reorderRaw) {
       const n = Number(reorderRaw);
       if (!Number.isInteger(n) || n < 0)
-        return { rowIndex, raw, error: "reorder_point must be a non-negative integer" };
+        return { rowIndex, raw, error: hard("reorder_point must be a non-negative integer") };
     }
 
     if (lowStockRaw) {
       const n = Number(lowStockRaw);
       if (!Number.isInteger(n) || n < 0)
-        return { rowIndex, raw, error: "low_stock_level must be a non-negative integer" };
+        return { rowIndex, raw, error: hard("low_stock_level must be a non-negative integer") };
     }
 
     if (supplierName && !lookups.supplierNames.has(supplierName.toLowerCase()))
-      return { rowIndex, raw, error: `Supplier not found: ${supplierName}` };
+      return { rowIndex, raw, error: soft(`Supplier not found: ${supplierName}`, "supplier_name") };
 
     if (locationName && !lookups.locationNames.has(locationName.toLowerCase()))
-      return { rowIndex, raw, error: `Location not found: ${locationName}` };
+      return { rowIndex, raw, error: hard(`Location not found: ${locationName}`) };
 
     if (groupName && !lookups.groupNames.has(groupName.toLowerCase()))
-      return { rowIndex, raw, error: `Group not found: ${groupName}` };
+      return { rowIndex, raw, error: soft(`Group not found: ${groupName}`, "group_name") };
 
     return { rowIndex, raw };
   });
