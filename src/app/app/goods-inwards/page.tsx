@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import ReceiptList from "./receipt-list";
-import HelpLink from "../_ui/help-link";
+import PageHeader from "../_ui/page-header";
+import styles from "./goods-inwards.module.css";
+import Link from "next/link";
 
 export default async function GoodsInwardsPage() {
   const ctx = await getServerTenantContext();
@@ -21,9 +23,18 @@ export default async function GoodsInwardsPage() {
     .order("received_at", { ascending: false });
 
   return (
-    <>
-      <HelpLink slug="purchasing/goods-inwards" label="How to receive goods" />
+    <section className={styles.page}>
+      <PageHeader
+        eyebrow="Operations"
+        title="Goods Inwards"
+        description="Receive and reconcile supplier deliveries against purchase orders."
+        actions={
+          <Link href="/app/goods-inwards/new" className={styles.primary}>
+            New Receipt
+          </Link>
+        }
+      />
       <ReceiptList receipts={receipts ?? []} />
-    </>
+    </section>
   );
 }

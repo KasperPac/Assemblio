@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import type { ReceiptStatus } from "./helpers";
 import styles from "./goods-inwards.module.css";
+import EmptyState from "../_ui/empty-state";
+import StatusBadge from "../_ui/status-badge";
 
 type Receipt = {
   id: string;
@@ -25,6 +27,12 @@ const TABS: { key: FilterTab; label: string }[] = [
   { key: "discrepancy", label: "Discrepancy" },
   { key: "this_week", label: "This Week" },
 ];
+
+const STATUS_VARIANTS: Record<Receipt["status"], "warning" | "success" | "danger"> = {
+  unmatched: "warning",
+  po_linked: "success",
+  discrepancy: "danger",
+};
 
 const STATUS_LABELS: Record<Receipt["status"], string> = {
   unmatched: "Unmatched",
@@ -63,7 +71,7 @@ export default function ReceiptList({ receipts }: { receipts: Receipt[] }) {
   });
 
   return (
-    <div className={styles.page}>
+    <>
       <div className={styles.toolbar}>
         <div className={styles.tabs}>
           {TABS.map((t) => (
@@ -76,14 +84,9 @@ export default function ReceiptList({ receipts }: { receipts: Receipt[] }) {
             </button>
           ))}
         </div>
-        <Link href="/app/goods-inwards/new" className={styles.primary}>
-          New Receipt
-        </Link>
       </div>
 
-      {filtered.length === 0 ? (
-        <p className={styles.empty}>No receipts found.</p>
-      ) : (
+      <div className={styles.tableCard}>
         <table className={styles.table}>
           <thead>
             <tr>
@@ -97,38 +100,49 @@ export default function ReceiptList({ receipts }: { receipts: Receipt[] }) {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((r) => (
-              <tr key={r.id}>
-                <td>{resolveSupplier(r)}</td>
-                <td>
-                  <Link href={`/app/goods-inwards/${r.id}`} className={styles.link}>
-                    {r.supplier_reference}
-                  </Link>
-                </td>
-                <td>{r.delivery_receipt_line.length}</td>
-                <td>
-                  {new Date(r.received_at).toLocaleDateString("en-AU", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </td>
-                <td>{resolveLocation(r)}</td>
-                <td>
-                  {r.purchase_order_id
-                    ? `PO ${r.purchase_order_id.slice(0, 8).toUpperCase()}`
-                    : "—"}
-                </td>
-                <td>
-                  <span className={`${styles.badge} ${styles[`badge_${r.status}`]}`}>
-                    {STATUS_LABELS[r.status]}
-                  </span>
+            {filtered.length === 0 ? (
+              <tr>
+                <td colSpan={7}>
+                  <EmptyState
+                    title="No receipts found"
+                    message="Received deliveries will appear here. Use New Receipt to log a delivery."
+                  />
                 </td>
               </tr>
-            ))}
+            ) : (
+              filtered.map((r) => (
+                <tr key={r.id}>
+                  <td>{resolveSupplier(r)}</td>
+                  <td>
+                    <Link href={`/app/goods-inwards/${r.id}`} className={styles.link}>
+                      {r.supplier_reference}
+                    </Link>
+                  </td>
+                  <td>{r.delivery_receipt_line.length}</td>
+                  <td>
+                    {new Date(r.received_at).toLocaleDateString("en-AU", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </td>
+                  <td>{resolveLocation(r)}</td>
+                  <td>
+                    {r.purchase_order_id
+                      ? `PO ${r.purchase_order_id.slice(0, 8).toUpperCase()}`
+                      : "—"}
+                  </td>
+                  <td>
+                    <StatusBadge variant={STATUS_VARIANTS[r.status]}>
+                      {STATUS_LABELS[r.status]}
+                    </StatusBadge>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
-      )}
-    </div>
+      </div>
+    </>
   );
 }
