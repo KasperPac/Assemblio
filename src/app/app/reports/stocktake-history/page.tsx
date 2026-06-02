@@ -6,6 +6,7 @@ import { ReportStatCards } from "../_components/report-stat-cards";
 import { ReportChart } from "../_components/report-chart";
 import { ReportTable, Badge } from "../_components/report-table";
 import type { TableColumn, BadgeVariant } from "../_components/report-table";
+import styles from "./stocktake-history.module.css";
 
 interface Row { id: string; date: string; location: string; status: string; lineCount: number; varianceLines: number; totalVarianceQty: number; }
 interface ChartPoint extends Record<string, unknown> { date: string; variances: number; }
@@ -66,7 +67,7 @@ export default async function StocktakeHistoryPage({
     { key: "location", header: "Location", render: (r) => r.location },
     { key: "status", header: "Status", render: (r) => <Badge variant={STATUS_VARIANT[r.status] ?? "gray"}>{r.status.replace("_", " ")}</Badge> },
     { key: "lineCount", header: "Lines counted", align: "right", render: (r) => r.lineCount },
-    { key: "varianceLines", header: "Variance lines", align: "right", render: (r) => <span style={{ color: r.varianceLines > 0 ? "var(--warning)" : "var(--ink-muted)" }}>{r.varianceLines}</span> },
+    { key: "varianceLines", header: "Variance lines", align: "right", render: (r) => <span className={r.varianceLines > 0 ? styles.variance : styles.noVariance}>{r.varianceLines}</span> },
     { key: "totalVarianceQty", header: "Total variance qty", align: "right", render: (r) => r.totalVarianceQty.toLocaleString() },
   ];
 

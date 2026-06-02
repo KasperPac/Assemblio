@@ -5,3 +5,5 @@
 .reportLink:hover {
   text-decoration: underline;
 }
+
+.muted { color: var(--ink-muted); }

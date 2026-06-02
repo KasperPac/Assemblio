@@ -5,3 +5,6 @@
 .reportLink:hover {
   text-decoration: underline;
 }
+
+.late { color: var(--warning); }
+.poor { color: var(--danger); }

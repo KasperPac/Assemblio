@@ -7,3 +7,5 @@
 .reportLink:hover {
   text-decoration: underline;
 }
+
+.overdue { color: var(--danger); }

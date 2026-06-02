@@ -1,0 +1,2 @@
+.variance   { color: var(--warning); }
+.noVariance { color: var(--ink-muted); }

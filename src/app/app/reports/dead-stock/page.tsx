@@ -92,7 +92,11 @@ export default async function DeadStockPage({
     {
       key: "daysIdle", header: "Days idle", align: "right",
       render: (r) => (
-        <span style={{ color: r.daysIdle >= 180 ? "var(--danger)" : r.daysIdle >= 90 ? "var(--warning)" : "var(--ink-strong)", fontWeight: 600 }}>
+        <span className={
+          r.daysIdle >= 180 ? styles.idleHigh
+          : r.daysIdle >= 90 ? styles.idleMed
+          : styles.idleLow
+        }>
           {r.daysIdle === 999 ? "never moved" : r.daysIdle}
         </span>
       ),

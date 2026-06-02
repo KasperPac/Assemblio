@@ -79,7 +79,7 @@ export default async function MovementsPage({
   }));
 
   const columns: TableColumn<Row>[] = [
-    { key: "date", header: "Date", render: (r) => <span style={{ color: "var(--ink-muted)" }}>{r.date}</span> },
+    { key: "date", header: "Date", render: (r) => <span className={styles.muted}>{r.date}</span> },
     {
       key: "component", header: "Component",
       render: (r) => r.componentId
@@ -90,7 +90,7 @@ export default async function MovementsPage({
     {
       key: "qty", header: "Qty", align: "right",
       render: (r) => (
-        <span style={{ color: r.qty > 0 ? "var(--ok)" : r.qty < 0 ? "var(--danger)" : "var(--ink-muted)", fontWeight: 600 }}>
+        <span className={r.qty > 0 ? styles.qtyPositive : r.qty < 0 ? styles.qtyNegative : styles.qtyNeutral}>
           {r.qty > 0 ? `+${r.qty}` : r.qty}
         </span>
       ),

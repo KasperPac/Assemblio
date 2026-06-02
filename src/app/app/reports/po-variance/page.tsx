@@ -127,7 +127,7 @@ export default async function POVariancePage({
       header: "Variance",
       align: "right",
       render: (row) => (
-        <span style={{ color: row.variance > 0 ? "var(--ok)" : "var(--danger)" }}>
+        <span className={row.variance > 0 ? styles.positive : styles.negative}>
           {row.variance > 0 ? "+" : ""}{row.variance}
         </span>
       ),
@@ -137,7 +137,7 @@ export default async function POVariancePage({
       header: "Variance %",
       align: "right",
       render: (row) => (
-        <span style={{ color: row.variancePct > 0 ? "var(--ok)" : "var(--danger)" }}>
+        <span className={row.variancePct > 0 ? styles.positive : styles.negative}>
           {row.variancePct > 0 ? "+" : ""}{row.variancePct}%
         </span>
       ),

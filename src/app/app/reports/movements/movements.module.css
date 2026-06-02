@@ -5,3 +5,8 @@
 .reportLink:hover {
   text-decoration: underline;
 }
+
+.muted       { color: var(--ink-muted); }
+.qtyPositive { color: var(--ok);        font-weight: 600; }
+.qtyNegative { color: var(--danger);    font-weight: 600; }
+.qtyNeutral  { color: var(--ink-muted); font-weight: 600; }

@@ -7,3 +7,6 @@
 .reportLink:hover {
   text-decoration: underline;
 }
+
+.positive { color: var(--ok); }
+.negative { color: var(--danger); }

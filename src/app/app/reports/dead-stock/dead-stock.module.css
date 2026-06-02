@@ -5,3 +5,7 @@
 .reportLink:hover {
   text-decoration: underline;
 }
+
+.idleHigh { color: var(--danger);     font-weight: 600; }
+.idleMed  { color: var(--warning);    font-weight: 600; }
+.idleLow  { color: var(--ink-strong); font-weight: 600; }

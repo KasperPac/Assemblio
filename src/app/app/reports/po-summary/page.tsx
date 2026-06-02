@@ -84,7 +84,7 @@ export default async function POSummaryPage({
     )},
     { key: "supplier", header: "Supplier", render: (r) => r.supplier },
     { key: "status", header: "Status", render: (r) => <Badge variant={STATUS_VARIANT[r.status] ?? "gray"}>{r.status}</Badge> },
-    { key: "expectedDate", header: "Expected date", render: (r) => <span style={{ color: r.overdue ? "var(--danger)" : "inherit" }}>{r.expectedDate ?? "—"}{r.overdue ? " ⚠" : ""}</span> },
+    { key: "expectedDate", header: "Expected date", render: (r) => <span className={r.overdue ? styles.overdue : undefined}>{r.expectedDate ?? "—"}{r.overdue ? " ⚠" : ""}</span> },
     { key: "value", header: "Total value", align: "right", render: (r) => fmtCurrency(r.totalValue) },
     { key: "lines", header: "Lines", align: "right", render: (r) => r.lineCount },
   ];

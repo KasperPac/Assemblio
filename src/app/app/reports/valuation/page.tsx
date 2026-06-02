@@ -72,7 +72,7 @@ export default async function ValuationPage({
     { key: "on_hand", header: "On hand", align: "right", render: (r) => r.on_hand.toLocaleString() },
     { key: "cost", header: "Cost / unit", align: "right", render: (r) => fmtCurrency(r.cost) },
     { key: "value", header: "Total value", align: "right", render: (r) => fmtCurrency(r.value) },
-    { key: "pct", header: "% of total", align: "right", render: (r) => <span style={{ color: "var(--ink-muted)" }}>{r.pct.toFixed(1)}%</span> },
+    { key: "pct", header: "% of total", align: "right", render: (r) => <span className={styles.muted}>{r.pct.toFixed(1)}%</span> },
   ];
 
   return (

@@ -121,7 +121,7 @@ export default async function LeadTimeAccuracyPage({
       header: "Late",
       align: "right",
       render: (row) => (
-        <span style={{ color: row.late > 0 ? "var(--warning)" : undefined }}>
+        <span className={row.late > 0 ? styles.late : undefined}>
           {row.late}
         </span>
       ),
@@ -131,7 +131,7 @@ export default async function LeadTimeAccuracyPage({
       header: "Accuracy %",
       align: "right",
       render: (row) => (
-        <span style={{ color: row.accuracy < 80 ? "var(--danger)" : undefined }}>
+        <span className={row.accuracy < 80 ? styles.poor : undefined}>
           {row.accuracy}%
         </span>
       ),
