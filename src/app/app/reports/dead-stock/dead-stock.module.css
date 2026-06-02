@@ -6,6 +6,6 @@
   text-decoration: underline;
 }
 
-.idleHigh { color: var(--danger);     font-weight: 600; }
-.idleMed  { color: var(--warning);    font-weight: 600; }
-.idleLow  { color: var(--ink-strong); font-weight: 600; }
+.idleHigh { color: var(--danger);     font-weight: var(--fw-semibold); }
+.idleMed  { color: var(--warning);    font-weight: var(--fw-semibold); }
+.idleLow  { color: var(--ink-strong); font-weight: var(--fw-semibold); }

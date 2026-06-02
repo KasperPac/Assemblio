@@ -7,6 +7,6 @@
 }
 
 .muted       { color: var(--ink-muted); }
-.qtyPositive { color: var(--ok);        font-weight: 600; }
-.qtyNegative { color: var(--danger);    font-weight: 600; }
-.qtyNeutral  { color: var(--ink-muted); font-weight: 600; }
+.qtyPositive { color: var(--ok);        font-weight: var(--fw-semibold); }
+.qtyNegative { color: var(--danger);    font-weight: var(--fw-semibold); }
+.qtyNeutral  { color: var(--ink-muted); font-weight: var(--fw-semibold); }
