@@ -34,6 +34,8 @@ export async function createComponent(
   const supplierId = parseUuid(formData.get("supplier_id"));
   const locationId = parseUuid(formData.get("location_id"));
   const groupId = parseUuid(formData.get("group_id"));
+  const description = formData.get("description")?.toString().trim() || null;
+  const supplierPartNumber = formData.get("supplier_part_number")?.toString().trim() || null;
 
   if (!name) {
     return { error: "Component name is required." };
@@ -45,20 +47,41 @@ export async function createComponent(
   }
   const { supabase, tenantId } = context;
 
-  const { error } = await supabase.from("component").insert({
-    tenant_id: tenantId,
-    name,
-    sku: sku || null,
-    unit: unit || null,
-    reorder_point: reorderPoint,
-    low_stock_level: lowStockLevel,
-    cost_per_unit: costPerUnit,
-    supplier_id: supplierId,
-    location_id: locationId,
-    group_id: groupId,
-  });
+  const { data: newComponent, error } = await supabase
+    .from("component")
+    .insert({
+      tenant_id: tenantId,
+      name,
+      sku: sku || null,
+      unit: unit || null,
+      reorder_point: reorderPoint,
+      low_stock_level: lowStockLevel,
+      cost_per_unit: costPerUnit,
+      supplier_id: supplierId,
+      location_id: locationId,
+      group_id: groupId,
+      description,
+    })
+    .select("id")
+    .single();
 
   if (error) return { error: error.message };
+
+  if (supplierId && newComponent?.id) {
+    const { error: scErr } = await supabase
+      .from("supplier_components")
+      .upsert(
+        {
+          tenant_id: tenantId,
+          supplier_id: supplierId,
+          component_id: newComponent.id,
+          supplier_part_number: supplierPartNumber,
+          is_preferred: true,
+        },
+        { onConflict: "tenant_id,supplier_id,component_id", ignoreDuplicates: false }
+      );
+    if (scErr) console.error("supplier_components upsert failed:", scErr.message);
+  }
 
   await supabase.from("activity_log").insert({
     tenant_id: tenantId,
@@ -85,6 +108,7 @@ export async function updateComponent(
   const costPerUnit = parseNumber(formData.get("cost_per_unit")) ?? 0;
   const supplierId = parseUuid(formData.get("supplier_id"));
   const groupId = parseUuid(formData.get("group_id"));
+  const description = formData.get("description")?.toString().trim() || null;
 
   if (!name) return { error: "Component name is required." };
 
@@ -98,7 +122,7 @@ export async function updateComponent(
 
   const { data: current } = await supabase
     .from("component")
-    .select("name, sku, unit, cost_per_unit, reorder_point, low_stock_level, supplier_id, group_id")
+    .select("name, sku, unit, cost_per_unit, reorder_point, low_stock_level, supplier_id, group_id, description")
     .eq("id", componentId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
@@ -116,6 +140,7 @@ export async function updateComponent(
       low_stock_level: lowStockLevel,
       supplier_id: supplierId,
       group_id: groupId,
+      description,
     })
     .eq("id", componentId)
     .eq("tenant_id", tenantId);
@@ -136,6 +161,7 @@ export async function updateComponent(
         low_stock_level: current.low_stock_level,
         supplier_id: current.supplier_id,
         group_id: current.group_id,
+        description: current.description,
       },
       after: {
         name,
@@ -146,6 +172,7 @@ export async function updateComponent(
         low_stock_level: lowStockLevel,
         supplier_id: supplierId,
         group_id: groupId,
+        description,
       },
     },
   });
