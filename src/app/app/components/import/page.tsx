@@ -430,6 +430,8 @@ export default function ComponentsImportPage() {
                   <th>Unit</th>
                   <th>Cost/unit</th>
                   <th>Supplier</th>
+                  <th>Supplier Part #</th>
+                  <th>Description</th>
                   <th>Status</th>
                 </tr>
               </thead>
@@ -451,6 +453,8 @@ export default function ComponentsImportPage() {
                     <td>{row.raw["unit"] || "—"}</td>
                     <td>{row.raw["cost_per_unit"] || "—"}</td>
                     <td>{row.raw["supplier_name"] || "—"}</td>
+                    <td>{row.raw["supplier_part_number"] || "—"}</td>
+                    <td>{row.raw["description"] || "—"}</td>
                     <td>
                       {row.error?.type === "hard" ? (
                         <span className={styles.errorLabel}>✗ {row.error.message}</span>
