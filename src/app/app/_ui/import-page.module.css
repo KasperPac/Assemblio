@@ -254,3 +254,234 @@
   color: var(--ink-strong);
   margin: 0;
 }
+
+/* ── Soft-mismatch row (warning, resolvable) ── */
+.rowWarning td {
+  background: var(--warning-dim, #fffbeb);
+}
+
+.warningLabel {
+  color: var(--warning);
+  font-size: 0.77rem;
+  font-weight: 600;
+}
+
+/* ── Resolve step ── */
+.resolveSection {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.resolveCard {
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.resolveCardTitle {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  color: var(--ink-muted);
+  margin: 0 0 12px 0;
+}
+
+.mismatchRow {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  align-items: start;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--stroke);
+}
+
+.mismatchRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.csvValueChip {
+  font-family: monospace;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--ink-strong);
+  background: var(--surface-1);
+  padding: 3px 8px;
+  border-radius: var(--radius-lg);
+  display: inline-block;
+}
+
+.rowCount {
+  font-size: var(--fs-xs);
+  color: var(--ink-faint);
+  margin-top: 4px;
+}
+
+.resolutionOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.suggestionChip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--brand-dim);
+  border: 1px solid var(--brand-1);
+  border-radius: var(--radius-lg);
+  padding: 7px 12px;
+  font-size: var(--fs-sm);
+  color: var(--brand-1);
+}
+
+.suggestionLabel {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  background: var(--brand-1);
+  color: var(--ink-on-brand);
+  padding: 2px 6px;
+  border-radius: var(--radius-lg);
+  flex-shrink: 0;
+}
+
+.useSuggestionBtn {
+  composes: primary from "./buttons.module.css";
+  margin-left: auto;
+  min-height: 30px !important;
+  font-size: var(--fs-xs) !important;
+  padding: 0 10px !important;
+}
+
+.orDivider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-xs);
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+}
+
+.orDivider::before,
+.orDivider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--stroke);
+}
+
+.optionGroup {
+  display: flex;
+  gap: 8px;
+}
+
+.existingSelect {
+  flex: 1;
+  height: 36px;
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-lg);
+  padding: 0 10px;
+  font-size: var(--fs-sm);
+  color: var(--ink-strong);
+  background: var(--bg-card);
+}
+
+.createNewBtn {
+  all: unset;
+  height: 36px;
+  padding: 0 14px;
+  border: 1.5px dashed var(--stroke-strong);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  color: var(--brand-1);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+.createNewBtn:hover {
+  border-color: var(--brand-1);
+  background: var(--brand-dim);
+}
+
+.createExpanded {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.createInput {
+  flex: 1;
+  height: 36px;
+  border: 1.5px solid var(--brand-1);
+  border-radius: var(--radius-lg);
+  padding: 0 10px;
+  font-size: var(--fs-sm);
+  color: var(--ink-strong);
+  background: var(--brand-dim);
+  outline: none;
+}
+
+.confirmCreateBtn {
+  composes: primary from "./buttons.module.css";
+  min-height: 36px !important;
+}
+
+.cancelCreateLink {
+  all: unset;
+  font-size: var(--fs-xs);
+  color: var(--ink-muted);
+  cursor: pointer;
+  text-decoration: underline;
+}
+.cancelCreateLink:hover {
+  color: var(--ink-strong);
+}
+
+.resolvedChip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--ok);
+  border-radius: var(--radius-lg);
+  padding: 7px 12px;
+  font-size: var(--fs-sm);
+  color: var(--ok);
+  font-weight: 500;
+}
+
+.undoLink {
+  all: unset;
+  margin-left: auto;
+  font-size: var(--fs-xs);
+  color: var(--ink-muted);
+  cursor: pointer;
+  text-decoration: underline;
+}
+.undoLink:hover {
+  color: var(--ink-strong);
+}
+
+.resolveActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.resolveProgress {
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+}
