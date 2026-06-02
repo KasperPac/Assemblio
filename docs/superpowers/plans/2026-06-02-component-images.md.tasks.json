@@ -1,0 +1,47 @@
+{
+  "planPath": "docs/superpowers/plans/2026-06-02-component-images.md",
+  "tasks": [
+    {
+      "id": 10,
+      "subject": "Task 1: Database migration and storage bucket",
+      "status": "pending",
+      "description": "**Goal:** Add `image_url` to the `component` table and provision the `component-images` Supabase Storage bucket with RLS policies.\n\n**Files:**\n- Create: `supabase/patches/component_images.sql`\n\n**Acceptance Criteria:**\n- [ ] `component` table has a nullable `image_url text` column\n- [ ] `component-images` bucket exists and is public\n- [ ] Any authenticated tenant member can INSERT/UPDATE/DELETE to paths starting with their tenant ID\n- [ ] Public reads work without auth headers\n\n**Verify:** Check Supabase Studio for column and bucket.\n\n```json:metadata\n{\"files\": [\"supabase/patches/component_images.sql\"], \"verifyCommand\": \"Check Supabase Studio\", \"acceptanceCriteria\": [\"image_url column on component table\", \"component-images bucket is public\", \"RLS policies for tenant-scoped write\"]}\n```"
+    },
+    {
+      "id": 11,
+      "subject": "Task 2: Nexar API client",
+      "status": "pending",
+      "blockedBy": [10],
+      "description": "**Goal:** Server-only module with OAuth2 token cache and `searchComponentImage(q)` GraphQL helper.\n\n**Files:**\n- Create: `src/lib/nexar/client.ts`\n- Create: `src/lib/nexar/client.test.ts`\n\n**Acceptance Criteria:**\n- [ ] Returns `{ found: true, imageUrl, mpn, manufacturer }` when Nexar has results\n- [ ] Returns `{ found: false, reason: \"no_results\" }` on empty results\n- [ ] Returns `{ found: false, reason: \"api_error\" }` on HTTP failure\n- [ ] All 3 Vitest tests pass\n\n**Verify:** `npx vitest run src/lib/nexar/client.test.ts` → 3 tests passing\n\n```json:metadata\n{\"files\": [\"src/lib/nexar/client.ts\", \"src/lib/nexar/client.test.ts\"], \"verifyCommand\": \"npx vitest run src/lib/nexar/client.test.ts\", \"acceptanceCriteria\": [\"searchComponentImage returns found:true with imageUrl\", \"returns found:false/no_results on empty\", \"returns found:false/api_error on HTTP failure\"]}\n```"
+    },
+    {
+      "id": 12,
+      "subject": "Task 3: Component image server actions",
+      "status": "pending",
+      "blockedBy": [10, 11],
+      "description": "**Goal:** Three server actions in `actions.ts` — upload, Nexar fetch, remove.\n\n**Files:**\n- Modify: `src/app/app/components/actions.ts`\n\n**Acceptance Criteria:**\n- [ ] `uploadComponentImage` validates type/size, uploads to storage, updates `component.image_url`, logs activity\n- [ ] `fetchComponentImageFromNexar` queries preferred supplier part number, downloads + stores image\n- [ ] `removeComponentImage` deletes from storage, clears `image_url`\n- [ ] `npx tsc --noEmit` passes\n\n**Verify:** `npx tsc --noEmit` → no errors\n\n```json:metadata\n{\"files\": [\"src/app/app/components/actions.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"uploadComponentImage validates and uploads\", \"fetchComponentImageFromNexar fetches and stores\", \"removeComponentImage clears image_url\"]}\n```"
+    },
+    {
+      "id": 13,
+      "subject": "Task 4: ComponentImage client component",
+      "status": "pending",
+      "blockedBy": [12],
+      "description": "**Goal:** Self-contained `\"use client\"` component with image slot, upload, find, remove, inline error state.\n\n**Files:**\n- Create: `src/app/app/components/[componentId]/component-image.tsx`\n- Create: `src/app/app/components/[componentId]/component-image.module.css`\n\n**Acceptance Criteria:**\n- [ ] 96×96 image shows when `initialImageUrl` set; grey placeholder + camera SVG when not\n- [ ] Upload button triggers file picker; client-side validates type and size\n- [ ] Find image button shown only when `hasSupplierPartNumber && !imageUrl`\n- [ ] Remove button shown only when `imageUrl` is set\n- [ ] All buttons disabled during `isPending`\n- [ ] Inline error message shown on failure\n\n**Verify:** `npx tsc --noEmit` → no errors\n\n```json:metadata\n{\"files\": [\"src/app/app/components/[componentId]/component-image.tsx\", \"src/app/app/components/[componentId]/component-image.module.css\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"image displays at 96x96\", \"upload validates client-side\", \"find button conditional on hasSupplierPartNumber\", \"remove button conditional on imageUrl\"]}\n```"
+    },
+    {
+      "id": 14,
+      "subject": "Task 5: Wire into component detail page",
+      "status": "pending",
+      "blockedBy": [10, 13],
+      "description": "**Goal:** Add `image_url` to data fetch, compute `hasPreferredPartNumber`, render `<ComponentImage>` in info card.\n\n**Files:**\n- Modify: `src/app/app/components/[componentId]/page.tsx`\n- Modify: `src/app/app/components/[componentId]/page.module.css`\n\n**Acceptance Criteria:**\n- [ ] `image_url` selected in Supabase query and typed in `ComponentRecord`\n- [ ] `hasPreferredPartNumber` computed from existing supplier catalog fetch\n- [ ] `<ComponentImage>` renders above component name in `aside.infoCard`\n- [ ] No TypeScript errors; app starts cleanly\n\n**Verify:** `npm run dev` → navigate to a component detail page → image slot visible.\n\n```json:metadata\n{\"files\": [\"src/app/app/components/[componentId]/page.tsx\", \"src/app/app/components/[componentId]/page.module.css\"], \"verifyCommand\": \"npm run dev — navigate to a component detail page\", \"acceptanceCriteria\": [\"image_url in ComponentRecord type and Supabase select\", \"hasPreferredPartNumber computed\", \"ComponentImage renders in info card\"]}\n```"
+    },
+    {
+      "id": 15,
+      "subject": "Task 6: Goods Inwards thumbnail column",
+      "status": "pending",
+      "blockedBy": [10],
+      "description": "**Goal:** Add `image_url` to component fetches, add `ComponentThumbnail` helper, render thumbnail as first column in receive lines table.\n\n**Files:**\n- Modify: `src/app/app/goods-inwards/receipt-form.tsx`\n- Modify: `src/app/app/goods-inwards/new/page.tsx`\n- Modify: `src/app/app/goods-inwards/[id]/page.tsx`\n\n**Acceptance Criteria:**\n- [ ] 40px thumbnail column is first column in receive lines table\n- [ ] Components with image show 36×36 `<img>` with `object-fit: contain`\n- [ ] Components without image show grey placeholder box\n- [ ] Table header for thumbnail column is blank\n\n**Verify:** `npm run dev` → Goods Inwards → receive screen → thumbnail column present.\n\n```json:metadata\n{\"files\": [\"src/app/app/goods-inwards/receipt-form.tsx\", \"src/app/app/goods-inwards/new/page.tsx\", \"src/app/app/goods-inwards/[id]/page.tsx\"], \"verifyCommand\": \"npm run dev — navigate to Goods Inwards receive screen\", \"acceptanceCriteria\": [\"40px thumbnail column first in table\", \"image shown at 36x36 for components with images\", \"grey placeholder for components without\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-06-02T00:00:00.000Z"
+}
