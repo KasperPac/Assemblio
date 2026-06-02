@@ -588,6 +588,7 @@ export default function ReceiptForm({
                     className={styles.secondary}
                     style={{ padding: "4px 10px" }}
                     disabled={lines.length === 1}
+                    aria-label="Remove line"
                   >
                     ✕
                   </button>

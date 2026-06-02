@@ -267,8 +267,10 @@ button:hover {
   filter: brightness(1.1);
 }
 
-button:active {
-  transform: translateY(1px);
+@media (prefers-reduced-motion: no-preference) {
+  button:active {
+    transform: translateY(1px);
+  }
 }
 
 input,
@@ -306,4 +308,16 @@ textarea:focus {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--scrollbar-thumb-hover);
+}
+
+/* ── Motion accessibility ───────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

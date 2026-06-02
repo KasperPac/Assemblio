@@ -34,7 +34,7 @@ export default function SupplierCreateForm({ action }: Props) {
         <div className={styles.dialogInner}>
           <div className={styles.dialogHeader}>
             <h2>New Supplier</h2>
-            <button type="button" className={styles.dialogClose} onClick={() => setOpen(false)}>
+            <button type="button" className={styles.dialogClose} onClick={() => setOpen(false)} aria-label="Close dialog">
               &times;
             </button>
           </div>

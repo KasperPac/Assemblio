@@ -66,6 +66,12 @@
   color: var(--brand-1);
 }
 
+.viewBtn:focus-visible,
+.viewActive:focus-visible {
+  outline: 2px solid var(--brand-1);
+  outline-offset: 2px;
+}
+
 /* ── Board view ───────────────────────────────────────────── */
 .board {
   display: flex;
@@ -131,6 +137,11 @@
   box-shadow: var(--shadow-sm);
 }
 
+.card:focus-visible {
+  outline: 2px solid var(--brand-1);
+  outline-offset: 2px;
+}
+
 .cardActive {
   border-color: var(--brand-2);
   background: var(--brand-dim);
@@ -181,6 +192,11 @@
 
 .listRow {
   cursor: pointer;
+}
+
+.listRow:focus-visible {
+  outline: 2px solid var(--brand-1);
+  outline-offset: -2px;
 }
 
 .listOrder {

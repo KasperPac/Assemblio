@@ -36,7 +36,27 @@
   gap: 8px;
 }
 
-.inlineForm select,
+.inlineForm select {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-lg);
+  min-height: 38px;
+  padding: 0 36px 0 12px;
+  background: var(--bg-input) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 12px center;
+  background-size: 10px;
+  color: var(--ink-strong);
+  font-size: var(--fs-base);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.inlineForm select:focus {
+  outline: none;
+  border-color: var(--focus-border);
+  box-shadow: var(--shadow-focus);
+}
+
 .inlineForm input {
   border: 1px solid var(--stroke-strong);
   border-radius: var(--radius-lg);
@@ -44,6 +64,14 @@
   padding: 0 12px;
   background: var(--bg-input);
   color: var(--ink-strong);
+  font-size: var(--fs-base);
+  font-family: inherit;
+}
+
+.inlineForm input:focus {
+  outline: none;
+  border-color: var(--focus-border);
+  box-shadow: var(--shadow-focus);
 }
 
 .inlineFormBtn {
@@ -134,7 +162,7 @@
   border: none;
   background: none;
   color: var(--ink-muted);
-  font-size: 24px;
+  font-size: var(--fs-xl);
   cursor: pointer;
   padding: 0 4px;
   line-height: 1;

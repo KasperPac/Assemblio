@@ -89,6 +89,12 @@
   border-color: var(--surface-hover);
 }
 
+.navItem:focus-visible {
+  outline: 2px solid var(--brand-1);
+  outline-offset: -2px;
+  border-radius: var(--radius-md);
+}
+
 .navIcon {
   width: 20px;
   height: 20px;
@@ -169,6 +175,12 @@
   transform: none;
 }
 
+.dropdownItem:focus-visible {
+  outline: 2px solid var(--brand-1);
+  outline-offset: -2px;
+  background: var(--surface-hover);
+}
+
 .dropdownItemDanger {
   color: var(--danger);
 }
@@ -176,6 +188,11 @@
 .dropdownItemDanger:hover {
   background: var(--danger-dim);
   color: var(--danger);
+}
+
+.dropdownItemDanger:focus-visible {
+  outline: 2px solid var(--danger);
+  outline-offset: -2px;
 }
 
 .dropdownDivider {
@@ -201,6 +218,11 @@
   font-size: var(--fs-sm);
 }
 
+.dropdownSelect:focus-visible {
+  outline: 2px solid var(--brand-1);
+  outline-offset: 1px;
+}
+
 .dropdownSwitchBtn {
   border: none;
   border-radius: var(--radius-md);
@@ -210,6 +232,16 @@
   font-size: var(--fs-sm);
   font-weight: var(--fw-bold);
   cursor: pointer;
+}
+
+.dropdownSwitchBtn:focus-visible {
+  outline: 2px solid var(--brand-1);
+  outline-offset: 2px;
+}
+
+.dropdownSwitchBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .main {
@@ -371,6 +403,11 @@
 .topbarAvatar:hover {
   filter: none;
   opacity: 0.85;
+}
+
+.topbarAvatar:focus-visible {
+  outline: 2px solid var(--brand-1);
+  outline-offset: 2px;
 }
 
 .content {
