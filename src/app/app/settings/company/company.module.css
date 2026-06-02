@@ -128,17 +128,9 @@
 .primaryButton {
   composes: primary from "../../_ui/buttons.module.css";
 }
-.primaryButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
 
 .secondaryButton {
   composes: secondary from "../../_ui/buttons.module.css";
-}
-.secondaryButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 .feedback {

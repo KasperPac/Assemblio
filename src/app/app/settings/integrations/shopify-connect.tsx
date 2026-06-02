@@ -20,7 +20,7 @@ export default function ShopifyConnect() {
           onChange={(event) => setShop(event.target.value)}
           required
         />
-        <button type="submit">Connect Shopify</button>
+        <button type="submit" className={styles.connectFormBtn}>Connect Shopify</button>
       </form>
     </div>
   );

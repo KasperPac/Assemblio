@@ -155,21 +155,8 @@
   padding: var(--space-2) var(--space-3);
 }
 
-.shopifyForm button {
-  font-family: var(--font-body);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-medium);
-  background: var(--brand-1);
-  color: var(--ink-on-brand);
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: var(--space-2) var(--space-4);
-  cursor: pointer;
-  transition: background var(--dur-fast) var(--ease-out);
-}
-
-.shopifyForm button:hover {
-  background: var(--brand-2);
+.connectFormBtn {
+  composes: primary from "../../_ui/buttons.module.css";
 }
 
 /* sync-submit-form.tsx classes */

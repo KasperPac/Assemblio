@@ -158,12 +158,10 @@
 .primaryButton {
   composes: primary from "../../_ui/buttons.module.css";
 }
-.primaryButton:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .dangerButton {
   composes: danger from "../../_ui/buttons.module.css";
 }
-.dangerButton:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .feedback { font-size: var(--fs-sm); color: var(--ok); }
 .errorMsg { font-size: var(--fs-sm); color: var(--danger); }
