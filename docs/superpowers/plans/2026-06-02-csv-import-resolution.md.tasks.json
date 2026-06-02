@@ -1,0 +1,33 @@
+{
+  "planPath": "docs/superpowers/plans/2026-06-02-csv-import-resolution.md",
+  "tasks": [
+    {
+      "id": 1,
+      "subject": "Task 1: Fuzzy matching utility",
+      "status": "pending",
+      "description": "**Goal:** Create `src/lib/csv/fuzzy.ts` — a pure, dependency-free Levenshtein-based best-match function — with full test coverage.\n\n**Files:**\n- Create: `src/lib/csv/fuzzy.ts`\n- Create: `src/lib/csv/fuzzy.test.ts`\n\n**Acceptance Criteria:**\n- [ ] `bestMatch(query, candidates)` returns closest candidate when distance ≤ 2 AND ratio ≤ 30%\n- [ ] Returns `null` when no candidate meets the threshold\n- [ ] Case-insensitive; returned value preserves original candidate casing\n- [ ] All tests pass\n\n**Verify:** `npx vitest run src/lib/csv/fuzzy.test.ts` → all tests green\n\n```json:metadata\n{\"files\": [\"src/lib/csv/fuzzy.ts\", \"src/lib/csv/fuzzy.test.ts\"], \"verifyCommand\": \"npx vitest run src/lib/csv/fuzzy.test.ts\", \"acceptanceCriteria\": [\"bestMatch returns closest candidate when distance ≤ 2 AND ratio ≤ 30%\", \"Returns null when no candidate meets threshold\", \"Case-insensitive matching\", \"All tests pass\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: Update validator — hard vs soft error types",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Update `src/lib/csv/validate-components.ts` so that `error` is a structured object `{ message, type, field? }` instead of a plain string, with supplier/group mismatches returning `type: \"soft\"` and everything else returning `type: \"hard\"`.\n\n**Files:**\n- Modify: `src/lib/csv/validate-components.ts`\n- Modify: `src/lib/csv/validate-components.test.ts`\n\n**Acceptance Criteria:**\n- [ ] `ValidatedRow.error` is `{ message: string; type: \"hard\" | \"soft\"; field?: string }` or undefined\n- [ ] Supplier-not-found → `type: \"soft\"`, `field: \"supplier_name\"`\n- [ ] Group-not-found → `type: \"soft\"`, `field: \"group_name\"`\n- [ ] All other errors → `type: \"hard\"`, no `field`\n- [ ] All tests pass\n\n**Verify:** `npx vitest run src/lib/csv/validate-components.test.ts` → all tests green\n\n```json:metadata\n{\"files\": [\"src/lib/csv/validate-components.ts\", \"src/lib/csv/validate-components.test.ts\"], \"verifyCommand\": \"npx vitest run src/lib/csv/validate-components.test.ts\", \"acceptanceCriteria\": [\"error.type is hard or soft\", \"supplier/group not-found are soft\", \"location not-found is hard\", \"all tests pass\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: Update components import API route",
+      "status": "pending",
+      "blockedBy": [1, 2],
+      "description": "**Goal:** Update `src/app/api/import/components/route.ts` so the dry-run response includes `unknowns` (with fuzzy suggestions) and `allSuppliers`/`allGroups`; the commit path accepts `resolutions`, creates new suppliers/groups, and merges resolved IDs before inserting.\n\n**Files:**\n- Modify: `src/app/api/import/components/route.ts`\n\n**Acceptance Criteria:**\n- [ ] Dry-run response includes `unknowns.suppliers`, `unknowns.groups`, `allSuppliers`, `allGroups`\n- [ ] Fuzzy suggestions computed via `bestMatch`\n- [ ] Commit with complete resolutions succeeds\n- [ ] Commit with missing resolutions returns 400\n- [ ] Commit with hard errors returns 400 regardless\n- [ ] `create_new` resolutions create the DB record before inserting components\n\n**Verify:** `npx tsc --noEmit` → no errors\n\n```json:metadata\n{\"files\": [\"src/app/api/import/components/route.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"dry-run returns unknowns+suggestions+allSuppliers+allGroups\", \"commit accepts resolutions\", \"create_new creates DB records\", \"missing resolutions return 400\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: Update import UI — Preview changes, Resolve step, CSS",
+      "status": "pending",
+      "blockedBy": [3],
+      "description": "**Goal:** Update `src/app/app/components/import/page.tsx` and `src/app/app/_ui/import-page.module.css` to implement the 4-step wizard with amber soft-mismatch warnings in Preview and a new Resolve step.\n\n**Files:**\n- Modify: `src/app/app/components/import/page.tsx`\n- Modify: `src/app/app/_ui/import-page.module.css`\n\n**Acceptance Criteria:**\n- [ ] Wizard bar shows 4 steps: Upload / Preview / Resolve / Done\n- [ ] Soft-mismatch rows show amber warning (not red)\n- [ ] Preview: only soft mismatches → \"Next: Resolve →\"; hard errors → re-upload only; clean → Import\n- [ ] Resolve step: fuzzy suggestion chip, pick-existing dropdown, create-new with editable name\n- [ ] Resolved values show green chip with undo\n- [ ] Import button disabled until all unknowns resolved\n- [ ] `resolutions` JSON sent in FormData on commit\n\n**Verify:** Manual: upload CSV with typo'd supplier → see amber warning → Resolve step → \"Did you mean X?\" → accept → import succeeds\n\n```json:metadata\n{\"files\": [\"src/app/app/components/import/page.tsx\", \"src/app/app/_ui/import-page.module.css\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"4-step wizard\", \"amber soft-mismatch warnings\", \"Resolve step with suggestion/pick/create\", \"resolutions sent on commit\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-06-02T00:00:00.000Z"
+}
