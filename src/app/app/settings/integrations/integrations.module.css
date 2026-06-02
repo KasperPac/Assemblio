@@ -110,7 +110,9 @@
 }
 
 .disconnectButton {
-  composes: danger from "../../_ui/buttons.module.css";
+  composes: secondary from "../../_ui/buttons.module.css";
+  color: var(--danger);
+  border-color: var(--danger-dim);
 }
 
 .disconnectButton:hover {
@@ -164,10 +166,6 @@
   composes: primary from "../../_ui/buttons.module.css";
 }
 
-.syncButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
 
 .syncOverlay {
   position: fixed;
@@ -310,6 +308,7 @@
 
 .syncTable {
   composes: table from "../../_ui/table.module.css";
+  font-size: var(--fs-sm);
   color: var(--ink-muted);
 }
 
