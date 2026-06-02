@@ -12,6 +12,7 @@ type InitialValues = {
   name: string;
   sku: string | null;
   unit: string | null;
+  description: string | null;
   costPerUnit: number;
   reorderPoint: number;
   lowStockLevel: number;
@@ -121,6 +122,17 @@ export default function ComponentEditForm({ componentId, initialValues, lookups 
             <label className={styles.field}>
               <span>Name *</span>
               <input name="name" required defaultValue={initialValues.name} />
+            </label>
+
+            <label className={styles.field}>
+              Description
+              <textarea
+                name="description"
+                rows={2}
+                defaultValue={initialValues.description ?? ""}
+                placeholder="Optional — what is this component used for?"
+                style={{ resize: "vertical" }}
+              />
             </label>
 
             <div className={styles.fieldRow}>

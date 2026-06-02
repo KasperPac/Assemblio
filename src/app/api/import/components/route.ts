@@ -206,11 +206,45 @@ export async function POST(req: NextRequest) {
       supplier_id: supplierName ? (supplierIdMap.get(supplierName.toLowerCase()) ?? null) : null,
       location_id: locationName ? (locationIdMap.get(locationName.toLowerCase()) ?? null) : null,
       group_id: groupName ? (groupIdMap.get(groupName.toLowerCase()) ?? null) : null,
+      description: raw["description"]?.trim() || null,
     };
   });
 
-  const { error } = await supabase.from("component").insert(insertRows);
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  const supplierPartNumbers = validatedRows.map((r) =>
+    r.raw["supplier_part_number"]?.trim() || null
+  );
+
+  const { data: insertedComponents, error: insertError } = await supabase
+    .from("component")
+    .insert(insertRows)
+    .select("id, supplier_id");
+  if (insertError) return NextResponse.json({ error: insertError.message }, { status: 500 });
+
+  if (insertedComponents) {
+    const scRows = insertedComponents
+      .map((comp, i) => ({
+        comp,
+        supplierPartNumber: supplierPartNumbers[i],
+      }))
+      .filter(({ comp }) => comp.supplier_id !== null)
+      .map(({ comp, supplierPartNumber }) => ({
+        tenant_id: tenantId,
+        supplier_id: comp.supplier_id!,
+        component_id: comp.id,
+        supplier_part_number: supplierPartNumber,
+        is_preferred: true,
+      }));
+
+    if (scRows.length > 0) {
+      const { error: scErr } = await supabase
+        .from("supplier_components")
+        .upsert(scRows, {
+          onConflict: "tenant_id,supplier_id,component_id",
+          ignoreDuplicates: false,
+        });
+      if (scErr) console.error("supplier_components bulk upsert failed:", scErr.message);
+    }
+  }
 
   await supabase.from("activity_log").insert({
     tenant_id: tenantId,

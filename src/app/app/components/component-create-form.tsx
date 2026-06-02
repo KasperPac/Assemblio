@@ -29,6 +29,9 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
   const [state, formAction] = React.useActionState(action, initialState);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
+  // Supplier state
+  const [selectedSupplierId, setSelectedSupplierId] = useState("");
+
   // Group state
   const [groups, setGroups] = useState<LookupItem[]>(lookups.groups);
   const [selectedGroupId, setSelectedGroupId] = useState("");
@@ -86,7 +89,7 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
       <button
         type="button"
         className={styles.addButton}
-        onClick={() => { setOpen(true); setFormKey((k) => k + 1); }}
+        onClick={() => { setOpen(true); setFormKey((k) => k + 1); setSelectedSupplierId(""); }}
       >
         + Add Component
       </button>
@@ -115,6 +118,16 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
               <input name="name" required placeholder="e.g. Safety Laser Scanner" />
             </label>
 
+            <label className={styles.field}>
+              Description
+              <textarea
+                name="description"
+                rows={2}
+                placeholder="Optional — what is this component used for?"
+                style={{ resize: "vertical" }}
+              />
+            </label>
+
             <div className={styles.fieldRow}>
               <label className={styles.field}>
                 <span>SKU</span>
@@ -129,7 +142,11 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
             <div className={styles.fieldRow}>
               <label className={styles.field}>
                 <span>Supplier</span>
-                <select name="supplier_id">
+                <select
+                  name="supplier_id"
+                  value={selectedSupplierId}
+                  onChange={(e) => setSelectedSupplierId(e.target.value)}
+                >
                   <option value="">-- None --</option>
                   {lookups.suppliers.map((s) => (
                     <option key={s.id} value={s.id}>{s.name}</option>
@@ -196,6 +213,18 @@ export default function ComponentCreateForm({ action, lookups }: Props) {
                 )}
               </div>
             </div>
+
+            {selectedSupplierId && (
+              <label className={styles.field}>
+                Supplier Part Number
+                <input
+                  type="text"
+                  name="supplier_part_number"
+                  placeholder="e.g. RC0402FR-0710KL"
+                  autoComplete="off"
+                />
+              </label>
+            )}
 
             <label className={styles.field}>
               <span>Location</span>

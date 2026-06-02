@@ -36,8 +36,8 @@ type CreateExpanded = {
 };
 
 const TEMPLATE_CSV = [
-  "name,sku,unit,cost_per_unit,reorder_point,low_stock_level,supplier_name,location_name,group_name",
-  "Safety Laser Scanner,CMP-001,ea,142.00,10,5,Omron,Warehouse A,Electronics",
+  "name,sku,unit,cost_per_unit,reorder_point,low_stock_level,supplier_name,supplier_part_number,location_name,group_name,description",
+  "Safety Laser Scanner,CMP-001,ea,142.00,10,5,Omron,F3SG-4RA0960P14,Warehouse A,Electronics,Compact safety laser scanner for machine guarding",
 ].join("\n");
 
 export default function ComponentsImportPage() {
@@ -395,7 +395,7 @@ export default function ComponentsImportPage() {
             <strong>CSV format:</strong>{" "}
             <code>
               name, sku, unit, cost_per_unit, reorder_point, low_stock_level, supplier_name,
-              location_name, group_name
+              supplier_part_number, location_name, group_name, description
             </code>
             <button type="button" className={styles.templateLink} onClick={downloadTemplate}>
               ↓ Download template
