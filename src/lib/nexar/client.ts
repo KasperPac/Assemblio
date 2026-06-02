@@ -13,8 +13,11 @@ async function getToken(): Promise<string> {
     return cachedToken.accessToken;
   }
 
-  const clientId = process.env.NEXAR_CLIENT_ID ?? "";
-  const clientSecret = process.env.NEXAR_CLIENT_SECRET ?? "";
+  const clientId = process.env.NEXAR_CLIENT_ID;
+  const clientSecret = process.env.NEXAR_CLIENT_SECRET;
+  if (!clientId || !clientSecret) {
+    throw new Error("NEXAR_CLIENT_ID and NEXAR_CLIENT_SECRET must be set");
+  }
 
   const resp = await fetch("https://identity.nexar.com/connect/token", {
     method: "POST",

@@ -1,9 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// Reset modules between tests to clear the module-level token cache
+// Reset modules between tests to clear the module-level token cache.
+// IMPORTANT: `searchComponentImage` must be imported with dynamic `await import("./client")`
+// inside each test body — NOT at the top of the file. A top-level import runs before any
+// beforeEach and captures the stale module reference, breaking cache isolation.
 beforeEach(() => {
   vi.resetModules();
   vi.restoreAllMocks();
+  // Set dummy env vars so the early credential check in getToken() doesn't throw.
+  // Individual tests mock fetch to control what the token endpoint returns.
+  process.env.NEXAR_CLIENT_ID = "test-client-id";
+  process.env.NEXAR_CLIENT_SECRET = "test-client-secret";
 });
 
 describe("searchComponentImage", () => {
