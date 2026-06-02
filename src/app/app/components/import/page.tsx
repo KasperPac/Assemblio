@@ -395,7 +395,7 @@ export default function ComponentsImportPage() {
             <strong>CSV format:</strong>{" "}
             <code>
               name, sku, unit, cost_per_unit, reorder_point, low_stock_level, supplier_name,
-              location_name, group_name
+              supplier_part_number, location_name, group_name, description
             </code>
             <button type="button" className={styles.templateLink} onClick={downloadTemplate}>
               ↓ Download template
