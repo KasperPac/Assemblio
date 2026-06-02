@@ -31,9 +31,6 @@ type ComponentRecord = {
   tenant_id: string;
   image_url: string | null;
   description: string | null;
-  supplier: { name: string } | Array<{ name: string }> | null;
-  location: { name: string } | Array<{ name: string }> | null;
-  group: { name: string } | Array<{ name: string }> | null;
 };
 
 type SupplierCatalogRow = {
@@ -124,9 +121,11 @@ export default async function ComponentDetailPage({ params }: Props) {
   const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
   const isAdmin = role === "admin" || role === "super_admin";
 
+  // Fetch the component itself — no embedded joins to avoid PostgREST FK resolution issues.
+  // Related names (supplier, location, group) are fetched in separate queries below.
   const { data: component } = await supabase
     .from("component")
-    .select("id,name,sku,unit,cost_per_unit,reorder_point,low_stock_level,archived_at,created_at,tenant_id,bin_sub_location_id,bin_aisle_id,bin_bay_id,supplier_id,group_id,image_url,description,supplier:supplier_id(name),location:location_id(name),group:group_id(name)")
+    .select("id,name,sku,unit,cost_per_unit,reorder_point,low_stock_level,archived_at,created_at,tenant_id,bin_sub_location_id,bin_aisle_id,bin_bay_id,supplier_id,group_id,image_url,description")
     .eq("id", componentId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
@@ -134,6 +133,19 @@ export default async function ComponentDetailPage({ params }: Props) {
   if (!component) notFound();
 
   const c = component as ComponentRecord;
+
+  // Resolve human-readable names via separate point queries — avoids embedded-join failures.
+  const [supplierRes, locationRes, groupRes] = await Promise.all([
+    c.supplier_id
+      ? supabase.from("suppliers").select("name").eq("id", c.supplier_id).maybeSingle()
+      : Promise.resolve({ data: null }),
+    (c as unknown as { location_id?: string }).location_id
+      ? supabase.from("location").select("name").eq("id", (c as unknown as { location_id: string }).location_id).maybeSingle()
+      : Promise.resolve({ data: null }),
+    c.group_id
+      ? supabase.from("component_group").select("name").eq("id", c.group_id).maybeSingle()
+      : Promise.resolve({ data: null }),
+  ]);
 
   // Only fetch bin location data for admins — members never see the Location tab
   const [whRes, slRes, aisleRes, bayRes] = isAdmin
@@ -232,10 +244,10 @@ export default async function ComponentDetailPage({ params }: Props) {
   const totalReserved = typedBalances.reduce((s, b) => s + (b.reserved ?? 0), 0);
   const available = totalOnHand - totalReserved;
   const belowReorder = c.reorder_point > 0 && available < c.reorder_point;
-  const supplierName = unwrap(c.supplier)?.name ?? null;
-  const groupName = unwrap(c.group)?.name ?? null;
-  const componentLocation = unwrap(c.location)?.name ?? null;
-  const locationName = componentLocation
+  const supplierName = (supplierRes.data as { name: string } | null)?.name ?? null;
+  const groupName = (groupRes.data as { name: string } | null)?.name ?? null;
+  const locationFromQuery = (locationRes.data as { name: string } | null)?.name ?? null;
+  const locationName = locationFromQuery
     ?? (typedBalances.length > 0 ? (unwrap(typedBalances[0].location)?.name ?? "N/A") : "N/A");
 
   const status = getStockStatus(available, c.reorder_point);
