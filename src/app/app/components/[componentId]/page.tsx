@@ -30,6 +30,7 @@ type ComponentRecord = {
   bin_bay_id: string | null;
   tenant_id: string;
   image_url: string | null;
+  description: string | null;
   supplier: { name: string } | Array<{ name: string }> | null;
   location: { name: string } | Array<{ name: string }> | null;
   group: { name: string } | Array<{ name: string }> | null;
@@ -125,7 +126,7 @@ export default async function ComponentDetailPage({ params }: Props) {
 
   const { data: component } = await supabase
     .from("component")
-    .select("id,name,sku,unit,cost_per_unit,reorder_point,low_stock_level,archived_at,created_at,tenant_id,bin_sub_location_id,bin_aisle_id,bin_bay_id,supplier_id,group_id,image_url,supplier:supplier_id(name),location:location_id(name),group:group_id(name)")
+    .select("id,name,sku,unit,cost_per_unit,reorder_point,low_stock_level,archived_at,created_at,tenant_id,bin_sub_location_id,bin_aisle_id,bin_bay_id,supplier_id,group_id,image_url,description,supplier:supplier_id(name),location:location_id(name),group:group_id(name)")
     .eq("id", componentId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
@@ -355,6 +356,11 @@ export default async function ComponentDetailPage({ params }: Props) {
                     : `Low stock — ${available} available, reorder point is ${c.reorder_point}`}
                 </div>
               )}
+              {c.description && (
+                <p style={{ margin: 0, fontSize: "var(--fs-sm)", color: "var(--ink-muted)" }}>
+                  {c.description}
+                </p>
+              )}
             </div>
           </div>
 
@@ -412,6 +418,7 @@ export default async function ComponentDetailPage({ params }: Props) {
                   name: c.name,
                   sku: c.sku,
                   unit: c.unit,
+                  description: c.description,
                   costPerUnit: c.cost_per_unit,
                   reorderPoint: c.reorder_point,
                   lowStockLevel: c.low_stock_level,
