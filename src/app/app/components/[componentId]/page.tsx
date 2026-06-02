@@ -7,6 +7,7 @@ import { getStockStatus } from "../helpers";
 import { getAvgActualLeadTimesForComponent } from "@/lib/suppliers/catalog";
 import ComponentEditForm from "../component-edit-form";
 import ArchiveButton from "./archive-button";
+import ComponentImage from "./component-image";
 
 type Props = {
   params: Promise<{ componentId: string }>;
@@ -28,6 +29,7 @@ type ComponentRecord = {
   bin_aisle_id: string | null;
   bin_bay_id: string | null;
   tenant_id: string;
+  image_url: string | null;
   supplier: { name: string } | Array<{ name: string }> | null;
   location: { name: string } | Array<{ name: string }> | null;
   group: { name: string } | Array<{ name: string }> | null;
@@ -123,7 +125,7 @@ export default async function ComponentDetailPage({ params }: Props) {
 
   const { data: component } = await supabase
     .from("component")
-    .select("id,name,sku,unit,cost_per_unit,reorder_point,low_stock_level,archived_at,created_at,tenant_id,bin_sub_location_id,bin_aisle_id,bin_bay_id,supplier_id,group_id,supplier:supplier_id(name),location:location_id(name),group:group_id(name)")
+    .select("id,name,sku,unit,cost_per_unit,reorder_point,low_stock_level,archived_at,created_at,tenant_id,bin_sub_location_id,bin_aisle_id,bin_bay_id,supplier_id,group_id,image_url,supplier:supplier_id(name),location:location_id(name),group:group_id(name)")
     .eq("id", componentId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
@@ -215,6 +217,10 @@ export default async function ComponentDetailPage({ params }: Props) {
       avgActualDays: lt ? lt.avgDays : null,
     };
   });
+
+  const hasPreferredPartNumber = ((supplierCatalogRaw ?? []) as SupplierCatalogRow[]).some(
+    (sc) => sc.is_preferred && !!sc.supplier_part_number?.trim()
+  );
 
   const typedBalances = (balances ?? []) as BalanceRecord[];
   const typedMovements = (movements ?? []) as MovementRecord[];
@@ -331,16 +337,25 @@ export default async function ComponentDetailPage({ params }: Props) {
       <div className={styles.layout}>
         {/* ── Left: Component info card ──── */}
         <aside className={styles.infoCard}>
-          <h1 className={styles.componentName}>{c.name}</h1>
-          {c.sku && <span className={styles.skuBadge}>{c.sku}</span>}
+          <div className={styles.imageRow}>
+            <ComponentImage
+              componentId={componentId}
+              initialImageUrl={c.image_url}
+              hasSupplierPartNumber={hasPreferredPartNumber}
+            />
+            <div>
+              <h1 className={styles.componentName}>{c.name}</h1>
+              {c.sku && <span className={styles.skuBadge}>{c.sku}</span>}
 
-          {status !== "ok" && (
-            <div className={styles.alarmBanner}>
-              {status === "critical"
-                ? `Critical — no available stock${totalReserved > 0 ? ` (${totalReserved} committed to production)` : ""}`
-                : `Low stock — ${available} available, reorder point is ${c.reorder_point}`}
+              {status !== "ok" && (
+                <div className={styles.alarmBanner}>
+                  {status === "critical"
+                    ? `Critical — no available stock${totalReserved > 0 ? ` (${totalReserved} committed to production)` : ""}`
+                    : `Low stock — ${available} available, reorder point is ${c.reorder_point}`}
+                </div>
+              )}
             </div>
-          )}
+          </div>
 
           <div className={styles.metaGrid}>
             <div>

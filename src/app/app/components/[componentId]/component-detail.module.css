@@ -52,6 +52,12 @@
   gap: 16px;
 }
 
+.imageRow {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
 .componentName {
   font-size: 22px;
   line-height: 1.2;
