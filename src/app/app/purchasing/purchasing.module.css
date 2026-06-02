@@ -276,6 +276,16 @@
   color: var(--ink-faint);
 }
 
+.link {
+  color: var(--brand-1);
+  text-decoration: none;
+  font-weight: var(--fw-medium);
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
 .backLink {
   font-size: var(--fs-sm);
   color: var(--ink-muted);

@@ -20,6 +20,27 @@ type POLine = {
     | null;
 };
 
+type ReceiptRow = {
+  id: string;
+  supplier_reference: string;
+  received_at: string;
+  status: string;
+};
+
+function receiptStatusVariant(
+  status: string
+): "default" | "success" | "warning" | "danger" | "info" {
+  if (status === "po_linked") return "success";
+  if (status === "discrepancy") return "warning";
+  return "default";
+}
+
+function receiptStatusLabel(status: string): string {
+  if (status === "po_linked") return "PO Linked";
+  if (status === "discrepancy") return "Discrepancy";
+  return "Unmatched";
+}
+
 export default async function PurchaseOrderDetailPage({ params }: Props) {
   const { id } = await params;
 
@@ -40,6 +61,15 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
     .single();
 
   if (error || !po) notFound();
+
+  const { data: receipts } = await supabase
+    .from("delivery_receipt")
+    .select("id, supplier_reference, received_at, status")
+    .eq("purchase_order_id", id)
+    .eq("tenant_id", tenantId)
+    .order("received_at", { ascending: false });
+
+  const receiptRows = (receipts ?? []) as ReceiptRow[];
 
   const rawSupplier = Array.isArray(po.supplier) ? po.supplier[0] : po.supplier;
   const supplierName =
@@ -142,6 +172,47 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
                   </tr>
                 );
               })}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {/* Receipts card */}
+      <div className={styles.formCard}>
+        <h2>Receipts</h2>
+        {receiptRows.length === 0 ? (
+          <p className={styles.meta}>No deliveries recorded against this PO yet.</p>
+        ) : (
+          <table className={styles.linesTable}>
+            <thead>
+              <tr>
+                <th>Docket</th>
+                <th>Received</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {receiptRows.map((r) => (
+                <tr key={r.id}>
+                  <td>
+                    <Link href={`/app/goods-inwards/${r.id}`} className={styles.link}>
+                      {r.supplier_reference}
+                    </Link>
+                  </td>
+                  <td className={styles.meta}>
+                    {new Date(r.received_at).toLocaleDateString("en-AU", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </td>
+                  <td>
+                    <StatusBadge variant={receiptStatusVariant(r.status)}>
+                      {receiptStatusLabel(r.status)}
+                    </StatusBadge>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         )}
