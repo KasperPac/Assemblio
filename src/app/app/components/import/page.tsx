@@ -9,7 +9,7 @@ type Step = "upload" | "preview" | "done";
 type PreviewRow = {
   rowIndex: number;
   raw: Record<string, string>;
-  error?: string;
+  error?: { message: string; type: "hard" | "soft"; field?: string };
 };
 
 const TEMPLATE_CSV = [
@@ -191,7 +191,7 @@ export default function ComponentsImportPage() {
                     <td>{row.raw["supplier_name"] || "—"}</td>
                     <td>
                       {row.error ? (
-                        <span className={styles.errorLabel}>✗ {row.error}</span>
+                        <span className={styles.errorLabel}>✗ {row.error.message}</span>
                       ) : (
                         <span className={styles.okLabel}>✓ OK</span>
                       )}
