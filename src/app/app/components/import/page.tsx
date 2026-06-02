@@ -414,14 +414,7 @@ export default function ComponentsImportPage() {
             </p>
           )}
           {!hasHardErrors && hasSoftMismatches && (
-            <p
-              className={styles.errorBanner}
-              style={{
-                background: "var(--warning-dim, #fffbeb)",
-                borderColor: "var(--warning)",
-                color: "var(--warning)",
-              }}
-            >
+            <p className={`${styles.errorBanner} ${styles.warningBanner}`}>
               ⚠️ <strong>{softMismatchCount} value{softMismatchCount !== 1 ? "s" : ""}</strong>{" "}
               need resolution before you can import — click &ldquo;Next: Resolve&rdquo; below.
             </p>
@@ -508,8 +501,8 @@ export default function ComponentsImportPage() {
       {/* Resolve step */}
       {step === "resolve" && (
         <div className={styles.resolveSection}>
-          <p style={{ fontSize: "var(--fs-sm)", color: "var(--ink-muted)", margin: 0 }}>
-            <strong style={{ color: "var(--ink-strong)" }}>
+          <p className={styles.resolveIntro}>
+            <strong className={styles.resolveIntroStrong}>
               {totalUnknownCount} value{totalUnknownCount !== 1 ? "s" : ""} from your CSV
               weren&rsquo;t recognised.
             </strong>{" "}

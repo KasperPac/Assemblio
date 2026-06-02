@@ -150,11 +150,17 @@
 .errorBanner {
   padding: 10px 14px;
   background: var(--danger-dim);
-  border: 1px solid var(--danger-dim);
+  border: 1px solid var(--danger);
   border-radius: var(--radius-lg);
   color: var(--danger);
   font-size: 0.83rem;
   margin: 0;
+}
+
+.warningBanner {
+  background: var(--warning-dim);
+  border-color: var(--warning);
+  color: var(--warning);
 }
 
 /* ── Preview table ── */
@@ -242,7 +248,7 @@
   gap: 12px;
   padding: 24px;
   background: var(--bg-card);
-  border: 1px solid var(--stroke-strong);
+  border: 1px solid var(--stroke-card);
   border-radius: var(--radius-lg);
 }
 
@@ -271,6 +277,16 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.resolveIntro {
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+  margin: 0;
+}
+
+.resolveIntroStrong {
+  color: var(--ink-strong);
 }
 
 .resolveCard {
