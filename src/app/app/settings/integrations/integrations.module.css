@@ -48,17 +48,10 @@
 }
 
 .manageToggle {
-  font-family: var(--font-body);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-medium);
-  background: transparent;
-  color: var(--brand-1);
-  border: 1px solid var(--brand-dim);
-  border-radius: var(--radius-sm);
-  padding: var(--space-2) var(--space-4);
-  cursor: pointer;
+  composes: secondary from "../../_ui/buttons.module.css";
   align-self: flex-start;
-  transition: background var(--dur-fast) var(--ease-out);
+  color: var(--brand-1);
+  border-color: var(--brand-dim);
 }
 
 .manageToggle:hover {
@@ -117,14 +110,7 @@
 }
 
 .disconnectButton {
-  font-family: var(--font-body);
-  font-size: var(--fs-sm);
-  color: var(--danger);
-  background: transparent;
-  border: 1px solid var(--danger-dim);
-  border-radius: var(--radius-xs);
-  padding: var(--space-1) var(--space-2);
-  cursor: pointer;
+  composes: danger from "../../_ui/buttons.module.css";
 }
 
 .disconnectButton:hover {
@@ -188,20 +174,7 @@
 
 /* sync-submit-form.tsx classes */
 .syncButton {
-  font-family: var(--font-body);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-medium);
-  background: var(--brand-1);
-  color: var(--ink-on-brand);
-  border: none;
-  border-radius: var(--radius-xs);
-  padding: var(--space-1) var(--space-2);
-  cursor: pointer;
-  transition: background var(--dur-fast) var(--ease-out);
-}
-
-.syncButton:hover:not(:disabled) {
-  background: var(--brand-2);
+  composes: primary from "../../_ui/buttons.module.css";
 }
 
 .syncButton:disabled {
@@ -309,23 +282,8 @@
 
 /* xero-manage.tsx */
 .connectButton {
-  display: inline-block;
-  font-family: var(--font-body);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-medium);
-  background: var(--brand-1);
-  color: var(--ink-on-brand);
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: var(--space-2) var(--space-4);
-  cursor: pointer;
-  text-decoration: none;
+  composes: primary from "../../_ui/buttons.module.css";
   flex-shrink: 0;
-  transition: background var(--dur-fast) var(--ease-out);
-}
-
-.connectButton:hover {
-  background: var(--brand-2);
 }
 
 .integrationSection {
@@ -364,9 +322,7 @@
 }
 
 .syncTable {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: var(--fs-sm);
+  composes: table from "../../_ui/table.module.css";
   color: var(--ink-muted);
 }
 

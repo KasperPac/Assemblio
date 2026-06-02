@@ -6,6 +6,7 @@ export default function AppearancePage() {
     <>
       <PageHeader
         eyebrow="Personal"
+        title="Appearance"
         description="Choose a visual theme for your workspace."
       />
       <ThemePicker />

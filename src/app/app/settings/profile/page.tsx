@@ -22,6 +22,7 @@ export default async function ProfilePage() {
     <>
       <PageHeader
         eyebrow="Personal"
+        title="Profile"
         description="Your display name and account security."
       />
       <ProfileForm

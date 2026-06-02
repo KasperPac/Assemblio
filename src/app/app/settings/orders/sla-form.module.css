@@ -24,14 +24,8 @@
   width: 120px;
 }
 .submit {
+  composes: primary from "../../_ui/buttons.module.css";
   align-self: flex-start;
-  background: var(--brand-1);
-  color: var(--ink-on-brand);
-  border: none;
-  padding: 8px 18px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
   margin-top: 4px;
 }
 .meta {

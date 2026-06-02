@@ -59,6 +59,7 @@ export default async function IntegrationsPage({ searchParams }: Props) {
     <>
       <PageHeader
         eyebrow="Workspace"
+        title="Integrations"
         description="Connect external services to sync catalog, orders, and inventory."
       />
       {params.shopify && (

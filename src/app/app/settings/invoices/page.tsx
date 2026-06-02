@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import PageHeader from "../../_ui/page-header";
+import EmptyState from "../../_ui/empty-state";
+import StatusBadge from "../../_ui/status-badge";
 import styles from "./invoices.module.css";
 
 export default async function InvoicesPage() {
@@ -28,13 +30,15 @@ export default async function InvoicesPage() {
     <>
       <PageHeader
         eyebrow="Workspace"
+        title="Invoices"
         description="Monthly subscription invoices for your workspace."
       />
 
       {invoicesWithUrls.length === 0 ? (
-        <p className={styles.empty}>
-          Invoices will appear here once your first billing period ends.
-        </p>
+        <EmptyState
+          title="No invoices yet"
+          message="Invoices will appear here once your first billing period ends."
+        />
       ) : (
         <div className={styles.card}>
         <table className={styles.table}>
@@ -57,7 +61,7 @@ export default async function InvoicesPage() {
                   })}
                 </td>
                 <td className={styles.td}>
-                  <span className={styles.paidBadge}>Paid</span>
+                  <StatusBadge variant="success">Paid</StatusBadge>
                 </td>
                 <td className={styles.td}>
                   {inv.downloadUrl ? (

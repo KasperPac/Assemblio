@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import PageHeader from "../../_ui/page-header";
+import StatusBadge from "../../_ui/status-badge";
 import InviteForm from "./invite-form";
 import TeamRowActions from "./team-row-actions";
 import PendingInviteActions from "./pending-invite-actions";
@@ -47,6 +48,7 @@ export default async function TeamPage() {
     <>
       <PageHeader
         eyebrow="Workspace"
+        title="Team"
         description="Members, roles, and invitations."
       />
       <div className={styles.page}>
@@ -77,9 +79,9 @@ export default async function TeamPage() {
                       <td className={styles.td}>{inv.role}</td>
                       <td className={styles.td}>
                         {expired ? (
-                          <span className={styles.deactivatedBadge}>
+                          <StatusBadge variant="warning">
                             Expired {expires.toLocaleDateString()}
-                          </span>
+                          </StatusBadge>
                         ) : (
                           <span className={styles.muted}>
                             {expires.toLocaleDateString()}
@@ -138,15 +140,9 @@ export default async function TeamPage() {
                   </td>
                   <td className={styles.td}>{member.role}</td>
                   <td className={styles.td}>
-                    <span
-                      className={
-                        member.status === "active"
-                          ? styles.activeBadge
-                          : styles.deactivatedBadge
-                      }
-                    >
+                    <StatusBadge variant={member.status === "active" ? "success" : "warning"}>
                       {member.status}
-                    </span>
+                    </StatusBadge>
                   </td>
                   <td className={styles.td}>
                     <TeamRowActions

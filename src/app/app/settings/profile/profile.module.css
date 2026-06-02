@@ -109,46 +109,16 @@
 }
 
 .primaryButton {
-  font-family: var(--font-body);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
-  background: var(--brand-1);
-  color: var(--ink-on-brand);
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: var(--space-2) var(--space-4);
-  cursor: pointer;
-  transition: background var(--dur-fast) var(--ease-out);
+  composes: primary from "../../_ui/buttons.module.css";
 }
-
-.primaryButton:hover:not(:disabled) {
-  background: var(--brand-2);
-}
-
 .primaryButton:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
 .secondaryButton {
-  font-family: var(--font-body);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-medium);
-  background: transparent;
-  color: var(--ink-muted);
-  border: 1px solid var(--stroke-card);
-  border-radius: var(--radius-sm);
-  padding: var(--space-2) var(--space-4);
-  cursor: pointer;
-  transition: border-color var(--dur-fast) var(--ease-out),
-    color var(--dur-fast) var(--ease-out);
+  composes: secondary from "../../_ui/buttons.module.css";
 }
-
-.secondaryButton:hover:not(:disabled) {
-  border-color: var(--stroke-strong);
-  color: var(--ink-strong);
-}
-
 .secondaryButton:disabled {
   opacity: 0.6;
   cursor: not-allowed;

@@ -22,6 +22,7 @@ export default async function CompanyPage() {
     <>
       <PageHeader
         eyebrow="Workspace"
+        title="Company"
         description="Workspace name, logo, timezone, and currency."
       />
       <CompanyForm
