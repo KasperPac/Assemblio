@@ -4,6 +4,7 @@ import { useMemo, useRef, useState, useTransition } from "react";
 import { createDeliveryReceipt, parseReceiptPdf } from "./actions";
 import type { ParsedReceiptLine } from "./actions";
 import ComponentPicker, { type PickerComponent } from "./component-picker";
+import ComponentThumbnail from "../_ui/component-thumbnail";
 import styles from "./goods-inwards.module.css";
 
 type Supplier = { id: string; name: string };
@@ -57,6 +58,7 @@ function blankLine(): LineState {
 function componentLabel(c: Component): string {
   return c.sku ? `${c.name} (${c.sku})` : c.name;
 }
+
 
 export default function ReceiptForm({
   suppliers,
@@ -457,6 +459,7 @@ export default function ReceiptForm({
         <table className={styles.linesTable}>
           <thead>
             <tr>
+              <th style={{ width: 40 }} aria-label="Image" />
               <th>Component</th>
               {selectedPoId && <th>Expected</th>}
               <th>Qty delivered</th>
@@ -468,6 +471,17 @@ export default function ReceiptForm({
           <tbody>
             {lines.map((line) => (
               <tr key={line.key}>
+                <td style={{ width: 40, paddingRight: 0, verticalAlign: "middle" }}>
+                  {(() => {
+                    const c = components.find((c) => c.id === line.component_id);
+                    return (
+                      <ComponentThumbnail
+                        imageUrl={c?.image_url ?? null}
+                        name={c?.name ?? ""}
+                      />
+                    );
+                  })()}
+                </td>
                 <td>
                   {line.extractedName && (
                     <div style={{ fontSize: "0.75rem", color: "var(--ink-muted)", marginBottom: 4 }}>

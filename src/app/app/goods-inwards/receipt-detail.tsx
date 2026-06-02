@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { updateDeliveryReceipt, updateComponentCosts, linkReceiptToPo } from "./actions";
 import { computeVariance } from "./helpers";
 import type { ReceiptStatus } from "./helpers";
+import ComponentThumbnail from "../_ui/component-thumbnail";
 import styles from "./goods-inwards.module.css";
 
 type ReceiptLine = {
@@ -14,8 +15,8 @@ type ReceiptLine = {
   cost_per_unit: number | null;
   notes: string | null;
   component:
-    | { name: string; sku: string | null }
-    | Array<{ name: string; sku: string | null }>
+    | { name: string; sku: string | null; image_url: string | null }
+    | Array<{ name: string; sku: string | null; image_url: string | null }>
     | null;
 };
 
@@ -84,6 +85,16 @@ function resolveComponentName(line: ReceiptLine): string {
   if (!c) return "Unknown";
   return c.sku ? `${c.name} (${c.sku})` : c.name;
 }
+
+function resolveComponentImage(
+  line: ReceiptLine
+): { imageUrl: string | null; name: string } {
+  if (!line.component) return { imageUrl: null, name: "" };
+  const c = Array.isArray(line.component) ? line.component[0] : line.component;
+  if (!c) return { imageUrl: null, name: "" };
+  return { imageUrl: c.image_url, name: c.name };
+}
+
 
 export default function ReceiptDetail({
   receipt,
@@ -426,6 +437,7 @@ export default function ReceiptDetail({
         <table className={styles.linesTable}>
           <thead>
             <tr>
+              <th style={{ width: 40 }} aria-label="Image" />
               <th>Component</th>
               <th>Expected</th>
               <th>Delivered</th>
@@ -440,8 +452,12 @@ export default function ReceiptDetail({
                 line.quantity_delivered,
                 line.quantity_expected
               );
+              const { imageUrl, name: componentName } = resolveComponentImage(line);
               return (
                 <tr key={line.id}>
+                  <td style={{ width: 40, paddingRight: 0, verticalAlign: "middle" }}>
+                    <ComponentThumbnail imageUrl={imageUrl} name={componentName} />
+                  </td>
                   <td>{resolveComponentName(line)}</td>
                   <td>{line.quantity_expected ?? "—"}</td>
                   <td>{line.quantity_delivered}</td>

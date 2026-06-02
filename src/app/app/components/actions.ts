@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { validateGroupName } from "./helpers";
+import { searchComponentImage } from "@/lib/nexar/client";
 
 type ComponentState = {
   error?: string;
@@ -396,4 +397,194 @@ export async function createComponentGroup(
   revalidatePath("/app/components");
   revalidatePath("/app/activity-log");
   return { group: { id: data.id, name: data.name } };
+}
+
+export async function uploadComponentImage(
+  componentId: string,
+  formData: FormData
+): Promise<{ imageUrl?: string; error?: string }> {
+  const ctx = await getServerTenantContext();
+  if (!ctx) return { error: "Not authenticated" };
+
+  const file = formData.get("image") as File | null;
+  if (!file || file.size === 0) return { error: "No file selected" };
+  if (file.size > 5 * 1024 * 1024) return { error: "Image must be under 5 MB" };
+
+  const allowed = ["image/png", "image/jpeg", "image/webp"];
+  if (!allowed.includes(file.type)) return { error: "Use PNG, JPEG, or WebP" };
+
+  // Confirm this component belongs to the caller's tenant
+  const { data: comp, error: fetchErr } = await ctx.supabase
+    .from("component")
+    .select("id")
+    .eq("id", componentId)
+    .eq("tenant_id", ctx.tenantId)
+    .single();
+  if (fetchErr || !comp) return { error: "Component not found" };
+
+  // Fixed path without extension — re-uploads always overwrite cleanly
+  const storagePath = `${ctx.tenantId}/${componentId}`;
+  const bytes = await file.arrayBuffer();
+
+  const { error: uploadErr } = await ctx.supabase.storage
+    .from("component-images")
+    .upload(storagePath, bytes, { contentType: file.type, upsert: true });
+  if (uploadErr) return { error: uploadErr.message };
+
+  const {
+    data: { publicUrl },
+  } = ctx.supabase.storage.from("component-images").getPublicUrl(storagePath);
+  const versioned = `${publicUrl}?v=${Date.now()}`;
+
+  const { error: dbErr } = await ctx.supabase
+    .from("component")
+    .update({ image_url: versioned })
+    .eq("id", componentId)
+    .eq("tenant_id", ctx.tenantId);
+  if (dbErr) return { error: dbErr.message };
+
+  await ctx.supabase.from("activity_log").insert({
+    tenant_id: ctx.tenantId,
+    actor_id: ctx.userId,
+    event: "component.image_uploaded",
+    metadata: { component_id: componentId },
+  });
+
+  revalidatePath(`/app/components/${componentId}`);
+  revalidatePath("/app/activity-log");
+  return { imageUrl: versioned };
+}
+
+export async function fetchComponentImageFromNexar(componentId: string): Promise<
+  | { found: true; imageUrl: string }
+  | { found: false; reason: "no_part_number" | "no_results" | "api_error" }
+> {
+  const ctx = await getServerTenantContext();
+  if (!ctx) return { found: false, reason: "api_error" };
+
+  // Verify the component belongs to the caller's tenant
+  const { data: comp, error: compErr } = await ctx.supabase
+    .from("component")
+    .select("id")
+    .eq("id", componentId)
+    .eq("tenant_id", ctx.tenantId)
+    .single();
+  if (compErr || !comp) return { found: false, reason: "api_error" };
+
+  // Look up preferred supplier part number (many-to-one join; suppliers is always an object)
+  const { data: sc } = await ctx.supabase
+    .from("supplier_components")
+    .select("supplier_part_number, suppliers(name)")
+    .eq("component_id", componentId)
+    .eq("tenant_id", ctx.tenantId)
+    .eq("is_preferred", true)
+    .maybeSingle();
+
+  if (!sc) return { found: false, reason: "no_part_number" };
+
+  const partNumber = sc.supplier_part_number?.trim();
+  if (!partNumber) return { found: false, reason: "no_part_number" };
+
+  // Supabase may return the FK join as object or array depending on codegen; handle both.
+  const suppliersData = sc.suppliers as unknown as
+    | { name: string }
+    | { name: string }[]
+    | null;
+  const supplierName = Array.isArray(suppliersData)
+    ? suppliersData[0]?.name ?? ""
+    : suppliersData?.name ?? "";
+
+  const nexarResult = await searchComponentImage(
+    `${partNumber} ${supplierName}`.trim()
+  );
+
+  if (!nexarResult.found) {
+    await ctx.supabase.from("activity_log").insert({
+      tenant_id: ctx.tenantId,
+      actor_id: ctx.userId,
+      event: "component.image_fetch_failed",
+      metadata: { component_id: componentId, reason: nexarResult.reason },
+    });
+    return { found: false, reason: nexarResult.reason };
+  }
+
+  // Download from Nexar CDN and store in our bucket
+  let imageBytes: ArrayBuffer;
+  let contentType = "image/jpeg";
+  try {
+    const imgResp = await fetch(nexarResult.imageUrl);
+    if (!imgResp.ok) throw new Error(`Download failed: ${imgResp.status}`);
+    contentType = imgResp.headers.get("content-type") ?? "image/jpeg";
+    imageBytes = await imgResp.arrayBuffer();
+  } catch {
+    return { found: false, reason: "api_error" };
+  }
+
+  const storagePath = `${ctx.tenantId}/${componentId}`;
+  const { error: uploadErr } = await ctx.supabase.storage
+    .from("component-images")
+    .upload(storagePath, imageBytes, { contentType, upsert: true });
+  if (uploadErr) {
+    console.error("component-images upload failed:", uploadErr.message);
+    return { found: false, reason: "api_error" };
+  }
+
+  const {
+    data: { publicUrl },
+  } = ctx.supabase.storage.from("component-images").getPublicUrl(storagePath);
+  const versioned = `${publicUrl}?v=${Date.now()}`;
+
+  const { error: dbErr } = await ctx.supabase
+    .from("component")
+    .update({ image_url: versioned })
+    .eq("id", componentId)
+    .eq("tenant_id", ctx.tenantId);
+  if (dbErr) {
+    console.error("component image_url update failed:", dbErr.message);
+    return { found: false, reason: "api_error" };
+  }
+
+  await ctx.supabase.from("activity_log").insert({
+    tenant_id: ctx.tenantId,
+    actor_id: ctx.userId,
+    event: "component.image_fetched",
+    metadata: {
+      component_id: componentId,
+      mpn: nexarResult.mpn,
+      manufacturer: nexarResult.manufacturer,
+    },
+  });
+
+  revalidatePath(`/app/components/${componentId}`);
+  revalidatePath("/app/activity-log");
+  return { found: true, imageUrl: versioned };
+}
+
+export async function removeComponentImage(
+  componentId: string
+): Promise<{ error?: string }> {
+  const ctx = await getServerTenantContext();
+  if (!ctx) return { error: "Not authenticated" };
+
+  const storagePath = `${ctx.tenantId}/${componentId}`;
+  // Ignore storage delete errors — file may not exist
+  await ctx.supabase.storage.from("component-images").remove([storagePath]);
+
+  const { error: dbErr } = await ctx.supabase
+    .from("component")
+    .update({ image_url: null })
+    .eq("id", componentId)
+    .eq("tenant_id", ctx.tenantId);
+  if (dbErr) return { error: dbErr.message };
+
+  await ctx.supabase.from("activity_log").insert({
+    tenant_id: ctx.tenantId,
+    actor_id: ctx.userId,
+    event: "component.image_removed",
+    metadata: { component_id: componentId },
+  });
+
+  revalidatePath(`/app/components/${componentId}`);
+  revalidatePath("/app/activity-log");
+  return {};
 }

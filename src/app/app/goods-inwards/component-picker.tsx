@@ -10,6 +10,7 @@ export type PickerComponent = {
   unit: string | null;
   cost_per_unit: number | null;
   group: string | null;
+  image_url: string | null;
 };
 
 type Props = {
