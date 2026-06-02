@@ -86,7 +86,7 @@ export async function createComponent(
   await supabase.from("activity_log").insert({
     tenant_id: tenantId,
     event: "component_created",
-    metadata: { name, sku: sku || null },
+    metadata: { name, sku: sku || null, description, supplier_part_number: supplierPartNumber },
   });
 
   revalidatePath("/app/components");
