@@ -1,0 +1,33 @@
+{
+  "planPath": "docs/superpowers/plans/2026-06-02-component-description-supplier-part.md",
+  "tasks": [
+    {
+      "id": 22,
+      "subject": "Task 1: DB migration — add description column",
+      "status": "pending",
+      "description": "**Goal:** Add `description text` column to `component` table.\n\n**Files:**\n- Create: `supabase/patches/component_description_and_supplier_part.sql`\n\n**Acceptance Criteria:**\n- [ ] `alter table public.component add column if not exists description text`\n- [ ] File committed\n\n**Verify:** File exists; apply in Supabase Studio and confirm column appears.\n\n```json:metadata\n{\"files\": [\"supabase/patches/component_description_and_supplier_part.sql\"], \"verifyCommand\": \"Check Supabase Studio\", \"acceptanceCriteria\": [\"description column added to component table\"]}\n```"
+    },
+    {
+      "id": 23,
+      "subject": "Task 2: Update createComponent and updateComponent server actions",
+      "status": "pending",
+      "blockedBy": [22],
+      "description": "**Goal:** `createComponent` adds description + supplier_part_number + supplier_components upsert; `updateComponent` adds description.\n\n**Files:**\n- Modify: `src/app/app/components/actions.ts`\n\n**Acceptance Criteria:**\n- [ ] `description` in createComponent insert\n- [ ] supplier_components upsert when supplierId set\n- [ ] `description` in updateComponent select, update, and activity log\n- [ ] `npx tsc --noEmit` passes\n\n**Verify:** `npx tsc --noEmit` → no output\n\n```json:metadata\n{\"files\": [\"src/app/app/components/actions.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"description in component insert\", \"supplier_components upsert when supplier_id set\", \"description in updateComponent\"]}\n```"
+    },
+    {
+      "id": 24,
+      "subject": "Task 3: Update create form, edit form, and detail page",
+      "status": "pending",
+      "blockedBy": [22, 23],
+      "description": "**Goal:** Add Description textarea and conditional Supplier Part Number to create form; Description to edit form; render description on detail page.\n\n**Files:**\n- Modify: `src/app/app/components/component-create-form.tsx`\n- Modify: `src/app/app/components/component-edit-form.tsx`\n- Modify: `src/app/app/components/[componentId]/page.tsx`\n\n**Acceptance Criteria:**\n- [ ] Description textarea below Name in create form\n- [ ] Supplier Part Number input shown only when supplier selected\n- [ ] Description textarea in edit form, pre-populated\n- [ ] description in ComponentRecord type and Supabase select\n- [ ] description rendered in info card when non-null\n- [ ] npx tsc --noEmit passes\n\n**Verify:** `npx tsc --noEmit` → no output; manual app check\n\n```json:metadata\n{\"files\": [\"src/app/app/components/component-create-form.tsx\", \"src/app/app/components/component-edit-form.tsx\", \"src/app/app/components/[componentId]/page.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Description textarea in create form\", \"Supplier Part Number conditional on supplier\", \"Description in edit form\", \"Description on detail page\"]}\n```"
+    },
+    {
+      "id": 25,
+      "subject": "Task 4: Update CSV import template and route",
+      "status": "pending",
+      "blockedBy": [22],
+      "description": "**Goal:** Update TEMPLATE_CSV with new columns; commit route reads description + supplier_part_number and upserts supplier_components.\n\n**Files:**\n- Modify: `src/app/app/components/import/page.tsx`\n- Modify: `src/app/api/import/components/route.ts`\n\n**Acceptance Criteria:**\n- [ ] TEMPLATE_CSV has supplier_part_number and description columns\n- [ ] description in component insert rows\n- [ ] supplier_components bulk upsert after component insert\n- [ ] npx tsc --noEmit passes\n\n**Verify:** `npx tsc --noEmit` → no output; download template and confirm columns\n\n```json:metadata\n{\"files\": [\"src/app/app/components/import/page.tsx\", \"src/app/api/import/components/route.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"TEMPLATE_CSV updated\", \"description in insert rows\", \"supplier_components upsert after import\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-06-02T00:00:00.000Z"
+}
