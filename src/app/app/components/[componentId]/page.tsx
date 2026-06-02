@@ -340,6 +340,7 @@ export default async function ComponentDetailPage({ params }: Props) {
           <div className={styles.imageRow}>
             <ComponentImage
               componentId={componentId}
+              componentName={c.name}
               initialImageUrl={c.image_url}
               hasSupplierPartNumber={hasPreferredPartNumber}
             />

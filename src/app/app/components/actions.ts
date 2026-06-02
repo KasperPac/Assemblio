@@ -534,11 +534,15 @@ export async function fetchComponentImageFromNexar(componentId: string): Promise
   } = ctx.supabase.storage.from("component-images").getPublicUrl(storagePath);
   const versioned = `${publicUrl}?v=${Date.now()}`;
 
-  await ctx.supabase
+  const { error: dbErr } = await ctx.supabase
     .from("component")
     .update({ image_url: versioned })
     .eq("id", componentId)
     .eq("tenant_id", ctx.tenantId);
+  if (dbErr) {
+    console.error("component image_url update failed:", dbErr.message);
+    return { found: false, reason: "api_error" };
+  }
 
   await ctx.supabase.from("activity_log").insert({
     tenant_id: ctx.tenantId,

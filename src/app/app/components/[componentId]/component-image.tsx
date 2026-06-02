@@ -10,6 +10,8 @@ import styles from "./component-image.module.css";
 
 interface Props {
   componentId: string;
+  /** Component name — used as alt text on the image. */
+  componentName: string;
   initialImageUrl: string | null;
   /** True when the component has a preferred supplier_components row with a non-empty supplier_part_number */
   hasSupplierPartNumber: boolean;
@@ -17,6 +19,7 @@ interface Props {
 
 export default function ComponentImage({
   componentId,
+  componentName,
   initialImageUrl,
   hasSupplierPartNumber,
 }: Props) {
@@ -86,7 +89,7 @@ export default function ComponentImage({
       <div className={styles.imageSlot}>
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={imageUrl} alt="Component" className={styles.image} />
+          <img src={imageUrl} alt={componentName} className={styles.image} />
         ) : (
           <div className={styles.placeholder} aria-hidden="true">
             {/* Camera icon */}

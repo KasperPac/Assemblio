@@ -4,6 +4,7 @@ import { useMemo, useRef, useState, useTransition } from "react";
 import { createDeliveryReceipt, parseReceiptPdf } from "./actions";
 import type { ParsedReceiptLine } from "./actions";
 import ComponentPicker, { type PickerComponent } from "./component-picker";
+import ComponentThumbnail from "../_ui/component-thumbnail";
 import styles from "./goods-inwards.module.css";
 
 type Supplier = { id: string; name: string };
@@ -58,55 +59,6 @@ function componentLabel(c: Component): string {
   return c.sku ? `${c.name} (${c.sku})` : c.name;
 }
 
-function ComponentThumbnail({
-  imageUrl,
-  name,
-}: {
-  imageUrl: string | null;
-  name: string;
-}) {
-  const slotStyle: React.CSSProperties = {
-    width: 36,
-    height: 36,
-    borderRadius: 6,
-    background: "var(--surface-1)",
-    border: "1px solid var(--stroke-card)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    overflow: "hidden",
-    flexShrink: 0,
-  };
-
-  if (imageUrl) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={imageUrl}
-        alt={name}
-        style={{ ...slotStyle, objectFit: "contain" }}
-      />
-    );
-  }
-
-  return (
-    <div style={slotStyle} aria-hidden="true">
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="var(--ink-faint)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-        <circle cx="12" cy="13" r="4" />
-      </svg>
-    </div>
-  );
-}
 
 export default function ReceiptForm({
   suppliers,
