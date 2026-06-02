@@ -451,6 +451,7 @@ export async function uploadComponentImage(
   });
 
   revalidatePath(`/app/components/${componentId}`);
+  revalidatePath("/app/activity-log");
   return { imageUrl: versioned };
 }
 
@@ -461,7 +462,16 @@ export async function fetchComponentImageFromNexar(componentId: string): Promise
   const ctx = await getServerTenantContext();
   if (!ctx) return { found: false, reason: "api_error" };
 
-  // Look up preferred supplier part number
+  // Verify the component belongs to the caller's tenant
+  const { data: comp, error: compErr } = await ctx.supabase
+    .from("component")
+    .select("id")
+    .eq("id", componentId)
+    .eq("tenant_id", ctx.tenantId)
+    .single();
+  if (compErr || !comp) return { found: false, reason: "api_error" };
+
+  // Look up preferred supplier part number (many-to-one join; suppliers is always an object)
   const { data: sc } = await ctx.supabase
     .from("supplier_components")
     .select("supplier_part_number, suppliers(name)")
@@ -475,10 +485,14 @@ export async function fetchComponentImageFromNexar(componentId: string): Promise
   const partNumber = sc.supplier_part_number?.trim();
   if (!partNumber) return { found: false, reason: "no_part_number" };
 
-  // suppliers may be returned as object or array depending on join shape
-  const supplierName = Array.isArray(sc.suppliers)
-    ? (sc.suppliers[0] as { name: string } | undefined)?.name ?? ""
-    : (sc.suppliers as { name: string } | null)?.name ?? "";
+  // Supabase may return the FK join as object or array depending on codegen; handle both.
+  const suppliersData = sc.suppliers as unknown as
+    | { name: string }
+    | { name: string }[]
+    | null;
+  const supplierName = Array.isArray(suppliersData)
+    ? suppliersData[0]?.name ?? ""
+    : suppliersData?.name ?? "";
 
   const nexarResult = await searchComponentImage(
     `${partNumber} ${supplierName}`.trim()
@@ -510,7 +524,10 @@ export async function fetchComponentImageFromNexar(componentId: string): Promise
   const { error: uploadErr } = await ctx.supabase.storage
     .from("component-images")
     .upload(storagePath, imageBytes, { contentType, upsert: true });
-  if (uploadErr) return { found: false, reason: "api_error" };
+  if (uploadErr) {
+    console.error("component-images upload failed:", uploadErr.message);
+    return { found: false, reason: "api_error" };
+  }
 
   const {
     data: { publicUrl },
@@ -535,6 +552,7 @@ export async function fetchComponentImageFromNexar(componentId: string): Promise
   });
 
   revalidatePath(`/app/components/${componentId}`);
+  revalidatePath("/app/activity-log");
   return { found: true, imageUrl: versioned };
 }
 
@@ -563,5 +581,6 @@ export async function removeComponentImage(
   });
 
   revalidatePath(`/app/components/${componentId}`);
+  revalidatePath("/app/activity-log");
   return {};
 }
