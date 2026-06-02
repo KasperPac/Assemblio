@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useActionState, useEffect, useState } from "react";
+import Link from "next/link";
 import type {
   Supplier,
   SupplierContact,
@@ -17,7 +18,7 @@ type PoRow = {
   created_at: string;
   expected_date: string | null;
   purchase_order_line: Array<{ quantity: number; unit_cost: number | null }>;
-  delivery_receipt: Array<{ received_at: string }>;
+  delivery_receipt: Array<{ id: string; received_at: string }>;
 };
 
 type CatalogRow = SupplierComponent & {
@@ -373,7 +374,9 @@ export default function SupplierTabs({
                 }
                 return (
                   <div key={po.id} className={styles.poRow}>
-                    <span className={styles.poRef}>{po.id.slice(0, 8).toUpperCase()}</span>
+                    <Link href={`/app/purchasing/${po.id}`} className={styles.poRef}>
+                      {po.id.slice(0, 8).toUpperCase()}
+                    </Link>
                     <span>
                       {new Date(po.created_at).toLocaleDateString("en-AU", {
                         day: "numeric",
@@ -402,13 +405,18 @@ export default function SupplierTabs({
                         : "—"}
                     </span>
                     <span>
-                      {latestReceipt
-                        ? new Date(latestReceipt.received_at).toLocaleDateString("en-AU", {
+                      {latestReceipt ? (
+                        <Link
+                          href={`/app/goods-inwards/${latestReceipt.id}`}
+                          className={styles.receiptLink}
+                        >
+                          {new Date(latestReceipt.received_at).toLocaleDateString("en-AU", {
                             day: "numeric",
                             month: "short",
                             year: "numeric",
-                          })
-                        : "—"}
+                          })}
+                        </Link>
+                      ) : "—"}
                       {onTimePill}
                     </span>
                     <span>

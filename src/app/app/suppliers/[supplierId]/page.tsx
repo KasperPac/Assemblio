@@ -29,7 +29,7 @@ type PoRow = {
   created_at: string;
   expected_date: string | null;
   purchase_order_line: Array<{ quantity: number; unit_cost: number | null }>;
-  delivery_receipt: Array<{ received_at: string }>;
+  delivery_receipt: Array<{ id: string; received_at: string }>;
 };
 
 type Props = { params: Promise<{ supplierId: string }> };
@@ -77,7 +77,7 @@ export default async function SupplierDetailPage({ params }: Props) {
       .select(`
         id, status, created_at, expected_date,
         purchase_order_line(quantity, unit_cost),
-        delivery_receipt(received_at)
+        delivery_receipt(id, received_at)
       `)
       .eq("tenant_id", tenantId)
       .eq("supplier_id", supplierId)
