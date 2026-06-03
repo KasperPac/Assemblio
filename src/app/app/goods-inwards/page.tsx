@@ -22,6 +22,42 @@ export default async function GoodsInwardsPage() {
     .eq("tenant_id", tenantId)
     .order("received_at", { ascending: false });
 
+  const { data: duePOsRaw } = await supabase
+    .from("purchase_order")
+    .select(
+      "id, status, expected_date, supplier:supplier_id(name), purchase_order_line(id), delivery_receipt(id)"
+    )
+    .in("status", ["open", "in_transit"])
+    .not("expected_date", "is", null)
+    .eq("tenant_id", tenantId)
+    .order("expected_date", { ascending: true });
+
+  const now = new Date();
+  const cutoff = new Date(now);
+  cutoff.setDate(cutoff.getDate() + 14);
+
+  const duePOs = (duePOsRaw ?? [])
+    .filter((po) => {
+      // Exclude POs that already have a receipt
+      const receipts = po.delivery_receipt ?? [];
+      if (Array.isArray(receipts) ? receipts.length > 0 : !!receipts) return false;
+      // Include overdue and due within 14 days
+      const expected = new Date(po.expected_date as string);
+      return expected <= cutoff;
+    })
+    .map((po) => {
+      const rawSupplier = Array.isArray(po.supplier) ? po.supplier[0] : po.supplier;
+      const lines = po.purchase_order_line ?? [];
+      return {
+        id: po.id as string,
+        status: po.status as string,
+        expected_date: po.expected_date as string,
+        supplier_name:
+          (rawSupplier as { name: string } | null)?.name ?? "Unknown supplier",
+        line_count: Array.isArray(lines) ? lines.length : 0,
+      };
+    });
+
   return (
     <section className={styles.page}>
       <PageHeader
@@ -34,7 +70,7 @@ export default async function GoodsInwardsPage() {
           </Link>
         }
       />
-      <ReceiptList receipts={receipts ?? []} />
+      <ReceiptList receipts={receipts ?? []} duePOs={duePOs} />
     </section>
   );
 }
