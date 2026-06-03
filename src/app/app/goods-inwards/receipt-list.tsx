@@ -176,11 +176,8 @@ export default function ReceiptList({
                       </td>
                       <td>
                         <span
-                          style={{
-                            color,
-                            fontWeight:
-                              color === "var(--ink-muted)" ? undefined : 600,
-                          }}
+                          className={color !== "var(--ink-muted)" ? styles.dueUrgent : undefined}
+                          style={{ color }}
                         >
                           {text}
                         </span>

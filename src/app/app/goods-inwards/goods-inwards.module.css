@@ -170,3 +170,7 @@
 .poLink:hover {
   text-decoration: underline;
 }
+
+.dueUrgent {
+  font-weight: var(--fw-semibold);
+}
