@@ -24,6 +24,7 @@ export default async function ReceiptDetailPage({ params }: Props) {
            location:location_id(id, name),
            delivery_receipt_line(
              id, component_id, quantity_delivered, quantity_expected, notes, cost_per_unit,
+             batch_number,
              component:component_id(name, sku, image_url)
            )`
         )

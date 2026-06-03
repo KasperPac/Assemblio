@@ -15,6 +15,7 @@ type ReceiptLine = {
   quantity_expected: number | null;
   cost_per_unit: number | null;
   notes: string | null;
+  batch_number: string | null;
   component:
     | { name: string; sku: string | null; image_url: string | null }
     | Array<{ name: string; sku: string | null; image_url: string | null }>
@@ -456,6 +457,7 @@ export default function ReceiptDetail({
               <th>Variance</th>
               <th>Cost / unit</th>
               <th>Note</th>
+              <th>Batch #</th>
             </tr>
           </thead>
           <tbody>
@@ -509,6 +511,7 @@ export default function ReceiptDetail({
                       line.notes ?? "—"
                     )}
                   </td>
+                  <td>{line.batch_number ?? "—"}</td>
                 </tr>
               );
             })}
