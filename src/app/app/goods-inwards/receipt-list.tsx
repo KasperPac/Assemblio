@@ -35,9 +35,9 @@ const STATUS_VARIANTS: Record<Receipt["status"], "warning" | "success" | "danger
 };
 
 const STATUS_LABELS: Record<Receipt["status"], string> = {
-  unmatched: "Unmatched",
-  po_linked: "PO linked",
-  discrepancy: "Discrepancy",
+  unmatched: "· Unmatched",
+  po_linked: "✓ PO linked",
+  discrepancy: "⚠ Discrepancy",
 };
 
 function resolveSupplier(r: Receipt): string {
@@ -103,10 +103,27 @@ export default function ReceiptList({ receipts }: { receipts: Receipt[] }) {
             {filtered.length === 0 ? (
               <tr>
                 <td colSpan={7}>
-                  <EmptyState
-                    title="No receipts found"
-                    message="Received deliveries will appear here. Use New Receipt to log a delivery."
-                  />
+                  {activeFilter === "unmatched" ? (
+                    <EmptyState
+                      title="No unmatched receipts"
+                      message="All receipts are linked to a purchase order."
+                    />
+                  ) : activeFilter === "discrepancy" ? (
+                    <EmptyState
+                      title="No discrepancies"
+                      message="All received quantities match their purchase orders."
+                    />
+                  ) : activeFilter === "this_week" ? (
+                    <EmptyState
+                      title="No receipts this week"
+                      message="No deliveries have been recorded in the last 7 days."
+                    />
+                  ) : (
+                    <EmptyState
+                      title="No deliveries yet"
+                      message="Record your first goods receipt using the New Receipt button."
+                    />
+                  )}
                 </td>
               </tr>
             ) : (
