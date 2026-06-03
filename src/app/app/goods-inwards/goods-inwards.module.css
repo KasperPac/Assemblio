@@ -174,3 +174,8 @@
 .dueUrgent {
   font-weight: var(--fw-semibold);
 }
+
+.receiveBtnSm {
+  padding: 4px 10px;
+  white-space: nowrap;
+}

@@ -25,7 +25,7 @@ export default async function GoodsInwardsPage() {
   const { data: duePOsRaw } = await supabase
     .from("purchase_order")
     .select(
-      "id, status, expected_date, supplier:supplier_id(name), purchase_order_line(id), delivery_receipt(id)"
+      "id, expected_date, supplier:supplier_id(name), purchase_order_line(id), delivery_receipt(id)"
     )
     .in("status", ["open", "in_transit"])
     .not("expected_date", "is", null)
@@ -41,16 +41,17 @@ export default async function GoodsInwardsPage() {
       // Exclude POs that already have a receipt
       const receipts = po.delivery_receipt ?? [];
       if (Array.isArray(receipts) ? receipts.length > 0 : !!receipts) return false;
-      // Include overdue and due within 14 days
+      // Include overdue and due within 14 days, with 90-day lower bound
       const expected = new Date(po.expected_date as string);
-      return expected <= cutoff;
+      const lowerBound = new Date(now);
+      lowerBound.setDate(lowerBound.getDate() - 90);
+      return expected >= lowerBound && expected <= cutoff;
     })
     .map((po) => {
       const rawSupplier = Array.isArray(po.supplier) ? po.supplier[0] : po.supplier;
       const lines = po.purchase_order_line ?? [];
       return {
         id: po.id as string,
-        status: po.status as string,
         expected_date: po.expected_date as string,
         supplier_name:
           (rawSupplier as { name: string } | null)?.name ?? "Unknown supplier",

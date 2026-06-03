@@ -21,7 +21,6 @@ type Receipt = {
 
 type DuePO = {
   id: string;
-  status: string;
   expected_date: string;
   supplier_name: string;
   line_count: number;
@@ -186,8 +185,7 @@ export default function ReceiptList({
                       <td>
                         <Link
                           href={`/app/goods-inwards/new?po=${po.id}`}
-                          className={styles.secondary}
-                          style={{ padding: "4px 10px", whiteSpace: "nowrap" }}
+                          className={`${styles.secondary} ${styles.receiveBtnSm}`}
                         >
                           Receive →
                         </Link>
