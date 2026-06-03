@@ -70,6 +70,7 @@ export default function ReceiptForm({
   availablePOs,
   initialPoId,
   initialComponentId,
+  hasPdfParser,
 }: {
   suppliers: Supplier[];
   components: Component[];
@@ -78,6 +79,7 @@ export default function ReceiptForm({
   availablePOs: AvailablePO[];
   initialPoId?: string;
   initialComponentId?: string | null;
+  hasPdfParser: boolean;
 }) {
   const defaultLocation = locations.find((l) => l.is_default) ?? locations[0];
 
@@ -331,12 +333,14 @@ export default function ReceiptForm({
       )}
 
       {/* PDF parse section */}
-      <div className={styles.formCard}>
+      <div className={styles.formCard} style={!hasPdfParser ? { opacity: 0.55 } : undefined}>
         <h2 style={{ margin: 0, fontSize: "1rem", fontWeight: 700 }}>
           Parse delivery docket (optional)
         </h2>
         <p style={{ margin: 0, color: "var(--ink-muted)", fontSize: "0.85rem" }}>
-          Upload a PDF packing slip to pre-fill this form.
+          {hasPdfParser
+            ? "Upload a PDF packing slip to pre-fill this form."
+            : "PDF parsing is not configured — contact your administrator to enable it."}
         </p>
         <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
           <input
@@ -344,12 +348,13 @@ export default function ReceiptForm({
             type="file"
             accept=".pdf"
             style={{ flex: 1 }}
+            disabled={!hasPdfParser}
           />
           <button
             type="button"
             className={styles.secondary}
             onClick={handlePdfParse}
-            disabled={pdfParsing}
+            disabled={pdfParsing || !hasPdfParser}
           >
             {pdfParsing ? "Parsing…" : "Parse PDF"}
           </button>
