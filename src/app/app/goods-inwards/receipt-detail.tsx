@@ -335,6 +335,14 @@ export default function ReceiptDetail({
               >
                 {STATUS_LABELS[receipt.status]}
               </span>
+              <a
+                href={`/app/goods-inwards/${receipt.id}/print`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.secondary}
+              >
+                Print GRN
+              </a>
               <button
                 type="button"
                 className={styles.secondary}
