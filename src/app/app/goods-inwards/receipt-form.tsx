@@ -31,6 +31,7 @@ type LineState = {
   quantity_delivered: string;
   cost_per_unit: string;
   notes: string;
+  batch_number: string;
   extractedName?: string;
   quantity_expected?: number | null;
   purchase_order_line_id?: string | null;
@@ -52,6 +53,7 @@ function blankLine(): LineState {
     quantity_delivered: "",
     cost_per_unit: "",
     notes: "",
+    batch_number: "",
   };
 }
 
@@ -98,6 +100,7 @@ export default function ReceiptForm({
             quantity_delivered: String(remaining),
             cost_per_unit: "",
             notes: "",
+            batch_number: "",
             quantity_expected: remaining,
             purchase_order_line_id: l.id,
           };
@@ -143,6 +146,7 @@ export default function ReceiptForm({
           quantity_delivered: String(remaining),
           cost_per_unit: "",
           notes: "",
+          batch_number: "",
           quantity_expected: remaining,
           purchase_order_line_id: l.id,
         };
@@ -229,6 +233,7 @@ export default function ReceiptForm({
           quantity_delivered: String(l.quantity),
           cost_per_unit: "",
           notes: "",
+          batch_number: "",
           extractedName: l.extracted_name,
         }))
       );
@@ -268,6 +273,7 @@ export default function ReceiptForm({
           quantity_expected: l.quantity_expected ?? null,
           cost_per_unit: l.cost_per_unit ? parseFloat(l.cost_per_unit) : null,
           notes: l.notes || null,
+          batch_number: l.batch_number || null,
         }))
       )
     );
@@ -465,6 +471,7 @@ export default function ReceiptForm({
               <th>Qty delivered</th>
               <th>Cost / unit (optional)</th>
               <th>Note</th>
+              <th>Batch #</th>
               <th></th>
             </tr>
           </thead>
@@ -579,6 +586,15 @@ export default function ReceiptForm({
                     value={line.notes}
                     onChange={(e) => updateLine(line.key, { notes: e.target.value })}
                     style={{ width: 140 }}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    placeholder="Batch…"
+                    value={line.batch_number}
+                    onChange={(e) => updateLine(line.key, { batch_number: e.target.value })}
+                    style={{ width: 120 }}
                   />
                 </td>
                 <td>
