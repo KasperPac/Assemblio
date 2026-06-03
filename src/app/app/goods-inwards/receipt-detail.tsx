@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { updateDeliveryReceipt, updateComponentCosts, linkReceiptToPo } from "./actions";
 import { computeVariance } from "./helpers";
 import type { ReceiptStatus } from "./helpers";
@@ -141,24 +141,14 @@ export default function ReceiptDetail({
   const linesWithCost = receipt.delivery_receipt_line.filter(
     (l): l is ReceiptLine & { cost_per_unit: number } => l.cost_per_unit !== null
   );
-  const dismissKey = `dismissed_cost_modal_${receipt.id}`;
-  const [showCostModal, setShowCostModal] = useState(false);
+  const totalValue = linesWithCost.reduce(
+    (sum, l) => sum + l.quantity_delivered * l.cost_per_unit,
+    0
+  );
   const [costChecked, setCostChecked] = useState<Record<string, boolean>>(
     () => Object.fromEntries(linesWithCost.map((l) => [l.id, true]))
   );
   const [costUpdatePending, startCostTransition] = useTransition();
-
-  useEffect(() => {
-    if (linesWithCost.length === 0) return;
-    if (!localStorage.getItem(dismissKey)) {
-      setShowCostModal(true);
-    }
-  }, [dismissKey, linesWithCost.length]);
-
-  function dismissCostModal() {
-    localStorage.setItem(dismissKey, "1");
-    setShowCostModal(false);
-  }
 
   function handleCostUpdate() {
     const selected = linesWithCost
@@ -166,7 +156,6 @@ export default function ReceiptDetail({
       .map((l) => ({ component_id: l.component_id, cost_per_unit: l.cost_per_unit }));
     startCostTransition(async () => {
       if (selected.length > 0) await updateComponentCosts(selected);
-      dismissCostModal();
     });
   }
 
@@ -494,7 +483,11 @@ export default function ReceiptDetail({
                             : ""
                         }`}
                       >
-                        {variance > 0 ? `+${variance}` : String(variance)}
+                        {variance < 0
+                          ? `${variance} Short`
+                          : variance > 0
+                          ? `+${variance} Over`
+                          : "0"}
                       </span>
                     ) : (
                       "—"
@@ -526,56 +519,62 @@ export default function ReceiptDetail({
           </tbody>
         </table>
         )}
+        {linesWithCost.length > 0 && (
+          <p style={{ margin: "4px 0 0", textAlign: "right", fontSize: "0.85rem" }}>
+            <span style={{ color: "var(--ink-muted)" }}>Total received value: </span>
+            <strong>
+              ${totalValue.toLocaleString("en-AU", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </strong>
+          </p>
+        )}
       </div>
 
-      {showCostModal && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modal}>
-            <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 700 }}>
-              Update component prices?
-            </h3>
-            <p style={{ margin: "6px 0 0", color: "var(--ink-muted)", fontSize: "0.85rem" }}>
-              These costs were recorded on this receipt. Select the components whose price you'd like to update.
-            </p>
-            <table className={styles.linesTable} style={{ marginTop: 12 }}>
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>Component</th>
-                  <th>Receipt cost</th>
+      {linesWithCost.length > 0 && (
+        <div className={styles.formCard}>
+          <h2 style={{ margin: 0, fontSize: "1rem", fontWeight: 700 }}>
+            Update component costs
+          </h2>
+          <p style={{ margin: "4px 0 0", color: "var(--ink-muted)", fontSize: "0.85rem" }}>
+            Select which components to update with the costs captured on this receipt.
+          </p>
+          <table className={styles.linesTable}>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Component</th>
+                <th>Receipt cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              {linesWithCost.map((l) => (
+                <tr key={l.id}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={costChecked[l.id] ?? true}
+                      onChange={(e) =>
+                        setCostChecked((prev) => ({ ...prev, [l.id]: e.target.checked }))
+                      }
+                    />
+                  </td>
+                  <td>{resolveComponentName(l)}</td>
+                  <td>${l.cost_per_unit.toFixed(2)}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {linesWithCost.map((l) => (
-                  <tr key={l.id}>
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={costChecked[l.id] ?? true}
-                        onChange={(e) =>
-                          setCostChecked((prev) => ({ ...prev, [l.id]: e.target.checked }))
-                        }
-                      />
-                    </td>
-                    <td>{resolveComponentName(l)}</td>
-                    <td>${l.cost_per_unit.toFixed(2)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className={styles.actions} style={{ marginTop: 16 }}>
-              <button type="button" className={styles.secondary} onClick={dismissCostModal}>
-                Skip
-              </button>
-              <button
-                type="button"
-                className={styles.primary}
-                disabled={costUpdatePending || !linesWithCost.some((l) => costChecked[l.id])}
-                onClick={handleCostUpdate}
-              >
-                {costUpdatePending ? "Updating…" : "Update selected"}
-              </button>
-            </div>
+              ))}
+            </tbody>
+          </table>
+          <div className={styles.actions}>
+            <button
+              type="button"
+              className={styles.primary}
+              disabled={costUpdatePending || !linesWithCost.some((l) => costChecked[l.id])}
+              onClick={handleCostUpdate}
+            >
+              {costUpdatePending ? "Updating…" : "Update selected"}
+            </button>
           </div>
         </div>
       )}
