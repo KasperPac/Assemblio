@@ -16,7 +16,8 @@ import type { AccessResult } from "@/lib/subscription/access";
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const pathname = (await headers()).get("x-pathname") ?? ""; // set by middleware on /app/* only
   const isBillingShell = pathname.startsWith("/app/billing");
-  if (isBillingShell) return <>{children}</>; // billing/layout.tsx provides its own chrome
+  const isPrintRoute = pathname.endsWith("/print");
+  if (isBillingShell || isPrintRoute) return <>{children}</>; // billing/layout.tsx and print routes provide their own chrome
 
   const supabase = await createSupabaseServerClient();
   const {

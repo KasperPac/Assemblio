@@ -24,6 +24,7 @@ export default async function GrnPrintPage({ params }: Props) {
   const ctx = await getServerTenantContext();
   if (!ctx) redirect("/auth/login");
   const { supabase, tenantId } = ctx;
+  if (!tenantId) redirect("/auth/login");
 
   const [{ data: receipt }, { data: tenantData }] = await Promise.all([
     supabase
