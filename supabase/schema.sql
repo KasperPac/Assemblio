@@ -171,6 +171,7 @@ create table public.shopify_store (
   tenant_id uuid not null references public.tenant(id),
   store_domain text not null,
   status text not null default 'active',
+  app_id text not null default 'public' check (app_id in ('public', 'unlisted')),
   last_synced_at timestamptz,
   last_sync_status text,
   last_sync_meta jsonb,

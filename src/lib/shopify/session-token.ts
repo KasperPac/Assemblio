@@ -1,4 +1,5 @@
 import { createHmac, timingSafeEqual } from "crypto";
+import type { ShopifyAppId } from "./auth";
 
 /**
  * Verifies a Shopify App Bridge session token (JWT).
@@ -34,6 +35,17 @@ export type ShopifySessionTokenClaims = {
 export type VerifiedSessionToken = {
   shop: string;
   claims: ShopifySessionTokenClaims;
+};
+
+export type VerifiedSessionTokenAny = VerifiedSessionToken & {
+  /** Which configured app the token verified against. */
+  appId: ShopifyAppId;
+};
+
+export type SessionTokenApp = {
+  appId: ShopifyAppId;
+  apiKey: string;
+  apiSecret: string;
 };
 
 const CLOCK_SKEW_SECONDS = 5;
@@ -153,6 +165,64 @@ export function verifyShopifySessionToken(
   }
 
   return { shop, claims };
+}
+
+/**
+ * Returns the list of apps whose credentials are configured, in priority order:
+ * the public app first, then the unlisted app if SHOPIFY_UNLISTED_* are set.
+ * Mirrors verifyWebhookHmacAny() in auth.ts, which accepts webhooks from either app.
+ */
+function configuredSessionTokenApps(): SessionTokenApp[] {
+  const apps: SessionTokenApp[] = [];
+  const apiKey = process.env.SHOPIFY_API_KEY ?? "";
+  const apiSecret = process.env.SHOPIFY_API_SECRET ?? "";
+  if (apiKey && apiSecret) {
+    apps.push({ appId: "public", apiKey, apiSecret });
+  }
+  const unlistedKey = process.env.SHOPIFY_UNLISTED_API_KEY ?? "";
+  const unlistedSecret = process.env.SHOPIFY_UNLISTED_API_SECRET ?? "";
+  if (unlistedKey && unlistedSecret) {
+    apps.push({ appId: "unlisted", apiKey: unlistedKey, apiSecret: unlistedSecret });
+  }
+  return apps;
+}
+
+/**
+ * Verifies a Shopify session token against any configured app (public or unlisted)
+ * and reports which app it matched. Used by the embedded surface, which serves both
+ * the public "Manuva" app and the unlisted "Manuva Fab" app at the same URL — the
+ * token's signature + aud determine which app the merchant actually installed.
+ *
+ * Each candidate is tried via verifyShopifySessionToken, which checks the HS256
+ * signature (with that app's secret) before aud, so a token only "matches" an app
+ * whose secret signed it. Throws SessionTokenError if no configured app matches.
+ */
+export function verifyShopifySessionTokenAny(
+  token: string,
+  options: { apps?: SessionTokenApp[]; nowSeconds?: number } = {}
+): VerifiedSessionTokenAny {
+  const apps = options.apps ?? configuredSessionTokenApps();
+  if (apps.length === 0) {
+    throw new SessionTokenError("missing-app-credentials");
+  }
+
+  let lastError: unknown;
+  for (const app of apps) {
+    try {
+      const verified = verifyShopifySessionToken(token, {
+        apiKey: app.apiKey,
+        apiSecret: app.apiSecret,
+        nowSeconds: options.nowSeconds,
+      });
+      return { ...verified, appId: app.appId };
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  throw lastError instanceof SessionTokenError
+    ? lastError
+    : new SessionTokenError("verify-failed");
 }
 
 /**

@@ -4,11 +4,14 @@ import {
   SessionTokenError,
   extractBearerToken,
   verifyShopifySessionToken,
+  verifyShopifySessionTokenAny,
   type ShopifySessionTokenClaims,
 } from "./session-token";
 
 const API_KEY = "test-api-key";
 const API_SECRET = "test-api-secret";
+const UNLISTED_API_KEY = "test-unlisted-key";
+const UNLISTED_API_SECRET = "test-unlisted-secret";
 
 function base64url(input: Buffer | string): string {
   const buf = typeof input === "string" ? Buffer.from(input) : input;
@@ -175,6 +178,42 @@ describe("verifyShopifySessionToken", () => {
       process.env.SHOPIFY_API_KEY = prevKey;
       process.env.SHOPIFY_API_SECRET = prevSecret;
     }
+  });
+});
+
+describe("verifyShopifySessionTokenAny", () => {
+  const apps = [
+    { appId: "public" as const, apiKey: API_KEY, apiSecret: API_SECRET },
+    { appId: "unlisted" as const, apiKey: UNLISTED_API_KEY, apiSecret: UNLISTED_API_SECRET },
+  ];
+
+  it("verifies a token from the public app and reports appId 'public'", () => {
+    const token = signJwt(validClaims({ aud: API_KEY }), { secret: API_SECRET });
+    const result = verifyShopifySessionTokenAny(token, { apps, nowSeconds: NOW });
+    expect(result.appId).toBe("public");
+    expect(result.shop).toBe("demo.myshopify.com");
+  });
+
+  it("verifies a token from the unlisted app and reports appId 'unlisted'", () => {
+    const token = signJwt(validClaims({ aud: UNLISTED_API_KEY }), { secret: UNLISTED_API_SECRET });
+    const result = verifyShopifySessionTokenAny(token, { apps, nowSeconds: NOW });
+    expect(result.appId).toBe("unlisted");
+    expect(result.shop).toBe("demo.myshopify.com");
+  });
+
+  it("rejects a token signed by neither app's secret", () => {
+    const token = signJwt(validClaims({ aud: API_KEY }), { secret: "rogue-secret" });
+    expect(() => verifyShopifySessionTokenAny(token, { apps, nowSeconds: NOW })).toThrow(
+      SessionTokenError
+    );
+  });
+
+  it("only tries configured apps — rejects an unlisted token when no unlisted app is configured", () => {
+    const publicOnly = [{ appId: "public" as const, apiKey: API_KEY, apiSecret: API_SECRET }];
+    const token = signJwt(validClaims({ aud: UNLISTED_API_KEY }), { secret: UNLISTED_API_SECRET });
+    expect(() =>
+      verifyShopifySessionTokenAny(token, { apps: publicOnly, nowSeconds: NOW })
+    ).toThrow(SessionTokenError);
   });
 });
 

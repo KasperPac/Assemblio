@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { needsTokenExchange } from "./needs-token-exchange";
 import styles from "./embedded.module.css";
 
 type SessionResponse =
@@ -10,16 +11,19 @@ type SessionResponse =
   | {
       status: "no-subscription";
       tenantId: string;
+      hasToken: boolean;
     }
   | {
       status: "past_due_locked";
       tenantId: string;
+      hasToken: boolean;
     }
   | {
       status: "ok";
       tenantId: string;
       storeId: string;
       shopDomain: string;
+      hasToken: boolean;
       lastSyncedAt: string | null;
       lastSyncStatus: string | null;
     };
@@ -97,11 +101,9 @@ export default function EmbeddedClient({ shop: _shop }: { shop: string }) {
 
       // If the shop is associated with a tenant but we don't yet have a token
       // (Shopify-managed install path skips our OAuth callback), exchange the
-      // session token for an offline access token now.
-      if (session.status === "not-installed") {
+      // session token for an offline access token now, then re-read state.
+      if (needsTokenExchange(session)) {
         await tryTokenExchange();
-        // Re-fetch session to see updated state. If still not-installed, the
-        // shop has no tenant association and the UI will prompt to sign in.
         const retryRes = await authenticatedFetch("/api/shopify/embedded/session", {
           method: "POST",
         });
