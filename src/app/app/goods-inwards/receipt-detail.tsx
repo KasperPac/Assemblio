@@ -62,9 +62,9 @@ const REASONS = [
 ];
 
 const STATUS_LABELS: Record<Receipt["status"], string> = {
-  unmatched: "Unmatched",
-  po_linked: "PO linked",
-  discrepancy: "Discrepancy",
+  unmatched: "· Unmatched",
+  po_linked: "✓ PO linked",
+  discrepancy: "⚠ Discrepancy",
 };
 
 function resolveSupplier(r: Receipt): string {
@@ -149,6 +149,7 @@ export default function ReceiptDetail({
     () => Object.fromEntries(linesWithCost.map((l) => [l.id, true]))
   );
   const [costUpdatePending, startCostTransition] = useTransition();
+  const [costUpdateSuccess, setCostUpdateSuccess] = useState(false);
 
   function handleCostUpdate() {
     const selected = linesWithCost
@@ -156,6 +157,7 @@ export default function ReceiptDetail({
       .map((l) => ({ component_id: l.component_id, cost_per_unit: l.cost_per_unit }));
     startCostTransition(async () => {
       if (selected.length > 0) await updateComponentCosts(selected);
+      setCostUpdateSuccess(true);
     });
   }
 
@@ -576,6 +578,11 @@ export default function ReceiptDetail({
               {costUpdatePending ? "Updating…" : "Update selected"}
             </button>
           </div>
+          {costUpdateSuccess && (
+            <p style={{ margin: "4px 0 0", color: "var(--ok)", fontSize: "0.85rem" }}>
+              ✓ Component costs updated.
+            </p>
+          )}
         </div>
       )}
     </div>
