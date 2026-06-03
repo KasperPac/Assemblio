@@ -20,6 +20,7 @@ export type DeliveryReceiptLineInput = {
   quantity_expected: number | null;
   cost_per_unit: number | null;
   notes: string | null;
+  batch_number: string | null;
 };
 
 // ─── Actions ─────────────────────────────────────────────────────────────────
@@ -108,6 +109,7 @@ export async function createDeliveryReceipt(formData: FormData) {
         quantity_expected: l.quantity_expected,
         cost_per_unit: l.cost_per_unit ?? null,
         notes: l.notes,
+        batch_number: l.batch_number ?? null,
       }))
     );
 
