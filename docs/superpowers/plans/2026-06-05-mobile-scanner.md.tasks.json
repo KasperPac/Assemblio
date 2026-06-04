@@ -1,0 +1,54 @@
+{
+  "planPath": "docs/superpowers/plans/2026-06-05-mobile-scanner.md",
+  "tasks": [
+    {
+      "id": 10,
+      "subject": "Task 1: DB patch + app shell bypass + scan layout + home",
+      "status": "pending",
+      "description": "**Goal:** Land everything needed to reach /app/scan: RPC patch, mobile shell, home page, PWA manifest.\n\n**Files:**\n- Create: supabase/patches/2026-06-05-resolve-location-barcode-rpc.sql\n- Modify: src/app/app/layout.tsx\n- Create: src/app/app/scan/layout.tsx\n- Create: src/app/app/scan/scan.module.css\n- Create: src/app/app/scan/page.tsx\n- Create: src/app/app/scan/manifest.json/route.ts\n\n```json:metadata\n{\"files\":[\"supabase/patches/2026-06-05-resolve-location-barcode-rpc.sql\",\"src/app/app/layout.tsx\",\"src/app/app/scan/layout.tsx\",\"src/app/app/scan/scan.module.css\",\"src/app/app/scan/page.tsx\",\"src/app/app/scan/manifest.json/route.ts\"],\"verifyCommand\":\"npx vitest run src/app/app/scan\",\"acceptanceCriteria\":[\"GET /app/scan renders without sidebar\",\"PWA manifest returns valid JSON\",\"resolve_location_barcode RPC applied\"]}\n```"
+    },
+    {
+      "id": 11,
+      "subject": "Task 2: resolveBarcode server action + tests",
+      "status": "pending",
+      "blockedBy": [10],
+      "description": "**Goal:** Typed server action calling the RPC, returning ResolvedLocation or null.\n\n**Files:**\n- Create: src/app/app/scan/_actions/resolve-barcode.ts\n- Create: src/app/app/scan/_actions/resolve-barcode.test.ts\n\n```json:metadata\n{\"files\":[\"src/app/app/scan/_actions/resolve-barcode.ts\",\"src/app/app/scan/_actions/resolve-barcode.test.ts\"],\"verifyCommand\":\"npx vitest run src/app/app/scan/_actions/resolve-barcode.test.ts\",\"acceptanceCriteria\":[\"Returns ResolvedLocation for known code\",\"Returns null for unknown code\",\"Uppercases input\"]}\n```"
+    },
+    {
+      "id": 12,
+      "subject": "Task 3: Location picker data action + LocationPicker component",
+      "status": "pending",
+      "blockedBy": [11],
+      "description": "**Goal:** Server action loading warehouse hierarchy; bottom-sheet LocationPicker component.\n\n**Files:**\n- Create: src/app/app/scan/_actions/get-location-picker-data.ts\n- Create: src/app/app/scan/_actions/get-location-picker-data.test.ts\n- Create: src/app/app/scan/_components/location-picker.tsx\n\n```json:metadata\n{\"files\":[\"src/app/app/scan/_actions/get-location-picker-data.ts\",\"src/app/app/scan/_actions/get-location-picker-data.test.ts\",\"src/app/app/scan/_components/location-picker.tsx\"],\"verifyCommand\":\"npx vitest run src/app/app/scan/_actions/get-location-picker-data.test.ts\",\"acceptanceCriteria\":[\"getWarehouses returns warehouse list\",\"getAislesForWarehouse includes subLocationName\",\"getBaysForAisle returns bay list\"]}\n```"
+    },
+    {
+      "id": 13,
+      "subject": "Task 4: Scanner camera component",
+      "status": "pending",
+      "blockedBy": [10],
+      "description": "**Goal:** Reusable camera viewfinder decoding Code 128 barcodes.\n\n**Files:**\n- Modify: package.json (add @zxing/browser)\n- Create: src/app/app/scan/_components/scanner.tsx\n\n```json:metadata\n{\"files\":[\"package.json\",\"src/app/app/scan/_components/scanner.tsx\"],\"verifyCommand\":\"npm install && npx tsc --noEmit\",\"acceptanceCriteria\":[\"@zxing/browser installed\",\"Scanner renders video element\",\"Fires onScan with 6-char code\"]}\n```"
+    },
+    {
+      "id": 14,
+      "subject": "Task 5: getSessionLines action + stocktake session picker page",
+      "status": "pending",
+      "blockedBy": [11, 12, 13],
+      "description": "**Goal:** Action fetching stocktake lines filtered by location; session picker page.\n\n**Files:**\n- Create: src/app/app/scan/_actions/get-session-lines.ts\n- Create: src/app/app/scan/_actions/get-session-lines.test.ts\n- Create: src/app/app/scan/stocktake/page.tsx\n\n```json:metadata\n{\"files\":[\"src/app/app/scan/_actions/get-session-lines.ts\",\"src/app/app/scan/_actions/get-session-lines.test.ts\",\"src/app/app/scan/stocktake/page.tsx\"],\"verifyCommand\":\"npx vitest run src/app/app/scan/_actions/get-session-lines.test.ts\",\"acceptanceCriteria\":[\"Returns [] when context missing\",\"blind_count returns null expectedOnHand\",\"Session picker renders open sessions\"]}\n```"
+    },
+    {
+      "id": 15,
+      "subject": "Task 6: Stocktake scan + count page",
+      "status": "pending",
+      "blockedBy": [14],
+      "description": "**Goal:** Full scan-and-count UI.\n\n**Files:**\n- Create: src/app/app/scan/stocktake/[sessionId]/page.tsx\n\n```json:metadata\n{\"files\":[\"src/app/app/scan/stocktake/[sessionId]/page.tsx\"],\"verifyCommand\":\"npx tsc --noEmit\",\"acceptanceCriteria\":[\"Camera active on load\",\"Known scan shows lines\",\"Unknown scan shows toast\",\"Save resets to scanning state\"]}\n```"
+    },
+    {
+      "id": 16,
+      "subject": "Task 7: Location assignment actions + locate page",
+      "status": "pending",
+      "blockedBy": [12, 13],
+      "description": "**Goal:** Full scan-and-assign UI.\n\n**Files:**\n- Create: src/app/app/scan/_actions/get-location-components.ts\n- Create: src/app/app/scan/_actions/assign-component.ts\n- Create: src/app/app/scan/_actions/assign-component.test.ts\n- Create: src/app/app/scan/_actions/search-components.ts\n- Create: src/app/app/scan/locate/page.tsx\n\n```json:metadata\n{\"files\":[\"src/app/app/scan/_actions/get-location-components.ts\",\"src/app/app/scan/_actions/assign-component.ts\",\"src/app/app/scan/_actions/assign-component.test.ts\",\"src/app/app/scan/_actions/search-components.ts\",\"src/app/app/scan/locate/page.tsx\"],\"verifyCommand\":\"npx vitest run src/app/app/scan/_actions/assign-component.test.ts\",\"acceptanceCriteria\":[\"assignComponentToLocation sets FK\",\"removeComponentFromLocation nulls FK\",\"Locate page shows occupants with remove buttons\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-06-05T00:00:00Z"
+}
