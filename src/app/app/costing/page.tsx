@@ -86,6 +86,7 @@ export default async function CostingPage({ searchParams }: Props) {
       .from("orders")
       .select("*", { count: "exact", head: true })
       .eq("tenant_id", tenantId)
+      .eq("historical", false)
       .not("status", "in", '("fulfilled","cancelled")'),
     supabase
       .from("product_bom")
