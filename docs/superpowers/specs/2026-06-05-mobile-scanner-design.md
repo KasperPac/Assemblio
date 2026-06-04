@@ -188,7 +188,8 @@ Fetches components assigned to the given location entity. Same FK logic as above
      → resolveBarcode() identifies entity
      → getLocationComponents() loads assigned components
      → list renders with ✕ remove buttons
-        → tap ✕ → updateBinLocation(componentId, { clear: level })
+        → tap ✕ → updateBinLocation(componentId, { bin_bay_id: null } | { bin_aisle_id: null } | { bin_sub_location_id: null })
+          (nulls the appropriate FK for the resolved location level)
           saves immediately, no confirm
      → tap "+ Add component…" → bottom sheet
         → search field, type-to-filter
