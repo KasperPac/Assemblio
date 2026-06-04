@@ -42,6 +42,7 @@ function asQuery(query: unknown) {
 type OrderRow = {
   id: string;
   status: string;
+  historical?: boolean;
 };
 
 type LocationRow = {
@@ -179,13 +180,20 @@ export async function reconcileOrderAllocations(
   orderId: string
 ): Promise<ReconcileOrderResult> {
   const { data: orderData, error: orderError } = await asQuery(client.from("orders"))
-    .select("id,status")
+    .select("id,status,historical")
     .eq("tenant_id", tenantId)
     .eq("id", orderId)
     .maybeSingle();
   if (orderError) throw orderError;
   const order = orderData as OrderRow | null;
   if (!order?.id) return { applied: 0, skippedMissingBom: 0, clearedOnly: false };
+
+  // Historical orders are imported for stats/reporting only — they must never
+  // reserve stock or drive allocation, even if a caller (e.g. the manual
+  // "Re-run allocation" UI action) reaches this function with one.
+  if ((order as { historical?: boolean }).historical) {
+    return { applied: 0, skippedMissingBom: 0, clearedOnly: false };
+  }
 
   const { data: locationData, error: locationError } = await asQuery(
     client.from("location")

@@ -1,5 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
-import { releaseOrderAllocations } from "./reconcile-order";
+import {
+  releaseOrderAllocations,
+  reconcileOrderAllocations,
+} from "./reconcile-order";
 
 // ---------------------------------------------------------------------------
 // Fake DbClient / DbQuery builder
@@ -158,6 +161,38 @@ describe("releaseOrderAllocations", () => {
     );
 
     expect(released).toBe(0);
+    expect(rpcMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("reconcileOrderAllocations", () => {
+  it("never reserves stock for a historical order (defense in depth)", async () => {
+    const rpcMock = vi.fn().mockResolvedValue({ data: null, error: null });
+
+    const client = makeFakeClient(
+      {
+        // the order fetch returns a historical order
+        orders: [{ id: "order-1", status: "open", historical: true }],
+        location: [{ id: "loc-1" }],
+        order_line: [{ id: "line-1", variant_id: "var-1", quantity: 5 }],
+        product_bom: [{ id: "bom-1" }],
+        product_bom_component: [{ component_id: "c1", quantity: 1 }],
+        order_component_allocation: [],
+      },
+      rpcMock
+    );
+
+    const result = await reconcileOrderAllocations(
+      client as Parameters<typeof reconcileOrderAllocations>[0],
+      "tenant-1",
+      "order-1"
+    );
+
+    expect(result).toEqual({
+      applied: 0,
+      skippedMissingBom: 0,
+      clearedOnly: false,
+    });
     expect(rpcMock).not.toHaveBeenCalled();
   });
 });
