@@ -26,7 +26,6 @@ type ShopifyOrderNode = {
   name: string;
   cancelledAt: string | null;
   displayFulfillmentStatus: string | null;
-  customer: { firstName: string | null; email: string | null } | null;
   lineItems: {
     nodes: Array<{
       quantity: number;
@@ -141,7 +140,6 @@ async function fetchOrders(shopDomain: string, accessToken: string) {
           name
           cancelledAt
           displayFulfillmentStatus
-          customer { firstName email }
           lineItems(first: 100) {
             nodes {
               quantity
@@ -245,8 +243,11 @@ export async function syncShopifyStoreData(
     shopify_order_id: order.id,
     order_number: order.name,
     status: mapOrderStatus(order),
-    customer_email: order.customer?.email?.toLowerCase() ?? null,
-    customer_first_name: order.customer?.firstName ?? null,
+    // Customer fields are deferred until a future feature: querying them
+    // requires the read_customers (protected customer data) scope, which the
+    // app does not request at launch. Synced as null for now.
+    customer_email: null,
+    customer_first_name: null,
   }));
   if (orderRows.length > 0) {
     const { error } = await admin.from("orders").upsert(orderRows, {
