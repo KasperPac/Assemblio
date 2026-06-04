@@ -1,7 +1,12 @@
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { shopifyGraphqlRequest } from "./client";
+import { chunk } from "./chunk";
 import { reconcileOrderAllocations } from "@/lib/allocation/reconcile-order";
 import { getWeekStart } from "@/lib/dates";
+
+// Max ids per PostgREST .in(...) filter. The filter is serialized into the
+// request URL, so large lists overflow the server URI limit (HTTP 414).
+const IN_FILTER_CHUNK = 100;
 
 type SyncResult = {
   products: number;
@@ -57,6 +62,9 @@ function assertNoError(
   throw new Error(`${context}: ${error.message ?? "Unknown Supabase error"}`);
 }
 
+// Upserts products and returns a shopify_id -> local id map built from the rows
+// the upsert returns, avoiding a follow-up .in() select (which would 414 on
+// large catalogs).
 async function upsertProducts(
   admin: ReturnType<typeof createSupabaseAdminClient>,
   rows: Array<{
@@ -66,17 +74,19 @@ async function upsertProducts(
     description: string;
     image_url: string | null;
   }>
-) {
+): Promise<Map<string, string>> {
   const now = new Date().toISOString();
   const sourcedRows = rows.map((row) => ({
     ...row,
     source: "shopify" as const,
     last_synced_at: now,
   }));
-  const { error } = await admin
+  const { data, error } = await admin
     .from("product")
-    .upsert(sourcedRows, { onConflict: "tenant_id,shopify_id" });
+    .upsert(sourcedRows, { onConflict: "tenant_id,shopify_id" })
+    .select("id,shopify_id");
   assertNoError(error, "Failed to upsert product");
+  return new Map((data ?? []).map((p) => [p.shopify_id as string, p.id as string]));
 }
 
 function mapOrderStatus(order: ShopifyOrderNode) {
@@ -180,8 +190,9 @@ export async function syncShopifyStoreData(
     fetchOrders(shopDomain, accessToken),
   ]);
 
+  let productMap = new Map<string, string>();
   if (products.length > 0) {
-    await upsertProducts(
+    productMap = await upsertProducts(
       admin,
       products.map((product) => ({
         tenant_id: tenantId,
@@ -191,18 +202,6 @@ export async function syncShopifyStoreData(
         image_url: product.featuredImage?.url ?? null,
       }))
     );
-  }
-
-  const productIds = products.map((product) => product.id);
-  let productMap = new Map<string, string>();
-  if (productIds.length > 0) {
-    const { data: savedProducts, error } = await admin
-      .from("product")
-      .select("id,shopify_id")
-      .eq("tenant_id", tenantId)
-      .in("shopify_id", productIds);
-    assertNoError(error, "Failed to fetch saved product rows");
-    productMap = new Map((savedProducts ?? []).map((p) => [p.shopify_id, p.id]));
   }
 
   const variantRows = products.flatMap((product) =>
@@ -219,23 +218,14 @@ export async function syncShopifyStoreData(
       .filter((variant) => variant.product_id)
   );
 
-  if (variantRows.length > 0) {
-    const { error } = await admin.from("product_variant").upsert(variantRows, {
-      onConflict: "tenant_id,shopify_id",
-    });
-    assertNoError(error, "Failed to upsert product_variant");
-  }
-
-  const variantShopifyIds = variantRows.map((variant) => variant.shopify_id);
   let variantMap = new Map<string, string>();
-  if (variantShopifyIds.length > 0) {
+  if (variantRows.length > 0) {
     const { data: savedVariants, error } = await admin
       .from("product_variant")
-      .select("id,shopify_id")
-      .eq("tenant_id", tenantId)
-      .in("shopify_id", variantShopifyIds);
-    assertNoError(error, "Failed to fetch saved product_variant rows");
-    variantMap = new Map((savedVariants ?? []).map((v) => [v.shopify_id, v.id]));
+      .upsert(variantRows, { onConflict: "tenant_id,shopify_id" })
+      .select("id,shopify_id");
+    assertNoError(error, "Failed to upsert product_variant");
+    variantMap = new Map((savedVariants ?? []).map((v) => [v.shopify_id as string, v.id as string]));
   }
 
   const orderRows = orders.map((order) => ({
@@ -249,23 +239,14 @@ export async function syncShopifyStoreData(
     customer_email: null,
     customer_first_name: null,
   }));
-  if (orderRows.length > 0) {
-    const { error } = await admin.from("orders").upsert(orderRows, {
-      onConflict: "tenant_id,shopify_order_id",
-    });
-    assertNoError(error, "Failed to upsert orders");
-  }
-
-  const orderIds = orderRows.map((order) => order.shopify_order_id);
   let orderMap = new Map<string, string>();
-  if (orderIds.length > 0) {
+  if (orderRows.length > 0) {
     const { data: savedOrders, error } = await admin
       .from("orders")
-      .select("id,shopify_order_id")
-      .eq("tenant_id", tenantId)
-      .in("shopify_order_id", orderIds);
-    assertNoError(error, "Failed to fetch saved orders rows");
-    orderMap = new Map((savedOrders ?? []).map((o) => [o.shopify_order_id, o.id]));
+      .upsert(orderRows, { onConflict: "tenant_id,shopify_order_id" })
+      .select("id,shopify_order_id");
+    assertNoError(error, "Failed to upsert orders");
+    orderMap = new Map((savedOrders ?? []).map((o) => [o.shopify_order_id as string, o.id as string]));
   }
 
   const orderLineRows = orders.flatMap((order) => {
@@ -295,11 +276,20 @@ export async function syncShopifyStoreData(
     }));
   });
 
+  // Build order_id -> line ids from the upsert's returned rows (used below for
+  // financial planning), avoiding a follow-up .in() select that would 414.
+  const linesByOrderId = new Map<string, string[]>();
   if (orderLineRows.length > 0) {
-    const { error } = await admin.from("order_line").upsert(orderLineRows, {
-      onConflict: "tenant_id,order_id,variant_id",
-    });
+    const { data: savedLines, error } = await admin
+      .from("order_line")
+      .upsert(orderLineRows, { onConflict: "tenant_id,order_id,variant_id" })
+      .select("id,order_id");
     assertNoError(error, "Failed to upsert order_line");
+    for (const row of savedLines ?? []) {
+      const list = linesByOrderId.get(row.order_id as string) ?? [];
+      list.push(row.id as string);
+      linesByOrderId.set(row.order_id as string, list);
+    }
   }
 
   const fulfilledOrderIds: string[] = [];
@@ -314,12 +304,14 @@ export async function syncShopifyStoreData(
 
   if (fulfilledOrderIds.length > 0) {
     const nowIso = new Date().toISOString();
-    await admin
-      .from("order_line")
-      .update({ shipped_at: nowIso })
-      .eq("tenant_id", tenantId)
-      .in("order_id", fulfilledOrderIds)
-      .is("shipped_at", null);
+    for (const batch of chunk(fulfilledOrderIds, IN_FILTER_CHUNK)) {
+      await admin
+        .from("order_line")
+        .update({ shipped_at: nowIso })
+        .eq("tenant_id", tenantId)
+        .in("order_id", batch)
+        .is("shipped_at", null);
+    }
   }
 
   if (partialOrders.length > 0) {
@@ -340,22 +332,7 @@ export async function syncShopifyStoreData(
     }
   }
 
-  // Batch-fetch all order line IDs for this sync in one query
-  const { data: allPlanLines } = await admin
-    .from("order_line")
-    .select("id, order_id")
-    .eq("tenant_id", tenantId)
-    .in("order_id", orderLocalIds);
-
-  // Group by order_id in memory
-  const linesByOrderId = new Map<string, string[]>();
-  for (const row of allPlanLines ?? []) {
-    const list = linesByOrderId.get(row.order_id) ?? [];
-    list.push(row.id);
-    linesByOrderId.set(row.order_id, list);
-  }
-
-  // Run financial planning with zero extra DB reads
+  // Run financial planning from the line-id map built at upsert time
   let planRuns = 0;
   let planErrors = 0;
   const weekStart = getWeekStart();
