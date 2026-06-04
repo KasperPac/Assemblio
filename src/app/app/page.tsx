@@ -5,6 +5,7 @@ import StatusBadge from "./_ui/status-badge";
 import { calcDaysRemaining } from "@/lib/dashboard/calculations";
 import { FinanceChartCard } from "./_dashboard/finance-chart";
 import { OrdersChartCard } from "./_dashboard/orders-chart";
+import { deriveDashboardSalesMetrics, type ProductSalesRow } from "@/lib/dashboard/sales-metrics";
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(value);
@@ -37,6 +38,35 @@ export default async function DashboardPage() {
 
   const { supabase, tenantId: _tenantId } = context;
   const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
+
+  const todayDate = new Date();
+  const toDate = todayDate.toISOString().slice(0, 10);
+  const fromDate = new Date(todayDate.getTime() - 30 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
+
+  const [{ data: productSalesRows }, { data: windowOrders }] = await Promise.all([
+    supabase.rpc("dashboard_product_sales", {
+      p_tenant_id: tenantId,
+      p_from: fromDate,
+      p_to: toDate,
+    }),
+    supabase.rpc("list_orders", {
+      p_tenant_id: tenantId,
+      p_date_from: fromDate,
+      p_date_to: toDate,
+      p_limit: 1,
+      p_offset: 0,
+    }),
+  ]);
+
+  const windowOrderCount = Number(
+    (windowOrders as Array<{ total_count: number }> | null)?.[0]?.total_count ?? 0
+  );
+  const salesMetrics = deriveDashboardSalesMetrics(
+    (productSalesRows ?? []) as ProductSalesRow[],
+    windowOrderCount
+  );
 
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   const sixMonthsAgo = new Date();
@@ -172,6 +202,21 @@ export default async function DashboardPage() {
           <span className={styles.kpiValue}>{openOrderCount ?? 0}</span>
           <span className={styles.kpiSub}>Awaiting fulfillment</span>
         </div>
+        <div className={styles.kpiChip}>
+          <span className={styles.kpiLabel}>Revenue (30d)</span>
+          <span className={styles.kpiValue}>{formatCurrency(salesMetrics.totalRevenue)}</span>
+          <span className={styles.kpiSub}>{salesMetrics.totalUnits} units sold</span>
+        </div>
+        <div className={styles.kpiChip}>
+          <span className={styles.kpiLabel}>Avg order value</span>
+          <span className={styles.kpiValue}>{formatCurrency(salesMetrics.avgOrderValue)}</span>
+          <span className={styles.kpiSub}>Last 30 days</span>
+        </div>
+        <div className={styles.kpiChip}>
+          <span className={styles.kpiLabel}>Gross margin</span>
+          <span className={styles.kpiValue}>{Math.round(salesMetrics.grossMarginPct)}%</span>
+          <span className={styles.kpiSub}>Over materials</span>
+        </div>
       </div>
 
       {/* Charts */}
@@ -246,6 +291,46 @@ export default async function DashboardPage() {
                   </div>
                 );
               })}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Top products — full width */}
+      <div className={styles.bottomRow}>
+        <div className={`${styles.card} ${styles.fullWidthCard}`}>
+          <div className={styles.cardHeader}>
+            <div>
+              <p className={styles.eyebrow}>Last 30 days</p>
+              <h3 className={styles.cardTitle}>Top products</h3>
+            </div>
+            <Link href="/app/products" className={styles.viewAll}>View all</Link>
+          </div>
+          {salesMetrics.mostPopular.length === 0 ? (
+            <p className={styles.emptyMsg}>No sales in the last 30 days.</p>
+          ) : (
+            <div className={styles.topProductsGrid}>
+              <div className={styles.topProductsCol}>
+                <p className={styles.topProductsHeading}>Most popular</p>
+                {salesMetrics.mostPopular.map((p) => (
+                  <Link key={p.product_id} href={`/app/products/${p.product_id}`} className={styles.topProductRow}>
+                    <span className={styles.topProductName}>{p.title}</span>
+                    <span className={styles.topProductVal}>{p.units} sold</span>
+                  </Link>
+                ))}
+              </div>
+              <div className={styles.topProductsCol}>
+                <p className={styles.topProductsHeading}>Highest profit</p>
+                {salesMetrics.highestProfit.map((p) => (
+                  <Link key={p.product_id} href={`/app/products/${p.product_id}`} className={styles.topProductRow}>
+                    <span className={styles.topProductName}>
+                      {p.title}
+                      {!p.has_bom && <span className={styles.noBomTag}> no BOM</span>}
+                    </span>
+                    <span className={styles.topProductVal}>{formatCurrency(p.profit)}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
         </div>
