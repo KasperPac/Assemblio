@@ -6,6 +6,7 @@ import { getServerTenantContext } from "@/lib/tenant/context";
 import PageHeader from "../_ui/page-header";
 import EmptyState from "../_ui/empty-state";
 import HelpLink from "../_ui/help-link";
+import StatusBadge from "../_ui/status-badge";
 import { getOrdersPipelineRollup } from "@/lib/orders/pipeline-rollup";
 import { daysLate } from "@/lib/orders/target-ship";
 import {
@@ -45,6 +46,9 @@ type OrderRow = {
   source: string;
   target_ship_date: string | null;
   created_at: string;
+  historical: boolean;
+  shopify_processed_at: string | null;
+  shopify_created_at: string | null;
 };
 
 type OrderLineRef = { order_id: string; line_sell_price: number };
@@ -97,7 +101,7 @@ export default async function OrdersPage({ searchParams }: Props) {
   const { data: orderData, error } = await supabase
     .from("orders")
     .select(
-      "id, order_number, customer_email, status, source, target_ship_date, created_at"
+      "id, order_number, customer_email, status, source, target_ship_date, created_at, historical, shopify_processed_at, shopify_created_at"
     )
     .eq("tenant_id", tenantId)
     .order("target_ship_date", { ascending: true, nullsFirst: false })
@@ -199,6 +203,7 @@ export default async function OrdersPage({ searchParams }: Props) {
             <tr>
               <th>Order</th>
               <th>Customer</th>
+              <th>Order date</th>
               <th>Target ship</th>
               <th className={styles.cellRight}>Total</th>
               <th>Components</th>
@@ -210,7 +215,7 @@ export default async function OrdersPage({ searchParams }: Props) {
           <tbody>
             {error ? (
               <tr>
-                <td colSpan={8} className={styles.emptyCell}>
+                <td colSpan={9} className={styles.emptyCell}>
                   <EmptyState
                     title="Failed to load orders"
                     message={`Supabase: ${error.message}.`}
@@ -219,7 +224,7 @@ export default async function OrdersPage({ searchParams }: Props) {
               </tr>
             ) : visibleOrders.length === 0 ? (
               <tr>
-                <td colSpan={8} className={styles.emptyCell}>
+                <td colSpan={9} className={styles.emptyCell}>
                   <EmptyState
                     title="No orders in this view"
                     message="Try a different tab or sync orders to populate the queue."
@@ -234,6 +239,9 @@ export default async function OrdersPage({ searchParams }: Props) {
                 const overdue = rollup?.isOverdue ?? false;
                 const lateDays = overdue && target ? daysLate(target, now) : 0;
 
+                const orderDate =
+                  row.shopify_processed_at ?? row.shopify_created_at;
+
                 return (
                   <tr key={row.id}>
                     <td>
@@ -243,6 +251,9 @@ export default async function OrdersPage({ searchParams }: Props) {
                       >
                         {row.order_number ?? row.id.slice(0, 8)}
                       </Link>
+                      {row.historical && (
+                        <>{" "}<StatusBadge>Historical</StatusBadge></>
+                      )}
                     </td>
                     <td>
                       <span className={styles.customerName}>
@@ -251,6 +262,9 @@ export default async function OrdersPage({ searchParams }: Props) {
                       <span className={styles.sourceChip}>
                         ({sourceChipText(row.source)})
                       </span>
+                    </td>
+                    <td>
+                      {orderDate ? formatDate(new Date(orderDate)) : "—"}
                     </td>
                     <td className={overdue ? styles.overdue : undefined}>
                       {target ? formatDate(target) : "—"}
