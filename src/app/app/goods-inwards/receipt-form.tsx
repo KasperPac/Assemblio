@@ -31,6 +31,7 @@ type LineState = {
   quantity_delivered: string;
   cost_per_unit: string;
   notes: string;
+  batch_number: string;
   extractedName?: string;
   quantity_expected?: number | null;
   purchase_order_line_id?: string | null;
@@ -52,6 +53,7 @@ function blankLine(): LineState {
     quantity_delivered: "",
     cost_per_unit: "",
     notes: "",
+    batch_number: "",
   };
 }
 
@@ -68,6 +70,7 @@ export default function ReceiptForm({
   availablePOs,
   initialPoId,
   initialComponentId,
+  hasPdfParser,
 }: {
   suppliers: Supplier[];
   components: Component[];
@@ -76,6 +79,7 @@ export default function ReceiptForm({
   availablePOs: AvailablePO[];
   initialPoId?: string;
   initialComponentId?: string | null;
+  hasPdfParser: boolean;
 }) {
   const defaultLocation = locations.find((l) => l.is_default) ?? locations[0];
 
@@ -98,6 +102,7 @@ export default function ReceiptForm({
             quantity_delivered: String(remaining),
             cost_per_unit: "",
             notes: "",
+            batch_number: "",
             quantity_expected: remaining,
             purchase_order_line_id: l.id,
           };
@@ -143,6 +148,7 @@ export default function ReceiptForm({
           quantity_delivered: String(remaining),
           cost_per_unit: "",
           notes: "",
+          batch_number: "",
           quantity_expected: remaining,
           purchase_order_line_id: l.id,
         };
@@ -229,6 +235,7 @@ export default function ReceiptForm({
           quantity_delivered: String(l.quantity),
           cost_per_unit: "",
           notes: "",
+          batch_number: "",
           extractedName: l.extracted_name,
         }))
       );
@@ -268,6 +275,7 @@ export default function ReceiptForm({
           quantity_expected: l.quantity_expected ?? null,
           cost_per_unit: l.cost_per_unit ? parseFloat(l.cost_per_unit) : null,
           notes: l.notes || null,
+          batch_number: l.batch_number || null,
         }))
       )
     );
@@ -325,12 +333,14 @@ export default function ReceiptForm({
       )}
 
       {/* PDF parse section */}
-      <div className={styles.formCard}>
+      <div className={styles.formCard} style={!hasPdfParser ? { opacity: 0.55 } : undefined}>
         <h2 style={{ margin: 0, fontSize: "1rem", fontWeight: 700 }}>
           Parse delivery docket (optional)
         </h2>
         <p style={{ margin: 0, color: "var(--ink-muted)", fontSize: "0.85rem" }}>
-          Upload a PDF packing slip to pre-fill this form.
+          {hasPdfParser
+            ? "Upload a PDF packing slip to pre-fill this form."
+            : "PDF parsing is not configured — contact your administrator to enable it."}
         </p>
         <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
           <input
@@ -338,12 +348,13 @@ export default function ReceiptForm({
             type="file"
             accept=".pdf"
             style={{ flex: 1 }}
+            disabled={!hasPdfParser}
           />
           <button
             type="button"
             className={styles.secondary}
             onClick={handlePdfParse}
-            disabled={pdfParsing}
+            disabled={pdfParsing || !hasPdfParser}
           >
             {pdfParsing ? "Parsing…" : "Parse PDF"}
           </button>
@@ -465,6 +476,7 @@ export default function ReceiptForm({
               <th>Qty delivered</th>
               <th>Cost / unit (optional)</th>
               <th>Note</th>
+              <th>Batch #</th>
               <th></th>
             </tr>
           </thead>
@@ -579,6 +591,15 @@ export default function ReceiptForm({
                     value={line.notes}
                     onChange={(e) => updateLine(line.key, { notes: e.target.value })}
                     style={{ width: 140 }}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    placeholder="Batch…"
+                    value={line.batch_number}
+                    onChange={(e) => updateLine(line.key, { batch_number: e.target.value })}
+                    style={{ width: 120 }}
                   />
                 </td>
                 <td>

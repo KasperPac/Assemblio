@@ -161,24 +161,21 @@
   }
 }
 
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
+.poLink {
+  font-size: var(--fs-sm);
+  color: var(--brand-1);
+  text-decoration: none;
 }
 
-.modal {
-  background: var(--bg-card);
-  border: 1px solid var(--stroke-card);
-  border-radius: var(--radius-xl);
-  padding: 24px;
-  max-width: 480px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.poLink:hover {
+  text-decoration: underline;
+}
+
+.dueUrgent {
+  font-weight: var(--fw-semibold);
+}
+
+.receiveBtnSm {
+  padding: 4px 10px;
+  white-space: nowrap;
 }

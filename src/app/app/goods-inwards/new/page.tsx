@@ -96,6 +96,8 @@ export default async function NewReceiptPage({ searchParams }: Props) {
     };
   });
 
+  const hasPdfParser = !!process.env.ANTHROPIC_API_KEY;
+
   return (
     <ReceiptForm
       suppliers={suppliersResult.data ?? []}
@@ -105,6 +107,7 @@ export default async function NewReceiptPage({ searchParams }: Props) {
       availablePOs={availablePOs}
       initialPoId={initialPoId}
       initialComponentId={initialComponentId ?? null}
+      hasPdfParser={hasPdfParser}
     />
   );
 }

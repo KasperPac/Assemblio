@@ -3,9 +3,10 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import {
   SessionTokenError,
   extractBearerToken,
-  verifyShopifySessionToken,
+  verifyShopifySessionTokenAny,
 } from "@/lib/shopify/session-token";
 import { exchangeSessionTokenForOfflineAccessToken } from "@/lib/shopify/token-exchange";
+import { getShopifyOAuthConfigForApp } from "@/lib/shopify/auth";
 import { registerRequiredWebhooks } from "@/lib/shopify/client";
 
 /**
@@ -28,13 +29,24 @@ export async function POST(request: NextRequest) {
 
   let verified;
   try {
-    verified = verifyShopifySessionToken(token);
+    verified = verifyShopifySessionTokenAny(token);
   } catch (error) {
     const reason = error instanceof SessionTokenError ? error.reason : "verify-failed";
     return NextResponse.json({ ok: false, error: `invalid-session-token:${reason}` }, { status: 401 });
   }
 
   const shop = verified.shop;
+
+  // Exchange using the credentials of the app the token actually came from
+  // (public "Manuva" vs unlisted "Manuva Fab"). Using the wrong app's client
+  // credentials makes Shopify reject the exchange with an invalid-token error.
+  const appConfig = getShopifyOAuthConfigForApp(verified.appId);
+  if (!appConfig.ok) {
+    return NextResponse.json(
+      { ok: false, error: `app-config-missing:${verified.appId}` },
+      { status: 500 }
+    );
+  }
   const admin = createSupabaseAdminClient();
 
   const { data: store } = await admin
@@ -52,7 +64,10 @@ export async function POST(request: NextRequest) {
 
   let exchange;
   try {
-    exchange = await exchangeSessionTokenForOfflineAccessToken(shop, token);
+    exchange = await exchangeSessionTokenForOfflineAccessToken(shop, token, {
+      apiKey: appConfig.apiKey,
+      apiSecret: appConfig.apiSecret,
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : "token-exchange-failed";
     return NextResponse.json({ ok: false, error: message }, { status: 500 });

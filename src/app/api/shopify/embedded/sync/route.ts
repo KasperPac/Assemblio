@@ -3,7 +3,7 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import {
   SessionTokenError,
   extractBearerToken,
-  verifyShopifySessionToken,
+  verifyShopifySessionTokenAny,
 } from "@/lib/shopify/session-token";
 import { syncShopifyStoreData } from "@/lib/shopify/sync";
 import { getMissingSyncScopes } from "@/lib/shopify/scopes";
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
   let verified;
   try {
-    verified = verifyShopifySessionToken(token);
+    verified = verifyShopifySessionTokenAny(token);
   } catch (error) {
     const reason = error instanceof SessionTokenError ? error.reason : "verify-failed";
     return NextResponse.json({ ok: false, error: `invalid-session-token:${reason}` }, { status: 401 });

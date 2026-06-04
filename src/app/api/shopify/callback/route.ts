@@ -37,7 +37,8 @@ async function upsertStoreAndToken(
   accessToken: string,
   scopes: string,
   refreshToken: string | null,
-  expiresInSeconds: number | null
+  expiresInSeconds: number | null,
+  appId: ShopifyAppId
 ): Promise<"ok" | "conflict" | "store-save-failed" | "token-save-failed"> {
   // Block cross-tenant install only if there's an ACTIVE install on another tenant.
   // Disconnected / uninstalled rows are stale and would otherwise permanently block
@@ -54,7 +55,7 @@ async function upsertStoreAndToken(
   const { data: store, error: storeError } = await admin
     .from("shopify_store")
     .upsert(
-      { tenant_id: tenantId, store_domain: shop, status: "active" },
+      { tenant_id: tenantId, store_domain: shop, status: "active", app_id: appId },
       { onConflict: "tenant_id,store_domain" }
     )
     .select("id")
@@ -217,7 +218,8 @@ export async function GET(request: NextRequest) {
       tokenData.access_token,
       tokenData.scope ?? "",
       tokenData.refresh_token ?? null,
-      tokenData.expires_in ?? null
+      tokenData.expires_in ?? null,
+      appId
     );
     if (result !== "ok") {
       const shopifyParam = result === "conflict" ? "tenant-store-conflict" : result;
@@ -293,7 +295,8 @@ export async function GET(request: NextRequest) {
         tokenData.access_token,
         tokenData.scope ?? "",
         tokenData.refresh_token ?? null,
-        tokenData.expires_in ?? null
+        tokenData.expires_in ?? null,
+        appId
       );
       let status = result === "ok" ? "connected" : result;
       let webhookErrorMsg: string | null = null;
