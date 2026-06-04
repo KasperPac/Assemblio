@@ -65,10 +65,10 @@ export default async function DashboardPage() {
     supabase.from("inventory_balance").select("component_id,on_hand,in_prod,reserved,component:component_id(cost_per_unit)").eq("tenant_id", tenantId),
     supabase.from("component").select("id,name,reorder_point").eq("tenant_id", tenantId),
     supabase.from("bom_component").select("component_id,quantity").eq("tenant_id", tenantId),
-    supabase.from("orders").select("id").eq("tenant_id", tenantId).eq("status", "fulfilled").gte("updated_at", thirtyDaysAgo),
-    supabase.from("orders").select("status").eq("tenant_id", tenantId).gte("created_at", sixMonthsAgo.toISOString()),
-    supabase.from("orders").select("*", { count: "exact", head: true }).eq("tenant_id", tenantId).eq("status", "fulfilled").gte("updated_at", thisWeek.start.toISOString()).lt("updated_at", thisWeek.end.toISOString()),
-    supabase.from("orders").select("*", { count: "exact", head: true }).eq("tenant_id", tenantId).eq("status", "fulfilled").gte("updated_at", lastWeek.start.toISOString()).lt("updated_at", lastWeek.end.toISOString()),
+    supabase.from("orders").select("id").eq("tenant_id", tenantId).eq("historical", false).eq("status", "fulfilled").gte("updated_at", thirtyDaysAgo),
+    supabase.from("orders").select("status").eq("tenant_id", tenantId).eq("historical", false).gte("created_at", sixMonthsAgo.toISOString()),
+    supabase.from("orders").select("*", { count: "exact", head: true }).eq("tenant_id", tenantId).eq("historical", false).eq("status", "fulfilled").gte("updated_at", thisWeek.start.toISOString()).lt("updated_at", thisWeek.end.toISOString()),
+    supabase.from("orders").select("*", { count: "exact", head: true }).eq("tenant_id", tenantId).eq("historical", false).eq("status", "fulfilled").gte("updated_at", lastWeek.start.toISOString()).lt("updated_at", lastWeek.end.toISOString()),
     supabase.from("orders").select("id,shopify_order_id,order_number,status,created_at").eq("tenant_id", tenantId).eq("historical", false).neq("status", "fulfilled").order("created_at", { ascending: false }).limit(8),
   ]);
 

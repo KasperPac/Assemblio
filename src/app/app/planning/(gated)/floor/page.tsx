@@ -57,16 +57,28 @@ export default async function FloorPage() {
   const { supabase, tenantId } = ctx;
 
   // 0. Fetch unstarted order lines via two-step approach (avoids raw SQL subquery interpolation)
-  const { data: startedLineRows } = await supabase
-    .from("job_routing_step")
-    .select("order_line_id")
-    .eq("tenant_id", tenantId);
+  const [{ data: startedLineRows }, { data: historicalOrderRows }] = await Promise.all([
+    supabase
+      .from("job_routing_step")
+      .select("order_line_id")
+      .eq("tenant_id", tenantId),
+    // Historical orders are imported for stats only — their lines must never
+    // appear in the operational "Start job" production queue.
+    supabase
+      .from("orders")
+      .select("id")
+      .eq("tenant_id", tenantId)
+      .eq("historical", true),
+  ]);
   const startedLineIds = [...new Set((startedLineRows ?? []).map((r: any) => r.order_line_id as string))];
+  const historicalOrderIds = new Set(
+    ((historicalOrderRows ?? []) as Array<{ id: string }>).map((r) => r.id)
+  );
 
   let unstartedQuery = supabase
     .from("order_line")
     .select(`
-      id, quantity,
+      id, quantity, order_id,
       orders:order_id ( order_number ),
       variant:variant_id ( title, product:product_id ( title ) )
     `)
@@ -77,16 +89,19 @@ export default async function FloorPage() {
   }
   const { data: unstartedRaw } = await unstartedQuery;
 
-  const unstartedLines: UnstartedLine[] = (unstartedRaw ?? []).map((row: any) => {
-    const variant = row.variant as any;
-    const order = row.orders as any;
-    return {
-      id: row.id as string,
-      quantity: Number(row.quantity),
-      orderNumber: order?.order_number ?? "—",
-      productTitle: variant?.product?.title ?? variant?.title ?? "Unknown product",
-    };
-  });
+  const unstartedLines: UnstartedLine[] = (unstartedRaw ?? [])
+    .filter((row) => !historicalOrderIds.has((row as { order_id: string }).order_id))
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .map((row: any) => {
+      const variant = row.variant as any;
+      const order = row.orders as any;
+      return {
+        id: row.id as string,
+        quantity: Number(row.quantity),
+        orderNumber: order?.order_number ?? "—",
+        productTitle: variant?.product?.title ?? variant?.title ?? "Unknown product",
+      };
+    });
 
   // 1. Parallel-fetch departments (active) + routing steps (active/queued/blocked)
   const [{ data: deptData }, { data: stepData }] = await Promise.all([

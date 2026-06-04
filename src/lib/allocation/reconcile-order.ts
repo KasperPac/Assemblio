@@ -191,7 +191,7 @@ export async function reconcileOrderAllocations(
   // Historical orders are imported for stats/reporting only — they must never
   // reserve stock or drive allocation, even if a caller (e.g. the manual
   // "Re-run allocation" UI action) reaches this function with one.
-  if ((order as { historical?: boolean }).historical) {
+  if (order.historical) {
     return { applied: 0, skippedMissingBom: 0, clearedOnly: false };
   }
 
