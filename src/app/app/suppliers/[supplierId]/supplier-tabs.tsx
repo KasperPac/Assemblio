@@ -457,7 +457,16 @@ function CatalogRowItem({
     <>
       <div className={styles.catalogRow}>
         <div>
-          <span>{row.component?.name ?? row.component_id}</span>
+          {row.component?.id ? (
+            <Link
+              href={`/app/components/${row.component.id}`}
+              className={styles.componentLink}
+            >
+              {row.component.name}
+            </Link>
+          ) : (
+            <span>{row.component?.name ?? row.component_id}</span>
+          )}
           {row.component?.unit && (
             <span className={styles.catalogUnit}> / {row.component.unit}</span>
           )}

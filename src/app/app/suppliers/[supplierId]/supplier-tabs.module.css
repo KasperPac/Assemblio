@@ -395,6 +395,14 @@
   text-decoration: underline;
 }
 
+.componentLink {
+  color: var(--brand-1);
+  text-decoration: none;
+}
+.componentLink:hover {
+  text-decoration: underline;
+}
+
 .receiptLink {
   color: var(--brand-1);
   text-decoration: none;

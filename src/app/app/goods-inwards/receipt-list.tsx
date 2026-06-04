@@ -260,9 +260,16 @@ export default function ReceiptList({
                     </td>
                     <td>{resolveLocation(r)}</td>
                     <td>
-                      {r.purchase_order_id
-                        ? `PO ${r.purchase_order_id.slice(0, 8).toUpperCase()}`
-                        : "—"}
+                      {r.purchase_order_id ? (
+                        <Link
+                          href={`/app/purchasing/${r.purchase_order_id}`}
+                          className={styles.link}
+                        >
+                          {`PO ${r.purchase_order_id.slice(0, 8).toUpperCase()}`}
+                        </Link>
+                      ) : (
+                        "—"
+                      )}
                     </td>
                     <td>
                       <StatusBadge variant={STATUS_VARIANTS[r.status]}>

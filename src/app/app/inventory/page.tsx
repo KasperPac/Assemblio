@@ -1,4 +1,5 @@
 import styles from "./inventory.module.css";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import MovementForm from "./movement-form";
@@ -14,8 +15,8 @@ type InventoryRow = {
   in_prod: number;
   reserved: number;
   component:
-    | { name: string | null; sku: string | null; reorder_point?: number | null }
-    | Array<{ name: string | null; sku: string | null; reorder_point?: number | null }>
+    | { id: string; name: string | null; sku: string | null; reorder_point?: number | null }
+    | Array<{ id: string; name: string | null; sku: string | null; reorder_point?: number | null }>
     | null;
   location: { name: string | null } | Array<{ name: string | null }> | null;
 };
@@ -56,7 +57,7 @@ export default async function InventoryPage() {
   const { data, error } = await supabase
     .from("inventory_balance")
     .select(
-      "id,on_hand,in_prod,reserved,component:component_id(name,sku,reorder_point),location:location_id(name)"
+      "id,on_hand,in_prod,reserved,component:component_id(id,name,sku,reorder_point),location:location_id(name)"
     )
     .eq("tenant_id", tenantId)
     .order("on_hand", { ascending: false });
@@ -185,7 +186,16 @@ export default async function InventoryPage() {
                 return (
                   <tr key={row.id}>
                     <td>
-                      <strong>{component?.name ?? "Unknown component"}</strong>
+                      {component?.id ? (
+                        <Link
+                          href={`/app/components/${component.id}`}
+                          className={styles.componentLink}
+                        >
+                          <strong>{component.name ?? "Unknown component"}</strong>
+                        </Link>
+                      ) : (
+                        <strong>{component?.name ?? "Unknown component"}</strong>
+                      )}
                       <span className={styles.sku}>
                         {component?.sku ?? "No SKU"}
                       </span>

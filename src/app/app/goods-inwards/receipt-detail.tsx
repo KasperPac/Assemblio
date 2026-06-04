@@ -471,7 +471,14 @@ export default function ReceiptDetail({
                   <td style={{ width: 40, paddingRight: 0, verticalAlign: "middle" }}>
                     <ComponentThumbnail imageUrl={imageUrl} name={componentName} />
                   </td>
-                  <td>{resolveComponentName(line)}</td>
+                  <td>
+                    <Link
+                      href={`/app/components/${line.component_id}`}
+                      className={styles.link}
+                    >
+                      {resolveComponentName(line)}
+                    </Link>
+                  </td>
                   <td>{line.quantity_expected ?? "—"}</td>
                   <td>{line.quantity_delivered}</td>
                   <td>
