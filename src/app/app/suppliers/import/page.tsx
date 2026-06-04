@@ -129,6 +129,7 @@ export default function SuppliersImportPage() {
               ref={inputRef}
               type="file"
               accept=".csv"
+              aria-label="Upload suppliers CSV"
               className={styles.hiddenInput}
               onChange={handleFileChange}
               disabled={loading}

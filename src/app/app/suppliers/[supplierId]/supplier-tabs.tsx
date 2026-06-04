@@ -225,22 +225,26 @@ export default function SupplierTabs({
               name="name"
               placeholder="Name"
               required
+              aria-label="Contact name"
               className={styles.editInput}
             />
             <input
               name="email"
               placeholder="Email"
               type="email"
+              aria-label="Contact email"
               className={styles.editInput}
             />
             <input
               name="phone"
               placeholder="Phone"
+              aria-label="Contact phone"
               className={styles.editInput}
             />
             <input
               name="role"
               placeholder="Role (e.g. Accounts)"
+              aria-label="Contact role"
               className={styles.editInput}
             />
             <button type="submit" className={styles.btnPrimary}>
@@ -266,7 +270,7 @@ export default function SupplierTabs({
           {linkComponentOpen && (
             <form action={linkAction} className={styles.linkForm}>
               <input type="hidden" name="supplier_id" value={supplier.id} />
-              <select name="component_id" required className={styles.editInput}>
+              <select name="component_id" required aria-label="Component" className={styles.editInput}>
                 <option value="">Select component…</option>
                 {allComponents.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -274,11 +278,11 @@ export default function SupplierTabs({
                   </option>
                 ))}
               </select>
-              <input name="supplier_part_number" placeholder="Supplier part #" className={styles.editInput} />
-              <input name="unit_cost" type="number" step="0.01" placeholder="Unit cost" className={styles.editInput} />
-              <input name="currency" placeholder="Currency (e.g. AUD)" className={styles.editInput} />
-              <input name="lead_time_days" type="number" placeholder="Lead time (days)" className={styles.editInput} />
-              <input name="moq" type="number" step="0.01" placeholder="MOQ" className={styles.editInput} />
+              <input name="supplier_part_number" placeholder="Supplier part #" aria-label="Supplier part number" className={styles.editInput} />
+              <input name="unit_cost" type="number" step="0.01" placeholder="Unit cost" aria-label="Unit cost" className={styles.editInput} />
+              <input name="currency" placeholder="Currency (e.g. AUD)" aria-label="Currency" className={styles.editInput} />
+              <input name="lead_time_days" type="number" placeholder="Lead time (days)" aria-label="Lead time in days" className={styles.editInput} />
+              <input name="moq" type="number" step="0.01" placeholder="MOQ" aria-label="Minimum order quantity" className={styles.editInput} />
               <button type="submit" className={styles.btnPrimary}>Link</button>
               <button type="button" onClick={() => setLinkComponentOpen(false)} className={styles.btnSecondary}>Cancel</button>
             </form>
@@ -502,7 +506,11 @@ function CatalogRowItem({
           <input type="hidden" name="supplier_component_id" value={row.id} />
           <input type="hidden" name="component_id" value={row.component_id} />
           <input type="hidden" name="supplier_id" value={supplierId} />
-          <button type="submit" className={styles.starBtn}>
+          <button
+            type="submit"
+            className={styles.starBtn}
+            aria-label={row.is_preferred ? "Unset preferred supplier" : "Set preferred supplier"}
+          >
             {row.is_preferred ? "★" : "☆"}
           </button>
         </form>
@@ -576,7 +584,7 @@ function CatalogRowItem({
                   <input type="hidden" name="price_break_id" value={pb.id} />
                   <input type="hidden" name="supplier_component_id" value={row.id} />
                   <input type="hidden" name="supplier_id" value={supplierId} />
-                  <button type="submit" className={styles.btnDanger}>×</button>
+                  <button type="submit" className={styles.btnDanger} aria-label="Remove price break">×</button>
                 </form>
               </div>
             ))}

@@ -113,6 +113,7 @@ export default async function SuperAdminTenantsPage({
   return (
     <div className={styles.page}>
       <PageHeader
+        eyebrow="Admin"
         title="Tenants"
         description={`${filtered.length} of ${allRows.length} tenants on the platform.`}
         actions={

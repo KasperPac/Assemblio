@@ -146,7 +146,7 @@ export default async function PurchasingPage() {
                 </span>
                 <form action={updatePurchaseOrderStatus} className={styles.inlineForm}>
                   <input type="hidden" name="purchase_order_id" value={row.id} />
-                  <select name="status" defaultValue={row.status}>
+                  <select name="status" defaultValue={row.status} aria-label="Update purchase order status">
                     <option value="open">Open</option>
                     <option value="in_transit">In Transit</option>
                     <option value="received">Received</option>
@@ -225,6 +225,7 @@ export default async function PurchasingPage() {
                     step="0.01"
                     min="0.01"
                     defaultValue={line.quantity}
+                    aria-label="Quantity"
                   />
                   <button type="submit" className={styles.inlineFormBtn}>
                     Save

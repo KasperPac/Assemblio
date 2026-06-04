@@ -182,6 +182,7 @@ export function CountingSheet({ binGroups, sessionId, isInitial, showBlind, isAd
                             step="1"
                             value={counted ?? ""}
                             placeholder="0"
+                            aria-label="Counted quantity"
                             onChange={e => handleChange(line.id, e.target.value)}
                             onBlur={() => handleBlur(line.id)}
                           />

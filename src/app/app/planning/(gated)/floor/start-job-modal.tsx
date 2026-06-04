@@ -28,7 +28,7 @@ export function StartJobModal({ orderLineId, orderNumber, productTitle, onClose 
     <>
       <div className={styles.drawerOverlay} onClick={onClose} />
       <div className={styles.drawer}>
-        <button className={styles.drawerClose} onClick={onClose}>✕</button>
+        <button type="button" aria-label="Close" className={styles.drawerClose} onClick={onClose}>✕</button>
         <div className={styles.drawerTitle}>Start Job</div>
         <div className={styles.drawerMeta}>
           <span>{orderNumber}</span>

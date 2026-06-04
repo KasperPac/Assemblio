@@ -233,6 +233,8 @@ export function FloorBoard({ columns, drawerSteps }: Props) {
           />
           <div className={styles.drawer}>
             <button
+              type="button"
+              aria-label="Close"
               className={styles.drawerClose}
               onClick={() => setOpenStep(null)}
             >

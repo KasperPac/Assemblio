@@ -252,7 +252,7 @@ export function LocationsTree({ warehouses, componentCounts = {} }: { warehouses
               <div className={styles.warehouseRow}>
                 <InlineForm action={editWarehouse} onDone={() => setEditingWh(null)} label={`warehouse ${wh.name}`} fields={<>
                   <input type="hidden" name="id" value={wh.id} />
-                  <input name="name" defaultValue={wh.name} className={styles.inlineInput} autoFocus />
+                  <input name="name" defaultValue={wh.name} aria-label="Warehouse name" className={styles.inlineInput} autoFocus />
                 </>} />
               </div>
             ) : (
@@ -284,7 +284,7 @@ export function LocationsTree({ warehouses, componentCounts = {} }: { warehouses
                   <div className={styles.addSlRow}>
                     <InlineForm action={addSubLocation} onDone={() => setAddingSl(null)} label="new sub-location" fields={<>
                       <input type="hidden" name="warehouse_id" value={wh.id} />
-                      <input name="name" placeholder="Sub-location name" className={styles.inlineInput} autoFocus />
+                      <input name="name" placeholder="Sub-location name" aria-label="Sub-location name" className={styles.inlineInput} autoFocus />
                     </>} />
                   </div>
                 )}
@@ -306,7 +306,7 @@ export function LocationsTree({ warehouses, componentCounts = {} }: { warehouses
                         <div className={styles.subLocRow}>
                           <InlineForm action={editSubLocation} onDone={() => setEditingSl(null)} label={`sub-location ${sl.name}`} fields={<>
                             <input type="hidden" name="id" value={sl.id} />
-                            <input name="name" defaultValue={sl.name} className={styles.inlineInput} autoFocus />
+                            <input name="name" defaultValue={sl.name} aria-label="Sub-location name" className={styles.inlineInput} autoFocus />
                           </>} />
                         </div>
                       ) : (
@@ -342,7 +342,7 @@ export function LocationsTree({ warehouses, componentCounts = {} }: { warehouses
                               <InlineForm action={addAisle} onDone={() => setAddingAisle(null)} label="new aisle" fields={<>
                                 <input type="hidden" name="warehouse_id" value={wh.id} />
                                 <input type="hidden" name="sub_location_id" value={sl.id} />
-                                <input name="name" placeholder="Aisle name" className={styles.inlineInput} autoFocus />
+                                <input name="name" placeholder="Aisle name" aria-label="Aisle name" className={styles.inlineInput} autoFocus />
                               </>} />
                             </div>
                           )}
@@ -363,7 +363,7 @@ export function LocationsTree({ warehouses, componentCounts = {} }: { warehouses
                                     <InlineForm action={editAisle} onDone={() => setEditingAisle(null)} label={`aisle ${aisle.name}`} fields={<>
                                       <input type="hidden" name="id" value={aisle.id} />
                                       <input type="hidden" name="sub_location_id" value={sl.id} />
-                                      <input name="name" defaultValue={aisle.name} className={styles.inlineInput} autoFocus />
+                                      <input name="name" defaultValue={aisle.name} aria-label="Aisle name" className={styles.inlineInput} autoFocus />
                                     </>} />
                                   </div>
                                 ) : (
@@ -394,7 +394,7 @@ export function LocationsTree({ warehouses, componentCounts = {} }: { warehouses
                                   <div className={styles.bayRow}>
                                     <InlineForm action={addBay} onDone={() => setAddingBay(null)} label="new bay" fields={<>
                                       <input type="hidden" name="aisle_id" value={aisle.id} />
-                                      <input name="name" placeholder="Bay name" className={styles.inlineInput} autoFocus />
+                                      <input name="name" placeholder="Bay name" aria-label="Bay name" className={styles.inlineInput} autoFocus />
                                     </>} />
                                   </div>
                                 )}
@@ -405,7 +405,7 @@ export function LocationsTree({ warehouses, componentCounts = {} }: { warehouses
                                     {editingBay === bay.id ? (
                                       <InlineForm action={editBay} onDone={() => setEditingBay(null)} label={`bay ${bay.name}`} fields={<>
                                         <input type="hidden" name="id" value={bay.id} />
-                                        <input name="name" defaultValue={bay.name} className={styles.inlineInput} autoFocus />
+                                        <input name="name" defaultValue={bay.name} aria-label="Bay name" className={styles.inlineInput} autoFocus />
                                       </>} />
                                     ) : (
                                       <>
@@ -440,7 +440,7 @@ export function LocationsTree({ warehouses, componentCounts = {} }: { warehouses
       <div className={styles.addWarehouseRow}>
         {addingWh ? (
           <InlineForm action={addWarehouse} onDone={() => setAddingWh(false)} label="new warehouse" fields={
-            <input name="name" placeholder="Warehouse name" className={styles.inlineInput} autoFocus />
+            <input name="name" placeholder="Warehouse name" aria-label="Warehouse name" className={styles.inlineInput} autoFocus />
           } />
         ) : (
           <>

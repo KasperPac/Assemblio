@@ -152,7 +152,7 @@ export default async function BomPage() {
                 <div className={styles.actionCell}>
                   <form action={updateBomStatus} className={styles.inlineForm}>
                     <input type="hidden" name="bom_id" value={row.id} />
-                    <select name="status" defaultValue={row.status}>
+                    <select name="status" defaultValue={row.status} aria-label="BOM status">
                       <option value="draft">Draft</option>
                       <option value="active">Active</option>
                       <option value="archived">Archived</option>
@@ -222,6 +222,7 @@ export default async function BomPage() {
                     step="0.01"
                     min="0.01"
                     defaultValue={line.quantity}
+                    aria-label="Quantity per unit"
                   />
                   <button type="submit" className={styles.inlineFormBtn}>Save</button>
                 </form>

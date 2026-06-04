@@ -30,7 +30,11 @@ export function DefaultLocationPicker({ locations }: { locations: Location[] }) 
           {!loc.is_default && (
             <form action={formAction}>
               <input type="hidden" name="location_id" value={loc.id} />
-              <button type="submit" className={styles.setDefaultButton}>
+              <button
+                type="submit"
+                className={styles.setDefaultButton}
+                aria-label={`Set ${loc.name} as default`}
+              >
                 Set as default
               </button>
             </form>

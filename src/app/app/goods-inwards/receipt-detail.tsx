@@ -573,6 +573,7 @@ export default function ReceiptDetail({
                   <td>
                     <input
                       type="checkbox"
+                      aria-label="Include this line in cost update"
                       checked={costChecked[l.id] ?? true}
                       onChange={(e) =>
                         setCostChecked((prev) => ({ ...prev, [l.id]: e.target.checked }))

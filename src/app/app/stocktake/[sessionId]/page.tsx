@@ -315,6 +315,7 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
                         name="variance_reason_id"
                         className={styles.reasonSelect}
                         defaultValue={line.variance_reason_id ?? ""}
+                        aria-label="Variance reason"
                       >
                         <option value="">Select reason…</option>
                         {reasonsList.map((r) => (
@@ -326,6 +327,7 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
                         className={styles.reasonNotes}
                         defaultValue={line.notes ?? ""}
                         placeholder="Optional comment…"
+                        aria-label="Variance note"
                       />
                       <button type="submit" className={styles.saveLineBtn}>Save</button>
                     </form>

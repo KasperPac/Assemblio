@@ -90,16 +90,19 @@ export default function ActivityLogClient({ rows, error }: Props) {
 
       <div className={styles.filters}>
         <input
+          aria-label="Search activity"
           placeholder="Search messages, users, entities..."
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />
         <input
+          aria-label="From date"
           type="date"
           value={dateFrom}
           onChange={(event) => setDateFrom(event.target.value)}
         />
         <input
+          aria-label="To date"
           type="date"
           value={dateTo}
           onChange={(event) => setDateTo(event.target.value)}
