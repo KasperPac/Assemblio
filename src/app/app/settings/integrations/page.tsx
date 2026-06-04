@@ -30,7 +30,7 @@ export default async function IntegrationsPage({ searchParams }: Props) {
   const { data: stores } = await supabase
     .from("shopify_store")
     .select(
-      "id,store_domain,status,created_at,last_synced_at,last_sync_status,last_sync_meta"
+      "id,store_domain,status,created_at,last_synced_at,last_sync_status,last_sync_meta,stats_only_before"
     )
     .order("created_at", { ascending: false })
     .limit(10);

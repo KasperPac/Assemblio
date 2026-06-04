@@ -119,6 +119,50 @@
   background: var(--danger-dim);
 }
 
+/* Historical cutoff form (shopify-manage.tsx) */
+.cutoffForm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--stroke);
+}
+
+.cutoffLabel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  color: var(--ink-muted);
+}
+
+.cutoffInput {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  color: var(--ink-strong);
+  background: var(--bg-input);
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+}
+
+.cutoffSave {
+  composes: secondary from "../../_ui/buttons.module.css";
+  align-self: flex-end;
+}
+
+.cutoffHint {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--ink-faint);
+}
+
 /* shopify-connect.tsx classes */
 .shopifyCard {
   display: flex;
