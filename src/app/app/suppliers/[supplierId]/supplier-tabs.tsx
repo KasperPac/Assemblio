@@ -33,6 +33,7 @@ type Actions = {
   addContact: (formData: FormData) => Promise<void>;
   removeContact: (formData: FormData) => Promise<void>;
   linkComponent: (prevState: ActionResult, formData: FormData) => Promise<ActionResult>;
+  updateSupplierComponent: (formData: FormData) => Promise<void>;
   unlinkComponent: (formData: FormData) => Promise<void>;
   togglePreferred: (formData: FormData) => Promise<void>;
   addPriceBreak: (formData: FormData) => Promise<void>;
@@ -452,6 +453,7 @@ function CatalogRowItem({
   actions: Actions;
 }) {
   const [breaksOpen, setBreaksOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
 
   return (
     <>
@@ -483,6 +485,15 @@ function CatalogRowItem({
               {breaksOpen ? "▴" : "▾"} {row.supplier_component_price_breaks.length} breaks
             </button>
           )}
+          <button
+            type="button"
+            className={styles.breaksToggle}
+            onClick={() => setEditOpen((v) => !v)}
+            aria-label="Edit supplier pricing"
+            aria-expanded={editOpen}
+          >
+            {editOpen ? "▴ Edit" : "✎ Edit"}
+          </button>
         </div>
         <span>{row.moq != null ? String(row.moq) : "—"}</span>
         <span>{row.lead_time_days != null ? `${row.lead_time_days}d` : "—"}</span>
@@ -502,6 +513,54 @@ function CatalogRowItem({
           <button type="submit" className={styles.btnDanger}>Remove</button>
         </form>
       </div>
+      {editOpen && (
+        <form
+          action={actions.updateSupplierComponent}
+          className={styles.editComponentForm}
+        >
+          <input type="hidden" name="supplier_component_id" value={row.id} />
+          <input type="hidden" name="supplier_id" value={supplierId} />
+          <input type="hidden" name="component_id" value={row.component_id} />
+          <input
+            name="supplier_part_number"
+            defaultValue={row.supplier_part_number ?? ""}
+            placeholder="Part #"
+            aria-label="Supplier part number"
+            className={`${styles.editInput} ${styles.inputMd}`}
+          />
+          <input
+            name="unit_cost"
+            type="number"
+            step="0.01"
+            min="0"
+            defaultValue={row.unit_cost ?? ""}
+            placeholder="Unit cost"
+            aria-label="Unit cost"
+            className={`${styles.editInput} ${styles.inputMd}`}
+          />
+          <input
+            name="moq"
+            type="number"
+            step="0.01"
+            min="0"
+            defaultValue={row.moq ?? ""}
+            placeholder="MOQ"
+            aria-label="Minimum order quantity"
+            className={`${styles.editInput} ${styles.inputSm}`}
+          />
+          <input
+            name="lead_time_days"
+            type="number"
+            step="1"
+            min="0"
+            defaultValue={row.lead_time_days ?? ""}
+            placeholder="Lead days"
+            aria-label="Lead time in days"
+            className={`${styles.editInput} ${styles.inputSm}`}
+          />
+          <button type="submit" className={styles.btnAddBreak}>Save</button>
+        </form>
+      )}
       {breaksOpen && (
         <>
           {row.supplier_component_price_breaks
