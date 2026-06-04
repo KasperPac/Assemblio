@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { getShopifyOAuthConfigForApp, type ShopifyAppId } from "./auth";
 
 /**
  * Expiring offline access tokens — request, store, and refresh.
@@ -107,11 +108,16 @@ export async function getValidAccessToken(
 ): Promise<{ accessToken: string; scopes: string | null; refreshed: boolean }> {
   const { data: store } = await admin
     .from("shopify_store")
-    .select("id")
+    .select("id, app_id")
     .eq("tenant_id", tenantId)
     .eq("store_domain", shopDomain)
     .maybeSingle();
   if (!store) throw new Error(`shopify_store row not found for ${shopDomain}`);
+
+  // The token was issued by a specific app (public "Manuva" or unlisted "Manuva
+  // Fab"); refresh MUST use that app's client credentials, or Shopify rejects it
+  // with "requires an active refresh_token".
+  const appId: ShopifyAppId = store.app_id === "unlisted" ? "unlisted" : "public";
 
   const { data: tok } = await admin
     .from("shopify_install_tokens")
@@ -142,7 +148,14 @@ export async function getValidAccessToken(
     );
   }
 
-  const refreshed = await refreshAccessToken(shopDomain, tok.refresh_token);
+  const appConfig = getShopifyOAuthConfigForApp(appId);
+  if (!appConfig.ok) {
+    throw new Error(`token-refresh: Shopify app config missing for app "${appId}".`);
+  }
+  const refreshed = await refreshAccessToken(shopDomain, tok.refresh_token, {
+    apiKey: appConfig.apiKey,
+    apiSecret: appConfig.apiSecret,
+  });
   await saveTokenSet(admin, tenantId, store.id, {
     ...refreshed,
     // Preserve the previous scope string if the response doesn't include it
