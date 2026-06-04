@@ -140,6 +140,39 @@ async function clearLineAllocations(
   return released;
 }
 
+export async function releaseOrderAllocations(
+  client: DbClient,
+  tenantId: string,
+  orderId: string
+): Promise<number> {
+  const { data: locationData, error: locationError } = await asQuery(
+    client.from("location")
+  )
+    .select("id")
+    .eq("tenant_id", tenantId)
+    .eq("is_default", true)
+    .maybeSingle();
+  if (locationError) throw locationError;
+  const location = locationData as LocationRow | null;
+  const locationId = location?.id;
+  if (!locationId) return 0;
+
+  const { data: orderLineData, error: lineError } = await asQuery(
+    client.from("order_line")
+  )
+    .select("id,variant_id,quantity")
+    .eq("tenant_id", tenantId)
+    .eq("order_id", orderId);
+  if (lineError) throw lineError;
+  const lines = (orderLineData ?? []) as OrderLineRow[];
+
+  let released = 0;
+  for (const line of lines) {
+    released += await clearLineAllocations(client, tenantId, orderId, locationId, line.id);
+  }
+  return released;
+}
+
 export async function reconcileOrderAllocations(
   client: DbClient,
   tenantId: string,
