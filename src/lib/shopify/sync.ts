@@ -1,12 +1,8 @@
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { shopifyGraphqlRequest } from "./client";
-import { chunk } from "./chunk";
-import { reconcileOrderAllocations } from "@/lib/allocation/reconcile-order";
+import { reconcileOrderAllocations, releaseOrderAllocations } from "@/lib/allocation/reconcile-order";
+import { resolveOrderDate, isHistoricalOrder } from "./order-dates";
 import { getWeekStart } from "@/lib/dates";
-
-// Max ids per PostgREST .in(...) filter. The filter is serialized into the
-// request URL, so large lists overflow the server URI limit (HTTP 414).
-const IN_FILTER_CHUNK = 100;
 
 type SyncResult = {
   products: number;
@@ -29,15 +25,23 @@ type ShopifyProductNode = {
 type ShopifyOrderNode = {
   id: string;
   name: string;
+  createdAt: string;
+  processedAt: string | null;
+  updatedAt: string | null;
   cancelledAt: string | null;
   displayFulfillmentStatus: string | null;
   lineItems: {
     nodes: Array<{
+      id: string;
       quantity: number;
       variant: { id: string } | null;
       originalUnitPriceSet: { shopMoney: { amount: string } } | null;
     }>;
   };
+  fulfillments: Array<{
+    createdAt: string;
+    fulfillmentLineItems: { nodes: Array<{ lineItem: { id: string } | null }> };
+  }>;
 };
 
 type ProductsQueryResult = {
@@ -148,20 +152,31 @@ async function fetchOrders(shopDomain: string, accessToken: string) {
         nodes {
           id
           name
+          createdAt
+          processedAt
+          updatedAt
           cancelledAt
           displayFulfillmentStatus
           lineItems(first: 100) {
             nodes {
+              id
               quantity
               originalUnitPriceSet { shopMoney { amount } }
               variant { id }
             }
+          }
+          fulfillments(first: 10) {
+            createdAt
+            fulfillmentLineItems(first: 100) { nodes { lineItem { id } } }
           }
         }
       }
     }
   `;
 
+  // Paginates the full order history (no cap). Acceptable at current volumes;
+  // incremental sync is a tracked follow-up in the spec
+  // (docs/superpowers/specs/2026-06-04-shopify-order-dates-and-historical-design.md).
   while (hasNextPage) {
     const data: OrdersQueryResult = await shopifyGraphqlRequest<OrdersQueryResult>(
       shopDomain,
@@ -173,7 +188,6 @@ async function fetchOrders(shopDomain: string, accessToken: string) {
     orders.push(...data.orders.nodes);
     hasNextPage = data.orders.pageInfo.hasNextPage;
     cursor = data.orders.pageInfo.endCursor;
-    if (orders.length >= 250) break;
   }
 
   return orders;
@@ -185,6 +199,15 @@ export async function syncShopifyStoreData(
   accessToken: string
 ): Promise<SyncResult> {
   const admin = createSupabaseAdminClient();
+
+  const { data: storeRow } = await admin
+    .from("shopify_store")
+    .select("stats_only_before")
+    .eq("tenant_id", tenantId)
+    .eq("store_domain", shopDomain)
+    .maybeSingle();
+  const statsOnlyBefore = (storeRow?.stats_only_before as string | null) ?? null;
+
   const [products, orders] = await Promise.all([
     fetchProducts(shopDomain, accessToken),
     fetchOrders(shopDomain, accessToken),
@@ -228,17 +251,33 @@ export async function syncShopifyStoreData(
     variantMap = new Map((savedVariants ?? []).map((v) => [v.shopify_id as string, v.id as string]));
   }
 
-  const orderRows = orders.map((order) => ({
-    tenant_id: tenantId,
-    shopify_order_id: order.id,
-    order_number: order.name,
-    status: mapOrderStatus(order),
-    // Customer fields are deferred until a future feature: querying them
-    // requires the read_customers (protected customer data) scope, which the
-    // app does not request at launch. Synced as null for now.
-    customer_email: null,
-    customer_first_name: null,
-  }));
+  const orderRows = orders.map((order) => {
+    const orderDate = resolveOrderDate(order.processedAt, order.createdAt);
+    // Compute fulfilled_at: earliest fulfillment createdAt, or null if none
+    const fulfillmentDates = order.fulfillments
+      .map((f) => f.createdAt)
+      .filter(Boolean)
+      .sort();
+    const fulfilledAt = fulfillmentDates.length > 0 ? fulfillmentDates[0] : null;
+
+    return {
+      tenant_id: tenantId,
+      shopify_order_id: order.id,
+      order_number: order.name,
+      status: mapOrderStatus(order),
+      // Customer fields are deferred until a future feature: querying them
+      // requires the read_customers (protected customer data) scope, which the
+      // app does not request at launch. Synced as null for now.
+      customer_email: null,
+      customer_first_name: null,
+      shopify_created_at: order.createdAt,
+      shopify_processed_at: order.processedAt,
+      shopify_updated_at: order.updatedAt,
+      fulfilled_at: fulfilledAt,
+      historical: isHistoricalOrder(orderDate, statsOnlyBefore),
+    };
+  });
+
   let orderMap = new Map<string, string>();
   if (orderRows.length > 0) {
     const { data: savedOrders, error } = await admin
@@ -252,6 +291,32 @@ export async function syncShopifyStoreData(
   const orderLineRows = orders.flatMap((order) => {
     const orderId = orderMap.get(order.id);
     if (!orderId) return [];
+
+    // Build a map from Shopify line item id -> Shopify variant id
+    const lineItemToVariant = new Map<string, string>();
+    for (const lineItem of order.lineItems.nodes) {
+      if (lineItem.variant?.id) {
+        lineItemToVariant.set(lineItem.id, lineItem.variant.id);
+      }
+    }
+
+    // Build shippedByVariant: local variant id -> earliest fulfillment createdAt
+    const shippedByVariant = new Map<string, string>();
+    for (const fulfillment of order.fulfillments) {
+      for (const node of fulfillment.fulfillmentLineItems.nodes) {
+        const lineItemId = node.lineItem?.id;
+        if (!lineItemId) continue;
+        const shopifyVariantId = lineItemToVariant.get(lineItemId);
+        if (!shopifyVariantId) continue;
+        const localVariantId = variantMap.get(shopifyVariantId);
+        if (!localVariantId) continue;
+        // Shopify does not guarantee fulfillment order; keep the minimum createdAt.
+        const existing = shippedByVariant.get(localVariantId);
+        if (!existing || fulfillment.createdAt < existing) {
+          shippedByVariant.set(localVariantId, fulfillment.createdAt);
+        }
+      }
+    }
 
     const lineDataByVariant = new Map<string, { quantity: number; revenue: number }>();
     for (const lineItem of order.lineItems.nodes) {
@@ -273,6 +338,7 @@ export async function syncShopifyStoreData(
       quantity: data.quantity,
       unit_sell_price: data.quantity > 0 ? data.revenue / data.quantity : 0,
       line_sell_price: data.revenue,
+      shipped_at: shippedByVariant.get(variantId) ?? null,
     }));
   });
 
@@ -292,38 +358,18 @@ export async function syncShopifyStoreData(
     }
   }
 
-  const fulfilledOrderIds: string[] = [];
-  const partialOrders: string[] = [];
-  for (const order of orders) {
-    const localId = orderMap.get(order.id);
-    if (!localId) continue;
-    const status = (order.displayFulfillmentStatus ?? "").toUpperCase();
-    if (status === "FULFILLED") fulfilledOrderIds.push(localId);
-    else if (status === "PARTIALLY_FULFILLED") partialOrders.push(localId);
-  }
-
-  if (fulfilledOrderIds.length > 0) {
-    const nowIso = new Date().toISOString();
-    for (const batch of chunk(fulfilledOrderIds, IN_FILTER_CHUNK)) {
-      await admin
-        .from("order_line")
-        .update({ shipped_at: nowIso })
-        .eq("tenant_id", tenantId)
-        .in("order_id", batch)
-        .is("shipped_at", null);
-    }
-  }
-
-  if (partialOrders.length > 0) {
-    console.warn(
-      "[shopify-sync] partial fulfillment encountered for orders; per-line mark-shipped deferred to v2",
-      partialOrders
-    );
-  }
+  // Partition orders: live orders get allocation reconciliation and financial
+  // planning; historical orders get their reservations released.
+  const orderLocalIds = Array.from(new Set(orderLineRows.map((row) => row.order_id)));
+  const historicalLocalIds = orderRows
+    .filter((r) => r.historical)
+    .map((r) => orderMap.get(r.shopify_order_id))
+    .filter((id): id is string => Boolean(id));
+  const historicalSet = new Set(historicalLocalIds);
+  const liveOrderLocalIds = orderLocalIds.filter((id) => !historicalSet.has(id));
 
   let allocationRuns = 0;
-  const orderLocalIds = Array.from(new Set(orderLineRows.map((row) => row.order_id)));
-  for (const localOrderId of orderLocalIds) {
+  for (const localOrderId of liveOrderLocalIds) {
     try {
       await reconcileOrderAllocations(admin, tenantId, localOrderId);
       allocationRuns += 1;
@@ -336,7 +382,7 @@ export async function syncShopifyStoreData(
   let planRuns = 0;
   let planErrors = 0;
   const weekStart = getWeekStart();
-  for (const localOrderId of orderLocalIds) {
+  for (const localOrderId of liveOrderLocalIds) {
     for (const lineId of linesByOrderId.get(localOrderId) ?? []) {
       try {
         await admin.rpc("generate_job_financial_plan", {
@@ -348,6 +394,16 @@ export async function syncShopifyStoreData(
         planErrors += 1;
         continue;
       }
+    }
+  }
+
+  // Release any stock reservations for historical orders (idempotent)
+  for (const localOrderId of historicalLocalIds) {
+    try {
+      await releaseOrderAllocations(admin, tenantId, localOrderId);
+    } catch (err) {
+      console.error(`[shopify-sync] releaseOrderAllocations failed for ${localOrderId}:`, err instanceof Error ? err.message : err);
+      continue;
     }
   }
 

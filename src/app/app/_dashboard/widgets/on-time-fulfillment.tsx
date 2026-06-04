@@ -11,6 +11,7 @@ export async function OnTimeFulfillment({ supabase, tenantId }: Props) {
     .from("orders")
     .select("status")
     .eq("tenant_id", tenantId)
+    .eq("historical", false)
     .gte("created_at", sixMonthsAgo.toISOString());
 
   const rows = data ?? [];

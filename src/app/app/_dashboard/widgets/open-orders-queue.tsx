@@ -11,6 +11,7 @@ export async function OpenOrdersQueue({ supabase, tenantId }: Props) {
     .from("orders")
     .select("id,shopify_order_id,order_number,status,created_at")
     .eq("tenant_id", tenantId)
+    .eq("historical", false)
     .neq("status", "fulfilled")
     .order("created_at", { ascending: false })
     .limit(5);
@@ -19,6 +20,7 @@ export async function OpenOrdersQueue({ supabase, tenantId }: Props) {
     .from("orders")
     .select("*", { count: "exact", head: true })
     .eq("tenant_id", tenantId)
+    .eq("historical", false)
     .neq("status", "fulfilled");
 
   const list = orders ?? [];

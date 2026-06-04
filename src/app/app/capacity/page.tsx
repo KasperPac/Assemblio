@@ -61,6 +61,7 @@ export default async function CapacityPage({ searchParams }: Props) {
         .from("orders")
         .select("*", { count: "exact", head: true })
         .eq("tenant_id", tenantId)
+        .eq("historical", false)
         .not("status", "in", '("fulfilled","cancelled")'),
       supabase
         .from("department_capacity_week")

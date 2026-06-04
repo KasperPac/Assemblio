@@ -172,6 +172,7 @@ create table public.shopify_store (
   store_domain text not null,
   status text not null default 'active',
   app_id text not null default 'public' check (app_id in ('public', 'unlisted')),
+  stats_only_before date,
   last_synced_at timestamptz,
   last_sync_status text,
   last_sync_meta jsonb,
@@ -299,6 +300,11 @@ create table public.orders (
   order_number text,
   customer_email text,
   status text not null default 'open',
+  shopify_created_at timestamptz,
+  shopify_processed_at timestamptz,
+  shopify_updated_at timestamptz,
+  fulfilled_at timestamptz,
+  historical boolean not null default false,
   created_at timestamptz not null default now(),
   unique (tenant_id, shopify_order_id)
 );

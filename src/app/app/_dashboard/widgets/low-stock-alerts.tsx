@@ -12,7 +12,7 @@ export async function LowStockAlerts({ supabase, tenantId }: Props) {
     supabase.from("component").select("id,name,reorder_point").eq("tenant_id", tenantId),
     supabase.from("inventory_balance").select("component_id,on_hand,reserved").eq("tenant_id", tenantId),
     supabase.from("bom_component").select("component_id,quantity").eq("tenant_id", tenantId),
-    supabase.from("orders").select("id").eq("tenant_id", tenantId).eq("status", "fulfilled").gte("updated_at", thirtyDaysAgo),
+    supabase.from("orders").select("id").eq("tenant_id", tenantId).eq("historical", false).eq("status", "fulfilled").gte("updated_at", thirtyDaysAgo),
   ]);
 
   const orderCount = (recentOrders ?? []).length;
