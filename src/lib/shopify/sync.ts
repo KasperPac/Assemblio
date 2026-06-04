@@ -174,6 +174,9 @@ async function fetchOrders(shopDomain: string, accessToken: string) {
     }
   `;
 
+  // Paginates the full order history (no cap). Acceptable at current volumes;
+  // incremental sync is a tracked follow-up in the spec
+  // (docs/superpowers/specs/2026-06-04-shopify-order-dates-and-historical-design.md).
   while (hasNextPage) {
     const data: OrdersQueryResult = await shopifyGraphqlRequest<OrdersQueryResult>(
       shopDomain,
@@ -307,8 +310,7 @@ export async function syncShopifyStoreData(
         if (!shopifyVariantId) continue;
         const localVariantId = variantMap.get(shopifyVariantId);
         if (!localVariantId) continue;
-        // Keep the earliest fulfillment date (fulfillments already come sorted ascending
-        // because we sort in the query; but also guard here for safety)
+        // Shopify does not guarantee fulfillment order; keep the minimum createdAt.
         const existing = shippedByVariant.get(localVariantId);
         if (!existing || fulfillment.createdAt < existing) {
           shippedByVariant.set(localVariantId, fulfillment.createdAt);
@@ -356,22 +358,6 @@ export async function syncShopifyStoreData(
     }
   }
 
-  {
-    const partialOrderIds: string[] = [];
-    for (const order of orders) {
-      const localId = orderMap.get(order.id);
-      if (!localId) continue;
-      const status = (order.displayFulfillmentStatus ?? "").toUpperCase();
-      if (status === "PARTIALLY_FULFILLED") partialOrderIds.push(localId);
-    }
-    if (partialOrderIds.length > 0) {
-      console.warn(
-        "[shopify-sync] partial fulfillment encountered for orders; per-line shipped_at computed from fulfillments",
-        partialOrderIds
-      );
-    }
-  }
-
   // Partition orders: live orders get allocation reconciliation and financial
   // planning; historical orders get their reservations released.
   const orderLocalIds = Array.from(new Set(orderLineRows.map((row) => row.order_id)));
@@ -413,7 +399,12 @@ export async function syncShopifyStoreData(
 
   // Release any stock reservations for historical orders (idempotent)
   for (const localOrderId of historicalLocalIds) {
-    try { await releaseOrderAllocations(admin, tenantId, localOrderId); } catch { continue; }
+    try {
+      await releaseOrderAllocations(admin, tenantId, localOrderId);
+    } catch (err) {
+      console.error(`[shopify-sync] releaseOrderAllocations failed for ${localOrderId}:`, err instanceof Error ? err.message : err);
+      continue;
+    }
   }
 
   const { error: activityError } = await admin.from("activity_log").insert({
