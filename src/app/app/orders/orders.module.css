@@ -98,3 +98,30 @@
   font-weight: 600;
   font-size: 13px;
 }
+
+.filterBar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.filterSearch { flex: 1 1 220px; min-width: 180px; }
+.filterSelect, .filterDate, .filterSearch {
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-lg);
+  background: var(--bg-input);
+  color: var(--ink-strong);
+  padding: 6px 10px;
+  font-size: var(--fs-sm);
+}
+.sortLink { color: inherit; text-decoration: none; display: inline-flex; align-items: center; }
+.sortLink:hover { color: var(--ink-strong); }
+.sortIndicator { color: var(--ink-muted); }
+.pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 4px; }
+.pageInfo { font-size: var(--fs-sm); color: var(--ink-muted); }
+.pageButtons { display: flex; gap: 8px; }
+.pageBtn {
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  padding: 6px 12px;
+  font-size: var(--fs-sm);
+  text-decoration: none;
+}
+.pageBtnDisabled { color: var(--ink-faint); pointer-events: none; opacity: 0.5; }
