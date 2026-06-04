@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "../planning.module.css";
@@ -185,7 +186,9 @@ export default async function CapacityPage({ searchParams }: Props) {
               return (
                 <div key={row.id} className={styles.tableRow}>
                   <div>
-                    <strong>{department?.name ?? "Department"}</strong>
+                    <Link href="/app/departments" className={styles.jobLink}>
+                      <strong>{department?.name ?? "Department"}</strong>
+                    </Link>
                     <div className={styles.subtle}>{note}</div>
                   </div>
                   <span>{row.capacity_hours_total} hrs</span>

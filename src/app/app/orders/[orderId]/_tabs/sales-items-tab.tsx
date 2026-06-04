@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { OrderLineStatus } from "@/lib/orders/order-line-status";
 import StatusBadge from "../../../_ui/status-badge";
 import styles from "./tabs.module.css";
@@ -7,6 +8,7 @@ type LineRow = {
   quantity: number;
   unit_sell_price: number;
   line_sell_price: number;
+  variant_id: string | null;
   variant_title: string | null;
   variant_sku: string | null;
 };
@@ -71,7 +73,16 @@ export default function SalesItemsTab({ lines, statuses }: Props) {
             <tr key={line.id}>
               <td>
                 <div className={styles.itemName}>
-                  {line.variant_title ?? "—"}
+                  {line.variant_id ? (
+                    <Link
+                      href={`/app/products/variants/${line.variant_id}`}
+                      className={styles.componentLink}
+                    >
+                      {line.variant_title ?? "—"}
+                    </Link>
+                  ) : (
+                    line.variant_title ?? "—"
+                  )}
                 </div>
                 <div className={styles.itemMeta}>
                   {line.variant_sku ? `SKU ${line.variant_sku}` : ""}
@@ -87,7 +98,17 @@ export default function SalesItemsTab({ lines, statuses }: Props) {
                   <ul className={styles.shortList}>
                     {shorts.map((c) => (
                       <li key={c.componentId}>
-                        {c.name}: need {c.requiredQty}, have {c.availableQty}
+                        {c.componentId ? (
+                          <Link
+                            href={`/app/components/${c.componentId}`}
+                            className={styles.componentLink}
+                          >
+                            {c.name}
+                          </Link>
+                        ) : (
+                          c.name
+                        )}
+                        : need {c.requiredQty}, have {c.availableQty}
                         {c.earliestPoEta
                           ? ` · PO due ${formatDate(c.earliestPoEta)}`
                           : " · no PO"}

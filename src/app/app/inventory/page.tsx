@@ -27,7 +27,10 @@ type MovementRow = {
   delta_in_prod: number;
   reason: string | null;
   created_at: string;
-  component: { name: string | null } | Array<{ name: string | null }> | null;
+  component:
+    | { id: string | null; name: string | null }
+    | Array<{ id: string | null; name: string | null }>
+    | null;
   location: { name: string | null } | Array<{ name: string | null }> | null;
 };
 
@@ -65,7 +68,7 @@ export default async function InventoryPage() {
   const { data: movements } = await supabase
     .from("inventory_movement")
     .select(
-      "id,delta_on_hand,delta_in_prod,reason,created_at,component:component_id(name),location:location_id(name)"
+      "id,delta_on_hand,delta_in_prod,reason,created_at,component:component_id(id,name),location:location_id(name)"
     )
     .eq("tenant_id", tenantId)
     .order("created_at", { ascending: false })
@@ -238,7 +241,16 @@ export default async function InventoryPage() {
                 key={movement.id}
                 columnsTemplate="1.4fr 0.8fr 0.6fr 0.6fr 0.8fr 1fr"
               >
-                <strong>{component?.name ?? "Unknown"}</strong>
+                {component?.id ? (
+                  <Link
+                    href={`/app/components/${component.id}`}
+                    className={styles.componentLink}
+                  >
+                    {component.name ?? "Unknown"}
+                  </Link>
+                ) : (
+                  <strong>{component?.name ?? "Unknown"}</strong>
+                )}
                 <span>{location?.name ?? "Unassigned"}</span>
                 <span className={deltaClass(styles, movement.delta_on_hand)}>
                   {formatSignedValue(movement.delta_on_hand)}

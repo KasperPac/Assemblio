@@ -66,6 +66,8 @@
   font-size: 11px;
 }
 .dash { color: var(--ink-muted); }
+.componentLink { color: var(--brand-1); text-decoration: none; }
+.componentLink:hover { text-decoration: underline; }
 .shopifyNote {
   color: var(--ink-muted);
   font-size: 13px;

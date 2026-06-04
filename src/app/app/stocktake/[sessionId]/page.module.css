@@ -52,6 +52,8 @@
 .lineRow:last-child { border-bottom: none; }
 .compCell { display: flex; flex-direction: column; gap: 2px; }
 .compName { color: var(--ink-strong); font-weight: 500; font-size: 0.9rem; }
+.componentLink { color: var(--brand-1); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+.componentLink:hover { text-decoration: underline; }
 .compSku { color: var(--ink-faint); font-size: 0.75rem; }
 .numCol { text-align: right; }
 .muted { color: var(--ink-muted); }

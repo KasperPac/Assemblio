@@ -21,7 +21,10 @@ type PurchaseOrderRow = {
   id: string;
   status: string;
   created_at: string;
-  supplier: { name: string | null } | Array<{ name: string | null }> | null;
+  supplier:
+    | { id: string | null; name: string | null }
+    | Array<{ id: string | null; name: string | null }>
+    | null;
 };
 
 type PurchaseOrderLineRow = {
@@ -30,8 +33,8 @@ type PurchaseOrderLineRow = {
   quantity_received: number;
   purchase_order: { id: string } | Array<{ id: string }> | null;
   component:
-    | { name: string | null; sku: string | null }
-    | Array<{ name: string | null; sku: string | null }>
+    | { id: string | null; name: string | null; sku: string | null }
+    | Array<{ id: string | null; name: string | null; sku: string | null }>
     | null;
 };
 
@@ -44,7 +47,7 @@ export default async function PurchasingPage() {
     await Promise.all([
       supabase
         .from("purchase_order")
-        .select("id,status,created_at,supplier:supplier_id(name)")
+        .select("id,status,created_at,supplier:supplier_id(id,name)")
         .eq("tenant_id", tenantId)
         .order("created_at", { ascending: false })
         .limit(12),
@@ -53,7 +56,7 @@ export default async function PurchasingPage() {
       supabase
         .from("purchase_order_line")
         .select(
-          "id,quantity,quantity_received,purchase_order:purchase_order_id(id),component:component_id(name,sku)"
+          "id,quantity,quantity_received,purchase_order:purchase_order_id(id),component:component_id(id,name,sku)"
         )
         .eq("tenant_id", tenantId)
         .order("created_at", { ascending: false })
@@ -123,9 +126,18 @@ export default async function PurchasingPage() {
                 <Link href={`/app/purchasing/${row.id}`} className={styles.poLink}>
                   PO-{row.id.slice(0, 6)}
                 </Link>
-                <span className={styles.meta}>
-                  {supplier?.name ?? "Unknown supplier"}
-                </span>
+                {supplier?.id ? (
+                  <Link
+                    href={`/app/suppliers/${supplier.id}`}
+                    className={styles.poLink}
+                  >
+                    {supplier.name ?? "Unknown supplier"}
+                  </Link>
+                ) : (
+                  <span className={styles.meta}>
+                    {supplier?.name ?? "Unknown supplier"}
+                  </span>
+                )}
                 <StatusBadge variant={getStatusVariant(row.status)}>
                   {row.status}
                 </StatusBadge>
@@ -185,7 +197,16 @@ export default async function PurchasingPage() {
                   <strong>???</strong>
                 )}
                 <div className={styles.cellStack}>
-                  <strong>{component?.name ?? "Unknown"}</strong>
+                  {component?.id ? (
+                    <Link
+                      href={`/app/components/${component.id}`}
+                      className={styles.poLink}
+                    >
+                      {component.name ?? "Unknown"}
+                    </Link>
+                  ) : (
+                    <strong>{component?.name ?? "Unknown"}</strong>
+                  )}
                   <span className={styles.meta}>
                     {component?.sku ?? "No SKU"}
                   </span>

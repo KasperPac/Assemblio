@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "../planning.module.css";
@@ -57,7 +58,7 @@ type RollupRow = {
   actual_hours_total: number;
   order_line: Relation<{
     line_sell_price: number;
-    variant: Relation<{ title: string | null; sku: string | null }>;
+    variant: Relation<{ id: string | null; title: string | null; sku: string | null }>;
   }>;
 };
 
@@ -125,7 +126,7 @@ export default async function ActualTimePage({ searchParams }: Props) {
     supabase
       .from("job_cost_actual_rollup")
       .select(
-        "id,actual_total_cost,actual_margin,actual_hours_total,order_line:order_line_id(line_sell_price,variant:variant_id(title,sku))"
+        "id,actual_total_cost,actual_margin,actual_hours_total,order_line:order_line_id(line_sell_price,variant:variant_id(id,title,sku))"
       )
       .eq("tenant_id", tenantId)
       .order("updated_at", { ascending: false })
@@ -359,7 +360,13 @@ export default async function ActualTimePage({ searchParams }: Props) {
                 return (
                   <div key={row.id} className={styles.tableRow}>
                     <div>
-                      <strong>{variant?.title ?? variant?.sku ?? "Order line"}</strong>
+                      {variant?.id ? (
+                        <Link href={`/app/products/variants/${variant.id}`} className={styles.jobLink}>
+                          <strong>{variant.title ?? variant.sku ?? "Order line"}</strong>
+                        </Link>
+                      ) : (
+                        <strong>{variant?.title ?? variant?.sku ?? "Order line"}</strong>
+                      )}
                       <div className={styles.subtle}>
                         Hours: {row.actual_hours_total} | Sell:{" "}
                         {formatCurrency(orderLine?.line_sell_price ?? 0)}

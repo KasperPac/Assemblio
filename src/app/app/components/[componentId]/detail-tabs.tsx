@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import styles from "./component-detail.module.css";
 import { togglePreferred, linkComponent, unlinkComponent } from "@/app/app/suppliers/[supplierId]/actions";
 import { updateComponentSupplier } from "../actions";
@@ -456,7 +457,7 @@ function ComponentSuppliersTab({
               <React.Fragment key={row.id}>
                 <div className={`${styles.suppliersRow} ${isAdmin ? styles.suppliersRowAdmin : ""}`}>
                   <div>
-                    <span className={styles.supplierLink}>{row.supplierName}</span>
+                    <Link href={`/app/suppliers/${row.supplierId}`} className={styles.supplierLink}>{row.supplierName}</Link>
                     {isBestPrice && <span className={styles.tagGreen}>best price</span>}
                     {isFastest && !isBestPrice && <span className={styles.tagBlue}>fastest</span>}
                   </div>

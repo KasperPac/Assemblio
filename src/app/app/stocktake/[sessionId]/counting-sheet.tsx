@@ -157,7 +157,13 @@ export function CountingSheet({ binGroups, sessionId, isInitial, showBlind, isAd
                   return (
                     <div key={line.id} className={styles.lineRow} style={gridStyle}>
                       <div className={styles.compCell}>
-                        <span className={styles.compName}>{comp?.name ?? "Unknown"}</span>
+                        {comp?.id ? (
+                          <Link href={`/app/components/${comp.id}`} className={styles.componentLink}>
+                            {comp.name ?? "Unknown"}
+                          </Link>
+                        ) : (
+                          <span className={styles.compName}>{comp?.name ?? "Unknown"}</span>
+                        )}
                         <span className={styles.compSku}>{comp?.sku ?? ""}</span>
                       </div>
 

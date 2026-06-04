@@ -278,7 +278,7 @@ export default async function DashboardPage() {
                   b.days <= 10 ? styles.trendNeutral : styles.trendUp;
                 const barPct = b.days !== null ? Math.min((b.days / 30) * 100, 100) : 0;
                 return (
-                  <div key={b.id} className={styles.alertRow}>
+                  <Link key={b.id} href={`/app/components/${b.id}`} className={styles.alertRow}>
                     <div className={styles.alertBody}>
                       <span className={styles.alertName}>{b.name}</span>
                       <div className={styles.daysBar}>
@@ -288,7 +288,7 @@ export default async function DashboardPage() {
                     <span className={`${styles.daysVal} ${trendClass}`}>
                       {b.days !== null ? `${b.days}d` : `${b.available} avail`}
                     </span>
-                  </div>
+                  </Link>
                 );
               })}
             </div>

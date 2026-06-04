@@ -279,9 +279,11 @@ export default async function StaffingPage({ searchParams }: Props) {
             departmentPressure.map((department) => (
               <div key={department.id} className={styles.tableRow}>
                 <div>
-                  <strong>
-                    {department.name} ({department.code})
-                  </strong>
+                  <Link href="/app/departments" className={styles.jobLink}>
+                    <strong>
+                      {department.name} ({department.code})
+                    </strong>
+                  </Link>
                   <div className={styles.subtle}>
                     {department.overloadHours > 0
                       ? `Over by ${department.overloadHours.toFixed(1)} hrs`

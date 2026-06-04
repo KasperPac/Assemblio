@@ -312,7 +312,17 @@ export default function ReceiptDetail({
                   fontSize: "0.85rem",
                 }}
               >
-                {resolveSupplier(receipt)} &middot;{" "}
+                {receipt.supplier_id ? (
+                  <Link
+                    href={`/app/suppliers/${receipt.supplier_id}`}
+                    className={styles.link}
+                  >
+                    {resolveSupplier(receipt)}
+                  </Link>
+                ) : (
+                  resolveSupplier(receipt)
+                )}{" "}
+                &middot;{" "}
                 {new Date(receipt.received_at).toLocaleDateString("en-AU", {
                   day: "numeric",
                   month: "long",

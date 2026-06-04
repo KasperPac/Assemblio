@@ -285,7 +285,13 @@ export default async function SessionDetailPage({ params, searchParams }: Props)
                   <div key={line.id} className={`${styles.varianceLine} ${variance < 0 ? styles.lossLine : styles.gainLine}`}>
                     <div className={styles.varianceLineData}>
                       <div className={styles.compCell}>
-                        <span className={styles.compName}>{comp?.name ?? "Unknown"}</span>
+                        {comp?.id ? (
+                          <Link href={`/app/components/${comp.id}`} className={styles.componentLink}>
+                            {comp.name ?? "Unknown"}
+                          </Link>
+                        ) : (
+                          <span className={styles.compName}>{comp?.name ?? "Unknown"}</span>
+                        )}
                         <span className={styles.compSku}>{comp?.sku ?? ""}</span>
                       </div>
                       <span className={`${styles.numCol} ${styles.muted}`}>{Number(line.expected_on_hand).toFixed(0)}</span>

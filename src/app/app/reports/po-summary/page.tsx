@@ -13,6 +13,7 @@ interface Row extends Record<string, unknown> {
   id: string;
   poNumber: string;
   supplier: string;
+  supplierId: string | null;
   status: string;
   expectedDate: string | null;
   totalValue: number;
@@ -25,6 +26,7 @@ type PORaw = {
   created_at: string;
   expected_date: string | null;
   status: string | null;
+  supplier_id: string | null;
   supplier: { name: string } | null;
   lines: { quantity: number; unit_cost: number }[];
 };
@@ -46,7 +48,7 @@ export default async function POSummaryPage({
 
   const { data } = await supabase
     .from("purchase_order")
-    .select("id,created_at,expected_date,status,supplier:supplier_id(name),lines:purchase_order_line(quantity,unit_cost)")
+    .select("id,created_at,expected_date,status,supplier_id,supplier:supplier_id(name),lines:purchase_order_line(quantity,unit_cost)")
     .eq("tenant_id", tenantId)
     .gte("created_at", range.from.toISOString())
     .lte("created_at", range.to.toISOString())
@@ -62,6 +64,7 @@ export default async function POSummaryPage({
       id: po.id,
       poNumber: po.id.slice(0, 8).toUpperCase(),
       supplier: po.supplier?.name ?? "—",
+      supplierId: po.supplier_id ?? null,
       status: po.status ?? "draft",
       expectedDate: po.expected_date ? new Date(po.expected_date).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" }) : null,
       totalValue,
@@ -82,7 +85,10 @@ export default async function POSummaryPage({
         PO-{r.poNumber}
       </Link>
     )},
-    { key: "supplier", header: "Supplier", render: (r) => r.supplier },
+    { key: "supplier", header: "Supplier", render: (r) => r.supplierId
+      ? <Link href={`/app/suppliers/${r.supplierId}`} className={styles.reportLink}>{r.supplier}</Link>
+      : r.supplier
+    },
     { key: "status", header: "Status", render: (r) => <Badge variant={STATUS_VARIANT[r.status] ?? "gray"}>{r.status}</Badge> },
     { key: "expectedDate", header: "Expected date", render: (r) => <span className={r.overdue ? styles.overdue : undefined}>{r.expectedDate ?? "—"}{r.overdue ? " ⚠" : ""}</span> },
     { key: "value", header: "Total value", align: "right", render: (r) => fmtCurrency(r.totalValue) },
