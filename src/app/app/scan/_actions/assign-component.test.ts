@@ -35,28 +35,45 @@ describe("assignComponentToLocation", () => {
     vi.mocked(getServerTenantContext).mockResolvedValue(ctx as any);
     const result = await assignComponentToLocation("c1", "bay1", "bay");
     expect(result).toEqual({ ok: true });
-    expect(ctx.supabase._chain.update).toHaveBeenCalledWith({ bin_bay_id: "bay1" });
+    expect(ctx.supabase._chain.update).toHaveBeenCalledWith({
+      bin_bay_id: "bay1",
+      bin_aisle_id: null,
+      bin_sub_location_id: null,
+    });
   });
 
   it("sets bin_aisle_id when type is aisle", async () => {
     const ctx = makeCtx();
     vi.mocked(getServerTenantContext).mockResolvedValue(ctx as any);
     await assignComponentToLocation("c1", "a1", "aisle");
-    expect(ctx.supabase._chain.update).toHaveBeenCalledWith({ bin_aisle_id: "a1" });
+    expect(ctx.supabase._chain.update).toHaveBeenCalledWith({
+      bin_aisle_id: "a1",
+      bin_bay_id: null,
+      bin_sub_location_id: null,
+    });
   });
 
   it("sets bin_sub_location_id when type is sub_location", async () => {
     const ctx = makeCtx();
     vi.mocked(getServerTenantContext).mockResolvedValue(ctx as any);
     await assignComponentToLocation("c1", "sl1", "sub_location");
-    expect(ctx.supabase._chain.update).toHaveBeenCalledWith({ bin_sub_location_id: "sl1" });
+    expect(ctx.supabase._chain.update).toHaveBeenCalledWith({
+      bin_sub_location_id: "sl1",
+      bin_bay_id: null,
+      bin_aisle_id: null,
+    });
   });
 
   it("sets location_id when type is warehouse", async () => {
     const ctx = makeCtx();
     vi.mocked(getServerTenantContext).mockResolvedValue(ctx as any);
     await assignComponentToLocation("c1", "wh1", "warehouse");
-    expect(ctx.supabase._chain.update).toHaveBeenCalledWith({ location_id: "wh1" });
+    expect(ctx.supabase._chain.update).toHaveBeenCalledWith({
+      location_id: "wh1",
+      bin_bay_id: null,
+      bin_aisle_id: null,
+      bin_sub_location_id: null,
+    });
   });
 
   it("returns ok:false on DB error", async () => {

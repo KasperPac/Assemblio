@@ -7,10 +7,10 @@ import type { ResolvedLocation } from "./resolve-barcode";
 type LocType = ResolvedLocation["type"];
 
 function buildUpdate(id: string, type: LocType): Record<string, string | null> {
-  if (type === "bay")          return { bin_bay_id: id };
-  if (type === "aisle")        return { bin_aisle_id: id };
-  if (type === "sub_location") return { bin_sub_location_id: id };
-  return { location_id: id }; // warehouse
+  if (type === "bay")          return { bin_bay_id: id, bin_aisle_id: null, bin_sub_location_id: null };
+  if (type === "aisle")        return { bin_aisle_id: id, bin_bay_id: null, bin_sub_location_id: null };
+  if (type === "sub_location") return { bin_sub_location_id: id, bin_bay_id: null, bin_aisle_id: null };
+  return { location_id: id, bin_bay_id: null, bin_aisle_id: null, bin_sub_location_id: null }; // warehouse
 }
 
 function buildClear(type: LocType): Record<string, null> {

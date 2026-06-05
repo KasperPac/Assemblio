@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState, useCallback, useTransition, useRef } from "react";
+import { use, useState, useCallback, useTransition, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Scanner } from "../../_components/scanner";
 import { LocationPicker } from "../../_components/location-picker";
@@ -26,6 +26,12 @@ export default function StocktakeScanPage({ params }: Props) {
   const [savedCount, setSavedCount] = useState(0);
   const [isPending, startTransition] = useTransition();
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+    };
+  }, []);
 
   function showToast(msg: string) {
     setToast(msg);
@@ -216,6 +222,7 @@ export default function StocktakeScanPage({ params }: Props) {
                   type="button"
                   className={styles.manualBtn}
                   onClick={() => setShowPicker(true)}
+                  disabled={isSaving}
                 >
                   Change location
                 </button>

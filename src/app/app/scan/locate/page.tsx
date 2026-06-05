@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useTransition, useRef } from "react";
+import { useState, useCallback, useTransition, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Scanner } from "../_components/scanner";
 import { LocationPicker } from "../_components/location-picker";
@@ -24,6 +24,12 @@ export default function LocateScanPage() {
   const [isPending, startTransition] = useTransition();
   const [isSearching, startSearchTransition] = useTransition();
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+    };
+  }, []);
 
   function showToast(msg: string) {
     setToast(msg);
