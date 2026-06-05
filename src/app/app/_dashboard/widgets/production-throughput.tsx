@@ -23,6 +23,7 @@ export async function ProductionThroughput({ supabase, tenantId }: Props) {
       .from("orders")
       .select("*", { count: "exact", head: true })
       .eq("tenant_id", tenantId)
+      .eq("historical", false)
       .eq("status", "fulfilled")
       .gte("updated_at", thisWeek.start.toISOString())
       .lt("updated_at", thisWeek.end.toISOString()),
@@ -30,6 +31,7 @@ export async function ProductionThroughput({ supabase, tenantId }: Props) {
       .from("orders")
       .select("*", { count: "exact", head: true })
       .eq("tenant_id", tenantId)
+      .eq("historical", false)
       .eq("status", "fulfilled")
       .gte("updated_at", lastWeek.start.toISOString())
       .lt("updated_at", lastWeek.end.toISOString()),

@@ -6,6 +6,7 @@ import { getServerTenantContext } from "@/lib/tenant/context";
 import PageHeader from "../_ui/page-header";
 import EmptyState from "../_ui/empty-state";
 import HelpLink from "../_ui/help-link";
+import StatusBadge from "../_ui/status-badge";
 import { getOrdersPipelineRollup } from "@/lib/orders/pipeline-rollup";
 import { daysLate } from "@/lib/orders/target-ship";
 import {
@@ -13,49 +14,13 @@ import {
   ProductionPill,
   DeliveryPill,
 } from "./_components/pipeline-pills";
-
-type TabKey = "open" | "in-production" | "ready-to-ship" | "done" | "all";
-
-const TAB_LABELS: Record<TabKey, string> = {
-  open: "Open",
-  "in-production": "In production",
-  "ready-to-ship": "Ready to ship",
-  done: "Done",
-  all: "All",
-};
-
-function parseTab(value: string | undefined): TabKey {
-  if (
-    value === "open" ||
-    value === "in-production" ||
-    value === "ready-to-ship" ||
-    value === "done" ||
-    value === "all"
-  ) {
-    return value;
-  }
-  return "open";
-}
-
-type OrderRow = {
-  id: string;
-  order_number: string | null;
-  customer_email: string | null;
-  status: string;
-  source: string;
-  target_ship_date: string | null;
-  created_at: string;
-};
-
-type OrderLineRef = { order_id: string; line_sell_price: number };
+import { parseOrdersQuery } from "@/lib/orders/orders-query";
+import OrdersFilters from "./_components/orders-filters";
+import SortableHeader from "./_components/sortable-header";
+import OrdersPagination from "./_components/orders-pagination";
 
 type Props = {
-  searchParams?: Promise<{
-    tab?: string;
-    shopify?: string;
-    orders?: string;
-    sync_error?: string;
-  }>;
+  searchParams?: Promise<Record<string, string | undefined>>;
 };
 
 function formatDate(d: Date): string {
@@ -92,68 +57,49 @@ export default async function OrdersPage({ searchParams }: Props) {
   const { supabase, tenantId: _tenantId } = context;
   const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
   const params = (await searchParams) ?? {};
-  const activeTab = parseTab(params.tab);
+  const q = parseOrdersQuery(params as Record<string, string | undefined>);
 
-  const { data: orderData, error } = await supabase
-    .from("orders")
-    .select(
-      "id, order_number, customer_email, status, source, target_ship_date, created_at"
-    )
-    .eq("tenant_id", tenantId)
-    .order("target_ship_date", { ascending: true, nullsFirst: false })
-    .order("created_at", { ascending: false })
-    .limit(200);
+  const { data: rows, error } = await supabase.rpc("list_orders", {
+    p_tenant_id: tenantId,
+    p_search: q.search,
+    p_status: q.status,
+    p_source: q.source,
+    p_historical: q.historical,
+    p_date_from: q.dateFrom,
+    p_date_to: q.dateTo,
+    p_sort: q.sort,
+    p_dir: q.dir,
+    p_limit: q.limit,
+    p_offset: q.offset,
+  });
 
-  const allOrders = ((orderData ?? []) as OrderRow[]).filter(
-    (o) => o.status !== "cancelled"
+  const orderRows = (rows ?? []) as Array<{
+    id: string;
+    order_number: string | null;
+    customer_email: string | null;
+    status: string;
+    source: string;
+    target_ship_date: string | null;
+    shopify_processed_at: string | null;
+    shopify_created_at: string | null;
+    fulfilled_at: string | null;
+    historical: boolean;
+    order_total: number;
+    total_count: number;
+  }>;
+
+  const total = Number(orderRows[0]?.total_count ?? 0);
+
+  const { rollups } = await getOrdersPipelineRollup(
+    supabase,
+    tenantId,
+    orderRows.map((o) => ({
+      id: o.id,
+      status: o.status,
+      target_ship_date: o.target_ship_date,
+    }))
   );
 
-  const { data: orderLineData } = await (allOrders.length > 0
-    ? supabase
-        .from("order_line")
-        .select("order_id, line_sell_price")
-        .in(
-          "order_id",
-          allOrders.map((o) => o.id)
-        )
-    : Promise.resolve({ data: [] as OrderLineRef[] }));
-
-  const totalByOrder = ((orderLineData ?? []) as OrderLineRef[]).reduce<
-    Record<string, number>
-  >((acc, line) => {
-    acc[line.order_id] = (acc[line.order_id] ?? 0) + Number(line.line_sell_price ?? 0);
-    return acc;
-  }, {});
-
-  const { rollups } = await getOrdersPipelineRollup(supabase, tenantId, allOrders);
-
-  function matchesTab(orderId: string, tab: TabKey): boolean {
-    const r = rollups.get(orderId);
-    if (!r) return false;
-    if (tab === "all") return true;
-    if (tab === "done") return r.delivery === "shipped";
-    if (tab === "in-production") return r.production === "in-progress";
-    if (tab === "ready-to-ship")
-      return r.production === "done" && r.delivery !== "shipped";
-    // open
-    return r.production !== "done" || r.delivery !== "shipped";
-  }
-
-  const counts: Record<TabKey, number> = {
-    open: 0,
-    "in-production": 0,
-    "ready-to-ship": 0,
-    done: 0,
-    all: allOrders.length,
-  };
-  for (const o of allOrders) {
-    if (matchesTab(o.id, "open")) counts.open++;
-    if (matchesTab(o.id, "in-production")) counts["in-production"]++;
-    if (matchesTab(o.id, "ready-to-ship")) counts["ready-to-ship"]++;
-    if (matchesTab(o.id, "done")) counts.done++;
-  }
-
-  const visibleOrders = allOrders.filter((o) => matchesTab(o.id, activeTab));
   const now = new Date();
 
   return (
@@ -180,27 +126,17 @@ export default async function OrdersPage({ searchParams }: Props) {
         <p className={styles.syncError}>{params.sync_error ?? "Sync failed."}</p>
       ) : null}
 
-      <nav className={styles.tabBar} aria-label="Orders filter">
-        {(Object.keys(TAB_LABELS) as TabKey[]).map((tab) => (
-          <Link
-            key={tab}
-            href={`/app/orders?tab=${tab}`}
-            className={`${styles.tab} ${activeTab === tab ? styles.tabActive : ""}`}
-          >
-            {TAB_LABELS[tab]}{" "}
-            <span className={styles.tabCount}>{counts[tab]}</span>
-          </Link>
-        ))}
-      </nav>
+      <OrdersFilters />
 
       <div className={styles.tableCard}>
         <table className={styles.table}>
           <thead>
             <tr>
-              <th>Order</th>
-              <th>Customer</th>
-              <th>Target ship</th>
-              <th className={styles.cellRight}>Total</th>
+              <SortableHeader label="Order" sortKey="order_number" />
+              <SortableHeader label="Customer" sortKey="customer_email" />
+              <SortableHeader label="Order date" sortKey="order_date" />
+              <SortableHeader label="Target ship" sortKey="target_ship_date" />
+              <SortableHeader label="Total" sortKey="total" className={styles.cellRight} />
               <th>Components</th>
               <th>Production</th>
               <th>Delivery</th>
@@ -210,54 +146,60 @@ export default async function OrdersPage({ searchParams }: Props) {
           <tbody>
             {error ? (
               <tr>
-                <td colSpan={8} className={styles.emptyCell}>
+                <td colSpan={9} className={styles.emptyCell}>
                   <EmptyState
                     title="Failed to load orders"
                     message={`Supabase: ${error.message}.`}
                   />
                 </td>
               </tr>
-            ) : visibleOrders.length === 0 ? (
+            ) : orderRows.length === 0 ? (
               <tr>
-                <td colSpan={8} className={styles.emptyCell}>
+                <td colSpan={9} className={styles.emptyCell}>
                   <EmptyState
                     title="No orders in this view"
-                    message="Try a different tab or sync orders to populate the queue."
+                    message="Try adjusting the filters or sync orders to populate the queue."
                   />
                 </td>
               </tr>
             ) : (
-              visibleOrders.map((row) => {
-                const rollup = rollups.get(row.id);
-                const orderTotal = totalByOrder[row.id] ?? 0;
+              orderRows.map((o) => {
+                const rollup = rollups.get(o.id);
                 const target = rollup?.targetShipDate ?? null;
                 const overdue = rollup?.isOverdue ?? false;
                 const lateDays = overdue && target ? daysLate(target, now) : 0;
+                const orderDate = o.shopify_processed_at ?? o.shopify_created_at;
 
                 return (
-                  <tr key={row.id}>
+                  <tr key={o.id}>
                     <td>
                       <Link
-                        href={`/app/orders/${row.id}`}
+                        href={`/app/orders/${o.id}`}
                         className={styles.orderLink}
                       >
-                        {row.order_number ?? row.id.slice(0, 8)}
+                        {o.order_number ?? o.id.slice(0, 8)}
                       </Link>
+                      {o.historical && (
+                        <>{" "}<StatusBadge>Historical</StatusBadge></>
+                      )}
                     </td>
                     <td>
                       <span className={styles.customerName}>
-                        {customerLabel(row.customer_email)}
+                        {customerLabel(o.customer_email)}
                       </span>{" "}
                       <span className={styles.sourceChip}>
-                        ({sourceChipText(row.source)})
+                        ({sourceChipText(o.source)})
                       </span>
+                    </td>
+                    <td>
+                      {orderDate ? formatDate(new Date(orderDate)) : "—"}
                     </td>
                     <td className={overdue ? styles.overdue : undefined}>
                       {target ? formatDate(target) : "—"}
                       {overdue ? ` · ${lateDays}d late` : ""}
                     </td>
                     <td className={styles.cellRight}>
-                      {orderTotal > 0 ? formatCurrency(orderTotal) : "—"}
+                      {o.order_total > 0 ? formatCurrency(o.order_total) : "—"}
                     </td>
                     <td>
                       {rollup ? (
@@ -282,7 +224,7 @@ export default async function OrdersPage({ searchParams }: Props) {
                     </td>
                     <td className={styles.cellRight}>
                       <Link
-                        href={`/app/orders/${row.id}`}
+                        href={`/app/orders/${o.id}`}
                         className={styles.viewLink}
                       >
                         View →
@@ -295,6 +237,8 @@ export default async function OrdersPage({ searchParams }: Props) {
           </tbody>
         </table>
       </div>
+
+      <OrdersPagination page={q.page} pageSize={q.pageSize} total={total} />
     </div>
   );
 }

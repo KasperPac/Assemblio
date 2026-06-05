@@ -1,6 +1,7 @@
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { shopifyGraphqlRequest } from "./client";
-import { reconcileOrderAllocations } from "@/lib/allocation/reconcile-order";
+import { reconcileOrderAllocations, releaseOrderAllocations } from "@/lib/allocation/reconcile-order";
+import { resolveOrderDate, isHistoricalOrder } from "./order-dates";
 import { getWeekStart } from "@/lib/dates";
 
 type SyncResult = {
@@ -24,16 +25,23 @@ type ShopifyProductNode = {
 type ShopifyOrderNode = {
   id: string;
   name: string;
+  createdAt: string;
+  processedAt: string | null;
+  updatedAt: string | null;
   cancelledAt: string | null;
   displayFulfillmentStatus: string | null;
-  customer: { firstName: string | null; email: string | null } | null;
   lineItems: {
     nodes: Array<{
+      id: string;
       quantity: number;
       variant: { id: string } | null;
       originalUnitPriceSet: { shopMoney: { amount: string } } | null;
     }>;
   };
+  fulfillments: Array<{
+    createdAt: string;
+    fulfillmentLineItems: { nodes: Array<{ lineItem: { id: string } | null }> };
+  }>;
 };
 
 type ProductsQueryResult = {
@@ -58,6 +66,9 @@ function assertNoError(
   throw new Error(`${context}: ${error.message ?? "Unknown Supabase error"}`);
 }
 
+// Upserts products and returns a shopify_id -> local id map built from the rows
+// the upsert returns, avoiding a follow-up .in() select (which would 414 on
+// large catalogs).
 async function upsertProducts(
   admin: ReturnType<typeof createSupabaseAdminClient>,
   rows: Array<{
@@ -67,17 +78,19 @@ async function upsertProducts(
     description: string;
     image_url: string | null;
   }>
-) {
+): Promise<Map<string, string>> {
   const now = new Date().toISOString();
   const sourcedRows = rows.map((row) => ({
     ...row,
     source: "shopify" as const,
     last_synced_at: now,
   }));
-  const { error } = await admin
+  const { data, error } = await admin
     .from("product")
-    .upsert(sourcedRows, { onConflict: "tenant_id,shopify_id" });
+    .upsert(sourcedRows, { onConflict: "tenant_id,shopify_id" })
+    .select("id,shopify_id");
   assertNoError(error, "Failed to upsert product");
+  return new Map((data ?? []).map((p) => [p.shopify_id as string, p.id as string]));
 }
 
 function mapOrderStatus(order: ShopifyOrderNode) {
@@ -139,21 +152,31 @@ async function fetchOrders(shopDomain: string, accessToken: string) {
         nodes {
           id
           name
+          createdAt
+          processedAt
+          updatedAt
           cancelledAt
           displayFulfillmentStatus
-          customer { firstName email }
           lineItems(first: 100) {
             nodes {
+              id
               quantity
               originalUnitPriceSet { shopMoney { amount } }
               variant { id }
             }
+          }
+          fulfillments(first: 10) {
+            createdAt
+            fulfillmentLineItems(first: 100) { nodes { lineItem { id } } }
           }
         }
       }
     }
   `;
 
+  // Paginates the full order history (no cap). Acceptable at current volumes;
+  // incremental sync is a tracked follow-up in the spec
+  // (docs/superpowers/specs/2026-06-04-shopify-order-dates-and-historical-design.md).
   while (hasNextPage) {
     const data: OrdersQueryResult = await shopifyGraphqlRequest<OrdersQueryResult>(
       shopDomain,
@@ -165,7 +188,6 @@ async function fetchOrders(shopDomain: string, accessToken: string) {
     orders.push(...data.orders.nodes);
     hasNextPage = data.orders.pageInfo.hasNextPage;
     cursor = data.orders.pageInfo.endCursor;
-    if (orders.length >= 250) break;
   }
 
   return orders;
@@ -177,13 +199,23 @@ export async function syncShopifyStoreData(
   accessToken: string
 ): Promise<SyncResult> {
   const admin = createSupabaseAdminClient();
+
+  const { data: storeRow } = await admin
+    .from("shopify_store")
+    .select("stats_only_before")
+    .eq("tenant_id", tenantId)
+    .eq("store_domain", shopDomain)
+    .maybeSingle();
+  const statsOnlyBefore = (storeRow?.stats_only_before as string | null) ?? null;
+
   const [products, orders] = await Promise.all([
     fetchProducts(shopDomain, accessToken),
     fetchOrders(shopDomain, accessToken),
   ]);
 
+  let productMap = new Map<string, string>();
   if (products.length > 0) {
-    await upsertProducts(
+    productMap = await upsertProducts(
       admin,
       products.map((product) => ({
         tenant_id: tenantId,
@@ -193,18 +225,6 @@ export async function syncShopifyStoreData(
         image_url: product.featuredImage?.url ?? null,
       }))
     );
-  }
-
-  const productIds = products.map((product) => product.id);
-  let productMap = new Map<string, string>();
-  if (productIds.length > 0) {
-    const { data: savedProducts, error } = await admin
-      .from("product")
-      .select("id,shopify_id")
-      .eq("tenant_id", tenantId)
-      .in("shopify_id", productIds);
-    assertNoError(error, "Failed to fetch saved product rows");
-    productMap = new Map((savedProducts ?? []).map((p) => [p.shopify_id, p.id]));
   }
 
   const variantRows = products.flatMap((product) =>
@@ -221,55 +241,82 @@ export async function syncShopifyStoreData(
       .filter((variant) => variant.product_id)
   );
 
-  if (variantRows.length > 0) {
-    const { error } = await admin.from("product_variant").upsert(variantRows, {
-      onConflict: "tenant_id,shopify_id",
-    });
-    assertNoError(error, "Failed to upsert product_variant");
-  }
-
-  const variantShopifyIds = variantRows.map((variant) => variant.shopify_id);
   let variantMap = new Map<string, string>();
-  if (variantShopifyIds.length > 0) {
+  if (variantRows.length > 0) {
     const { data: savedVariants, error } = await admin
       .from("product_variant")
-      .select("id,shopify_id")
-      .eq("tenant_id", tenantId)
-      .in("shopify_id", variantShopifyIds);
-    assertNoError(error, "Failed to fetch saved product_variant rows");
-    variantMap = new Map((savedVariants ?? []).map((v) => [v.shopify_id, v.id]));
+      .upsert(variantRows, { onConflict: "tenant_id,shopify_id" })
+      .select("id,shopify_id");
+    assertNoError(error, "Failed to upsert product_variant");
+    variantMap = new Map((savedVariants ?? []).map((v) => [v.shopify_id as string, v.id as string]));
   }
 
-  const orderRows = orders.map((order) => ({
-    tenant_id: tenantId,
-    shopify_order_id: order.id,
-    order_number: order.name,
-    status: mapOrderStatus(order),
-    customer_email: order.customer?.email?.toLowerCase() ?? null,
-    customer_first_name: order.customer?.firstName ?? null,
-  }));
-  if (orderRows.length > 0) {
-    const { error } = await admin.from("orders").upsert(orderRows, {
-      onConflict: "tenant_id,shopify_order_id",
-    });
-    assertNoError(error, "Failed to upsert orders");
-  }
+  const orderRows = orders.map((order) => {
+    const orderDate = resolveOrderDate(order.processedAt, order.createdAt);
+    // Compute fulfilled_at: earliest fulfillment createdAt, or null if none
+    const fulfillmentDates = order.fulfillments
+      .map((f) => f.createdAt)
+      .filter(Boolean)
+      .sort();
+    const fulfilledAt = fulfillmentDates.length > 0 ? fulfillmentDates[0] : null;
 
-  const orderIds = orderRows.map((order) => order.shopify_order_id);
+    return {
+      tenant_id: tenantId,
+      shopify_order_id: order.id,
+      order_number: order.name,
+      status: mapOrderStatus(order),
+      // Customer fields are deferred until a future feature: querying them
+      // requires the read_customers (protected customer data) scope, which the
+      // app does not request at launch. Synced as null for now.
+      customer_email: null,
+      customer_first_name: null,
+      shopify_created_at: order.createdAt,
+      shopify_processed_at: order.processedAt,
+      shopify_updated_at: order.updatedAt,
+      fulfilled_at: fulfilledAt,
+      historical: isHistoricalOrder(orderDate, statsOnlyBefore),
+    };
+  });
+
   let orderMap = new Map<string, string>();
-  if (orderIds.length > 0) {
+  if (orderRows.length > 0) {
     const { data: savedOrders, error } = await admin
       .from("orders")
-      .select("id,shopify_order_id")
-      .eq("tenant_id", tenantId)
-      .in("shopify_order_id", orderIds);
-    assertNoError(error, "Failed to fetch saved orders rows");
-    orderMap = new Map((savedOrders ?? []).map((o) => [o.shopify_order_id, o.id]));
+      .upsert(orderRows, { onConflict: "tenant_id,shopify_order_id" })
+      .select("id,shopify_order_id");
+    assertNoError(error, "Failed to upsert orders");
+    orderMap = new Map((savedOrders ?? []).map((o) => [o.shopify_order_id as string, o.id as string]));
   }
 
   const orderLineRows = orders.flatMap((order) => {
     const orderId = orderMap.get(order.id);
     if (!orderId) return [];
+
+    // Build a map from Shopify line item id -> Shopify variant id
+    const lineItemToVariant = new Map<string, string>();
+    for (const lineItem of order.lineItems.nodes) {
+      if (lineItem.variant?.id) {
+        lineItemToVariant.set(lineItem.id, lineItem.variant.id);
+      }
+    }
+
+    // Build shippedByVariant: local variant id -> earliest fulfillment createdAt
+    const shippedByVariant = new Map<string, string>();
+    for (const fulfillment of order.fulfillments) {
+      for (const node of fulfillment.fulfillmentLineItems.nodes) {
+        const lineItemId = node.lineItem?.id;
+        if (!lineItemId) continue;
+        const shopifyVariantId = lineItemToVariant.get(lineItemId);
+        if (!shopifyVariantId) continue;
+        const localVariantId = variantMap.get(shopifyVariantId);
+        if (!localVariantId) continue;
+        // Shopify does not guarantee fulfillment order; keep the minimum createdAt.
+        const existing = shippedByVariant.get(localVariantId);
+        if (!existing || fulfillment.createdAt < existing) {
+          shippedByVariant.set(localVariantId, fulfillment.createdAt);
+        }
+      }
+    }
 
     const lineDataByVariant = new Map<string, { quantity: number; revenue: number }>();
     for (const lineItem of order.lineItems.nodes) {
@@ -291,46 +338,38 @@ export async function syncShopifyStoreData(
       quantity: data.quantity,
       unit_sell_price: data.quantity > 0 ? data.revenue / data.quantity : 0,
       line_sell_price: data.revenue,
+      shipped_at: shippedByVariant.get(variantId) ?? null,
     }));
   });
 
+  // Build order_id -> line ids from the upsert's returned rows (used below for
+  // financial planning), avoiding a follow-up .in() select that would 414.
+  const linesByOrderId = new Map<string, string[]>();
   if (orderLineRows.length > 0) {
-    const { error } = await admin.from("order_line").upsert(orderLineRows, {
-      onConflict: "tenant_id,order_id,variant_id",
-    });
-    assertNoError(error, "Failed to upsert order_line");
-  }
-
-  const fulfilledOrderIds: string[] = [];
-  const partialOrders: string[] = [];
-  for (const order of orders) {
-    const localId = orderMap.get(order.id);
-    if (!localId) continue;
-    const status = (order.displayFulfillmentStatus ?? "").toUpperCase();
-    if (status === "FULFILLED") fulfilledOrderIds.push(localId);
-    else if (status === "PARTIALLY_FULFILLED") partialOrders.push(localId);
-  }
-
-  if (fulfilledOrderIds.length > 0) {
-    const nowIso = new Date().toISOString();
-    await admin
+    const { data: savedLines, error } = await admin
       .from("order_line")
-      .update({ shipped_at: nowIso })
-      .eq("tenant_id", tenantId)
-      .in("order_id", fulfilledOrderIds)
-      .is("shipped_at", null);
+      .upsert(orderLineRows, { onConflict: "tenant_id,order_id,variant_id" })
+      .select("id,order_id");
+    assertNoError(error, "Failed to upsert order_line");
+    for (const row of savedLines ?? []) {
+      const list = linesByOrderId.get(row.order_id as string) ?? [];
+      list.push(row.id as string);
+      linesByOrderId.set(row.order_id as string, list);
+    }
   }
 
-  if (partialOrders.length > 0) {
-    console.warn(
-      "[shopify-sync] partial fulfillment encountered for orders; per-line mark-shipped deferred to v2",
-      partialOrders
-    );
-  }
+  // Partition orders: live orders get allocation reconciliation and financial
+  // planning; historical orders get their reservations released.
+  const orderLocalIds = Array.from(new Set(orderLineRows.map((row) => row.order_id)));
+  const historicalLocalIds = orderRows
+    .filter((r) => r.historical)
+    .map((r) => orderMap.get(r.shopify_order_id))
+    .filter((id): id is string => Boolean(id));
+  const historicalSet = new Set(historicalLocalIds);
+  const liveOrderLocalIds = orderLocalIds.filter((id) => !historicalSet.has(id));
 
   let allocationRuns = 0;
-  const orderLocalIds = Array.from(new Set(orderLineRows.map((row) => row.order_id)));
-  for (const localOrderId of orderLocalIds) {
+  for (const localOrderId of liveOrderLocalIds) {
     try {
       await reconcileOrderAllocations(admin, tenantId, localOrderId);
       allocationRuns += 1;
@@ -339,26 +378,11 @@ export async function syncShopifyStoreData(
     }
   }
 
-  // Batch-fetch all order line IDs for this sync in one query
-  const { data: allPlanLines } = await admin
-    .from("order_line")
-    .select("id, order_id")
-    .eq("tenant_id", tenantId)
-    .in("order_id", orderLocalIds);
-
-  // Group by order_id in memory
-  const linesByOrderId = new Map<string, string[]>();
-  for (const row of allPlanLines ?? []) {
-    const list = linesByOrderId.get(row.order_id) ?? [];
-    list.push(row.id);
-    linesByOrderId.set(row.order_id, list);
-  }
-
-  // Run financial planning with zero extra DB reads
+  // Run financial planning from the line-id map built at upsert time
   let planRuns = 0;
   let planErrors = 0;
   const weekStart = getWeekStart();
-  for (const localOrderId of orderLocalIds) {
+  for (const localOrderId of liveOrderLocalIds) {
     for (const lineId of linesByOrderId.get(localOrderId) ?? []) {
       try {
         await admin.rpc("generate_job_financial_plan", {
@@ -370,6 +394,16 @@ export async function syncShopifyStoreData(
         planErrors += 1;
         continue;
       }
+    }
+  }
+
+  // Release any stock reservations for historical orders (idempotent)
+  for (const localOrderId of historicalLocalIds) {
+    try {
+      await releaseOrderAllocations(admin, tenantId, localOrderId);
+    } catch (err) {
+      console.error(`[shopify-sync] releaseOrderAllocations failed for ${localOrderId}:`, err instanceof Error ? err.message : err);
+      continue;
     }
   }
 

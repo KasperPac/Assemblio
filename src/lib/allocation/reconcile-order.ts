@@ -42,6 +42,7 @@ function asQuery(query: unknown) {
 type OrderRow = {
   id: string;
   status: string;
+  historical?: boolean;
 };
 
 type LocationRow = {
@@ -140,19 +141,59 @@ async function clearLineAllocations(
   return released;
 }
 
+export async function releaseOrderAllocations(
+  client: DbClient,
+  tenantId: string,
+  orderId: string
+): Promise<number> {
+  const { data: locationData, error: locationError } = await asQuery(
+    client.from("location")
+  )
+    .select("id")
+    .eq("tenant_id", tenantId)
+    .eq("is_default", true)
+    .maybeSingle();
+  if (locationError) throw locationError;
+  const location = locationData as LocationRow | null;
+  const locationId = location?.id;
+  if (!locationId) return 0;
+
+  const { data: orderLineData, error: lineError } = await asQuery(
+    client.from("order_line")
+  )
+    .select("id,variant_id,quantity")
+    .eq("tenant_id", tenantId)
+    .eq("order_id", orderId);
+  if (lineError) throw lineError;
+  const lines = (orderLineData ?? []) as OrderLineRow[];
+
+  let released = 0;
+  for (const line of lines) {
+    released += await clearLineAllocations(client, tenantId, orderId, locationId, line.id);
+  }
+  return released;
+}
+
 export async function reconcileOrderAllocations(
   client: DbClient,
   tenantId: string,
   orderId: string
 ): Promise<ReconcileOrderResult> {
   const { data: orderData, error: orderError } = await asQuery(client.from("orders"))
-    .select("id,status")
+    .select("id,status,historical")
     .eq("tenant_id", tenantId)
     .eq("id", orderId)
     .maybeSingle();
   if (orderError) throw orderError;
   const order = orderData as OrderRow | null;
   if (!order?.id) return { applied: 0, skippedMissingBom: 0, clearedOnly: false };
+
+  // Historical orders are imported for stats/reporting only — they must never
+  // reserve stock or drive allocation, even if a caller (e.g. the manual
+  // "Re-run allocation" UI action) reaches this function with one.
+  if (order.historical) {
+    return { applied: 0, skippedMissingBom: 0, clearedOnly: false };
+  }
 
   const { data: locationData, error: locationError } = await asQuery(
     client.from("location")

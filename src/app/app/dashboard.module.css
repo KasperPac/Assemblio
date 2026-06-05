@@ -53,7 +53,7 @@
 /* ── KPI chips — full width ──────────────────────────────────── */
 .kpiRow {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 12px;
 }
 
@@ -278,3 +278,30 @@
     padding: 18px;
   }
 }
+
+/* ── Top products card ───────────────────────────────────────── */
+.fullWidthCard { grid-column: 1 / -1; }
+.topProductsGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.topProductsCol { display: flex; flex-direction: column; gap: 4px; }
+.topProductsHeading {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  color: var(--ink-muted);
+  margin: 0 0 4px;
+}
+.topProductRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  color: var(--ink-strong);
+  font-size: var(--fs-sm);
+}
+.topProductRow:hover { background: var(--surface-hover); }
+.topProductName { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.topProductVal { color: var(--ink-muted); white-space: nowrap; }
+.noBomTag { color: var(--ink-faint); font-size: var(--fs-xs); }
