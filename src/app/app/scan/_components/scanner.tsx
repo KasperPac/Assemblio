@@ -28,11 +28,20 @@ export function Scanner({
     onScanRef.current = onScan;
   }, [onScan]);
 
-  // Start camera stream on mount
+  // Pre-load the zxing reader class so it's ready before the first scan
+  type ReaderClass = typeof import("@zxing/browser").BrowserMultiFormatReader;
+  const readerClassRef = useRef<ReaderClass | null>(null);
+
+  // Start camera stream on mount — also eagerly loads the zxing module
   useEffect(() => {
     let stopped = false;
 
     async function start() {
+      // Kick off zxing module load in parallel with camera permission request
+      const zxingPromise = import("@zxing/browser").then((m) => {
+        readerClassRef.current = m.BrowserMultiFormatReader;
+      }).catch(() => {/* non-fatal — will retry on first decode */});
+
       try {
         // Prefer rear camera on mobile
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -47,6 +56,7 @@ export function Scanner({
           videoRef.current.srcObject = stream;
           await videoRef.current.play();
         }
+        await zxingPromise; // ensure module is loaded before first decode attempt
         setPermission("granted");
       } catch {
         // Fallback: any camera (works on desktops without rear camera)
@@ -88,7 +98,12 @@ export function Scanner({
     let stopped = false;
 
     async function startDecoding() {
-      const { BrowserMultiFormatReader } = await import("@zxing/browser");
+      // Use pre-loaded class if available, otherwise load now (first-render fallback)
+      if (!readerClassRef.current) {
+        const m = await import("@zxing/browser");
+        readerClassRef.current = m.BrowserMultiFormatReader;
+      }
+      const { BrowserMultiFormatReader } = { BrowserMultiFormatReader: readerClassRef.current };
       if (stopped || !videoRef.current || !streamRef.current) return;
 
       const reader = new BrowserMultiFormatReader();

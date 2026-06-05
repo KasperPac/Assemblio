@@ -4,8 +4,9 @@ import { useState, useCallback, useTransition, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Scanner } from "../_components/scanner";
 import { LocationPicker } from "../_components/location-picker";
-import { resolveBarcode, type ResolvedLocation } from "../_actions/resolve-barcode";
+import type { ResolvedLocation } from "../_actions/resolve-barcode";
 import { getLocationComponents, type LocationComponent } from "../_actions/get-location-components";
+import { scanAndFetchComponents } from "../_actions/scan-and-fetch";
 import { assignComponentToLocation, removeComponentFromLocation } from "../_actions/assign-component";
 import { searchComponents, type ComponentSearchResult } from "../_actions/search-components";
 import styles from "../scan.module.css";
@@ -47,12 +48,14 @@ export default function LocateScanPage() {
   const handleScan = useCallback((code: string) => {
     if (scanState !== "scanning") return;
     startTransition(async () => {
-      const resolved = await resolveBarcode(code);
-      if (!resolved) {
+      const result = await scanAndFetchComponents(code);
+      if (!result.found) {
         showToast("Location not found — check the label");
         return;
       }
-      await loadLocation(resolved);
+      setLocation(result.location);
+      setComponents(result.components);
+      setScanState("showing");
     });
   }, [scanState]);
 

@@ -4,8 +4,9 @@ import { use, useState, useCallback, useTransition, useRef, useEffect } from "re
 import Link from "next/link";
 import { Scanner } from "../../_components/scanner";
 import { LocationPicker } from "../../_components/location-picker";
-import { resolveBarcode, type ResolvedLocation } from "../../_actions/resolve-barcode";
+import type { ResolvedLocation } from "../../_actions/resolve-barcode";
 import { getSessionLines, type SessionLine } from "../../_actions/get-session-lines";
+import { scanAndFetchLines } from "../../_actions/scan-and-fetch";
 import { saveLineCountClient } from "@/app/app/stocktake/[sessionId]/actions";
 import styles from "../../scan.module.css";
 
@@ -43,14 +44,13 @@ export default function StocktakeScanPage({ params }: Props) {
     (code: string) => {
       if (scanState !== "scanning") return;
       startTransition(async () => {
-        const resolved = await resolveBarcode(code);
-        if (!resolved) {
+        const result = await scanAndFetchLines(code, sessionId);
+        if (!result.found) {
           showToast("Location not found — check the label");
           return;
         }
-        const sessionLines = await getSessionLines(sessionId, resolved);
-        setLocation(resolved);
-        setLines(sessionLines);
+        setLocation(result.location);
+        setLines(result.lines);
         setCounts(new Map());
         setScanState("showing");
       });
