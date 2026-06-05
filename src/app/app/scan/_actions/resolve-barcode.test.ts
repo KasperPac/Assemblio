@@ -66,4 +66,16 @@ describe("resolveBarcode", () => {
       p_code: "ABC123",
     });
   });
+
+  it("returns null when RPC returns an error", async () => {
+    const supabase = {
+      rpc: vi.fn().mockResolvedValue({ data: null, error: { message: "permission denied" } }),
+    };
+    vi.mocked(getServerTenantContext).mockResolvedValue({
+      supabase: supabase as any,
+      tenantId: "t1",
+    } as any);
+    const result = await resolveBarcode("ABC123");
+    expect(result).toBeNull();
+  });
 });
