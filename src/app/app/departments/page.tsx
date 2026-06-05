@@ -167,7 +167,7 @@ export default async function DepartmentsPage({ searchParams }: Props) {
       {/* Add department */}
       <section className={styles.card}>
         <h3>Add department</h3>
-        <form action={createDepartment} style={{ display: "flex", flexDirection: "column", gap: "14px", marginTop: "14px" }}>
+        <form action={createDepartment} className={deptStyles.createForm}>
           <div className={deptStyles.fieldsGrid}>
             <div className={styles.field}>
               <label htmlFor="name">Name</label>

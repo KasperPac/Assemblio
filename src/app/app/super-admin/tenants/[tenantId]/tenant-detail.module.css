@@ -4,6 +4,12 @@
   gap: 18px;
 }
 
+.vitalsError {
+  color: var(--danger);
+  font-family: monospace;
+  font-size: 0.82rem;
+}
+
 .headerActions {
   display: flex;
   align-items: center;
