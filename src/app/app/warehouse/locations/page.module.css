@@ -446,6 +446,11 @@
   gap: 16px;
 }
 
+/* dialog's default display:none is overridden by display:flex above — restore it */
+.confirmDialog:not([open]) {
+  display: none;
+}
+
 .confirmDialog::backdrop {
   background: var(--bg-overlay, rgba(0, 0, 0, 0.45));
 }
