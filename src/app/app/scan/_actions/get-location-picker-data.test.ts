@@ -25,6 +25,15 @@ function makeCtx(data: unknown) {
   return { supabase: sb as any, tenantId: "t1" };
 }
 
+function makeSupabaseError() {
+  const chain = {
+    select: vi.fn().mockReturnThis(),
+    eq: vi.fn().mockReturnThis(),
+    order: vi.fn().mockResolvedValue({ data: null, error: { message: "DB error" } }),
+  };
+  return { from: vi.fn().mockReturnValue(chain) };
+}
+
 beforeEach(() => vi.clearAllMocks());
 
 describe("getWarehouses", () => {
@@ -37,6 +46,14 @@ describe("getWarehouses", () => {
     const rows = [{ id: "wh1", name: "Main Warehouse" }];
     vi.mocked(getServerTenantContext).mockResolvedValue(makeCtx(rows) as any);
     expect(await getWarehouses()).toEqual(rows);
+  });
+
+  it("returns empty array on DB error", async () => {
+    vi.mocked(getServerTenantContext).mockResolvedValue({
+      supabase: makeSupabaseError() as any,
+      tenantId: "t1",
+    } as any);
+    expect(await getWarehouses()).toEqual([]);
   });
 });
 

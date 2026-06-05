@@ -21,7 +21,7 @@ interface Props {
 
 export function LocationPicker({ onSelect, onCancel }: Props) {
   const [level, setLevel] = useState<Level>("warehouse");
-  const [warehouses, setWarehouses] = useState<WarehouseItem[]>([]);
+  const [warehouses, setWarehouses] = useState<WarehouseItem[] | null>(null);
   const [aisles, setAisles] = useState<AisleItem[]>([]);
   const [bays, setBays] = useState<BayItem[]>([]);
   const [selectedWarehouse, setSelectedWarehouse] = useState<WarehouseItem | null>(null);
@@ -128,12 +128,12 @@ export function LocationPicker({ onSelect, onCancel }: Props) {
 
         {!isPending && level === "warehouse" && (
           <div className={styles.sheetResults}>
-            {warehouses.length === 0 && (
+            {warehouses !== null && warehouses.length === 0 && (
               <div className={styles.emptyState}>
                 No warehouses found. Add them in the desktop app first.
               </div>
             )}
-            {warehouses.map((wh) => (
+            {(warehouses ?? []).map((wh) => (
               <div key={wh.id} style={{ display: "flex", gap: 6 }}>
                 <button
                   type="button"
