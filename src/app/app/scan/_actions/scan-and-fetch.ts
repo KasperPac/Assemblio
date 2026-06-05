@@ -1,19 +1,17 @@
 "use server";
 
-// Combined actions that resolve a barcode AND fetch the follow-on data in a
-// single server round-trip, halving the latency on every scan.
+// Combined actions: resolve barcode + fetch follow-on data in ONE server call.
+// Internal queries that are independent are run in parallel with Promise.all.
 
 import { getServerTenantContext } from "@/lib/tenant/context";
 import type { ResolvedLocation } from "./resolve-barcode";
 import type { SessionLine } from "./get-session-lines";
 import type { LocationComponent } from "./get-location-components";
 
-// ── shared barcode resolver (inline, avoids an extra import hop) ──────────────
+// ── shared barcode resolver ───────────────────────────────────────────────────
 
-async function resolveCode(code: string): Promise<ResolvedLocation | null> {
-  const context = await getServerTenantContext();
-  if (!context) return null;
-  const { supabase } = context;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function resolveCode(supabase: any, code: string): Promise<ResolvedLocation | null> {
   const { data, error } = await supabase.rpc("resolve_location_barcode", {
     p_code: code.toUpperCase(),
   });
@@ -27,7 +25,7 @@ async function resolveCode(code: string): Promise<ResolvedLocation | null> {
   };
 }
 
-// ── stocktake: resolve barcode + fetch session lines ─────────────────────────
+// ── stocktake: resolve + session + lines in two parallel phases ───────────────
 
 export type ScanAndFetchLinesResult =
   | { found: false }
@@ -41,37 +39,50 @@ export async function scanAndFetchLines(
   if (!context) return { found: false };
   const { supabase, tenantId } = context;
 
-  const location = await resolveCode(code);
+  // Phase 1 — both are independent; run in parallel
+  const [location, sessionRes] = await Promise.all([
+    resolveCode(supabase, code),
+    supabase
+      .from("stocktake_session")
+      .select("id, blind_count")
+      .eq("id", sessionId)
+      .eq("tenant_id", tenantId)
+      .maybeSingle(),
+  ]);
+
   if (!location) return { found: false };
+  if (!sessionRes.data) return { found: true, location, lines: [] };
+  const isBlind = (sessionRes.data as { blind_count: boolean }).blind_count;
 
-  // Fetch session blind_count + component IDs at location + lines — all with
-  // the same tenant context, no extra round-trips.
-  const { data: session } = await supabase
-    .from("stocktake_session")
-    .select("id, blind_count")
-    .eq("id", sessionId)
-    .eq("tenant_id", tenantId)
-    .maybeSingle();
+  // Phase 2 — single query: lines joined with component, filtered by bin location
+  // PostgREST !inner filter lets us skip a separate component-IDs lookup
+  const selectCols =
+    "id, component_id, expected_on_hand, counted, " +
+    "component:component_id!inner(id, name, sku, bin_bay_id, bin_aisle_id, bin_sub_location_id, location_id)";
 
-  if (!session) return { found: true, location, lines: [] };
-  const isBlind = (session as { blind_count: boolean }).blind_count;
-
-  let compQuery = supabase.from("component").select("id").eq("tenant_id", tenantId);
-  if (location.type === "bay")          compQuery = compQuery.eq("bin_bay_id", location.id);
-  else if (location.type === "aisle")   compQuery = compQuery.eq("bin_aisle_id", location.id);
-  else if (location.type === "sub_location") compQuery = compQuery.eq("bin_sub_location_id", location.id);
-  else compQuery = compQuery.eq("location_id", location.warehouseId).is("bin_bay_id", null).is("bin_aisle_id", null).is("bin_sub_location_id", null);
-
-  const { data: components } = await compQuery;
-  const componentIds = (components ?? []).map((c: { id: string }) => c.id);
-  if (componentIds.length === 0) return { found: true, location, lines: [] };
-
-  const { data: lineRows } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let q: any = supabase
     .from("stocktake_line")
-    .select("id, component_id, expected_on_hand, counted, component:component_id(id, name, sku)")
+    .select(selectCols)
     .eq("session_id", sessionId)
-    .eq("tenant_id", tenantId)
-    .in("component_id", componentIds);
+    .eq("tenant_id", tenantId);
+
+  if (location.type === "bay") {
+    q = q.eq("component.bin_bay_id", location.id);
+  } else if (location.type === "aisle") {
+    q = q.eq("component.bin_aisle_id", location.id);
+  } else if (location.type === "sub_location") {
+    q = q.eq("component.bin_sub_location_id", location.id);
+  } else {
+    // warehouse level — components assigned to warehouse with no bin set
+    q = q
+      .eq("component.location_id", location.warehouseId)
+      .is("component.bin_bay_id", null)
+      .is("component.bin_aisle_id", null)
+      .is("component.bin_sub_location_id", null);
+  }
+
+  const { data: lineRows } = await q;
 
   const lines: SessionLine[] = (lineRows ?? []).map((l: any) => {
     const comp = Array.isArray(l.component) ? l.component[0] : l.component;
@@ -88,7 +99,7 @@ export async function scanAndFetchLines(
   return { found: true, location, lines };
 }
 
-// ── locate: resolve barcode + fetch components at location ───────────────────
+// ── locate: resolve + components in two parallel phases ──────────────────────
 
 export type ScanAndFetchComponentsResult =
   | { found: false }
@@ -101,19 +112,25 @@ export async function scanAndFetchComponents(
   if (!context) return { found: false };
   const { supabase, tenantId } = context;
 
-  const location = await resolveCode(code);
+  const location = await resolveCode(supabase, code);
   if (!location) return { found: false };
 
-  let query = supabase.from("component").select("id, name, sku").eq("tenant_id", tenantId).order("name");
-  if (location.type === "bay")          query = query.eq("bin_bay_id", location.id);
-  else if (location.type === "aisle")   query = query.eq("bin_aisle_id", location.id);
-  else if (location.type === "sub_location") query = query.eq("bin_sub_location_id", location.id);
-  else query = query.eq("location_id", location.warehouseId).is("bin_bay_id", null).is("bin_aisle_id", null).is("bin_sub_location_id", null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let q: any = supabase
+    .from("component")
+    .select("id, name, sku")
+    .eq("tenant_id", tenantId)
+    .order("name");
 
-  const { data } = await query;
-  return {
-    found: true,
-    location,
-    components: (data ?? []) as LocationComponent[],
-  };
+  if (location.type === "bay")               q = q.eq("bin_bay_id", location.id);
+  else if (location.type === "aisle")        q = q.eq("bin_aisle_id", location.id);
+  else if (location.type === "sub_location") q = q.eq("bin_sub_location_id", location.id);
+  else q = q
+    .eq("location_id", location.warehouseId)
+    .is("bin_bay_id", null)
+    .is("bin_aisle_id", null)
+    .is("bin_sub_location_id", null);
+
+  const { data } = await q;
+  return { found: true, location, components: (data ?? []) as LocationComponent[] };
 }

@@ -40,6 +40,10 @@ export function Scanner({ onScan, active, label = "Scan a location barcode" }: S
   const onScanRef = useRef(onScan);
   useEffect(() => { onScanRef.current = onScan; }, [onScan]);
 
+  // Brief visual acknowledgement state after a successful decode
+  const [hitCode, setHitCode] = useState<string | null>(null);
+  const hitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // Pre-load zxing in parallel with camera permission (only needed on iOS)
   type ReaderCtor = typeof import("@zxing/browser").BrowserMultiFormatReader;
   const readerCtorRef = useRef<ReaderCtor | null>(null);
@@ -108,6 +112,10 @@ export function Scanner({ onScan, active, label = "Scan a location barcode" }: S
       if (code === lastCodeRef.current && now - lastTimeRef.current < 1500) return;
       lastCodeRef.current = code;
       lastTimeRef.current = now;
+      // Flash the target green and show the code while the parent fetches data
+      setHitCode(code);
+      if (hitTimerRef.current) clearTimeout(hitTimerRef.current);
+      hitTimerRef.current = setTimeout(() => setHitCode(null), 2000);
       onScanRef.current(code);
     }
 
@@ -190,8 +198,11 @@ export function Scanner({ onScan, active, label = "Scan a location barcode" }: S
       {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
       <video ref={videoRef} className={styles.scanVideo} playsInline muted />
       <div className={styles.scanOverlay} aria-hidden>
-        <div className={styles.scanTarget} />
-        <span className={styles.scanLabel}>{label}</span>
+        <div className={`${styles.scanTarget}${hitCode ? ` ${styles.scanTargetHit}` : ""}`} />
+        {hitCode
+          ? <span className={styles.scanHitCode}>{hitCode}</span>
+          : <span className={styles.scanLabel}>{label}</span>
+        }
       </div>
       <button
         type="button"
