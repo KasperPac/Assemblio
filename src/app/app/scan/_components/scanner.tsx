@@ -9,11 +9,25 @@ interface ScannerProps {
   label?: string;
 }
 
-export function Scanner({
-  onScan,
-  active,
-  label = "Scan a location barcode",
-}: ScannerProps) {
+// Native BarcodeDetector (Chrome 83+, Edge, Android WebView) — QR only.
+// Declared here so TypeScript doesn't complain about the non-standard API.
+interface NativeBarcode { rawValue: string }
+interface NativeDetector {
+  detect(source: HTMLVideoElement): Promise<NativeBarcode[]>;
+}
+declare const BarcodeDetector: {
+  new(opts: { formats: string[] }): NativeDetector;
+};
+const HAS_NATIVE_DETECTOR =
+  typeof window !== "undefined" && "BarcodeDetector" in window;
+
+function extractCode(raw: string): string {
+  // The QR encodes the 6-char short code directly; strip any accidental
+  // hyphens and take the last 6 chars for forward-compatibility.
+  return raw.replace(/-/g, "").slice(-6).toUpperCase();
+}
+
+export function Scanner({ onScan, active, label = "Scan a location barcode" }: ScannerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const controlsRef = useRef<{ stop: () => void } | null>(null);
@@ -22,50 +36,41 @@ export function Scanner({
   const [permission, setPermission] = useState<"pending" | "granted" | "denied">("pending");
   const [torchOn, setTorchOn] = useState(false);
 
-  // Keep a stable ref to onScan so the decode loop doesn't restart on every render
+  // Stable ref so the decode loop never restarts just because the parent re-renders
   const onScanRef = useRef(onScan);
-  useEffect(() => {
-    onScanRef.current = onScan;
-  }, [onScan]);
+  useEffect(() => { onScanRef.current = onScan; }, [onScan]);
 
-  // Pre-load the zxing reader class so it's ready before the first scan
-  type ReaderClass = typeof import("@zxing/browser").BrowserMultiFormatReader;
-  const readerClassRef = useRef<ReaderClass | null>(null);
+  // Pre-load zxing in parallel with camera permission (only needed on iOS)
+  type ReaderCtor = typeof import("@zxing/browser").BrowserMultiFormatReader;
+  const readerCtorRef = useRef<ReaderCtor | null>(null);
 
-  // Start camera stream on mount — also eagerly loads the zxing module
+  // ── Camera stream ─────────────────────────────────────────────────────────
   useEffect(() => {
     let stopped = false;
 
-    async function start() {
-      // Kick off zxing module load in parallel with camera permission request
-      const zxingPromise = import("@zxing/browser").then((m) => {
-        readerClassRef.current = m.BrowserMultiFormatReader;
-      }).catch(() => {/* non-fatal — will retry on first decode */});
+    // Kick off zxing load immediately — free while waiting for camera permission
+    if (!HAS_NATIVE_DETECTOR) {
+      import("@zxing/browser")
+        .then((m) => { readerCtorRef.current = m.BrowserMultiFormatReader; })
+        .catch(() => {/* non-fatal */});
+    }
 
+    async function start() {
       try {
-        // Prefer rear camera on mobile
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: { exact: "environment" } },
         });
-        if (stopped) {
-          stream.getTracks().forEach((t) => t.stop());
-          return;
-        }
+        if (stopped) { stream.getTracks().forEach((t) => t.stop()); return; }
         streamRef.current = stream;
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           await videoRef.current.play();
         }
-        await zxingPromise; // ensure module is loaded before first decode attempt
         setPermission("granted");
       } catch {
-        // Fallback: any camera (works on desktops without rear camera)
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-          if (stopped) {
-            stream.getTracks().forEach((t) => t.stop());
-            return;
-          }
+          if (stopped) { stream.getTracks().forEach((t) => t.stop()); return; }
           streamRef.current = stream;
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
@@ -86,10 +91,9 @@ export function Scanner({
     };
   }, []);
 
-  // Decode loop — start when active and camera is ready, stop when inactive
+  // ── Decode loop ───────────────────────────────────────────────────────────
   useEffect(() => {
     if (!active || permission !== "granted" || !videoRef.current || !streamRef.current) {
-      // Stop any running decode loop when going inactive
       controlsRef.current?.stop();
       controlsRef.current = null;
       return;
@@ -97,68 +101,86 @@ export function Scanner({
 
     let stopped = false;
 
-    async function startDecoding() {
-      // Use pre-loaded class if available, otherwise load now (first-render fallback)
-      if (!readerClassRef.current) {
-        const m = await import("@zxing/browser");
-        readerClassRef.current = m.BrowserMultiFormatReader;
-      }
-      const { BrowserMultiFormatReader } = { BrowserMultiFormatReader: readerClassRef.current };
-      if (stopped || !videoRef.current || !streamRef.current) return;
-
-      const reader = new BrowserMultiFormatReader();
-      try {
-        const controls = await reader.decodeFromStream(
-          streamRef.current,
-          videoRef.current,
-          (result) => {
-            if (!result) return;
-            // Extract the 6-char short code: last 6 chars of the decoded text, uppercased
-            const code = result.getText().replace(/-/g, "").slice(-6).toUpperCase();
-            const now = Date.now();
-            // Debounce: ignore same code within 1.5s to prevent double-fires
-            if (code === lastCodeRef.current && now - lastTimeRef.current < 1500) return;
-            lastCodeRef.current = code;
-            lastTimeRef.current = now;
-            onScanRef.current(code);
-          }
-        );
-        controlsRef.current = controls;
-      } catch {
-        // Stream ended or component unmounted before decode started — ignore
-      }
+    function fire(raw: string) {
+      const code = extractCode(raw);
+      if (!code) return;
+      const now = Date.now();
+      if (code === lastCodeRef.current && now - lastTimeRef.current < 1500) return;
+      lastCodeRef.current = code;
+      lastTimeRef.current = now;
+      onScanRef.current(code);
     }
 
-    startDecoding();
-    return () => {
-      stopped = true;
-      controlsRef.current?.stop();
-      controlsRef.current = null;
-    };
+    if (HAS_NATIVE_DETECTOR) {
+      // ── Fast path: native BarcodeDetector (Chrome / Pixel 10 Pro) ─────────
+      // Detects directly from the live <video> element — no canvas needed.
+      const detector = new BarcodeDetector({ formats: ["qr_code"] });
+      const id = setInterval(async () => {
+        if (stopped || !videoRef.current) return;
+        try {
+          const results = await detector.detect(videoRef.current);
+          for (const b of results) fire(b.rawValue);
+        } catch { /* ignore per-frame errors */ }
+      }, 150);
+      controlsRef.current = { stop: () => clearInterval(id) };
+      return () => {
+        stopped = true;
+        clearInterval(id);
+        controlsRef.current = null;
+      };
+    } else {
+      // ── Fallback: zxing QR-only reader (iOS Safari) ───────────────────────
+      async function startDecoding() {
+        // Ensure module is loaded
+        if (!readerCtorRef.current) {
+          const m = await import("@zxing/browser");
+          readerCtorRef.current = m.BrowserMultiFormatReader;
+        }
+        if (stopped || !videoRef.current || !streamRef.current) return;
+
+        // Restrict to QR only — dramatically faster than trying all formats
+        const { DecodeHintType, BarcodeFormat } = await import("@zxing/library");
+        const hints = new Map<number, unknown>();
+        hints.set(DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.QR_CODE]);
+        const ReaderCtor = readerCtorRef.current;
+        const reader = new ReaderCtor(hints as Map<never, never>);
+
+        try {
+          const controls = await reader.decodeFromStream(
+            streamRef.current,
+            videoRef.current,
+            (result) => { if (result) fire(result.getText()); }
+          );
+          controlsRef.current = controls;
+        } catch { /* stream ended or unmounted */ }
+      }
+
+      startDecoding();
+      return () => {
+        stopped = true;
+        controlsRef.current?.stop();
+        controlsRef.current = null;
+      };
+    }
   }, [active, permission]);
 
+  // ── Torch ─────────────────────────────────────────────────────────────────
   const toggleTorch = useCallback(async () => {
     const track = streamRef.current?.getVideoTracks()[0];
     if (!track) return;
     const next = !torchOn;
     try {
-      // Torch constraint is not in the standard TS lib — cast to avoid type error
-      await track.applyConstraints({
-        advanced: [{ torch: next } as MediaTrackConstraintSet],
-      });
+      await track.applyConstraints({ advanced: [{ torch: next } as MediaTrackConstraintSet] });
       setTorchOn(next);
-    } catch {
-      // Torch not supported on this device — silently ignore
-    }
+    } catch { /* torch not supported */ }
   }, [torchOn]);
 
+  // ── Render ─────────────────────────────────────────────────────────────────
   if (permission === "denied") {
     return (
       <div className={styles.permissionDenied}>
         <p>📷 Camera access required</p>
-        <p>
-          Open your browser settings, allow camera access for this site, then reload the page.
-        </p>
+        <p>Open your browser settings, allow camera access for this site, then reload.</p>
       </div>
     );
   }

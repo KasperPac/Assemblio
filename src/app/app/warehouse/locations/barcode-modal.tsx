@@ -13,18 +13,15 @@ interface Props {
 
 export function BarcodeModal({ entityId, entityType, entityName, path, onClose }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
-  const printSvgRef = useRef<SVGSVGElement>(null);
   const [copied, setCopied] = useState(false);
-  const [barcodeError, setBarcodeError] = useState(false);
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  const [qrError, setQrError] = useState(false);
   const shortCode = entityId.replace(/-/g, "").slice(-6).toUpperCase();
 
-  // Open dialog on mount
   useEffect(() => {
     dialogRef.current?.showModal();
   }, []);
 
-  // Wire native cancel event (Escape key) to onClose
   useEffect(() => {
     const el = dialogRef.current;
     if (!el) return;
@@ -33,20 +30,21 @@ export function BarcodeModal({ entityId, entityType, entityName, path, onClose }
     return () => el.removeEventListener("cancel", handler);
   }, [onClose]);
 
-  // Generate barcode
+  // Generate QR code as data URL
   useEffect(() => {
-    setBarcodeError(false);
-    import("jsbarcode")
-      .then((mod) => {
-        const JsBarcode = mod.default;
-        try {
-          if (svgRef.current) JsBarcode(svgRef.current, shortCode, { format: "CODE128", displayValue: false, margin: 0, width: 2.5, height: 64 });
-          if (printSvgRef.current) JsBarcode(printSvgRef.current, shortCode, { format: "CODE128", displayValue: false, margin: 0, width: 2, height: 40 });
-        } catch {
-          setBarcodeError(true);
-        }
-      })
-      .catch(() => setBarcodeError(true));
+    setQrError(false);
+    setQrDataUrl(null);
+    import("qrcode")
+      .then(({ default: QRCode }) =>
+        QRCode.toDataURL(shortCode, {
+          width: 200,
+          margin: 2,
+          errorCorrectionLevel: "M",
+          color: { dark: "#000000", light: "#ffffff" },
+        })
+      )
+      .then(setQrDataUrl)
+      .catch(() => setQrError(true));
   }, [shortCode]);
 
   function handleCopyCode() {
@@ -54,6 +52,14 @@ export function BarcodeModal({ entityId, entityType, entityName, path, onClose }
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     });
+  }
+
+  function handleDownload() {
+    if (!qrDataUrl) return;
+    const a = document.createElement("a");
+    a.href = qrDataUrl;
+    a.download = `${shortCode}.png`;
+    a.click();
   }
 
   return (
@@ -74,10 +80,12 @@ export function BarcodeModal({ entityId, entityType, entityName, path, onClose }
       <div className={styles.modalPath}>{path}</div>
 
       <div className={styles.barcodeBox}>
-        {barcodeError ? (
-          <p className={styles.barcodeFallback}>Could not generate barcode.</p>
+        {qrError ? (
+          <p className={styles.barcodeFallback}>Could not generate QR code.</p>
+        ) : qrDataUrl ? (
+          <img src={qrDataUrl} alt={`QR code for ${shortCode}`} width={160} height={160} />
         ) : (
-          <svg ref={svgRef} />
+          <div style={{ width: 160, height: 160, background: "var(--surface-1)", borderRadius: 4 }} />
         )}
         <div className={styles.shortCode2}>{shortCode}</div>
         <div className={styles.shortCodeLabel}>location code</div>
@@ -92,14 +100,23 @@ export function BarcodeModal({ entityId, entityType, entityName, path, onClose }
       </div>
 
       <div className={styles.modalActions}>
-        <button className={styles.btnSave} onClick={() => window.print()}>Print Label</button>
+        <button className={styles.btnSave} onClick={() => window.print()}>
+          🖨 Print Label
+        </button>
+        {qrDataUrl && (
+          <button className={styles.btnSave} onClick={handleDownload}>
+            ⬇ Download PNG
+          </button>
+        )}
       </div>
 
       {/* Print-only label */}
       <div className={styles.printLabel}>
         <div className={styles.printPath}>{path}</div>
         <div className={styles.printName}>{entityName}</div>
-        {!barcodeError && <svg ref={printSvgRef} />}
+        {qrDataUrl && (
+          <img src={qrDataUrl} alt="" width={120} height={120} style={{ display: "block", margin: "6px 0" }} />
+        )}
         <div className={styles.printCode}>{shortCode}</div>
       </div>
     </dialog>
