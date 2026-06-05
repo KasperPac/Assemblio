@@ -11,7 +11,7 @@ import { assignComponentToLocation, removeComponentFromLocation } from "../_acti
 import { searchComponents, type ComponentSearchResult } from "../_actions/search-components";
 import styles from "../scan.module.css";
 
-type ScanState = "scanning" | "showing";
+type ScanState = "scanning" | "loading" | "showing";
 
 export default function LocateScanPage() {
   const [scanState, setScanState] = useState<ScanState>("scanning");
@@ -47,10 +47,12 @@ export default function LocateScanPage() {
 
   const handleScan = useCallback((code: string) => {
     if (scanState !== "scanning") return;
+    setScanState("loading"); // close camera immediately
     startTransition(async () => {
       const result = await scanAndFetchComponents(code);
       if (!result.found) {
         showToast("Location not found — check the label");
+        setScanState("scanning");
         return;
       }
       setLocation(result.location);
@@ -61,6 +63,7 @@ export default function LocateScanPage() {
 
   function handlePickerSelect(loc: ResolvedLocation) {
     setShowPicker(false);
+    setScanState("loading");
     startTransition(() => loadLocation(loc));
   }
 
@@ -112,22 +115,30 @@ export default function LocateScanPage() {
         <span className={styles.topBarTitle}>Set Locations</span>
       </div>
 
-      <Scanner
-        onScan={handleScan}
-        active={scanState === "scanning"}
-        label="Scan a location barcode"
-      />
+      {/* Camera — only rendered when actively scanning */}
+      {scanState === "scanning" && (
+        <Scanner onScan={handleScan} active label="Scan a location barcode" />
+      )}
 
       <div className={styles.scanContent}>
-        {!location && (
+
+        {/* Loading */}
+        {scanState === "loading" && (
+          <div className={styles.loadingState}>
+            <div className={styles.spinner} aria-label="Loading" />
+            <p className={styles.loadingText}>Finding location…</p>
+          </div>
+        )}
+
+        {/* Scanning idle */}
+        {scanState === "scanning" && (
           <button className={styles.manualBtn} onClick={() => setShowPicker(true)} type="button">
             Can&apos;t scan? Choose location manually →
           </button>
         )}
 
-        {isPending && <div className={styles.emptyState}>Loading…</div>}
-
-        {location && !isPending && (
+        {/* Location + components */}
+        {scanState === "showing" && location && (
           <>
             <div className={styles.locationBadge}>📍 {location.path}</div>
 
@@ -160,7 +171,7 @@ export default function LocateScanPage() {
             </button>
 
             <button type="button" className={styles.manualBtn} onClick={resetToScan}>
-              Scan a different location
+              ← Scan a different location
             </button>
           </>
         )}
