@@ -4,6 +4,7 @@ import styles from "./scan.module.css";
 export const metadata = {
   title: "Manuva Scanner",
   description: "Warehouse barcode scanner",
+  manifest: "/app/scan/manifest.json",
 };
 
 export const viewport = {
