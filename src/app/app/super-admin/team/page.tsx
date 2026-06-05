@@ -44,6 +44,7 @@ export default async function TeamPage() {
   return (
     <div className={styles.page}>
       <PageHeader
+        eyebrow="Admin"
         title="Platform team"
         description={`${rows.length} platform operator${rows.length !== 1 ? "s" : ""}`}
       />

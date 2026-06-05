@@ -83,6 +83,13 @@
   justify-content: flex-end;
 }
 
+.createForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 14px;
+}
+
 @media (max-width: 900px) {
   .fieldsGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

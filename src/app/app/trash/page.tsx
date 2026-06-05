@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "./trash.module.css";
@@ -114,6 +115,8 @@ export default async function TrashPage() {
   return (
     <div className={styles.page}>
       <PageHeader
+        eyebrow="Admin"
+        title="Trash"
         description="Review archived and inactive records before restoring them or clearing them from the workspace."
         actions={
           <form action={emptyTrash}>
@@ -202,7 +205,14 @@ export default async function TrashPage() {
             (archivedPos as ArchivedPoRow[]).map((row) => (
               <ListRow key={row.id} columnsTemplate="1fr" className={styles.row}>
                 <strong>
-                  PO-{row.id.slice(0, 6)} - {firstOf(row.supplier)?.name ?? "Unknown supplier"}
+                  {row.id ? (
+                    <Link href={`/app/purchasing/${row.id}`} className={styles.entityLink}>
+                      PO-{row.id.slice(0, 6)}
+                    </Link>
+                  ) : (
+                    `PO-${row.id}`
+                  )}{" "}
+                  - {firstOf(row.supplier)?.name ?? "Unknown supplier"}
                 </strong>
                 <span className={styles.meta}>
                   {new Date(row.created_at).toLocaleString("en-AU")}
@@ -232,7 +242,14 @@ export default async function TrashPage() {
             (archivedStocktakes as ArchivedStocktakeRow[]).map((row) => (
               <ListRow key={row.id} columnsTemplate="1fr" className={styles.row}>
                 <strong>
-                  STK-{row.id.slice(0, 6)} - {firstOf(row.location)?.name ?? "Unknown location"}
+                  {row.id ? (
+                    <Link href={`/app/stocktake/${row.id}`} className={styles.entityLink}>
+                      STK-{row.id.slice(0, 6)}
+                    </Link>
+                  ) : (
+                    `STK-${row.id}`
+                  )}{" "}
+                  - {firstOf(row.location)?.name ?? "Unknown location"}
                 </strong>
                 <span className={styles.meta}>
                   {new Date(row.created_at).toLocaleString("en-AU")}

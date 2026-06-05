@@ -89,19 +89,22 @@ export default function ComponentPicker({
         e.preventDefault();
         handleClose();
       }}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="component-picker-title"
     >
       <div className={styles.backdrop} onClick={handleClose} />
       <div className={styles.panel}>
         <div className={styles.header}>
           <div>
-            <h2 className={styles.title}>{title}</h2>
+            <h2 id="component-picker-title" className={styles.title}>{title}</h2>
             {supplierName && (
               <p className={styles.sub}>
                 Supplier: <strong>{supplierName}</strong>
               </p>
             )}
           </div>
-          <button type="button" className={styles.closeBtn} onClick={handleClose}>
+          <button type="button" className={styles.closeBtn} onClick={handleClose} aria-label="Close dialog">
             &times;
           </button>
         </div>

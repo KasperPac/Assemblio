@@ -511,3 +511,11 @@
 .compFooterCell:first-child {
   border-right: 1px solid var(--stroke);
 }
+
+.componentLink {
+  color: var(--brand-1);
+  text-decoration: none;
+}
+.componentLink:hover {
+  text-decoration: underline;
+}

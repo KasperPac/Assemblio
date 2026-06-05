@@ -32,23 +32,24 @@ export default function OrdersFilters() {
         className={styles.filterSearch}
         type="search"
         placeholder="Search order # or customer"
+        aria-label="Search orders"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
-      <select className={styles.filterSelect} value={sp.get("status") ?? ""}
+      <select className={styles.filterSelect} aria-label="Filter by status" value={sp.get("status") ?? ""}
         onChange={(e) => setParam("status", e.target.value)}>
         <option value="">All statuses</option>
         <option value="open">Open</option>
         <option value="fulfilled">Fulfilled</option>
         <option value="cancelled">Cancelled</option>
       </select>
-      <select className={styles.filterSelect} value={sp.get("source") ?? ""}
+      <select className={styles.filterSelect} aria-label="Filter by source" value={sp.get("source") ?? ""}
         onChange={(e) => setParam("source", e.target.value)}>
         <option value="">All sources</option>
         <option value="shopify">Shopify</option>
         <option value="manual">B2B</option>
       </select>
-      <select className={styles.filterSelect} value={sp.get("historical") ?? "all"}
+      <select className={styles.filterSelect} aria-label="Filter by historical" value={sp.get("historical") ?? "all"}
         onChange={(e) => setParam("historical", e.target.value)}>
         <option value="all">All orders</option>
         <option value="hide">Hide historical</option>

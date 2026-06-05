@@ -15,8 +15,8 @@ type POLine = {
   quantity: number;
   quantity_received: number;
   component:
-    | { name: string; sku: string | null }
-    | Array<{ name: string; sku: string | null }>
+    | { id: string; name: string; sku: string | null }
+    | Array<{ id: string; name: string; sku: string | null }>
     | null;
 };
 
@@ -52,9 +52,9 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
     .from("purchase_order")
     .select(
       `id, status, created_at,
-       supplier:supplier_id(name),
+       supplier:supplier_id(id, name),
        purchase_order_line(id, quantity, quantity_received,
-         component:component_id(name, sku))`
+         component:component_id(id, name, sku))`
     )
     .eq("id", id)
     .eq("tenant_id", tenantId)
@@ -72,8 +72,8 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
   const receiptRows = (receipts ?? []) as ReceiptRow[];
 
   const rawSupplier = Array.isArray(po.supplier) ? po.supplier[0] : po.supplier;
-  const supplierName =
-    (rawSupplier as { name: string } | null)?.name ?? "Unknown supplier";
+  const supplier = rawSupplier as { id: string; name: string } | null;
+  const supplierName = supplier?.name ?? "Unknown supplier";
   const canReceive = po.status === "open" || po.status === "in_transit";
   const lines = (po.purchase_order_line ?? []) as POLine[];
 
@@ -102,7 +102,16 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
         <div className={styles.infoRow}>
           <div className={styles.infoField}>
             <p className={styles.meta}>Supplier</p>
-            <strong>{supplierName}</strong>
+            {supplier?.id ? (
+              <Link
+                href={`/app/suppliers/${supplier.id}`}
+                className={styles.link}
+              >
+                {supplierName}
+              </Link>
+            ) : (
+              <strong>{supplierName}</strong>
+            )}
           </div>
           <div className={styles.infoField}>
             <p className={styles.meta}>Status</p>
@@ -155,7 +164,18 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
                     key={line.id}
                     style={{ opacity: fullyReceived ? 0.45 : 1 }}
                   >
-                    <td>{compName}</td>
+                    <td>
+                      {comp?.id ? (
+                        <Link
+                          href={`/app/components/${comp.id}`}
+                          className={styles.link}
+                        >
+                          {compName}
+                        </Link>
+                      ) : (
+                        compName
+                      )}
+                    </td>
                     <td className={`${styles.alignRight} ${styles.meta}`}>
                       {line.quantity}
                     </td>

@@ -254,3 +254,11 @@
     grid-template-columns: 1fr;
   }
 }
+
+.componentLink {
+  color: var(--brand-1);
+  text-decoration: none;
+}
+.componentLink:hover {
+  text-decoration: underline;
+}

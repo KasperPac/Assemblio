@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "../planning.module.css";
@@ -17,10 +18,12 @@ type SnapshotRow = {
         quantity: number;
         variant:
           | {
+              id: string | null;
               title: string | null;
               sku: string | null;
             }
           | {
+              id: string | null;
               title: string | null;
               sku: string | null;
             }[]
@@ -30,10 +33,12 @@ type SnapshotRow = {
         quantity: number;
         variant:
           | {
+              id: string | null;
               title: string | null;
               sku: string | null;
             }
           | {
+              id: string | null;
               title: string | null;
               sku: string | null;
             }[]
@@ -104,7 +109,7 @@ export default async function CostingPage({ searchParams }: Props) {
     supabase
       .from("job_cost_snapshot")
       .select(
-        "id,order_line_id,snapshot_status,sell_price,planned_total_cost,planned_margin,planned_margin_pct,created_at,order_line:order_line_id(quantity,variant:variant_id(title,sku))"
+        "id,order_line_id,snapshot_status,sell_price,planned_total_cost,planned_margin,planned_margin_pct,created_at,order_line:order_line_id(quantity,variant:variant_id(id,title,sku))"
       )
       .eq("tenant_id", tenantId)
       .order("created_at", { ascending: false })
@@ -214,7 +219,13 @@ export default async function CostingPage({ searchParams }: Props) {
               return (
                 <div key={row.id} className={styles.tableRow}>
                   <div>
-                    <strong>{variant?.title ?? variant?.sku ?? row.snapshot_status}</strong>
+                    {variant?.id ? (
+                      <Link href={`/app/products/variants/${variant.id}`} className={styles.jobLink}>
+                        <strong>{variant.title ?? variant.sku ?? row.snapshot_status}</strong>
+                      </Link>
+                    ) : (
+                      <strong>{variant?.title ?? variant?.sku ?? row.snapshot_status}</strong>
+                    )}
                     <div className={styles.subtle}>
                       Sell {formatCurrency(row.sell_price)} | Qty {orderLine?.quantity ?? 0}
                     </div>
@@ -248,7 +259,13 @@ export default async function CostingPage({ searchParams }: Props) {
 
               return (
                 <div key={`${row.id}-variance`} className={styles.stackRow}>
-                  <strong>{variant?.title ?? variant?.sku ?? "Job"}</strong>
+                  {variant?.id ? (
+                    <Link href={`/app/products/variants/${variant.id}`} className={styles.jobLink}>
+                      <strong>{variant.title ?? variant.sku ?? "Job"}</strong>
+                    </Link>
+                  ) : (
+                    <strong>{variant?.title ?? variant?.sku ?? "Job"}</strong>
+                  )}
                   <div className={styles.subtle}>
                     Planned cost {formatCurrency(row.planned_total_cost)} | Planned margin{" "}
                     {formatCurrency(row.planned_margin)}

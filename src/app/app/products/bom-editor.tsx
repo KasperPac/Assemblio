@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useCallback, useEffect, useRef, useState, useTransition } from "react";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   deleteBomDraft,
@@ -346,7 +347,13 @@ export default function BomEditor({
               return (
                 <tr key={line.id}>
                   <td>
-                    <span>{line.component.name}</span>
+                    {line.component_id ? (
+                      <Link href={`/app/components/${line.component_id}`} className={styles.componentLink}>
+                        {line.component.name}
+                      </Link>
+                    ) : (
+                      <span>{line.component.name}</span>
+                    )}
                     {line.component.cost_per_unit === null ? (
                       <span className={styles.noCostBadge}>no cost</span>
                     ) : null}

@@ -153,7 +153,7 @@ export default async function TenantDetailPage({
 
       {vitalsError && (
         <section className={styles.card}>
-          <p style={{ color: "var(--danger)", fontFamily: "monospace", fontSize: "0.82rem" }}>
+          <p className={styles.vitalsError}>
             Vitals RPC error: {vitalsError.message} (code: {vitalsError.code})
           </p>
         </section>

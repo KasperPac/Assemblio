@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { setBomActive } from "@/app/app/bom/actions";
 import styles from "./bom-versions-tab.module.css";
 
@@ -146,7 +147,15 @@ function SingleVersionView({
                 const lc = lineCost(line.quantity, line.yield_pct ?? 1, cpu);
                 return (
                   <tr key={line.id}>
-                    <td>{line.component?.name ?? "Unknown"}</td>
+                    <td>
+                      {line.component_id ? (
+                        <Link href={`/app/components/${line.component_id}`} className={styles.componentLink}>
+                          {line.component?.name ?? "Unknown"}
+                        </Link>
+                      ) : (
+                        line.component?.name ?? "Unknown"
+                      )}
+                    </td>
                     <td className={styles.dimText}>{line.component?.sku ?? "—"}</td>
                     <td className={styles.dimText}>{line.component?.unit ?? "—"}</td>
                     <td>{line.quantity}</td>

@@ -77,7 +77,7 @@ export function AddLineForm({
   return (
     <form action={formAction} className={styles.addLineForm}>
       <input type="hidden" name="template_id" value={templateId} />
-      <select name="component_id" required>
+      <select name="component_id" required aria-label="Component">
         <option value="">Select component</option>
         {components.map((c) => (
           <option key={c.id} value={c.id}>
@@ -85,7 +85,7 @@ export function AddLineForm({
           </option>
         ))}
       </select>
-      <input name="quantity" type="number" step="0.01" min="0" defaultValue="0" placeholder="Qty" />
+      <input name="quantity" type="number" step="0.01" min="0" defaultValue="0" placeholder="Qty" aria-label="Quantity" />
       <button type="submit" className={styles.btnSmall}>Add</button>
       {state.error && <p className={styles.error}>{state.error}</p>}
     </form>

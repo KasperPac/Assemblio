@@ -162,6 +162,7 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
       quantity: Number(line.quantity),
       unit_sell_price: Number(line.unit_sell_price),
       line_sell_price: Number(line.line_sell_price),
+      variant_id: line.variant_id ?? null,
       variant_title: variant?.title ?? null,
       variant_sku: variant?.sku ?? null,
     };

@@ -347,6 +347,7 @@ export default function ReceiptForm({
             ref={fileInputRef}
             type="file"
             accept=".pdf"
+            aria-label="Delivery docket PDF"
             style={{ flex: 1 }}
             disabled={!hasPdfParser}
           />
@@ -514,6 +515,7 @@ export default function ReceiptForm({
                       <select
                         value={line.component_id}
                         onChange={(e) => updateLine(line.key, { component_id: e.target.value })}
+                        aria-label="Component"
                         style={{ flex: 1, minWidth: 0 }}
                       >
                         <option value="">Select component…</option>
@@ -570,6 +572,7 @@ export default function ReceiptForm({
                     step="0.01"
                     value={line.quantity_delivered}
                     onChange={(e) => updateLine(line.key, { quantity_delivered: e.target.value })}
+                    aria-label="Quantity delivered"
                     style={{ width: 90 }}
                   />
                 </td>
@@ -581,6 +584,7 @@ export default function ReceiptForm({
                     value={line.cost_per_unit}
                     onChange={(e) => updateLine(line.key, { cost_per_unit: e.target.value })}
                     placeholder="—"
+                    aria-label="Cost per unit"
                     style={{ width: 100 }}
                   />
                 </td>
@@ -590,6 +594,7 @@ export default function ReceiptForm({
                     placeholder="Note…"
                     value={line.notes}
                     onChange={(e) => updateLine(line.key, { notes: e.target.value })}
+                    aria-label="Line note"
                     style={{ width: 140 }}
                   />
                 </td>
@@ -599,6 +604,7 @@ export default function ReceiptForm({
                     placeholder="Batch…"
                     value={line.batch_number}
                     onChange={(e) => updateLine(line.key, { batch_number: e.target.value })}
+                    aria-label="Batch number"
                     style={{ width: 120 }}
                   />
                 </td>

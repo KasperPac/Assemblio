@@ -1,4 +1,5 @@
 import styles from "./inventory.module.css";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import MovementForm from "./movement-form";
@@ -14,8 +15,8 @@ type InventoryRow = {
   in_prod: number;
   reserved: number;
   component:
-    | { name: string | null; sku: string | null; reorder_point?: number | null }
-    | Array<{ name: string | null; sku: string | null; reorder_point?: number | null }>
+    | { id: string; name: string | null; sku: string | null; reorder_point?: number | null }
+    | Array<{ id: string; name: string | null; sku: string | null; reorder_point?: number | null }>
     | null;
   location: { name: string | null } | Array<{ name: string | null }> | null;
 };
@@ -26,7 +27,10 @@ type MovementRow = {
   delta_in_prod: number;
   reason: string | null;
   created_at: string;
-  component: { name: string | null } | Array<{ name: string | null }> | null;
+  component:
+    | { id: string | null; name: string | null }
+    | Array<{ id: string | null; name: string | null }>
+    | null;
   location: { name: string | null } | Array<{ name: string | null }> | null;
 };
 
@@ -56,7 +60,7 @@ export default async function InventoryPage() {
   const { data, error } = await supabase
     .from("inventory_balance")
     .select(
-      "id,on_hand,in_prod,reserved,component:component_id(name,sku,reorder_point),location:location_id(name)"
+      "id,on_hand,in_prod,reserved,component:component_id(id,name,sku,reorder_point),location:location_id(name)"
     )
     .eq("tenant_id", tenantId)
     .order("on_hand", { ascending: false });
@@ -64,7 +68,7 @@ export default async function InventoryPage() {
   const { data: movements } = await supabase
     .from("inventory_movement")
     .select(
-      "id,delta_on_hand,delta_in_prod,reason,created_at,component:component_id(name),location:location_id(name)"
+      "id,delta_on_hand,delta_in_prod,reason,created_at,component:component_id(id,name),location:location_id(name)"
     )
     .eq("tenant_id", tenantId)
     .order("created_at", { ascending: false })
@@ -185,7 +189,16 @@ export default async function InventoryPage() {
                 return (
                   <tr key={row.id}>
                     <td>
-                      <strong>{component?.name ?? "Unknown component"}</strong>
+                      {component?.id ? (
+                        <Link
+                          href={`/app/components/${component.id}`}
+                          className={styles.componentLink}
+                        >
+                          <strong>{component.name ?? "Unknown component"}</strong>
+                        </Link>
+                      ) : (
+                        <strong>{component?.name ?? "Unknown component"}</strong>
+                      )}
                       <span className={styles.sku}>
                         {component?.sku ?? "No SKU"}
                       </span>
@@ -228,7 +241,16 @@ export default async function InventoryPage() {
                 key={movement.id}
                 columnsTemplate="1.4fr 0.8fr 0.6fr 0.6fr 0.8fr 1fr"
               >
-                <strong>{component?.name ?? "Unknown"}</strong>
+                {component?.id ? (
+                  <Link
+                    href={`/app/components/${component.id}`}
+                    className={styles.componentLink}
+                  >
+                    {component.name ?? "Unknown"}
+                  </Link>
+                ) : (
+                  <strong>{component?.name ?? "Unknown"}</strong>
+                )}
                 <span>{location?.name ?? "Unassigned"}</span>
                 <span className={deltaClass(styles, movement.delta_on_hand)}>
                   {formatSignedValue(movement.delta_on_hand)}

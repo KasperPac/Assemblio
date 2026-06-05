@@ -15,8 +15,8 @@ type TemplateLine = {
   id: string;
   quantity: number;
   component:
-    | { name: string; sku: string | null; unit: string | null }
-    | Array<{ name: string; sku: string | null; unit: string | null }>
+    | { id: string; name: string; sku: string | null; unit: string | null }
+    | Array<{ id: string; name: string; sku: string | null; unit: string | null }>
     | null;
 };
 
@@ -42,7 +42,7 @@ export default async function TemplatesPage() {
       supabase.from("bom_template").select("id,name,description,created_at").eq("tenant_id", tenantId).order("name"),
       supabase
         .from("bom_template_line")
-        .select("id,template_id,quantity,component:component_id(name,sku,unit)")
+        .select("id,template_id,quantity,component:component_id(id,name,sku,unit)")
         .eq("tenant_id", tenantId)
         .order("created_at", { ascending: true }),
       supabase.from("component").select("id,name,sku").eq("tenant_id", tenantId).order("name"),
@@ -67,6 +67,8 @@ export default async function TemplatesPage() {
   return (
     <div className={styles.page}>
       <PageHeader
+        eyebrow="Products"
+        title="BOM Templates"
         description={`${typedTemplates.length} template${typedTemplates.length !== 1 ? "s" : ""} available for repeatable BOM composition.`}
         actions={<CreateTemplateButton />}
       />
@@ -105,7 +107,13 @@ export default async function TemplatesPage() {
                     return (
                       <div key={line.id} className={styles.lineRow}>
                         <div className={styles.lineIdentity}>
-                          <strong>{comp?.name ?? "Unknown"}</strong>
+                          {comp?.id ? (
+                            <Link href={`/app/components/${comp.id}`} className={styles.componentLink}>
+                              {comp?.name ?? "Unknown"}
+                            </Link>
+                          ) : (
+                            <strong>{comp?.name ?? "Unknown"}</strong>
+                          )}
                           <span>{comp?.sku ?? "--"}</span>
                         </div>
                         <div className={styles.lineMeta}>

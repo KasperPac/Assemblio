@@ -121,6 +121,33 @@ export async function linkComponent(
   return { success: true };
 }
 
+export async function updateSupplierComponent(formData: FormData) {
+  const supplierComponentId = formData.get("supplier_component_id")?.toString() ?? "";
+  const supplierId = formData.get("supplier_id")?.toString() ?? "";
+  const componentId = formData.get("component_id")?.toString() ?? "";
+  const context = await getServerTenantContext();
+  if (!context || !supplierComponentId) return;
+  const { supabase, tenantId } = context;
+
+  const unitCost = formData.get("unit_cost")?.toString().trim();
+  const moq = formData.get("moq")?.toString().trim();
+  const leadTime = formData.get("lead_time_days")?.toString().trim();
+
+  await supabase
+    .from("supplier_components")
+    .update({
+      supplier_part_number: formData.get("supplier_part_number")?.toString().trim() || null,
+      unit_cost: unitCost ? Number(unitCost) : null,
+      moq: moq ? Number(moq) : null,
+      lead_time_days: leadTime ? Number(leadTime) : null,
+    })
+    .eq("tenant_id", tenantId)
+    .eq("id", supplierComponentId);
+
+  revalidatePath(`/app/suppliers/${supplierId}`);
+  if (componentId) revalidatePath(`/app/components/${componentId}`);
+}
+
 export async function unlinkComponent(formData: FormData) {
   const supplierComponentId = formData.get("supplier_component_id")?.toString() ?? "";
   const supplierId = formData.get("supplier_id")?.toString() ?? "";

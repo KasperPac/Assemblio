@@ -446,3 +446,11 @@
 .btnDanger:hover {
   opacity: 0.85;
 }
+
+.componentLink {
+  color: var(--brand-1);
+  text-decoration: none;
+}
+.componentLink:hover {
+  text-decoration: underline;
+}

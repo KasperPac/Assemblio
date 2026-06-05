@@ -33,6 +33,7 @@ type Actions = {
   addContact: (formData: FormData) => Promise<void>;
   removeContact: (formData: FormData) => Promise<void>;
   linkComponent: (prevState: ActionResult, formData: FormData) => Promise<ActionResult>;
+  updateSupplierComponent: (formData: FormData) => Promise<void>;
   unlinkComponent: (formData: FormData) => Promise<void>;
   togglePreferred: (formData: FormData) => Promise<void>;
   addPriceBreak: (formData: FormData) => Promise<void>;
@@ -224,22 +225,26 @@ export default function SupplierTabs({
               name="name"
               placeholder="Name"
               required
+              aria-label="Contact name"
               className={styles.editInput}
             />
             <input
               name="email"
               placeholder="Email"
               type="email"
+              aria-label="Contact email"
               className={styles.editInput}
             />
             <input
               name="phone"
               placeholder="Phone"
+              aria-label="Contact phone"
               className={styles.editInput}
             />
             <input
               name="role"
               placeholder="Role (e.g. Accounts)"
+              aria-label="Contact role"
               className={styles.editInput}
             />
             <button type="submit" className={styles.btnPrimary}>
@@ -265,7 +270,7 @@ export default function SupplierTabs({
           {linkComponentOpen && (
             <form action={linkAction} className={styles.linkForm}>
               <input type="hidden" name="supplier_id" value={supplier.id} />
-              <select name="component_id" required className={styles.editInput}>
+              <select name="component_id" required aria-label="Component" className={styles.editInput}>
                 <option value="">Select component…</option>
                 {allComponents.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -273,11 +278,11 @@ export default function SupplierTabs({
                   </option>
                 ))}
               </select>
-              <input name="supplier_part_number" placeholder="Supplier part #" className={styles.editInput} />
-              <input name="unit_cost" type="number" step="0.01" placeholder="Unit cost" className={styles.editInput} />
-              <input name="currency" placeholder="Currency (e.g. AUD)" className={styles.editInput} />
-              <input name="lead_time_days" type="number" placeholder="Lead time (days)" className={styles.editInput} />
-              <input name="moq" type="number" step="0.01" placeholder="MOQ" className={styles.editInput} />
+              <input name="supplier_part_number" placeholder="Supplier part #" aria-label="Supplier part number" className={styles.editInput} />
+              <input name="unit_cost" type="number" step="0.01" placeholder="Unit cost" aria-label="Unit cost" className={styles.editInput} />
+              <input name="currency" placeholder="Currency (e.g. AUD)" aria-label="Currency" className={styles.editInput} />
+              <input name="lead_time_days" type="number" placeholder="Lead time (days)" aria-label="Lead time in days" className={styles.editInput} />
+              <input name="moq" type="number" step="0.01" placeholder="MOQ" aria-label="Minimum order quantity" className={styles.editInput} />
               <button type="submit" className={styles.btnPrimary}>Link</button>
               <button type="button" onClick={() => setLinkComponentOpen(false)} className={styles.btnSecondary}>Cancel</button>
             </form>
@@ -452,12 +457,22 @@ function CatalogRowItem({
   actions: Actions;
 }) {
   const [breaksOpen, setBreaksOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
 
   return (
     <>
       <div className={styles.catalogRow}>
         <div>
-          <span>{row.component?.name ?? row.component_id}</span>
+          {row.component?.id ? (
+            <Link
+              href={`/app/components/${row.component.id}`}
+              className={styles.componentLink}
+            >
+              {row.component.name}
+            </Link>
+          ) : (
+            <span>{row.component?.name ?? row.component_id}</span>
+          )}
           {row.component?.unit && (
             <span className={styles.catalogUnit}> / {row.component.unit}</span>
           )}
@@ -474,6 +489,15 @@ function CatalogRowItem({
               {breaksOpen ? "▴" : "▾"} {row.supplier_component_price_breaks.length} breaks
             </button>
           )}
+          <button
+            type="button"
+            className={styles.breaksToggle}
+            onClick={() => setEditOpen((v) => !v)}
+            aria-label="Edit supplier pricing"
+            aria-expanded={editOpen}
+          >
+            {editOpen ? "▴ Edit" : "✎ Edit"}
+          </button>
         </div>
         <span>{row.moq != null ? String(row.moq) : "—"}</span>
         <span>{row.lead_time_days != null ? `${row.lead_time_days}d` : "—"}</span>
@@ -482,7 +506,11 @@ function CatalogRowItem({
           <input type="hidden" name="supplier_component_id" value={row.id} />
           <input type="hidden" name="component_id" value={row.component_id} />
           <input type="hidden" name="supplier_id" value={supplierId} />
-          <button type="submit" className={styles.starBtn}>
+          <button
+            type="submit"
+            className={styles.starBtn}
+            aria-label={row.is_preferred ? "Unset preferred supplier" : "Set preferred supplier"}
+          >
             {row.is_preferred ? "★" : "☆"}
           </button>
         </form>
@@ -493,6 +521,54 @@ function CatalogRowItem({
           <button type="submit" className={styles.btnDanger}>Remove</button>
         </form>
       </div>
+      {editOpen && (
+        <form
+          action={actions.updateSupplierComponent}
+          className={styles.editComponentForm}
+        >
+          <input type="hidden" name="supplier_component_id" value={row.id} />
+          <input type="hidden" name="supplier_id" value={supplierId} />
+          <input type="hidden" name="component_id" value={row.component_id} />
+          <input
+            name="supplier_part_number"
+            defaultValue={row.supplier_part_number ?? ""}
+            placeholder="Part #"
+            aria-label="Supplier part number"
+            className={`${styles.editInput} ${styles.inputMd}`}
+          />
+          <input
+            name="unit_cost"
+            type="number"
+            step="0.01"
+            min="0"
+            defaultValue={row.unit_cost ?? ""}
+            placeholder="Unit cost"
+            aria-label="Unit cost"
+            className={`${styles.editInput} ${styles.inputMd}`}
+          />
+          <input
+            name="moq"
+            type="number"
+            step="0.01"
+            min="0"
+            defaultValue={row.moq ?? ""}
+            placeholder="MOQ"
+            aria-label="Minimum order quantity"
+            className={`${styles.editInput} ${styles.inputSm}`}
+          />
+          <input
+            name="lead_time_days"
+            type="number"
+            step="1"
+            min="0"
+            defaultValue={row.lead_time_days ?? ""}
+            placeholder="Lead days"
+            aria-label="Lead time in days"
+            className={`${styles.editInput} ${styles.inputSm}`}
+          />
+          <button type="submit" className={styles.btnAddBreak}>Save</button>
+        </form>
+      )}
       {breaksOpen && (
         <>
           {row.supplier_component_price_breaks
@@ -508,7 +584,7 @@ function CatalogRowItem({
                   <input type="hidden" name="price_break_id" value={pb.id} />
                   <input type="hidden" name="supplier_component_id" value={row.id} />
                   <input type="hidden" name="supplier_id" value={supplierId} />
-                  <button type="submit" className={styles.btnDanger}>×</button>
+                  <button type="submit" className={styles.btnDanger} aria-label="Remove price break">×</button>
                 </form>
               </div>
             ))}

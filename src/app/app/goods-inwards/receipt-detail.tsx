@@ -312,7 +312,17 @@ export default function ReceiptDetail({
                   fontSize: "0.85rem",
                 }}
               >
-                {resolveSupplier(receipt)} &middot;{" "}
+                {receipt.supplier_id ? (
+                  <Link
+                    href={`/app/suppliers/${receipt.supplier_id}`}
+                    className={styles.link}
+                  >
+                    {resolveSupplier(receipt)}
+                  </Link>
+                ) : (
+                  resolveSupplier(receipt)
+                )}{" "}
+                &middot;{" "}
                 {new Date(receipt.received_at).toLocaleDateString("en-AU", {
                   day: "numeric",
                   month: "long",
@@ -471,7 +481,14 @@ export default function ReceiptDetail({
                   <td style={{ width: 40, paddingRight: 0, verticalAlign: "middle" }}>
                     <ComponentThumbnail imageUrl={imageUrl} name={componentName} />
                   </td>
-                  <td>{resolveComponentName(line)}</td>
+                  <td>
+                    <Link
+                      href={`/app/components/${line.component_id}`}
+                      className={styles.link}
+                    >
+                      {resolveComponentName(line)}
+                    </Link>
+                  </td>
                   <td>{line.quantity_expected ?? "—"}</td>
                   <td>{line.quantity_delivered}</td>
                   <td>
@@ -556,6 +573,7 @@ export default function ReceiptDetail({
                   <td>
                     <input
                       type="checkbox"
+                      aria-label="Include this line in cost update"
                       checked={costChecked[l.id] ?? true}
                       onChange={(e) =>
                         setCostChecked((prev) => ({ ...prev, [l.id]: e.target.checked }))

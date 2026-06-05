@@ -12,8 +12,10 @@ type DeliveryReceiptLineRaw = {
   id: string;
   quantity_delivered: number;
   quantity_expected: number | null;
+  component_id: string | null;
   component: { name: string } | null;
   delivery_receipt: {
+    supplier_id: string | null;
     supplier: { name: string } | null;
     supplier_name_override: string | null;
     purchase_order: { id: string } | null;
@@ -25,7 +27,9 @@ interface VarianceRow extends Record<string, unknown> {
   poId: string | null;
   poNumber: string;
   supplier: string;
+  supplierId: string | null;
   component: string;
+  componentId: string | null;
   ordered: number;
   received: number;
   variance: number;
@@ -50,8 +54,10 @@ export default async function POVariancePage({
       id,
       quantity_delivered,
       quantity_expected,
+      component_id,
       component:component_id(name),
       delivery_receipt:delivery_receipt_id(
+        supplier_id,
         supplier_name_override,
         supplier:supplier_id(name),
         purchase_order:purchase_order_id(id)
@@ -97,7 +103,9 @@ export default async function POVariancePage({
       poId: poObj?.id ?? null,
       poNumber,
       supplier,
+      supplierId: dr?.supplier_id ?? null,
       component,
+      componentId: l.component_id ?? null,
       ordered,
       received,
       variance,
@@ -118,8 +126,14 @@ export default async function POVariancePage({
       ? <Link href={`/app/purchasing/${r.poId}`} className={styles.reportLink}>PO-{r.poNumber}</Link>
       : <span>PO-{r.poNumber}</span>
     },
-    { key: "supplier", header: "Supplier", render: (r) => r.supplier },
-    { key: "component", header: "Component", render: (r) => r.component },
+    { key: "supplier", header: "Supplier", render: (r) => r.supplierId
+      ? <Link href={`/app/suppliers/${r.supplierId}`} className={styles.reportLink}>{r.supplier}</Link>
+      : r.supplier
+    },
+    { key: "component", header: "Component", render: (r) => r.componentId
+      ? <Link href={`/app/components/${r.componentId}`} className={styles.reportLink}>{r.component}</Link>
+      : r.component
+    },
     { key: "ordered", header: "Ordered", align: "right", render: (r) => r.ordered },
     { key: "received", header: "Received", align: "right", render: (r) => r.received },
     {

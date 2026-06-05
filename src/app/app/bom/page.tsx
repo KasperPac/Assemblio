@@ -1,4 +1,5 @@
 import styles from "./bom.module.css";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import BomCreateForm from "./bom-create-form";
@@ -35,8 +36,8 @@ type BomComponentRow = {
     | Array<{ id: string; version: number }>
     | null;
   component:
-    | { name: string | null; sku: string | null }
-    | Array<{ name: string | null; sku: string | null }>
+    | { id: string; name: string | null; sku: string | null }
+    | Array<{ id: string; name: string | null; sku: string | null }>
     | null;
 };
 
@@ -65,7 +66,7 @@ export default async function BomPage() {
       supabase
         .from("product_bom_component")
         .select(
-          "id,quantity,product_bom:product_bom_id(id,version),component:component_id(name,sku)"
+          "id,quantity,product_bom:product_bom_id(id,version),component:component_id(id,name,sku)"
         )
         .eq("tenant_id", tenantId)
         .order("created_at", { ascending: false })
@@ -151,7 +152,7 @@ export default async function BomPage() {
                 <div className={styles.actionCell}>
                   <form action={updateBomStatus} className={styles.inlineForm}>
                     <input type="hidden" name="bom_id" value={row.id} />
-                    <select name="status" defaultValue={row.status}>
+                    <select name="status" defaultValue={row.status} aria-label="BOM status">
                       <option value="draft">Draft</option>
                       <option value="active">Active</option>
                       <option value="archived">Archived</option>
@@ -201,7 +202,13 @@ export default async function BomPage() {
               >
                 <strong>v{bom?.version ?? "?"}</strong>
                 <div className={styles.cellStack}>
-                  <strong>{component?.name ?? "Unknown"}</strong>
+                  {component?.id ? (
+                    <Link href={`/app/components/${component.id}`} className={styles.componentLink}>
+                      {component?.name ?? "Unknown"}
+                    </Link>
+                  ) : (
+                    <strong>{component?.name ?? "Unknown"}</strong>
+                  )}
                   <span className={styles.meta}>
                     {component?.sku ? component.sku : "No SKU"}
                   </span>
@@ -215,6 +222,7 @@ export default async function BomPage() {
                     step="0.01"
                     min="0.01"
                     defaultValue={line.quantity}
+                    aria-label="Quantity per unit"
                   />
                   <button type="submit" className={styles.inlineFormBtn}>Save</button>
                 </form>

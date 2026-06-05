@@ -189,3 +189,11 @@
   composes: primary from "../_ui/buttons.module.css";
   flex: 1;
 }
+
+.componentLink {
+  color: var(--brand-1);
+  text-decoration: none;
+}
+.componentLink:hover {
+  text-decoration: underline;
+}

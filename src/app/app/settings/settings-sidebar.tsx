@@ -14,6 +14,7 @@ const workspaceLinks = [
   { href: "/app/settings/team", label: "Team" },
   { href: "/app/settings/integrations", label: "Integrations" },
   { href: "/app/settings/locations", label: "Locations" },
+  { href: "/app/settings/orders", label: "Orders" },
   { href: "/app/settings/invoices", label: "Invoices" },
 ];
 

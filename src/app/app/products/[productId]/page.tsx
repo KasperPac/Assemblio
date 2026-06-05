@@ -315,6 +315,10 @@ export default async function ProductDetailPage({ params }: Props) {
   return (
     <div className={styles.page}>
       <PageHeader
+        breadcrumbs={[
+          { label: "Products", href: "/app/products" },
+          { label: product.title },
+        ]}
         title={product.title}
         description={`${variants.length} variant${variants.length === 1 ? "" : "s"} · ${syncLabel} ${timeAgo(lastSync)}`}
       />
