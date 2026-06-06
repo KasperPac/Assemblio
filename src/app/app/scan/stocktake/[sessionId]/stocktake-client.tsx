@@ -122,7 +122,7 @@ export function StocktakeClient({ sessionId, locationsMap, allLines }: Props) {
   const showExpected = here.some((l) => l.expectedOnHand !== null);
 
   return (
-    <main style={{ display: "flex", flexDirection: "column", minHeight: "100dvh" }}>
+    <main className={styles.scanMain}>
       <div className={styles.topBar}>
         <Link href="/app/scan/stocktake" className={styles.backBtn}>← Sessions</Link>
         <span className={styles.topBarTitle}>Stocktake</span>
@@ -161,11 +161,7 @@ export function StocktakeClient({ sessionId, locationsMap, allLines }: Props) {
                       <div key={line.id} className={styles.lineRow}>
                         <span className={styles.lineName}>
                           {line.name}
-                          {line.sku && (
-                            <span style={{ color: "var(--ink-faint)", marginLeft: 4, fontSize: "var(--fs-xs)" }}>
-                              {line.sku}
-                            </span>
-                          )}
+                          {line.sku && <span className={styles.skuInline}>{line.sku}</span>}
                         </span>
                         {showExpected && (
                           <span className={styles.lineExpected} title="Expected on hand">

@@ -3,7 +3,7 @@ import styles from "../../scan.module.css";
 
 export default function StocktakeSessionLoading() {
   return (
-    <main style={{ display: "flex", flexDirection: "column", minHeight: "100dvh" }}>
+    <main className={styles.scanMain}>
       <div className={styles.topBar}>
         <Link href="/app/scan/stocktake" className={styles.backBtn}>← Sessions</Link>
         <span className={styles.topBarTitle}>Stocktake</span>

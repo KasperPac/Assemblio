@@ -134,25 +134,21 @@ export function LocationPicker({ onSelect, onCancel }: Props) {
               </div>
             )}
             {(warehouses ?? []).map((wh) => (
-              <div key={wh.id} style={{ display: "flex", gap: 6 }}>
+              <div key={wh.id} className={styles.pickerRowWrap}>
                 <button
                   type="button"
-                  className={styles.pickerRow}
-                  style={{ flex: 1 }}
+                  className={`${styles.pickerRow} ${styles.pickerRowSelect}`}
                   onClick={() => selectWarehouse(wh)}
                 >
                   <span className={styles.pickerRowName}>{wh.name}</span>
                 </button>
                 <button
                   type="button"
-                  className={styles.pickerRow}
-                  style={{ flex: "none", padding: "12px 8px" }}
+                  className={`${styles.pickerRow} ${styles.pickerDrill}`}
                   onClick={() => drillToAisles(wh)}
                   aria-label={`Browse aisles in ${wh.name}`}
                 >
-                  <span style={{ fontSize: "var(--fs-xs)", color: "var(--ink-muted)" }}>
-                    Aisles →
-                  </span>
+                  <span className={styles.pickerDrillLabel}>Aisles →</span>
                 </button>
               </div>
             ))}
@@ -165,32 +161,26 @@ export function LocationPicker({ onSelect, onCancel }: Props) {
               <div className={styles.emptyState}>No aisles in this warehouse yet.</div>
             )}
             {aisles.map((a) => (
-              <div key={a.id} style={{ display: "flex", gap: 6 }}>
+              <div key={a.id} className={styles.pickerRowWrap}>
                 <button
                   type="button"
-                  className={styles.pickerRow}
-                  style={{ flex: 1 }}
+                  className={`${styles.pickerRow} ${styles.pickerRowSelect}`}
                   onClick={() => selectAisle(a)}
                 >
                   <span className={styles.pickerRowName}>
                     {a.name}
                     {a.subLocationName && (
-                      <span style={{ color: "var(--ink-muted)", marginLeft: 6 }}>
-                        · {a.subLocationName}
-                      </span>
+                      <span className={styles.pickerSubTag}>· {a.subLocationName}</span>
                     )}
                   </span>
                 </button>
                 <button
                   type="button"
-                  className={styles.pickerRow}
-                  style={{ flex: "none", padding: "12px 8px" }}
+                  className={`${styles.pickerRow} ${styles.pickerDrill}`}
                   onClick={() => drillToBays(a)}
                   aria-label={`Browse bays in ${a.name}`}
                 >
-                  <span style={{ fontSize: "var(--fs-xs)", color: "var(--ink-muted)" }}>
-                    Bays →
-                  </span>
+                  <span className={styles.pickerDrillLabel}>Bays →</span>
                 </button>
               </div>
             ))}

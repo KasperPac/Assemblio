@@ -137,7 +137,7 @@ export function LocateClient({ locationsMap, allComponents }: Props) {
   }
 
   return (
-    <main style={{ display: "flex", flexDirection: "column", minHeight: "100dvh" }}>
+    <main className={styles.scanMain}>
       <div className={styles.topBar}>
         <Link href="/app/scan" className={styles.backBtn}>← Back</Link>
         <span className={styles.topBarTitle}>Set Locations</span>
@@ -229,14 +229,10 @@ export function LocateClient({ locationsMap, allComponents }: Props) {
                   <div key={r.id} className={styles.sheetRow}>
                     <span className={styles.sheetRowName}>
                       {r.name}
-                      {r.sku && (
-                        <span style={{ color: "var(--ink-faint)", marginLeft: 6, fontSize: "var(--fs-xs)" }}>
-                          {r.sku}
-                        </span>
-                      )}
+                      {r.sku && <span className={styles.skuInline}>{r.sku}</span>}
                     </span>
                     {alreadyHere ? (
-                      <span style={{ color: "var(--ok)", fontSize: "var(--fs-xs)" }}>✓ Here</span>
+                      <span className={styles.hereTag}>✓ Here</span>
                     ) : (
                       <button
                         type="button"

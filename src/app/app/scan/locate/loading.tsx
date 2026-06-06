@@ -3,7 +3,7 @@ import styles from "../scan.module.css";
 
 export default function LocateLoading() {
   return (
-    <main style={{ display: "flex", flexDirection: "column", minHeight: "100dvh" }}>
+    <main className={styles.scanMain}>
       <div className={styles.topBar}>
         <Link href="/app/scan" className={styles.backBtn}>← Back</Link>
         <span className={styles.topBarTitle}>Set Locations</span>
