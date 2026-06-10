@@ -10,7 +10,7 @@
 
   --ink-strong:    #0F172A;
   --ink-muted:     #475569;
-  --ink-faint:     #94A3B8;
+  --ink-faint:     #64748B;   /* slate-500 — 4.75:1 on bg-card, WCAG AA */
   --ink-on-brand:  #FFFFFF;
 
   --stroke:        rgba(0, 0, 0, 0.08);
