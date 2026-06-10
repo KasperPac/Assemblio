@@ -9,6 +9,7 @@ import {
   shouldRunStoreSync,
 } from "@/lib/shopify/webhook";
 import { handleAppUninstalled } from "@/lib/shopify/uninstall";
+import { getValidAccessToken } from "@/lib/shopify/token-refresh";
 
 export async function POST(request: NextRequest) {
   const hmac = request.headers.get("x-shopify-hmac-sha256") ?? "";
@@ -72,28 +73,28 @@ export async function POST(request: NextRequest) {
     return new NextResponse("OK", { status: 200 });
   }
 
-  const { data: tokenRow } = store?.id && store?.tenant_id
-    ? await admin
-        .from("shopify_install_tokens")
-        .select("access_token")
+  if (store?.id && store?.tenant_id && shouldRunStoreSync({ topic, storeId: store.id, tenantId: store.tenant_id, accessToken: "present" })) {
+    let accessToken: string;
+    try {
+      const tokenSet = await getValidAccessToken(admin, store.tenant_id, shop);
+      accessToken = tokenSet.accessToken;
+    } catch {
+      await admin
+        .from("shopify_store")
+        .update({
+          last_synced_at: new Date().toISOString(),
+          last_sync_status: "failed",
+          last_sync_meta: { fromWebhook: topic, error: "token-refresh-failed" },
+        })
         .eq("tenant_id", store.tenant_id)
-        .eq("shopify_store_id", store.id)
-        .maybeSingle()
-    : { data: null };
-
-  if (
-    shouldRunStoreSync({
-      topic,
-      storeId: store?.id,
-      tenantId: store?.tenant_id,
-      accessToken: tokenRow?.access_token,
-    })
-  ) {
+        .eq("id", store.id);
+      return new NextResponse("OK", { status: 200 });
+    }
     try {
       const result = await syncShopifyStoreData(
-        store!.tenant_id,
+        store.tenant_id,
         shop,
-        tokenRow!.access_token
+        accessToken
       );
       await admin
         .from("shopify_store")
@@ -111,8 +112,8 @@ export async function POST(request: NextRequest) {
             plan_errors: result.planErrors,
           },
         })
-        .eq("tenant_id", store!.tenant_id)
-        .eq("id", store!.id);
+        .eq("tenant_id", store.tenant_id)
+        .eq("id", store.id);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "unknown-sync-error";
@@ -123,8 +124,8 @@ export async function POST(request: NextRequest) {
           last_sync_status: "failed",
           last_sync_meta: { fromWebhook: topic, error: message },
         })
-        .eq("tenant_id", store!.tenant_id)
-        .eq("id", store!.id);
+        .eq("tenant_id", store.tenant_id)
+        .eq("id", store.id);
     }
   }
 
