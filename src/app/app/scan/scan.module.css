@@ -106,7 +106,8 @@
 }
 
 .modeCardIcon {
-  font-size: 2rem;
+  display: flex;
+  color: var(--brand-1);
   line-height: 1;
 }
 
