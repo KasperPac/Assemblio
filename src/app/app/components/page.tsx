@@ -15,6 +15,7 @@ type ComponentRow = {
   sku: string | null;
   reorder_point: number | null;
   group_id: string | null;
+  description: string | null;
 };
 
 type BalanceRow = {
@@ -51,7 +52,7 @@ export default async function ComponentsPage({ searchParams }: Props) {
     { data: locations },
     { data: groups },
   ] = await Promise.all([
-    supabase.from("component").select("id,name,sku,reorder_point,group_id").eq("tenant_id", tenantId).is("archived_at", null).order("name"),
+    supabase.from("component").select("id,name,sku,reorder_point,group_id,description").eq("tenant_id", tenantId).is("archived_at", null).order("name"),
     supabase.from("inventory_balance").select("component_id,on_hand,reserved").eq("tenant_id", tenantId),
     supabase.from("suppliers").select("id,name").eq("tenant_id", tenantId).order("name"),
     supabase.from("location").select("id,name").eq("tenant_id", tenantId).order("name"),
@@ -96,7 +97,8 @@ export default async function ComponentsPage({ searchParams }: Props) {
     const matchesSearch =
       q.length === 0 ||
       c.name.toLowerCase().includes(q) ||
-      (c.sku ?? "").toLowerCase().includes(q);
+      (c.sku ?? "").toLowerCase().includes(q) ||
+      (c.description ?? "").toLowerCase().includes(q);
     const matchesFilter = !filterLowStock || c.status !== "ok";
     return matchesSearch && matchesFilter;
   });

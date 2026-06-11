@@ -12,6 +12,7 @@ export type ComponentItem = {
   available: number;
   reorder_point: number | null;
   status: "ok" | "low" | "critical";
+  description: string | null;
 };
 
 export type ComponentSection = {
@@ -130,7 +131,12 @@ export default function ComponentTable({ sections, sortCol, sortDir, rawQ, filte
                             {component.status === "critical" ? "Critical" : component.status === "low" ? "Low" : "OK"}
                           </span>
                         </span>
-                        {component.name}
+                        <span className={styles.nameWrap}>
+                          <span>{component.name}</span>
+                          {component.description && (
+                            <span className={styles.descLine}>{component.description}</span>
+                          )}
+                        </span>
                       </Link>
                     </td>
                     <td className={styles.meta}>{component.sku ?? "—"}</td>
