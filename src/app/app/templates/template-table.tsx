@@ -70,9 +70,19 @@ export function ComponentTemplateTable({
                 <tr
                   className={styles.rowClickable}
                   onClick={() => setExpandedId(expanded ? null : t.id)}
+                  tabIndex={0}
+                  aria-expanded={expanded}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setExpandedId(expanded ? null : t.id);
+                    }
+                  }}
                 >
                   <td>
-                    <span className={styles.chevron}>{expanded ? "▾" : "▸"}</span>
+                    <span className={styles.chevron} aria-hidden="true">
+                      {expanded ? "▾" : "▸"}
+                    </span>
                     <span className={styles.rowName}>{t.name}</span>
                   </td>
                   <td>{t.lines.length}</td>
@@ -133,10 +143,12 @@ function ComponentExpansion({
     try {
       const result = await setTemplateLines(
         template.id,
-        template.lines.map((l) => ({
-          component_id: l.componentId,
-          quantity: l.id === lineId ? parsed : l.quantity,
-        }))
+        template.lines
+          .filter((l) => l.componentId !== "")
+          .map((l) => ({
+            component_id: l.componentId,
+            quantity: l.id === lineId ? parsed : l.quantity,
+          }))
       );
       if (result.error) setError(result.error);
     } catch {
@@ -158,9 +170,16 @@ function ComponentExpansion({
           {template.lines.map((line) => (
             <Fragment key={line.id}>
               <span className={styles.expComponent}>
-                <Link href={`/app/components/${line.componentId}`} className={styles.componentLink}>
-                  {line.componentName}
-                </Link>
+                {line.componentId !== "" ? (
+                  <Link
+                    href={`/app/components/${line.componentId}`}
+                    className={styles.componentLink}
+                  >
+                    {line.componentName}
+                  </Link>
+                ) : (
+                  <span>{line.componentName}</span>
+                )}
                 {line.sku ? <span className={styles.expSku}>{line.sku}</span> : null}
               </span>
               <input
@@ -175,7 +194,7 @@ function ComponentExpansion({
                 aria-label={`Quantity for ${line.componentName}`}
               />
               <span className={styles.expUnit}>{line.unit ?? "ea"}</span>
-              <RemoveLineButton lineId={line.id} templateId={template.id} />
+              <RemoveLineButton lineId={line.id} templateId={template.id} disabled={busy} />
             </Fragment>
           ))}
         </div>

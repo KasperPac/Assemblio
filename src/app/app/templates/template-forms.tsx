@@ -68,13 +68,21 @@ export function CreateTemplateButton() {
   );
 }
 
-export function RemoveLineButton({ lineId, templateId }: { lineId: string; templateId: string }) {
+export function RemoveLineButton({
+  lineId,
+  templateId,
+  disabled,
+}: {
+  lineId: string;
+  templateId: string;
+  disabled?: boolean;
+}) {
   const [, formAction] = useActionState(removeTemplateLine, initialState);
   return (
     <form action={formAction} className={styles.inlineForm}>
       <input type="hidden" name="line_id" value={lineId} />
       <input type="hidden" name="template_id" value={templateId} />
-      <button type="submit" className={styles.removeBtn}>&times;</button>
+      <button type="submit" className={styles.removeBtn} disabled={disabled}>&times;</button>
     </form>
   );
 }
