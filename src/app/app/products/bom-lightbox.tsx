@@ -5,7 +5,7 @@ import { useActionState } from "react";
 import {
   createBomWithComponents,
   createBomFromTemplate,
-  copyBomToDraft,
+  fetchBomLines,
 } from "./actions";
 import { addComponentsToBom } from "@/app/app/bom/actions";
 import styles from "./bom-lightbox.module.css";
@@ -43,7 +43,10 @@ export default function BomLightbox({
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   const [templateState, templateAction] = useActionState(createBomFromTemplate, initial);
-  const [copyState, copyAction] = useActionState(copyBomToDraft, initial);
+
+  const [copySelection, setCopySelection] = useState<Record<string, number> | undefined>();
+  const [copyLoading, setCopyLoading] = useState(false);
+  const [copyMode, setCopyMode] = useState(false);
 
   function openDialog() {
     setOpen(true);
@@ -59,11 +62,6 @@ export default function BomLightbox({
     if (templateState.success) closeDialog();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [templateState.success]);
-
-  useEffect(() => {
-    if (copyState.success) closeDialog();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [copyState.success]);
 
   async function handlePickerSave(
     lines: { component_id: string; quantity: number }[]
@@ -136,33 +134,44 @@ export default function BomLightbox({
                     </span>
                   )}
                   {sourceBoms.length > 0 && (
-                    <form action={copyAction} className={styles.startFromForm}>
-                      <input type="hidden" name="target_variant_id" value={variantId} />
+                    <div className={styles.startFromForm}>
                       <select
-                        name="source_bom_id"
-                        required
                         defaultValue=""
                         className={styles.startFromSelect}
-                        onChange={(e) => { if (e.target.value) e.target.form?.requestSubmit(); }}
+                        disabled={copyLoading}
+                        onChange={async (e) => {
+                          const bomId = e.target.value;
+                          if (!bomId) return;
+                          setCopyLoading(true);
+                          const lines = await fetchBomLines(bomId);
+                          const sel: Record<string, number> = {};
+                          for (const line of lines) {
+                            sel[line.component_id] = line.quantity;
+                          }
+                          setCopySelection(sel);
+                          setCopyMode(true);
+                          setCopyLoading(false);
+                        }}
                       >
-                        <option value="" disabled>Copy from variant…</option>
+                        <option value="" disabled>
+                          {copyLoading ? "Loading\u2026" : "Copy from variant\u2026"}
+                        </option>
                         {sourceBoms.map((b) => (
                           <option key={b.id} value={b.id}>{b.label}</option>
                         ))}
                       </select>
-                    </form>
+                    </div>
                   )}
                 </div>
               )}
-              {(templateState?.error || copyState?.error) && (
-                <p className={styles.startFromError}>
-                  {templateState?.error ?? copyState?.error}
-                </p>
+              {templateState?.error && (
+                <p className={styles.startFromError}>{templateState.error}</p>
               )}
 
               <ComponentPicker
                 components={components}
-                saveLabel="Save BOM"
+                initialSelection={copySelection}
+                saveLabel={copyMode ? "Copy BOM" : "Save BOM"}
                 onSave={handlePickerSave}
               />
             </div>

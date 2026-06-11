@@ -73,6 +73,27 @@ async function getNextBomVersion(
   return Number(latestBom?.version ?? 0) + 1;
 }
 
+export async function fetchBomLines(
+  bomId: string
+): Promise<{ component_id: string; quantity: number }[]> {
+  const context = await getServerTenantContext();
+  if (!context || !context.tenantId) return [];
+  const { supabase, tenantId, role } = context;
+
+  const db = role === "super_admin" ? createSupabaseAdminClient() : supabase;
+
+  const { data } = await db
+    .from("product_bom_component")
+    .select("component_id,quantity")
+    .eq("tenant_id", tenantId)
+    .eq("product_bom_id", bomId);
+
+  return (data ?? []).map((row) => ({
+    component_id: row.component_id as string,
+    quantity: Number(row.quantity),
+  }));
+}
+
 export async function createBomWithComponents(
   _prevState: BomActionState,
   formData: FormData
