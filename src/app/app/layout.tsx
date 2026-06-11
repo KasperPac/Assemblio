@@ -36,7 +36,8 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     profile?.role === "super_admin" || profile?.role === "platform_observer";
 
   // Platform operator with no active tenant → send them to the platform module.
-  if (isPlatformOperator && !profile?.tenant_id) {
+  const isSuperAdminPath = pathname.startsWith("/app/super-admin");
+  if (isPlatformOperator && !profile?.tenant_id && !isSuperAdminPath) {
     const { redirect } = await import("next/navigation");
     redirect("/app/super-admin");
   }
