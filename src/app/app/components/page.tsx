@@ -163,8 +163,8 @@ export default async function ComponentsPage({ searchParams }: Props) {
           <input
             name="q"
             defaultValue={params.q ?? ""}
-            placeholder="Search by name or SKU"
-            aria-label="Search by name or SKU"
+            placeholder="Search by name, SKU, or description"
+            aria-label="Search by name, SKU, or description"
           />
         </form>
       </div>

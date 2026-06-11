@@ -11,6 +11,7 @@ import ComponentImage from "./component-image";
 
 type Props = {
   params: Promise<{ componentId: string }>;
+  searchParams?: Promise<{ q?: string; filter?: string; sort?: string; dir?: string }>;
 };
 
 type ComponentRecord = {
@@ -112,8 +113,16 @@ function unwrap<T>(val: T | T[] | null): T | null {
   return Array.isArray(val) ? val[0] ?? null : val;
 }
 
-export default async function ComponentDetailPage({ params }: Props) {
+export default async function ComponentDetailPage({ params, searchParams }: Props) {
   const { componentId } = await params;
+  const sp = (await searchParams) ?? {};
+  const backParams = new URLSearchParams();
+  if (sp.q) backParams.set("q", sp.q);
+  if (sp.filter) backParams.set("filter", sp.filter);
+  if (sp.sort) backParams.set("sort", sp.sort);
+  if (sp.dir) backParams.set("dir", sp.dir);
+  const backQs = backParams.toString();
+  const backHref = backQs ? `/app/components?${backQs}` : "/app/components";
 
   const context = await getServerTenantContext();
   if (!context) redirect("/auth/login");
@@ -341,7 +350,7 @@ export default async function ComponentDetailPage({ params }: Props) {
   return (
     <div className={styles.page}>
       <div className={styles.topRow}>
-        <Link href="/app/components" className={styles.backButton}>
+        <Link href={backHref} className={styles.backButton}>
           &larr; Back
         </Link>
         {isAdmin && <ArchiveButton componentId={componentId} />}

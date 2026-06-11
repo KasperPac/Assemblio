@@ -40,6 +40,18 @@ function sortHref(col: string, currentSort: string, currentDir: string, rawQ: st
   return `/app/components?${p.toString()}`;
 }
 
+function detailHref(id: string, currentSort: string, currentDir: string, rawQ: string, filterLowStock: boolean) {
+  const p = new URLSearchParams();
+  if (rawQ) p.set("q", rawQ);
+  if (filterLowStock) p.set("filter", "lowstock");
+  if (currentSort !== "name") {
+    p.set("sort", currentSort);
+    p.set("dir", currentDir);
+  }
+  const qs = p.toString();
+  return qs ? `/app/components/${id}?${qs}` : `/app/components/${id}`;
+}
+
 function SortTh({ col, label, currentSort, currentDir, rawQ, filterLowStock }: SortHeaderProps) {
   const active = currentSort === col;
   return (
@@ -117,7 +129,7 @@ export default function ComponentTable({ sections, sortCol, sortDir, rawQ, filte
                     }
                   >
                     <td>
-                      <Link href={`/app/components/${component.id}`} className={styles.nameCell}>
+                      <Link href={detailHref(component.id, sortCol, sortDir, rawQ, filterLowStock)} className={styles.nameCell}>
                         <span
                           className={`${styles.dot} ${
                             component.status === "critical"
