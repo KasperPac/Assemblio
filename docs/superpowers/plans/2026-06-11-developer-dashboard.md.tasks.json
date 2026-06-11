@@ -1,0 +1,47 @@
+{
+  "planPath": "docs/superpowers/plans/2026-06-11-developer-dashboard.md",
+  "tasks": [
+    {
+      "id": 6,
+      "subject": "Task 0: Types and Prometheus Parser",
+      "status": "pending",
+      "description": "**Goal:** Define all shared TypeScript types and build a Prometheus text format parser.\n\n**Files:**\n- Create: `src/lib/dev-dashboard/types.ts`\n- Create: `src/lib/dev-dashboard/prometheus.ts`\n- Create: `src/lib/dev-dashboard/prometheus.test.ts`\n\n**Verify:** `npx vitest run src/lib/dev-dashboard/prometheus.test.ts --pool threads --maxWorkers 1`\n\n```json:metadata\n{\"files\": [\"src/lib/dev-dashboard/types.ts\", \"src/lib/dev-dashboard/prometheus.ts\", \"src/lib/dev-dashboard/prometheus.test.ts\"], \"verifyCommand\": \"npx vitest run src/lib/dev-dashboard/prometheus.test.ts --pool threads --maxWorkers 1\", \"acceptanceCriteria\": [\"All dashboard data shapes defined\", \"Prometheus parser works\", \"Unit tests pass\"]}\n```"
+    },
+    {
+      "id": 7,
+      "subject": "Task 1: API Route Handlers",
+      "status": "pending",
+      "blockedBy": [6],
+      "description": "**Goal:** Create all 7 API route handlers with auth guard.\n\n**Files:**\n- Create: `src/app/api/dev-dashboard/_lib/guard.ts`\n- Create: 7 route.ts files under `src/app/api/dev-dashboard/`\n- Create: `supabase/patches/dev_dashboard_slow_queries.sql`\n- Create: `supabase/patches/dev_dashboard_helpers.sql`\n\n**Verify:** `npx tsc --noEmit`\n\n```json:metadata\n{\"files\": [\"src/app/api/dev-dashboard/_lib/guard.ts\", \"src/app/api/dev-dashboard/metrics/route.ts\", \"src/app/api/dev-dashboard/health/route.ts\", \"src/app/api/dev-dashboard/advisors/route.ts\", \"src/app/api/dev-dashboard/analytics/route.ts\", \"src/app/api/dev-dashboard/queries/route.ts\", \"src/app/api/dev-dashboard/vercel/route.ts\", \"src/app/api/dev-dashboard/business/route.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Auth guard works\", \"All 7 routes created\", \"Graceful error handling\"]}\n```"
+    },
+    {
+      "id": 8,
+      "subject": "Task 2: Server Component and Conditional Routing",
+      "status": "pending",
+      "blockedBy": [6, 7],
+      "description": "**Goal:** Modify /app page for conditional dev dashboard rendering.\n\n**Files:**\n- Modify: `src/app/app/page.tsx`\n- Create: `src/app/app/_dev-dashboard/dev-dashboard.tsx`\n\n**Verify:** `npx tsc --noEmit`\n\n```json:metadata\n{\"files\": [\"src/app/app/page.tsx\", \"src/app/app/_dev-dashboard/dev-dashboard.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Conditional routing works\", \"SSR fetches in parallel\", \"Regular users unaffected\"]}\n```"
+    },
+    {
+      "id": 9,
+      "subject": "Task 3: Client Component — Tabs, Polling, State",
+      "status": "pending",
+      "blockedBy": [6],
+      "description": "**Goal:** Build client shell with tabs, auto-refresh polling, state management.\n\n**Files:**\n- Create: `src/app/app/_dev-dashboard/dev-dashboard-client.tsx`\n- Create: `src/app/app/_dev-dashboard/dev-dashboard.module.css`\n\n**Verify:** `npx tsc --noEmit`\n\n```json:metadata\n{\"files\": [\"src/app/app/_dev-dashboard/dev-dashboard-client.tsx\", \"src/app/app/_dev-dashboard/dev-dashboard.module.css\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Tab navigation works\", \"Client polling works\", \"URL params sync\"]}\n```"
+    },
+    {
+      "id": 10,
+      "subject": "Task 4: Tab Components",
+      "status": "pending",
+      "blockedBy": [9],
+      "description": "**Goal:** Implement all four tab components.\n\n**Files:**\n- Create: `src/app/app/_dev-dashboard/overview-tab.tsx`\n- Create: `src/app/app/_dev-dashboard/infra-tab.tsx`\n- Create: `src/app/app/_dev-dashboard/business-tab.tsx`\n- Create: `src/app/app/_dev-dashboard/queries-tab.tsx`\n\n**Verify:** `npx tsc --noEmit`\n\n```json:metadata\n{\"files\": [\"src/app/app/_dev-dashboard/overview-tab.tsx\", \"src/app/app/_dev-dashboard/infra-tab.tsx\", \"src/app/app/_dev-dashboard/business-tab.tsx\", \"src/app/app/_dev-dashboard/queries-tab.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"All 4 tabs render\", \"Empty states handled\", \"Design system tokens used\"]}\n```"
+    },
+    {
+      "id": 11,
+      "subject": "Task 5: Integration and Verification",
+      "status": "pending",
+      "blockedBy": [7, 8, 9, 10],
+      "description": "**Goal:** Wire everything, update env docs, verify end-to-end.\n\n**Verify:** `npx tsc --noEmit` + manual browser test\n\n```json:metadata\n{\"files\": [\".env.example\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"No new TS errors\", \"Dashboard renders\", \"Normal dashboard unaffected\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-06-11T12:00:00.000Z"
+}
