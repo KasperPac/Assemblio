@@ -1,0 +1,33 @@
+{
+  "planPath": "docs/superpowers/plans/2026-06-11-live-search.md",
+  "tasks": [
+    {
+      "id": 1,
+      "subject": "Task 1: Shared SearchInput component",
+      "status": "pending",
+      "description": "**Goal:** Create the reusable debounced URL-param search input.\n\n**Files:**\n- Create: `src/app/app/_ui/search-input.tsx`\n\n**Verify:** `npx tsc --noEmit` -> only the 7 known baseline errors\n\n```json:metadata\n{\"files\": [\"src/app/app/_ui/search-input.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"input seeded from URL param\", \"300ms debounce to router.replace\", \"deletes page param\", \"preserves other params\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: Components page live search",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Replace Enter-to-search GET form on Components list with SearchInput.\n\n**Files:**\n- Modify: `src/app/app/components/page.tsx:159-169` + import\n\n**Verify:** `npx tsc --noEmit` -> baseline errors only\n\n```json:metadata\n{\"files\": [\"src/app/app/components/page.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"filters without Enter\", \"preserves filter/sort/dir params\", \"hidden inputs removed\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: Products page live search",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Convert ProductFilters from GET form to live search + direct param-setting select.\n\n**Files:**\n- Modify: `src/app/app/products/product-filters.tsx` (full rewrite)\n- Modify: `src/app/app/products/page.tsx:323` -> `<ProductFilters />`\n\n**Verify:** `npx tsc --noEmit` -> baseline errors only\n\n```json:metadata\n{\"files\": [\"src/app/app/products/product-filters.tsx\", \"src/app/app/products/page.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"filters without Enter\", \"select updates immediately\", \"no form remains\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: Orders page uses shared SearchInput",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Replace inline debounced search in OrdersFilters with shared SearchInput (behavior unchanged).\n\n**Files:**\n- Modify: `src/app/app/orders/_components/orders-filters.tsx` (full rewrite)\n\n**Verify:** `npx tsc --noEmit` -> baseline errors only\n\n```json:metadata\n{\"files\": [\"src/app/app/orders/_components/orders-filters.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"uses SearchInput\", \"inline debounce removed\", \"selects unchanged\", \"pagination resets\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-06-11"
+}
