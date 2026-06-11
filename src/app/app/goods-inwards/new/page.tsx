@@ -41,14 +41,22 @@ export default async function NewReceiptPage({ searchParams }: Props) {
       .order("created_at", { ascending: false }),
   ]);
 
-  if (
-    suppliersResult.error ||
-    componentsResult.error ||
-    locationsResult.error ||
-    supplierComponentResult.error ||
-    posResult.error
-  ) {
-    throw new Error("Failed to load form data");
+  const firstError =
+    suppliersResult.error ??
+    componentsResult.error ??
+    locationsResult.error ??
+    supplierComponentResult.error ??
+    posResult.error;
+
+  if (firstError) {
+    const failedQuery =
+      suppliersResult.error ? "suppliers" :
+      componentsResult.error ? "components" :
+      locationsResult.error ? "locations" :
+      supplierComponentResult.error ? "supplier_components" :
+      "purchase_orders";
+    console.error(`[goods-inwards/new] ${failedQuery} query failed:`, firstError.message);
+    throw new Error(`Failed to load form data (${failedQuery}: ${firstError.message})`);
   }
 
   const locations = locationsResult.data ?? [];
