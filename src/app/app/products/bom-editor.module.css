@@ -488,3 +488,29 @@
   font-size: var(--fs-sm);
   color: var(--ok);
 }
+
+/* ── Drag-and-drop handle ─────────────────────────── */
+
+.dragHandleHeader {
+  width: 28px;
+  padding: 0 4px;
+}
+
+.dragHandle {
+  width: 28px;
+  padding: 0 4px;
+  cursor: grab;
+  color: var(--ink-faint);
+  text-align: center;
+  user-select: none;
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+.gripIcon {
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 1px;
+}

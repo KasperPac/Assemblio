@@ -6,12 +6,29 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   deleteBomDraft,
   removeBomComponentLine,
+  reorderBomComponents,
   setBomActive,
   updateBomComponentQuantity,
   updateBomComponentYieldPct,
 } from "@/app/app/bom/actions";
 import { duplicateBomAsDraft, saveBomAsTemplate } from "@/app/app/products/actions";
 import { parseQtyInput } from "@/lib/bom/qty-input";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import BomLightbox from "./bom-lightbox";
 import styles from "./bom-editor.module.css";
 
@@ -98,6 +115,38 @@ function lineCost(qty: number, yieldPct: number, costPerUnit: number | null): nu
   return (costPerUnit * qty) / yieldPct;
 }
 
+function SortableRow({
+  id,
+  children,
+}: {
+  id: string;
+  children: React.ReactNode;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <tr ref={setNodeRef} style={style} {...attributes}>
+      <td className={styles.dragHandle} {...listeners}>
+        <span className={styles.gripIcon}>⠿</span>
+      </td>
+      {children}
+    </tr>
+  );
+}
+
 function fmt(cost: number | null): string {
   return cost !== null ? `$${cost.toFixed(2)}` : "—";
 }
@@ -134,6 +183,41 @@ export default function BomEditor({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const [lines, setLines] = useState(bom.lines);
+
+  useEffect(() => {
+    setLines(bom.lines);
+  }, [bom.lines]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      if (!over || active.id === over.id) return;
+
+      setLines((prev) => {
+        const oldIndex = prev.findIndex((l) => l.id === active.id);
+        const newIndex = prev.findIndex((l) => l.id === over.id);
+        if (oldIndex === -1 || newIndex === -1) return prev;
+
+        const next = [...prev];
+        const [moved] = next.splice(oldIndex, 1);
+        next.splice(newIndex, 0, moved);
+
+        startTransition(async () => {
+          await reorderBomComponents(bom.id, next.map((l) => l.id));
+        });
+
+        return next;
+      });
+    },
+    [bom.id, startTransition]
+  );
 
   useEffect(() => {
     if (templateState.success) templateDialogRef.current?.close();
@@ -173,7 +257,7 @@ export default function BomEditor({
 
   let materialCost: number | null = 0;
   let hasMissingCosts = false;
-  for (const line of bom.lines) {
+  for (const line of lines) {
     const local = localState.get(line.id) ?? { quantity: line.quantity, yieldPct: line.yield_pct };
     const cost = lineCost(local.quantity, local.yieldPct, line.component.cost_per_unit);
     if (cost === null) {
@@ -322,188 +406,193 @@ export default function BomEditor({
       {duplicateState.error ? <p className={styles.menuError}>{duplicateState.error}</p> : null}
 
       <div className={styles.tableWrapper}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Component</th>
-              <th>SKU</th>
-              <th>Unit</th>
-              <th>Qty</th>
-              <th>Yield %</th>
-              <th>Unit cost</th>
-              <th>Line cost</th>
-              {isDraft && <th></th>}
-            </tr>
-          </thead>
-          <tbody>
-            {bom.lines.map((line) => {
-              const local = localState.get(line.id) ?? { quantity: line.quantity, yieldPct: line.yield_pct };
-              const cost = lineCost(local.quantity, local.yieldPct, line.component.cost_per_unit);
-              const scrapCost =
-                isDraft && local.yieldPct < 1 && line.component.cost_per_unit !== null
-                  ? (line.component.cost_per_unit * local.quantity * (1 - local.yieldPct)) / local.yieldPct
-                  : null;
-
-              const submitQty = (qty: number) => {
-                const formData = new FormData();
-                formData.set("line_id", line.id);
-                formData.set("variant_id", variantId);
-                formData.set("quantity", String(qty));
-                startTransition(async () => {
-                  await updateBomComponentQuantity(formData);
-                });
-              };
-
-              const submitYield = (pct: number) => {
-                const formData = new FormData();
-                formData.set("line_id", line.id);
-                formData.set("variant_id", variantId);
-                formData.set("yield_pct", String(pct));
-                startTransition(async () => {
-                  await updateBomComponentYieldPct(formData);
-                });
-              };
-
-              return (
-                <tr key={line.id}>
-                  <td>
-                    {line.component_id ? (
-                      <Link href={`/app/components/${line.component_id}`} className={styles.componentLink}>
-                        {line.component.name}
-                      </Link>
-                    ) : (
-                      <span>{line.component.name}</span>
-                    )}
-                    {line.component.cost_per_unit === null ? (
-                      <span className={styles.noCostBadge}>no cost</span>
-                    ) : null}
-                  </td>
-                  <td className={styles.dimText}>{line.component.sku ?? "—"}</td>
-                  <td className={styles.dimText}>{line.component.unit ?? "—"}</td>
-                  <td>
-                    {!isDraft ? (
-                      <span className={styles.readOnlyQty}>{line.quantity}</span>
-                    ) : (
-                      <div className={styles.stepper}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const newQty = local.quantity - 1;
-                            if (newQty <= 0) return;
-                            updateLocal(line.id, { quantity: newQty });
-                            submitQty(newQty);
-                            setQtyDrafts((prev) => {
-                              const next = new Map(prev);
-                              next.delete(line.id);
-                              return next;
-                            });
-                          }}
-                        >
-                          −
-                        </button>
-                        <input
-                          type="number"
-                          step="any"
-                          inputMode="decimal"
-                          value={qtyDrafts.get(line.id) ?? String(local.quantity)}
-                          className={styles.stepperInput}
-                          onChange={(event) => {
-                            const raw = event.target.value;
-                            setQtyDrafts((prev) => {
-                              const next = new Map(prev);
-                              next.set(line.id, raw);
-                              return next;
-                            });
-                            const parsed = parseQtyInput(raw);
-                            if (parsed !== null) updateLocal(line.id, { quantity: parsed });
-                          }}
-                          onBlur={(event) => {
-                            const parsed = parseQtyInput(event.target.value);
-                            setQtyDrafts((prev) => {
-                              const next = new Map(prev);
-                              next.delete(line.id);
-                              return next;
-                            });
-                            if (parsed !== null) submitQty(parsed);
-                          }}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const newQty = local.quantity + 1;
-                            updateLocal(line.id, { quantity: newQty });
-                            submitQty(newQty);
-                            setQtyDrafts((prev) => {
-                              const next = new Map(prev);
-                              next.delete(line.id);
-                              return next;
-                            });
-                          }}
-                        >
-                          +
-                        </button>
-                      </div>
-                    )}
-                  </td>
-                  <td>
-                    {!isDraft || !canEditYield ? (
-                      <span
-                        className={styles.dimText}
-                        title={!canEditYield ? "Yield % editing is a Growth feature — upgrade to enable." : undefined}
-                      >
-                        {Math.round((isDraft ? local.yieldPct : line.yield_pct) * 100)}%
-                      </span>
-                    ) : (
-                      <>
-                        <input
-                          type="number"
-                          min={1}
-                          max={100}
-                          step={1}
-                          value={Math.round(local.yieldPct * 100)}
-                          className={`${styles.yieldInput} ${local.yieldPct < 1 ? styles.yieldLow : ""}`}
-                          onChange={(event) =>
-                            updateLocal(line.id, { yieldPct: Number(event.target.value) / 100 })
-                          }
-                          onBlur={(event) => submitYield(Number(event.target.value))}
-                        />
-                        {scrapCost !== null ? (
-                          <div className={styles.scrapNote}>+{fmt(scrapCost)} scrap</div>
-                        ) : null}
-                      </>
-                    )}
-                  </td>
-                  <td className={styles.dimText}>{fmt(line.component.cost_per_unit)}</td>
-                  <td>{fmt(cost)}</td>
-                  {isDraft && (
-                    <td>
-                      <form action={removeBomComponentLine}>
-                        <input type="hidden" name="line_id" value={line.id} />
-                        <input type="hidden" name="variant_id" value={variantId} />
-                        <button
-                          type="submit"
-                          className={styles.removeBtn}
-                          aria-label={`Remove ${line.component.name}`}
-                        >
-                          ✕
-                        </button>
-                      </form>
-                    </td>
-                  )}
-                </tr>
-              );
-            })}
-            {bom.lines.length === 0 ? (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <table className={styles.table}>
+            <thead>
               <tr>
-                <td colSpan={isDraft ? 8 : 7} className={styles.emptyRow}>
-                  {isDraft
-                    ? "No components yet — click + Add component above."
-                    : "No components in this BOM."}
-                </td>
+                <th className={styles.dragHandleHeader}></th>
+                <th>Component</th>
+                <th>SKU</th>
+                <th>Unit</th>
+                <th>Qty</th>
+                <th>Yield %</th>
+                <th>Unit cost</th>
+                <th>Line cost</th>
+                {isDraft && <th></th>}
               </tr>
-            ) : null}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              <SortableContext items={lines.map((l) => l.id)} strategy={verticalListSortingStrategy}>
+                {lines.map((line) => {
+                  const local = localState.get(line.id) ?? { quantity: line.quantity, yieldPct: line.yield_pct };
+                  const cost = lineCost(local.quantity, local.yieldPct, line.component.cost_per_unit);
+                  const scrapCost =
+                    isDraft && local.yieldPct < 1 && line.component.cost_per_unit !== null
+                      ? (line.component.cost_per_unit * local.quantity * (1 - local.yieldPct)) / local.yieldPct
+                      : null;
+
+                  const submitQty = (qty: number) => {
+                    const formData = new FormData();
+                    formData.set("line_id", line.id);
+                    formData.set("variant_id", variantId);
+                    formData.set("quantity", String(qty));
+                    startTransition(async () => {
+                      await updateBomComponentQuantity(formData);
+                    });
+                  };
+
+                  const submitYield = (pct: number) => {
+                    const formData = new FormData();
+                    formData.set("line_id", line.id);
+                    formData.set("variant_id", variantId);
+                    formData.set("yield_pct", String(pct));
+                    startTransition(async () => {
+                      await updateBomComponentYieldPct(formData);
+                    });
+                  };
+
+                  return (
+                    <SortableRow key={line.id} id={line.id}>
+                      <td>
+                        {line.component_id ? (
+                          <Link href={`/app/components/${line.component_id}`} className={styles.componentLink}>
+                            {line.component.name}
+                          </Link>
+                        ) : (
+                          <span>{line.component.name}</span>
+                        )}
+                        {line.component.cost_per_unit === null ? (
+                          <span className={styles.noCostBadge}>no cost</span>
+                        ) : null}
+                      </td>
+                      <td className={styles.dimText}>{line.component.sku ?? "—"}</td>
+                      <td className={styles.dimText}>{line.component.unit ?? "—"}</td>
+                      <td>
+                        {!isDraft ? (
+                          <span className={styles.readOnlyQty}>{line.quantity}</span>
+                        ) : (
+                          <div className={styles.stepper}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newQty = local.quantity - 1;
+                                if (newQty <= 0) return;
+                                updateLocal(line.id, { quantity: newQty });
+                                submitQty(newQty);
+                                setQtyDrafts((prev) => {
+                                  const next = new Map(prev);
+                                  next.delete(line.id);
+                                  return next;
+                                });
+                              }}
+                            >
+                              −
+                            </button>
+                            <input
+                              type="number"
+                              step="any"
+                              inputMode="decimal"
+                              value={qtyDrafts.get(line.id) ?? String(local.quantity)}
+                              className={styles.stepperInput}
+                              onChange={(event) => {
+                                const raw = event.target.value;
+                                setQtyDrafts((prev) => {
+                                  const next = new Map(prev);
+                                  next.set(line.id, raw);
+                                  return next;
+                                });
+                                const parsed = parseQtyInput(raw);
+                                if (parsed !== null) updateLocal(line.id, { quantity: parsed });
+                              }}
+                              onBlur={(event) => {
+                                const parsed = parseQtyInput(event.target.value);
+                                setQtyDrafts((prev) => {
+                                  const next = new Map(prev);
+                                  next.delete(line.id);
+                                  return next;
+                                });
+                                if (parsed !== null) submitQty(parsed);
+                              }}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newQty = local.quantity + 1;
+                                updateLocal(line.id, { quantity: newQty });
+                                submitQty(newQty);
+                                setQtyDrafts((prev) => {
+                                  const next = new Map(prev);
+                                  next.delete(line.id);
+                                  return next;
+                                });
+                              }}
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        {!isDraft || !canEditYield ? (
+                          <span
+                            className={styles.dimText}
+                            title={!canEditYield ? "Yield % editing is a Growth feature — upgrade to enable." : undefined}
+                          >
+                            {Math.round((isDraft ? local.yieldPct : line.yield_pct) * 100)}%
+                          </span>
+                        ) : (
+                          <>
+                            <input
+                              type="number"
+                              min={1}
+                              max={100}
+                              step={1}
+                              value={Math.round(local.yieldPct * 100)}
+                              className={`${styles.yieldInput} ${local.yieldPct < 1 ? styles.yieldLow : ""}`}
+                              onChange={(event) =>
+                                updateLocal(line.id, { yieldPct: Number(event.target.value) / 100 })
+                              }
+                              onBlur={(event) => submitYield(Number(event.target.value))}
+                            />
+                            {scrapCost !== null ? (
+                              <div className={styles.scrapNote}>+{fmt(scrapCost)} scrap</div>
+                            ) : null}
+                          </>
+                        )}
+                      </td>
+                      <td className={styles.dimText}>{fmt(line.component.cost_per_unit)}</td>
+                      <td>{fmt(cost)}</td>
+                      {isDraft && (
+                        <td>
+                          <form action={removeBomComponentLine}>
+                            <input type="hidden" name="line_id" value={line.id} />
+                            <input type="hidden" name="variant_id" value={variantId} />
+                            <button
+                              type="submit"
+                              className={styles.removeBtn}
+                              aria-label={`Remove ${line.component.name}`}
+                            >
+                              ✕
+                            </button>
+                          </form>
+                        </td>
+                      )}
+                    </SortableRow>
+                  );
+                })}
+              </SortableContext>
+              {lines.length === 0 ? (
+                <tr>
+                  <td colSpan={isDraft ? 9 : 8} className={styles.emptyRow}>
+                    {isDraft
+                      ? "No components yet — click + Add component above."
+                      : "No components in this BOM."}
+                  </td>
+                </tr>
+              ) : null}
+            </tbody>
+          </table>
+        </DndContext>
       </div>
 
       <div className={styles.rollup}>
