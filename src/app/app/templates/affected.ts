@@ -6,20 +6,19 @@ export type AffectedBom = {
   status: string;
 };
 
-type LinkedBomRow = {
+export type VariantShape = { id: string; title: string | null; sku: string | null };
+
+export type LinkedBomRow = {
   id: string;
   variant_id: string;
   version: number;
   status: string;
   component_template_id: string | null;
   labor_template_id: string | null;
-  variant:
-    | { id: string; title: string | null; sku: string | null }
-    | Array<{ id: string; title: string | null; sku: string | null }>
-    | null;
+  variant: VariantShape | Array<VariantShape> | null;
 };
 
-function unwrap<T>(val: T | T[] | null): T | null {
+export function unwrap<T>(val: T | T[] | null): T | null {
   if (val == null) return null;
   return Array.isArray(val) ? val[0] ?? null : val;
 }

@@ -14,12 +14,17 @@ async function touchTemplate(
   table: "bom_template" | "labor_template",
   tenantId: string | null,
   templateId: string
-) {
-  await supabase
+): Promise<string | null> {
+  const { error } = await supabase
     .from(table)
     .update({ lines_updated_at: new Date().toISOString() })
     .eq("tenant_id", tenantId)
     .eq("id", templateId);
+  if (error) {
+    console.error("[touchTemplate] failed to stamp lines_updated_at:", error.message);
+    return error.message;
+  }
+  return null;
 }
 
 export async function createTemplate(
@@ -70,7 +75,8 @@ export async function addTemplateLine(
 
   if (error) return { error: error.message };
 
-  await touchTemplate(supabase, "bom_template", tenantId, templateId);
+  const touchError = await touchTemplate(supabase, "bom_template", tenantId, templateId);
+  if (touchError) return { error: touchError };
   revalidatePath("/app/templates");
   return { success: "Line added." };
 }
@@ -95,7 +101,10 @@ export async function removeTemplateLine(
 
   if (error) return { error: error.message };
 
-  if (templateId) await touchTemplate(supabase, "bom_template", tenantId, templateId);
+  if (templateId) {
+    const touchError = await touchTemplate(supabase, "bom_template", tenantId, templateId);
+    if (touchError) return { error: touchError };
+  }
   revalidatePath("/app/templates");
   return { success: "Line removed." };
 }
@@ -155,7 +164,8 @@ export async function setTemplateLines(
     if (insertError) return { error: insertError.message };
   }
 
-  await touchTemplate(supabase, "bom_template", tenantId, templateId);
+  const touchError = await touchTemplate(supabase, "bom_template", tenantId, templateId);
+  if (touchError) return { error: touchError };
   revalidatePath("/app/templates");
   return {};
 }

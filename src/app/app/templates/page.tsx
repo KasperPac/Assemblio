@@ -9,7 +9,7 @@ import {
   DeleteTemplateButton,
   TemplateLightbox,
 } from "./template-forms";
-import { hasUnpublishedChanges, computeAffectedBoms } from "./affected";
+import { hasUnpublishedChanges, computeAffectedBoms, unwrap, type LinkedBomRow } from "./affected";
 import styles from "./templates.module.css";
 
 type TemplateLine = {
@@ -31,24 +31,6 @@ type ComponentTemplate = {
   last_published_at: string | null;
   created_at: string;
 };
-
-type LinkedBomRow = {
-  id: string;
-  variant_id: string;
-  version: number;
-  status: string;
-  component_template_id: string | null;
-  labor_template_id: string | null;
-  variant:
-    | { id: string; title: string | null; sku: string | null }
-    | Array<{ id: string; title: string | null; sku: string | null }>
-    | null;
-};
-
-function unwrap<T>(val: T | T[] | null): T | null {
-  if (val == null) return null;
-  return Array.isArray(val) ? val[0] ?? null : val;
-}
 
 type Props = {
   searchParams?: Promise<{ tab?: string }>;
