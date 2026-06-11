@@ -23,6 +23,7 @@ interface Row extends Record<string, unknown> {
 
 type PORaw = {
   id: string;
+  po_number: string | null;
   created_at: string;
   expected_date: string | null;
   status: string | null;
@@ -48,7 +49,7 @@ export default async function POSummaryPage({
 
   const { data } = await supabase
     .from("purchase_order")
-    .select("id,created_at,expected_date,status,supplier_id,supplier:supplier_id(name),lines:purchase_order_line(quantity,unit_cost)")
+    .select("id,po_number,created_at,expected_date,status,supplier_id,supplier:supplier_id(name),lines:purchase_order_line(quantity,unit_cost)")
     .eq("tenant_id", tenantId)
     .gte("created_at", range.from.toISOString())
     .lte("created_at", range.to.toISOString())
@@ -62,7 +63,7 @@ export default async function POSummaryPage({
     const overdue = !["received", "cancelled"].includes(po.status ?? "") && !!po.expected_date && new Date(po.expected_date) < now;
     return {
       id: po.id,
-      poNumber: po.id.slice(0, 8).toUpperCase(),
+      poNumber: po.po_number ?? `PO-${po.id.slice(0, 8).toUpperCase()}`,
       supplier: po.supplier?.name ?? "—",
       supplierId: po.supplier_id ?? null,
       status: po.status ?? "draft",
@@ -82,7 +83,7 @@ export default async function POSummaryPage({
   const columns: TableColumn<Row>[] = [
     { key: "poNumber", header: "PO #", render: (r) => (
       <Link href={`/app/purchasing/${r.id}`} className={styles.reportLink}>
-        PO-{r.poNumber}
+        {r.poNumber}
       </Link>
     )},
     { key: "supplier", header: "Supplier", render: (r) => r.supplierId

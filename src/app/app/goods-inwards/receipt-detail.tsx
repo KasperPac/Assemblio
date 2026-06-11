@@ -35,6 +35,7 @@ type Receipt = {
   created_at: string;
   supplier: { name: string } | Array<{ name: string }> | null;
   location: { id: string; name: string } | Array<{ id: string; name: string }> | null;
+  purchase_order: { po_number: string | null } | Array<{ po_number: string | null }> | null;
   delivery_receipt_line: ReceiptLine[];
 };
 
@@ -42,6 +43,7 @@ type SupplierOption = { id: string; name: string };
 type LocationOption = { id: string; name: string; is_default: boolean };
 type AvailablePO = {
   id: string;
+  po_number: string | null;
   supplier_id: string | null;
   supplier_name: string | null;
   lines: Array<{
@@ -366,7 +368,10 @@ export default function ReceiptDetail({
                   href={`/app/purchasing/${receipt.purchase_order_id}`}
                   className={styles.poLink}
                 >
-                  PO-{receipt.purchase_order_id.slice(0, 8).toUpperCase()} →
+                  {(() => {
+                    const po = Array.isArray(receipt.purchase_order) ? receipt.purchase_order[0] : receipt.purchase_order;
+                    return po?.po_number ?? `PO-${receipt.purchase_order_id!.slice(0, 8).toUpperCase()}`;
+                  })()} →
                 </Link>
               </div>
             )}
@@ -422,7 +427,7 @@ export default function ReceiptDetail({
                 ) : (
                   availablePOs.map((po) => (
                     <option key={po.id} value={po.id}>
-                      PO-{po.id.slice(0, 8).toUpperCase()} &middot; {po.supplier_name ?? "Unknown"} &middot;{" "}
+                      {po.po_number ?? `PO-${po.id.slice(0, 8).toUpperCase()}`} &middot; {po.supplier_name ?? "Unknown"} &middot;{" "}
                       {po.lines.length} line{po.lines.length !== 1 ? "s" : ""}
                     </option>
                   ))

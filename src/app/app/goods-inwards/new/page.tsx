@@ -34,7 +34,7 @@ export default async function NewReceiptPage({ searchParams }: Props) {
     supabase
       .from("purchase_order")
       .select(
-        "id, supplier_id, suppliers(name), purchase_order_line(id, component_id, quantity, quantity_received)"
+        "id, po_number, supplier_id, suppliers(name), purchase_order_line(id, component_id, quantity, quantity_received)"
       )
       .in("status", ["open", "in_transit"])
       .eq("tenant_id", tenantId)
@@ -88,6 +88,7 @@ export default async function NewReceiptPage({ searchParams }: Props) {
     const rawSupplier = Array.isArray(po.suppliers) ? po.suppliers[0] : po.suppliers;
     return {
       id: po.id as string,
+      po_number: (po.po_number as string | null) ?? null,
       supplier_id: po.supplier_id as string | null,
       supplier_name: (rawSupplier as { name: string } | null)?.name ?? null,
       lines: ((po.purchase_order_line ?? []) as Array<{

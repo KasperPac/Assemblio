@@ -20,6 +20,7 @@ type POLine = {
 
 type AvailablePO = {
   id: string;
+  po_number: string | null;
   supplier_id: string | null;
   supplier_name: string | null;
   lines: POLine[];
@@ -314,7 +315,7 @@ export default function ReceiptForm({
               <option value="">Select a PO to pre-fill this receipt…</option>
               {availablePOs.map((po) => (
                 <option key={po.id} value={po.id}>
-                  PO-{po.id.slice(0, 8).toUpperCase()} &middot; {po.supplier_name ?? "Unknown supplier"} &middot;{" "}
+                  {po.po_number ?? `PO-${po.id.slice(0, 8).toUpperCase()}`} &middot; {po.supplier_name ?? "Unknown supplier"} &middot;{" "}
                   {po.lines.length} line{po.lines.length !== 1 ? "s" : ""}
                 </option>
               ))}

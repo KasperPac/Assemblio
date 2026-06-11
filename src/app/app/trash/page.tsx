@@ -28,6 +28,7 @@ type ActivityRow = {
 
 type ArchivedPoRow = {
   id: string;
+  po_number: string | null;
   status: string;
   created_at: string;
   supplier: { name: string | null } | Array<{ name: string | null }> | null;
@@ -82,7 +83,7 @@ export default async function TrashPage() {
       .limit(50),
     supabase
       .from("purchase_order")
-      .select("id,status,created_at,supplier:supplier_id(name)")
+      .select("id,po_number,status,created_at,supplier:supplier_id(name)")
       .eq("tenant_id", tenantId)
       .eq("status", "archived")
       .order("created_at", { ascending: false })
@@ -207,7 +208,7 @@ export default async function TrashPage() {
                 <strong>
                   {row.id ? (
                     <Link href={`/app/purchasing/${row.id}`} className={styles.entityLink}>
-                      PO-{row.id.slice(0, 6)}
+                      {row.po_number ?? `PO-${row.id.slice(0, 6)}`}
                     </Link>
                   ) : (
                     `PO-${row.id}`

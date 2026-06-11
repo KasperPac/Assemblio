@@ -17,6 +17,7 @@ export default async function GoodsInwardsPage() {
        status, received_at,
        supplier:supplier_id(name),
        location:location_id(name),
+       purchase_order:purchase_order_id(po_number),
        delivery_receipt_line(id)`
     )
     .eq("tenant_id", tenantId)
@@ -25,7 +26,7 @@ export default async function GoodsInwardsPage() {
   const { data: duePOsRaw } = await supabase
     .from("purchase_order")
     .select(
-      "id, expected_date, supplier:supplier_id(name), purchase_order_line(id), delivery_receipt(id)"
+      "id, po_number, expected_date, supplier:supplier_id(name), purchase_order_line(id), delivery_receipt(id)"
     )
     .in("status", ["open", "in_transit"])
     .not("expected_date", "is", null)
@@ -52,6 +53,7 @@ export default async function GoodsInwardsPage() {
       const lines = po.purchase_order_line ?? [];
       return {
         id: po.id as string,
+        po_number: (po.po_number as string | null) ?? null,
         expected_date: po.expected_date as string,
         supplier_name:
           (rawSupplier as { name: string } | null)?.name ?? "Unknown supplier",

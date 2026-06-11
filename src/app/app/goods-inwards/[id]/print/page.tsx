@@ -34,6 +34,7 @@ export default async function GrnPrintPage({ params }: Props) {
          notes, purchase_order_id,
          supplier:supplier_id(name),
          location:location_id(name),
+         purchase_order:purchase_order_id(po_number),
          delivery_receipt_line(
            id, quantity_delivered, quantity_expected, cost_per_unit,
            notes, batch_number,
@@ -86,7 +87,10 @@ export default async function GrnPrintPage({ params }: Props) {
   );
 
   const poRef = receipt.purchase_order_id
-    ? `PO-${(receipt.purchase_order_id as string).slice(0, 8).toUpperCase()}`
+    ? (() => {
+        const rawPo = Array.isArray(receipt.purchase_order) ? receipt.purchase_order[0] : receipt.purchase_order;
+        return (rawPo as { po_number: string | null } | null)?.po_number ?? `PO-${(receipt.purchase_order_id as string).slice(0, 8).toUpperCase()}`;
+      })()
     : "—";
 
   return (

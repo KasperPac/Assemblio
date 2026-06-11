@@ -16,11 +16,13 @@ type Receipt = {
   received_at: string;
   supplier: { name: string } | Array<{ name: string }> | null;
   location: { name: string } | Array<{ name: string }> | null;
+  purchase_order: { po_number: string | null } | Array<{ po_number: string | null }> | null;
   delivery_receipt_line: Array<{ id: string }>;
 };
 
 type DuePO = {
   id: string;
+  po_number: string | null;
   expected_date: string;
   supplier_name: string;
   line_count: number;
@@ -162,7 +164,7 @@ export default function ReceiptList({
                           href={`/app/purchasing/${po.id}`}
                           className={styles.link}
                         >
-                          PO-{po.id.slice(0, 8).toUpperCase()}
+                          {po.po_number ?? `PO-${po.id.slice(0, 8).toUpperCase()}`}
                         </Link>
                       </td>
                       <td>{po.supplier_name}</td>
@@ -265,7 +267,10 @@ export default function ReceiptList({
                           href={`/app/purchasing/${r.purchase_order_id}`}
                           className={styles.link}
                         >
-                          {`PO ${r.purchase_order_id.slice(0, 8).toUpperCase()}`}
+                          {(() => {
+                        const po = Array.isArray(r.purchase_order) ? r.purchase_order[0] : r.purchase_order;
+                        return po?.po_number ?? `PO ${r.purchase_order_id!.slice(0, 8).toUpperCase()}`;
+                      })()}
                         </Link>
                       ) : (
                         "—"

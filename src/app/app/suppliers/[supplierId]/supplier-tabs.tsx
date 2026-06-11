@@ -14,6 +14,7 @@ import styles from "./supplier-tabs.module.css";
 
 type PoRow = {
   id: string;
+  po_number: string | null;
   status: string;
   created_at: string;
   expected_date: string | null;
@@ -380,7 +381,7 @@ export default function SupplierTabs({
                 return (
                   <div key={po.id} className={styles.poRow}>
                     <Link href={`/app/purchasing/${po.id}`} className={styles.poRef}>
-                      {po.id.slice(0, 8).toUpperCase()}
+                      {po.po_number ?? `PO-${po.id.slice(0, 8).toUpperCase()}`}
                     </Link>
                     <span>
                       {new Date(po.created_at).toLocaleDateString("en-AU", {

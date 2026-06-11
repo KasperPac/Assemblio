@@ -4,6 +4,7 @@ import { resolveDateRange } from "../../_lib/date-range";
 
 type PORaw = {
   id: string;
+  po_number: string | null;
   expected_date: string | null;
   status: string | null;
   supplier: { name: string } | null;
@@ -20,7 +21,7 @@ export async function GET(req: NextRequest) {
 
   const { data } = await supabase
     .from("purchase_order")
-    .select("id,created_at,expected_date,status,supplier:supplier_id(name),lines:purchase_order_line(quantity,unit_cost)")
+    .select("id,po_number,created_at,expected_date,status,supplier:supplier_id(name),lines:purchase_order_line(quantity,unit_cost)")
     .eq("tenant_id", tenantId)
     .gte("created_at", range.from.toISOString())
     .lte("created_at", range.to.toISOString())
@@ -33,7 +34,7 @@ export async function GET(req: NextRequest) {
     const poLines = po.lines ?? [];
     const value = poLines.reduce((s, l) => s + l.quantity * (l.unit_cost ?? 0), 0);
     const overdue = !["received", "cancelled"].includes(po.status ?? "") && !!po.expected_date && new Date(po.expected_date) < now;
-    return [po.id.slice(0, 8).toUpperCase(), po.supplier?.name ?? "", po.status ?? "", po.expected_date ? new Date(po.expected_date).toLocaleDateString("en-AU") : "", value.toFixed(2), poLines.length, overdue ? "Yes" : "No"]
+    return [po.po_number ?? po.id.slice(0, 8).toUpperCase(), po.supplier?.name ?? "", po.status ?? "", po.expected_date ? new Date(po.expected_date).toLocaleDateString("en-AU") : "", value.toFixed(2), poLines.length, overdue ? "Yes" : "No"]
       .map((v) => `"${String(v).replace(/"/g, '""')}"`)
       .join(",");
   });

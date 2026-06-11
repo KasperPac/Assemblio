@@ -51,7 +51,7 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
   const { data: po, error } = await supabase
     .from("purchase_order")
     .select(
-      `id, status, created_at,
+      `id, po_number, status, created_at,
        supplier:supplier_id(id, name),
        purchase_order_line(id, quantity, quantity_received,
          component:component_id(id, name, sku))`
@@ -76,15 +76,16 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
   const supplierName = supplier?.name ?? "Unknown supplier";
   const canReceive = po.status === "open" || po.status === "in_transit";
   const lines = (po.purchase_order_line ?? []) as POLine[];
+  const poLabel = (po.po_number as string | null) ?? `PO-${id.slice(0, 8).toUpperCase()}`;
 
   return (
     <div className={styles.page}>
       <PageHeader
         breadcrumbs={[
           { label: "Purchase Orders", href: "/app/purchasing" },
-          { label: `PO-${id.slice(0, 8).toUpperCase()}` },
+          { label: poLabel },
         ]}
-        title={`PO-${id.slice(0, 8).toUpperCase()}`}
+        title={poLabel}
         actions={
           canReceive ? (
             <Link

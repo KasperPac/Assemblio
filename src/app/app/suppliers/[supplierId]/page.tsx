@@ -26,6 +26,7 @@ import { getAvgActualLeadTimes } from "@/lib/suppliers/catalog";
 
 type PoRow = {
   id: string;
+  po_number: string | null;
   status: string;
   created_at: string;
   expected_date: string | null;
@@ -76,7 +77,7 @@ export default async function SupplierDetailPage({ params }: Props) {
     supabase
       .from("purchase_order")
       .select(`
-        id, status, created_at, expected_date,
+        id, po_number, status, created_at, expected_date,
         purchase_order_line(quantity, unit_cost),
         delivery_receipt(id, received_at)
       `)

@@ -19,6 +19,7 @@ import HelpLink from "../_ui/help-link";
 
 type PurchaseOrderRow = {
   id: string;
+  po_number: string | null;
   status: string;
   created_at: string;
   supplier:
@@ -31,7 +32,7 @@ type PurchaseOrderLineRow = {
   id: string;
   quantity: number;
   quantity_received: number;
-  purchase_order: { id: string } | Array<{ id: string }> | null;
+  purchase_order: { id: string; po_number: string | null } | Array<{ id: string; po_number: string | null }> | null;
   component:
     | { id: string | null; name: string | null; sku: string | null }
     | Array<{ id: string | null; name: string | null; sku: string | null }>
@@ -47,7 +48,7 @@ export default async function PurchasingPage() {
     await Promise.all([
       supabase
         .from("purchase_order")
-        .select("id,status,created_at,supplier:supplier_id(id,name)")
+        .select("id,po_number,status,created_at,supplier:supplier_id(id,name)")
         .eq("tenant_id", tenantId)
         .order("created_at", { ascending: false })
         .limit(12),
@@ -56,7 +57,7 @@ export default async function PurchasingPage() {
       supabase
         .from("purchase_order_line")
         .select(
-          "id,quantity,quantity_received,purchase_order:purchase_order_id(id),component:component_id(id,name,sku)"
+          "id,quantity,quantity_received,purchase_order:purchase_order_id(id,po_number),component:component_id(id,name,sku)"
         )
         .eq("tenant_id", tenantId)
         .order("created_at", { ascending: false })
@@ -74,7 +75,7 @@ export default async function PurchasingPage() {
             <PurchaseOrderLineForm
               purchaseOrders={(data ?? []).map((po) => ({
                 id: po.id,
-                label: `PO-${po.id.slice(0, 6)} (${po.status})`,
+                label: `${po.po_number ?? `PO-${po.id.slice(0, 6)}`} (${po.status})`,
               }))}
               components={(
                 (components ?? []) as Array<{ id: string; name: string | null; sku: string | null }>
@@ -124,7 +125,7 @@ export default async function PurchasingPage() {
                 className={styles.row}
               >
                 <Link href={`/app/purchasing/${row.id}`} className={styles.poLink}>
-                  PO-{row.id.slice(0, 6)}
+                  {row.po_number ?? `PO-${row.id.slice(0, 6)}`}
                 </Link>
                 {supplier?.id ? (
                   <Link
@@ -191,7 +192,7 @@ export default async function PurchasingPage() {
               >
                 {po?.id ? (
                   <Link href={`/app/purchasing/${po.id}`} className={styles.poLink}>
-                    PO-{po.id.slice(0, 6)}
+                    {po.po_number ?? `PO-${po.id.slice(0, 6)}`}
                   </Link>
                 ) : (
                   <strong>???</strong>
