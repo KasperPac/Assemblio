@@ -12,14 +12,14 @@ begin
 end;
 $$;
 
--- Count tenants with more than 1 warehouse location
+-- Count tenants with more than 1 location
 create or replace function public.count_multi_location_tenants()
 returns bigint
 language sql
 security definer
 as $$
   select count(*) from (
-    select tenant_id from public.warehouse_location
+    select tenant_id from public.location
     group by tenant_id having count(*) > 1
   ) sub;
 $$;
