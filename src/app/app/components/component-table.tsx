@@ -44,7 +44,7 @@ function detailHref(id: string, currentSort: string, currentDir: string, rawQ: s
   const p = new URLSearchParams();
   if (rawQ) p.set("q", rawQ);
   if (filterLowStock) p.set("filter", "lowstock");
-  if (currentSort !== "name") {
+  if (currentSort !== "name" || currentDir !== "asc") {
     p.set("sort", currentSort);
     p.set("dir", currentDir);
   }
