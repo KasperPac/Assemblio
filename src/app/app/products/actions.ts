@@ -380,6 +380,7 @@ export async function createBomFromTemplate(
       version,
       status: "draft",
       is_active: false,
+      component_template_id: templateId,
     })
     .select("id")
     .single();
@@ -390,7 +391,7 @@ export async function createBomFromTemplate(
 
   const { data: templateLines, error: linesError } = await supabase
     .from("bom_template_line")
-    .select("component_id,quantity")
+    .select("id,component_id,quantity")
     .eq("tenant_id", tenantId)
     .eq("template_id", templateId);
 
@@ -401,6 +402,7 @@ export async function createBomFromTemplate(
     product_bom_id: insertedBom.id,
     component_id: line.component_id,
     quantity: line.quantity,
+    source_template_line_id: line.id,
   }));
 
   if (rows.length > 0) {
