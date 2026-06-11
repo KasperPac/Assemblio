@@ -138,6 +138,7 @@ type ComponentOption = {
   unit: string | null;
   group: string | null;
   cost_per_unit: number | null;
+  description: string | null;
 };
 
 type Props = {
@@ -204,7 +205,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
       .order("name"),
     supabase
       .from("component")
-      .select("id,name,sku,unit,cost_per_unit,group:group_id(name)")
+      .select("id,name,sku,unit,cost_per_unit,description,group:group_id(name)")
       .eq("tenant_id", tenantId)
       .order("name"),
     supabase.from("department").select("id,name,code").eq("tenant_id", tenantId).eq("is_active", true).order("name"),
@@ -500,6 +501,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
       unit: (c.unit as string | null) ?? null,
       cost_per_unit: (c.cost_per_unit as number | null) ?? null,
       group: (rawGroup as { name: string } | null)?.name ?? null,
+      description: (c.description as string | null) ?? null,
     };
   });
   const requestedTab = query.tab;

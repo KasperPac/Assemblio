@@ -22,6 +22,7 @@ type ComponentOption = {
   unit: string | null;
   group: string | null;
   cost_per_unit: number | null;
+  description: string | null;
 };
 
 type Props = {
@@ -165,7 +166,8 @@ function ComponentPicker({
       list = list.filter(
         (c) =>
           c.name.toLowerCase().includes(q) ||
-          (c.sku ?? "").toLowerCase().includes(q)
+          (c.sku ?? "").toLowerCase().includes(q) ||
+          (c.description ?? "").toLowerCase().includes(q)
       );
     }
     return list;
@@ -335,7 +337,7 @@ function ComponentPicker({
       <div className={styles.searchRow}>
         <input
           type="search"
-          placeholder="Search by name or SKU…"
+          placeholder="Search by name, SKU or description…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className={styles.searchInput}
@@ -383,6 +385,7 @@ function ComponentPicker({
                 <div className={styles.componentInfo} onClick={() => toggleComponent(c.id)}>
                   <span className={styles.componentName}>{c.name}</span>
                   {c.sku && <span className={styles.componentSku}>{c.sku}</span>}
+                  {c.description && <span className={styles.componentDesc}>{c.description}</span>}
                 </div>
                 <span className={styles.componentUnit}>{c.unit ?? "—"}</span>
                 <span className={styles.componentCost}>

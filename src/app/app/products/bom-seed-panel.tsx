@@ -22,6 +22,7 @@ type ComponentOption = {
   unit: string | null;
   group: string | null;
   cost_per_unit: number | null;
+  description: string | null;
 };
 
 type Props = {
