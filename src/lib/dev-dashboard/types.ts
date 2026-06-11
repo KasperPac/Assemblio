@@ -74,6 +74,7 @@ export type AdvisorLint = {
 
 export type QueriesData = {
   slowQueries: SlowQuery[];
+  slowQueriesNote?: string;
   performanceLints: AdvisorLint[];
   securityLints: AdvisorLint[];
 };

@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
 import { requirePlatformOperator } from "../_lib/guard";
 import { parsePrometheus } from "@/lib/dev-dashboard/prometheus";
+import { getSupabaseProjectRef } from "@/lib/dev-dashboard/config";
 
 export async function GET() {
   const { error } = await requirePlatformOperator();
   if (error) return error;
 
-  const ref = process.env.SUPABASE_PROJECT_REF;
+  const ref = getSupabaseProjectRef();
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!ref || !key) {
-    return NextResponse.json({ error: "SUPABASE_PROJECT_REF or SUPABASE_SERVICE_ROLE_KEY not configured" }, { status: 503 });
+    return NextResponse.json({ error: "Supabase project ref or service role key not configured" }, { status: 503 });
   }
 
   const url = `https://${ref}.supabase.co/customer/v1/privileged/metrics`;

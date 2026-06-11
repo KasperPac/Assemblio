@@ -30,6 +30,12 @@ function timeAgo(iso: string): string {
   return `${Math.round(diff / 60)}m ago`;
 }
 
+async function fetchJsonIfOk(url: string) {
+  const res = await fetch(url);
+  if (!res.ok) return null;
+  return res.json();
+}
+
 export default function DevDashboardClient({ initialData }: { initialData: DashboardData }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -51,13 +57,13 @@ export default function DevDashboardClient({ initialData }: { initialData: Dashb
   const refresh = useCallback(async () => {
     try {
       const responses = await Promise.allSettled([
-        fetch("/api/dev-dashboard/metrics").then((r) => r.json()),
-        fetch("/api/dev-dashboard/health").then((r) => r.json()),
-        fetch("/api/dev-dashboard/advisors").then((r) => r.json()),
-        fetch("/api/dev-dashboard/analytics").then((r) => r.json()),
-        fetch("/api/dev-dashboard/vercel").then((r) => r.json()),
-        fetch("/api/dev-dashboard/business").then((r) => r.json()),
-        fetch("/api/dev-dashboard/queries").then((r) => r.json()),
+        fetchJsonIfOk("/api/dev-dashboard/metrics"),
+        fetchJsonIfOk("/api/dev-dashboard/health"),
+        fetchJsonIfOk("/api/dev-dashboard/advisors"),
+        fetchJsonIfOk("/api/dev-dashboard/analytics"),
+        fetchJsonIfOk("/api/dev-dashboard/vercel"),
+        fetchJsonIfOk("/api/dev-dashboard/business"),
+        fetchJsonIfOk("/api/dev-dashboard/queries"),
       ]);
 
       const get = (i: number) => responses[i].status === "fulfilled" ? responses[i].value : null;
@@ -72,8 +78,19 @@ export default function DevDashboardClient({ initialData }: { initialData: Dashb
       setData((prev) => {
         const next = { ...prev, fetchedAt: new Date().toISOString() };
         if (metrics) {
-          next.infra = { ...next.infra, cpu: metrics.cpu, memory: metrics.memory, disk: metrics.disk, poolActive: metrics.poolActive, poolMax: metrics.poolMax };
-          next.overview = { ...next.overview, dbConnections: metrics.poolActive, dbConnectionsMax: metrics.poolMax };
+          next.infra = {
+            ...next.infra,
+            cpu: metrics.cpu ?? next.infra.cpu,
+            memory: metrics.memory ?? next.infra.memory,
+            disk: metrics.disk ?? next.infra.disk,
+            poolActive: metrics.poolActive ?? next.infra.poolActive,
+            poolMax: metrics.poolMax ?? next.infra.poolMax,
+          };
+          next.overview = {
+            ...next.overview,
+            dbConnections: metrics.poolActive ?? next.overview.dbConnections,
+            dbConnectionsMax: metrics.poolMax ?? next.overview.dbConnectionsMax,
+          };
         }
         if (health && Array.isArray(health)) {
           next.infra = { ...next.infra, services: health.map((s: any) => ({ name: s.name ?? "Unknown", status: s.status ?? "UNKNOWN" })) };
@@ -92,7 +109,11 @@ export default function DevDashboardClient({ initialData }: { initialData: Dashb
           next.overview = { ...next.overview, mrr: business.mrr, totalTenants: Object.values(business.tenantsByStatus as Record<string, number>).reduce((a: number, b: number) => a + b, 0) };
         }
         if (queries?.slowQueries) {
-          next.queries = { ...next.queries, slowQueries: queries.slowQueries };
+          next.queries = {
+            ...next.queries,
+            slowQueries: queries.slowQueries,
+            slowQueriesNote: queries.note ?? queries.slowQueriesNote,
+          };
         }
         return next;
       });

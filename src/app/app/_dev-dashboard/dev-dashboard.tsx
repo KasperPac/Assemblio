@@ -1,11 +1,12 @@
-import type { DashboardData, InfraData, BusinessData, AlertItem } from "@/lib/dev-dashboard/types";
+import type { DashboardData, InfraData, BusinessData, AlertItem, QueriesData } from "@/lib/dev-dashboard/types";
 import { parsePrometheus } from "@/lib/dev-dashboard/prometheus";
 import { TIER_MONTHLY_PRICE } from "@/lib/dev-dashboard/types";
+import { getSupabaseProjectRef } from "@/lib/dev-dashboard/config";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import DevDashboardClient from "./dev-dashboard-client";
 
 async function fetchMetrics(): Promise<Partial<InfraData>> {
-  const ref = process.env.SUPABASE_PROJECT_REF;
+  const ref = getSupabaseProjectRef();
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!ref || !key) return {};
 
@@ -197,15 +198,40 @@ async function fetchBusiness(supabase: SupabaseClient): Promise<BusinessData> {
   };
 }
 
+async function fetchQueries(supabase: SupabaseClient): Promise<Pick<QueriesData, "slowQueries" | "slowQueriesNote">> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await supabase.rpc("get_slow_queries" as any);
+  if (error) {
+    return {
+      slowQueries: [],
+      slowQueriesNote: `get_slow_queries unavailable: ${error.message}`,
+    };
+  }
+
+  return {
+    slowQueries: ((data ?? []) as Array<{
+      query: string;
+      calls: number;
+      mean_time: number;
+      total_time: number;
+    }>).map((row) => ({
+      query: row.query,
+      calls: Number(row.calls ?? 0),
+      meanTime: Number(row.mean_time ?? 0),
+      totalTime: Number(row.total_time ?? 0),
+    })),
+  };
+}
+
 type Props = {
   supabase: SupabaseClient;
 };
 
 export default async function DevDashboard({ supabase }: Props) {
-  const ref = process.env.SUPABASE_PROJECT_REF ?? "";
+  const ref = getSupabaseProjectRef() ?? "";
   const pat = process.env.SUPABASE_MANAGEMENT_PAT ?? "";
 
-  const [metricsData, healthData, advisorsData, deploys, business] = await Promise.all([
+  const [metricsData, healthData, advisorsData, deploys, business, queries] = await Promise.all([
     fetchMetrics(),
     pat && ref ? fetchHealth(pat, ref) : Promise.resolve([]),
     pat && ref
@@ -213,6 +239,7 @@ export default async function DevDashboard({ supabase }: Props) {
       : Promise.resolve({ performanceLints: [], securityLints: [] }),
     fetchVercelDeploys(),
     fetchBusiness(supabase),
+    fetchQueries(supabase),
   ]);
 
   const alerts: AlertItem[] = [];
@@ -268,7 +295,8 @@ export default async function DevDashboard({ supabase }: Props) {
     },
     business,
     queries: {
-      slowQueries: [],
+      slowQueries: queries.slowQueries,
+      slowQueriesNote: queries.slowQueriesNote,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       performanceLints: advisorsData.performanceLints as any[],
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

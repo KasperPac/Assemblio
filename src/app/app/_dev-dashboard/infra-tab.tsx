@@ -47,7 +47,9 @@ export default function InfraTab({ data }: { data: InfraData }) {
           <div className={styles.cardHeader}>Service Status</div>
           <div className={styles.serviceRow}>
             {data.services.length === 0 ? (
-              <span className={styles.notConfigured}>Not configured</span>
+              <span className={styles.notConfigured}>
+                Not configured or unavailable. Set SUPABASE_MANAGEMENT_PAT to load Supabase service health.
+              </span>
             ) : (
               data.services.map((s) => (
                 <span key={s.name} className={styles.serviceDot}>

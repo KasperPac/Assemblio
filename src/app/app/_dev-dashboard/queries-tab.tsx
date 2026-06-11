@@ -16,7 +16,10 @@ export default function QueriesTab({ data }: { data: QueriesData }) {
       <div className={styles.card}>
         <div className={styles.cardHeader}>Slow Queries (pg_stat_statements)</div>
         {data.slowQueries.length === 0 ? (
-          <span className={styles.notConfigured}>No slow query data available. Ensure the get_slow_queries RPC is deployed.</span>
+          <span className={styles.notConfigured}>
+            {data.slowQueriesNote ??
+              "No slow query data available. Ensure the get_slow_queries RPC is deployed."}
+          </span>
         ) : (
           <div className={styles.tableCard}>
             <table className={styles.table}>
@@ -47,7 +50,9 @@ export default function QueriesTab({ data }: { data: QueriesData }) {
       <div className={styles.card}>
         <div className={styles.cardHeader}>Performance Advisor</div>
         {data.performanceLints.length === 0 ? (
-          <span className={styles.notConfigured}>No performance issues detected.</span>
+          <span className={styles.notConfigured}>
+            No performance advisory data loaded. Set SUPABASE_MANAGEMENT_PAT to verify this.
+          </span>
         ) : (
           data.performanceLints.map((lint, i) => (
             <div key={i} className={styles.lintItem}>
@@ -65,7 +70,9 @@ export default function QueriesTab({ data }: { data: QueriesData }) {
       <div className={styles.card}>
         <div className={styles.cardHeader}>Security Advisor</div>
         {data.securityLints.length === 0 ? (
-          <span style={{ color: "var(--ok)", fontSize: "var(--fs-sm)" }}>No security issues detected.</span>
+          <span className={styles.notConfigured}>
+            No security advisory data loaded. Set SUPABASE_MANAGEMENT_PAT to verify this.
+          </span>
         ) : (
           data.securityLints.map((lint, i) => (
             <div key={i} className={styles.lintItem}>

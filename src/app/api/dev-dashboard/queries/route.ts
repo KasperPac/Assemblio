@@ -15,8 +15,23 @@ export async function GET() {
 
   if (dbError) {
     // Fallback: the RPC might not exist yet. Return empty.
-    return NextResponse.json({ slowQueries: [], note: "get_slow_queries RPC not found" });
+    return NextResponse.json({
+      slowQueries: [],
+      note: `get_slow_queries unavailable: ${dbError.message}`,
+    });
   }
 
-  return NextResponse.json({ slowQueries: data ?? [] });
+  return NextResponse.json({
+    slowQueries: ((data ?? []) as Array<{
+      query: string;
+      calls: number;
+      mean_time: number;
+      total_time: number;
+    }>).map((row) => ({
+      query: row.query,
+      calls: Number(row.calls ?? 0),
+      meanTime: Number(row.mean_time ?? 0),
+      totalTime: Number(row.total_time ?? 0),
+    })),
+  });
 }

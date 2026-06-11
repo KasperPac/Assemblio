@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { requirePlatformOperator } from "../_lib/guard";
+import { getSupabaseProjectRef } from "@/lib/dev-dashboard/config";
 
 export async function GET() {
   const { error } = await requirePlatformOperator();
   if (error) return error;
 
-  const ref = process.env.SUPABASE_PROJECT_REF;
+  const ref = getSupabaseProjectRef();
   const pat = process.env.SUPABASE_MANAGEMENT_PAT;
   if (!ref || !pat) {
     return NextResponse.json({ error: "Not configured" }, { status: 503 });
