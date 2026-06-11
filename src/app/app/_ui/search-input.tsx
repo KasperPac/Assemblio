@@ -23,7 +23,9 @@ export default function SearchInput({ param, placeholder, ariaLabel, className }
     const trimmed = value.trim();
     if (trimmed === current) return;
     const t = setTimeout(() => {
-      const params = new URLSearchParams(sp.toString());
+      // Read the live URL, not the captured sp — another control (filter
+      // select, tab) may have changed params while the debounce was pending.
+      const params = new URLSearchParams(window.location.search);
       if (trimmed) params.set(param, trimmed);
       else params.delete(param);
       params.delete("page");
