@@ -1,13 +1,12 @@
 "use client";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import SearchInput from "../../_ui/search-input";
 import styles from "../orders.module.css";
 
 export default function OrdersFilters() {
   const router = useRouter();
   const pathname = usePathname();
   const sp = useSearchParams();
-  const [search, setSearch] = useState(sp.get("search") ?? "");
 
   function setParam(key: string, value: string) {
     const params = new URLSearchParams(sp.toString());
@@ -17,24 +16,13 @@ export default function OrdersFilters() {
     router.replace(`${pathname}?${params.toString()}`);
   }
 
-  // Debounce the search box -> URL.
-  useEffect(() => {
-    const current = sp.get("search") ?? "";
-    if (search === current) return;
-    const t = setTimeout(() => setParam("search", search.trim()), 300);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search]);
-
   return (
     <div className={styles.filterBar}>
-      <input
+      <SearchInput
         className={styles.filterSearch}
-        type="search"
+        param="search"
         placeholder="Search order # or customer"
-        aria-label="Search orders"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        ariaLabel="Search orders"
       />
       <select className={styles.filterSelect} aria-label="Filter by status" value={sp.get("status") ?? ""}
         onChange={(e) => setParam("status", e.target.value)}>
