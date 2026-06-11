@@ -8,6 +8,7 @@ import PurchaseOrderLineForm from "./po-line-form";
 import {
   createPurchaseOrder,
   createPurchaseOrderLine,
+  getNextPoNumber,
   updatePurchaseOrderLineQuantity,
   updatePurchaseOrderStatus,
 } from "./actions";
@@ -44,7 +45,7 @@ export default async function PurchasingPage() {
   if (!context) redirect("/auth/login");
   const { supabase, tenantId } = context;
 
-  const [{ data, error }, { data: suppliers }, { data: components }, { data: poLines }] =
+  const [{ data, error }, { data: suppliers }, { data: components }, { data: poLines }, nextPoNumber] =
     await Promise.all([
       supabase
         .from("purchase_order")
@@ -62,6 +63,7 @@ export default async function PurchasingPage() {
         .eq("tenant_id", tenantId)
         .order("created_at", { ascending: false })
         .limit(20),
+      getNextPoNumber(),
     ]);
 
   return (
@@ -89,6 +91,7 @@ export default async function PurchasingPage() {
               suppliers={
                 (suppliers ?? []) as Array<{ id: string; name: string | null }>
               }
+              nextPoNumber={nextPoNumber}
               action={createPurchaseOrder}
             />
           </div>

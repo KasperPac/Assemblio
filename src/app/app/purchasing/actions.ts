@@ -14,6 +14,34 @@ function parseNumber(value: FormDataEntryValue | null) {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+/** Increment trailing digits in a PO number, e.g. "PO-2506001" → "PO-2506002" */
+function incrementPoNumber(last: string | null): string {
+  if (!last) return "PO-001";
+  const match = last.match(/^(.*?)(\d+)$/);
+  if (!match) return `${last}-2`;
+  const [, prefix, digits] = match;
+  const next = String(Number(digits) + 1).padStart(digits.length, "0");
+  return `${prefix}${next}`;
+}
+
+/** Called by the create form to suggest the next PO number. */
+export async function getNextPoNumber(): Promise<string> {
+  const context = await getServerTenantContext();
+  if (!context?.tenantId) return "PO-001";
+  const { supabase, tenantId } = context;
+
+  const { data: latest } = await supabase
+    .from("purchase_order")
+    .select("po_number")
+    .eq("tenant_id", tenantId)
+    .not("po_number", "is", null)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  return incrementPoNumber(latest?.po_number ?? null);
+}
+
 export async function createPurchaseOrder(
   _prevState: PurchasingState,
   formData: FormData
@@ -30,10 +58,28 @@ export async function createPurchaseOrder(
   }
   const { supabase, tenantId } = context;
 
+  // Use provided PO number, or auto-increment from the last one
+  const providedPoNumber = formData.get("po_number")?.toString().trim() || null;
+  let poNumber = providedPoNumber;
+
+  if (!poNumber) {
+    const { data: latest } = await supabase
+      .from("purchase_order")
+      .select("po_number")
+      .eq("tenant_id", tenantId)
+      .not("po_number", "is", null)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    poNumber = incrementPoNumber(latest?.po_number ?? null);
+  }
+
   const { error } = await supabase.from("purchase_order").insert({
     tenant_id: tenantId,
     supplier_id: supplierId,
     status,
+    po_number: poNumber,
   });
 
   if (error) {

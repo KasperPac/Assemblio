@@ -16,12 +16,13 @@ type SupplierOption = {
 
 type Props = {
   suppliers: SupplierOption[];
+  nextPoNumber: string;
   action: (state: FormState, formData: FormData) => Promise<FormState>;
 };
 
 const initialState: FormState = {};
 
-export default function PurchaseOrderCreateForm({ suppliers, action }: Props) {
+export default function PurchaseOrderCreateForm({ suppliers, nextPoNumber, action }: Props) {
   const [open, setOpen] = useState(false);
   const [state, formAction] = React.useActionState(action, initialState);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -61,6 +62,10 @@ export default function PurchaseOrderCreateForm({ suppliers, action }: Props) {
             </button>
           </div>
           <form action={formAction} className={styles.dialogForm}>
+            <label className={styles.field}>
+              <span>PO Number</span>
+              <input name="po_number" defaultValue={nextPoNumber} placeholder="e.g. PO-2506001" />
+            </label>
             <label className={styles.field}>
               <span>Supplier *</span>
               <select name="supplier_id" required defaultValue="">
