@@ -5,6 +5,14 @@ import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import {
+  pickBomPerVariant,
+  variantLabel,
+  type CopySourceBomRow,
+  type CopySourceProduct,
+  type CopySourceProductGroup,
+  type CopySourceVariant,
+} from "@/lib/bom/copy-sources";
 
 type BomActionState = {
   error?: string;
@@ -92,6 +100,224 @@ export async function fetchBomLines(
     component_id: row.component_id as string,
     quantity: Number(row.quantity),
   }));
+}
+
+// Read-only tenant context for copy-source lookups. No role gate — any member
+// may browse copy sources; mutations are still gated by requireBomEditor.
+async function getCopySourceDb() {
+  const context = await getServerTenantContext();
+  if (!context || !context.tenantId) return null;
+  const { supabase, tenantId, role } = context;
+  const db = role === "super_admin" ? createSupabaseAdminClient() : supabase;
+  return { db, tenantId };
+}
+
+function unwrapOne<T>(value: T | T[] | null | undefined): T | null {
+  if (!value) return null;
+  return Array.isArray(value) ? (value[0] ?? null) : value;
+}
+
+export async function fetchCopySourceProducts(): Promise<CopySourceProduct[]> {
+  const ctx = await getCopySourceDb();
+  if (!ctx) return [];
+  const { db, tenantId } = ctx;
+
+  const { data } = await db
+    .from("product_bom")
+    .select("variant:variant_id!inner(id,product:product_id!inner(id,title))")
+    .eq("tenant_id", tenantId)
+    .neq("status", "archived")
+    .limit(2000);
+
+  type Row = {
+    variant:
+      | { id: string; product: { id: string; title: string } | Array<{ id: string; title: string }> | null }
+      | Array<{ id: string; product: { id: string; title: string } | Array<{ id: string; title: string }> | null }>
+      | null;
+  };
+
+  const products = new Map<string, { title: string; variantIds: Set<string> }>();
+  for (const raw of (data ?? []) as Row[]) {
+    const variant = unwrapOne(raw.variant);
+    const product = unwrapOne(variant?.product);
+    if (!variant || !product) continue;
+    const entry = products.get(product.id) ?? { title: product.title, variantIds: new Set<string>() };
+    entry.variantIds.add(variant.id);
+    products.set(product.id, entry);
+  }
+
+  return [...products.entries()]
+    .map(([productId, entry]) => ({
+      productId,
+      productTitle: entry.title,
+      variantCount: entry.variantIds.size,
+    }))
+    .sort((a, b) => a.productTitle.localeCompare(b.productTitle));
+}
+
+export async function fetchCopySourceVariants(
+  productId: string
+): Promise<CopySourceVariant[]> {
+  const ctx = await getCopySourceDb();
+  if (!ctx || !productId) return [];
+  const { db, tenantId } = ctx;
+
+  const { data } = await db
+    .from("product_bom")
+    .select("id,version,status,is_active,variant:variant_id!inner(id,title,sku,product_id)")
+    .eq("tenant_id", tenantId)
+    .eq("variant.product_id", productId)
+    .neq("status", "archived");
+
+  type Row = {
+    id: string;
+    version: number;
+    status: string;
+    is_active: boolean;
+    variant:
+      | { id: string; title: string | null; sku: string | null }
+      | Array<{ id: string; title: string | null; sku: string | null }>
+      | null;
+  };
+
+  const meta = new Map<string, { title: string | null; sku: string | null }>();
+  const rows: CopySourceBomRow[] = [];
+  for (const raw of (data ?? []) as Row[]) {
+    const variant = unwrapOne(raw.variant);
+    if (!variant) continue;
+    meta.set(variant.id, { title: variant.title, sku: variant.sku });
+    rows.push({
+      id: raw.id,
+      variant_id: variant.id,
+      version: Number(raw.version),
+      status: raw.status,
+      is_active: raw.is_active,
+    });
+  }
+
+  const picked = pickBomPerVariant(rows);
+  return Object.entries(picked)
+    .map(([variantId, bom]) => {
+      const m = meta.get(variantId);
+      return {
+        bomId: bom.bomId,
+        variantId,
+        label: variantLabel(m?.title ?? null, m?.sku ?? null),
+      };
+    })
+    .sort((a, b) => a.label.localeCompare(b.label));
+}
+
+const COPY_SEARCH_LIMIT = 20;
+
+export async function searchCopySources(
+  query: string
+): Promise<CopySourceProductGroup[]> {
+  // Strip characters that break PostgREST or() / ilike syntax.
+  const safe = query.replace(/[,()%_\\]/g, " ").trim();
+  if (safe.length < 2) return [];
+
+  const ctx = await getCopySourceDb();
+  if (!ctx) return [];
+  const { db, tenantId } = ctx;
+  const pattern = `%${safe}%`;
+
+  const [{ data: variantHits }, { data: productHits }] = await Promise.all([
+    db
+      .from("product_variant")
+      .select("id,title,sku,product:product_id(id,title)")
+      .eq("tenant_id", tenantId)
+      .or(`title.ilike.${pattern},sku.ilike.${pattern}`)
+      .limit(50),
+    db
+      .from("product")
+      .select("id,title,product_variant(id,title,sku)")
+      .eq("tenant_id", tenantId)
+      .ilike("title", pattern)
+      .limit(10),
+  ]);
+
+  type Candidate = {
+    title: string | null;
+    sku: string | null;
+    productId: string;
+    productTitle: string;
+  };
+  const candidates = new Map<string, Candidate>();
+
+  type VariantHit = {
+    id: string;
+    title: string | null;
+    sku: string | null;
+    product: { id: string; title: string } | Array<{ id: string; title: string }> | null;
+  };
+  for (const raw of (variantHits ?? []) as VariantHit[]) {
+    const product = unwrapOne(raw.product);
+    if (!product) continue;
+    candidates.set(raw.id, {
+      title: raw.title,
+      sku: raw.sku,
+      productId: product.id,
+      productTitle: product.title,
+    });
+  }
+
+  type ProductHit = {
+    id: string;
+    title: string;
+    product_variant: Array<{ id: string; title: string | null; sku: string | null }> | null;
+  };
+  for (const raw of (productHits ?? []) as ProductHit[]) {
+    for (const v of raw.product_variant ?? []) {
+      if (!candidates.has(v.id)) {
+        candidates.set(v.id, {
+          title: v.title,
+          sku: v.sku,
+          productId: raw.id,
+          productTitle: raw.title,
+        });
+      }
+    }
+  }
+
+  const variantIds = [...candidates.keys()];
+  if (variantIds.length === 0) return [];
+
+  const { data: boms } = await db
+    .from("product_bom")
+    .select("id,variant_id,version,status,is_active")
+    .eq("tenant_id", tenantId)
+    .in("variant_id", variantIds)
+    .neq("status", "archived");
+
+  const picked = pickBomPerVariant(
+    ((boms ?? []) as CopySourceBomRow[]).map((b) => ({
+      ...b,
+      version: Number(b.version),
+    }))
+  );
+
+  const groups = new Map<string, CopySourceProductGroup>();
+  let total = 0;
+  for (const [variantId, candidate] of candidates) {
+    if (total >= COPY_SEARCH_LIMIT) break;
+    const bom = picked[variantId];
+    if (!bom) continue;
+    const group = groups.get(candidate.productId) ?? {
+      productId: candidate.productId,
+      productTitle: candidate.productTitle,
+      variants: [],
+    };
+    group.variants.push({
+      bomId: bom.bomId,
+      variantId,
+      label: variantLabel(candidate.title, candidate.sku),
+    });
+    groups.set(candidate.productId, group);
+    total += 1;
+  }
+
+  return [...groups.values()];
 }
 
 export async function createBomWithComponents(
