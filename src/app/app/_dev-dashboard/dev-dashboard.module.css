@@ -1,0 +1,367 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ── Tabs ───────────────────────────────────────────────── */
+.tabBar {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.tab,
+.tabActive {
+  padding: 7px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+.tab {
+  color: var(--ink-muted);
+}
+
+.tab:hover {
+  background: var(--surface-1);
+  color: var(--ink-strong);
+}
+
+.tabActive {
+  background: var(--brand-dim);
+  color: var(--brand-1);
+}
+
+.refreshInfo {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-xs);
+  color: var(--ink-faint);
+}
+
+.refreshBtn {
+  background: none;
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-md);
+  padding: 4px 10px;
+  font-size: var(--fs-xs);
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.refreshBtn:hover {
+  border-color: var(--stroke-strong);
+  color: var(--ink-strong);
+}
+
+/* ── KPI strip ──────────────────────────────────────────── */
+.kpiRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.kpiChip {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 16px 18px;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--stroke-card);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+}
+
+.kpiLabel {
+  margin: 0;
+  font-size: 0.69rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-faint);
+}
+
+.kpiValue {
+  font-size: clamp(1.15rem, 1.1vw + 0.85rem, 1.75rem);
+  font-weight: 800;
+  line-height: 1.05;
+  color: var(--ink-strong);
+}
+
+.kpiSub {
+  font-size: 0.76rem;
+  color: var(--ink-muted);
+  line-height: 1.3;
+}
+
+/* ── Card ───────────────────────────────────────────────── */
+.card {
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  padding: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.cardHeader {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  color: var(--ink-muted);
+}
+
+/* ── Gauge ──────────────────────────────────────────────── */
+.gaugeRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.gauge {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gaugeLabel {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  color: var(--ink-muted);
+}
+
+.gaugeBar {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--surface-1);
+  overflow: hidden;
+}
+
+.gaugeFill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--brand-1);
+  transition: width 300ms ease;
+}
+
+.gaugeFillWarn { background: var(--warning); }
+.gaugeFillDanger { background: var(--danger); }
+
+.gaugeValue {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--ink-strong);
+}
+
+/* ── Service dots ───────────────────────────────────────── */
+.serviceRow {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.serviceDot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-sm);
+  color: var(--ink-strong);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.dotOk { background: var(--ok); }
+.dotWarn { background: var(--warning); }
+.dotDanger { background: var(--danger); }
+.dotUnknown { background: var(--ink-faint); }
+
+/* ── Alerts ─────────────────────────────────────────────── */
+.alertList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.alertItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: var(--fs-sm);
+  color: var(--ink-strong);
+  padding: 6px 0;
+}
+
+.alertIcon {
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.alertError { color: var(--danger); }
+.alertWarning { color: var(--warning); }
+.alertInfo { color: var(--info); }
+
+/* ── Deploy list ────────────────────────────────────────── */
+.deployList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.deployRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: var(--fs-sm);
+  border-bottom: 1px solid var(--stroke);
+}
+
+.deployRow:last-child { border-bottom: none; }
+
+.deployMsg {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink-strong);
+}
+
+.deployTime {
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.deployStatus {
+  font-weight: 600;
+  font-size: var(--fs-xs);
+}
+
+.deployReady { color: var(--ok); }
+.deployError { color: var(--danger); }
+
+/* ── Tables ─────────────────────────────────────────────── */
+.tableCard {
+  composes: tableCard from "../_ui/table.module.css";
+}
+
+.table {
+  composes: table from "../_ui/table.module.css";
+}
+
+/* ── Progress bar (feature adoption) ────────────────────── */
+.progressRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+}
+
+.progressLabel {
+  min-width: 160px;
+  font-size: var(--fs-sm);
+  color: var(--ink-strong);
+}
+
+.progressTrack {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--surface-1);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--brand-1);
+  transition: width 300ms ease;
+}
+
+.progressValue {
+  min-width: 40px;
+  text-align: right;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--ink-muted);
+}
+
+/* ── Lint card ──────────────────────────────────────────── */
+.lintItem {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--stroke);
+  font-size: var(--fs-sm);
+}
+
+.lintItem:last-child { border-bottom: none; }
+
+.lintTitle {
+  font-weight: 600;
+  color: var(--ink-strong);
+}
+
+.lintDesc {
+  color: var(--ink-muted);
+  margin-top: 2px;
+}
+
+.lintRemediation {
+  margin-top: 4px;
+  font-family: monospace;
+  font-size: var(--fs-xs);
+  color: var(--ink-faint);
+  background: var(--surface-1);
+  padding: 4px 8px;
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+}
+
+/* ── Two-column grid for cards ──────────────────────────── */
+.cardGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+@media (max-width: 900px) {
+  .cardGrid { grid-template-columns: 1fr; }
+  .gaugeRow { grid-template-columns: 1fr; }
+}
+
+/* ── External links ─────────────────────────────────────── */
+.externalLinks {
+  display: flex;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.extLink {
+  font-size: var(--fs-sm);
+  color: var(--brand-1);
+  text-decoration: none;
+}
+
+.extLink:hover {
+  text-decoration: underline;
+}
+
+/* ── Not configured state ───────────────────────────────── */
+.notConfigured {
+  color: var(--ink-faint);
+  font-size: var(--fs-sm);
+  font-style: italic;
+}
