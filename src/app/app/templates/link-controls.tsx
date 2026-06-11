@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { setTemplateLinked, publishTemplate } from "./actions";
 import type { AffectedBom } from "./affected";
 import styles from "./templates.module.css";
@@ -21,6 +22,7 @@ export function LinkControls({
   hasUnpublished: boolean;
   affectedBoms: AffectedBom[];
 }) {
+  const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -30,6 +32,9 @@ export function LinkControls({
   async function toggle() {
     setBusy(true);
     await setTemplateLinked(templateType, templateId, !isLinked);
+    // Refresh server data so the knob reflects the new is_linked value from the DB
+    // rather than rendering the stale prop until the next full navigation.
+    router.refresh();
     setBusy(false);
   }
 

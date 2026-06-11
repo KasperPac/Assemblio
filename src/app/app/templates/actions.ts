@@ -375,19 +375,28 @@ export async function publishTemplate(
     else successes.push(result.label!);
   }
 
-  // Stamp even when zero BOMs were selected.
-  await supabase
-    .from(templateTable)
-    .update({ last_published_at: new Date().toISOString() })
-    .eq("tenant_id", tenantId)
-    .eq("id", templateId);
+  // Stamp when at least one BOM was successfully updated, or when zero were selected
+  // (zero-select is an explicit "mark as up-to-date" intent). Do NOT stamp when all
+  // selected BOMs failed — that would hide the "Unpublished changes" badge despite
+  // nothing actually being published.
+  if (successes.length > 0 || selectedBomIds.length === 0) {
+    await supabase
+      .from(templateTable)
+      .update({ last_published_at: new Date().toISOString() })
+      .eq("tenant_id", tenantId)
+      .eq("id", templateId);
+  }
 
   revalidatePath("/app/templates");
   revalidatePath("/app/products");
 
   if (failures.length > 0) {
+    const successPart =
+      successes.length === 0
+        ? "No BOMs updated"
+        : `Updated ${successes.length} BOM${successes.length === 1 ? "" : "s"}`;
     return {
-      error: `Updated ${successes.length} BOM${successes.length === 1 ? "" : "s"}; ${failures.length} failed: ${failures.join("; ")}`,
+      error: `${successPart}; ${failures.length} failed: ${failures.join("; ")}`,
     };
   }
   return {
@@ -457,7 +466,7 @@ async function publishToBom(
     supabase,
     tenantId,
     "product_bom_component",
-    ["component_id", "quantity"],
+    ["component_id", "quantity", "yield_pct", "position"],
     oldBom.id as string,
     newBom.id,
     templateType === "component" ? templateLines : null
@@ -552,6 +561,10 @@ async function copyLines(
 
   let lines: Record<string, unknown>[];
   if (currentTemplateLines) {
+    // `id` is included in the projected object so buildPublishedLines can use it
+    // as the new source_template_line_id. buildPublishedLines destructures `id`
+    // out of the spread before building the output row, so `id` is never included
+    // in the final insert rows — only `source_template_line_id` is set from it.
     const tplLines = currentTemplateLines.map((line) => {
       const projected: Record<string, unknown> = { id: line.id };
       for (const f of fields) {
@@ -570,8 +583,8 @@ async function copyLines(
   if (table === "product_bom_labor") {
     const seqCounts = new Map<number, number>();
     for (const l of lines) {
-      const seq = l.sequence as number | undefined;
-      if (seq !== undefined) {
+      const seq = l.sequence as number | null;
+      if (seq != null) {
         seqCounts.set(seq, (seqCounts.get(seq) ?? 0) + 1);
       }
     }
