@@ -9,9 +9,9 @@ export default function ProductFilters() {
   const pathname = usePathname();
   const sp = useSearchParams();
 
-  function setFilter(value: string) {
+  function setStatus(value: string) {
     const params = new URLSearchParams(sp.toString());
-    params.set("filter", value);
+    params.set("status", value);
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   }
 
@@ -23,13 +23,14 @@ export default function ProductFilters() {
         ariaLabel="Search by name or SKU"
       />
       <select
-        aria-label="Filter products by variants"
-        value={sp.get("filter") ?? "all"}
-        onChange={(e) => setFilter(e.target.value)}
+        aria-label="Filter products by status"
+        value={sp.get("status") ?? "all"}
+        onChange={(e) => setStatus(e.target.value)}
       >
-        <option value="all">All</option>
-        <option value="with-variants">With variants</option>
-        <option value="without-variants">Without variants</option>
+        <option value="all">All statuses</option>
+        <option value="active">Active</option>
+        <option value="draft">Draft</option>
+        <option value="archived">Archived</option>
       </select>
     </div>
   );

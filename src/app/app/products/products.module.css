@@ -133,9 +133,14 @@
   color: var(--ok);
 }
 
-.statusPending {
+.statusDraft {
   background: var(--warning-dim);
   color: var(--warning);
+}
+
+.statusArchived {
+  background: var(--surface-1);
+  color: var(--ink-muted);
 }
 
 .sellPriceCell {

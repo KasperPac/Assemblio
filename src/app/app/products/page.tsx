@@ -12,6 +12,7 @@ type ProductRow = {
   description: string | null;
   created_at?: string | null;
   image_url: string | null;
+  status: string;
 };
 
 type VariantRow = {
@@ -55,7 +56,7 @@ type RateRow = {
 type Props = {
   searchParams?: Promise<{
     q?: string;
-    filter?: string;
+    status?: string;
     shopify?: string;
     products?: string;
     orders?: string;
@@ -66,7 +67,7 @@ type Props = {
 export default async function ProductsPage({ searchParams }: Props) {
   const params = (await searchParams) ?? {};
   const q = (params.q ?? "").trim().toLowerCase();
-  const filter = (params.filter ?? "all").toLowerCase();
+  const statusFilter = (params.status ?? "all").toLowerCase();
   const syncStatus = params.shopify ?? null;
   const syncProducts = params.products ?? "0";
   const syncOrders = params.orders ?? "0";
@@ -201,7 +202,7 @@ export default async function ProductsPage({ searchParams }: Props) {
 
   const detailedProductsResult = await supabase
     .from("product")
-    .select("id,title,description,created_at,image_url")
+    .select("id,title,description,created_at,image_url,status")
     .eq("tenant_id", tenantId)
     .order("created_at", { ascending: false });
 
@@ -209,41 +210,57 @@ export default async function ProductsPage({ searchParams }: Props) {
   let productsError: string | null = null;
 
   if (detailedProductsResult.error) {
-    const fallbackWithDescription = await supabase
+    // status column may not exist yet (patch not applied) — retry without it
+    const fallbackNoStatus = await supabase
       .from("product")
-      .select("id,title,description,image_url")
-      .eq("tenant_id", tenantId);
-    if (!fallbackWithDescription.error) {
-      products = (fallbackWithDescription.data ?? []).map((product) => ({
-        ...(product as Omit<ProductRow, "created_at">),
-        created_at: null,
+      .select("id,title,description,created_at,image_url")
+      .eq("tenant_id", tenantId)
+      .order("created_at", { ascending: false });
+    if (!fallbackNoStatus.error) {
+      products = (fallbackNoStatus.data ?? []).map((product) => ({
+        ...(product as Omit<ProductRow, "status">),
+        status: "active",
       }));
     } else {
-      const fallbackMinimalWithCreatedAt = await supabase
+      const fallbackWithDescription = await supabase
         .from("product")
-        .select("id,title,created_at")
-        .eq("tenant_id", tenantId)
-        .order("created_at", { ascending: false });
-      if (!fallbackMinimalWithCreatedAt.error) {
-        products = (fallbackMinimalWithCreatedAt.data ?? []).map((product) => ({
-          ...(product as Omit<ProductRow, "description" | "image_url">),
-          description: null,
-          image_url: null,
+        .select("id,title,description,image_url")
+        .eq("tenant_id", tenantId);
+      if (!fallbackWithDescription.error) {
+        products = (fallbackWithDescription.data ?? []).map((product) => ({
+          ...(product as Omit<ProductRow, "created_at" | "status">),
+          created_at: null,
+          status: "active",
         }));
       } else {
-        const fallbackMinimal = await supabase
+        const fallbackMinimalWithCreatedAt = await supabase
           .from("product")
-          .select("id,title")
-          .eq("tenant_id", tenantId);
-        if (fallbackMinimal.error) {
-          productsError = fallbackMinimal.error.message;
-        } else {
-          products = (fallbackMinimal.data ?? []).map((product) => ({
-            ...(product as Omit<ProductRow, "description" | "image_url" | "created_at">),
+          .select("id,title,created_at")
+          .eq("tenant_id", tenantId)
+          .order("created_at", { ascending: false });
+        if (!fallbackMinimalWithCreatedAt.error) {
+          products = (fallbackMinimalWithCreatedAt.data ?? []).map((product) => ({
+            ...(product as Omit<ProductRow, "description" | "image_url" | "status">),
             description: null,
             image_url: null,
-            created_at: null,
+            status: "active",
           }));
+        } else {
+          const fallbackMinimal = await supabase
+            .from("product")
+            .select("id,title")
+            .eq("tenant_id", tenantId);
+          if (fallbackMinimal.error) {
+            productsError = fallbackMinimal.error.message;
+          } else {
+            products = (fallbackMinimal.data ?? []).map((product) => ({
+              ...(product as Omit<ProductRow, "description" | "image_url" | "created_at" | "status">),
+              description: null,
+              image_url: null,
+              created_at: null,
+              status: "active",
+            }));
+          }
         }
       }
     }
@@ -289,8 +306,7 @@ export default async function ProductsPage({ searchParams }: Props) {
       );
 
     if (!matchesQ) return false;
-    if (filter === "with-variants") return productVariants.length > 0;
-    if (filter === "without-variants") return productVariants.length === 0;
+    if (statusFilter !== "all" && product.status !== statusFilter) return false;
     return true;
   });
 
@@ -338,7 +354,6 @@ export default async function ProductsPage({ searchParams }: Props) {
         ) : (
           filteredProducts.map((product) => {
             const productVariants = variantsByProduct[product.id] ?? [];
-            const statusLabel = productVariants.length > 0 ? "ACTIVE" : "PENDING";
             const sellPrice = sellPriceByProduct[product.id] ?? null;
             const variantsWithGp = productVariants.filter((v) => gpByVariant.has(v.id));
             const avgMatGpPct =
@@ -375,11 +390,15 @@ export default async function ProductsPage({ searchParams }: Props) {
 
                 <span
                   className={`${styles.statusBadge} ${
-                    productVariants.length > 0 ? styles.statusActive : styles.statusPending
+                    product.status === "active"
+                      ? styles.statusActive
+                      : product.status === "draft"
+                        ? styles.statusDraft
+                        : styles.statusArchived
                   }`}
                   data-label="Status"
                 >
-                  {statusLabel}
+                  {product.status.toUpperCase()}
                 </span>
 
                 <span className={styles.sellPriceCell} data-label="Sell Price">
