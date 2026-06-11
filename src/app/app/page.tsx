@@ -42,6 +42,17 @@ export default async function DashboardPage() {
   }
 
   const { supabase, tenantId: _tenantId } = context;
+
+  const isPlatformOperator =
+    context.role === "super_admin" || context.role === "platform_observer";
+  const isOnHomeTenant =
+    !context.tenantId || context.tenantId === context.superAdminHomeTenantId;
+
+  if (isPlatformOperator && isOnHomeTenant) {
+    const DevDashboard = (await import("./_dev-dashboard/dev-dashboard")).default;
+    return <DevDashboard supabase={supabase} />;
+  }
+
   const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const todayDate = new Date();
