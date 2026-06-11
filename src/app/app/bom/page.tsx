@@ -81,6 +81,9 @@ export default async function BomPage() {
         description="Maintain versioned bills of materials per product variant and keep component quantities aligned with production demand."
         actions={
           <div className={styles.headerActions}>
+            <Link href="/app/bom/templates" className={styles.ghostBtn}>
+              Templates
+            </Link>
             <BomComponentLineForm
               boms={(data ?? []).map((bom) => {
                 const variant = Array.isArray(bom.variant)
