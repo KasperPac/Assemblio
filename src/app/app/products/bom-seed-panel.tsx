@@ -10,8 +10,8 @@ type TemplateOption = {
   lineCount: number;
 };
 
-type SourceBomOption = {
-  id: string;
+type SiblingOption = {
+  bomId: string;
   label: string;
 };
 
@@ -28,7 +28,7 @@ type ComponentOption = {
 type Props = {
   targetVariantId: string;
   variantLabel: string;
-  sourceBoms: SourceBomOption[];
+  siblings: SiblingOption[];
   templates: TemplateOption[];
   components: ComponentOption[];
 };
@@ -36,7 +36,7 @@ type Props = {
 export default function BomSeedPanel({
   targetVariantId,
   variantLabel,
-  sourceBoms,
+  siblings,
   templates,
   components,
 }: Props) {
@@ -52,7 +52,7 @@ export default function BomSeedPanel({
         variantLabel={variantLabel}
         components={components}
         templates={templates}
-        sourceBoms={sourceBoms}
+        siblings={siblings}
         buttonLabel="+ Add Components"
         buttonClassName={styles.primaryButton}
       />
@@ -63,7 +63,7 @@ export default function BomSeedPanel({
           variantLabel={variantLabel}
           components={components}
           templates={templates}
-          sourceBoms={sourceBoms}
+          siblings={siblings}
           buttonLabel="start from a template"
           buttonClassName={styles.linkButton}
         />
@@ -73,8 +73,8 @@ export default function BomSeedPanel({
           variantLabel={variantLabel}
           components={components}
           templates={templates}
-          sourceBoms={sourceBoms}
-          buttonLabel="copy another variant's BOM"
+          siblings={siblings}
+          buttonLabel="copy an existing BOM"
           buttonClassName={styles.linkButton}
         />
       </p>

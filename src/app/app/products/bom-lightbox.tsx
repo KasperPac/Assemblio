@@ -10,18 +10,19 @@ import {
 import { addComponentsToBom } from "@/app/app/bom/actions";
 import styles from "./bom-lightbox.module.css";
 import ComponentPicker, { type ComponentOption } from "./_components/component-picker";
+import CopySourceBrowser from "./_components/copy-source-browser";
 
 type ActionState = { error?: string; success?: string };
 
 type TemplateOption = { id: string; name: string; lineCount: number };
-type SourceBomOption = { id: string; label: string };
+type SiblingOption = { bomId: string; label: string };
 
 type Props = {
   variantId: string;
   variantLabel: string;
   bomId?: string;
   templates: TemplateOption[];
-  sourceBoms: SourceBomOption[];
+  siblings?: SiblingOption[];
   components: ComponentOption[];
   buttonLabel?: string;
   buttonClassName: string;
@@ -34,7 +35,7 @@ export default function BomLightbox({
   variantLabel,
   bomId,
   templates,
-  sourceBoms,
+  siblings = [],
   components,
   buttonLabel = "Add / Modify BOM",
   buttonClassName,
@@ -47,6 +48,13 @@ export default function BomLightbox({
   const [copySelection, setCopySelection] = useState<Record<string, number> | undefined>();
   const [copyLoading, setCopyLoading] = useState(false);
   const [copyMode, setCopyMode] = useState(false);
+  const [browseOpen, setBrowseOpen] = useState(false);
+  const [showAllSiblings, setShowAllSiblings] = useState(false);
+  const [copySourceLabel, setCopySourceLabel] = useState<string | null>(null);
+
+  const SIBLING_LIMIT = 6;
+  const visibleSiblings = showAllSiblings ? siblings : siblings.slice(0, SIBLING_LIMIT);
+  const hiddenCount = siblings.length - visibleSiblings.length;
 
   function openDialog() {
     setOpen(true);
@@ -62,6 +70,20 @@ export default function BomLightbox({
     if (templateState.success) closeDialog();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [templateState.success]);
+
+  async function pickCopySource(sourceBomId: string, label: string) {
+    setCopyLoading(true);
+    const lines = await fetchBomLines(sourceBomId);
+    const sel: Record<string, number> = {};
+    for (const line of lines) {
+      sel[line.component_id] = line.quantity;
+    }
+    setCopySelection(sel);
+    setCopyMode(true);
+    setCopySourceLabel(label);
+    setBrowseOpen(false);
+    setCopyLoading(false);
+  }
 
   async function handlePickerSave(
     lines: { component_id: string; quantity: number }[]
@@ -133,39 +155,58 @@ export default function BomLightbox({
                       </a>
                     </span>
                   )}
-                  {sourceBoms.length > 0 && (
-                    <div className={styles.startFromForm}>
-                      <select
-                        defaultValue=""
-                        className={styles.startFromSelect}
-                        disabled={copyLoading}
-                        onChange={async (e) => {
-                          const bomId = e.target.value;
-                          if (!bomId) return;
-                          setCopyLoading(true);
-                          const lines = await fetchBomLines(bomId);
-                          const sel: Record<string, number> = {};
-                          for (const line of lines) {
-                            sel[line.component_id] = line.quantity;
-                          }
-                          setCopySelection(sel);
-                          setCopyMode(true);
-                          setCopyLoading(false);
-                        }}
+                  {copySourceLabel ? (
+                    <span className={styles.copyIndicator}>
+                      Copying from <strong>{copySourceLabel}</strong>{" "}
+                      <button
+                        type="button"
+                        className={styles.startFromLink}
+                        onClick={() => setCopySourceLabel(null)}
                       >
-                        <option value="" disabled>
-                          {copyLoading ? "Loading\u2026" : "Copy from variant\u2026"}
-                        </option>
-                        {sourceBoms.map((b) => (
-                          <option key={b.id} value={b.id}>{b.label}</option>
-                        ))}
-                      </select>
-                    </div>
+                        change
+                      </button>
+                    </span>
+                  ) : (
+                    <>
+                      {siblings.length > 0 && (
+                        <span className={styles.startFromLabel}>Copy from:</span>
+                      )}
+                      {visibleSiblings.map((s) => (
+                        <button
+                          key={s.bomId}
+                          type="button"
+                          className={styles.startFromBtn}
+                          disabled={copyLoading}
+                          onClick={() => pickCopySource(s.bomId, s.label)}
+                        >
+                          {s.label}
+                        </button>
+                      ))}
+                      {hiddenCount > 0 && (
+                        <button
+                          type="button"
+                          className={styles.startFromBtn}
+                          onClick={() => setShowAllSiblings(true)}
+                        >
+                          +{hiddenCount} more
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        className={styles.startFromLink}
+                        onClick={() => setBrowseOpen((o) => !o)}
+                      >
+                        Browse all products…
+                      </button>
+                    </>
                   )}
                 </div>
               )}
               {templateState?.error && (
                 <p className={styles.startFromError}>{templateState.error}</p>
+              )}
+              {!bomId && browseOpen && !copySourceLabel && (
+                <CopySourceBrowser onPick={pickCopySource} />
               )}
 
               <ComponentPicker

@@ -65,7 +65,6 @@ type ComponentOption = {
 };
 
 type TemplateOption = { id: string; name: string; lineCount: number };
-type SourceBomOption = { id: string; label: string };
 
 type PerOperationCost = {
   id: string;
@@ -104,7 +103,6 @@ type Props = {
   routingCosts: RoutingCosts | null;
   allComponents: ComponentOption[];
   templates: TemplateOption[];
-  sourceBoms: SourceBomOption[];
   activeVersion?: number | null;
   /** When false, the yield % input is rendered as read-only — a Growth+ feature. */
   canEditYield?: boolean;
@@ -161,7 +159,6 @@ export default function BomEditor({
   routingCosts,
   allComponents,
   templates,
-  sourceBoms,
   activeVersion,
   canEditYield = true,
 }: Props) {
@@ -318,7 +315,6 @@ export default function BomEditor({
                 bomId={bom.id}
                 components={allComponents}
                 templates={templates}
-                sourceBoms={sourceBoms}
                 buttonLabel="+ Add component"
                 buttonClassName={styles.btnSecondary}
               />

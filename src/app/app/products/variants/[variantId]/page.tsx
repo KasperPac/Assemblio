@@ -17,6 +17,7 @@ import {
   removeNotificationTrigger,
 } from "../../actions";
 import ApplyLaborTemplate from "../../apply-labor-template";
+import { pickBomPerVariant, variantLabel as makeVariantLabel } from "@/lib/bom/copy-sources";
 
 type VariantRecord = {
   id: string;
@@ -98,40 +99,6 @@ type LaborLineRecord = {
     | null;
 };
 
-type SourceBomRecord = {
-  id: string;
-  version: number;
-  status: string;
-  variant:
-    | {
-        id: string;
-        title: string | null;
-        sku: string | null;
-        product:
-          | {
-              title: string;
-            }
-          | Array<{
-              title: string;
-            }>
-          | null;
-      }
-    | Array<{
-        id: string;
-        title: string | null;
-        sku: string | null;
-        product:
-          | {
-              title: string;
-            }
-          | Array<{
-              title: string;
-            }>
-          | null;
-      }>
-    | null;
-};
-
 type ComponentOption = {
   id: string;
   name: string;
@@ -176,7 +143,6 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
   const [
     { data: variant },
     { data: boms },
-    { data: sourceBoms },
     { data: templates },
     { data: allComponents },
     { data: departments },
@@ -194,12 +160,6 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
       .eq("variant_id", variantId)
       .order("version", { ascending: false }),
     supabase
-      .from("product_bom")
-      .select("id,version,status,variant:variant_id(id,title,sku,product:product_id(title))")
-      .eq("tenant_id", tenantId)
-      .order("created_at", { ascending: false })
-      .limit(250),
-    supabase
       .from("bom_template")
       .select("id,name,description,bom_template_line(id)")
       .eq("tenant_id", tenantId)
@@ -216,8 +176,14 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
     notFound();
   }
 
+  const variantProductRaw = (variant as VariantRecord).product;
+  const variantProduct = Array.isArray(variantProductRaw)
+    ? variantProductRaw[0] ?? null
+    : variantProductRaw;
+  const productId = variantProduct?.id ?? null;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [{ data: laborTemplates }, { data: laborTemplateLineCounts }] = await Promise.all([
+  const [{ data: laborTemplates }, { data: laborTemplateLineCounts }, { data: siblingBomRows }] = await Promise.all([
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (supabase as any)
       .from("labor_template")
@@ -229,6 +195,15 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
       .from("labor_template_line")
       .select("template_id")
       .eq("tenant_id", tenantId),
+    productId
+      ? supabase
+          .from("product_bom")
+          .select("id,version,status,is_active,variant:variant_id!inner(id,title,sku,product_id)")
+          .eq("tenant_id", tenantId)
+          .eq("variant.product_id", productId)
+          .neq("variant_id", variantId)
+          .neq("status", "archived")
+      : Promise.resolve({ data: [] }),
   ]);
 
   const countByTemplate = ((laborTemplateLineCounts ?? []) as Array<{ template_id: string }>).reduce<Record<string, number>>(
@@ -320,21 +295,42 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
     })
   );
 
-  const copyOptions = ((sourceBoms ?? []) as SourceBomRecord[]).map((source) => {
-    const sourceVariant = Array.isArray(source.variant)
-      ? source.variant[0] ?? null
-      : source.variant;
-    const sourceProduct = Array.isArray(sourceVariant?.product)
-      ? sourceVariant?.product[0] ?? null
-      : sourceVariant?.product ?? null;
+  type SiblingBomRow = {
+    id: string;
+    version: number;
+    status: string;
+    is_active: boolean;
+    variant:
+      | { id: string; title: string | null; sku: string | null }
+      | Array<{ id: string; title: string | null; sku: string | null }>
+      | null;
+  };
 
-    return {
-      id: source.id,
-      label: `${sourceProduct?.title ?? "Product"} / ${sourceVariant?.title ?? "Variant"}${
-        sourceVariant?.sku ? ` (${sourceVariant.sku})` : ""
-      } - v${source.version} [${source.status}]`,
-    };
+  const siblingMeta = new Map<string, { title: string | null; sku: string | null }>();
+  const siblingPickRows = ((siblingBomRows ?? []) as SiblingBomRow[]).flatMap((row) => {
+    const v = Array.isArray(row.variant) ? row.variant[0] ?? null : row.variant;
+    if (!v) return [];
+    siblingMeta.set(v.id, { title: v.title, sku: v.sku });
+    return [
+      {
+        id: row.id,
+        variant_id: v.id,
+        version: Number(row.version),
+        status: row.status,
+        is_active: row.is_active,
+      },
+    ];
   });
+
+  const siblingOptions = Object.entries(pickBomPerVariant(siblingPickRows))
+    .map(([siblingVariantId, bom]) => {
+      const meta = siblingMeta.get(siblingVariantId);
+      return {
+        bomId: bom.bomId,
+        label: makeVariantLabel(meta?.title ?? null, meta?.sku ?? null),
+      };
+    })
+    .sort((a, b) => a.label.localeCompare(b.label));
 
   const departmentOptions = (departments ?? []) as DepartmentOption[];
 
@@ -625,7 +621,6 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                 routingCosts={routingCosts}
                 allComponents={typedAllComponents}
                 templates={templateOptions}
-                sourceBoms={copyOptions}
                 activeVersion={draftBom ? (activeBom?.version ?? null) : null}
                 canEditYield={canEditYield}
               />
@@ -633,7 +628,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
               <BomSeedPanel
                 targetVariantId={typedVariant.id}
                 variantLabel={variantTitle}
-                sourceBoms={copyOptions}
+                siblings={siblingOptions}
                 templates={templateOptions}
                 components={typedAllComponents}
               />
