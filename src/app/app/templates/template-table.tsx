@@ -5,6 +5,7 @@ import Link from "next/link";
 import StatusBadge from "../_ui/status-badge";
 import { parseQtyInput } from "@/lib/bom/qty-input";
 import { setTemplateLines } from "./actions";
+import type { LaborTemplateLineInput } from "./actions";
 import type { AffectedBom } from "./affected";
 import { LinkControls } from "./link-controls";
 import {
@@ -12,6 +13,12 @@ import {
   RemoveLineButton,
   DeleteTemplateButton,
 } from "./template-forms";
+import {
+  LaborLinesEditor,
+  ModeSwitch,
+  DeleteLaborTemplateButton,
+  type DepartmentOption,
+} from "./labor-template-forms";
 import type { ComponentOption } from "@/app/app/products/_components/component-picker";
 import styles from "./templates.module.css";
 
@@ -224,6 +231,119 @@ function ComponentExpansion({
         <span className={styles.usedBy}>{usedByFooter(template.affected)}</span>
         <DeleteTemplateButton templateId={template.id} usedByCount={template.affected.length} />
       </div>
+    </div>
+  );
+}
+
+export type LaborTemplateRowData = {
+  id: string;
+  name: string;
+  description: string | null;
+  mode: "basic" | "advanced";
+  isLinked: boolean;
+  hasUnpublished: boolean;
+  lines: LaborTemplateLineInput[];
+  affected: AffectedBom[];
+};
+
+export function LaborTemplateTable({
+  templates,
+  departments,
+}: {
+  templates: LaborTemplateRowData[];
+  departments: DepartmentOption[];
+}) {
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  return (
+    <div className={styles.tableCard}>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th>Template</th>
+            <th>Ops</th>
+            <th>Used by</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {templates.map((t) => {
+            const expanded = expandedId === t.id;
+            return (
+              <Fragment key={t.id}>
+                <tr
+                  className={styles.rowClickable}
+                  onClick={() => setExpandedId(expanded ? null : t.id)}
+                  tabIndex={0}
+                  aria-expanded={expanded}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setExpandedId(expanded ? null : t.id);
+                    }
+                  }}
+                >
+                  <td>
+                    <span className={styles.chevron} aria-hidden="true">
+                      {expanded ? "▾" : "▸"}
+                    </span>
+                    <span className={styles.rowName}>{t.name}</span>{" "}
+                    {t.mode === "advanced" ? (
+                      <StatusBadge variant="info">Advanced</StatusBadge>
+                    ) : (
+                      <StatusBadge>Basic</StatusBadge>
+                    )}
+                  </td>
+                  <td>{t.lines.length}</td>
+                  <td>{usedByLabel(t.affected)}</td>
+                  <td>
+                    <span className={styles.badgeGroup}>
+                      {t.isLinked ? (
+                        <StatusBadge variant="success">Linked</StatusBadge>
+                      ) : (
+                        <StatusBadge>Not linked</StatusBadge>
+                      )}
+                      {t.hasUnpublished ? (
+                        <StatusBadge variant="warning">Unpublished changes</StatusBadge>
+                      ) : null}
+                    </span>
+                  </td>
+                </tr>
+                {expanded ? (
+                  <tr className={styles.expRow}>
+                    <td colSpan={4} className={styles.expCell}>
+                      {t.description ? (
+                        <p className={styles.expDesc}>{t.description}</p>
+                      ) : null}
+                      <LaborLinesEditor
+                        templateId={t.id}
+                        mode={t.mode}
+                        existingLines={t.lines}
+                        departments={departments}
+                      />
+                      <div className={styles.expFooter}>
+                        <LinkControls
+                          templateType="labor"
+                          templateId={t.id}
+                          isLinked={t.isLinked}
+                          hasUnpublished={t.hasUnpublished}
+                          affectedBoms={t.affected}
+                        />
+                        <ModeSwitch templateId={t.id} mode={t.mode} />
+                        <span className={styles.usedBy}>{usedByFooter(t.affected)}</span>
+                        <DeleteLaborTemplateButton
+                          templateId={t.id}
+                          usedByCount={t.affected.length}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ) : null}
+              </Fragment>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }

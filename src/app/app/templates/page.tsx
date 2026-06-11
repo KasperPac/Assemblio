@@ -4,17 +4,14 @@ import { getServerTenantContext } from "@/lib/tenant/context";
 import PageHeader from "../_ui/page-header";
 import EmptyState from "../_ui/empty-state";
 import { CreateTemplateButton } from "./template-forms";
-import { ComponentTemplateTable, type ComponentTemplateRowData } from "./template-table";
 import {
-  CreateLaborTemplateButton,
-  ModeSwitch,
-  DeleteLaborTemplateButton,
-  LaborEditorDialog,
-  type DepartmentOption,
-} from "./labor-template-forms";
+  ComponentTemplateTable,
+  LaborTemplateTable,
+  type ComponentTemplateRowData,
+  type LaborTemplateRowData,
+} from "./template-table";
+import { CreateLaborTemplateButton, type DepartmentOption } from "./labor-template-forms";
 import { hasUnpublishedChanges, computeAffectedBoms, unwrap, type LinkedBomRow } from "./affected";
-import type { LaborTemplateLineInput } from "./actions";
-import { LinkControls } from "./link-controls";
 import styles from "./templates.module.css";
 
 type TemplateLine = {
@@ -185,6 +182,27 @@ export default async function TemplatesPage({ searchParams }: Props) {
     };
   });
 
+  const laborRows: LaborTemplateRowData[] = laborTemplates.map((t) => ({
+    id: t.id,
+    name: t.name,
+    description: t.description,
+    mode: t.mode,
+    isLinked: t.is_linked,
+    hasUnpublished: hasUnpublishedChanges(t),
+    affected: computeAffectedBoms(typedLinkedBoms, "labor_template_id", t.id),
+    lines: (laborLinesByTemplate[t.id] ?? []).map((line) => ({
+      department_id: line.department_id,
+      operation_name: line.operation_name,
+      sequence: line.sequence,
+      setup_hours: line.setup_hours,
+      run_hours_per_unit: line.run_hours_per_unit,
+      admin_hours_per_unit: line.admin_hours_per_unit,
+      electricity_kwh_per_unit: line.electricity_kwh_per_unit,
+      gas_units_per_unit: line.gas_units_per_unit,
+      notes: line.notes,
+    })),
+  }));
+
   return (
     <div className={styles.page}>
       <PageHeader
@@ -218,109 +236,7 @@ export default async function TemplatesPage({ searchParams }: Props) {
             message="Create a labor template to define reusable routing operations for BOMs."
           />
         ) : (
-          laborTemplates.map((t) => {
-            const lines = laborLinesByTemplate[t.id] ?? [];
-            const affected = computeAffectedBoms(typedLinkedBoms, "labor_template_id", t.id);
-            const dirty = hasUnpublishedChanges(t);
-
-            // Build the LaborTemplateLineInput array for the editor dialog
-            const editorLines: LaborTemplateLineInput[] = lines.map((line) => ({
-              department_id: line.department_id,
-              operation_name: line.operation_name,
-              sequence: line.sequence,
-              setup_hours: line.setup_hours,
-              run_hours_per_unit: line.run_hours_per_unit,
-              admin_hours_per_unit: line.admin_hours_per_unit,
-              electricity_kwh_per_unit: line.electricity_kwh_per_unit,
-              gas_units_per_unit: line.gas_units_per_unit,
-              notes: line.notes,
-            }));
-
-            return (
-              <section key={t.id} className={styles.templateCard}>
-                <div className={styles.templateTop}>
-                  <div className={styles.templateInfo}>
-                    <div className={styles.templateNameRow}>
-                      <h2>{t.name}</h2>
-                      <span className={styles.lineCountBadge}>{lines.length} operations</span>
-                      <span className={styles.badgeMode}>
-                        {t.mode === "basic" ? "Basic" : "Advanced"}
-                      </span>
-                      <span className={t.is_linked ? styles.badgeLinked : styles.badgeUnlinked}>
-                        {t.is_linked ? "Linked" : "Not linked"}
-                      </span>
-                      {dirty ? (
-                        <span className={styles.badgeDirty}>Unpublished changes</span>
-                      ) : null}
-                    </div>
-                    {t.description ? (
-                      <p className={styles.templateDesc}>{t.description}</p>
-                    ) : null}
-                  </div>
-                </div>
-
-                {lines.length > 0 ? (
-                  <div className={styles.lineList}>
-                    {/* Header row */}
-                    <div className={styles.labGrid}>
-                      <span className={styles.colHeader}>#</span>
-                      <span className={styles.colHeader}>Operation</span>
-                      <span className={styles.colHeader}>Department</span>
-                      <span className={styles.colHeader}>Setup h</span>
-                      <span className={styles.colHeader}>Run h/u</span>
-                      <span />
-                    </div>
-                    {lines.map((line) => {
-                      const dept = unwrap(line.department);
-                      return (
-                        <div key={line.id} className={styles.labGrid}>
-                          <span>{line.sequence}</span>
-                          <span>{line.operation_name}</span>
-                          <span>{dept?.name ?? "—"}</span>
-                          <span>
-                            {t.mode === "basic" ? "—" : line.setup_hours}
-                          </span>
-                          <span>
-                            {t.mode === "basic" ? "—" : line.run_hours_per_unit}
-                          </span>
-                          <span />
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className={styles.emptyLines}>No operations yet.</div>
-                )}
-
-                <div className={styles.cardFooter}>
-                  <LaborEditorDialog
-                    templateId={t.id}
-                    templateName={t.name}
-                    mode={t.mode}
-                    existingLines={editorLines}
-                    departments={departmentOptions}
-                  />
-                  <LinkControls
-                    templateType="labor"
-                    templateId={t.id}
-                    isLinked={t.is_linked}
-                    hasUnpublished={dirty}
-                    affectedBoms={affected}
-                  />
-                  <ModeSwitch templateId={t.id} mode={t.mode} />
-                  <span className={styles.usedBy}>
-                    {affected.length > 0
-                      ? `Used by ${affected.length} BOM${affected.length === 1 ? "" : "s"}`
-                      : "Not used yet"}
-                  </span>
-                  <DeleteLaborTemplateButton
-                    templateId={t.id}
-                    usedByCount={affected.length}
-                  />
-                </div>
-              </section>
-            );
-          })
+          <LaborTemplateTable templates={laborRows} departments={departmentOptions} />
         )
       ) : typedTemplates.length === 0 ? (
         <EmptyState
