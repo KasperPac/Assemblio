@@ -3,6 +3,7 @@ import { shopifyGraphqlRequest } from "./client";
 import { reconcileOrderAllocations, releaseOrderAllocations } from "@/lib/allocation/reconcile-order";
 import { resolveOrderDate, isHistoricalOrder } from "./order-dates";
 import { getWeekStart } from "@/lib/dates";
+import { mapProductStatus } from "./product-status";
 
 type SyncResult = {
   products: number;
@@ -18,6 +19,7 @@ type ShopifyProductNode = {
   id: string;
   title: string;
   description: string;
+  status: string | null;
   featuredImage: { url: string | null } | null;
   variants: { nodes: Array<{ id: string; title: string | null; sku: string | null; price: string | null }> };
 };
@@ -77,6 +79,7 @@ async function upsertProducts(
     title: string;
     description: string;
     image_url: string | null;
+    status: string;
   }>
 ): Promise<Map<string, string>> {
   const now = new Date().toISOString();
@@ -115,6 +118,7 @@ async function fetchProducts(shopDomain: string, accessToken: string) {
           id
           title
           description
+          status
           featuredImage { url }
           variants(first: 100) {
             nodes { id title sku price }
@@ -223,6 +227,7 @@ export async function syncShopifyStoreData(
         title: product.title,
         description: product.description,
         image_url: product.featuredImage?.url ?? null,
+        status: mapProductStatus(product.status),
       }))
     );
   }
