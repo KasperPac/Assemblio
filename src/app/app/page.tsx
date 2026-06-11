@@ -1,3 +1,5 @@
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import styles from "./dashboard.module.css";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import Link from "next/link";
@@ -27,6 +29,9 @@ function getWeekBounds(weeksAgo: number): { start: Date; end: Date } {
 }
 
 export default async function DashboardPage() {
+  const ua = (await headers()).get("user-agent") ?? "";
+  if (/Mobi|Android|iPhone|iPad/i.test(ua)) redirect("/app/scan");
+
   const context = await getServerTenantContext();
   if (!context || !context.tenantId) {
     return (
