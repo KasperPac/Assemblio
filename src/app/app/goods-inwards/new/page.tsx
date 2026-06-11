@@ -28,7 +28,7 @@ export default async function NewReceiptPage({ searchParams }: Props) {
       .order("name"),
     supabase.from("location").select("id, name, is_default").eq("tenant_id", tenantId).order("name"),
     supabase
-      .from("supplier_component")
+      .from("supplier_components")
       .select("supplier_id, component_id")
       .eq("tenant_id", tenantId),
     supabase
