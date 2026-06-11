@@ -194,6 +194,21 @@
   }
 }
 
+.sortLink {
+  color: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.sortLink:hover {
+  color: var(--ink-strong);
+}
+
+.sortIndicator {
+  color: var(--ink-muted);
+}
+
 /* ── Sync result banner ────────────────────────────── */
 
 .syncBanner {

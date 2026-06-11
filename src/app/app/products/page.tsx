@@ -5,6 +5,8 @@ import styles from "./products.module.css";
 import PageHeader from "@/app/app/_ui/page-header";
 import EmptyState from "@/app/app/_ui/empty-state";
 import ProductFilters from "./product-filters";
+import SortableHeader from "./sortable-header";
+import { parseSortParams, sortProductRows } from "./sort";
 
 type ProductRow = {
   id: string;
@@ -57,6 +59,8 @@ type Props = {
   searchParams?: Promise<{
     q?: string;
     status?: string;
+    sort?: string;
+    dir?: string;
     shopify?: string;
     products?: string;
     orders?: string;
@@ -68,6 +72,7 @@ export default async function ProductsPage({ searchParams }: Props) {
   const params = (await searchParams) ?? {};
   const q = (params.q ?? "").trim().toLowerCase();
   const statusFilter = (params.status ?? "all").toLowerCase();
+  const { sort: sortKey, dir: sortDir } = parseSortParams(params.sort, params.dir);
   const syncStatus = params.shopify ?? null;
   const syncProducts = params.products ?? "0";
   const syncOrders = params.orders ?? "0";
@@ -310,6 +315,37 @@ export default async function ProductsPage({ searchParams }: Props) {
     return true;
   });
 
+  const rows = filteredProducts.map((product) => {
+    const productVariants = variantsByProduct[product.id] ?? [];
+    const sellPrice = sellPriceByProduct[product.id] ?? null;
+    const variantsWithGp = productVariants.filter((v) => gpByVariant.has(v.id));
+    const avgMatGpPct =
+      variantsWithGp.length > 0
+        ? variantsWithGp.reduce((sum, v) => sum + gpByVariant.get(v.id)!.matGpPct, 0) /
+          variantsWithGp.length
+        : null;
+    const avgActualGpPct =
+      variantsWithGp.length > 0
+        ? variantsWithGp.reduce((sum, v) => sum + gpByVariant.get(v.id)!.actualGpPct, 0) /
+          variantsWithGp.length
+        : null;
+    return {
+      id: product.id,
+      title: product.title,
+      image_url: product.image_url,
+      status: product.status,
+      variantCount: productVariants.length,
+      sellPrice,
+      matGpPct: avgMatGpPct,
+      actualGpPct: avgActualGpPct,
+    };
+  });
+
+  const sortedRows = sortProductRows(rows, sortKey, sortDir);
+
+  const gpClassFor = (value: number | null) =>
+    value == null ? "" : value >= 0.3 ? styles.gpGood : value >= 0.1 ? styles.gpWarn : styles.gpBad;
+
   return (
     <div className={styles.page}>
       <PageHeader
@@ -340,81 +376,59 @@ export default async function ProductsPage({ searchParams }: Props) {
 
       <div className={styles.table}>
         <div className={styles.tableHeader}>
-          <span>Products</span>
-          <span>Variants</span>
-          <span>Status</span>
-          <span>Sell Price</span>
-          <span>Material GP %</span>
-          <span>Actual GP %</span>
+          <SortableHeader label="Products" sortKey="title" />
+          <SortableHeader label="Variants" sortKey="variants" />
+          <SortableHeader label="Status" sortKey="status" />
+          <SortableHeader label="Sell Price" sortKey="price" />
+          <SortableHeader label="Material GP %" sortKey="mat_gp" />
+          <SortableHeader label="Actual GP %" sortKey="actual_gp" />
         </div>
         {productsError ? (
           <EmptyState title="Failed to load" message={`Could not load products: ${productsError}`} />
         ) : filteredProducts.length === 0 ? (
           <EmptyState title="No results" message="No products match your filters." />
         ) : (
-          filteredProducts.map((product) => {
-            const productVariants = variantsByProduct[product.id] ?? [];
-            const sellPrice = sellPriceByProduct[product.id] ?? null;
-            const variantsWithGp = productVariants.filter((v) => gpByVariant.has(v.id));
-            const avgMatGpPct =
-              variantsWithGp.length > 0
-                ? variantsWithGp.reduce((sum, v) => sum + gpByVariant.get(v.id)!.matGpPct, 0) /
-                  variantsWithGp.length
-                : null;
-            const avgActualGpPct =
-              variantsWithGp.length > 0
-                ? variantsWithGp.reduce((sum, v) => sum + gpByVariant.get(v.id)!.actualGpPct, 0) /
-                  variantsWithGp.length
-                : null;
-            const gpClassFor = (value: number | null) =>
-              value == null ? "" : value >= 0.3 ? styles.gpGood : value >= 0.1 ? styles.gpWarn : styles.gpBad;
-            return (
-              <div key={product.id} className={styles.tableRow}>
-                <Link className={styles.productCell} href={`/app/products/${product.id}`}>
-                  <div className={styles.thumb}>
-                    {product.image_url ? (
-                      <Image
-                        src={product.image_url}
-                        alt={product.title}
-                        width={44}
-                        height={44}
-                      />
-                    ) : (
-                      <span>{product.title.slice(0, 1)}</span>
-                    )}
-                  </div>
-                  <span className={styles.productTitle}>{product.title}</span>
-                </Link>
+          sortedRows.map((row) => (
+            <div key={row.id} className={styles.tableRow}>
+              <Link className={styles.productCell} href={`/app/products/${row.id}`}>
+                <div className={styles.thumb}>
+                  {row.image_url ? (
+                    <Image src={row.image_url} alt={row.title} width={44} height={44} />
+                  ) : (
+                    <span>{row.title.slice(0, 1)}</span>
+                  )}
+                </div>
+                <span className={styles.productTitle}>{row.title}</span>
+              </Link>
 
-                <span className={styles.variantCount} data-label="Variants">{productVariants.length}</span>
+              <span className={styles.variantCount} data-label="Variants">{row.variantCount}</span>
 
-                <span
-                  className={`${styles.statusBadge} ${
-                    product.status === "active"
-                      ? styles.statusActive
-                      : product.status === "draft"
-                        ? styles.statusDraft
-                        : styles.statusArchived
-                  }`}
-                  data-label="Status"
-                >
-                  {product.status.toUpperCase()}
-                </span>
+              <span
+                className={`${styles.statusBadge} ${
+                  row.status === "active"
+                    ? styles.statusActive
+                    : row.status === "draft"
+                      ? styles.statusDraft
+                      : styles.statusArchived
+                }`}
+                data-label="Status"
+              >
+                {row.status.toUpperCase()}
+              </span>
 
-                <span className={styles.sellPriceCell} data-label="Sell Price">
-                  {sellPrice != null ? formatCurrency(sellPrice) : "—"}
-                </span>
+              <span className={styles.sellPriceCell} data-label="Sell Price">
+                {row.sellPrice != null ? formatCurrency(row.sellPrice) : "—"}
+              </span>
 
-                <span className={`${styles.gpCell} ${gpClassFor(avgMatGpPct)}`} data-label="Mat. GP %">
-                  {avgMatGpPct != null ? `${(avgMatGpPct * 100).toFixed(0)}%` : "—"}
-                </span>
+              <span className={`${styles.gpCell} ${gpClassFor(row.matGpPct)}`} data-label="Mat. GP %">
+                {row.matGpPct != null ? `${(row.matGpPct * 100).toFixed(0)}%` : "—"}
+              </span>
 
-                <span className={`${styles.gpCell} ${gpClassFor(avgActualGpPct)}`} data-label="Actual GP %">
-                  {avgActualGpPct != null ? `${(avgActualGpPct * 100).toFixed(0)}%` : "—"}
-                </span>
-              </div>
-            );
-          })
+              <span className={`${styles.gpCell} ${gpClassFor(row.actualGpPct)}`} data-label="Actual GP %">
+                {row.actualGpPct != null ? `${(row.actualGpPct * 100).toFixed(0)}%` : "—"}
+              </span>
+            </div>
+          ))
         )}
       </div>
     </div>
