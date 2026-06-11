@@ -29,6 +29,7 @@ export default function CopySourceBrowser({ onPick }: Props) {
   >({});
   const [loadingProduct, setLoadingProduct] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const seqRef = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -44,25 +45,35 @@ export default function CopySourceBrowser({ onPick }: Props) {
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
+
   function handleSearchChange(value: string) {
     setSearch(value);
     setError(null);
     if (debounceRef.current) clearTimeout(debounceRef.current);
     const trimmed = value.trim();
     if (trimmed.length < 2) {
+      seqRef.current++;
       setResults(null);
       setSearching(false);
       return;
     }
     setSearching(true);
     debounceRef.current = setTimeout(async () => {
+      const seq = ++seqRef.current;
       try {
         const groups = await searchCopySources(trimmed);
+        if (seq !== seqRef.current) return;
         setResults(groups);
       } catch {
+        if (seq !== seqRef.current) return;
         setError("Search failed.");
       } finally {
-        setSearching(false);
+        if (seq === seqRef.current) setSearching(false);
       }
     }, 300);
   }
@@ -145,11 +156,12 @@ export default function CopySourceBrowser({ onPick }: Props) {
                 type="button"
                 className={styles.browseProductRow}
                 onClick={() => toggleProduct(p.productId)}
+                aria-expanded={expanded === p.productId}
               >
                 <span>{p.productTitle}</span>
                 <span className={styles.browseCount}>
                   {p.variantCount} variant{p.variantCount === 1 ? "" : "s"}{" "}
-                  {expanded === p.productId ? "▾" : "▸"}
+                  <span aria-hidden="true">{expanded === p.productId ? "▾" : "▸"}</span>
                 </span>
               </button>
               {expanded === p.productId && (
