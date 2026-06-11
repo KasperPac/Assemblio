@@ -29,6 +29,27 @@ function isDone(s: string) {
   return s === "completed" || s === "archived";
 }
 
+function StocktakeBannerIcon() {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M11 18H3" />
+      <path d="m15 18 2 2 4-4" />
+      <path d="M16 12H3" />
+      <path d="M16 6H3" />
+    </svg>
+  );
+}
+
 export default async function StocktakePage() {
   const context = await getServerTenantContext();
   if (!context) return null;
@@ -90,7 +111,9 @@ export default async function StocktakePage() {
       {showBanner && (
         <div className={styles.banner}>
           <div className={styles.bannerInner}>
-            <span className={styles.bannerIcon}>📦</span>
+            <span className={styles.bannerIcon}>
+              <StocktakeBannerIcon />
+            </span>
             <div>
               <strong className={styles.bannerTitle}>Set up your opening stock</strong>
               <p className={styles.bannerDesc}>
