@@ -233,7 +233,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
           .from("product_bom_component")
           .select("id,product_bom_id,component_id,quantity,yield_pct,component:component_id(name,sku,unit,cost_per_unit)")
           .in("product_bom_id", bomIds)
-          .order("created_at", { ascending: true });
+          .order("position", { ascending: true });
 
   const { data: laborLines } =
     bomIds.length === 0
