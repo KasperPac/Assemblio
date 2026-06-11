@@ -9,7 +9,15 @@ import {
   DeleteTemplateButton,
   TemplateLightbox,
 } from "./template-forms";
+import {
+  CreateLaborTemplateButton,
+  ModeSwitch,
+  DeleteLaborTemplateButton,
+  LaborEditorDialog,
+  type DepartmentOption,
+} from "./labor-template-forms";
 import { hasUnpublishedChanges, computeAffectedBoms, unwrap, type LinkedBomRow } from "./affected";
+import type { LaborTemplateLineInput } from "./actions";
 import styles from "./templates.module.css";
 
 type TemplateLine = {
@@ -32,6 +40,35 @@ type ComponentTemplate = {
   created_at: string;
 };
 
+type LaborTemplate = {
+  id: string;
+  name: string;
+  description: string | null;
+  mode: "basic" | "advanced";
+  is_linked: boolean;
+  lines_updated_at: string | null;
+  last_published_at: string | null;
+  created_at: string;
+};
+
+type LaborTemplateLine = {
+  id: string;
+  template_id: string;
+  department_id: string;
+  operation_name: string;
+  sequence: number;
+  setup_hours: number;
+  run_hours_per_unit: number;
+  admin_hours_per_unit: number;
+  electricity_kwh_per_unit: number;
+  gas_units_per_unit: number;
+  notes: string | null;
+  department:
+    | { id: string; name: string }
+    | Array<{ id: string; name: string }>
+    | null;
+};
+
 type Props = {
   searchParams?: Promise<{ tab?: string }>;
 };
@@ -49,6 +86,9 @@ export default async function TemplatesPage({ searchParams }: Props) {
     { data: templateLines },
     { data: components },
     { data: linkedBoms },
+    { data: laborTemplatesRaw },
+    { data: laborTemplateLinesRaw },
+    { data: departmentsRaw },
   ] = await Promise.all([
     supabase
       .from("bom_template")
@@ -72,13 +112,41 @@ export default async function TemplatesPage({ searchParams }: Props) {
       )
       .eq("tenant_id", tenantId)
       .or("component_template_id.not.is.null,labor_template_id.not.is.null"),
+    supabase
+      .from("labor_template")
+      .select("id,name,description,mode,is_linked,lines_updated_at,last_published_at,created_at")
+      .eq("tenant_id", tenantId)
+      .order("name"),
+    supabase
+      .from("labor_template_line")
+      .select(
+        "id,template_id,department_id,operation_name,sequence,setup_hours,run_hours_per_unit,admin_hours_per_unit,electricity_kwh_per_unit,gas_units_per_unit,notes,department:department_id(id,name)"
+      )
+      .eq("tenant_id", tenantId)
+      .order("sequence", { ascending: true }),
+    supabase
+      .from("department")
+      .select("id,name")
+      .eq("tenant_id", tenantId)
+      .eq("is_active", true)
+      .order("name"),
   ]);
 
   const typedTemplates = (templates ?? []) as ComponentTemplate[];
   const typedLinkedBoms = (linkedBoms ?? []) as LinkedBomRow[];
+  const laborTemplates = (laborTemplatesRaw ?? []) as LaborTemplate[];
+  const laborTemplateLines = (laborTemplateLinesRaw ?? []) as LaborTemplateLine[];
+  const departmentOptions = (departmentsRaw ?? []) as DepartmentOption[];
 
   const linesByTemplate = ((templateLines ?? []) as TemplateLine[]).reduce<
     Record<string, TemplateLine[]>
+  >((acc, line) => {
+    (acc[line.template_id] ??= []).push(line);
+    return acc;
+  }, {});
+
+  const laborLinesByTemplate = laborTemplateLines.reduce<
+    Record<string, LaborTemplateLine[]>
   >((acc, line) => {
     (acc[line.template_id] ??= []).push(line);
     return acc;
@@ -103,7 +171,9 @@ export default async function TemplatesPage({ searchParams }: Props) {
         eyebrow="Products"
         title="Templates"
         description="Reusable component packs and labor routings for BOMs."
-        actions={tab === "components" ? <CreateTemplateButton /> : null}
+        actions={
+          tab === "components" ? <CreateTemplateButton /> : <CreateLaborTemplateButton />
+        }
       />
 
       <div className={styles.tabBar}>
@@ -117,15 +187,114 @@ export default async function TemplatesPage({ searchParams }: Props) {
           href="/app/templates?tab=labor"
           className={tab === "labor" ? styles.tabActive : styles.tab}
         >
-          Labor &amp; Routing (0)
+          Labor &amp; Routing ({laborTemplates.length})
         </Link>
       </div>
 
       {tab === "labor" ? (
-        <EmptyState
-          title="No labor templates yet"
-          message="Labor & routing templates arrive in the next step."
-        />
+        laborTemplates.length === 0 ? (
+          <EmptyState
+            title="No labor templates yet"
+            message="Create a labor template to define reusable routing operations for BOMs."
+          />
+        ) : (
+          laborTemplates.map((t) => {
+            const lines = laborLinesByTemplate[t.id] ?? [];
+            const affected = computeAffectedBoms(typedLinkedBoms, "labor_template_id", t.id);
+            const dirty = hasUnpublishedChanges(t);
+
+            // Build the LaborTemplateLineInput array for the editor dialog
+            const editorLines: LaborTemplateLineInput[] = lines.map((line) => ({
+              department_id: line.department_id,
+              operation_name: line.operation_name,
+              sequence: line.sequence,
+              setup_hours: line.setup_hours,
+              run_hours_per_unit: line.run_hours_per_unit,
+              admin_hours_per_unit: line.admin_hours_per_unit,
+              electricity_kwh_per_unit: line.electricity_kwh_per_unit,
+              gas_units_per_unit: line.gas_units_per_unit,
+              notes: line.notes,
+            }));
+
+            return (
+              <section key={t.id} className={styles.templateCard}>
+                <div className={styles.templateTop}>
+                  <div className={styles.templateInfo}>
+                    <div className={styles.templateNameRow}>
+                      <h2>{t.name}</h2>
+                      <span className={styles.lineCountBadge}>{lines.length} operations</span>
+                      <span className={styles.badgeMode}>
+                        {t.mode === "basic" ? "Basic" : "Advanced"}
+                      </span>
+                      <span className={t.is_linked ? styles.badgeLinked : styles.badgeUnlinked}>
+                        {t.is_linked ? "Linked" : "Not linked"}
+                      </span>
+                      {dirty ? (
+                        <span className={styles.badgeDirty}>Unpublished changes</span>
+                      ) : null}
+                    </div>
+                    {t.description ? (
+                      <p className={styles.templateDesc}>{t.description}</p>
+                    ) : null}
+                  </div>
+                </div>
+
+                {lines.length > 0 ? (
+                  <div className={styles.lineList}>
+                    {/* Header row */}
+                    <div className={styles.labGrid}>
+                      <span className={styles.colHeader}>#</span>
+                      <span className={styles.colHeader}>Operation</span>
+                      <span className={styles.colHeader}>Department</span>
+                      <span className={styles.colHeader}>Setup h</span>
+                      <span className={styles.colHeader}>Run h/u</span>
+                      <span />
+                    </div>
+                    {lines.map((line) => {
+                      const dept = unwrap(line.department);
+                      return (
+                        <div key={line.id} className={styles.labGrid}>
+                          <span>{line.sequence}</span>
+                          <span>{line.operation_name}</span>
+                          <span>{dept?.name ?? "—"}</span>
+                          <span>
+                            {t.mode === "basic" ? "—" : line.setup_hours}
+                          </span>
+                          <span>
+                            {t.mode === "basic" ? "—" : line.run_hours_per_unit}
+                          </span>
+                          <span />
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className={styles.emptyLines}>No operations yet.</div>
+                )}
+
+                <div className={styles.cardFooter}>
+                  <LaborEditorDialog
+                    templateId={t.id}
+                    templateName={t.name}
+                    mode={t.mode}
+                    existingLines={editorLines}
+                    departments={departmentOptions}
+                  />
+                  <ModeSwitch templateId={t.id} mode={t.mode} />
+                  <span className={styles.usedBy}>
+                    {affected.length > 0
+                      ? `Used by ${affected.length} BOM${affected.length === 1 ? "" : "s"}`
+                      : "Not used yet"}
+                  </span>
+                  <DeleteLaborTemplateButton
+                    templateId={t.id}
+                    usedByCount={affected.length}
+                  />
+                </div>
+              </section>
+            );
+          })
+        )
       ) : typedTemplates.length === 0 ? (
         <EmptyState
           title="No templates yet"

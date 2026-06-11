@@ -417,3 +417,51 @@
 .inlineForm {
   display: inline;
 }
+
+/* Labor editor dialog — wider variant */
+.dialogInnerWide {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 920px;
+  width: 92vw;
+}
+
+.dialogSub {
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+  margin: 0;
+}
+
+.laborEditor {
+  display: grid;
+  gap: 10px;
+}
+
+.laborEditorRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: end;
+  padding: 10px;
+  background: var(--surface-1);
+  border-radius: var(--radius-lg);
+}
+
+/* Labor card line grid: # / Operation / Department / Setup h / Run h/u / (remove col) */
+.labGrid {
+  display: grid;
+  grid-template-columns: 0.4fr 1.6fr 1.4fr 0.8fr 0.8fr 0.4fr;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Caps label for table headers */
+.colHeader {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  color: var(--ink-muted);
+}
