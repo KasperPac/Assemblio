@@ -20,9 +20,9 @@
 }
 
 .templateCard {
-  border: 1px solid var(--stroke-strong);
+  border: 1px solid var(--stroke-card);
   border-radius: var(--radius-xl);
-  background: var(--surface-1);
+  background: var(--bg-card);
   box-shadow: var(--shadow-card);
   overflow: hidden;
 }

@@ -55,7 +55,7 @@ export async function restoreBom(formData: FormData) {
     .eq("id", id);
 
   revalidatePath("/app/trash");
-  revalidatePath("/app/bom");
+  revalidatePath("/app/templates");
   revalidatePath("/app");
 }
 
@@ -179,7 +179,7 @@ export async function emptyTrash() {
   });
 
   revalidatePath("/app/trash");
-  revalidatePath("/app/bom");
+  revalidatePath("/app/templates");
   revalidatePath("/app/purchasing");
   revalidatePath("/app/goods-inwards");
   revalidatePath("/app/stocktake");
