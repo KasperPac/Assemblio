@@ -28,7 +28,7 @@ export default function SearchInput({ param, placeholder, ariaLabel, className }
       else params.delete(param);
       params.delete("page");
       const qs = params.toString();
-      router.replace(qs ? `${pathname}?${qs}` : pathname);
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     }, 300);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
