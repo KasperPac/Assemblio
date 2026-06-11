@@ -11,6 +11,7 @@ import {
   updateBomComponentYieldPct,
 } from "@/app/app/bom/actions";
 import { duplicateBomAsDraft } from "@/app/app/products/actions";
+import { parseQtyInput } from "@/lib/bom/qty-input";
 import BomLightbox from "./bom-lightbox";
 import styles from "./bom-editor.module.css";
 
@@ -118,6 +119,7 @@ export default function BomEditor({
   const [localState, setLocalState] = useState(
     () => new Map(bom.lines.map((line) => [line.id, { quantity: line.quantity, yieldPct: line.yield_pct }]))
   );
+  const [qtyDrafts, setQtyDrafts] = useState<Map<string, string>>(new Map());
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const saveBomDialogRef = useRef<HTMLDialogElement>(null);
@@ -368,20 +370,44 @@ export default function BomEditor({
                         <button
                           type="button"
                           onClick={() => {
-                            const newQty = Math.max(1, local.quantity - 1);
+                            const newQty = local.quantity - 1;
+                            if (newQty <= 0) return;
                             updateLocal(line.id, { quantity: newQty });
                             submitQty(newQty);
+                            setQtyDrafts((prev) => {
+                              const next = new Map(prev);
+                              next.delete(line.id);
+                              return next;
+                            });
                           }}
                         >
                           −
                         </button>
                         <input
                           type="number"
-                          min={1}
-                          value={local.quantity}
+                          step="any"
+                          inputMode="decimal"
+                          value={qtyDrafts.get(line.id) ?? String(local.quantity)}
                           className={styles.stepperInput}
-                          onChange={(event) => updateLocal(line.id, { quantity: Math.max(1, Number(event.target.value)) })}
-                          onBlur={(event) => submitQty(Number(event.target.value))}
+                          onChange={(event) => {
+                            const raw = event.target.value;
+                            setQtyDrafts((prev) => {
+                              const next = new Map(prev);
+                              next.set(line.id, raw);
+                              return next;
+                            });
+                            const parsed = parseQtyInput(raw);
+                            if (parsed !== null) updateLocal(line.id, { quantity: parsed });
+                          }}
+                          onBlur={(event) => {
+                            const parsed = parseQtyInput(event.target.value);
+                            setQtyDrafts((prev) => {
+                              const next = new Map(prev);
+                              next.delete(line.id);
+                              return next;
+                            });
+                            if (parsed !== null) submitQty(parsed);
+                          }}
                         />
                         <button
                           type="button"
@@ -389,6 +415,11 @@ export default function BomEditor({
                             const newQty = local.quantity + 1;
                             updateLocal(line.id, { quantity: newQty });
                             submitQty(newQty);
+                            setQtyDrafts((prev) => {
+                              const next = new Map(prev);
+                              next.delete(line.id);
+                              return next;
+                            });
                           }}
                         >
                           +
