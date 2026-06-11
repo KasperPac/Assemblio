@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 type BomState = {
   error?: string;
@@ -37,7 +38,9 @@ export async function createBom(
   if (!context) {
     return { error: "Missing tenant context." };
   }
-  const { supabase, tenantId } = context;
+  const { supabase: regularClient, tenantId, role } = context;
+  // Super-admins viewing as a tenant bypass RLS via the admin client.
+  const supabase = role === "super_admin" ? createSupabaseAdminClient() : regularClient;
 
   let version = requestedVersion;
   if (!version || version <= 0) {

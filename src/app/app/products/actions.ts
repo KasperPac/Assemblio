@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 type BomActionState = {
@@ -33,34 +34,24 @@ async function requireBomEditor() {
     return { error: "Missing tenant context." };
   }
 
-  const { supabase, tenantId: _tenantId } = context;
+  const { supabase, tenantId: _tenantId, role } = context;
   if (!_tenantId) {
     return { error: "Missing tenant context." };
   }
   const tenantId: string = _tenantId;
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
-  if (!user) {
-    return { error: "Authentication required." };
-  }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  const role = profile?.role ?? "member";
   if (!BOM_EDITOR_ROLES.has(role)) {
     return {
       error: "Only admin and super_admin can create or copy BOMs.",
     };
   }
 
+  // Super-admins viewing as a tenant use the admin client to bypass RLS,
+  // since their JWT may not carry the viewed tenant's membership claims.
+  const db = role === "super_admin" ? createSupabaseAdminClient() : supabase;
+
   return {
-    supabase,
+    supabase: db,
     tenantId,
   };
 }
