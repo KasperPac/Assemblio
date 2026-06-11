@@ -320,7 +320,7 @@ export default async function ProductsPage({ searchParams }: Props) {
         </div>
       )}
 
-      <ProductFilters defaultQ={params.q} defaultFilter={filter} />
+      <ProductFilters />
 
       <div className={styles.table}>
         <div className={styles.tableHeader}>
