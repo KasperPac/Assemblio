@@ -16,6 +16,7 @@ import {
   upsertNotificationTrigger,
   removeNotificationTrigger,
 } from "../../actions";
+import ApplyLaborTemplate from "../../apply-labor-template";
 
 type VariantRecord = {
   id: string;
@@ -214,6 +215,36 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
   if (!variant) {
     notFound();
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [{ data: laborTemplates }, { data: laborTemplateLineCounts }] = await Promise.all([
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (supabase as any)
+      .from("labor_template")
+      .select("id,name,mode")
+      .eq("tenant_id", tenantId)
+      .order("name"),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (supabase as any)
+      .from("labor_template_line")
+      .select("template_id")
+      .eq("tenant_id", tenantId),
+  ]);
+
+  const countByTemplate = ((laborTemplateLineCounts ?? []) as Array<{ template_id: string }>).reduce<Record<string, number>>(
+    (acc, row) => {
+      acc[row.template_id] = (acc[row.template_id] ?? 0) + 1;
+      return acc;
+    },
+    {}
+  );
+
+  const laborTemplateOptions = ((laborTemplates ?? []) as Array<{ id: string; name: string; mode: string }>).map((t) => ({
+    id: t.id as string,
+    name: t.name as string,
+    mode: t.mode as "basic" | "advanced",
+    operationCount: countByTemplate[t.id] ?? 0,
+  }));
 
   const typedVariant = variant as VariantRecord;
   const typedProduct = Array.isArray(typedVariant.product)
@@ -731,6 +762,11 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
                             <span className={styles.meta}>
                               {laborRows.length} operation{laborRows.length === 1 ? "" : "s"}
                             </span>
+                            <ApplyLaborTemplate
+                              productBomId={bom.id}
+                              variantId={typedVariant.id}
+                              templates={laborTemplateOptions}
+                            />
                           </div>
                           <div className={styles.routingTable}>
                             <div className={styles.routingTableHeader}>

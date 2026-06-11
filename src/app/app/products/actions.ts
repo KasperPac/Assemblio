@@ -823,3 +823,102 @@ export async function removeNotificationTrigger(formData: FormData) {
   revalidatePath("/app/products");
   redirectVariantResult(variantId, { tab: "notifications", notifSuccess: encodeMessage("Notification removed.") });
 }
+
+export async function applyLaborTemplate(formData: FormData) {
+  const productBomId = formData.get("product_bom_id")?.toString() ?? "";
+  const templateId = formData.get("template_id")?.toString() ?? "";
+  const variantId = formData.get("variant_id")?.toString() ?? "";
+
+  if (!productBomId || !templateId || !variantId) {
+    redirectVariantResult(variantId || "", {
+      laborError: encodeMessage("BOM and template are required."),
+    });
+  }
+
+  const context = await requireBomEditor();
+  if ("error" in context) {
+    redirectVariantResult(variantId, {
+      laborError: encodeMessage(context.error ?? "Authorization failed."),
+    });
+  }
+
+  const { supabase, tenantId } = context as {
+    supabase: SupabaseClient;
+    tenantId: string;
+  };
+
+  const [{ data: bom }, { data: template }] = await Promise.all([
+    supabase
+      .from("product_bom")
+      .select("id,labor_template_id")
+      .eq("tenant_id", tenantId)
+      .eq("id", productBomId)
+      .maybeSingle(),
+    supabase
+      .from("labor_template")
+      .select("id,name")
+      .eq("tenant_id", tenantId)
+      .eq("id", templateId)
+      .maybeSingle(),
+  ]);
+
+  if (!bom?.id) {
+    redirectVariantResult(variantId, { laborError: encodeMessage("BOM not found.") });
+  }
+  if (!template?.id) {
+    redirectVariantResult(variantId, { laborError: encodeMessage("Labor template not found.") });
+  }
+
+  // Always delete existing provenance lines when any template has been applied before
+  // (covers re-applying the same template — prevents duplicate lines).
+  if (bom!.labor_template_id) {
+    const { error: clearError } = await supabase
+      .from("product_bom_labor")
+      .delete()
+      .eq("tenant_id", tenantId)
+      .eq("product_bom_id", productBomId)
+      .not("source_template_line_id", "is", null);
+    if (clearError) {
+      redirectVariantResult(variantId, { laborError: encodeMessage(clearError.message) });
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: templateLines, error: linesError } = await (supabase as any)
+    .from("labor_template_line")
+    .select(
+      "id,department_id,operation_name,sequence,setup_hours,run_hours_per_unit,admin_hours_per_unit,electricity_kwh_per_unit,gas_units_per_unit,blocked_by,notes"
+    )
+    .eq("tenant_id", tenantId)
+    .eq("template_id", templateId);
+  if (linesError) {
+    redirectVariantResult(variantId, { laborError: encodeMessage((linesError as { message: string }).message) });
+  }
+
+  const rows = ((templateLines ?? []) as Array<{ id: string; department_id: string; operation_name: string; sequence: number; setup_hours: number; run_hours_per_unit: number; admin_hours_per_unit: number; electricity_kwh_per_unit: number; gas_units_per_unit: number; blocked_by: number[]; notes: string | null }>).map(({ id, ...fields }) => ({
+    ...fields,
+    tenant_id: tenantId,
+    product_bom_id: productBomId,
+    source_template_line_id: id,
+  }));
+
+  if (rows.length > 0) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: insertError } = await (supabase as any).from("product_bom_labor").insert(rows);
+    if (insertError) {
+      redirectVariantResult(variantId, { laborError: encodeMessage((insertError as { message: string }).message) });
+    }
+  }
+
+  const { error: linkError } = await supabase
+    .from("product_bom")
+    .update({ labor_template_id: templateId } as Record<string, unknown>)
+    .eq("tenant_id", tenantId)
+    .eq("id", productBomId);
+  if (linkError) {
+    redirectVariantResult(variantId, { laborError: encodeMessage(linkError.message) });
+  }
+
+  revalidatePath(`/app/products/variants/${variantId}`);
+  revalidatePath("/app/costing");
+}
