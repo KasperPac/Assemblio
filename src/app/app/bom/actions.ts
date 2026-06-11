@@ -74,7 +74,7 @@ export async function createBom(
     return { error: error.message };
   }
 
-  revalidatePath("/app/bom");
+  revalidatePath("/app/templates");
   revalidatePath("/app");
   return { success: "BOM created." };
 }
@@ -102,7 +102,7 @@ export async function updateBomStatus(formData: FormData) {
       .eq("id", bomId);
   }
 
-  revalidatePath("/app/bom");
+  revalidatePath("/app/templates");
   revalidatePath("/app");
   revalidatePath("/app/trash");
 }
@@ -134,7 +134,7 @@ export async function setBomActive(formData: FormData) {
     .eq("tenant_id", tenantId)
     .eq("id", bom.id);
 
-  revalidatePath("/app/bom");
+  revalidatePath("/app/templates");
   revalidatePath("/app");
   revalidatePath(`/app/products/variants/${bom.variant_id}`);
 }
@@ -161,7 +161,7 @@ export async function setBomArchived(formData: FormData) {
     .eq("tenant_id", tenantId)
     .eq("id", bom.id);
 
-  revalidatePath("/app/bom");
+  revalidatePath("/app/templates");
   revalidatePath("/app");
   revalidatePath(`/app/products/variants/${bom.variant_id}`);
 }
@@ -200,7 +200,7 @@ export async function createBomComponentLine(
   });
   if (error) return { error: error.message };
 
-  revalidatePath("/app/bom");
+  revalidatePath("/app/templates");
   return { success: "BOM component line added." };
 }
 
@@ -219,7 +219,7 @@ export async function updateBomComponentQuantity(formData: FormData) {
     .update({ quantity })
     .eq("tenant_id", tenantId)
     .eq("id", lineId);
-  revalidatePath("/app/bom");
+  revalidatePath("/app/templates");
   if (variantId) revalidatePath(`/app/products/variants/${variantId}`);
 }
 
@@ -243,7 +243,7 @@ export async function updateBomComponentYieldPct(formData: FormData) {
     .eq("tenant_id", tenantId)
     .eq("id", lineId);
 
-  revalidatePath("/app/bom");
+  revalidatePath("/app/templates");
   if (variantId) revalidatePath(`/app/products/variants/${variantId}`);
 }
 
@@ -262,7 +262,7 @@ export async function removeBomComponentLine(formData: FormData) {
     .eq("tenant_id", tenantId)
     .eq("id", lineId);
 
-  revalidatePath("/app/bom");
+  revalidatePath("/app/templates");
   if (variantId) revalidatePath(`/app/products/variants/${variantId}`);
 }
 
@@ -289,7 +289,7 @@ export async function reorderBomComponents(bomId: string, orderedIds: string[]) 
     .eq("id", bomId)
     .maybeSingle();
 
-  revalidatePath("/app/bom");
+  revalidatePath("/app/templates");
   if (bom?.variant_id) revalidatePath(`/app/products/variants/${bom.variant_id}`);
 }
 
@@ -325,7 +325,7 @@ export async function deleteBomDraft(formData: FormData) {
     .eq("id", bomId);
 
   const vid = variantId || bom.variant_id;
-  revalidatePath("/app/bom");
+  revalidatePath("/app/templates");
   revalidatePath("/app");
   if (vid) revalidatePath(`/app/products/variants/${vid}`);
 }
@@ -379,7 +379,7 @@ export async function addComponentsToBom(
   const { error } = await supabase.from("product_bom_component").insert(rows);
   if (error) return { error: error.message };
 
-  revalidatePath("/app/bom");
+  revalidatePath("/app/templates");
   if (variantId) revalidatePath(`/app/products/variants/${variantId}`);
   return { success: `Added ${rows.length} component(s).` };
 }

@@ -29,7 +29,7 @@ export async function createTemplate(
 
   if (error) return { error: error.message };
 
-  revalidatePath("/app/bom/templates");
+  revalidatePath("/app/templates");
   revalidatePath("/app/products");
   return { success: `Template "${name}" created.` };
 }
@@ -57,7 +57,7 @@ export async function addTemplateLine(
 
   if (error) return { error: error.message };
 
-  revalidatePath("/app/bom/templates");
+  revalidatePath("/app/templates");
   revalidatePath("/app/products");
   return { success: "Line added." };
 }
@@ -81,7 +81,7 @@ export async function removeTemplateLine(
 
   if (error) return { error: error.message };
 
-  revalidatePath("/app/bom/templates");
+  revalidatePath("/app/templates");
   revalidatePath("/app/products");
   return { success: "Line removed." };
 }

@@ -79,12 +79,6 @@ const ROUTES: RouteDefinition[] = [
     crumbs: ["Components", "Detail"],
   },
   {
-    prefix: "/app/bom/templates",
-    title: "BOM Templates",
-    subtitle: "Reusable component sets for faster BOM creation.",
-    crumbs: ["BOM", "Templates"],
-  },
-  {
     prefix: "/app/activity-log",
     title: "Activity Log",
     subtitle: "Search and inspect system activity across the workspace.",
@@ -95,12 +89,6 @@ const ROUTES: RouteDefinition[] = [
     title: "Actual Time",
     subtitle: "Post labor actuals and compare them against job plans.",
     crumbs: ["Actual Time"],
-  },
-  {
-    prefix: "/app/bom",
-    title: "BOM Management",
-    subtitle: "Versioned bills of materials and component line maintenance.",
-    crumbs: ["BOM"],
   },
   {
     prefix: "/app/capacity",
@@ -197,6 +185,12 @@ const ROUTES: RouteDefinition[] = [
     title: "Suppliers",
     subtitle: "Maintain supplier records used by purchasing workflows.",
     crumbs: ["Suppliers"],
+  },
+  {
+    prefix: "/app/templates",
+    title: "Templates",
+    subtitle: "Reusable component packs and labor routings for BOMs.",
+    crumbs: ["Templates"],
   },
   {
     prefix: "/app/trash",

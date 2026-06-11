@@ -93,7 +93,7 @@ function CreateForm({ onDone }: { onDone: () => void }) {
       </div>
       {state.success && (
         <p className={styles.wizardHint}>
-          Template created. Add components to it from the BOM Templates page, then come back here to use it.
+          Template created. Add components to it from the <a href="/app/templates">Templates page</a>, then come back here to use it.
         </p>
       )}
     </form>

@@ -128,7 +128,7 @@ export default function BomLightbox({
                   ) : (
                     <span className={styles.startFromEmpty}>
                       No templates —{" "}
-                      <a href="/app/bom/templates" className={styles.startFromCreateLink}>
+                      <a href="/app/templates" className={styles.startFromCreateLink}>
                         create one →
                       </a>
                     </span>

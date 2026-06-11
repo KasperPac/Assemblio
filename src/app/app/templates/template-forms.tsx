@@ -4,7 +4,6 @@ import { useActionState } from "react";
 import { useState, useEffect, useRef, useMemo } from "react";
 import {
   createTemplate,
-  addTemplateLine,
   removeTemplateLine,
   deleteTemplate,
   setTemplateLines,
@@ -66,33 +65,6 @@ export function CreateTemplateButton() {
         </div>
       </dialog>
     </>
-  );
-}
-
-export function AddLineForm({
-  templateId,
-  components,
-}: {
-  templateId: string;
-  components: ComponentOption[];
-}) {
-  const [state, formAction] = useActionState(addTemplateLine, initialState);
-
-  return (
-    <form action={formAction} className={styles.addLineForm}>
-      <input type="hidden" name="template_id" value={templateId} />
-      <select name="component_id" required aria-label="Component">
-        <option value="">Select component</option>
-        {components.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.name}{c.sku ? ` (${c.sku})` : ""}
-          </option>
-        ))}
-      </select>
-      <input name="quantity" type="number" step="0.01" min="0" defaultValue="0" placeholder="Qty" aria-label="Quantity" />
-      <button type="submit" className={styles.btnSmall}>Add</button>
-      {state.error && <p className={styles.error}>{state.error}</p>}
-    </form>
   );
 }
 

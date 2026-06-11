@@ -52,35 +52,6 @@ export async function createTemplate(
   return { success: `Template "${name}" created.` };
 }
 
-export async function addTemplateLine(
-  _prevState: ActionState,
-  formData: FormData
-): Promise<ActionState> {
-  const templateId = formData.get("template_id")?.toString() ?? "";
-  const componentId = formData.get("component_id")?.toString() ?? "";
-  const quantity = Number(formData.get("quantity") ?? 0);
-
-  if (!templateId || !componentId) return { error: "Template and component are required." };
-
-  const context = await getServerTenantContext();
-  if (!context) return { error: "Missing tenant context." };
-  const { supabase, tenantId } = context;
-
-  const { error } = await supabase.from("bom_template_line").insert({
-    tenant_id: tenantId,
-    template_id: templateId,
-    component_id: componentId,
-    quantity,
-  });
-
-  if (error) return { error: error.message };
-
-  const touchError = await touchTemplate(supabase, "bom_template", tenantId, templateId);
-  if (touchError) return { error: touchError };
-  revalidatePath("/app/templates");
-  return { success: "Line added." };
-}
-
 export async function removeTemplateLine(
   _prevState: ActionState,
   formData: FormData

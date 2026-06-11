@@ -180,7 +180,7 @@ export async function createBomWithComponents(
 
   revalidatePath(`/app/products/variants/${variantId}`);
   revalidatePath(`/app/products`);
-  revalidatePath("/app/bom");
+  revalidatePath("/app/templates");
   return { success: `Draft BOM v${version} created with ${rows.length} components.` };
 }
 
@@ -227,7 +227,7 @@ export async function createDraftBomFromScratch(
 
   revalidatePath(`/app/products/variants/${variantId}`);
   revalidatePath("/app/products");
-  revalidatePath("/app/bom");
+  revalidatePath("/app/templates");
   return { success: `Draft BOM v${version} created.` };
 }
 
@@ -327,7 +327,7 @@ export async function copyBomToDraft(
 
   revalidatePath(`/app/products/variants/${targetVariantId}`);
   revalidatePath("/app/products");
-  revalidatePath("/app/bom");
+  revalidatePath("/app/templates");
 
   return {
     success: `Created draft BOM v${version} from source (${rowsToInsert.length} lines).`,
@@ -416,7 +416,7 @@ export async function createBomFromTemplate(
 
   revalidatePath(`/app/products/variants/${targetVariantId}`);
   revalidatePath("/app/products");
-  revalidatePath("/app/bom");
+  revalidatePath("/app/templates");
 
   return {
     success: `Created draft BOM v${version} from template "${template.name}" (${rows.length} lines).`,
@@ -689,7 +689,7 @@ export async function duplicateBomAsDraft(
   }
 
   revalidatePath(`/app/products/variants/${variantId}`);
-  revalidatePath("/app/bom");
+  revalidatePath("/app/templates");
   return { success: `Draft BOM v${version} created (${rows.length} lines).` };
 }
 
@@ -743,7 +743,7 @@ export async function saveBomAsTemplate(
     }
   }
 
-  revalidatePath("/app/bom/templates");
+  revalidatePath("/app/templates");
   return { success: `Template "${templateName}" created with ${(bomLines ?? []).length} lines.` };
 }
 
