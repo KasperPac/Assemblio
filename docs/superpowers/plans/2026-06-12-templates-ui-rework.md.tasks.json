@@ -1,0 +1,39 @@
+{
+  "planPath": "docs/superpowers/plans/2026-06-12-templates-ui-rework.md",
+  "tasks": [
+    {
+      "id": 26,
+      "subject": "Task 1: Rename TemplateLightbox → TemplatePickerLightbox",
+      "status": "pending",
+      "description": "**Goal:** Picker lightbox becomes the expansion's \"+ Add components\" affordance: secondary trigger button, \"Add components\" header, \"Save template\" save label.\n\n**Files:** Modify src/app/app/templates/template-forms.tsx:105-172; src/app/app/templates/page.tsx:374-382 (call-site rename); src/app/app/templates/templates.module.css (.addComponentsBtn).\n\n**Acceptance Criteria:** TemplatePickerLightbox exported, TemplateLightbox gone from src/; trigger \"+ Add components\" secondary style; header \"Add components\", saveLabel \"Save template\"; tsc baseline only.\n\n**Verify:** npx tsc --noEmit → 2 baseline errors only. Full code in plan Task 1.\n\n```json:metadata\n{\"files\": [\"src/app/app/templates/template-forms.tsx\", \"src/app/app/templates/page.tsx\", \"src/app/app/templates/templates.module.css\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"TemplatePickerLightbox exported, TemplateLightbox gone\", \"trigger '+ Add components' secondary style\", \"header 'Add components', saveLabel 'Save template'\", \"tsc baseline only\"]}\n```"
+    },
+    {
+      "id": 27,
+      "subject": "Task 2: Inline LaborLinesEditor component",
+      "status": "pending",
+      "description": "**Goal:** Inline labor-operations grid editor (from LaborEditorDialog internals) rendering directly in a row expansion — no dialog shell.\n\n**Files:** Modify src/app/app/templates/labor-template-forms.tsx (add LaborLinesEditor; keep LaborEditorDialog until Task 4); templates.module.css (labEditGrid*, laborInlineEditor, expAddRow, expError).\n\n**Acceptance Criteria:** LaborLinesEditor({templateId, mode, existingLines, departments}) exported; grid seq/op/dept + advanced-only fields, basic preserves hidden values; add operation = next free sequence; save via setLaborTemplateLines with inline error; tsc baseline only.\n\n**Verify:** npx tsc --noEmit → 2 baseline errors only. Full code in plan Task 2.\n\n```json:metadata\n{\"files\": [\"src/app/app/templates/labor-template-forms.tsx\", \"src/app/app/templates/templates.module.css\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"LaborLinesEditor exported with correct props\", \"grid columns per mode, basic preserves hidden values\", \"add operation uses next free sequence\", \"save via setLaborTemplateLines with inline error\", \"tsc baseline only\"]}\n```"
+    },
+    {
+      "id": 28,
+      "subject": "Task 3: ComponentTemplateTable + page wiring (Components tab)",
+      "status": "pending",
+      "blockedBy": [26],
+      "description": "**Goal:** Components tab renders a compact design-system table; row click expands inline into the editor (qty on blur, remove line, add via picker, footer controls).\n\n**Files:** Create src/app/app/templates/template-table.tsx; modify page.tsx (components branch + componentRows mapping; keep labor branch and LinkControls import); modify templates.module.css (table + expansion classes).\n\n**Acceptance Criteria:** one tableCard/table with Template/Items/Used by/Status; accordion one-at-a-time client state; StatusBadge statuses; expansion with line grid + parseQtyInput-on-blur via setTemplateLines + RemoveLineButton + TemplatePickerLightbox pre-seeded + footer LinkControls/used-by/Delete; inline error keeps row expanded; EmptyState/tab bar unchanged; tsc baseline only.\n\n**Verify:** npx tsc --noEmit → 2 baseline errors only; manual checks. Full code in plan Task 3.\n\n```json:metadata\n{\"files\": [\"src/app/app/templates/template-table.tsx\", \"src/app/app/templates/page.tsx\", \"src/app/app/templates/templates.module.css\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"single design-system table for components tab\", \"accordion expansion, one at a time\", \"qty draft-buffer commit on blur via setTemplateLines\", \"picker lightbox pre-seeded from expansion\", \"inline error handling, footer controls reused\", \"tsc baseline only\"]}\n```"
+    },
+    {
+      "id": 29,
+      "subject": "Task 4: LaborTemplateTable + page wiring + delete LaborEditorDialog",
+      "status": "pending",
+      "blockedBy": [27, 28],
+      "description": "**Goal:** Labor tab uses the compact table pattern; expansion renders inline LaborLinesEditor; LaborEditorDialog deleted.\n\n**Files:** Modify template-table.tsx (LaborTemplateTable + LaborTemplateRowData); page.tsx (labor branch → table, laborRows mapping, trim imports incl. LinkControls); labor-template-forms.tsx (delete LaborEditorDialog, keep newKey/LaborLineDraft).\n\n**Acceptance Criteria:** labor tab single table Template/Ops/Used by/Status with Basic/Advanced badge; expansion = description + LaborLinesEditor + footer LinkControls/ModeSwitch/used-by/Delete; mode switch preserves values; zero LaborEditorDialog references; tsc baseline only.\n\n**Verify:** npx tsc --noEmit → 2 baseline errors only; grep LaborEditorDialog → none. Full code in plan Task 4.\n\n```json:metadata\n{\"files\": [\"src/app/app/templates/template-table.tsx\", \"src/app/app/templates/page.tsx\", \"src/app/app/templates/labor-template-forms.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"labor tab single table with mode badge\", \"expansion renders LaborLinesEditor + footer controls\", \"LaborEditorDialog deleted, zero references\", \"tsc baseline only\"]}\n```"
+    },
+    {
+      "id": 30,
+      "subject": "Task 5: CSS cleanup + full verification sweep",
+      "status": "pending",
+      "blockedBy": [29],
+      "description": "**Goal:** Remove all big-card CSS that nothing references anymore; run the full verification baseline.\n\n**Files:** Modify src/app/app/templates/templates.module.css.\n\n**Acceptance Criteria:** each candidate class grep-verified before deletion (templateCard, templateTop, templateInfo, templateNameRow, lineCountBadge, templateDesc, lineList, lineRow, lineIdentity, lineMeta, lineAction, emptyLines, addLineWrap, addLineForm, badgeLinked/Unlinked/Dirty/Mode, cardFooter, labGrid, dialogWide, dialogInnerWide, dialogSub, laborEditor, laborEditorRow, breadcrumb); grouped selectors and 720px media query pruned; LinkControls/create-dialog/table classes kept; tsc + vitest baselines hold; manual checklist both tabs.\n\n**Verify:** npx tsc --noEmit → 2 baseline errors; npx vitest run --pool threads --maxWorkers 1 → 2 baseline failures only. Details in plan Task 5.\n\n```json:metadata\n{\"files\": [\"src/app/app/templates/templates.module.css\"], \"verifyCommand\": \"npx tsc --noEmit && npx vitest run --pool threads --maxWorkers 1\", \"acceptanceCriteria\": [\"all dead big-card classes removed after grep verification\", \"all referenced classes kept\", \"tsc and vitest baselines hold\", \"manual checklist passes both tabs\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-06-12T10:30:00+10:00"
+}
