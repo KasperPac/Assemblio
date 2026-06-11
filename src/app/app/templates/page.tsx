@@ -18,6 +18,7 @@ import {
 } from "./labor-template-forms";
 import { hasUnpublishedChanges, computeAffectedBoms, unwrap, type LinkedBomRow } from "./affected";
 import type { LaborTemplateLineInput } from "./actions";
+import { LinkControls } from "./link-controls";
 import styles from "./templates.module.css";
 
 type TemplateLine = {
@@ -280,6 +281,13 @@ export default async function TemplatesPage({ searchParams }: Props) {
                     existingLines={editorLines}
                     departments={departmentOptions}
                   />
+                  <LinkControls
+                    templateType="labor"
+                    templateId={t.id}
+                    isLinked={t.is_linked}
+                    hasUnpublished={dirty}
+                    affectedBoms={affected}
+                  />
                   <ModeSwitch templateId={t.id} mode={t.mode} />
                   <span className={styles.usedBy}>
                     {affected.length > 0
@@ -372,7 +380,13 @@ export default async function TemplatesPage({ searchParams }: Props) {
                   })}
                   components={componentOptions}
                 />
-                {/* Link controls (toggle + tooltip + publish) added in Task 6 */}
+                <LinkControls
+                  templateType="component"
+                  templateId={template.id}
+                  isLinked={template.is_linked}
+                  hasUnpublished={dirty}
+                  affectedBoms={affected}
+                />
                 <span className={styles.usedBy}>
                   {affected.length > 0
                     ? `Used by ${affected.length} BOM${affected.length === 1 ? "" : "s"}`

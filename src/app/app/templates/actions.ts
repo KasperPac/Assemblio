@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { buildPublishedLines, inheritStatus } from "@/lib/templates/publish";
 
 type ActionState = {
   error?: string;
@@ -136,8 +137,8 @@ export async function setTemplateLines(
   }
 
   const touchError = await touchTemplate(supabase, "bom_template", tenantId, templateId);
-  if (touchError) return { error: touchError };
   revalidatePath("/app/templates");
+  if (touchError) return { error: touchError };
   return {};
 }
 
@@ -300,7 +301,296 @@ export async function setLaborTemplateLines(
   }
 
   const touchError = await touchTemplate(supabase, "labor_template", tenantId, templateId);
-  if (touchError) return { error: touchError };
   revalidatePath("/app/templates");
+  if (touchError) return { error: touchError };
+  return {};
+}
+
+// ---------------------------------------------------------------------------
+// Dynamic linking & publish
+// ---------------------------------------------------------------------------
+
+export async function setTemplateLinked(
+  templateType: "component" | "labor",
+  templateId: string,
+  isLinked: boolean
+): Promise<{ error?: string }> {
+  const context = await getServerTenantContext();
+  if (!context) return { error: "Missing tenant context." };
+  const { supabase, tenantId } = context;
+
+  const table = templateType === "component" ? "bom_template" : "labor_template";
+  const { error } = await supabase
+    .from(table)
+    .update({ is_linked: isLinked })
+    .eq("tenant_id", tenantId)
+    .eq("id", templateId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/app/templates");
+  return {};
+}
+
+export async function publishTemplate(
+  templateType: "component" | "labor",
+  templateId: string,
+  selectedBomIds: string[]
+): Promise<{ error?: string; success?: string }> {
+  const context = await getServerTenantContext();
+  if (!context) return { error: "Missing tenant context." };
+  const { supabase, tenantId } = context;
+
+  const templateTable = templateType === "component" ? "bom_template" : "labor_template";
+  const lineTable = templateType === "component" ? "bom_template_line" : "labor_template_line";
+
+  const { data: template } = await supabase
+    .from(templateTable)
+    .select("id,name")
+    .eq("tenant_id", tenantId)
+    .eq("id", templateId)
+    .maybeSingle();
+  if (!template?.id) return { error: "Template not found." };
+
+  const { data: templateLines, error: tplLinesError } = await supabase
+    .from(lineTable)
+    .select("*")
+    .eq("tenant_id", tenantId)
+    .eq("template_id", templateId);
+  if (tplLinesError) return { error: tplLinesError.message };
+
+  const successes: string[] = [];
+  const failures: string[] = [];
+
+  for (const bomId of selectedBomIds) {
+    const result = await publishToBom(
+      supabase,
+      tenantId,
+      templateType,
+      templateId,
+      (templateLines ?? []) as TemplateLineRow[],
+      bomId
+    );
+    if (result.error) failures.push(result.error);
+    else successes.push(result.label!);
+  }
+
+  // Stamp even when zero BOMs were selected.
+  await supabase
+    .from(templateTable)
+    .update({ last_published_at: new Date().toISOString() })
+    .eq("tenant_id", tenantId)
+    .eq("id", templateId);
+
+  revalidatePath("/app/templates");
+  revalidatePath("/app/products");
+
+  if (failures.length > 0) {
+    return {
+      error: `Updated ${successes.length} BOM${successes.length === 1 ? "" : "s"}; ${failures.length} failed: ${failures.join("; ")}`,
+    };
+  }
+  return {
+    success:
+      selectedBomIds.length === 0
+        ? "Marked as published (no BOMs selected)."
+        : `Updated ${successes.length} BOM${successes.length === 1 ? "" : "s"}: ${successes.join(", ")}.`,
+  };
+}
+
+type TemplateLineRow = Record<string, unknown> & { id: string };
+
+async function publishToBom(
+  supabase: SupabaseClient,
+  tenantId: string | null,
+  templateType: "component" | "labor",
+  templateId: string,
+  templateLines: TemplateLineRow[],
+  bomId: string
+): Promise<{ error?: string; label?: string }> {
+  // 1. Load the latest version of this BOM's lineage.
+  const { data: oldBom, error: bomError } = await supabase
+    .from("product_bom")
+    .select("id,variant_id,version,status,component_template_id,labor_template_id")
+    .eq("tenant_id", tenantId)
+    .eq("id", bomId)
+    .maybeSingle();
+  if (bomError || !oldBom) return { error: `BOM ${bomId}: not found` };
+
+  const { data: newer } = await supabase
+    .from("product_bom")
+    .select("id,version")
+    .eq("tenant_id", tenantId)
+    .eq("variant_id", oldBom.variant_id)
+    .gt("version", oldBom.version)
+    .limit(1);
+  if (newer && newer.length > 0) {
+    return { error: `BOM v${oldBom.version}: a newer version already exists` };
+  }
+
+  const statusPlan = inheritStatus(oldBom.status);
+
+  // 2. Insert the new version, copying both template-id columns.
+  const { data: newBom, error: insertError } = await supabase
+    .from("product_bom")
+    .insert({
+      tenant_id: tenantId,
+      variant_id: oldBom.variant_id,
+      version: (oldBom.version as number) + 1,
+      status: statusPlan.newStatus,
+      is_active: statusPlan.newIsActive,
+      component_template_id: oldBom.component_template_id,
+      labor_template_id: oldBom.labor_template_id,
+    })
+    .select("id")
+    .single();
+  if (insertError || !newBom?.id) {
+    return { error: `BOM v${oldBom.version}: ${insertError?.message ?? "insert failed"}` };
+  }
+
+  const rollback = async () => {
+    await supabase.from("product_bom").delete().eq("id", newBom.id);
+  };
+
+  // 3. Build and insert both line tables.
+  const componentResult = await copyLines(
+    supabase,
+    tenantId,
+    "product_bom_component",
+    ["component_id", "quantity"],
+    oldBom.id as string,
+    newBom.id,
+    templateType === "component" ? templateLines : null
+  );
+  if (componentResult.error) {
+    await rollback();
+    return { error: `BOM v${oldBom.version}: ${componentResult.error}` };
+  }
+
+  const laborResult = await copyLines(
+    supabase,
+    tenantId,
+    "product_bom_labor",
+    [
+      "department_id",
+      "operation_name",
+      "sequence",
+      "setup_hours",
+      "run_hours_per_unit",
+      "admin_hours_per_unit",
+      "electricity_kwh_per_unit",
+      "gas_units_per_unit",
+      "blocked_by",
+      "notes",
+    ],
+    oldBom.id as string,
+    newBom.id,
+    templateType === "labor" ? templateLines : null
+  );
+  if (laborResult.error) {
+    await rollback();
+    return { error: `BOM v${oldBom.version}: ${laborResult.error}` };
+  }
+
+  // 4. Status: old active → archived; old draft untouched.
+  if (statusPlan.archiveOld) {
+    await supabase
+      .from("product_bom")
+      .update({ status: "archived", is_active: false })
+      .eq("tenant_id", tenantId)
+      .eq("id", oldBom.id);
+  }
+
+  // 5. Activity log.
+  await supabase.from("activity_log").insert({
+    tenant_id: tenantId,
+    event: "bom.template_publish",
+    metadata: {
+      template_id: templateId,
+      template_type: templateType,
+      bom_id: newBom.id,
+      old_version: oldBom.version,
+      new_version: (oldBom.version as number) + 1,
+    },
+  });
+
+  revalidatePath(`/app/products/variants/${oldBom.variant_id}`);
+  return { label: `v${oldBom.version} → v${(oldBom.version as number) + 1}` };
+}
+
+/**
+ * Copy one line table from old BOM to new BOM.
+ * If currentTemplateLines is provided, this is the published type: template-provenance
+ * lines are regenerated from the template via buildPublishedLines. Otherwise the
+ * lines are copied verbatim, provenance included.
+ *
+ * For product_bom_labor: detects duplicate sequence values in the final merged line
+ * set (collision between regenerated template lines and kept manual lines) and
+ * returns an error rather than silently renumbering.
+ */
+async function copyLines(
+  supabase: SupabaseClient,
+  tenantId: string | null,
+  table: "product_bom_component" | "product_bom_labor",
+  fields: string[],
+  oldBomId: string,
+  newBomId: string,
+  currentTemplateLines: TemplateLineRow[] | null
+): Promise<{ error?: string }> {
+  const selectStr = `${fields.join(",")},source_template_line_id`;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: rawLines, error: readError } = await (supabase as any)
+    .from(table)
+    .select(selectStr)
+    .eq("tenant_id", tenantId)
+    .eq("product_bom_id", oldBomId);
+  if (readError) return { error: (readError as { message: string }).message };
+
+  const oldLines = (rawLines ?? []) as (Record<string, unknown> & {
+    source_template_line_id: string | null;
+  })[];
+
+  let lines: Record<string, unknown>[];
+  if (currentTemplateLines) {
+    const tplLines = currentTemplateLines.map((line) => {
+      const projected: Record<string, unknown> = { id: line.id };
+      for (const f of fields) {
+        if (f in line) projected[f] = line[f];
+      }
+      return projected as { id: string } & Record<string, unknown>;
+    });
+    lines = buildPublishedLines(oldLines, tplLines);
+  } else {
+    lines = oldLines as Record<string, unknown>[];
+  }
+
+  if (lines.length === 0) return {};
+
+  // Requirement A: detect sequence collisions for labor lines before inserting.
+  if (table === "product_bom_labor") {
+    const seqCounts = new Map<number, number>();
+    for (const l of lines) {
+      const seq = l.sequence as number | undefined;
+      if (seq !== undefined) {
+        seqCounts.set(seq, (seqCounts.get(seq) ?? 0) + 1);
+      }
+    }
+    for (const [seq, count] of seqCounts) {
+      if (count > 1) {
+        return {
+          error: `sequence conflict: template operations and manually added operations share sequence ${seq}`,
+        };
+      }
+    }
+  }
+
+  const rows = lines.map((l) => ({
+    ...l,
+    tenant_id: tenantId,
+    product_bom_id: newBomId,
+  }));
+
+  const { error: insertError } = await supabase.from(table).insert(rows);
+  if (insertError) return { error: insertError.message };
   return {};
 }

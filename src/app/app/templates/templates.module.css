@@ -470,3 +470,48 @@
   letter-spacing: var(--ls-caps);
   color: var(--ink-muted);
 }
+
+/* Publish dialog — BOM list */
+.publishList {
+  display: grid;
+  gap: 8px;
+}
+
+.publishRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--surface-1);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+}
+
+.publishIdentity {
+  display: grid;
+  gap: 2px;
+}
+
+.publishMeta {
+  font-size: var(--fs-xs);
+  color: var(--ink-faint);
+}
+
+.versionChip {
+  margin-left: auto;
+  font-size: var(--fs-xs);
+  color: var(--brand-1);
+  background: var(--brand-dim);
+  border-radius: 999px;
+  padding: 2px 10px;
+  white-space: nowrap;
+}
+
+.publishWarn {
+  font-size: var(--fs-xs);
+  color: var(--warning);
+  background: color-mix(in srgb, var(--warning) 10%, transparent);
+  border-radius: var(--radius-lg);
+  padding: 8px 10px;
+}
