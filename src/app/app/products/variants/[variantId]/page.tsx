@@ -163,7 +163,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
   const query = (await searchParams) ?? {};
   const context = await getServerTenantContext();
   if (!context) notFound();
-  const { supabase, tenantId: _tenantId } = context;
+  const { supabase, tenantId: _tenantId, role } = context;
   const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const subscriptionAccess = await getSubscriptionAccess(supabase, tenantId);
@@ -175,7 +175,6 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
     { data: variant },
     { data: boms },
     { data: sourceBoms },
-    { data: profile },
     { data: templates },
     { data: allComponents },
     { data: departments },
@@ -198,7 +197,6 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
       .eq("tenant_id", tenantId)
       .order("created_at", { ascending: false })
       .limit(250),
-    supabase.from("profiles").select("role").single(),
     supabase
       .from("bom_template")
       .select("id,name,description,bom_template_line(id)")
@@ -224,7 +222,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
   const editableBoms = typedBoms.filter((b) => b.status !== "archived");
   const archivedBoms = typedBoms.filter((b) => b.status === "archived");
   const hasBom = typedBoms.length > 0;
-  const canManageBom = ["admin", "super_admin"].includes(profile?.role ?? "member");
+  const canManageBom = ["admin", "super_admin"].includes(role);
   const bomIds = typedBoms.map((bom) => bom.id);
 
   const { data: bomLines } =
