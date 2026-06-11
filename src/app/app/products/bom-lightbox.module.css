@@ -860,3 +860,14 @@
   color: var(--danger);
   padding: 0 14px 6px;
 }
+
+.startFromEmpty {
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+.startFromCreateLink {
+  color: var(--brand-1);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

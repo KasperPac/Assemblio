@@ -277,35 +277,50 @@ function ComponentPicker({
 
   return (
     <div className={styles.pickerLayout}>
-      {!bomId && (templates.length > 0 || sourceBoms.length > 0) && (
+      {!bomId && (
         <div className={styles.startFromBar}>
           <span className={styles.startFromLabel}>Start from:</span>
-          {templates.length > 0 && (
+          {templates.length > 0 ? (
             <form action={templateAction} className={styles.startFromForm}>
               <input type="hidden" name="target_variant_id" value={variantId} />
-              <select name="template_id" required className={styles.startFromSelect}>
-                <option value="">Choose template…</option>
+              <select
+                name="template_id"
+                required
+                defaultValue=""
+                className={styles.startFromSelect}
+                onChange={(e) => { if (e.target.value) e.target.form?.requestSubmit(); }}
+              >
+                <option value="" disabled>Choose template…</option>
                 {templates.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.name} ({t.lineCount} line{t.lineCount === 1 ? "" : "s"})
                   </option>
                 ))}
               </select>
-              <button type="submit" className={styles.startFromBtn}>Use template</button>
             </form>
+          ) : (
+            <span className={styles.startFromEmpty}>
+              No templates —{" "}
+              <a href="/app/bom/templates" className={styles.startFromCreateLink}>
+                create one →
+              </a>
+            </span>
           )}
           {sourceBoms.length > 0 && (
             <form action={copyAction} className={styles.startFromForm}>
               <input type="hidden" name="target_variant_id" value={variantId} />
-              <select name="source_bom_id" required className={styles.startFromSelect}>
-                <option value="">Copy from variant…</option>
+              <select
+                name="source_bom_id"
+                required
+                defaultValue=""
+                className={styles.startFromSelect}
+                onChange={(e) => { if (e.target.value) e.target.form?.requestSubmit(); }}
+              >
+                <option value="" disabled>Copy from variant…</option>
                 {sourceBoms.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {b.label}
-                  </option>
+                  <option key={b.id} value={b.id}>{b.label}</option>
                 ))}
               </select>
-              <button type="submit" className={styles.startFromBtn}>Copy</button>
             </form>
           )}
         </div>
