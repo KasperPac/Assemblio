@@ -105,3 +105,40 @@ export async function deleteTemplate(
   revalidatePath("/app/bom/templates");
   return { success: "Template deleted." };
 }
+
+export async function setTemplateLines(
+  templateId: string,
+  lines: { component_id: string; quantity: number }[]
+): Promise<{ error?: string }> {
+  const context = await getServerTenantContext();
+  if (!context) return { error: "Missing tenant context." };
+  const { supabase, tenantId } = context;
+
+  // Delete existing lines for this template
+  const { error: delError } = await supabase
+    .from("bom_template_line")
+    .delete()
+    .eq("tenant_id", tenantId)
+    .eq("template_id", templateId);
+
+  if (delError) return { error: delError.message };
+
+  // Insert new lines
+  if (lines.length > 0) {
+    const rows = lines.map((l) => ({
+      tenant_id: tenantId,
+      template_id: templateId,
+      component_id: l.component_id,
+      quantity: l.quantity,
+    }));
+
+    const { error: insertError } = await supabase
+      .from("bom_template_line")
+      .insert(rows);
+
+    if (insertError) return { error: insertError.message };
+  }
+
+  revalidatePath("/app/bom/templates");
+  return {};
+}

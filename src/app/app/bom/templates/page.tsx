@@ -3,9 +3,9 @@ import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import {
   CreateTemplateButton,
-  AddLineForm,
   RemoveLineButton,
   DeleteTemplateButton,
+  TemplateLightbox,
 } from "./template-forms";
 import PageHeader from "../../_ui/page-header";
 import EmptyState from "../../_ui/empty-state";
@@ -45,7 +45,7 @@ export default async function TemplatesPage() {
         .select("id,template_id,quantity,component:component_id(id,name,sku,unit)")
         .eq("tenant_id", tenantId)
         .order("created_at", { ascending: true }),
-      supabase.from("component").select("id,name,sku").eq("tenant_id", tenantId).order("name"),
+      supabase.from("component").select("id,name,sku,unit,cost_per_unit,description,group:group_id(name)").eq("tenant_id", tenantId).order("name"),
     ]);
 
   const typedTemplates = (templates ?? []) as Template[];
@@ -58,11 +58,18 @@ export default async function TemplatesPage() {
     return acc;
   }, {});
 
-  const componentOptions = (components ?? []) as Array<{
-    id: string;
-    name: string;
-    sku: string | null;
-  }>;
+  const componentOptions = (components ?? []).map((c) => {
+    const rawGroup = Array.isArray(c.group) ? c.group[0] : c.group;
+    return {
+      id: c.id as string,
+      name: c.name as string,
+      sku: (c.sku as string | null) ?? null,
+      unit: (c.unit as string | null) ?? null,
+      cost_per_unit: (c.cost_per_unit as number | null) ?? null,
+      description: (c.description as string | null) ?? null,
+      group: (rawGroup as { name: string } | null)?.name ?? null,
+    };
+  });
 
   return (
     <div className={styles.page}>
@@ -136,7 +143,15 @@ export default async function TemplatesPage() {
               )}
 
               <div className={styles.addLineWrap}>
-                <AddLineForm templateId={template.id} components={componentOptions} />
+                <TemplateLightbox
+                  templateId={template.id}
+                  templateName={template.name}
+                  existingLines={(linesByTemplate[template.id] ?? []).map((line) => {
+                    const comp = unwrap(line.component);
+                    return { component_id: comp?.id ?? "", quantity: line.quantity };
+                  })}
+                  components={componentOptions}
+                />
               </div>
             </section>
           );

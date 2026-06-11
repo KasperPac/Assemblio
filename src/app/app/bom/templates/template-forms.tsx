@@ -1,17 +1,21 @@
 "use client";
 
 import { useActionState } from "react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import {
   createTemplate,
   addTemplateLine,
   removeTemplateLine,
   deleteTemplate,
+  setTemplateLines,
 } from "./actions";
+import ComponentPicker, {
+  type ComponentOption,
+} from "@/app/app/products/_components/component-picker";
 import styles from "./templates.module.css";
+import lightboxStyles from "@/app/app/products/bom-lightbox.module.css";
 
 type ActionState = { error?: string; success?: string };
-type ComponentOption = { id: string; name: string; sku: string | null };
 
 const initialState: ActionState = {};
 
@@ -109,5 +113,74 @@ export function DeleteTemplateButton({ templateId }: { templateId: string }) {
       <input type="hidden" name="template_id" value={templateId} />
       <button type="submit" className={styles.deleteTplBtn}>Delete Template</button>
     </form>
+  );
+}
+
+export function TemplateLightbox({
+  templateId,
+  templateName,
+  existingLines,
+  components,
+}: {
+  templateId: string;
+  templateName: string;
+  existingLines: { component_id: string; quantity: number }[];
+  components: ComponentOption[];
+}) {
+  const [open, setOpen] = useState(false);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  const initialSelection = useMemo(() => {
+    const sel: Record<string, number> = {};
+    for (const line of existingLines) {
+      sel[line.component_id] = line.quantity;
+    }
+    return sel;
+  }, [existingLines]);
+
+  function openDialog() {
+    setOpen(true);
+    dialogRef.current?.showModal();
+  }
+
+  function closeDialog() {
+    setOpen(false);
+    dialogRef.current?.close();
+  }
+
+  return (
+    <>
+      <button type="button" className={styles.btnSmall} onClick={openDialog}>
+        Edit Components
+      </button>
+
+      <dialog ref={dialogRef} className={lightboxStyles.overlay} onClose={() => setOpen(false)}>
+        <div className={lightboxStyles.backdrop} onClick={closeDialog} />
+        <div className={lightboxStyles.panelWide}>
+          <div className={lightboxStyles.panelHeader}>
+            <div>
+              <h2>Edit Template Components</h2>
+              <p className={lightboxStyles.panelSub}>{templateName}</p>
+            </div>
+            <button type="button" className={lightboxStyles.closeBtn} onClick={closeDialog}>
+              &times;
+            </button>
+          </div>
+
+          {open && (
+            <ComponentPicker
+              components={components}
+              initialSelection={initialSelection}
+              saveLabel="Save Template"
+              onSave={async (lines) => {
+                const result = await setTemplateLines(templateId, lines);
+                if (result.error) return { error: result.error };
+                closeDialog();
+              }}
+            />
+          )}
+        </div>
+      </dialog>
+    </>
   );
 }
