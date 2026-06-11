@@ -3,12 +3,8 @@ import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import PageHeader from "../_ui/page-header";
 import EmptyState from "../_ui/empty-state";
-import {
-  CreateTemplateButton,
-  RemoveLineButton,
-  DeleteTemplateButton,
-  TemplatePickerLightbox,
-} from "./template-forms";
+import { CreateTemplateButton } from "./template-forms";
+import { ComponentTemplateTable, type ComponentTemplateRowData } from "./template-table";
 import {
   CreateLaborTemplateButton,
   ModeSwitch,
@@ -166,6 +162,29 @@ export default async function TemplatesPage({ searchParams }: Props) {
     };
   });
 
+  const componentRows: ComponentTemplateRowData[] = typedTemplates.map((template) => {
+    const lines = linesByTemplate[template.id] ?? [];
+    return {
+      id: template.id,
+      name: template.name,
+      description: template.description,
+      isLinked: template.is_linked,
+      hasUnpublished: hasUnpublishedChanges(template),
+      affected: computeAffectedBoms(typedLinkedBoms, "component_template_id", template.id),
+      lines: lines.map((line) => {
+        const comp = unwrap(line.component);
+        return {
+          id: line.id,
+          componentId: comp?.id ?? "",
+          componentName: comp?.name ?? "Unknown",
+          sku: comp?.sku ?? null,
+          unit: comp?.unit ?? null,
+          quantity: line.quantity,
+        };
+      }),
+    };
+  });
+
   return (
     <div className={styles.page}>
       <PageHeader
@@ -309,94 +328,7 @@ export default async function TemplatesPage({ searchParams }: Props) {
           message="Create a component template to start reusing common material packs."
         />
       ) : (
-        typedTemplates.map((template) => {
-          const lines = linesByTemplate[template.id] ?? [];
-          const affected = computeAffectedBoms(
-            typedLinkedBoms,
-            "component_template_id",
-            template.id
-          );
-          const dirty = hasUnpublishedChanges(template);
-          return (
-            <section key={template.id} className={styles.templateCard}>
-              <div className={styles.templateTop}>
-                <div className={styles.templateInfo}>
-                  <div className={styles.templateNameRow}>
-                    <h2>{template.name}</h2>
-                    <span className={styles.lineCountBadge}>{lines.length} items</span>
-                    <span className={template.is_linked ? styles.badgeLinked : styles.badgeUnlinked}>
-                      {template.is_linked ? "Linked" : "Not linked"}
-                    </span>
-                    {dirty ? <span className={styles.badgeDirty}>Unpublished changes</span> : null}
-                  </div>
-                  {template.description ? (
-                    <p className={styles.templateDesc}>{template.description}</p>
-                  ) : null}
-                </div>
-              </div>
-
-              {lines.length > 0 ? (
-                <div className={styles.lineList}>
-                  {lines.map((line) => {
-                    const comp = unwrap(line.component);
-                    return (
-                      <div key={line.id} className={styles.lineRow}>
-                        <div className={styles.lineIdentity}>
-                          {comp?.id ? (
-                            <Link href={`/app/components/${comp.id}`} className={styles.componentLink}>
-                              {comp?.name ?? "Unknown"}
-                            </Link>
-                          ) : (
-                            <strong>{comp?.name ?? "Unknown"}</strong>
-                          )}
-                          <span>{comp?.sku ?? "--"}</span>
-                        </div>
-                        <div className={styles.lineMeta}>
-                          <span>Qty</span>
-                          <strong>{line.quantity}</strong>
-                        </div>
-                        <div className={styles.lineMeta}>
-                          <span>Unit</span>
-                          <strong>{comp?.unit ?? "ea"}</strong>
-                        </div>
-                        <span className={styles.lineAction}>
-                          <RemoveLineButton lineId={line.id} templateId={template.id} />
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className={styles.emptyLines}>No template lines yet.</div>
-              )}
-
-              <div className={styles.cardFooter}>
-                <TemplatePickerLightbox
-                  templateId={template.id}
-                  templateName={template.name}
-                  existingLines={lines.map((line) => {
-                    const comp = unwrap(line.component);
-                    return { component_id: comp?.id ?? "", quantity: line.quantity };
-                  })}
-                  components={componentOptions}
-                />
-                <LinkControls
-                  templateType="component"
-                  templateId={template.id}
-                  isLinked={template.is_linked}
-                  hasUnpublished={dirty}
-                  affectedBoms={affected}
-                />
-                <span className={styles.usedBy}>
-                  {affected.length > 0
-                    ? `Used by ${affected.length} BOM${affected.length === 1 ? "" : "s"}`
-                    : "Not used yet"}
-                </span>
-                <DeleteTemplateButton templateId={template.id} usedByCount={affected.length} />
-              </div>
-            </section>
-          );
-        })
+        <ComponentTemplateTable templates={componentRows} components={componentOptions} />
       )}
     </div>
   );

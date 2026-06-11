@@ -568,3 +568,87 @@
   font-size: var(--fs-xs);
   color: var(--danger);
 }
+
+/* Compact template list table */
+.tableCard {
+  composes: tableCard from "../_ui/table.module.css";
+}
+.table {
+  composes: table from "../_ui/table.module.css";
+}
+.rowClickable {
+  cursor: pointer;
+}
+.rowName {
+  font-weight: 600;
+  color: var(--ink-strong);
+}
+.chevron {
+  color: var(--ink-faint);
+  font-size: var(--fs-xs);
+  display: inline-block;
+  width: 14px;
+}
+.badgeGroup {
+  display: inline-flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Expanded row */
+.table tbody tr.expRow:hover td {
+  background: var(--bg-card);
+}
+.table td.expCell {
+  padding: 14px 16px 16px 30px;
+}
+.expDesc {
+  margin: 0 0 10px;
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+}
+.expLineGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 90px 70px 36px;
+  gap: 6px 12px;
+  align-items: center;
+  font-size: var(--fs-sm);
+}
+.expComponent {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.expSku {
+  font-size: var(--fs-xs);
+  color: var(--ink-faint);
+}
+.expUnit {
+  color: var(--ink-muted);
+}
+.qtyInput {
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-lg);
+  padding: 5px 8px;
+  font-size: var(--fs-sm);
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  width: 100%;
+  box-sizing: border-box;
+}
+.expEmpty {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+}
+.expFooter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--stroke);
+  margin-top: 14px;
+  padding-top: 12px;
+}
