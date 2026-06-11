@@ -241,14 +241,18 @@ export async function setLaborTemplateLines(
       return { error: "Every operation needs a department and a name." };
     }
     if (
+      !Number.isFinite(line.sequence) ||
+      !Number.isInteger(line.sequence) ||
       line.sequence < 1 ||
-      line.setup_hours < 0 ||
-      line.run_hours_per_unit < 0 ||
-      line.admin_hours_per_unit < 0 ||
-      line.electricity_kwh_per_unit < 0 ||
-      line.gas_units_per_unit < 0
+      [
+        line.setup_hours,
+        line.run_hours_per_unit,
+        line.admin_hours_per_unit,
+        line.electricity_kwh_per_unit,
+        line.gas_units_per_unit,
+      ].some((v) => !Number.isFinite(v) || v < 0)
     ) {
-      return { error: "Values cannot be negative, and sequence must be at least 1." };
+      return { error: "Values cannot be negative, and sequence must be a whole number of at least 1." };
     }
   }
 

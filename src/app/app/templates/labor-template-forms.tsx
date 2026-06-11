@@ -208,7 +208,7 @@ export function LaborEditorDialog({
       <button type="button" className={styles.btnSmall} onClick={openDialog}>
         Edit operations
       </button>
-      <dialog ref={dialogRef} className={styles.dialog} onClose={() => setOpen(false)}>
+      <dialog ref={dialogRef} className={`${styles.dialog} ${styles.dialogWide}`} onClose={() => setOpen(false)}>
         <div className={styles.dialogInnerWide}>
           <div className={styles.dialogHeader}>
             <h2>Edit Operations</h2>
@@ -228,6 +228,7 @@ export function LaborEditorDialog({
                     <input
                       type="number"
                       min={1}
+                      step={1}
                       value={row.sequence}
                       onChange={(e) => update(row.key, { sequence: Number(e.target.value) })}
                     />

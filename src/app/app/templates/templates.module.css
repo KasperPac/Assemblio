@@ -209,7 +209,8 @@
 }
 
 .field input,
-.field textarea {
+.field textarea,
+.field select {
   border: 1px solid var(--stroke);
   border-radius: var(--radius-lg);
   padding: 10px 12px;
@@ -416,6 +417,10 @@
 /* Inline form (for remove/delete buttons) */
 .inlineForm {
   display: inline;
+}
+
+.dialogWide {
+  max-width: 960px;
 }
 
 /* Labor editor dialog — wider variant */
