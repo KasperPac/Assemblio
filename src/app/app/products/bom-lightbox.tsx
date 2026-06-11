@@ -51,6 +51,7 @@ export default function BomLightbox({
   const [browseOpen, setBrowseOpen] = useState(false);
   const [showAllSiblings, setShowAllSiblings] = useState(false);
   const [copySourceLabel, setCopySourceLabel] = useState<string | null>(null);
+  const [copyError, setCopyError] = useState<string | null>(null);
 
   const SIBLING_LIMIT = 6;
   const visibleSiblings = showAllSiblings ? siblings : siblings.slice(0, SIBLING_LIMIT);
@@ -73,16 +74,26 @@ export default function BomLightbox({
 
   async function pickCopySource(sourceBomId: string, label: string) {
     setCopyLoading(true);
-    const lines = await fetchBomLines(sourceBomId);
-    const sel: Record<string, number> = {};
-    for (const line of lines) {
-      sel[line.component_id] = line.quantity;
+    setCopyError(null);
+    try {
+      const lines = await fetchBomLines(sourceBomId);
+      if (lines.length === 0) {
+        setCopyError("That BOM has no components to copy.");
+        return;
+      }
+      const sel: Record<string, number> = {};
+      for (const line of lines) {
+        sel[line.component_id] = line.quantity;
+      }
+      setCopySelection(sel);
+      setCopyMode(true);
+      setCopySourceLabel(label);
+      setBrowseOpen(false);
+    } catch {
+      setCopyError("Failed to load that BOM. Please try again.");
+    } finally {
+      setCopyLoading(false);
     }
-    setCopySelection(sel);
-    setCopyMode(true);
-    setCopySourceLabel(label);
-    setBrowseOpen(false);
-    setCopyLoading(false);
   }
 
   async function handlePickerSave(
@@ -205,6 +216,7 @@ export default function BomLightbox({
               {templateState?.error && (
                 <p className={styles.startFromError}>{templateState.error}</p>
               )}
+              {copyError && <p className={styles.startFromError}>{copyError}</p>}
               {!bomId && browseOpen && !copySourceLabel && (
                 <CopySourceBrowser onPick={pickCopySource} />
               )}

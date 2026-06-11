@@ -114,7 +114,7 @@ export default function CopySourceBrowser({ onPick }: Props) {
   }
 
   return (
-    <div className={styles.browsePanel}>
+    <div className={styles.copyBrowsePanel}>
       <input
         type="search"
         value={search}

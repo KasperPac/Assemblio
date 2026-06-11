@@ -904,7 +904,7 @@
   font-weight: 600;
 }
 
-.browsePanel {
+.copyBrowsePanel {
   display: flex;
   flex-direction: column;
   gap: 8px;
