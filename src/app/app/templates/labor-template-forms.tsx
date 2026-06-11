@@ -406,12 +406,17 @@ export function LaborLinesEditor({
   async function save() {
     setSaving(true);
     setError(null);
-    const result = await setLaborTemplateLines(
-      templateId,
-      rows.map(({ key: _key, ...line }) => line)
-    );
-    setSaving(false);
-    if (result.error) setError(result.error);
+    try {
+      const result = await setLaborTemplateLines(
+        templateId,
+        rows.map(({ key: _key, ...line }) => line)
+      );
+      if (result.error) setError(result.error);
+    } catch {
+      setError("Something went wrong saving operations. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   const gridClass = mode === "advanced" ? styles.labEditGridAdvanced : styles.labEditGridBasic;
