@@ -10,7 +10,7 @@ import {
   updateBomComponentQuantity,
   updateBomComponentYieldPct,
 } from "@/app/app/bom/actions";
-import { duplicateBomAsDraft } from "@/app/app/products/actions";
+import { duplicateBomAsDraft, saveBomAsTemplate } from "@/app/app/products/actions";
 import { parseQtyInput } from "@/lib/bom/qty-input";
 import BomLightbox from "./bom-lightbox";
 import styles from "./bom-editor.module.css";
@@ -127,11 +127,17 @@ export default function BomEditor({
   const saveBomFormRef = useRef<HTMLFormElement>(null);
   const discardDialogRef = useRef<HTMLDialogElement>(null);
   const discardFormRef = useRef<HTMLFormElement>(null);
+  const templateDialogRef = useRef<HTMLDialogElement>(null);
   const [duplicateState, duplicateAction, isDuplicating] = useActionState(duplicateBomAsDraft, {});
+  const [templateState, templateAction, isTemplateSaving] = useActionState(saveBomAsTemplate, {});
   const [, startTransition] = useTransition();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (templateState.success) templateDialogRef.current?.close();
+  }, [templateState.success]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -266,6 +272,17 @@ export default function BomEditor({
                 </button>
                 {menuOpen ? (
                   <div className={styles.menu} role="menu">
+                    <button
+                      type="button"
+                      className={styles.menuItem}
+                      role="menuitem"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        templateDialogRef.current?.showModal();
+                      }}
+                    >
+                      Save as template
+                    </button>
                     <button
                       type="button"
                       className={`${styles.menuItem} ${styles.menuItemDanger}`}
@@ -636,6 +653,31 @@ export default function BomEditor({
             Activate BOM
           </button>
         </div>
+      </dialog>
+
+      <dialog ref={templateDialogRef} className={styles.confirmDialog}>
+        <form action={templateAction}>
+          <input type="hidden" name="bom_id" value={bom.id} />
+          <p>Save this BOM as a reusable template?</p>
+          <label className={styles.templateNameField}>
+            <span>Template name</span>
+            <input name="template_name" required placeholder="e.g. Standard Machine Build" />
+          </label>
+          {templateState.error && <p className={styles.menuError}>{templateState.error}</p>}
+          {templateState.success && <p className={styles.successMsg}>{templateState.success}</p>}
+          <div className={styles.confirmActions}>
+            <button
+              type="button"
+              className={styles.btnDiscard}
+              onClick={() => templateDialogRef.current?.close()}
+            >
+              Cancel
+            </button>
+            <button type="submit" className={styles.btnPrimary} disabled={isTemplateSaving}>
+              {isTemplateSaving ? "Saving…" : "Save Template"}
+            </button>
+          </div>
+        </form>
       </dialog>
     </div>
   );

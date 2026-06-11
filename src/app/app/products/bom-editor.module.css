@@ -457,3 +457,34 @@
 .componentLink:hover {
   text-decoration: underline;
 }
+
+/* ── Save-as-template dialog ─────────────────────── */
+
+.templateNameField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 12px 0;
+}
+
+.templateNameField span {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+}
+
+.templateNameField input {
+  padding: 8px 10px;
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  font-size: var(--fs-sm);
+}
+
+.successMsg {
+  font-size: var(--fs-sm);
+  color: var(--ok);
+}

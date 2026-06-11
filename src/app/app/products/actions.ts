@@ -689,6 +689,60 @@ export async function duplicateBomAsDraft(
   return { success: `Draft BOM v${version} created (${rows.length} lines).` };
 }
 
+export async function saveBomAsTemplate(
+  _prevState: BomActionState,
+  formData: FormData
+): Promise<BomActionState> {
+  const bomId = formData.get("bom_id")?.toString() ?? "";
+  const templateName = formData.get("template_name")?.toString().trim() ?? "";
+
+  if (!bomId || !templateName) {
+    return { error: "BOM ID and template name are required." };
+  }
+
+  const context = await requireBomEditor();
+  if ("error" in context) return { error: context.error };
+  const { supabase, tenantId } = context;
+
+  // Create template
+  const { data: template, error: tplError } = await supabase
+    .from("bom_template")
+    .insert({ tenant_id: tenantId, name: templateName })
+    .select("id")
+    .single();
+
+  if (tplError || !template?.id) {
+    return { error: tplError?.message ?? "Failed to create template." };
+  }
+
+  // Copy BOM lines to template lines
+  const { data: bomLines } = await supabase
+    .from("product_bom_component")
+    .select("component_id,quantity")
+    .eq("tenant_id", tenantId)
+    .eq("product_bom_id", bomId);
+
+  if ((bomLines ?? []).length > 0) {
+    const rows = (bomLines ?? []).map((line) => ({
+      tenant_id: tenantId,
+      template_id: template.id,
+      component_id: line.component_id,
+      quantity: line.quantity,
+    }));
+
+    const { error: lineError } = await supabase
+      .from("bom_template_line")
+      .insert(rows);
+
+    if (lineError) {
+      return { error: lineError.message };
+    }
+  }
+
+  revalidatePath("/app/bom/templates");
+  return { success: `Template "${templateName}" created with ${(bomLines ?? []).length} lines.` };
+}
+
 export async function upsertNotificationTrigger(formData: FormData) {
   const auth = await requireBomEditor();
   if ("error" in auth) return;
