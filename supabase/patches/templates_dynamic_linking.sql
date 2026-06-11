@@ -27,7 +27,8 @@ create table if not exists public.labor_template_line (
   gas_units_per_unit numeric not null default 0,
   blocked_by integer[] not null default '{}',
   notes text,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  unique (template_id, sequence)
 );
 
 alter table public.bom_template
@@ -75,3 +76,5 @@ create index if not exists idx_labor_template_tenant on public.labor_template(te
 create index if not exists idx_labor_template_line_template on public.labor_template_line(template_id);
 create index if not exists idx_product_bom_component_template on public.product_bom(component_template_id) where component_template_id is not null;
 create index if not exists idx_product_bom_labor_template on public.product_bom(labor_template_id) where labor_template_id is not null;
+create index if not exists idx_product_bom_component_source_line on public.product_bom_component(source_template_line_id) where source_template_line_id is not null;
+create index if not exists idx_product_bom_labor_source_line on public.product_bom_labor(source_template_line_id) where source_template_line_id is not null;
