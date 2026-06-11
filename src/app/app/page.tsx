@@ -8,6 +8,7 @@ import { calcDaysRemaining } from "@/lib/dashboard/calculations";
 import { FinanceChartCard } from "./_dashboard/finance-chart";
 import { OrdersChartCard } from "./_dashboard/orders-chart";
 import { deriveDashboardSalesMetrics, type ProductSalesRow } from "@/lib/dashboard/sales-metrics";
+import { shouldShowDevDashboard } from "@/lib/dev-dashboard/access";
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(value);
@@ -33,7 +34,7 @@ export default async function DashboardPage() {
   if (/Mobi|Android|iPhone|iPad/i.test(ua)) redirect("/app/scan");
 
   const context = await getServerTenantContext();
-  if (!context || !context.tenantId) {
+  if (!context) {
     return (
       <div className={styles.dashboard}>
         <p className={styles.emptyMsg}>Could not resolve the active tenant.</p>
@@ -43,14 +44,17 @@ export default async function DashboardPage() {
 
   const { supabase, tenantId: _tenantId } = context;
 
-  const isPlatformOperator =
-    context.role === "super_admin" || context.role === "platform_observer";
-  const isOnHomeTenant =
-    !context.tenantId || context.tenantId === context.superAdminHomeTenantId;
-
-  if (isPlatformOperator && isOnHomeTenant) {
+  if (shouldShowDevDashboard(context)) {
     const DevDashboard = (await import("./_dev-dashboard/dev-dashboard")).default;
     return <DevDashboard supabase={supabase} />;
+  }
+
+  if (!context.tenantId) {
+    return (
+      <div className={styles.dashboard}>
+        <p className={styles.emptyMsg}>Could not resolve the active tenant.</p>
+      </div>
+    );
   }
 
   const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
