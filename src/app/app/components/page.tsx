@@ -7,6 +7,7 @@ import ComponentTable, { type ComponentSection } from "./component-table";
 import { createComponent } from "./actions";
 import PageHeader from "../_ui/page-header";
 import EmptyState from "../_ui/empty-state";
+import SearchInput from "../_ui/search-input";
 import { getStockStatus } from "./helpers";
 
 type ComponentRow = {
@@ -156,17 +157,13 @@ export default async function ComponentsPage({ searchParams }: Props) {
             )}
           </a>
         </div>
-        <form className={styles.search} method="get">
-          {filterLowStock && <input type="hidden" name="filter" value="lowstock" />}
-          {sortCol !== "name" && <input type="hidden" name="sort" value={sortCol} />}
-          {sortCol !== "name" && sortDir === "desc" && <input type="hidden" name="dir" value={sortDir} />}
-          <input
-            name="q"
-            defaultValue={params.q ?? ""}
+        <div className={styles.search}>
+          <SearchInput
+            param="q"
             placeholder="Search by name, SKU, or description"
-            aria-label="Search by name, SKU, or description"
+            ariaLabel="Search by name, SKU, or description"
           />
-        </form>
+        </div>
       </div>
 
       {error ? (
