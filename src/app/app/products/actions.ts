@@ -292,20 +292,22 @@ export async function copyBomToDraft(
 
   const { data: sourceLines, error: sourceLinesError } = await supabase
     .from("product_bom_component")
-    .select("component_id,quantity,yield_pct")
+    .select("component_id,quantity,yield_pct,position")
     .eq("tenant_id", tenantId)
-    .eq("product_bom_id", sourceBomId);
+    .eq("product_bom_id", sourceBomId)
+    .order("position", { ascending: true });
 
   if (sourceLinesError) {
     return { error: sourceLinesError.message };
   }
 
-  const rowsToInsert = (sourceLines ?? []).map((line) => ({
+  const rowsToInsert = (sourceLines ?? []).map((line, i) => ({
     tenant_id: tenantId,
     product_bom_id: insertedBom.id,
     component_id: line.component_id,
     quantity: line.quantity,
     yield_pct: line.yield_pct ?? 1.0,
+    position: line.position ?? i + 1,
   }));
 
   if (rowsToInsert.length > 0) {
@@ -642,9 +644,10 @@ export async function duplicateBomAsDraft(
 
   const { data: sourceLines, error: linesError } = await supabase
     .from("product_bom_component")
-    .select("component_id,quantity,yield_pct")
+    .select("component_id,quantity,yield_pct,position")
     .eq("tenant_id", tenantId)
-    .eq("product_bom_id", sourceBomId);
+    .eq("product_bom_id", sourceBomId)
+    .order("position", { ascending: true });
 
   if (linesError) return { error: linesError.message };
 
@@ -666,12 +669,13 @@ export async function duplicateBomAsDraft(
     return { error: bomError?.message ?? "Failed to create draft BOM." };
   }
 
-  const rows = (sourceLines ?? []).map((l) => ({
+  const rows = (sourceLines ?? []).map((l, i) => ({
     tenant_id: tenantId,
     product_bom_id: newBom.id,
     component_id: l.component_id,
     quantity: l.quantity,
     yield_pct: l.yield_pct ?? 1.0,
+    position: l.position ?? i + 1,
   }));
 
   if (rows.length > 0) {

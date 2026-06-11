@@ -181,11 +181,22 @@ export async function createBomComponentLine(
   if (!context) return { error: "Missing tenant context." };
   const { supabase, tenantId } = context;
 
+  const { data: maxRow } = await supabase
+    .from("product_bom_component")
+    .select("position")
+    .eq("product_bom_id", productBomId)
+    .order("position", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const position = (maxRow?.position ?? 0) + 1;
+
   const { error } = await supabase.from("product_bom_component").insert({
     tenant_id: tenantId,
     product_bom_id: productBomId,
     component_id: componentId,
     quantity,
+    position,
   });
   if (error) return { error: error.message };
 
@@ -255,6 +266,33 @@ export async function removeBomComponentLine(formData: FormData) {
   if (variantId) revalidatePath(`/app/products/variants/${variantId}`);
 }
 
+export async function reorderBomComponents(bomId: string, orderedIds: string[]) {
+  const context = await getServerTenantContext();
+  if (!context) return;
+  const { supabase: regularClient, tenantId, role } = context;
+  const supabase = role === "super_admin" ? createSupabaseAdminClient() : regularClient;
+
+  const updates = orderedIds.map((id, index) =>
+    supabase
+      .from("product_bom_component")
+      .update({ position: index + 1 })
+      .eq("tenant_id", tenantId)
+      .eq("id", id)
+      .eq("product_bom_id", bomId)
+  );
+
+  await Promise.all(updates);
+
+  const { data: bom } = await supabase
+    .from("product_bom")
+    .select("variant_id")
+    .eq("id", bomId)
+    .maybeSingle();
+
+  revalidatePath("/app/bom");
+  if (bom?.variant_id) revalidatePath(`/app/products/variants/${bom.variant_id}`);
+}
+
 export async function deleteBomDraft(formData: FormData) {
   const bomId = formData.get("bom_id")?.toString() ?? "";
   const variantId = formData.get("variant_id")?.toString() ?? "";
@@ -315,14 +353,25 @@ export async function addComponentsToBom(
   if (!context) return { error: "Missing tenant context." };
   const { supabase, tenantId } = context;
 
+  const { data: maxRow } = await supabase
+    .from("product_bom_component")
+    .select("position")
+    .eq("product_bom_id", bomId)
+    .order("position", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const startPosition = (maxRow?.position ?? 0) + 1;
+
   const rows = lines
     .filter((l) => l.quantity > 0)
-    .map((l) => ({
+    .map((l, i) => ({
       tenant_id: tenantId,
       product_bom_id: bomId,
       component_id: l.component_id,
       quantity: l.quantity,
       yield_pct: l.yield_pct ?? 1.0,
+      position: startPosition + i,
     }));
 
   if (rows.length === 0) return { error: "All selected components have quantity 0." };
