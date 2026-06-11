@@ -102,7 +102,7 @@ export function DeleteTemplateButton({ templateId, usedByCount }: { templateId: 
   );
 }
 
-export function TemplateLightbox({
+export function TemplatePickerLightbox({
   templateId,
   templateName,
   existingLines,
@@ -136,8 +136,8 @@ export function TemplateLightbox({
 
   return (
     <>
-      <button type="button" className={styles.btnSmall} onClick={openDialog}>
-        Edit Components
+      <button type="button" className={styles.addComponentsBtn} onClick={openDialog}>
+        + Add components
       </button>
 
       <dialog ref={dialogRef} className={lightboxStyles.overlay} onClose={() => setOpen(false)}>
@@ -145,7 +145,7 @@ export function TemplateLightbox({
         <div className={lightboxStyles.panelWide}>
           <div className={lightboxStyles.panelHeader}>
             <div>
-              <h2>Edit Template Components</h2>
+              <h2>Add components</h2>
               <p className={lightboxStyles.panelSub}>{templateName}</p>
             </div>
             <button type="button" className={lightboxStyles.closeBtn} onClick={closeDialog}>
@@ -157,7 +157,7 @@ export function TemplateLightbox({
             <ComponentPicker
               components={components}
               initialSelection={initialSelection}
-              saveLabel="Save Template"
+              saveLabel="Save template"
               onSave={async (lines) => {
                 const result = await setTemplateLines(templateId, lines);
                 if (result.error) return { error: result.error };

@@ -7,7 +7,7 @@ import {
   CreateTemplateButton,
   RemoveLineButton,
   DeleteTemplateButton,
-  TemplateLightbox,
+  TemplatePickerLightbox,
 } from "./template-forms";
 import {
   CreateLaborTemplateButton,
@@ -371,7 +371,7 @@ export default async function TemplatesPage({ searchParams }: Props) {
               )}
 
               <div className={styles.cardFooter}>
-                <TemplateLightbox
+                <TemplatePickerLightbox
                   templateId={template.id}
                   templateName={template.name}
                   existingLines={lines.map((line) => {

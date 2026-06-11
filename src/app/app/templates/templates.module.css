@@ -515,3 +515,11 @@
   border-radius: var(--radius-lg);
   padding: 8px 10px;
 }
+
+/* Expansion "+ Add components" trigger */
+.addComponentsBtn {
+  composes: secondary from "../_ui/buttons.module.css";
+  font-size: var(--fs-sm);
+  padding: 6px 14px;
+  min-height: 34px;
+}
