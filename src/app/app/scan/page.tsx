@@ -26,7 +26,7 @@ export default async function ScanHomePage() {
   return (
     <main className={styles.homePage}>
       <div className={styles.homeHeader}>
-        <Image src="/manuva.svg" alt="Manuva" width={140} height={32} priority />
+        <Image src="/manuva.svg" alt="Manuva" width={180} height={98} priority />
         <div className={styles.homeSubtitle}>Warehouse Scanner</div>
       </div>
 

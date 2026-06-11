@@ -1,5 +1,9 @@
 /* ── Shell ──────────────────────────────────────────────────── */
 .shell {
+  /* Brand navy from the Manuva logo — overrides the app-wide indigo */
+  --brand-1: #15314D;
+  --brand-dim: rgba(21, 49, 77, 0.10);
+
   min-height: 100dvh;
   display: flex;
   flex-direction: column;

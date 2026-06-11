@@ -12,7 +12,7 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#6366F1",
+  themeColor: "#15314D",
 };
 
 export default function ScanLayout({ children }: { children: ReactNode }) {
