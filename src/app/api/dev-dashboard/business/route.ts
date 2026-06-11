@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requirePlatformOperator } from "../_lib/guard";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { TIER_MONTHLY_PRICE } from "@/lib/dev-dashboard/types";
+import { calculateRevenueMetrics } from "@/lib/dev-dashboard/revenue";
 
 export async function GET() {
   const { error } = await requirePlatformOperator();
@@ -48,20 +48,7 @@ export async function GET() {
     statusCounts[status] = (statusCounts[status] ?? 0) + 1;
   }
 
-  // MRR calculation
-  let mrr = 0;
-  const tierCounts: Record<string, { count: number; mrr: number }> = {};
-  for (const sub of allSubs) {
-    if (sub.status !== "active" && sub.status !== "trialing") continue;
-    const interval = sub.billing_interval ?? "monthly";
-    const price = TIER_MONTHLY_PRICE[sub.selected_tier]?.[interval] ?? 0;
-    mrr += price;
-    if (!tierCounts[sub.selected_tier]) tierCounts[sub.selected_tier] = { count: 0, mrr: 0 };
-    tierCounts[sub.selected_tier].count++;
-    tierCounts[sub.selected_tier].mrr += price;
-  }
-
-  const arpu = activeTenants > 0 ? Math.round(mrr / activeTenants) : 0;
+  const revenue = calculateRevenueMetrics(allSubs);
 
   // Trial conversion: count of tenants that were trialing and are now active / total that trialed
   const trialedCount = allSubs.length;
@@ -117,11 +104,11 @@ export async function GET() {
   return NextResponse.json({
     tenantsByStatus: statusCounts,
     signupsByWeek: weeks,
-    mrr,
-    arpu,
+    mrr: revenue.mrr,
+    arpu: revenue.arpu,
     trialConversion,
     churnRate,
-    revenueByTier: Object.entries(tierCounts).map(([tier, v]) => ({ tier, ...v })),
+    revenueByTier: revenue.revenueByTier,
     featureAdoption,
   });
 }

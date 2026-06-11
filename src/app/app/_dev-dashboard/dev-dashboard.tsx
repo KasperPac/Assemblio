@@ -1,7 +1,7 @@
 import type { DashboardData, InfraData, BusinessData, AlertItem, QueriesData } from "@/lib/dev-dashboard/types";
 import { parsePrometheus } from "@/lib/dev-dashboard/prometheus";
-import { TIER_MONTHLY_PRICE } from "@/lib/dev-dashboard/types";
 import { getSupabaseProjectRef } from "@/lib/dev-dashboard/config";
+import { calculateRevenueMetrics } from "@/lib/dev-dashboard/revenue";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import DevDashboardClient from "./dev-dashboard-client";
 
@@ -130,19 +130,7 @@ async function fetchBusiness(supabase: SupabaseClient): Promise<BusinessData> {
     statusCounts[status] = (statusCounts[status] ?? 0) + 1;
   }
 
-  let mrr = 0;
-  const tierCounts: Record<string, { count: number; mrr: number }> = {};
-  for (const sub of allSubs) {
-    if (sub.status !== "active" && sub.status !== "trialing") continue;
-    const interval = sub.billing_interval ?? "monthly";
-    const price = TIER_MONTHLY_PRICE[sub.selected_tier]?.[interval] ?? 0;
-    mrr += price;
-    if (!tierCounts[sub.selected_tier]) tierCounts[sub.selected_tier] = { count: 0, mrr: 0 };
-    tierCounts[sub.selected_tier].count++;
-    tierCounts[sub.selected_tier].mrr += price;
-  }
-
-  const arpu = activeTenants > 0 ? Math.round(mrr / activeTenants) : 0;
+  const revenue = calculateRevenueMetrics(allSubs);
   const convertedCount = allSubs.filter((s) => s.status === "active").length;
   const trialConversion =
     allSubs.length > 0 ? Math.round((convertedCount / allSubs.length) * 100) : 0;
@@ -189,11 +177,11 @@ async function fetchBusiness(supabase: SupabaseClient): Promise<BusinessData> {
   return {
     tenantsByStatus: statusCounts,
     signupsByWeek: weeks,
-    mrr,
-    arpu,
+    mrr: revenue.mrr,
+    arpu: revenue.arpu,
     trialConversion,
     churnRate,
-    revenueByTier: Object.entries(tierCounts).map(([tier, v]) => ({ tier, ...v })),
+    revenueByTier: revenue.revenueByTier,
     featureAdoption,
   };
 }
