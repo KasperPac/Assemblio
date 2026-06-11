@@ -9,6 +9,7 @@ import {
 } from "./actions";
 import { addComponentsToBom } from "@/app/app/bom/actions";
 import styles from "./bom-lightbox.module.css";
+import { parseQtyInput } from "@/lib/bom/qty-input";
 
 type ActionState = { error?: string; success?: string };
 
@@ -129,6 +130,7 @@ function ComponentPicker({
   copyState,
 }: PickerProps) {
   const [selection, setSelection] = useState<Selection>({});
+  const [qtyDrafts, setQtyDrafts] = useState<Record<string, string>>({});
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -193,16 +195,41 @@ function ComponentPicker({
       }
       return { ...prev, [id]: 1 };
     });
+    setQtyDrafts((prev) => {
+      if (!(id in prev)) return prev;
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
   }
 
-  function setQty(id: string, qty: number) {
+  function handleQtyChange(id: string, raw: string) {
+    setQtyDrafts((prev) => ({ ...prev, [id]: raw }));
+    const parsed = parseQtyInput(raw);
+    if (parsed !== null) {
+      setSelection((prev) => ({ ...prev, [id]: parsed }));
+    }
+  }
+
+  function handleQtyBlur(id: string) {
+    setQtyDrafts((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+  }
+
+  function stepQty(id: string, delta: number) {
     setSelection((prev) => {
-      if (qty <= 0) {
-        const next = { ...prev };
-        delete next[id];
-        return next;
-      }
-      return { ...prev, [id]: qty };
+      const current = prev[id] ?? 1;
+      const next = current + delta;
+      if (next <= 0) return prev; // never auto-remove via stepper
+      return { ...prev, [id]: next };
+    });
+    setQtyDrafts((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
     });
   }
 
@@ -350,23 +377,19 @@ function ComponentPicker({
                 </span>
                 {isSelected && (
                   <div className={styles.stepper}>
-                    <button
-                      type="button"
-                      onClick={() => setQty(c.id, (selection[c.id] ?? 1) - 1)}
-                    >
+                    <button type="button" onClick={() => stepQty(c.id, -1)}>
                       −
                     </button>
                     <input
                       type="number"
+                      step="any"
+                      inputMode="decimal"
                       className={styles.stepperQty}
-                      value={selection[c.id] ?? 1}
-                      min={0}
-                      onChange={(e) => setQty(c.id, Number(e.target.value))}
+                      value={qtyDrafts[c.id] ?? String(selection[c.id] ?? 1)}
+                      onChange={(e) => handleQtyChange(c.id, e.target.value)}
+                      onBlur={() => handleQtyBlur(c.id)}
                     />
-                    <button
-                      type="button"
-                      onClick={() => setQty(c.id, (selection[c.id] ?? 1) + 1)}
-                    >
+                    <button type="button" onClick={() => stepQty(c.id, 1)}>
                       +
                     </button>
                   </div>

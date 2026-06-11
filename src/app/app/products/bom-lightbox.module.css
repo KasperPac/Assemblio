@@ -496,13 +496,13 @@
 }
 
 .stepperQty {
-  width: 38px;
+  width: 64px;
   text-align: center;
   background: var(--bg-input);
   border: 1px solid var(--stroke-strong);
   border-radius: 3px;
   color: var(--ink-strong);
-  font-size: 12px;
+  font-size: 13px;
   padding: 2px 4px;
 }
 
