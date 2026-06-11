@@ -1,11 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import {
-  uploadComponentImage,
-  fetchComponentImageFromNexar,
-  removeComponentImage,
-} from "../actions";
+import { uploadComponentImage, removeComponentImage } from "../actions";
 import styles from "./component-image.module.css";
 
 interface Props {
@@ -13,15 +9,12 @@ interface Props {
   /** Component name — used as alt text on the image. */
   componentName: string;
   initialImageUrl: string | null;
-  /** True when the component has a preferred supplier_components row with a non-empty supplier_part_number */
-  hasSupplierPartNumber: boolean;
 }
 
 export default function ComponentImage({
   componentId,
   componentName,
   initialImageUrl,
-  hasSupplierPartNumber,
 }: Props) {
   const [imageUrl, setImageUrl] = useState<string | null>(initialImageUrl);
   const [error, setError] = useState<string | null>(null);
@@ -55,20 +48,6 @@ export default function ComponentImage({
       }
       // Reset so the same file can be re-selected
       if (fileInputRef.current) fileInputRef.current.value = "";
-    });
-  }
-
-  function handleFind() {
-    setError(null);
-    startTransition(async () => {
-      const result = await fetchComponentImageFromNexar(componentId);
-      if (result.found) {
-        setImageUrl(result.imageUrl);
-      } else if (result.reason === "no_results") {
-        setError("No image found — try uploading one manually");
-      } else {
-        setError("Image lookup failed — try again or upload your own");
-      }
     });
   }
 
@@ -130,18 +109,6 @@ export default function ComponentImage({
         >
           ↑ Upload
         </button>
-
-        {!imageUrl && hasSupplierPartNumber && (
-          <button
-            type="button"
-            className={styles.controlBtn}
-            onClick={handleFind}
-            disabled={isPending}
-            aria-label="Find image from supplier catalog"
-          >
-            {isPending ? "Searching…" : <><span aria-hidden="true">🔍</span> Find image</>}
-          </button>
-        )}
 
         {imageUrl && (
           <button

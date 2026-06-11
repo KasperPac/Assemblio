@@ -240,10 +240,6 @@ export default async function ComponentDetailPage({ params, searchParams }: Prop
     };
   });
 
-  const hasPreferredPartNumber = ((supplierCatalogRaw ?? []) as SupplierCatalogRow[]).some(
-    (sc) => sc.is_preferred && !!sc.supplier_part_number?.trim()
-  );
-
   const typedBalances = (balances ?? []) as BalanceRecord[];
   const typedMovements = (movements ?? []) as MovementRecord[];
   const typedBomUsage = (bomUsage ?? []) as BomUsageRecord[];
@@ -364,7 +360,6 @@ export default async function ComponentDetailPage({ params, searchParams }: Prop
               componentId={componentId}
               componentName={c.name}
               initialImageUrl={c.image_url}
-              hasSupplierPartNumber={hasPreferredPartNumber}
             />
             <div>
               <h1 className={styles.componentName}>{c.name}</h1>
