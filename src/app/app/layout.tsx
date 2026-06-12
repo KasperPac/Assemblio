@@ -112,7 +112,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   // when the tenant's subscription state requires it. /app/billing/* routes are
   // already short-circuited above, so this only fires on non-billing routes.
   let access: AccessResult | null = null;
-  if (profile?.tenant_id) {
+  if (profile?.tenant_id && !isPlatformOperator) {
     access = await requireActiveSubscription(supabase, profile.tenant_id);
   }
   const sub = access?.sub ?? null;
