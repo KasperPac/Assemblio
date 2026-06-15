@@ -7,6 +7,7 @@ import EmptyState from "@/app/app/_ui/empty-state";
 import ProductFilters from "./product-filters";
 import SortableHeader from "./sortable-header";
 import { parseSortParams, sortProductRows } from "./sort";
+import { fetchAllRows } from "@/lib/supabase/paginate";
 
 type ProductRow = {
   id: string;
@@ -85,30 +86,40 @@ export default async function ProductsPage({ searchParams }: Props) {
     return <div className={styles.page}>No tenant access.</div>;
   }
 
-  const detailedVariantsResult = await supabase
-    .from("product_variant")
-    .select("id,product_id,title,sku,price")
-    .eq("tenant_id", tenantId)
-    .order("created_at", { ascending: true });
+  // Page through every variant: PostgREST caps an un-paginated response at 1000
+  // rows, so tenants with >1000 variants would otherwise have products silently
+  // showing 0 variants / no price (the detail page is unaffected — it filters by
+  // product_id). See fetchAllRows.
+  const detailedVariantsResult = await fetchAllRows<VariantRow>((from, to) =>
+    supabase
+      .from("product_variant")
+      .select("id,product_id,title,sku,price")
+      .eq("tenant_id", tenantId)
+      .order("created_at", { ascending: true })
+      .range(from, to)
+  );
   const variantsFallbackResult = detailedVariantsResult.error
-    ? await supabase.from("product_variant").select("id,product_id,title,sku,price")
+    ? await fetchAllRows<VariantRow>((from, to) =>
+        supabase
+          .from("product_variant")
+          .select("id,product_id,title,sku,price")
+          .range(from, to)
+      )
     : null;
   const variants =
     (detailedVariantsResult.error
       ? variantsFallbackResult?.data
       : detailedVariantsResult.data) ?? [];
 
-  const variantIds = (variants ?? []).map((v) => v.id);
-
   const [activeBomsResult, ratesResult] = await Promise.all([
-    variantIds.length === 0
-      ? Promise.resolve({ data: [] as BomRow[] })
-      : supabase
-          .from("product_bom")
-          .select("id,variant_id")
-          .eq("tenant_id", tenantId)
-          .eq("is_active", true)
-          .in("variant_id", variantIds),
+    // All active BOMs for the tenant. Don't filter by `.in("variant_id", ids)`:
+    // with thousands of variant ids that URL would 414. Active BOMs are few, and
+    // every BOM's variant is already in `variants`, so a plain fetch is enough.
+    supabase
+      .from("product_bom")
+      .select("id,variant_id")
+      .eq("tenant_id", tenantId)
+      .eq("is_active", true),
     supabase
       .from("cost_rate_schedule")
       .select(
