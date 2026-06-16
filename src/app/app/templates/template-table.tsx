@@ -35,6 +35,7 @@ export type ComponentTemplateRowData = {
     sku: string | null;
     unit: string | null;
     quantity: number;
+    costPerUnit: number | null;
   }[];
   affected: AffectedBom[];
 };

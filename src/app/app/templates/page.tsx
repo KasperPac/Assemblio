@@ -18,9 +18,10 @@ type TemplateLine = {
   id: string;
   template_id: string;
   quantity: number;
+  sort_order: number;
   component:
-    | { id: string; name: string; sku: string | null; unit: string | null }
-    | Array<{ id: string; name: string; sku: string | null; unit: string | null }>
+    | { id: string; name: string; sku: string | null; unit: string | null; cost_per_unit: number | null }
+    | Array<{ id: string; name: string; sku: string | null; unit: string | null; cost_per_unit: number | null }>
     | null;
 };
 
@@ -91,8 +92,9 @@ export default async function TemplatesPage({ searchParams }: Props) {
       .order("name"),
     supabase
       .from("bom_template_line")
-      .select("id,template_id,quantity,component:component_id(id,name,sku,unit)")
+      .select("id,template_id,quantity,sort_order,component:component_id(id,name,sku,unit,cost_per_unit)")
       .eq("tenant_id", tenantId)
+      .order("sort_order", { ascending: true })
       .order("created_at", { ascending: true }),
     supabase
       .from("component")
@@ -177,6 +179,7 @@ export default async function TemplatesPage({ searchParams }: Props) {
           sku: comp?.sku ?? null,
           unit: comp?.unit ?? null,
           quantity: line.quantity,
+          costPerUnit: comp?.cost_per_unit ?? null,
         };
       }),
     };
