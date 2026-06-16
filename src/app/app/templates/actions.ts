@@ -142,6 +142,31 @@ export async function setTemplateLines(
   return {};
 }
 
+export async function reorderTemplateLines(
+  templateId: string,
+  orderedLineIds: string[]
+): Promise<{ error?: string }> {
+  const context = await getServerTenantContext();
+  if (!context) return { error: "Missing tenant context." };
+  const { supabase, tenantId } = context;
+
+  const updates = orderedLineIds.map((id, index) =>
+    supabase
+      .from("bom_template_line")
+      .update({ sort_order: index + 1 } as any)
+      .eq("tenant_id", tenantId)
+      .eq("id", id)
+      .eq("template_id", templateId)
+  );
+
+  await Promise.all(updates);
+
+  const touchError = await touchTemplate(supabase, "bom_template", tenantId, templateId);
+  revalidatePath("/app/templates");
+  if (touchError) return { error: touchError };
+  return {};
+}
+
 // ---------------------------------------------------------------------------
 // Labor template CRUD
 // ---------------------------------------------------------------------------
