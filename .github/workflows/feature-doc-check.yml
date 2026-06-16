@@ -1,0 +1,59 @@
+name: Feature doc check
+
+# Enforces the CLAUDE.md convention: when feature code changes, the feature
+# test plan (docs/qa-feature-test-plan.md) must be updated in the same PR.
+# Bypass for non-feature changes (refactors, bugfixes) by putting
+# [skip-feature-doc] in the PR title or description.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+jobs:
+  feature-doc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify feature test plan was updated
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          set -euo pipefail
+
+          if printf '%s\n%s' "$PR_TITLE" "$PR_BODY" | grep -qiF '[skip-feature-doc]'; then
+            echo "::notice::Bypass token [skip-feature-doc] found — skipping feature doc check."
+            exit 0
+          fi
+
+          git fetch --no-tags --depth=1 origin "$BASE_REF"
+          CHANGED="$(git diff --name-only "origin/${BASE_REF}...HEAD")"
+          echo "Changed files:"
+          echo "$CHANGED"
+
+          # Feature code: app pages, server actions, API routes, and domain logic
+          # (excluding tests, which don't by themselves constitute a feature change).
+          FEATURE_CHANGED="$(echo "$CHANGED" | grep -E '^(src/app/app/.*/(page|actions)\.tsx?|src/app/api/.*/route\.ts|src/lib/.*\.ts)$' | grep -vE '\.test\.tsx?$' || true)"
+
+          DOC='docs/qa-feature-test-plan.md'
+          DOC_CHANGED="$(echo "$CHANGED" | grep -xF "$DOC" || true)"
+
+          if [ -n "$FEATURE_CHANGED" ] && [ -z "$DOC_CHANGED" ]; then
+            echo "::error::Feature code changed but $DOC was not updated."
+            echo ""
+            echo "Per CLAUDE.md, when you add or amend a feature you must update $DOC"
+            echo "(feature entry + dated Changelog line) in the same PR."
+            echo ""
+            echo "Feature files changed:"
+            echo "$FEATURE_CHANGED" | sed 's/^/  - /'
+            echo ""
+            echo "If this PR is NOT a feature change (refactor, bugfix, etc.),"
+            echo "add [skip-feature-doc] to the PR title or description."
+            exit 1
+          fi
+
+          echo "Feature doc check passed."
