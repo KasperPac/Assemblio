@@ -8,6 +8,9 @@ import ProductFilters from "./product-filters";
 import SortableHeader from "./sortable-header";
 import { parseSortParams, sortProductRows } from "./sort";
 import { fetchAllRows } from "@/lib/supabase/paginate";
+import ProductsPagination from "./products-pagination";
+
+const PAGE_SIZE = 25;
 
 type ProductRow = {
   id: string;
@@ -62,6 +65,7 @@ type Props = {
     status?: string;
     sort?: string;
     dir?: string;
+    page?: string;
     shopify?: string;
     products?: string;
     orders?: string;
@@ -74,6 +78,7 @@ export default async function ProductsPage({ searchParams }: Props) {
   const q = (params.q ?? "").trim().toLowerCase();
   const statusFilter = (params.status ?? "all").toLowerCase();
   const { sort: sortKey, dir: sortDir } = parseSortParams(params.sort, params.dir);
+  const pageNum = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
   const syncStatus = params.shopify ?? null;
   const syncProducts = params.products ?? "0";
   const syncOrders = params.orders ?? "0";
@@ -353,6 +358,10 @@ export default async function ProductsPage({ searchParams }: Props) {
   });
 
   const sortedRows = sortProductRows(rows, sortKey, sortDir);
+  const totalFiltered = sortedRows.length;
+  const totalPages = Math.max(1, Math.ceil(totalFiltered / PAGE_SIZE));
+  const safePage = Math.min(pageNum, totalPages);
+  const pagedRows = sortedRows.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
   const gpClassFor = (value: number | null) =>
     value == null ? "" : value >= 0.3 ? styles.gpGood : value >= 0.1 ? styles.gpWarn : styles.gpBad;
@@ -362,7 +371,7 @@ export default async function ProductsPage({ searchParams }: Props) {
       <PageHeader
         eyebrow="Products"
         title="Products"
-        description={`${filteredProducts.length} of ${products.length} products`}
+        description={`${totalFiltered} of ${products.length} products`}
         actions={
           <form method="post" action="/api/shopify/sync?return_to=/app/products">
             <button type="submit" className={styles.importButton}>
@@ -399,7 +408,7 @@ export default async function ProductsPage({ searchParams }: Props) {
         ) : filteredProducts.length === 0 ? (
           <EmptyState title="No results" message="No products match your filters." />
         ) : (
-          sortedRows.map((row) => (
+          pagedRows.map((row) => (
             <div key={row.id} className={styles.tableRow}>
               <Link className={styles.productCell} href={`/app/products/${row.id}`}>
                 <div className={styles.thumb}>
@@ -442,6 +451,8 @@ export default async function ProductsPage({ searchParams }: Props) {
           ))
         )}
       </div>
+
+      <ProductsPagination page={safePage} pageSize={PAGE_SIZE} total={totalFiltered} />
     </div>
   );
 }

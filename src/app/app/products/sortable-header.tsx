@@ -20,6 +20,7 @@ export default function SortableHeader({
   const params = new URLSearchParams(sp.toString());
   params.set("sort", sortKey);
   params.set("dir", isActive ? nextDir : "asc");
+  params.delete("page");
 
   return (
     <span>

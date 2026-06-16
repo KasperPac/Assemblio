@@ -228,3 +228,19 @@
   border-radius: var(--radius-md);
   font-size: 13px;
 }
+
+/* ── Pagination ──────────────────────────────────── */
+
+.pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 4px; }
+.pageInfo { font-size: var(--fs-sm); color: var(--ink-muted); }
+.pageButtons { display: flex; gap: 8px; }
+.pageBtn {
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  padding: 6px 12px;
+  font-size: var(--fs-sm);
+  text-decoration: none;
+}
+.pageBtnDisabled { color: var(--ink-faint); pointer-events: none; opacity: 0.5; }
