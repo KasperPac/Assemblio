@@ -107,7 +107,7 @@ export async function deleteTemplate(
 
 export async function setTemplateLines(
   templateId: string,
-  lines: { component_id: string; quantity: number }[]
+  lines: { component_id: string; quantity: number; sort_order?: number }[]
 ): Promise<{ error?: string }> {
   const context = await getServerTenantContext();
   if (!context) return { error: "Missing tenant context." };
@@ -122,11 +122,12 @@ export async function setTemplateLines(
   if (delError) return { error: delError.message };
 
   if (lines.length > 0) {
-    const rows = lines.map((l) => ({
+    const rows = lines.map((l, i) => ({
       tenant_id: tenantId,
       template_id: templateId,
       component_id: l.component_id,
       quantity: l.quantity,
+      sort_order: l.sort_order ?? i + 1,
     }));
 
     const { error: insertError } = await supabase

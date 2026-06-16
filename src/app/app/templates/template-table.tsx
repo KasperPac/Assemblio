@@ -223,9 +223,10 @@ function ComponentExpansion({
         template.id,
         lines
           .filter((l) => l.componentId !== "")
-          .map((l) => ({
+          .map((l, i) => ({
             component_id: l.componentId,
             quantity: l.id === lineId ? parsed : l.quantity,
+            sort_order: i + 1,
           }))
       );
       if (result.error) setError(result.error);
@@ -249,9 +250,10 @@ function ComponentExpansion({
       template.id,
       lines
         .filter((l) => l.componentId !== "")
-        .map((l) => ({
+        .map((l, i) => ({
           component_id: l.componentId,
           quantity: l.id === lineId ? next : l.quantity,
+          sort_order: i + 1,
         }))
     )
       .then((result) => {
