@@ -1,0 +1,33 @@
+{
+  "planPath": "docs/superpowers/plans/2026-06-16-templates-bom-editor-style.md",
+  "tasks": [
+    {
+      "id": 3,
+      "subject": "Task 1: SQL Patch — Add sort_order to bom_template_line",
+      "status": "pending",
+      "description": "**Goal:** Add a `sort_order integer` column to `bom_template_line` for drag-and-drop reordering.\n\n**Files:**\n- Create: `supabase/patches/bom_template_line_sort_order.sql`\n\n**Acceptance Criteria:**\n- [ ] Patch is idempotent\n- [ ] Default value is 0\n\n```json:metadata\n{\"files\": [\"supabase/patches/bom_template_line_sort_order.sql\"], \"verifyCommand\": \"cat supabase/patches/bom_template_line_sort_order.sql\", \"acceptanceCriteria\": [\"Patch is idempotent\", \"Default value is 0\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 2: Server Action — reorderTemplateLines",
+      "status": "pending",
+      "blockedBy": [3],
+      "description": "**Goal:** Add a server action that persists drag-and-drop reorder of template lines.\n\n**Files:**\n- Modify: `src/app/app/templates/actions.ts`\n\n```json:metadata\n{\"files\": [\"src/app/app/templates/actions.ts\"], \"verifyCommand\": \"npx tsc --noEmit 2>&1 | grep -c src/\", \"acceptanceCriteria\": [\"reorderTemplateLines updates sort_order\", \"Touches lines_updated_at\", \"Revalidates /app/templates\"]}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 3: Thread cost_per_unit through template lines",
+      "status": "pending",
+      "blockedBy": [3],
+      "description": "**Goal:** Include `cost_per_unit` in template line data and order by `sort_order`.\n\n**Files:**\n- Modify: `src/app/app/templates/page.tsx`\n- Modify: `src/app/app/templates/template-table.tsx`\n\n```json:metadata\n{\"files\": [\"src/app/app/templates/page.tsx\", \"src/app/app/templates/template-table.tsx\"], \"verifyCommand\": \"npx tsc --noEmit 2>&1 | grep -c src/\", \"acceptanceCriteria\": [\"cost_per_unit in TemplateLine type\", \"costPerUnit populated\", \"Lines ordered by sort_order\"]}\n```"
+    },
+    {
+      "id": 6,
+      "subject": "Task 4: BOM-editor-style expansion with DnD",
+      "status": "pending",
+      "blockedBy": [4, 5],
+      "description": "**Goal:** Rewrite ComponentExpansion with BOM-editor-style table, DnD, stepper qty, materials total.\n\n**Files:**\n- Modify: `src/app/app/templates/template-table.tsx`\n- Modify: `src/app/app/templates/templates.module.css`\n\n```json:metadata\n{\"files\": [\"src/app/app/templates/template-table.tsx\", \"src/app/app/templates/templates.module.css\"], \"verifyCommand\": \"npx tsc --noEmit 2>&1 | grep -c src/\", \"acceptanceCriteria\": [\"BOM-editor table columns\", \"Mini toolbar\", \"Materials total\", \"DnD reorder\", \"Stepper qty\", \"Empty state\", \"Footer unchanged\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-06-16T00:00:00Z"
+}
