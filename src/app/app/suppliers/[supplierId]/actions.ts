@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { logActivity } from "@/lib/activity/log";
 
 export async function updateSupplier(
   _prevState: { success?: boolean; error?: string },
@@ -33,6 +34,8 @@ export async function updateSupplier(
 
   if (error) return { error: error.message };
 
+  await logActivity({ event: "supplier.updated", entityId: supplierId });
+
   revalidatePath(`/app/suppliers/${supplierId}`);
   return { success: true };
 }
@@ -49,6 +52,8 @@ export async function archiveSupplier(formData: FormData) {
     .update({ is_active: false })
     .eq("tenant_id", tenantId)
     .eq("id", supplierId);
+
+  await logActivity({ event: "supplier.archived", entityId: supplierId });
 
   revalidatePath("/app/suppliers");
   redirect("/app/suppliers");
@@ -69,6 +74,8 @@ export async function addContact(formData: FormData) {
     role: formData.get("role")?.toString() ?? null,
   });
 
+  await logActivity({ event: "supplier.contact_added", entityId: supplierId });
+
   revalidatePath(`/app/suppliers/${supplierId}`);
 }
 
@@ -84,6 +91,8 @@ export async function removeContact(formData: FormData) {
     .delete()
     .eq("tenant_id", tenantId)
     .eq("id", contactId);
+
+  await logActivity({ event: "supplier.contact_removed", entityId: supplierId });
 
   revalidatePath(`/app/suppliers/${supplierId}`);
 }
@@ -116,6 +125,8 @@ export async function linkComponent(
 
   if (error) return { error: error.message };
 
+  await logActivity({ event: "supplier.component_linked", entityId: supplierId });
+
   revalidatePath(`/app/suppliers/${supplierId}`);
   revalidatePath(`/app/components/${componentId}`);
   return { success: true };
@@ -144,6 +155,8 @@ export async function updateSupplierComponent(formData: FormData) {
     .eq("tenant_id", tenantId)
     .eq("id", supplierComponentId);
 
+  await logActivity({ event: "supplier.component_updated", entityId: supplierId });
+
   revalidatePath(`/app/suppliers/${supplierId}`);
   if (componentId) revalidatePath(`/app/components/${componentId}`);
 }
@@ -161,6 +174,8 @@ export async function unlinkComponent(formData: FormData) {
     .delete()
     .eq("tenant_id", tenantId)
     .eq("id", supplierComponentId);
+
+  await logActivity({ event: "supplier.component_unlinked", entityId: supplierId });
 
   revalidatePath(`/app/suppliers/${supplierId}`);
   if (componentId) revalidatePath(`/app/components/${componentId}`);
@@ -205,6 +220,8 @@ export async function togglePreferred(formData: FormData) {
       .eq("id", supplierComponentId);
   }
 
+  await logActivity({ event: "supplier.preferred_changed", entityId: supplierId });
+
   revalidatePath(`/app/suppliers/${supplierId}`);
   revalidatePath(`/app/components/${componentId}`);
 }
@@ -233,6 +250,8 @@ export async function addPriceBreak(formData: FormData) {
     unit_cost: Number(formData.get("unit_cost")),
   });
 
+  await logActivity({ event: "supplier.price_break_added", entityId: supplierId });
+
   revalidatePath(`/app/suppliers/${supplierId}`);
 }
 
@@ -259,6 +278,8 @@ export async function removePriceBreak(formData: FormData) {
     .delete()
     .eq("tenant_id", tenantId)
     .eq("id", priceBreakId);
+
+  await logActivity({ event: "supplier.price_break_removed", entityId: supplierId });
 
   revalidatePath(`/app/suppliers/${supplierId}`);
 }

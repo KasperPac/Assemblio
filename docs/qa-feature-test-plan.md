@@ -378,7 +378,15 @@ For each report below: sortable table, CSV export, correct date-range default, a
 ## 14. Activity Log & Trash
 
 ### Activity log — `/app/activity-log`
-- [ ] Last 10 events (desc): event name, timestamp, actor; metadata shown when present; empty state
+- [ ] Lists activity newest-first, 50 per page, with Prev/Next pagination and a total count
+- [ ] Event filter (from the catalog), user filter (tenant members), date-from/date-to, and text search all run server-side over full history (not just the current page)
+- [ ] Filters + page persist in the URL (shareable/bookmarkable); search input reflects the active query after navigation
+- [ ] User-initiated events show the operator's real name (full_name, else email)
+- [ ] Automated events show a typed actor label ("Shopify", "Stripe billing", "System") with an "auto" chip — never a blanket "Shopify"
+- [ ] Creating/updating/deleting business records (BOMs, components, POs, suppliers, inventory, stocktakes, locations, team members, etc.) each produce a log entry with a human-readable summary
+- [ ] Deleting/archiving a record is logged (e.g. "who deleted that BOM")
+- [ ] A logging failure never breaks the underlying action (logActivity/logSystemActivity swallow errors)
+- [ ] Detail pane shows operator, entity (type + id), summary, and raw metadata
 
 ### Trash — `/app/trash`
 - [ ] Sections: uninstalled Shopify stores, delete-activity log, archived POs, archived stocktakes, archived BOMs; each with empty state
@@ -570,3 +578,4 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 
 - 2026-06-16 — added Feature & QA test plan: initial comprehensive inventory of all 23 domains.
 - 2026-06-16 — amended Products list: page through all variants (PostgREST 1000-row cap fix) so >1000-variant tenants show correct counts/prices.
+- 2026-06-17 — amended Activity log: full audit-trail coverage of all mutations, real/typed actors, server-side paged filtering.

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { logActivity } from "@/lib/activity/log";
 
 function parseNumber(value: FormDataEntryValue | null, fallback = 0) {
   const raw = value?.toString().trim();
@@ -79,6 +80,7 @@ export async function createDepartment(formData: FormData) {
   revalidatePath("/app/capacity");
   revalidatePath("/app/actual-time");
   revalidatePath("/app/reports");
+  await logActivity({ event: "department.created", entityId: department.id, metadata: { name } });
   redirect(`/app/departments?success=${encodeMessage(`Created ${name}.`)}`);
 }
 
@@ -165,5 +167,6 @@ export async function updateDepartment(formData: FormData) {
   revalidatePath("/app/capacity");
   revalidatePath("/app/actual-time");
   revalidatePath("/app/reports");
+  await logActivity({ event: "department.updated", entityId: departmentId });
   redirect(`/app/departments?success=${encodeMessage(`Updated ${name}.`)}`);
 }

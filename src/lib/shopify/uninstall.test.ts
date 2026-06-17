@@ -108,7 +108,7 @@ describe("handleAppUninstalled", () => {
     expect(admin._tables.shopify_install_tokens).toHaveLength(0);
     expect(admin._tables.shopify_store[0].status).toBe("uninstalled");
     expect(admin._tables.activity_log).toHaveLength(1);
-    expect(admin._tables.activity_log[0].event).toBe("SHOPIFY_APP_UNINSTALLED");
+    expect(admin._tables.activity_log[0].event).toBe("shopify.app_uninstalled");
   });
 
   it("is idempotent on repeat uninstall (no token, status already uninstalled)", async () => {

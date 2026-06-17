@@ -4,6 +4,7 @@ import { reconcileOrderAllocations, releaseOrderAllocations } from "@/lib/alloca
 import { resolveOrderDate, isHistoricalOrder } from "./order-dates";
 import { getWeekStart } from "@/lib/dates";
 import { mapProductStatus } from "./product-status";
+import { logSystemActivity } from "@/lib/activity/log";
 
 type SyncResult = {
   products: number;
@@ -412,10 +413,12 @@ export async function syncShopifyStoreData(
     }
   }
 
-  const { error: activityError } = await admin.from("activity_log").insert({
-    tenant_id: tenantId,
-    actor_id: null,
-    event: "SHOPIFY_SYNC_COMPLETED",
+  await logSystemActivity({
+    supabase: admin,
+    tenantId,
+    event: "shopify.sync_completed",
+    actorType: "shopify",
+    actorLabel: "Shopify sync",
     metadata: {
       shop_domain: shopDomain,
       products: products.length,
@@ -427,7 +430,6 @@ export async function syncShopifyStoreData(
       plan_errors: planErrors,
     },
   });
-  assertNoError(activityError, "Failed to insert activity_log");
 
   return {
     products: products.length,

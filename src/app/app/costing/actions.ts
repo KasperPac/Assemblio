@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getWeekStart } from "@/lib/dates";
+import { logActivity } from "@/lib/activity/log";
 
 export async function generateFinancialPlans() {
   await generateFinancialPlansForWeek(getWeekStart(), "/app/costing");
@@ -31,5 +32,6 @@ async function generateFinancialPlansForWeek(weekStart: string, redirectTo: stri
     redirect(`${redirectTo}?week=${weekStart}&error=${encodeURIComponent(error.message)}`);
   }
 
+  await logActivity({ event: "costing.financial_plans_generated", metadata: { weekStart } });
   redirect(`${redirectTo}?week=${weekStart}&generated=${data ?? 0}`);
 }

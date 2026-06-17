@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "../../lib/supabase/server";
 import { createSupabaseAdminClient } from "../../lib/supabase/admin";
 import { PLANS, type PlanTier, type BillingInterval } from "../../lib/plans";
+import { buildActivityRow } from "@/lib/activity/build";
 
 export type SignUpState = { error?: string; message?: string };
 
@@ -132,12 +133,7 @@ export async function signUpTenant(
         trial_started_at: now.toISOString(),
         trial_ends_at: trialEnds.toISOString(),
       }),
-      admin.from("activity_log").insert({
-        tenant_id: tenantId,
-        actor_id: authUser.id,
-        event: "tenant_created",
-        metadata: { plan, billing },
-      }),
+      admin.from("activity_log").insert(buildActivityRow({ event: "tenant.created", tenantId, actorId: authUser.id, actorType: "user", actorLabel: null, metadata: { plan, billing } })),
     ]);
 
     for (const r of results) {

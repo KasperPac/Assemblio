@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { parseCSV } from "@/lib/csv/parse";
 import { validateSupplierRows } from "@/lib/csv/validate-suppliers";
+import { logActivity } from "@/lib/activity/log";
 
 const MAX_CSV_BYTES = 5 * 1024 * 1024;
 const REQUIRED_HEADERS = ["name"];
@@ -75,11 +76,7 @@ export async function POST(req: NextRequest) {
   const { error } = await supabase.from("suppliers").insert(insertRows);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  await supabase.from("activity_log").insert({
-    tenant_id: tenantId,
-    event: "suppliers_csv_imported",
-    metadata: { count: insertRows.length },
-  });
+  await logActivity({ event: "supplier.csv_imported", metadata: { count: insertRows.length } });
 
   revalidatePath("/app/suppliers");
   revalidatePath("/app/purchasing");

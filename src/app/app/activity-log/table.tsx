@@ -1,10 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import PageHeader from "../_ui/page-header";
 import StatusBadge from "../_ui/status-badge";
 import EmptyState from "../_ui/empty-state";
 import styles from "./activity-log.module.css";
+import type { ActivityFilters } from "@/lib/activity/query";
 
 type LogRow = {
   id: string;
@@ -12,147 +14,117 @@ type LogRow = {
   created_at: string;
   metadata: Record<string, unknown> | null;
   actor_id: string | null;
+  actor_type: string;
+  actor_label: string | null;
+  entity_type: string | null;
+  entity_id: string | null;
+  summary: string | null;
 };
 
 type Props = {
   rows: LogRow[];
   error?: string;
+  filters: ActivityFilters;
+  eventOptions: string[];
+  actorOptions: { id: string; label: string }[];
+  page: number;
+  totalPages: number;
+  pageSize: number;
+  totalCount: number;
 };
 
 function getEventVariant(event: string) {
-  const normalized = event.toLowerCase();
-  if (normalized.includes("delete") || normalized.includes("disconnect")) return "danger";
-  if (normalized.includes("sync") || normalized.includes("update")) return "info";
-  if (normalized.includes("create") || normalized.includes("restore")) return "success";
+  const n = event.toLowerCase();
+  if (n.includes("delete") || n.includes("archived") || n.includes("uninstall") || n.includes("removed")) return "danger";
+  if (n.includes("sync") || n.includes("updated") || n.includes("changed")) return "info";
+  if (n.includes("created") || n.includes("restored") || n.includes("activated")) return "success";
   return "default";
 }
 
-export default function ActivityLogClient({ rows, error }: Props) {
+const SYSTEM_ACTOR_LABEL: Record<string, string> = {
+  shopify: "Shopify",
+  stripe: "Stripe billing",
+  system: "System",
+};
+
+function actorDisplay(row: LogRow): string {
+  if (row.actor_type !== "user") return row.actor_label ?? SYSTEM_ACTOR_LABEL[row.actor_type] ?? "System";
+  return row.actor_label ?? "Unknown user";
+}
+
+export default function ActivityLogClient(props: Props) {
+  const { rows, error, filters, eventOptions, actorOptions, page, totalPages, totalCount } = props;
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
   const [selectedId, setSelectedId] = useState(rows[0]?.id ?? "");
-  const [search, setSearch] = useState("");
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
-  const [selectedUser, setSelectedUser] = useState("all");
-  const [selectedEvent, setSelectedEvent] = useState("all");
+  const [searchDraft, setSearchDraft] = useState(filters.search ?? "");
+  // Re-sync the search input with the URL when navigation changes the active query
+  // (e.g. paging). Adjusting state during render is the React-recommended pattern
+  // over a useEffect for "reset state when a prop changes".
+  const [prevSearch, setPrevSearch] = useState(filters.search);
+  if (filters.search !== prevSearch) {
+    setPrevSearch(filters.search);
+    setSearchDraft(filters.search ?? "");
+  }
 
-  const users = useMemo(() => {
-    const unique = new Set<string>();
-    for (const row of rows) {
-      unique.add((row.metadata?.user as string | undefined) ?? "Shopify");
+  const selected = useMemo(
+    () => rows.find((r) => r.id === selectedId) ?? rows[0],
+    [rows, selectedId]
+  );
+
+  function pushParams(next: Record<string, string | null>, resetPage = true) {
+    const params = new URLSearchParams(searchParams.toString());
+    for (const [key, value] of Object.entries(next)) {
+      if (value === null || value === "") params.delete(key);
+      else params.set(key, value);
     }
-    return Array.from(unique).sort((a, b) => a.localeCompare(b));
-  }, [rows]);
-
-  const events = useMemo(() => {
-    const unique = new Set<string>();
-    for (const row of rows) {
-      unique.add(row.event);
-    }
-    return Array.from(unique).sort((a, b) => a.localeCompare(b));
-  }, [rows]);
-
-  const filteredRows = useMemo(() => {
-    const query = search.trim().toLowerCase();
-    return rows.filter((row) => {
-      const createdDateIso = row.created_at.slice(0, 10);
-      const user = ((row.metadata?.user as string | undefined) ?? "Shopify").toLowerCase();
-      const entity = ((row.metadata?.entity as string | undefined) ?? "component").toLowerCase();
-      const message = ((row.metadata?.message as string | undefined) ?? row.event).toLowerCase();
-      const event = row.event.toLowerCase();
-
-      if (selectedUser !== "all" && user !== selectedUser.toLowerCase()) return false;
-      if (selectedEvent !== "all" && event !== selectedEvent.toLowerCase()) return false;
-      if (dateFrom && createdDateIso < dateFrom) return false;
-      if (dateTo && createdDateIso > dateTo) return false;
-      if (!query) return true;
-
-      return (
-        event.includes(query) ||
-        entity.includes(query) ||
-        message.includes(query) ||
-        user.includes(query) ||
-        createdDateIso.includes(query)
-      );
-    });
-  }, [rows, search, selectedUser, selectedEvent, dateFrom, dateTo]);
-
-  const selected = useMemo(() => {
-    return filteredRows.find((row) => row.id === selectedId) ?? filteredRows[0] ?? undefined;
-  }, [filteredRows, selectedId]);
+    if (resetPage) params.delete("page");
+    startTransition(() => router.push(`?${params.toString()}`));
+  }
 
   return (
     <div className={styles.page}>
       <PageHeader
         eyebrow="Audit"
         title="Activity log"
-        description="Search recent platform activity, inspect event details, and review the raw metadata recorded for each action."
+        description="Search and page through all platform activity, inspect event details, and review the raw metadata recorded for each action."
       />
 
       <div className={styles.filters}>
         <input
           aria-label="Search activity"
-          placeholder="Search messages, users, entities..."
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
+          placeholder="Search messages, users..."
+          value={searchDraft}
+          onChange={(e) => setSearchDraft(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") pushParams({ q: searchDraft || null }); }}
+          onBlur={() => { if ((filters.search ?? "") !== searchDraft) pushParams({ q: searchDraft || null }); }}
         />
-        <input
-          aria-label="From date"
-          type="date"
-          value={dateFrom}
-          onChange={(event) => setDateFrom(event.target.value)}
-        />
-        <input
-          aria-label="To date"
-          type="date"
-          value={dateTo}
-          onChange={(event) => setDateTo(event.target.value)}
-        />
-        <select
-          value={selectedUser}
-          onChange={(event) => setSelectedUser(event.target.value)}
-        >
+        <input aria-label="From date" type="date" value={filters.dateFrom ?? ""} onChange={(e) => pushParams({ from: e.target.value || null })} />
+        <input aria-label="To date" type="date" value={filters.dateTo ?? ""} onChange={(e) => pushParams({ to: e.target.value || null })} />
+        <select value={filters.actorId ?? "all"} onChange={(e) => pushParams({ actor: e.target.value === "all" ? null : e.target.value })}>
           <option value="all">All users</option>
-          {users.map((user) => (
-            <option key={user} value={user}>
-              {user}
-            </option>
-          ))}
+          {actorOptions.map((a) => <option key={a.id} value={a.id}>{a.label}</option>)}
         </select>
-        <select
-          value={selectedEvent}
-          onChange={(event) => setSelectedEvent(event.target.value)}
-        >
+        <select value={filters.event ?? "all"} onChange={(e) => pushParams({ event: e.target.value === "all" ? null : e.target.value })}>
           <option value="all">All events</option>
-          {events.map((eventName) => (
-            <option key={eventName} value={eventName}>
-              {eventName}
-            </option>
-          ))}
+          {eventOptions.map((ev) => <option key={ev} value={ev}>{ev}</option>)}
         </select>
       </div>
 
       <div className={styles.content}>
-        <section className={styles.tableCard}>
+        <section className={styles.tableCard} data-pending={isPending ? "true" : undefined}>
           <div className={styles.tableHeader}>
-            <span>Date</span>
-            <span>User</span>
-            <span>Event</span>
-            <span>Entity</span>
-            <span>Message</span>
+            <span>Date</span><span>User</span><span>Event</span><span>Entity</span><span>Message</span>
           </div>
           {error ? (
             <EmptyState title="Failed to load activity" message={error} />
-          ) : filteredRows.length === 0 ? (
-            <EmptyState
-              title="No activity found"
-              message="Try widening the filters or search term to inspect more events."
-            />
+          ) : rows.length === 0 ? (
+            <EmptyState title="No activity found" message="Try widening the filters or search term to inspect more events." />
           ) : (
-            filteredRows.map((row) => {
-              const entity = (row.metadata?.entity as string | undefined) ?? "component";
-              const message = (row.metadata?.message as string | undefined) ?? row.event;
-              const user = (row.metadata?.user as string | undefined) ?? "Shopify";
+            rows.map((row) => {
               const isActive = row.id === selected?.id;
+              const isSystem = row.actor_type !== "user";
               return (
                 <button
                   type="button"
@@ -162,19 +134,43 @@ export default function ActivityLogClient({ rows, error }: Props) {
                 >
                   <span className={styles.meta}>
                     {new Date(row.created_at).toLocaleDateString("en-GB")}{" "}
-                    {new Date(row.created_at).toLocaleTimeString("en-GB", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {new Date(row.created_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
                   </span>
-                  <span>{user}</span>
+                  <span>
+                    {actorDisplay(row)}
+                    {isSystem && <span className={styles.systemChip}>auto</span>}
+                  </span>
                   <StatusBadge variant={getEventVariant(row.event)}>{row.event}</StatusBadge>
-                  <span>{entity}</span>
-                  <span>{message}</span>
+                  <span>{row.entity_type ?? "—"}</span>
+                  <span>{row.summary ?? row.event}</span>
                 </button>
               );
             })
           )}
+
+          <div className={styles.pagination}>
+            <span className={styles.meta}>
+              {totalCount} event{totalCount === 1 ? "" : "s"} · page {page} of {totalPages}
+            </span>
+            <div className={styles.pageButtons}>
+              <button
+                type="button"
+                className={styles.pageBtn}
+                disabled={page <= 1 || isPending}
+                onClick={() => pushParams({ page: String(page - 1) }, false)}
+              >
+                ← Prev
+              </button>
+              <button
+                type="button"
+                className={styles.pageBtn}
+                disabled={page >= totalPages || isPending}
+                onClick={() => pushParams({ page: String(page + 1) }, false)}
+              >
+                Next →
+              </button>
+            </div>
+          </div>
         </section>
 
         <aside className={styles.detailCard}>
@@ -189,11 +185,11 @@ export default function ActivityLogClient({ rows, error }: Props) {
             <p className={styles.detailLabel}>Operator</p>
             <div className={styles.detailUser}>
               <span className={styles.avatar}>
-                {((selected?.metadata?.user as string | undefined) ?? "S").slice(0, 1).toUpperCase()}
+                {(selected ? actorDisplay(selected) : "?").slice(0, 1).toUpperCase()}
               </span>
               <div>
-                <p>{(selected?.metadata?.user as string) ?? "Shopify"}</p>
-                <span>{selected?.actor_id ?? "System actor"}</span>
+                <p>{selected ? actorDisplay(selected) : "—"}</p>
+                <span>{selected?.actor_type === "user" ? (selected?.actor_id ?? "—") : "Automated"}</span>
               </div>
             </div>
           </div>
@@ -201,22 +197,19 @@ export default function ActivityLogClient({ rows, error }: Props) {
           <div className={styles.detailSection}>
             <p className={styles.detailLabel}>Entity</p>
             <div className={styles.detailBox}>
-              {(selected?.metadata?.entity as string) ?? "component"}
+              {selected?.entity_type ?? "—"}
+              {selected?.entity_id ? ` · ${selected.entity_id}` : ""}
             </div>
           </div>
 
           <div className={styles.detailSection}>
             <p className={styles.detailLabel}>Message</p>
-            <p className={styles.detailMessage}>
-              {(selected?.metadata?.message as string) ?? "Activity logged"}
-            </p>
+            <p className={styles.detailMessage}>{selected?.summary ?? "Activity logged"}</p>
           </div>
 
           <div className={styles.detailSection}>
             <p className={styles.detailLabel}>Raw metadata</p>
-            <pre className={styles.detailCode}>
-              {JSON.stringify(selected?.metadata ?? {}, null, 2)}
-            </pre>
+            <pre className={styles.detailCode}>{JSON.stringify(selected?.metadata ?? {}, null, 2)}</pre>
           </div>
         </aside>
       </div>

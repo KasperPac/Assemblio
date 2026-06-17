@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { logActivity } from "@/lib/activity/log";
 import {
   pickBomPerVariant,
   variantLabel,
@@ -391,18 +392,7 @@ export async function createBomWithComponents(
     }
   }
 
-  if (notes) {
-    await supabase.from("activity_log").insert({
-      tenant_id: tenantId,
-      event: "bom_created",
-      metadata: {
-        variant_id: variantId,
-        version,
-        components: rows.length,
-        notes,
-      },
-    });
-  }
+  await logActivity({ event: "bom.created", entityId: insertedBom.id, metadata: { version } });
 
   revalidatePath(`/app/products/variants/${variantId}`);
   revalidatePath(`/app/products`);
@@ -450,6 +440,8 @@ export async function createDraftBomFromScratch(
   if (error) {
     return { error: error.message };
   }
+
+  await logActivity({ event: "bom.draft_created" });
 
   revalidatePath(`/app/products/variants/${variantId}`);
   revalidatePath("/app/products");
@@ -551,6 +543,8 @@ export async function copyBomToDraft(
     }
   }
 
+  await logActivity({ event: "bom.draft_created", entityId: insertedBom.id });
+
   revalidatePath(`/app/products/variants/${targetVariantId}`);
   revalidatePath("/app/products");
   revalidatePath("/app/templates");
@@ -642,6 +636,8 @@ export async function createBomFromTemplate(
     }
   }
 
+  await logActivity({ event: "bom.created_from_template", entityId: insertedBom.id, metadata: { templateName: template?.name } });
+
   revalidatePath(`/app/products/variants/${targetVariantId}`);
   revalidatePath("/app/products");
   revalidatePath("/app/templates");
@@ -714,6 +710,8 @@ export async function createBomLaborLine(formData: FormData) {
       laborError: encodeMessage(error.message),
     });
   }
+
+  await logActivity({ event: "bom.labor_added", entityId: productBomId, metadata: { operationName } });
 
   revalidatePath(`/app/products/variants/${variantId}`);
   revalidatePath("/app/costing");
@@ -815,6 +813,8 @@ export async function updateBomLaborLine(formData: FormData) {
     });
   }
 
+  await logActivity({ event: "bom.labor_updated", entityId: existingLine?.product_bom_id, metadata: { operationName } });
+
   revalidatePath(`/app/products/variants/${variantId}`);
   revalidatePath("/app/costing");
 }
@@ -850,6 +850,8 @@ export async function deleteBomLaborLine(formData: FormData) {
       laborError: encodeMessage(error.message),
     });
   }
+
+  await logActivity({ event: "bom.labor_removed" });
 
   revalidatePath(`/app/products/variants/${variantId}`);
   revalidatePath("/app/costing");
@@ -916,6 +918,8 @@ export async function duplicateBomAsDraft(
     }
   }
 
+  await logActivity({ event: "bom.duplicated", entityId: newBom.id });
+
   revalidatePath(`/app/products/variants/${variantId}`);
   revalidatePath("/app/templates");
   return { success: `Draft BOM v${version} created (${rows.length} lines).` };
@@ -971,6 +975,8 @@ export async function saveBomAsTemplate(
     }
   }
 
+  await logActivity({ event: "template.created", entityId: template.id, metadata: { name: templateName } });
+
   revalidatePath("/app/templates");
   return { success: `Template "${templateName}" created with ${(bomLines ?? []).length} lines.` };
 }
@@ -1008,6 +1014,8 @@ export async function upsertNotificationTrigger(formData: FormData) {
     return;
   }
 
+  await logActivity({ event: "product.notification_set" });
+
   revalidatePath(`/app/products/variants/${variantId}`);
   revalidatePath("/app/products");
   redirectVariantResult(variantId, { tab: "notifications", notifSuccess: encodeMessage("Notification saved.") });
@@ -1044,6 +1052,8 @@ export async function removeNotificationTrigger(formData: FormData) {
     redirectVariantResult(variantId, { tab: "notifications", notifError: encodeMessage(error.message) });
     return;
   }
+
+  await logActivity({ event: "product.notification_removed" });
 
   revalidatePath(`/app/products/variants/${variantId}`);
   revalidatePath("/app/products");
@@ -1144,6 +1154,8 @@ export async function applyLaborTemplate(formData: FormData) {
   if (linkError) {
     redirectVariantResult(variantId, { laborError: encodeMessage(linkError.message) });
   }
+
+  await logActivity({ event: "bom.labor_template_applied", entityId: productBomId, metadata: { templateName: template?.name } });
 
   revalidatePath(`/app/products/variants/${variantId}`);
   revalidatePath("/app/costing");

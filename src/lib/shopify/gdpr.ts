@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { logSystemActivity } from "@/lib/activity/log";
 
 /**
  * Shopify GDPR mandatory webhook handlers.
@@ -111,9 +112,12 @@ export async function handleCustomersDataRequest(
   }
 
   if (tenantId) {
-    await admin.from("activity_log").insert({
-      tenant_id: tenantId,
-      event: "SHOPIFY_GDPR_DATA_REQUEST",
+    await logSystemActivity({
+      supabase: admin,
+      tenantId,
+      event: "shopify.gdpr_data_request",
+      actorType: "shopify",
+      actorLabel: "Shopify GDPR",
       metadata: {
         shop_domain: shopDomain,
         customer_email: customerEmail,
@@ -170,9 +174,12 @@ export async function handleCustomersRedact(
   }
 
   if (tenantId) {
-    await admin.from("activity_log").insert({
-      tenant_id: tenantId,
-      event: "SHOPIFY_GDPR_CUSTOMER_REDACT",
+    await logSystemActivity({
+      supabase: admin,
+      tenantId,
+      event: "shopify.gdpr_customer_redact",
+      actorType: "shopify",
+      actorLabel: "Shopify GDPR",
       metadata: {
         shop_domain: shopDomain,
         customer_email: customerEmail,
@@ -283,9 +290,12 @@ export async function handleShopRedact(
       .eq("tenant_id", tenantId);
     shopifyStoreDeleted = !storeDeleteError;
 
-    await admin.from("activity_log").insert({
-      tenant_id: tenantId,
-      event: "SHOPIFY_GDPR_SHOP_REDACT",
+    await logSystemActivity({
+      supabase: admin,
+      tenantId,
+      event: "shopify.gdpr_shop_redact",
+      actorType: "shopify",
+      actorLabel: "Shopify GDPR",
       metadata: {
         shop_domain: shopDomain,
         shopify_store_deleted: shopifyStoreDeleted,

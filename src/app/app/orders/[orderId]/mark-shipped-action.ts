@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { logActivity } from "@/lib/activity/log";
 
 export async function markLineShipped(formData: FormData) {
   const orderLineId = formData.get("order_line_id")?.toString();
@@ -19,11 +20,7 @@ export async function markLineShipped(formData: FormData) {
     .eq("id", orderLineId)
     .is("shipped_at", null);
 
-  await supabase.from("activity_log").insert({
-    tenant_id: tenantId,
-    event: "order_line_marked_shipped",
-    metadata: { order_id: orderId, order_line_id: orderLineId },
-  });
+  await logActivity({ event: "order.line_marked_shipped", entityId: orderLineId, metadata: { order_id: orderId, order_line_id: orderLineId } });
 
   revalidatePath(`/app/orders/${orderId}`);
   revalidatePath("/app/orders");

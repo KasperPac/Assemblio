@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { logSystemActivity } from "@/lib/activity/log";
 
 /**
  * Handles the `app/uninstalled` webhook side effects.
@@ -50,15 +51,13 @@ export async function handleAppUninstalled(
     statusChanged = true;
   }
 
-  await admin.from("activity_log").insert({
-    tenant_id: store.tenant_id,
-    event: "SHOPIFY_APP_UNINSTALLED",
-    metadata: {
-      shop_domain: shopDomain,
-      shopify_store_id: store.id,
-      token_deleted: tokenDeleted,
-      status_changed: statusChanged,
-    },
+  await logSystemActivity({
+    supabase: admin,
+    tenantId: store.tenant_id,
+    event: "shopify.app_uninstalled",
+    actorType: "shopify",
+    actorLabel: "Shopify",
+    metadata: { shop_domain: shopDomain, shopify_store_id: store.id, token_deleted: tokenDeleted, status_changed: statusChanged },
   });
 
   return {

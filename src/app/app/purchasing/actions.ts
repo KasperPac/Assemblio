@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { logActivity } from "@/lib/activity/log";
 
 type PurchasingState = {
   error?: string;
@@ -86,6 +87,8 @@ export async function createPurchaseOrder(
     return { error: error.message };
   }
 
+  await logActivity({ event: "purchase_order.created", metadata: { poNumber } });
+
   revalidatePath("/app/purchasing");
   revalidatePath("/app/goods-inwards");
   return { success: "Purchase order created." };
@@ -105,6 +108,8 @@ export async function updatePurchaseOrderStatus(formData: FormData) {
     .update({ status })
     .eq("tenant_id", tenantId)
     .eq("id", purchaseOrderId);
+
+  await logActivity({ event: "purchase_order.status_changed", metadata: { status } });
 
   revalidatePath("/app/purchasing");
   revalidatePath("/app/goods-inwards");
@@ -137,6 +142,8 @@ export async function createPurchaseOrderLine(
   });
   if (error) return { error: error.message };
 
+  await logActivity({ event: "purchase_order.line_added" });
+
   revalidatePath("/app/purchasing");
   return { success: "PO line added." };
 }
@@ -164,5 +171,8 @@ export async function updatePurchaseOrderLineQuantity(formData: FormData) {
     .update({ quantity })
     .eq("tenant_id", tenantId)
     .eq("id", lineId);
+
+  await logActivity({ event: "purchase_order.line_updated" });
+
   revalidatePath("/app/purchasing");
 }

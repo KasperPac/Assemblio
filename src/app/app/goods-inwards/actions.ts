@@ -6,6 +6,7 @@ import { getServerTenantContext } from "@/lib/tenant/context";
 import { computeReceiptStatus } from "./helpers";
 import { pushBillToAccounting } from "@/lib/accounting/push-bill";
 import Anthropic from "@anthropic-ai/sdk";
+import { logActivity } from "@/lib/activity/log";
 
 // ─── Pure helpers (re-exported from helpers.ts for testing) ──────────────────
 
@@ -127,13 +128,11 @@ export async function createDeliveryReceipt(formData: FormData) {
     return { error: rpcError.message };
   }
 
-  await supabase.from("activity_log").insert({
-    tenant_id: tenantId,
-    actor_id: authData.user.id,
-    event: "delivery_receipt_created",
+  await logActivity({
+    event: "goods_receipt.created",
+    entityId: receipt?.id,
     metadata: {
-      delivery_receipt_id: receipt.id,
-      supplier_reference: supplierReference,
+      reference: supplierReference,
       lines_count: lines.length,
       purchase_order_id: purchaseOrderId,
     },
@@ -242,16 +241,7 @@ export async function linkReceiptToPo(formData: FormData) {
       .eq("tenant_id", tenantId);
   }
 
-  const { data: linkAuthData } = await supabase.auth.getUser();
-  await supabase.from("activity_log").insert({
-    tenant_id: tenantId,
-    actor_id: linkAuthData.user?.id ?? null,
-    event: "delivery_receipt_linked",
-    metadata: {
-      delivery_receipt_id: receiptId,
-      purchase_order_id: purchaseOrderId,
-    },
-  });
+  await logActivity({ event: "goods_receipt.linked_to_po", entityId: receiptId });
 
   revalidatePath("/app/goods-inwards");
   revalidatePath("/app/purchasing");
@@ -309,6 +299,8 @@ export async function updateDeliveryReceipt(formData: FormData) {
     .eq("tenant_id", tenantId);
 
   if (headerError) return { error: headerError.message };
+
+  await logActivity({ event: "goods_receipt.updated", entityId: receiptId });
 
   const lineNotesRaw = formData.get("line_notes") as string;
   if (lineNotesRaw) {

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { logActivity } from "@/lib/activity/log";
 
 export async function restorePurchaseOrder(formData: FormData) {
   const id = formData.get("id")?.toString() ?? "";
@@ -17,6 +18,7 @@ export async function restorePurchaseOrder(formData: FormData) {
     .eq("tenant_id", tenantId)
     .eq("id", id);
 
+  await logActivity({ event: "trash.purchase_order_restored", entityId: id });
   revalidatePath("/app/trash");
   revalidatePath("/app/purchasing");
   revalidatePath("/app/goods-inwards");
@@ -36,6 +38,7 @@ export async function restoreStocktakeSession(formData: FormData) {
     .eq("tenant_id", tenantId)
     .eq("id", id);
 
+  await logActivity({ event: "trash.stocktake_restored", entityId: id });
   revalidatePath("/app/trash");
   revalidatePath("/app/stocktake");
 }
@@ -54,6 +57,7 @@ export async function restoreBom(formData: FormData) {
     .eq("tenant_id", tenantId)
     .eq("id", id);
 
+  await logActivity({ event: "trash.bom_restored", entityId: id });
   revalidatePath("/app/trash");
   revalidatePath("/app/templates");
   revalidatePath("/app");
@@ -168,8 +172,7 @@ export async function emptyTrash() {
     );
   }
 
-  await supabase.from("activity_log").insert({
-    tenant_id: tenantId,
+  await logActivity({
     event: "trash.emptied",
     metadata: {
       archivedPurchaseOrdersDeleted: poIds.length,

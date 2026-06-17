@@ -566,10 +566,24 @@ create table public.activity_log (
   id uuid primary key default gen_random_uuid(),
   tenant_id uuid not null references public.tenant(id),
   actor_id uuid references auth.users(id),
+  actor_type text not null default 'user',
+  actor_label text,
   event text not null,
+  entity_type text,
+  entity_id uuid,
+  summary text,
   metadata jsonb,
   created_at timestamptz not null default now()
 );
+
+create index if not exists activity_log_tenant_created_idx
+  on public.activity_log (tenant_id, created_at desc);
+create index if not exists activity_log_tenant_event_idx
+  on public.activity_log (tenant_id, event);
+create index if not exists activity_log_tenant_actor_idx
+  on public.activity_log (tenant_id, actor_id);
+create index if not exists activity_log_tenant_entity_idx
+  on public.activity_log (tenant_id, entity_type, entity_id);
 
 create table public.event_log (
   id uuid primary key default gen_random_uuid(),

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { logActivity } from "@/lib/activity/log";
 
 const REVALIDATE = "/app/warehouse/locations";
 
@@ -19,6 +20,7 @@ export async function addWarehouse(formData: FormData): Promise<{ error: string 
   const { supabase, tenantId } = await ctx();
   const { error } = await supabase.from("location").insert({ tenant_id: tenantId, name, is_default: false });
   if (error) throw new Error(error.message);
+  await logActivity({ event: "location.created", metadata: { name } });
   revalidatePath(REVALIDATE);
 }
 
@@ -29,6 +31,7 @@ export async function editWarehouse(formData: FormData): Promise<{ error: string
   const { supabase, tenantId } = await ctx();
   const { error } = await supabase.from("location").update({ name }).eq("id", id).eq("tenant_id", tenantId);
   if (error) throw new Error(error.message);
+  await logActivity({ event: "location.updated", metadata: { name } });
   revalidatePath(REVALIDATE);
 }
 
@@ -41,6 +44,7 @@ export async function addSubLocation(formData: FormData): Promise<{ error: strin
   const { supabase, tenantId } = await ctx();
   const { error } = await supabase.from("bin_sub_location").insert({ tenant_id: tenantId, warehouse_id: warehouseId, name });
   if (error) throw new Error(error.message);
+  await logActivity({ event: "sub_location.created", metadata: { name } });
   revalidatePath(REVALIDATE);
 }
 
@@ -51,6 +55,7 @@ export async function editSubLocation(formData: FormData): Promise<{ error: stri
   const { supabase, tenantId } = await ctx();
   const { error } = await supabase.from("bin_sub_location").update({ name }).eq("id", id).eq("tenant_id", tenantId);
   if (error) throw new Error(error.message);
+  await logActivity({ event: "sub_location.updated", metadata: { name } });
   revalidatePath(REVALIDATE);
 }
 
@@ -66,6 +71,7 @@ export async function deleteSubLocation(formData: FormData): Promise<{ error?: s
   if ((count ?? 0) > 0) return { error: `${count} component(s) assigned — reassign before deleting.` };
   const { error } = await supabase.from("bin_sub_location").delete().eq("id", id).eq("tenant_id", tenantId);
   if (error) return { error: error.message };
+  await logActivity({ event: "sub_location.deleted" });
   revalidatePath(REVALIDATE);
   return {};
 }
@@ -82,6 +88,7 @@ export async function addAisle(formData: FormData): Promise<{ error: string } | 
     tenant_id: tenantId, warehouse_id: warehouseId, name, sub_location_id: subLocationId,
   });
   if (error) throw new Error(error.message);
+  await logActivity({ event: "aisle.created", metadata: { name } });
   revalidatePath(REVALIDATE);
 }
 
@@ -97,6 +104,7 @@ export async function editAisle(formData: FormData): Promise<{ error: string } |
     .eq("id", id)
     .eq("tenant_id", tenantId);
   if (error) throw new Error(error.message);
+  await logActivity({ event: "aisle.updated", metadata: { name } });
   revalidatePath(REVALIDATE);
 }
 
@@ -124,6 +132,7 @@ export async function deleteAisle(formData: FormData): Promise<{ error?: string;
 
   const { error } = await supabase.from("bin_aisle").delete().eq("id", id).eq("tenant_id", tenantId);
   if (error) return { error: error.message };
+  await logActivity({ event: "aisle.deleted" });
   revalidatePath(REVALIDATE);
   return {};
 }
@@ -137,6 +146,7 @@ export async function addBay(formData: FormData): Promise<{ error: string } | vo
   const { supabase, tenantId } = await ctx();
   const { error } = await supabase.from("bin_bay").insert({ tenant_id: tenantId, aisle_id: aisleId, name });
   if (error) throw new Error(error.message);
+  await logActivity({ event: "bay.created", metadata: { name } });
   revalidatePath(REVALIDATE);
 }
 
@@ -147,6 +157,7 @@ export async function editBay(formData: FormData): Promise<{ error: string } | v
   const { supabase, tenantId } = await ctx();
   const { error } = await supabase.from("bin_bay").update({ name }).eq("id", id).eq("tenant_id", tenantId);
   if (error) throw new Error(error.message);
+  await logActivity({ event: "bay.updated", metadata: { name } });
   revalidatePath(REVALIDATE);
 }
 
@@ -162,6 +173,7 @@ export async function deleteBay(formData: FormData): Promise<{ error?: string }>
   if ((count ?? 0) > 0) return { error: `${count} component(s) assigned — reassign before deleting.` };
   const { error } = await supabase.from("bin_bay").delete().eq("id", id).eq("tenant_id", tenantId);
   if (error) return { error: error.message };
+  await logActivity({ event: "bay.deleted" });
   revalidatePath(REVALIDATE);
   return {};
 }

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { validateGroupName } from "./helpers";
 import { searchComponentImage } from "@/lib/nexar/client";
+import { logActivity } from "@/lib/activity/log";
 
 type ComponentState = {
   error?: string;
@@ -83,11 +84,7 @@ export async function createComponent(
     if (scErr) console.error("supplier_components upsert failed:", scErr.message);
   }
 
-  await supabase.from("activity_log").insert({
-    tenant_id: tenantId,
-    event: "component_created",
-    metadata: { name, sku: sku || null, description, supplier_part_number: supplierPartNumber },
-  });
+  await logActivity({ event: "component.created", entityId: newComponent?.id, metadata: { name, sku: sku || null } });
 
   revalidatePath("/app/components");
   revalidatePath("/app/inventory");
@@ -147,35 +144,7 @@ export async function updateComponent(
 
   if (error) return { error: error.message };
 
-  await supabase.from("activity_log").insert({
-    tenant_id: tenantId,
-    event: "component_updated",
-    metadata: {
-      component_id: componentId,
-      before: {
-        name: current.name,
-        sku: current.sku,
-        unit: current.unit,
-        cost_per_unit: current.cost_per_unit,
-        reorder_point: current.reorder_point,
-        low_stock_level: current.low_stock_level,
-        supplier_id: current.supplier_id,
-        group_id: current.group_id,
-        description: current.description,
-      },
-      after: {
-        name,
-        sku: sku || null,
-        unit: unit || null,
-        cost_per_unit: costPerUnit,
-        reorder_point: reorderPoint,
-        low_stock_level: lowStockLevel,
-        supplier_id: supplierId,
-        group_id: groupId,
-        description,
-      },
-    },
-  });
+  await logActivity({ event: "component.updated", entityId: componentId, metadata: { name } });
 
   revalidatePath(`/app/components/${componentId}`);
   revalidatePath("/app/components");
@@ -220,24 +189,7 @@ export async function updateBinLocation(_prevState: { error?: string }, formData
 
   if (error) return { error: error.message };
 
-  await supabase.from("activity_log").insert({
-    tenant_id: tenantId,
-    event: "bin_location_updated",
-    metadata: {
-      component_id: componentId,
-      component_name: current.name,
-      old: {
-        bin_sub_location_id: current.bin_sub_location_id,
-        bin_aisle_id: current.bin_aisle_id,
-        bin_bay_id: current.bin_bay_id,
-      },
-      new: {
-        bin_sub_location_id: binSubLocationId,
-        bin_aisle_id: binAisleId,
-        bin_bay_id: binBayId,
-      },
-    },
-  });
+  await logActivity({ event: "component.bin_location_updated", entityId: componentId, metadata: { name: current?.name } });
 
   revalidatePath(`/app/components/${componentId}`);
   revalidatePath("/app/activity-log");
@@ -279,11 +231,7 @@ export async function updateComponentSupplier(
 
   if (error) return { error: error.message };
 
-  await supabase.from("activity_log").insert({
-    tenant_id: tenantId,
-    event: "component_supplier_updated",
-    metadata: { supplier_component_id: supplierComponentId, component_id: componentId },
-  });
+  await logActivity({ event: "component.supplier_updated", entityId: componentId });
 
   revalidatePath(`/app/components/${componentId}`);
   revalidatePath("/app/activity-log");
@@ -377,11 +325,7 @@ export async function archiveComponent(componentId: string): Promise<ArchiveResu
 
   if (error) return { error: error.message, conflicts: [] };
 
-  await supabase.from("activity_log").insert({
-    tenant_id: tenantId,
-    event: "component_archived",
-    metadata: { component_id: componentId },
-  });
+  await logActivity({ event: "component.archived", entityId: componentId });
 
   revalidatePath("/app/components");
   revalidatePath(`/app/components/${componentId}`);
@@ -415,11 +359,7 @@ export async function createComponentGroup(
 
   if (error) return { error: error.message };
 
-  await supabase.from("activity_log").insert({
-    tenant_id: tenantId,
-    event: "component_group_created",
-    metadata: { name: trimmedName },
-  });
+  await logActivity({ event: "component_group.created", entityId: data?.id, metadata: { name: trimmedName } });
 
   revalidatePath("/app/components");
   revalidatePath("/app/activity-log");
@@ -470,12 +410,7 @@ export async function uploadComponentImage(
     .eq("tenant_id", ctx.tenantId);
   if (dbErr) return { error: dbErr.message };
 
-  await ctx.supabase.from("activity_log").insert({
-    tenant_id: ctx.tenantId,
-    actor_id: ctx.userId,
-    event: "component.image_uploaded",
-    metadata: { component_id: componentId },
-  });
+  await logActivity({ event: "component.image_updated", entityId: componentId });
 
   revalidatePath(`/app/components/${componentId}`);
   revalidatePath("/app/activity-log");
@@ -526,12 +461,7 @@ export async function fetchComponentImageFromNexar(componentId: string): Promise
   );
 
   if (!nexarResult.found) {
-    await ctx.supabase.from("activity_log").insert({
-      tenant_id: ctx.tenantId,
-      actor_id: ctx.userId,
-      event: "component.image_fetch_failed",
-      metadata: { component_id: componentId, reason: nexarResult.reason },
-    });
+    await logActivity({ event: "component.image_fetch_failed", entityId: componentId, metadata: { reason: nexarResult.reason } });
     return { found: false, reason: nexarResult.reason };
   }
 
@@ -571,16 +501,7 @@ export async function fetchComponentImageFromNexar(componentId: string): Promise
     return { found: false, reason: "api_error" };
   }
 
-  await ctx.supabase.from("activity_log").insert({
-    tenant_id: ctx.tenantId,
-    actor_id: ctx.userId,
-    event: "component.image_fetched",
-    metadata: {
-      component_id: componentId,
-      mpn: nexarResult.mpn,
-      manufacturer: nexarResult.manufacturer,
-    },
-  });
+  await logActivity({ event: "component.image_updated", entityId: componentId });
 
   revalidatePath(`/app/components/${componentId}`);
   revalidatePath("/app/activity-log");
@@ -604,12 +525,7 @@ export async function removeComponentImage(
     .eq("tenant_id", ctx.tenantId);
   if (dbErr) return { error: dbErr.message };
 
-  await ctx.supabase.from("activity_log").insert({
-    tenant_id: ctx.tenantId,
-    actor_id: ctx.userId,
-    event: "component.image_removed",
-    metadata: { component_id: componentId },
-  });
+  await logActivity({ event: "component.image_removed", entityId: componentId });
 
   revalidatePath(`/app/components/${componentId}`);
   revalidatePath("/app/activity-log");

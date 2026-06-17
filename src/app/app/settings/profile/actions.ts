@@ -2,6 +2,7 @@
 
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { revalidatePath } from "next/cache";
+import { logActivity } from "@/lib/activity/log";
 
 type State = { error?: string; success?: string } | null;
 
@@ -28,6 +29,7 @@ export async function updateProfile(
 
   if (error) return { error: error.message };
 
+  await logActivity({ event: "profile.updated" });
   revalidatePath("/app/settings/profile");
   return { success: "Profile updated" };
 }
@@ -82,6 +84,7 @@ export async function uploadAvatar(
 
   if (dbError) return { error: dbError.message };
 
+  await logActivity({ event: "profile.avatar_updated" });
   revalidatePath("/app/settings/profile");
   revalidatePath("/app", "layout");
   return { success: "Avatar updated" };

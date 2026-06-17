@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { logActivity } from "@/lib/activity/log";
 
 type BomState = {
   error?: string;
@@ -74,6 +75,8 @@ export async function createBom(
     return { error: error.message };
   }
 
+  await logActivity({ event: "bom.created", metadata: { version } });
+
   revalidatePath("/app/templates");
   revalidatePath("/app");
   return { success: "BOM created." };
@@ -101,6 +104,8 @@ export async function updateBomStatus(formData: FormData) {
       .eq("tenant_id", tenantId)
       .eq("id", bomId);
   }
+
+  await logActivity({ event: "bom.status_changed", entityId: bomId, metadata: { status } });
 
   revalidatePath("/app/templates");
   revalidatePath("/app");
@@ -134,6 +139,8 @@ export async function setBomActive(formData: FormData) {
     .eq("tenant_id", tenantId)
     .eq("id", bom.id);
 
+  await logActivity({ event: "bom.activated", entityId: bomId });
+
   revalidatePath("/app/templates");
   revalidatePath("/app");
   revalidatePath(`/app/products/variants/${bom.variant_id}`);
@@ -160,6 +167,8 @@ export async function setBomArchived(formData: FormData) {
     .update({ status: "archived", is_active: false })
     .eq("tenant_id", tenantId)
     .eq("id", bom.id);
+
+  await logActivity({ event: "bom.archived", entityId: bomId });
 
   revalidatePath("/app/templates");
   revalidatePath("/app");
@@ -200,6 +209,8 @@ export async function createBomComponentLine(
   });
   if (error) return { error: error.message };
 
+  await logActivity({ event: "bom.line_added", entityId: productBomId });
+
   revalidatePath("/app/templates");
   return { success: "BOM component line added." };
 }
@@ -219,6 +230,9 @@ export async function updateBomComponentQuantity(formData: FormData) {
     .update({ quantity })
     .eq("tenant_id", tenantId)
     .eq("id", lineId);
+
+  await logActivity({ event: "bom.line_updated" });
+
   revalidatePath("/app/templates");
   if (variantId) revalidatePath(`/app/products/variants/${variantId}`);
 }
@@ -243,6 +257,8 @@ export async function updateBomComponentYieldPct(formData: FormData) {
     .eq("tenant_id", tenantId)
     .eq("id", lineId);
 
+  await logActivity({ event: "bom.line_updated" });
+
   revalidatePath("/app/templates");
   if (variantId) revalidatePath(`/app/products/variants/${variantId}`);
 }
@@ -261,6 +277,8 @@ export async function removeBomComponentLine(formData: FormData) {
     .delete()
     .eq("tenant_id", tenantId)
     .eq("id", lineId);
+
+  await logActivity({ event: "bom.line_removed" });
 
   revalidatePath("/app/templates");
   if (variantId) revalidatePath(`/app/products/variants/${variantId}`);
@@ -282,6 +300,8 @@ export async function reorderBomComponents(bomId: string, orderedIds: string[]) 
   );
 
   await Promise.all(updates);
+
+  await logActivity({ event: "bom.lines_reordered", entityId: bomId });
 
   const { data: bom } = await supabase
     .from("product_bom")
@@ -323,6 +343,8 @@ export async function deleteBomDraft(formData: FormData) {
     .delete()
     .eq("tenant_id", tenantId)
     .eq("id", bomId);
+
+  await logActivity({ event: "bom.deleted", entityId: bomId });
 
   const vid = variantId || bom.variant_id;
   revalidatePath("/app/templates");
@@ -378,6 +400,8 @@ export async function addComponentsToBom(
 
   const { error } = await supabase.from("product_bom_component").insert(rows);
   if (error) return { error: error.message };
+
+  await logActivity({ event: "bom.line_added", entityId: bomId });
 
   revalidatePath("/app/templates");
   if (variantId) revalidatePath(`/app/products/variants/${variantId}`);

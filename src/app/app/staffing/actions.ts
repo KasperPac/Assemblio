@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { logActivity } from "@/lib/activity/log";
 
 function parseNumber(value: FormDataEntryValue | null, fallback = 0) {
   const raw = value?.toString().trim();
@@ -142,6 +143,7 @@ export async function prepareStaffingWeek(formData: FormData) {
 
   revalidatePath("/app/staffing");
   revalidatePath("/app/capacity");
+  await logActivity({ event: "staffing.week_prepared", metadata: { weekStart } });
   redirect(
     staffingPath(weekStart, {
       success: encodeMessage(
@@ -222,6 +224,7 @@ export async function createStaffMember(formData: FormData) {
   revalidatePath("/app/capacity");
   revalidatePath("/app/actual-time");
   revalidatePath("/app/reports");
+  await logActivity({ event: "staff.created", entityId: staffMember.id, metadata: { name } });
   redirect(staffingPath(weekStart, { success: encodeMessage(`Created ${name}.`) }));
 }
 
@@ -292,5 +295,6 @@ export async function updateStaffMember(formData: FormData) {
   revalidatePath("/app/capacity");
   revalidatePath("/app/actual-time");
   revalidatePath("/app/reports");
+  await logActivity({ event: "staff.updated", entityId: staffMemberId });
   redirect(staffingPath(weekStart, { success: encodeMessage(`Updated ${name}.`) }));
 }
