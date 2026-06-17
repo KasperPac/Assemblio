@@ -148,13 +148,25 @@ implementation (not guessed now).
 | **Orders** | orders | `order.allocation_run` (exists), `order.updated` |
 | **Production** | planning/floor, capacity, staffing, staff-costings, actual-time, departments, costing | `production.*`, `department.created/updated`, etc. |
 | **Settings/admin** | settings/{team,profile,company,orders,locations,integrations} | `team.member_invited/role_changed/removed`, `company.updated`, `integration.connected/disconnected` |
-| **Lifecycle** | trash, super-admin, shopify, stripe | `trash.emptied` (exists), tenant suspend/plan (exist), `shopify.sync_completed` (exists), `subscription.activated` (exists) |
+| **Lifecycle** | trash, shopify, stripe (NOT super-admin) | `trash.emptied` (exists), `shopify.sync_completed` (exists), `subscription.activated` (exists) |
 
 Approach notes:
 
-- **Existing ad-hoc inserts are migrated** to the helper (orders, trash, templates, super-admin,
-  shopify, stripe) so there is one consistent path, not two. Current behavior is preserved; rows now
-  populate the new columns.
+- **Existing ad-hoc inserts are migrated** to the helper so there is one consistent path, not two.
+  Current behavior is preserved; rows now populate the new columns. The full set of existing inserts
+  (discovered during planning) is larger than first thought:
+  `components/actions.ts` (6 inserts: `component_created`, `component_updated`, bin-location,
+  supplier, `component_archived`, image events), `products/actions.ts` (`bom_created`),
+  `templates/actions.ts` (`bom.template_publish`), `stocktake/actions.ts` +
+  `stocktake/[sessionId]/actions.ts`, `settings/locations/actions.ts` (`default_location_changed` —
+  the one place that already sets `actor_id`), `orders/actions.ts` (`order_allocation_run`),
+  `trash/actions.ts` (`trash.emptied`), `lib/shopify/sync.ts` (`SHOPIFY_SYNC_COMPLETED`),
+  `lib/shopify/uninstall.ts` (`SHOPIFY_APP_UNINSTALLED`), `lib/stripe/webhook-events.ts`
+  (`subscription.activated`). Event names are inconsistent (snake_case / SCREAMING / dotted) and
+  will be normalized to the catalog's `domain.action` convention.
+- **Super-admin is OUT of scope.** Platform-operator actions write to a separate
+  `super_admin_audit_log` table via `logSuperAdminAction` (`@/lib/super-admin/audit`). That is a
+  distinct audit system and is not part of the tenant-facing activity log.
 - The catalog is the checklist: implementation isn't done until every exported mutation across these
   files either has an event or is a conscious exclusion (pure reads, no-op saves).
 - **Deletes/soft-deletes are explicitly in scope** ("who deleted that BOM") — easy to miss, called
