@@ -566,7 +566,12 @@ create table public.activity_log (
   id uuid primary key default gen_random_uuid(),
   tenant_id uuid not null references public.tenant(id),
   actor_id uuid references auth.users(id),
+  actor_type text not null default 'user',
+  actor_label text,
   event text not null,
+  entity_type text,
+  entity_id uuid,
+  summary text,
   metadata jsonb,
   created_at timestamptz not null default now()
 );
