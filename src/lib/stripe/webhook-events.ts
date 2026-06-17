@@ -1,6 +1,7 @@
 import type Stripe from "stripe";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { resolvePriceId } from "./price-resolution";
+import { logSystemActivity } from "@/lib/activity/log";
 
 type Admin = SupabaseClient;
 
@@ -109,10 +110,12 @@ async function onCheckoutCompleted(
     .eq("tenant_id", tenantId)
     .is("manual_override_at", null);
 
-  await admin.from("activity_log").insert({
-    tenant_id: tenantId,
-    actor_id: null,
+  await logSystemActivity({
+    supabase: admin,
+    tenantId,
     event: "subscription.activated",
+    actorType: "stripe",
+    actorLabel: "Stripe billing",
     metadata: { tier: resolved.tier, billing: resolved.billing },
   });
 }
