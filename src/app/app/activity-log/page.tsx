@@ -25,9 +25,10 @@ export default async function ActivityLogPage({
     if (filters.event) out = out.eq("event", filters.event);
     if (filters.actorId) out = out.eq("actor_id", filters.actorId);
     if (filters.dateFrom) out = out.gte("created_at", filters.dateFrom);
+    // UTC end-of-day; may be off by the viewer's TZ offset at day boundaries (date-only filter).
     if (filters.dateTo) out = out.lte("created_at", `${filters.dateTo}T23:59:59.999Z`);
     if (filters.search) {
-      const term = filters.search.replace(/[%,]/g, "");
+      const term = filters.search.replace(/[%,()[\]]/g, "");
       out = out.or(`summary.ilike.%${term}%,actor_label.ilike.%${term}%`);
     }
     return out;

@@ -108,6 +108,7 @@ Every `PageHeader` must have an `eyebrow` that identifies the section:
 | `"Logistics"` | Suppliers, Locations |
 | `"Orders"` | Customer Orders |
 | `"Admin"` | Settings, Users |
+| `"Audit"` | Activity Log |
 
 ### Detail pages
 

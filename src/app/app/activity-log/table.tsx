@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import PageHeader from "../_ui/page-header";
 import StatusBadge from "../_ui/status-badge";
@@ -59,6 +59,10 @@ export default function ActivityLogClient(props: Props) {
   const [isPending, startTransition] = useTransition();
   const [selectedId, setSelectedId] = useState(rows[0]?.id ?? "");
   const [searchDraft, setSearchDraft] = useState(filters.search ?? "");
+
+  useEffect(() => {
+    setSearchDraft(filters.search ?? "");
+  }, [filters.search]);
 
   const selected = useMemo(
     () => rows.find((r) => r.id === selectedId) ?? rows[0],
