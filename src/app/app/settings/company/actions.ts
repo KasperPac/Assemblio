@@ -2,6 +2,7 @@
 
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { revalidatePath } from "next/cache";
+import { logActivity } from "@/lib/activity/log";
 
 type State = { error?: string; success?: string } | null;
 
@@ -36,6 +37,7 @@ export async function updateCompany(
 
   if (error) return { error: error.message };
 
+  await logActivity({ event: "company.updated", metadata: { name } });
   revalidatePath("/app/settings/company");
   return { success: "Company settings updated" };
 }
@@ -87,6 +89,7 @@ export async function uploadLogo(
 
   if (dbError) return { error: dbError.message };
 
+  await logActivity({ event: "company.logo_updated" });
   revalidatePath("/app/settings/company");
   return { success: "Logo updated" };
 }

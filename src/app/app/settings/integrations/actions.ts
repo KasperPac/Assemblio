@@ -1,6 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { logActivity } from "@/lib/activity/log";
 
 export async function setStatsOnlyBefore(formData: FormData) {
   const ctx = await getServerTenantContext();
@@ -16,5 +17,6 @@ export async function setStatsOnlyBefore(formData: FormData) {
     .update({ stats_only_before: value })
     .eq("id", storeId)
     .eq("tenant_id", ctx.tenantId);
+  await logActivity({ event: "integration.stats_only_set" });
   revalidatePath("/app/settings/integrations");
 }

@@ -8,6 +8,7 @@ import {
   revokeInvitation,
   resendInvitation,
 } from "@/lib/invitations/actions";
+import { logActivity } from "@/lib/activity/log";
 
 type State = { error?: string; success?: string } | null;
 
@@ -31,6 +32,7 @@ export async function inviteMember(
   const result = await inviteTeammate({ email, role });
   if (!result.ok) return { error: result.error };
 
+  await logActivity({ event: "team.member_invited", metadata: { email } });
   revalidatePath("/app/settings/team");
   return { success: `Invitation sent to ${email}` };
 }
@@ -50,6 +52,7 @@ export async function revokeInvite(
   const result = await revokeInvitation(invitationId);
   if (!result.ok) return { error: result.error };
 
+  await logActivity({ event: "team.invite_revoked" });
   revalidatePath("/app/settings/team");
   return { success: "Invitation revoked" };
 }
@@ -69,6 +72,7 @@ export async function resendInvite(
   const result = await resendInvitation(invitationId);
   if (!result.ok) return { error: result.error };
 
+  await logActivity({ event: "team.invite_resent" });
   revalidatePath("/app/settings/team");
   return { success: "Invitation resent" };
 }
@@ -111,6 +115,7 @@ export async function updateMemberRole(
     return { error: "Member not found in this workspace" };
   }
 
+  await logActivity({ event: "team.role_changed", metadata: { role } });
   revalidatePath("/app/settings/team");
   return { success: "Role updated" };
 }
@@ -146,6 +151,7 @@ export async function deactivateMember(
     return { error: "Member not found in this workspace" };
   }
 
+  await logActivity({ event: "team.member_deactivated" });
   revalidatePath("/app/settings/team");
   return { success: "Member deactivated" };
 }

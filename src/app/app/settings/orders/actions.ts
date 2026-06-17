@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { logActivity } from "@/lib/activity/log";
 
 export async function updateOrderSourceSla(formData: FormData) {
   const shopify = Number(formData.get("shopify_days") ?? 7);
@@ -23,5 +24,6 @@ export async function updateOrderSourceSla(formData: FormData) {
       { onConflict: "tenant_id,source" }
     );
 
+  await logActivity({ event: "settings.order_sla_updated" });
   revalidatePath("/app/settings/orders");
 }
