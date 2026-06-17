@@ -38,7 +38,7 @@ export async function allocateOrder(formData: FormData) {
       .from("activity_log")
       .select("id")
       .eq("tenant_id", tenantId)
-      .eq("event", "order_allocation_run")
+      .eq("event", "order.allocation_run")
       .contains("metadata", {
         order_id: orderId,
         idempotency_key: idempotencyKey,
