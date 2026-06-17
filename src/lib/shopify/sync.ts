@@ -424,6 +424,10 @@ export async function syncShopifyStoreData(
       products: products.length,
       variants: variantRows.length,
       orders: orderRows.length,
+      order_lines: orderLineRows.length,
+      allocation_runs: allocationRuns,
+      plan_runs: planRuns,
+      plan_errors: planErrors,
     },
   });
 
