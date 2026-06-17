@@ -159,3 +159,38 @@
     grid-template-columns: 1fr;
   }
 }
+
+.systemChip {
+  margin-left: 6px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  color: var(--ink-muted);
+  background: var(--surface-1);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  padding: 1px 6px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border-top: 1px solid var(--stroke);
+}
+
+.pageButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.pageBtn {
+  composes: secondary from "../_ui/buttons.module.css";
+}
+
+.tableCard[data-pending="true"] {
+  opacity: 0.6;
+}
