@@ -461,6 +461,7 @@ export async function fetchComponentImageFromNexar(componentId: string): Promise
   );
 
   if (!nexarResult.found) {
+    await logActivity({ event: "component.image_fetch_failed", entityId: componentId, metadata: { reason: nexarResult.reason } });
     return { found: false, reason: nexarResult.reason };
   }
 

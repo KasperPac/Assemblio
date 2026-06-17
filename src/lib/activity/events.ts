@@ -21,6 +21,7 @@ export const ACTIVITY_EVENTS = {
   "component.archived": { entityType: "component", summary: (m) => `Archived component ${s(m.name)}`.trim() },
   "component.image_updated": { entityType: "component", summary: (m) => `Updated image for ${s(m.name, "component")}` },
   "component.image_removed": { entityType: "component", summary: (m) => `Removed image for ${s(m.name, "component")}` },
+  "component.image_fetch_failed": { entityType: "component", summary: (m) => `Image lookup failed for ${s(m.name, "component")}` },
   "component_group.created": { entityType: "component_group", summary: (m) => `Created group ${s(m.name)}`.trim() },
 
   // --- BOMs ---
