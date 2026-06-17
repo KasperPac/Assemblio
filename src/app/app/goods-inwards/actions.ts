@@ -6,6 +6,7 @@ import { getServerTenantContext } from "@/lib/tenant/context";
 import { computeReceiptStatus } from "./helpers";
 import { pushBillToAccounting } from "@/lib/accounting/push-bill";
 import Anthropic from "@anthropic-ai/sdk";
+import { logActivity } from "@/lib/activity/log";
 
 // ─── Pure helpers (re-exported from helpers.ts for testing) ──────────────────
 
@@ -139,6 +140,8 @@ export async function createDeliveryReceipt(formData: FormData) {
     },
   });
 
+  await logActivity({ event: "goods_receipt.created", entityId: receipt?.id, metadata: { reference: supplierReference } });
+
   await pushBillToAccounting(tenantId, receipt.id);
 
   revalidatePath("/app/goods-inwards");
@@ -253,6 +256,8 @@ export async function linkReceiptToPo(formData: FormData) {
     },
   });
 
+  await logActivity({ event: "goods_receipt.linked_to_po", entityId: receiptId });
+
   revalidatePath("/app/goods-inwards");
   revalidatePath("/app/purchasing");
   revalidatePath("/app/inventory");
@@ -309,6 +314,8 @@ export async function updateDeliveryReceipt(formData: FormData) {
     .eq("tenant_id", tenantId);
 
   if (headerError) return { error: headerError.message };
+
+  await logActivity({ event: "goods_receipt.updated", entityId: receiptId });
 
   const lineNotesRaw = formData.get("line_notes") as string;
   if (lineNotesRaw) {

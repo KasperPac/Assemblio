@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { logActivity } from "@/lib/activity/log";
 
 type SupplierState = {
   error?: string;
@@ -31,6 +32,8 @@ export async function createSupplier(
   if (error) {
     return { error: error.message };
   }
+
+  await logActivity({ event: "supplier.created", metadata: { name } });
 
   revalidatePath("/app/suppliers");
   revalidatePath("/app/purchasing");
