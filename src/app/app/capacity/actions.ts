@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { logActivity } from "@/lib/activity/log";
 
 function encodeMessage(message: string) {
   return encodeURIComponent(message);
@@ -108,5 +109,6 @@ export async function refreshCapacityWeek(formData: FormData) {
     redirect(`/app/capacity?week=${week}&error=${encodeMessage(error.message)}`);
   }
 
+  await logActivity({ event: "capacity.week_refreshed", metadata: { week } });
   redirect(`/app/capacity?week=${week}&success=${encodeMessage("Capacity refreshed.")}`);
 }

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { reconcileOrderAllocations } from "@/lib/allocation/reconcile-order";
+import { logActivity } from "@/lib/activity/log";
 
 function sanitizeReturnPath(value: string | null | undefined) {
   if (!value || !value.startsWith("/app/orders")) {
@@ -58,17 +59,7 @@ export async function allocateOrder(formData: FormData) {
     orderId
   );
 
-  await supabase.from("activity_log").insert({
-    tenant_id: tenantId,
-    event: "order_allocation_run",
-    metadata: {
-      order_id: orderId,
-      changes_applied: result.applied,
-      missing_bom_lines: result.skippedMissingBom,
-      cleared_only: result.clearedOnly,
-      idempotency_key: idempotencyKey,
-    },
-  });
+  await logActivity({ event: "order.allocation_run", entityId: orderId, metadata: { order_id: orderId, changes_applied: result.applied, idempotency_key: idempotencyKey } });
 
   revalidatePath("/app/orders");
   revalidatePath("/app/inventory");
@@ -148,6 +139,7 @@ export async function updateJobLaborPlanWeek(formData: FormData) {
   revalidatePath(`/app/orders/${orderId}`);
   revalidatePath("/app/orders");
   revalidatePath("/app/capacity");
+  await logActivity({ event: "order.labor_plan_updated", entityId: planId });
   redirect(
     `${returnTo}?planned=updated&week=${encodeURIComponent(weekStart)}`
   );

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { logActivity } from "@/lib/activity/log";
 
 type ActionState = {
   error?: string;
@@ -63,6 +64,7 @@ export async function addDepartment(
 
   revalidatePath("/app/staff-costings");
   revalidatePath("/app/components");
+  await logActivity({ event: "department.rate_added", metadata: { name } });
   return { success: `"${name}" added at $${rate}/hr.` };
 }
 
@@ -89,6 +91,7 @@ export async function updateRate(
 
   revalidatePath("/app/staff-costings");
   revalidatePath("/app/components");
+  await logActivity({ event: "department.rate_changed", entityId: componentId });
   return { success: "Rate updated." };
 }
 
@@ -119,5 +122,6 @@ export async function removeDepartment(
 
   revalidatePath("/app/staff-costings");
   revalidatePath("/app/components");
+  await logActivity({ event: "department.rate_removed", entityId: componentId });
   return { success: "Department removed." };
 }

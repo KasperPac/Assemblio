@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { logActivity } from "@/lib/activity/log";
 
 function parseNumber(value: FormDataEntryValue | null) {
   if (value === null) return null;
@@ -56,5 +57,6 @@ export async function createActualTimeEntry(formData: FormData) {
   revalidatePath("/app/capacity");
   revalidatePath("/app/costing");
   revalidatePath("/app/reports");
+  await logActivity({ event: "production.actual_time_logged", entityId: orderLineId });
   redirect("/app/actual-time?created=1");
 }

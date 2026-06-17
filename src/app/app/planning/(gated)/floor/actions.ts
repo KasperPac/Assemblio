@@ -5,6 +5,7 @@ import { getServerTenantContext } from "@/lib/tenant/context";
 import { scheduleJob } from "@/lib/planning/scheduling";
 import { computeUnlocked } from "@/lib/planning/unlock-cascade";
 import { fireNotificationIfConfigured } from "@/lib/notifications/notification-engine";
+import { logActivity } from "@/lib/activity/log";
 
 export async function startJob(formData: FormData) {
   const orderLineId = formData.get("order_line_id")?.toString() ?? "";
@@ -85,6 +86,7 @@ export async function startJob(formData: FormData) {
 
   const { error } = await supabase.from("job_routing_step").insert(rows);
   if (error) throw new Error(error.message);
+  await logActivity({ event: "production.job_started", entityId: orderLineId });
   revalidatePath("/app/planning/floor");
 }
 
@@ -111,6 +113,7 @@ export async function startStep(stepId: string) {
 
   if (error) throw new Error(error.message);
 
+  await logActivity({ event: "production.step_started", entityId: stepId });
   revalidatePath("/app/planning/floor");
   revalidatePath("/app/planning/shopfloor");
 }
@@ -199,6 +202,7 @@ export async function completeStep(stepId: string) {
     if (unlockError) throw new Error(unlockError.message);
   }
 
+  await logActivity({ event: "production.step_completed", entityId: stepId });
   revalidatePath("/app/planning/floor");
   revalidatePath("/app/planning/shopfloor");
 }
