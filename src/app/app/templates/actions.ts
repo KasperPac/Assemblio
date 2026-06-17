@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { buildPublishedLines, inheritStatus } from "@/lib/templates/publish";
+import { logActivity } from "@/lib/activity/log";
 
 type ActionState = {
   error?: string;
@@ -49,6 +50,8 @@ export async function createTemplate(
 
   if (error) return { error: error.message };
 
+  await logActivity({ event: "template.created", metadata: { name } });
+
   revalidatePath("/app/templates");
   return { success: `Template "${name}" created.` };
 }
@@ -72,6 +75,8 @@ export async function removeTemplateLine(
     .eq("id", lineId);
 
   if (error) return { error: error.message };
+
+  await logActivity({ event: "template.updated", entityId: templateId || undefined });
 
   if (templateId) {
     const touchError = await touchTemplate(supabase, "bom_template", tenantId, templateId);
@@ -100,6 +105,8 @@ export async function deleteTemplate(
     .eq("id", templateId);
 
   if (error) return { error: error.message };
+
+  await logActivity({ event: "template.deleted", entityId: templateId });
 
   revalidatePath("/app/templates");
   return { success: "Template deleted." };
@@ -137,6 +144,8 @@ export async function setTemplateLines(
     if (insertError) return { error: insertError.message };
   }
 
+  await logActivity({ event: "template.updated", entityId: templateId });
+
   const touchError = await touchTemplate(supabase, "bom_template", tenantId, templateId);
   revalidatePath("/app/templates");
   if (touchError) return { error: touchError };
@@ -161,6 +170,8 @@ export async function reorderTemplateLines(
   );
 
   await Promise.all(updates);
+
+  await logActivity({ event: "template.reordered", entityId: templateId });
 
   const touchError = await touchTemplate(supabase, "bom_template", tenantId, templateId);
   revalidatePath("/app/templates");
@@ -207,6 +218,8 @@ export async function createLaborTemplate(
 
   if (error) return { error: error.message };
 
+  await logActivity({ event: "labor_template.created", metadata: { name } });
+
   revalidatePath("/app/templates");
   return { success: `Labor template "${name}" created.` };
 }
@@ -231,6 +244,8 @@ export async function updateLaborTemplateMode(
 
   if (error) return { error: error.message };
 
+  await logActivity({ event: "labor_template.updated", entityId: templateId });
+
   revalidatePath("/app/templates");
   return { success: `Mode set to ${mode}.` };
 }
@@ -253,6 +268,8 @@ export async function deleteLaborTemplate(
     .eq("id", templateId);
 
   if (error) return { error: error.message };
+
+  await logActivity({ event: "labor_template.deleted", entityId: templateId });
 
   revalidatePath("/app/templates");
   return { success: "Labor template deleted." };
@@ -325,6 +342,8 @@ export async function setLaborTemplateLines(
 
     if (insertError) return { error: insertError.message };
   }
+
+  await logActivity({ event: "labor_template.updated", entityId: templateId });
 
   const touchError = await touchTemplate(supabase, "labor_template", tenantId, templateId);
   revalidatePath("/app/templates");
@@ -537,17 +556,7 @@ async function publishToBom(
   }
 
   // 5. Activity log.
-  await supabase.from("activity_log").insert({
-    tenant_id: tenantId,
-    event: "bom.template_publish",
-    metadata: {
-      template_id: templateId,
-      template_type: templateType,
-      bom_id: newBom.id,
-      old_version: oldBom.version,
-      new_version: (oldBom.version as number) + 1,
-    },
-  });
+  await logActivity({ event: "bom.template_published", entityId: newBom.id, metadata: { template_id: templateId, new_version: (oldBom.version as number) + 1 } });
 
   revalidatePath(`/app/products/variants/${oldBom.variant_id}`);
   return { label: `v${oldBom.version} → v${(oldBom.version as number) + 1}` };
