@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { logActivity } from "@/lib/activity/log";
 
 export async function setDefaultLocation(
   _prevState: { error?: string },
@@ -45,15 +46,7 @@ export async function setDefaultLocation(
     .eq("tenant_id", tenantId!);
   if (setError) return { error: setError.message };
 
-  await supabase.from("activity_log").insert({
-    tenant_id: tenantId!,
-    actor_id: ctx.userId,
-    event: "default_location_changed",
-    metadata: {
-      location_id: locationId,
-      location_name: (check as { id: string; name: string }).name,
-    },
-  });
+  await logActivity({ event: "location.default_changed", entityId: locationId, metadata: { location_name: (check as { id: string; name: string }).name } });
 
   revalidatePath("/app/settings/locations");
   return {};

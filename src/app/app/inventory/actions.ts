@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { applyInventoryMovement } from "@/lib/inventory/movements";
+import { logActivity } from "@/lib/activity/log";
 
 type MovementState = {
   error?: string;
@@ -51,6 +52,7 @@ export async function createMovement(
     return { error: message };
   }
 
+  await logActivity({ event: "inventory.movement_logged" });
   revalidatePath("/app/inventory");
   return { success: "Movement logged." };
 }

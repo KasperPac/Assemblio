@@ -10,6 +10,7 @@ import {
   canSendBackForRecount,
   type StocktakeSessionStatus,
 } from "@/lib/stocktake/lifecycle";
+import { logActivity } from "@/lib/activity/log";
 
 type SessionRecord = {
   id: string;
@@ -95,6 +96,7 @@ export async function submitForReview(formData: FormData) {
     .eq("id", sessionId)
     .eq("tenant_id", tenantId);
 
+  await logActivity({ event: "stocktake.submitted", entityId: sessionId });
   revalidatePath(`/app/stocktake/${sessionId}`);
   revalidatePath("/app/stocktake");
   redirect(`/app/stocktake/${sessionId}`);
@@ -166,15 +168,7 @@ export async function approveAndApply(formData: FormData) {
 
   const summary = (Array.isArray(rpcData) ? rpcData[0] : rpcData) as { applied_lines: number; adjustment_count: number } | null;
 
-  try {
-    await supabase.from("activity_log").insert({
-      tenant_id: tenantId,
-      event: "stocktake_applied",
-      metadata: { session_id: sessionId, line_count: summary?.applied_lines ?? 0, adjustments: summary?.adjustment_count ?? 0 },
-    });
-  } catch (err) {
-    console.error("[approveAndApply] activity_log insert failed:", err);
-  }
+  await logActivity({ event: "stocktake.applied", entityId: sessionId, metadata: { applied_lines: summary?.applied_lines } });
 
   revalidatePath("/app/stocktake");
   revalidatePath("/app/inventory");
@@ -199,6 +193,7 @@ export async function sendBackForRecount(formData: FormData) {
     .eq("id", sessionId)
     .eq("tenant_id", tenantId);
 
+  await logActivity({ event: "stocktake.sent_back", entityId: sessionId });
   revalidatePath(`/app/stocktake/${sessionId}`);
   revalidatePath("/app/stocktake");
   redirect(`/app/stocktake/${sessionId}`);
@@ -251,6 +246,7 @@ export async function applyOpeningStock(formData: FormData) {
 
   const summary = (Array.isArray(rpcData) ? rpcData[0] : rpcData) as { applied_lines: number } | null;
 
+  await logActivity({ event: "stocktake.opening_stock_applied", entityId: sessionId });
   revalidatePath("/app/stocktake");
   revalidatePath("/app/inventory");
   redirect(`/app/stocktake?apply_ok=${summary?.applied_lines ?? 0}/initial`);

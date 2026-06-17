@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { canTransitionStocktakeStatus, type StocktakeSessionStatus } from "@/lib/stocktake/lifecycle";
+import { logActivity } from "@/lib/activity/log";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function seedVarianceReasonsIfNeeded(supabase: any, tenantId: string) {
@@ -109,19 +110,7 @@ export async function createStocktakeSession(formData: FormData): Promise<void> 
     }
   }
 
-  await supabase.from("activity_log").insert({
-    tenant_id: tenantId,
-    actor_id: context.userId,
-    event: "stocktake_session_created",
-    metadata: {
-      session_id: session.id,
-      location_id: locationId,
-      session_type: sessionType,
-      reference_number: referenceNumber,
-      blind_count: blindCount,
-      notes,
-    },
-  });
+  await logActivity({ event: "stocktake.opened", entityId: session?.id, metadata: { reference: referenceNumber } });
 
   revalidatePath("/app/stocktake");
   redirect(`/app/stocktake/${session.id}`);
@@ -152,6 +141,7 @@ export async function updateStocktakeStatus(formData: FormData) {
     .eq("tenant_id", tenantId)
     .eq("id", sessionId);
 
+  await logActivity({ event: "stocktake.status_changed", metadata: { status } });
   revalidatePath("/app/stocktake");
   revalidatePath(`/app/stocktake/${sessionId}`);
 }
