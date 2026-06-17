@@ -224,7 +224,7 @@ describe("handleCustomersDataRequest", () => {
 
     const log = admin.tables.get("activity_log")!.rows;
     expect(log).toHaveLength(1);
-    expect(log[0].event).toBe("SHOPIFY_GDPR_DATA_REQUEST");
+    expect(log[0].event).toBe("shopify.gdpr_data_request");
   });
 
   it("does not write activity_log when shop is unknown", async () => {

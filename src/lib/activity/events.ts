@@ -23,6 +23,7 @@ export const ACTIVITY_EVENTS = {
   "component.image_removed": { entityType: "component", summary: (m) => `Removed image for ${s(m.name, "component")}` },
   "component.image_fetch_failed": { entityType: "component", summary: (m) => `Image lookup failed for ${s(m.name, "component")}` },
   "component_group.created": { entityType: "component_group", summary: (m) => `Created group ${s(m.name)}`.trim() },
+  "component.csv_imported": { entityType: null, summary: (m) => `Imported ${s(m.count, "0")} components from CSV` },
 
   // --- BOMs ---
   "bom.created": { entityType: "bom", summary: (m) => `Created BOM v${s(m.version, "1")}` },
@@ -73,6 +74,7 @@ export const ACTIVITY_EVENTS = {
   "supplier.preferred_changed": { entityType: "supplier", summary: () => `Changed preferred supplier` },
   "supplier.price_break_added": { entityType: "supplier", summary: () => `Added supplier price break` },
   "supplier.price_break_removed": { entityType: "supplier", summary: () => `Removed supplier price break` },
+  "supplier.csv_imported": { entityType: null, summary: (m) => `Imported ${s(m.count, "0")} suppliers from CSV` },
 
   // --- Inventory ---
   "inventory.movement_logged": { entityType: "component", summary: () => `Logged inventory movement` },
@@ -98,6 +100,7 @@ export const ACTIVITY_EVENTS = {
   // --- Orders & production ---
   "order.allocation_run": { entityType: "order", summary: (m) => `Ran allocation (${s(m.changes_applied, "0")} changes)` },
   "order.labor_plan_updated": { entityType: "order", summary: () => `Updated job labor plan week` },
+  "order.line_marked_shipped": { entityType: "order_line", summary: () => `Marked order line shipped` },
   "production.job_started": { entityType: "order_line", summary: () => `Started job` },
   "production.step_started": { entityType: "job_routing_step", summary: () => `Started routing step` },
   "production.step_completed": { entityType: "job_routing_step", summary: () => `Completed routing step` },
@@ -133,6 +136,10 @@ export const ACTIVITY_EVENTS = {
   "trash.bom_restored": { entityType: "bom", summary: () => `Restored BOM` },
   "shopify.sync_completed": { entityType: null, summary: (m) => `Shopify sync completed (${s(m.products, "0")} products)` },
   "shopify.app_uninstalled": { entityType: null, summary: () => `Shopify app uninstalled` },
+  "shopify.gdpr_data_request": { entityType: null, summary: () => `Shopify GDPR data request received` },
+  "shopify.gdpr_customer_redact": { entityType: null, summary: () => `Shopify GDPR customer redaction` },
+  "shopify.gdpr_shop_redact": { entityType: null, summary: () => `Shopify GDPR shop redaction` },
+  "tenant.created": { entityType: null, summary: (m) => `Created tenant (${s(m.plan)} ${s(m.billing)})`.trim() },
   "subscription.activated": { entityType: null, summary: (m) => `Subscription activated (${s(m.tier)} ${s(m.billing)})`.trim() },
 } satisfies Record<string, ActivityEventDef>;
 

@@ -4,6 +4,7 @@ import { getServerTenantContext } from "@/lib/tenant/context";
 import { parseCSV } from "@/lib/csv/parse";
 import { validateComponentRows, type ComponentLookups } from "@/lib/csv/validate-components";
 import { bestMatch } from "@/lib/csv/fuzzy";
+import { logActivity } from "@/lib/activity/log";
 
 const MAX_CSV_BYTES = 5 * 1024 * 1024; // 5 MB
 const REQUIRED_HEADERS = ["name"];
@@ -246,11 +247,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  await supabase.from("activity_log").insert({
-    tenant_id: tenantId,
-    event: "components_csv_imported",
-    metadata: { count: insertRows.length },
-  });
+  await logActivity({ event: "component.csv_imported", metadata: { count: insertRows.length } });
 
   revalidatePath("/app/components");
   revalidatePath("/app/inventory");
