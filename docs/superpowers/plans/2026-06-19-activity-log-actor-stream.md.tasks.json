@@ -1,0 +1,32 @@
+{
+  "planPath": "docs/superpowers/plans/2026-06-19-activity-log-actor-stream.md",
+  "tasks": [
+    {
+      "id": 1,
+      "subject": "Task 1: Add tab filter to query parsing",
+      "status": "pending",
+      "description": "**Goal:** ActivityFilters carries tab (all|people|system) parsed from URL, defaulting to people.\n\n**Files:**\n- Modify: src/lib/activity/query.ts\n- Test: src/lib/activity/query.test.ts\n\n```json:metadata\n{\"files\": [\"src/lib/activity/query.ts\", \"src/lib/activity/query.test.ts\"], \"verifyCommand\": \"npx vitest run src/lib/activity/query.test.ts --pool threads --maxWorkers 1\", \"acceptanceCriteria\": [\"ActivityTab exported\", \"tab field on ActivityFilters\", \"default people; system; all; garbage->people\", \"existing tests updated\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: Apply actor_type filter per tab in page query",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Server page filters both rows and count queries by active tab actor_type.\n\n**Files:**\n- Modify: src/app/app/activity-log/page.tsx\n\n```json:metadata\n{\"files\": [\"src/app/app/activity-log/page.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"people eq user\", \"system neq user\", \"all unfiltered\", \"count query in sync\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: Render People/System/All tabs",
+      "status": "pending",
+      "blockedBy": [1, 2],
+      "description": "**Goal:** Three tab links above filters, active from filters.tab, user select hidden on System tab, per-tab empty states.\n\n**Files:**\n- Modify: src/app/app/activity-log/table.tsx\n- Modify: src/app/app/activity-log/activity-log.module.css\n\n```json:metadata\n{\"files\": [\"src/app/app/activity-log/table.tsx\", \"src/app/app/activity-log/activity-log.module.css\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"tabBar 3 links active state\", \"tabHref preserves filters resets page\", \"user select hidden on system\", \"per-tab empty state\", \"tab CSS added\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: Update QA feature test plan",
+      "status": "pending",
+      "description": "**Goal:** Document tab behavior per CLAUDE.md (checklist + dated changelog).\n\n**Files:**\n- Modify: docs/qa-feature-test-plan.md\n\n```json:metadata\n{\"files\": [\"docs/qa-feature-test-plan.md\"], \"verifyCommand\": \"\", \"acceptanceCriteria\": [\"tab checklist items added\", \"changelog line appended\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-06-19T00:00:00Z"
+}
