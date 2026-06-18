@@ -1,5 +1,6 @@
 export const ACTIVITY_PAGE_SIZE = 50;
 
+/** "people" = human users (actor_type "user"); "system" = non-user actors; "all" = no filter */
 export type ActivityTab = "all" | "people" | "system";
 
 export type ActivityFilters = {

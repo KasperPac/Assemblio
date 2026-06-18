@@ -31,6 +31,9 @@ export default async function ActivityLogPage({
       const term = filters.search.replace(/[%,()[\]]/g, "");
       out = out.or(`summary.ilike.%${term}%,actor_label.ilike.%${term}%`);
     }
+    if (filters.tab === "people") out = out.eq("actor_type", "user");
+    else if (filters.tab === "system") out = out.neq("actor_type", "user");
+    // "all" applies no actor_type filter
     return out;
   };
 
