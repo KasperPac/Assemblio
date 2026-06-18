@@ -194,3 +194,20 @@
 .tableCard[data-pending="true"] {
   opacity: 0.6;
 }
+
+.tabBar {
+  display: flex;
+  gap: 8px;
+}
+.tab {
+  composes: secondary from "../_ui/buttons.module.css";
+  min-height: 34px;
+  padding: 6px 16px;
+  font-size: var(--fs-sm);
+}
+.tabActive {
+  composes: primary from "../_ui/buttons.module.css";
+  min-height: 34px;
+  padding: 6px 16px;
+  font-size: var(--fs-sm);
+}

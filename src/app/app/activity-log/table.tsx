@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import PageHeader from "../_ui/page-header";
 import StatusBadge from "../_ui/status-badge";
 import EmptyState from "../_ui/empty-state";
@@ -83,6 +84,19 @@ export default function ActivityLogClient(props: Props) {
     startTransition(() => router.push(`?${params.toString()}`));
   }
 
+  function tabHref(tab: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tab);
+    params.delete("page");
+    return `?${params.toString()}`;
+  }
+
+  const TABS: { key: string; label: string }[] = [
+    { key: "people", label: "People" },
+    { key: "system", label: "System" },
+    { key: "all", label: "All" },
+  ];
+
   return (
     <div className={styles.page}>
       <PageHeader
@@ -90,6 +104,18 @@ export default function ActivityLogClient(props: Props) {
         title="Activity log"
         description="Search and page through all platform activity, inspect event details, and review the raw metadata recorded for each action."
       />
+
+      <div className={styles.tabBar}>
+        {TABS.map((t) => (
+          <Link
+            key={t.key}
+            href={tabHref(t.key)}
+            className={filters.tab === t.key ? styles.tabActive : styles.tab}
+          >
+            {t.label}
+          </Link>
+        ))}
+      </div>
 
       <div className={styles.filters}>
         <input
@@ -102,10 +128,12 @@ export default function ActivityLogClient(props: Props) {
         />
         <input aria-label="From date" type="date" value={filters.dateFrom ?? ""} onChange={(e) => pushParams({ from: e.target.value || null })} />
         <input aria-label="To date" type="date" value={filters.dateTo ?? ""} onChange={(e) => pushParams({ to: e.target.value || null })} />
-        <select value={filters.actorId ?? "all"} onChange={(e) => pushParams({ actor: e.target.value === "all" ? null : e.target.value })}>
-          <option value="all">All users</option>
-          {actorOptions.map((a) => <option key={a.id} value={a.id}>{a.label}</option>)}
-        </select>
+        {filters.tab !== "system" && (
+          <select value={filters.actorId ?? "all"} onChange={(e) => pushParams({ actor: e.target.value === "all" ? null : e.target.value })}>
+            <option value="all">All users</option>
+            {actorOptions.map((a) => <option key={a.id} value={a.id}>{a.label}</option>)}
+          </select>
+        )}
         <select value={filters.event ?? "all"} onChange={(e) => pushParams({ event: e.target.value === "all" ? null : e.target.value })}>
           <option value="all">All events</option>
           {eventOptions.map((ev) => <option key={ev} value={ev}>{ev}</option>)}
@@ -120,7 +148,18 @@ export default function ActivityLogClient(props: Props) {
           {error ? (
             <EmptyState title="Failed to load activity" message={error} />
           ) : rows.length === 0 ? (
-            <EmptyState title="No activity found" message="Try widening the filters or search term to inspect more events." />
+            <EmptyState
+              title={
+                filters.tab === "system" ? "No system activity recorded yet"
+                : filters.tab === "people" ? "No people activity yet"
+                : "No activity found"
+              }
+              message={
+                filters.tab === "system" ? "Automated events (Shopify, billing) will appear here."
+                : filters.tab === "people" ? "Actions taken by your team will appear here."
+                : "Try widening the filters or search term to inspect more events."
+              }
+            />
           ) : (
             rows.map((row) => {
               const isActive = row.id === selected?.id;
