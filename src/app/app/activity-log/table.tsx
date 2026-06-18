@@ -53,6 +53,12 @@ function actorDisplay(row: LogRow): string {
   return row.actor_label ?? "Unknown user";
 }
 
+const TABS: { key: string; label: string }[] = [
+  { key: "people", label: "People" },
+  { key: "system", label: "System" },
+  { key: "all", label: "All" },
+];
+
 export default function ActivityLogClient(props: Props) {
   const { rows, error, filters, eventOptions, actorOptions, page, totalPages, totalCount } = props;
   const router = useRouter();
@@ -67,6 +73,12 @@ export default function ActivityLogClient(props: Props) {
   if (filters.search !== prevSearch) {
     setPrevSearch(filters.search);
     setSearchDraft(filters.search ?? "");
+  }
+
+  const [prevTab, setPrevTab] = useState(filters.tab);
+  if (filters.tab !== prevTab) {
+    setPrevTab(filters.tab);
+    setSelectedId(rows[0]?.id ?? "");
   }
 
   const selected = useMemo(
@@ -88,14 +100,9 @@ export default function ActivityLogClient(props: Props) {
     const params = new URLSearchParams(searchParams.toString());
     params.set("tab", tab);
     params.delete("page");
+    if (tab === "system") params.delete("actor");
     return `?${params.toString()}`;
   }
-
-  const TABS: { key: string; label: string }[] = [
-    { key: "people", label: "People" },
-    { key: "system", label: "System" },
-    { key: "all", label: "All" },
-  ];
 
   return (
     <div className={styles.page}>
@@ -111,6 +118,7 @@ export default function ActivityLogClient(props: Props) {
             key={t.key}
             href={tabHref(t.key)}
             className={filters.tab === t.key ? styles.tabActive : styles.tab}
+            aria-current={filters.tab === t.key ? "page" : undefined}
           >
             {t.label}
           </Link>
