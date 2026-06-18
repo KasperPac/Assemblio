@@ -4,18 +4,26 @@ import { parseActivityFilters, activityRange, totalPages, ACTIVITY_PAGE_SIZE } f
 describe("parseActivityFilters", () => {
   it("defaults to page 1 and empty filters", () => {
     expect(parseActivityFilters({})).toEqual({
-      page: 1, event: null, actorId: null, dateFrom: null, dateTo: null, search: null,
+      page: 1, event: null, actorId: null, dateFrom: null, dateTo: null, search: null, tab: "people",
     });
   });
 
   it("parses provided params and clamps page to >= 1", () => {
     const f = parseActivityFilters({
-      page: "0", event: "bom.created", actor: "u1", from: "2026-01-01", to: "2026-02-01", q: "PO",
+      page: "0", event: "bom.created", actor: "u1", from: "2026-01-01", to: "2026-02-01", q: "PO", tab: "system",
     });
     expect(f).toEqual({
       page: 1, event: "bom.created", actorId: "u1",
-      dateFrom: "2026-01-01", dateTo: "2026-02-01", search: "PO",
+      dateFrom: "2026-01-01", dateTo: "2026-02-01", search: "PO", tab: "system",
     });
+  });
+
+  it("normalizes the tab param", () => {
+    expect(parseActivityFilters({ tab: "all" }).tab).toBe("all");
+    expect(parseActivityFilters({ tab: "system" }).tab).toBe("system");
+    expect(parseActivityFilters({ tab: "people" }).tab).toBe("people");
+    expect(parseActivityFilters({}).tab).toBe("people");
+    expect(parseActivityFilters({ tab: "garbage" }).tab).toBe("people");
   });
 
   it("takes the first value when a param is an array", () => {

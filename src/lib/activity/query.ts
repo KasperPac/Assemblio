@@ -1,5 +1,7 @@
 export const ACTIVITY_PAGE_SIZE = 50;
 
+export type ActivityTab = "all" | "people" | "system";
+
 export type ActivityFilters = {
   page: number;
   event: string | null;
@@ -7,6 +9,7 @@ export type ActivityFilters = {
   dateFrom: string | null;
   dateTo: string | null;
   search: string | null;
+  tab: ActivityTab;
 };
 
 type RawParams = Record<string, string | string[] | undefined>;
@@ -20,6 +23,8 @@ export function parseActivityFilters(params: RawParams): ActivityFilters {
   const pageRaw = Number(first(params.page) ?? "1");
   const page = Number.isFinite(pageRaw) && pageRaw >= 1 ? Math.floor(pageRaw) : 1;
   const norm = (v: string | null) => (v && v.trim().length > 0 ? v.trim() : null);
+  const tabRaw = first(params.tab);
+  const tab: ActivityTab = tabRaw === "all" || tabRaw === "system" ? tabRaw : "people";
   return {
     page,
     event: norm(first(params.event)),
@@ -27,6 +32,7 @@ export function parseActivityFilters(params: RawParams): ActivityFilters {
     dateFrom: norm(first(params.from)),
     dateTo: norm(first(params.to)),
     search: norm(first(params.q)),
+    tab,
   };
 }
 
