@@ -379,6 +379,10 @@ For each report below: sortable table, CSV export, correct date-range default, a
 
 ### Activity log — `/app/activity-log`
 - [ ] Lists activity newest-first, 50 per page, with Prev/Next pagination and a total count
+- [ ] Three tabs — People / System / All — split the log by actor_type; defaults to People on load so automated noise is hidden
+- [ ] People tab shows only user-initiated events; System tab shows only automated (Shopify/Stripe/System) events; All shows everything
+- [ ] Counts and Prev/Next paging are correct per tab; switching tabs preserves date/search/event filters but resets to page 1
+- [ ] The user filter is hidden on the System tab (and the actor param is cleared); each tab has its own empty-state message
 - [ ] Event filter (from the catalog), user filter (tenant members), date-from/date-to, and text search all run server-side over full history (not just the current page)
 - [ ] Filters + page persist in the URL (shareable/bookmarkable); search input reflects the active query after navigation
 - [ ] User-initiated events show the operator's real name (full_name, else email)
@@ -579,3 +583,4 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-06-16 — added Feature & QA test plan: initial comprehensive inventory of all 23 domains.
 - 2026-06-16 — amended Products list: page through all variants (PostgREST 1000-row cap fix) so >1000-variant tenants show correct counts/prices.
 - 2026-06-17 — amended Activity log: full audit-trail coverage of all mutations, real/typed actors, server-side paged filtering.
+- 2026-06-19 — amended Activity log: People/System/All tabs split the log by actor_type (default People) to separate the human audit trail from Shopify/system noise.
