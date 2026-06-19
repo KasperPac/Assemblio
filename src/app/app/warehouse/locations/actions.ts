@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { logActivity } from "@/lib/activity/log";
+import { evaluateBlockers } from "@/lib/housekeeping/blockers";
 
 const REVALIDATE = "/app/warehouse/locations";
 
@@ -176,4 +177,81 @@ export async function deleteBay(formData: FormData): Promise<{ error?: string }>
   await logActivity({ event: "bay.deleted" });
   revalidatePath(REVALIDATE);
   return {};
+}
+
+// ── Delete Warehouse ──────────────────────────────────────────
+
+export type DeleteWarehouseResult = { success: true } | { error: string };
+
+export async function deleteWarehouse(id: string): Promise<DeleteWarehouseResult> {
+  if (!id) return { success: true };
+  const context = await getServerTenantContext();
+  if (!context) return { error: "Unauthorized." };
+  const { supabase, tenantId, role } = context;
+
+  if (role !== "admin" && role !== "super_admin") {
+    return { error: "You do not have permission to delete warehouses." };
+  }
+
+  // Load the target for the default guard.
+  const { data: target } = await supabase
+    .from("location")
+    .select("id,is_default")
+    .eq("tenant_id", tenantId)
+    .eq("id", id)
+    .maybeSingle();
+  if (!target) return { success: true }; // already gone — no-op
+
+  if (target.is_default) {
+    return { error: "Can't delete the default warehouse. Make another warehouse the default first." };
+  }
+
+  const { count: warehouseCount } = await supabase
+    .from("location")
+    .select("id", { count: "exact", head: true })
+    .eq("tenant_id", tenantId);
+  if ((warehouseCount ?? 0) <= 1) {
+    return { error: "Can't delete the only warehouse. At least one warehouse must remain." };
+  }
+
+  // Reference checks — anything > 0 blocks the delete.
+  const countRefs = async (
+    table: "component" | "inventory_balance" | "inventory_movement" | "stocktake_session" | "delivery_receipt"
+  ) => {
+    const { count } = await supabase
+      .from(table)
+      .select("id", { count: "exact", head: true })
+      .eq("tenant_id", tenantId)
+      .eq("location_id", id);
+    return count ?? 0;
+  };
+
+  const [components, balances, movements, stocktakes, deliveries] = await Promise.all([
+    countRefs("component"),
+    countRefs("inventory_balance"),
+    countRefs("inventory_movement"),
+    countRefs("stocktake_session"),
+    countRefs("delivery_receipt"),
+  ]);
+
+  const verdict = evaluateBlockers([
+    { label: "components assigned here", count: components },
+    { label: "on-hand stock", count: balances },
+    { label: "movement history", count: movements },
+    { label: "stocktake sessions", count: stocktakes },
+    { label: "goods-in receipts", count: deliveries },
+  ]);
+  if (verdict.blocked) return { error: verdict.reason! };
+
+  // Clean — bins cascade via FK ON DELETE CASCADE on warehouse_id.
+  const { error } = await supabase
+    .from("location")
+    .delete()
+    .eq("tenant_id", tenantId)
+    .eq("id", id);
+  if (error) return { error: error.message };
+
+  await logActivity({ event: "location.deleted", entityId: id });
+  revalidatePath(REVALIDATE);
+  return { success: true };
 }

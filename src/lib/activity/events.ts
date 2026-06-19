@@ -86,6 +86,7 @@ export const ACTIVITY_EVENTS = {
   "stocktake.opening_stock_applied": { entityType: "stocktake_session", summary: () => `Applied opening stock` },
   "location.created": { entityType: "location", summary: (m) => `Created location ${s(m.name)}`.trim() },
   "location.updated": { entityType: "location", summary: (m) => `Updated location ${s(m.name)}`.trim() },
+  "location.deleted": { entityType: "location", summary: () => `Deleted warehouse` },
   "location.default_changed": { entityType: "location", summary: (m) => `Set default location to ${s(m.location_name)}`.trim() },
   "sub_location.created": { entityType: "bin_sub_location", summary: (m) => `Created sub-location ${s(m.name)}`.trim() },
   "sub_location.updated": { entityType: "bin_sub_location", summary: (m) => `Updated sub-location ${s(m.name)}`.trim() },
