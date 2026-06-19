@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { logActivity } from "@/lib/activity/log";
+import { evaluateBlockers } from "@/lib/housekeeping/blockers";
 
 type BomState = {
   error?: string;
@@ -350,6 +351,67 @@ export async function deleteBomDraft(formData: FormData) {
   revalidatePath("/app/templates");
   revalidatePath("/app");
   if (vid) revalidatePath(`/app/products/variants/${vid}`);
+}
+
+export type DeleteBomVersionResult = { success: true } | { error: string };
+
+export async function deleteBomVersion(
+  bomId: string,
+  variantId?: string
+): Promise<DeleteBomVersionResult> {
+  if (!bomId) return { success: true };
+
+  const context = await getServerTenantContext();
+  if (!context) return { error: "Unauthorized." };
+  const { supabase: regularClient, tenantId, role } = context;
+  if (role !== "admin" && role !== "super_admin") {
+    return { error: "You do not have permission to delete BOM versions." };
+  }
+  const supabase = role === "super_admin" ? createSupabaseAdminClient() : regularClient;
+
+  const { data: bom } = await supabase
+    .from("product_bom")
+    .select("id,variant_id,is_active")
+    .eq("tenant_id", tenantId)
+    .eq("id", bomId)
+    .maybeSingle();
+  if (!bom) return { success: true };
+
+  if (bom.is_active) {
+    return { error: "Can't delete the active BOM. Make another version active first." };
+  }
+
+  const { count: jobCount } = await (supabase as any)
+    .from("job_cost_snapshot")
+    .select("id", { count: "exact", head: true })
+    .eq("tenant_id", tenantId)
+    .eq("source_product_bom_id", bomId);
+
+  const verdict = evaluateBlockers([
+    { label: "a costed job", count: jobCount ?? 0 },
+  ]);
+  if (verdict.blocked) return { error: verdict.reason! };
+
+  await supabase
+    .from("product_bom_component")
+    .delete()
+    .eq("tenant_id", tenantId)
+    .eq("product_bom_id", bomId);
+
+  const { error } = await supabase
+    .from("product_bom")
+    .delete()
+    .eq("tenant_id", tenantId)
+    .eq("id", bomId);
+  if (error) return { error: error.message };
+
+  await logActivity({ event: "bom.deleted", entityId: bomId });
+
+  const vid = variantId || bom.variant_id;
+  revalidatePath("/app/templates");
+  revalidatePath("/app");
+  if (vid) revalidatePath(`/app/products/variants/${vid}`);
+  return { success: true };
 }
 
 export async function addComponentsToBom(
