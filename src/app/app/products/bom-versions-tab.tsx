@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { setBomActive } from "@/app/app/bom/actions";
+import { setBomActive, deleteBomVersion } from "@/app/app/bom/actions";
 import styles from "./bom-versions-tab.module.css";
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -33,6 +34,7 @@ type Props = {
   boms: Bom[];
   variantId: string;
   sellPrice: number | null;
+  canManage: boolean;
 };
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -93,12 +95,34 @@ function SingleVersionView({
   sellPrice,
   onActivate,
   isActivating,
+  variantId,
+  canManage,
 }: {
   bom: Bom;
   sellPrice: number | null;
   onActivate: (bomId: string) => void;
   isActivating: boolean;
+  variantId: string;
+  canManage: boolean;
 }) {
+  const router = useRouter();
+  const [delErr, setDelErr] = useState<string | null>(null);
+  const [confirming, setConfirming] = useState(false);
+  const [deleting, startDelete] = useTransition();
+
+  function onDelete() {
+    setDelErr(null);
+    startDelete(async () => {
+      const res = await deleteBomVersion(bom.id, variantId);
+      if ("error" in res) {
+        setDelErr(res.error);
+        return;
+      }
+      setConfirming(false);
+      router.refresh();
+    });
+  }
+
   const cost = totalMaterialCost(bom.lines);
   const gm = margin(cost, sellPrice);
   return (
@@ -118,6 +142,39 @@ function SingleVersionView({
           >
             Make active
           </button>
+        ) : null}
+        {canManage && !bom.is_active ? (
+          <span className={styles.deleteWrap}>
+            {confirming ? (
+              <>
+                <button
+                  type="button"
+                  className={styles.deleteDraftBtn}
+                  disabled={deleting}
+                  onClick={onDelete}
+                >
+                  {deleting ? "Deleting…" : "Confirm delete"}
+                </button>
+                <button
+                  type="button"
+                  className={styles.cancelBtn}
+                  disabled={deleting}
+                  onClick={() => setConfirming(false)}
+                >
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                className={styles.deleteDraftBtn}
+                onClick={() => setConfirming(true)}
+              >
+                Delete version
+              </button>
+            )}
+            {delErr ? <span className={styles.deleteError}>{delErr}</span> : null}
+          </span>
         ) : null}
       </div>
 
@@ -476,7 +533,7 @@ function ComparisonView({
 
 // ── Root component ─────────────────────────────────────────────────────────
 
-export default function BomVersionsTab({ boms, sellPrice }: Props) {
+export default function BomVersionsTab({ boms, variantId, sellPrice, canManage }: Props) {
   const [isPending, startTransition] = useTransition();
   const [selected, setSelected] = useState<[string | null, string | null]>([null, null]);
 
@@ -583,6 +640,8 @@ export default function BomVersionsTab({ boms, sellPrice }: Props) {
             sellPrice={sellPrice}
             onActivate={handleActivate}
             isActivating={isPending}
+            variantId={variantId}
+            canManage={canManage}
           />
         ) : (
           <div className={styles.emptyState}>

@@ -983,6 +983,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
             boms={allBomsWithLines}
             variantId={variant.id}
             sellPrice={sellPrice}
+            canManage={canManageBom}
           />
         }
         notifications={

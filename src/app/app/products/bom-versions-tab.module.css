@@ -519,3 +519,38 @@
 .componentLink:hover {
   text-decoration: underline;
 }
+
+.deleteWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cancelBtn {
+  background: none;
+  border: 1px solid var(--stroke-strong);
+  color: var(--ink-muted);
+  border-radius: 5px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.cancelBtn:hover:not(:disabled) {
+  border-color: var(--ink-strong);
+  color: var(--ink-strong);
+}
+
+.cancelBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.deleteError {
+  font-size: var(--fs-sm);
+  color: var(--danger);
+}
