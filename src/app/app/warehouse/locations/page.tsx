@@ -11,8 +11,9 @@ import styles from "./page.module.css";
 export default async function LocationsPage() {
   const context = await getServerTenantContext();
   if (!context) redirect("/auth/login");
-  const { supabase, tenantId: _tenantId } = context;
+  const { supabase, tenantId: _tenantId, role } = context;
   const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
+  const canDelete = role === "admin" || role === "super_admin";
 
   const access = await getSubscriptionAccess(supabase, tenantId);
   if (!access.sub || !hasFeature(access.sub, "binManagement")) {
@@ -61,7 +62,7 @@ export default async function LocationsPage() {
         Default location is set in{" "}
         <Link href="/app/settings/locations">Settings → Locations</Link>.
       </p>
-      <LocationsTree warehouses={(warehousesResult.data ?? []) as Warehouse[]} componentCounts={componentCounts} />
+      <LocationsTree warehouses={(warehousesResult.data ?? []) as Warehouse[]} componentCounts={componentCounts} canDelete={canDelete} />
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import { BarcodeModal } from "./barcode-modal";
 import {
-  addWarehouse, editWarehouse,
+  addWarehouse, editWarehouse, deleteWarehouse,
   addSubLocation, editSubLocation, deleteSubLocation,
   addAisle, editAisle, deleteAisle,
   addBay, editBay, deleteBay,
@@ -185,7 +185,40 @@ function SimpleDeleteButton({ id, entityName, entityType, action }: {
   );
 }
 
-export function LocationsTree({ warehouses, componentCounts = {} }: { warehouses: Warehouse[]; componentCounts?: Record<string, number> }) {
+function WarehouseDeleteButton({ id, name }: { id: string; name: string }) {
+  const router = useRouter();
+  const [err, setErr] = useState<string | null>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  async function handleConfirm() {
+    setErr(null);
+    const res = await deleteWarehouse(id);
+    if ("error" in res) { setErr(res.error); return; }
+    router.refresh();
+  }
+
+  return (
+    <span>
+      <button
+        type="button"
+        className={styles.btnDelete}
+        aria-label={`Delete warehouse ${name}`}
+        onClick={() => { setErr(null); dialogRef.current?.showModal(); }}
+      >
+        <span aria-hidden="true">✕</span> Delete
+      </button>
+      {err && <span className={styles.deleteError}>{err}</span>}
+      <ConfirmDialog
+        dialogRef={dialogRef}
+        message={`Delete warehouse "${name}"? This permanently removes it and any empty bins inside. This cannot be undone.`}
+        confirmLabel="Delete warehouse"
+        onConfirm={handleConfirm}
+      />
+    </span>
+  );
+}
+
+export function LocationsTree({ warehouses, componentCounts = {}, canDelete = false }: { warehouses: Warehouse[]; componentCounts?: Record<string, number>; canDelete?: boolean }) {
   const [addingWh, setAddingWh] = useState(false);
   const [editingWh, setEditingWh] = useState<string | null>(null);
   const [addingSl, setAddingSl] = useState<string | null>(null);    // warehouse id
@@ -270,6 +303,9 @@ export function LocationsTree({ warehouses, componentCounts = {} }: { warehouses
                 <button className={styles.btnIcon} aria-label={`Add sub-location to ${wh.name}`} onClick={() => { setAddingSl(wh.id); setCollapsedWh(s => { const n = new Set(s); n.delete(wh.id); return n; }); }}><span aria-hidden="true">⊕</span> Sub-loc</button>
                 <button className={styles.btnIcon} aria-label={`Print barcode for ${wh.name}`} onClick={() => setBarcode({ id: wh.id, type: "Warehouse", name: wh.name, path: wh.name })}><span aria-hidden="true">▦</span> Barcode</button>
                 <button className={styles.btnIcon} aria-label={`Edit warehouse ${wh.name}`} onClick={() => setEditingWh(wh.id)}><span aria-hidden="true">✎</span> Edit</button>
+                {canDelete && warehouses.length > 1 && !wh.is_default && (
+                  <WarehouseDeleteButton id={wh.id} name={wh.name} />
+                )}
                 <button className={styles.btnExpandCollapse} onClick={() => expandAll(wh)}>Expand all</button>
                 <button className={styles.btnExpandCollapse} onClick={() => collapseAll(wh)}>Collapse all</button>
               </div>
