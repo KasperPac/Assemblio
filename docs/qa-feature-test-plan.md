@@ -46,6 +46,17 @@ testable checks. Use this to verify ALL features work as expected.
 - [ ] Product image renders or shows fallback initial
 - [ ] "Import Products" triggers Shopify sync
 
+### Product categories & filters — `/app/products`
+Shopify sync captures product type, tags, Standard-Taxonomy category, and collection membership (read-only). The filter bar can filter and group by them.
+- [ ] Importing from Shopify populates product type, tags, category, and collections
+- [ ] Filter by product type narrows the list to that type
+- [ ] Filter by category narrows the list to that category
+- [ ] Selecting one or more tags ("More filters") shows only products carrying ALL selected tags
+- [ ] Selecting one or more collections ("More filters") shows products in ANY selected collection
+- [ ] Group by type / category / collection inserts section headers; null values group under "Uncategorised"
+- [ ] Row divider lines and filter-bar layout stay correct with the new controls
+- [ ] With the DB patch unapplied, the page still renders and category filters show no options (graceful degradation)
+
 ### Product detail — `/app/products/{productId}`
 - [ ] Coverage bar "X / Y variants have a BOM"; amber badge when some lack BOMs
 - [ ] Per-variant BOM status: "No BOM created" / active (version + line count) / "(draft in progress)"
@@ -584,3 +595,4 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-06-16 — amended Products list: page through all variants (PostgREST 1000-row cap fix) so >1000-variant tenants show correct counts/prices.
 - 2026-06-17 — amended Activity log: full audit-trail coverage of all mutations, real/typed actors, server-side paged filtering.
 - 2026-06-19 — amended Activity log: People/System/All tabs split the log by actor_type (default People) to separate the human audit trail from Shopify/system noise.
+- 2026-07-01 — added product categories & filters: sync Shopify product_type/tags/category/collections, filter and group the products page by them.
