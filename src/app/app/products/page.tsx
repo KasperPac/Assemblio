@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
@@ -240,7 +241,7 @@ export default async function ProductsPage({ searchParams }: Props) {
 
   const detailedProductsResult = await supabase
     .from("product")
-    .select("id,title,description,created_at,image_url,status,product_type,tags,category_name,category_full_name")
+    .select("id,title,description,created_at,image_url,status,product_type,tags,category_name")
     .eq("tenant_id", tenantId)
     .order("created_at", { ascending: false });
 
@@ -328,6 +329,8 @@ export default async function ProductsPage({ searchParams }: Props) {
       .from("product_collection")
       .select("product_id,collection_id,shopify_collection:collection_id(id,title)")
       .eq("tenant_id", tenantId)
+      // Deterministic order so "first collection" grouping is stable across renders.
+      .order("collection_id", { ascending: true })
       .range(from, to)
   );
   const collectionsByProduct = new Map<string, Array<{ id: string; title: string }>>();
@@ -499,7 +502,7 @@ export default async function ProductsPage({ searchParams }: Props) {
               const showHeader = groupBy !== "none" && row.groupKey !== lastGroup;
               lastGroup = row.groupKey;
               return (
-                <div key={row.id}>
+                <Fragment key={row.id}>
                   {showHeader && (
                     <div className={styles.groupHeader}>{row.groupKey}</div>
                   )}
@@ -542,7 +545,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                       {row.actualGpPct != null ? `${(row.actualGpPct * 100).toFixed(0)}%` : "—"}
                     </span>
                   </div>
-                </div>
+                </Fragment>
               );
             });
           })()

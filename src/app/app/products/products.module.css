@@ -35,9 +35,21 @@
 }
 
 .filters {
-  display: grid;
-  grid-template-columns: 1fr 150px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 10px;
+}
+
+/* Search grows to fill the row; the selects / "More filters" stay compact so a
+   variable number of controls line up without lopsided sizing. */
+.filters > :first-child {
+  flex: 1 1 220px;
+  min-width: 180px;
+}
+
+.filters select {
+  flex: 0 0 auto;
 }
 
 .filters input,
@@ -166,7 +178,8 @@
 
 @media (max-width: 900px) {
   .filters {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .tableHeader {
