@@ -6,6 +6,7 @@ import { getWeekStart } from "@/lib/dates";
 import { mapProductStatus } from "./product-status";
 import { logSystemActivity } from "@/lib/activity/log";
 import { normalizeProductCategories } from "./product-categories";
+import { chunk } from "./chunk";
 
 type SyncResult = {
   products: number;
@@ -262,73 +263,87 @@ export async function syncShopifyStoreData(
   }
 
   // Collections: upsert distinct collections, then rebuild membership per product.
+  // Collections drive a filter-only view, so a failure here must not abort the
+  // core product/variant/order sync below — mirror the try/catch guard used for
+  // allocation reconciliation. The rebuild is idempotent, so the next sync
+  // recovers any partial (non-atomic delete-then-insert) failure.
   if (products.length > 0) {
-    const collectionByShopifyId = new Map<
-      string,
-      { tenant_id: string; shopify_id: string; title: string; handle: string | null }
-    >();
-    for (const cats of normalizedByShopifyId.values()) {
-      for (const c of cats.collections) {
-        if (!collectionByShopifyId.has(c.shopifyId)) {
-          collectionByShopifyId.set(c.shopifyId, {
-            tenant_id: tenantId,
-            shopify_id: c.shopifyId,
-            title: c.title,
-            handle: c.handle,
-          });
+    try {
+      const collectionByShopifyId = new Map<
+        string,
+        { tenant_id: string; shopify_id: string; title: string; handle: string | null }
+      >();
+      for (const cats of normalizedByShopifyId.values()) {
+        for (const c of cats.collections) {
+          if (!collectionByShopifyId.has(c.shopifyId)) {
+            collectionByShopifyId.set(c.shopifyId, {
+              tenant_id: tenantId,
+              shopify_id: c.shopifyId,
+              title: c.title,
+              handle: c.handle,
+            });
+          }
         }
       }
-    }
 
-    const collectionIdMap = new Map<string, string>();
-    if (collectionByShopifyId.size > 0) {
-      const { data: savedCollections, error } = await admin
-        .from("shopify_collection")
-        .upsert(Array.from(collectionByShopifyId.values()), {
-          onConflict: "tenant_id,shopify_id",
-        })
-        .select("id,shopify_id");
-      assertNoError(error, "Failed to upsert shopify_collection");
-      for (const row of savedCollections ?? []) {
-        collectionIdMap.set(row.shopify_id as string, row.id as string);
-      }
-    }
-
-    // Rebuild product_collection for every synced product (each appears once).
-    const localProductIds = Array.from(productMap.values());
-    if (localProductIds.length > 0) {
-      const { error: delError } = await admin
-        .from("product_collection")
-        .delete()
-        .eq("tenant_id", tenantId)
-        .in("product_id", localProductIds);
-      assertNoError(delError, "Failed to clear product_collection");
-    }
-
-    const membershipRows: Array<{
-      tenant_id: string;
-      product_id: string;
-      collection_id: string;
-    }> = [];
-    for (const [shopifyProductId, localProductId] of productMap.entries()) {
-      const cats = normalizedByShopifyId.get(shopifyProductId);
-      if (!cats) continue;
-      for (const c of cats.collections) {
-        const localCollectionId = collectionIdMap.get(c.shopifyId);
-        if (localCollectionId) {
-          membershipRows.push({
-            tenant_id: tenantId,
-            product_id: localProductId,
-            collection_id: localCollectionId,
-          });
+      const collectionIdMap = new Map<string, string>();
+      if (collectionByShopifyId.size > 0) {
+        const { data: savedCollections, error } = await admin
+          .from("shopify_collection")
+          .upsert(Array.from(collectionByShopifyId.values()), {
+            onConflict: "tenant_id,shopify_id",
+          })
+          .select("id,shopify_id");
+        assertNoError(error, "Failed to upsert shopify_collection");
+        for (const row of savedCollections ?? []) {
+          collectionIdMap.set(row.shopify_id as string, row.id as string);
         }
       }
-    }
-    if (membershipRows.length > 0) {
-      const { error: insError } = await admin
-        .from("product_collection")
-        .insert(membershipRows);
-      assertNoError(insError, "Failed to insert product_collection");
+
+      // Rebuild product_collection for every synced product (each appears once).
+      // Batch the delete filter: `.in("product_id", ...)` serializes ids into the
+      // request URL, which would 414 on large catalogs (same reason upsertProducts
+      // builds its id map from the upsert return).
+      const localProductIds = Array.from(productMap.values());
+      for (const batch of chunk(localProductIds, 100)) {
+        const { error: delError } = await admin
+          .from("product_collection")
+          .delete()
+          .eq("tenant_id", tenantId)
+          .in("product_id", batch);
+        assertNoError(delError, "Failed to clear product_collection");
+      }
+
+      const membershipRows: Array<{
+        tenant_id: string;
+        product_id: string;
+        collection_id: string;
+      }> = [];
+      for (const [shopifyProductId, localProductId] of productMap.entries()) {
+        const cats = normalizedByShopifyId.get(shopifyProductId);
+        if (!cats) continue;
+        for (const c of cats.collections) {
+          const localCollectionId = collectionIdMap.get(c.shopifyId);
+          if (localCollectionId) {
+            membershipRows.push({
+              tenant_id: tenantId,
+              product_id: localProductId,
+              collection_id: localCollectionId,
+            });
+          }
+        }
+      }
+      if (membershipRows.length > 0) {
+        const { error: insError } = await admin
+          .from("product_collection")
+          .insert(membershipRows);
+        assertNoError(insError, "Failed to insert product_collection");
+      }
+    } catch (err) {
+      console.error(
+        `[shopify-sync] collection sync failed for ${shopDomain}:`,
+        err instanceof Error ? err.message : err
+      );
     }
   }
 
