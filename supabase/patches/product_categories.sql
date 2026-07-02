@@ -37,14 +37,19 @@ create index if not exists shopify_collection_tenant_idx
   on public.shopify_collection (tenant_id);
 
 -- 3. RLS -----------------------------------------------------------------------
+-- No is_super_admin() bypass: these are tenant-scoped business tables, so they
+-- follow the same stripped policy that super_admin_foundation.sql enforces for
+-- product / product_variant (a platform operator with no active tenant sees zero
+-- rows). Keeping the form identical here means the policy is correct regardless
+-- of the order these two patches are applied.
 alter table public.shopify_collection enable row level security;
 drop policy if exists shopify_collection_tenant_isolation on public.shopify_collection;
 create policy shopify_collection_tenant_isolation on public.shopify_collection
-  using ((tenant_id = public.current_tenant_id()) or public.is_super_admin())
-  with check ((tenant_id = public.current_tenant_id()) or public.is_super_admin());
+  using (tenant_id = public.current_tenant_id())
+  with check (tenant_id = public.current_tenant_id());
 
 alter table public.product_collection enable row level security;
 drop policy if exists product_collection_tenant_isolation on public.product_collection;
 create policy product_collection_tenant_isolation on public.product_collection
-  using ((tenant_id = public.current_tenant_id()) or public.is_super_admin())
-  with check ((tenant_id = public.current_tenant_id()) or public.is_super_admin());
+  using (tenant_id = public.current_tenant_id())
+  with check (tenant_id = public.current_tenant_id());
