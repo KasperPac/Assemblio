@@ -9,6 +9,8 @@ import SortableHeader from "./sortable-header";
 import { parseSortParams, sortProductRows } from "./sort";
 import { fetchAllRows } from "@/lib/supabase/paginate";
 import ProductsPagination from "./products-pagination";
+import { buildFacets } from "@/lib/products/facets";
+import { matchesCategoryFilters, resolveGroupKey, type GroupBy } from "@/lib/products/grouping";
 
 const PAGE_SIZE = 25;
 
@@ -19,6 +21,9 @@ type ProductRow = {
   created_at?: string | null;
   image_url: string | null;
   status: string;
+  product_type: string | null;
+  tags: string[] | null;
+  category_name: string | null;
 };
 
 type VariantRow = {
@@ -70,6 +75,11 @@ type Props = {
     products?: string;
     orders?: string;
     sync_error?: string;
+    type?: string;
+    tags?: string;
+    collection?: string;
+    category?: string;
+    group?: string;
   }>;
 };
 
@@ -77,6 +87,13 @@ export default async function ProductsPage({ searchParams }: Props) {
   const params = (await searchParams) ?? {};
   const q = (params.q ?? "").trim().toLowerCase();
   const statusFilter = (params.status ?? "all").toLowerCase();
+  const typeFilter = (params.type ?? "").trim();
+  const categoryFilter = (params.category ?? "").trim();
+  const tagsFilter = (params.tags ?? "").split(",").map((t) => t.trim()).filter(Boolean);
+  const collectionFilter = (params.collection ?? "").split(",").map((c) => c.trim()).filter(Boolean);
+  const groupBy: GroupBy = ["type", "category", "collection"].includes(params.group ?? "")
+    ? (params.group as GroupBy)
+    : "none";
   const { sort: sortKey, dir: sortDir } = parseSortParams(params.sort, params.dir);
   const pageNum = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
   const syncStatus = params.shopify ?? null;
@@ -223,7 +240,7 @@ export default async function ProductsPage({ searchParams }: Props) {
 
   const detailedProductsResult = await supabase
     .from("product")
-    .select("id,title,description,created_at,image_url,status")
+    .select("id,title,description,created_at,image_url,status,product_type,tags,category_name,category_full_name")
     .eq("tenant_id", tenantId)
     .order("created_at", { ascending: false });
 
@@ -239,8 +256,11 @@ export default async function ProductsPage({ searchParams }: Props) {
       .order("created_at", { ascending: false });
     if (!fallbackNoStatus.error) {
       products = (fallbackNoStatus.data ?? []).map((product) => ({
-        ...(product as Omit<ProductRow, "status">),
+        ...(product as Omit<ProductRow, "status" | "product_type" | "tags" | "category_name">),
         status: "active",
+        product_type: null,
+        tags: [],
+        category_name: null,
       }));
     } else {
       const fallbackWithDescription = await supabase
@@ -249,9 +269,12 @@ export default async function ProductsPage({ searchParams }: Props) {
         .eq("tenant_id", tenantId);
       if (!fallbackWithDescription.error) {
         products = (fallbackWithDescription.data ?? []).map((product) => ({
-          ...(product as Omit<ProductRow, "created_at" | "status">),
+          ...(product as Omit<ProductRow, "created_at" | "status" | "product_type" | "tags" | "category_name">),
           created_at: null,
           status: "active",
+          product_type: null,
+          tags: [],
+          category_name: null,
         }));
       } else {
         const fallbackMinimalWithCreatedAt = await supabase
@@ -261,10 +284,13 @@ export default async function ProductsPage({ searchParams }: Props) {
           .order("created_at", { ascending: false });
         if (!fallbackMinimalWithCreatedAt.error) {
           products = (fallbackMinimalWithCreatedAt.data ?? []).map((product) => ({
-            ...(product as Omit<ProductRow, "description" | "image_url" | "status">),
+            ...(product as Omit<ProductRow, "description" | "image_url" | "status" | "product_type" | "tags" | "category_name">),
             description: null,
             image_url: null,
             status: "active",
+            product_type: null,
+            tags: [],
+            category_name: null,
           }));
         } else {
           const fallbackMinimal = await supabase
@@ -275,11 +301,14 @@ export default async function ProductsPage({ searchParams }: Props) {
             productsError = fallbackMinimal.error.message;
           } else {
             products = (fallbackMinimal.data ?? []).map((product) => ({
-              ...(product as Omit<ProductRow, "description" | "image_url" | "created_at" | "status">),
+              ...(product as Omit<ProductRow, "description" | "image_url" | "created_at" | "status" | "product_type" | "tags" | "category_name">),
               description: null,
               image_url: null,
               created_at: null,
               status: "active",
+              product_type: null,
+              tags: [],
+              category_name: null,
             }));
           }
         }
@@ -288,6 +317,33 @@ export default async function ProductsPage({ searchParams }: Props) {
   } else {
     products = (detailedProductsResult.data ?? []) as ProductRow[];
   }
+
+  type CollectionMembershipRow = {
+    product_id: string;
+    collection_id: string;
+    shopify_collection: { id: string; title: string } | { id: string; title: string }[] | null;
+  };
+  const membershipResult = await fetchAllRows<CollectionMembershipRow>((from, to) =>
+    supabase
+      .from("product_collection")
+      .select("product_id,collection_id,shopify_collection:collection_id(id,title)")
+      .eq("tenant_id", tenantId)
+      .range(from, to)
+  );
+  const collectionsByProduct = new Map<string, Array<{ id: string; title: string }>>();
+  if (!membershipResult.error) {
+    for (const row of membershipResult.data ?? []) {
+      const coll = Array.isArray(row.shopify_collection)
+        ? row.shopify_collection[0] ?? null
+        : row.shopify_collection;
+      if (!coll) continue;
+      const list = collectionsByProduct.get(row.product_id) ?? [];
+      list.push({ id: coll.id, title: coll.title });
+      collectionsByProduct.set(row.product_id, list);
+    }
+  }
+
+  const facets = buildFacets(products, collectionsByProduct);
 
   const variantsByProduct = (variants ?? []).reduce<Record<string, VariantRow[]>>(
     (acc, variant) => {
@@ -328,6 +384,21 @@ export default async function ProductsPage({ searchParams }: Props) {
 
     if (!matchesQ) return false;
     if (statusFilter !== "all" && product.status !== statusFilter) return false;
+
+    if (
+      !matchesCategoryFilters(
+        product,
+        collectionsByProduct.get(product.id) ?? [],
+        {
+          type: typeFilter || undefined,
+          category: categoryFilter || undefined,
+          tags: tagsFilter.length ? tagsFilter : undefined,
+          collections: collectionFilter.length ? collectionFilter : undefined,
+        }
+      )
+    ) {
+      return false;
+    }
     return true;
   });
 
@@ -354,14 +425,23 @@ export default async function ProductsPage({ searchParams }: Props) {
       sellPrice,
       matGpPct: avgMatGpPct,
       actualGpPct: avgActualGpPct,
+      groupKey: resolveGroupKey(
+        product,
+        collectionsByProduct.get(product.id) ?? [],
+        groupBy
+      ),
     };
   });
 
   const sortedRows = sortProductRows(rows, sortKey, sortDir);
-  const totalFiltered = sortedRows.length;
+  const groupedRows =
+    groupBy === "none"
+      ? sortedRows
+      : [...sortedRows].sort((a, b) => a.groupKey.localeCompare(b.groupKey));
+  const totalFiltered = groupedRows.length;
   const totalPages = Math.max(1, Math.ceil(totalFiltered / PAGE_SIZE));
   const safePage = Math.min(pageNum, totalPages);
-  const pagedRows = sortedRows.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  const pagedRows = groupedRows.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
   const gpClassFor = (value: number | null) =>
     value == null ? "" : value >= 0.3 ? styles.gpGood : value >= 0.1 ? styles.gpWarn : styles.gpBad;
@@ -392,7 +472,12 @@ export default async function ProductsPage({ searchParams }: Props) {
         </div>
       )}
 
-      <ProductFilters />
+      <ProductFilters
+        productTypes={facets.productTypes}
+        categories={facets.categories}
+        tags={facets.tags}
+        collections={facets.collections}
+      />
 
       <div className={styles.table}>
         <div className={styles.tableHeader}>
@@ -408,47 +493,59 @@ export default async function ProductsPage({ searchParams }: Props) {
         ) : filteredProducts.length === 0 ? (
           <EmptyState title="No results" message="No products match your filters." />
         ) : (
-          pagedRows.map((row) => (
-            <div key={row.id} className={styles.tableRow}>
-              <Link className={styles.productCell} href={`/app/products/${row.id}`}>
-                <div className={styles.thumb}>
-                  {row.image_url ? (
-                    <Image src={row.image_url} alt={row.title} width={44} height={44} />
-                  ) : (
-                    <span>{row.title.slice(0, 1)}</span>
+          (() => {
+            let lastGroup: string | null = null;
+            return pagedRows.map((row) => {
+              const showHeader = groupBy !== "none" && row.groupKey !== lastGroup;
+              lastGroup = row.groupKey;
+              return (
+                <div key={row.id}>
+                  {showHeader && (
+                    <div className={styles.groupHeader}>{row.groupKey}</div>
                   )}
+                  <div className={styles.tableRow}>
+                    <Link className={styles.productCell} href={`/app/products/${row.id}`}>
+                      <div className={styles.thumb}>
+                        {row.image_url ? (
+                          <Image src={row.image_url} alt={row.title} width={44} height={44} />
+                        ) : (
+                          <span>{row.title.slice(0, 1)}</span>
+                        )}
+                      </div>
+                      <span className={styles.productTitle}>{row.title}</span>
+                    </Link>
+
+                    <span className={styles.variantCount} data-label="Variants">{row.variantCount}</span>
+
+                    <span
+                      className={`${styles.statusBadge} ${
+                        row.status === "active"
+                          ? styles.statusActive
+                          : row.status === "draft"
+                            ? styles.statusDraft
+                            : styles.statusArchived
+                      }`}
+                      data-label="Status"
+                    >
+                      {row.status.toUpperCase()}
+                    </span>
+
+                    <span className={styles.sellPriceCell} data-label="Sell Price">
+                      {row.sellPrice != null ? formatCurrency(row.sellPrice) : "—"}
+                    </span>
+
+                    <span className={`${styles.gpCell} ${gpClassFor(row.matGpPct)}`} data-label="Mat. GP %">
+                      {row.matGpPct != null ? `${(row.matGpPct * 100).toFixed(0)}%` : "—"}
+                    </span>
+
+                    <span className={`${styles.gpCell} ${gpClassFor(row.actualGpPct)}`} data-label="Actual GP %">
+                      {row.actualGpPct != null ? `${(row.actualGpPct * 100).toFixed(0)}%` : "—"}
+                    </span>
+                  </div>
                 </div>
-                <span className={styles.productTitle}>{row.title}</span>
-              </Link>
-
-              <span className={styles.variantCount} data-label="Variants">{row.variantCount}</span>
-
-              <span
-                className={`${styles.statusBadge} ${
-                  row.status === "active"
-                    ? styles.statusActive
-                    : row.status === "draft"
-                      ? styles.statusDraft
-                      : styles.statusArchived
-                }`}
-                data-label="Status"
-              >
-                {row.status.toUpperCase()}
-              </span>
-
-              <span className={styles.sellPriceCell} data-label="Sell Price">
-                {row.sellPrice != null ? formatCurrency(row.sellPrice) : "—"}
-              </span>
-
-              <span className={`${styles.gpCell} ${gpClassFor(row.matGpPct)}`} data-label="Mat. GP %">
-                {row.matGpPct != null ? `${(row.matGpPct * 100).toFixed(0)}%` : "—"}
-              </span>
-
-              <span className={`${styles.gpCell} ${gpClassFor(row.actualGpPct)}`} data-label="Actual GP %">
-                {row.actualGpPct != null ? `${(row.actualGpPct * 100).toFixed(0)}%` : "—"}
-              </span>
-            </div>
-          ))
+              );
+            });
+          })()
         )}
       </div>
 
