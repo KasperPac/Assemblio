@@ -1,0 +1,58 @@
+{
+  "planPath": "docs/superpowers/plans/2026-07-01-shopify-product-categories.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 0: Database patch — columns, collection tables, RLS",
+      "status": "pending",
+      "description": "**Goal:** Add category columns to product and create shopify_collection + product_collection with tenant-isolation RLS. Manual-apply.\n\n**Files:** Create supabase/patches/product_categories.sql; Modify supabase/patches/super_admin_foundation.sql:104\n\n```json:metadata\n{\"files\": [\"supabase/patches/product_categories.sql\", \"supabase/patches/super_admin_foundation.sql\"], \"verifyCommand\": \"\", \"acceptanceCriteria\": [\"product gains product_type/tags/category_name/category_full_name\", \"shopify_collection + product_collection created\", \"RLS tenant_isolation policies on both\", \"registered in super_admin_foundation array\", \"idempotent\"]}\n```"
+    },
+    {
+      "id": 1,
+      "subject": "Task 1: normalizeProductCategories pure module",
+      "status": "pending",
+      "description": "**Goal:** Pure function normalising a Shopify product node's category fields (nulls/whitespace/dedupe).\n\n**Files:** Create src/lib/shopify/product-categories.ts; Test src/lib/shopify/product-categories.test.ts\n\n```json:metadata\n{\"files\": [\"src/lib/shopify/product-categories.ts\", \"src/lib/shopify/product-categories.test.ts\"], \"verifyCommand\": \"npx vitest run src/lib/shopify/product-categories.test.ts --pool threads --maxWorkers 1\", \"acceptanceCriteria\": [\"null category -> nulls\", \"whitespace productType -> null\", \"tags trimmed/empties dropped\", \"collections deduped by shopifyId\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: facets.ts — distinct filter options",
+      "status": "pending",
+      "description": "**Goal:** buildFacets returns distinct sorted product types, tags, categories, collections.\n\n**Files:** Create src/lib/products/facets.ts; Test src/lib/products/facets.test.ts\n\n```json:metadata\n{\"files\": [\"src/lib/products/facets.ts\", \"src/lib/products/facets.test.ts\"], \"verifyCommand\": \"npx vitest run src/lib/products/facets.test.ts --pool threads --maxWorkers 1\", \"acceptanceCriteria\": [\"distinct case-insensitive sort\", \"nulls/empties excluded\", \"collections distinct by id sorted by title\", \"empty input -> empties\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: grouping.ts — filter predicate + group-key resolver",
+      "status": "pending",
+      "description": "**Goal:** matchesCategoryFilters + resolveGroupKey with Uncategorised bucket.\n\n**Files:** Create src/lib/products/grouping.ts; Test src/lib/products/grouping.test.ts\n\n```json:metadata\n{\"files\": [\"src/lib/products/grouping.ts\", \"src/lib/products/grouping.test.ts\"], \"verifyCommand\": \"npx vitest run src/lib/products/grouping.test.ts --pool threads --maxWorkers 1\", \"acceptanceCriteria\": [\"type/category exact, tags ALL, collections ANY\", \"empty filters match all\", \"resolveGroupKey Uncategorised for nulls\", \"none -> empty key\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: Wire category fields into Shopify sync",
+      "status": "pending",
+      "blockedBy": [0, 1],
+      "description": "**Goal:** Fetch the four fields; persist scalars on product + collection membership on join tables.\n\n**Files:** Modify src/lib/shopify/sync.ts\n\n```json:metadata\n{\"files\": [\"src/lib/shopify/sync.ts\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"query requests productType/tags/category/collections\", \"upsert writes 4 scalars\", \"shopify_collection upserted + product_collection rebuilt per product\", \"no new src/ tsc errors\"]}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 5: Filter + group-by controls on products page",
+      "status": "pending",
+      "blockedBy": [2, 3],
+      "description": "**Goal:** Add Type/Tags/Collection/Category filters + Group-by selector to ProductFilters, prop+URL driven.\n\n**Files:** Modify src/app/app/products/product-filters.tsx; src/app/app/products/products.module.css\n\n```json:metadata\n{\"files\": [\"src/app/app/products/product-filters.tsx\", \"src/app/app/products/products.module.css\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"controls render from facets props\", \"multi-selects comma-joined params\", \"router.replace scroll:false + delete page\", \"tokens only, no hardcoded hex\"]}\n```"
+    },
+    {
+      "id": 6,
+      "subject": "Task 6: Apply filters + grouping in products page",
+      "status": "pending",
+      "blockedBy": [0, 2, 3, 5],
+      "description": "**Goal:** Fetch collections, compute facets, apply filters, render group headers, pass facet props; graceful degradation if patch unapplied.\n\n**Files:** Modify src/app/app/products/page.tsx\n\n```json:metadata\n{\"files\": [\"src/app/app/products/page.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"select new columns, fallbacks default null/[]\", \"collections via fetchAllRows\", \"ProductFilters gets facet props\", \"filters applied + group headers on key change\", \"no new src/ tsc errors\"]}\n```"
+    },
+    {
+      "id": 7,
+      "subject": "Task 7: Update QA feature test plan",
+      "status": "pending",
+      "blockedBy": [4, 6],
+      "description": "**Goal:** Document the feature + testable checks per CLAUDE.md.\n\n**Files:** Modify docs/qa-feature-test-plan.md\n\n```json:metadata\n{\"files\": [\"docs/qa-feature-test-plan.md\"], \"verifyCommand\": \"\", \"acceptanceCriteria\": [\"new checklist under Products domain\", \"dated changelog line appended\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-07-01"
+}
