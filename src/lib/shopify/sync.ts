@@ -5,6 +5,7 @@ import { resolveOrderDate, isHistoricalOrder } from "./order-dates";
 import { getWeekStart } from "@/lib/dates";
 import { mapProductStatus } from "./product-status";
 import { logSystemActivity } from "@/lib/activity/log";
+import { normalizeProductCategories } from "./product-categories";
 
 type SyncResult = {
   products: number;
@@ -22,6 +23,10 @@ type ShopifyProductNode = {
   description: string;
   status: string | null;
   featuredImage: { url: string | null } | null;
+  productType: string | null;
+  tags: string[] | null;
+  category: { name: string | null; fullName: string | null } | null;
+  collections: { nodes: Array<{ id: string; title: string; handle: string | null }> } | null;
   variants: { nodes: Array<{ id: string; title: string | null; sku: string | null; price: string | null }> };
 };
 
@@ -81,6 +86,10 @@ async function upsertProducts(
     description: string;
     image_url: string | null;
     status: string;
+    product_type: string | null;
+    tags: string[];
+    category_name: string | null;
+    category_full_name: string | null;
   }>
 ): Promise<Map<string, string>> {
   const now = new Date().toISOString();
@@ -121,6 +130,10 @@ async function fetchProducts(shopDomain: string, accessToken: string) {
           description
           status
           featuredImage { url }
+          productType
+          tags
+          category { name fullName }
+          collections(first: 50) { nodes { id title handle } }
           variants(first: 100) {
             nodes { id title sku price }
           }
@@ -218,19 +231,105 @@ export async function syncShopifyStoreData(
     fetchOrders(shopDomain, accessToken),
   ]);
 
+  const normalizedByShopifyId = new Map<
+    string,
+    ReturnType<typeof normalizeProductCategories>
+  >();
+  for (const product of products) {
+    normalizedByShopifyId.set(product.id, normalizeProductCategories(product));
+  }
+
   let productMap = new Map<string, string>();
   if (products.length > 0) {
     productMap = await upsertProducts(
       admin,
-      products.map((product) => ({
-        tenant_id: tenantId,
-        shopify_id: product.id,
-        title: product.title,
-        description: product.description,
-        image_url: product.featuredImage?.url ?? null,
-        status: mapProductStatus(product.status),
-      }))
+      products.map((product) => {
+        const cats = normalizedByShopifyId.get(product.id)!;
+        return {
+          tenant_id: tenantId,
+          shopify_id: product.id,
+          title: product.title,
+          description: product.description,
+          image_url: product.featuredImage?.url ?? null,
+          status: mapProductStatus(product.status),
+          product_type: cats.productType,
+          tags: cats.tags,
+          category_name: cats.categoryName,
+          category_full_name: cats.categoryFullName,
+        };
+      })
     );
+  }
+
+  // Collections: upsert distinct collections, then rebuild membership per product.
+  if (products.length > 0) {
+    const collectionByShopifyId = new Map<
+      string,
+      { tenant_id: string; shopify_id: string; title: string; handle: string | null }
+    >();
+    for (const cats of normalizedByShopifyId.values()) {
+      for (const c of cats.collections) {
+        if (!collectionByShopifyId.has(c.shopifyId)) {
+          collectionByShopifyId.set(c.shopifyId, {
+            tenant_id: tenantId,
+            shopify_id: c.shopifyId,
+            title: c.title,
+            handle: c.handle,
+          });
+        }
+      }
+    }
+
+    const collectionIdMap = new Map<string, string>();
+    if (collectionByShopifyId.size > 0) {
+      const { data: savedCollections, error } = await admin
+        .from("shopify_collection")
+        .upsert(Array.from(collectionByShopifyId.values()), {
+          onConflict: "tenant_id,shopify_id",
+        })
+        .select("id,shopify_id");
+      assertNoError(error, "Failed to upsert shopify_collection");
+      for (const row of savedCollections ?? []) {
+        collectionIdMap.set(row.shopify_id as string, row.id as string);
+      }
+    }
+
+    // Rebuild product_collection for every synced product (each appears once).
+    const localProductIds = Array.from(productMap.values());
+    if (localProductIds.length > 0) {
+      const { error: delError } = await admin
+        .from("product_collection")
+        .delete()
+        .eq("tenant_id", tenantId)
+        .in("product_id", localProductIds);
+      assertNoError(delError, "Failed to clear product_collection");
+    }
+
+    const membershipRows: Array<{
+      tenant_id: string;
+      product_id: string;
+      collection_id: string;
+    }> = [];
+    for (const [shopifyProductId, localProductId] of productMap.entries()) {
+      const cats = normalizedByShopifyId.get(shopifyProductId);
+      if (!cats) continue;
+      for (const c of cats.collections) {
+        const localCollectionId = collectionIdMap.get(c.shopifyId);
+        if (localCollectionId) {
+          membershipRows.push({
+            tenant_id: tenantId,
+            product_id: localProductId,
+            collection_id: localCollectionId,
+          });
+        }
+      }
+    }
+    if (membershipRows.length > 0) {
+      const { error: insError } = await admin
+        .from("product_collection")
+        .insert(membershipRows);
+      assertNoError(insError, "Failed to insert product_collection");
+    }
   }
 
   const variantRows = products.flatMap((product) =>
