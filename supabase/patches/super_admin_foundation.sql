@@ -101,7 +101,9 @@ begin
     'bin_bay',
     -- bom_template_rls.sql
     'bom_template',
-    'bom_template_line'
+    'bom_template_line',
+    'shopify_collection',
+    'product_collection'
   ]
   loop
     execute format('drop policy if exists %I_tenant_isolation on public.%I', tbl, tbl);
