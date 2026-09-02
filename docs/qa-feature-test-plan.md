@@ -554,6 +554,17 @@ For each report below: sortable table, CSV export, correct date-range default, a
 - [ ] Tenant isolation (RLS) — no cross-tenant data leakage
 - [ ] Audit logging for super-admin actions, Shopify webhook events, GDPR requests
 
+#### SECURITY DEFINER RPC tenant guards (patch 2026-09-02)
+These functions bypass RLS by design, so each enforces the RLS predicate itself.
+Reusable proof: `supabase/__tests__/2026-09-02-tenant-isolation-hardening.verify.sql`.
+- [ ] `apply_stocktake_session` on another tenant's approved session is refused (was: applied it)
+- [ ] `apply_reserved_movement` with another tenant's `p_tenant_id` is refused (was: wrote to it)
+- [ ] `apply_inventory_movement` with a component or location owned by another tenant is refused
+- [ ] Shopify sync (service-role client, no `auth.uid()`) can still reserve/release stock
+- [ ] `inventory_balance` is unique on `(tenant_id, component_id, location_id)`; repeat movements accumulate on the caller's own row
+- [ ] `component-images`: an anon or other-tenant client cannot **list** the bucket; owning-tenant upload/delete and existing `<img>` URLs still work
+- [ ] `count_distinct_tenants` / `count_multi_location_tenants` refuse non platform-operator callers; dev dashboard still loads
+
 ---
 
 ## Sign-off
@@ -596,3 +607,4 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-06-17 — amended Activity log: full audit-trail coverage of all mutations, real/typed actors, server-side paged filtering.
 - 2026-06-19 — amended Activity log: People/System/All tabs split the log by actor_type (default People) to separate the human audit trail from Shopify/system noise.
 - 2026-07-01 — added product categories & filters: sync Shopify product_type/tags/category/collections, filter and group the products page by them.
+- 2026-09-02 — amended Security & integrity: tenant guards on the SECURITY DEFINER inventory RPCs (H1/H2), tenant-scoped `inventory_balance` uniqueness, component-images bucket listing locked down, dev-dashboard count RPCs gated to platform operators.
