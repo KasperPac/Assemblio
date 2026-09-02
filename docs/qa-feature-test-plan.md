@@ -589,6 +589,8 @@ Reusable proof: `supabase/__tests__/2026-09-02-tenant-isolation-hardening.verify
 - [ ] `inventory_balance` is unique on `(tenant_id, component_id, location_id)`; repeat movements accumulate on the caller's own row
 - [ ] `component-images`: an anon or other-tenant client cannot **list** the bucket; owning-tenant upload/delete and existing `<img>` URLs still work
 - [ ] `count_distinct_tenants` / `count_multi_location_tenants` refuse non platform-operator callers; dev dashboard still loads
+- [ ] **(Regression)** A caller with NO tenant context (fresh profile, platform operator with no active tenant) is refused, not passed through — the first guard used `p_tenant_id = current_tenant_id()`, which is NULL-not-false when there is no tenant
+- [ ] `anon` cannot execute any of these RPCs (`EXECUTE` revoked from PUBLIC, which `anon` inherited by default)
 
 ---
 
@@ -633,5 +635,6 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-06-19 — amended Activity log: People/System/All tabs split the log by actor_type (default People) to separate the human audit trail from Shopify/system noise.
 - 2026-07-01 — added product categories & filters: sync Shopify product_type/tags/category/collections, filter and group the products page by them.
 - 2026-09-02 — amended Security & integrity: tenant guards on the SECURITY DEFINER inventory RPCs (H1/H2), tenant-scoped `inventory_balance` uniqueness, component-images bucket listing locked down, dev-dashboard count RPCs gated to platform operators.
+- 2026-09-03 — amended Security & integrity: hardening migration applied to prod (Assemblio `svhaotzrtfbwmphaacjj`); guard made NULL-safe so a tenant-less caller is refused, and `EXECUTE` revoked from `anon`/PUBLIC on every function the patch touches.
 - 2026-09-02 — amended RBAC: billing checkout/portal, BOM archive/delete, template deletes, warehouse bin/aisle/bay deletes, trash restore/empty and order-SLA config are now admin-only server-side; middleware verifies the JWT via getUser().
 - 2026-09-02 — amended Shopify sync: chatty webhook topics (`orders/updated`, `products/update`) no longer write an activity row and are debounced to one full store sync per 60s; lifecycle topics unchanged.

@@ -40,6 +40,7 @@ create or replace function public.is_service_role()
 returns boolean
 language sql
 stable
+set search_path = public
 as $$
   select coalesce(
     nullif(current_setting('request.jwt.claims', true), '')::json ->> 'role',
@@ -47,7 +48,7 @@ as $$
   ) = 'service_role'
 $$;
 
-grant execute on function public.is_service_role() to anon, authenticated, service_role;
+-- Grants for every function in this file are set together in section 7.
 
 create or replace function public.assert_tenant_write_access(p_tenant_id uuid)
 returns void
@@ -56,16 +57,30 @@ stable
 security definer
 set search_path = public
 as $$
+declare
+  v_current uuid;
 begin
   if p_tenant_id is null then
     raise exception 'tenant is required';
   end if;
 
+  -- Trusted server callers (Shopify sync/webhooks) have no auth.uid().
   if public.is_service_role() then
     return;
   end if;
 
-  if not (p_tenant_id = public.current_tenant_id() or public.is_super_admin()) then
+  if public.is_super_admin() then
+    return;
+  end if;
+
+  v_current := public.current_tenant_id();
+
+  -- Deliberately NULL-safe, and checked on prod: an earlier version wrote
+  --   if not (p_tenant_id = public.current_tenant_id() or public.is_super_admin())
+  -- which evaluates to NULL when current_tenant_id() is NULL, so `if not NULL`
+  -- never fired and a caller with NO tenant context sailed through the guard.
+  -- No tenant context is a refusal, not a pass.
+  if v_current is null or v_current <> p_tenant_id then
     raise exception 'forbidden: no write access to tenant %', p_tenant_id
       using errcode = '42501';
   end if;
@@ -555,3 +570,34 @@ begin
   return result;
 end;
 $$;
+
+-- ---------------------------------------------------------------------
+-- 7. Grants — keep anon off every function this patch touches.
+--
+--    CREATE FUNCTION grants EXECUTE to PUBLIC by default, so `anon` could
+--    reach these RPCs even though only authenticated/service_role were
+--    granted explicitly. The tenant guards already refuse anon (it has no
+--    tenant context), but the reachable surface should not include it.
+--    Raised by the Supabase security advisor after this patch was applied.
+-- ---------------------------------------------------------------------
+
+revoke execute on function public.is_service_role() from public, anon;
+grant execute on function public.is_service_role() to authenticated, service_role;
+
+revoke execute on function public.assert_tenant_write_access(uuid) from public, anon;
+grant execute on function public.assert_tenant_write_access(uuid) to authenticated, service_role;
+
+revoke execute on function public.apply_inventory_movement(uuid, uuid, numeric, numeric, text, text, uuid) from public, anon;
+grant execute on function public.apply_inventory_movement(uuid, uuid, numeric, numeric, text, text, uuid) to authenticated, service_role;
+
+revoke execute on function public.apply_reserved_movement(uuid, uuid, uuid, uuid, numeric) from public, anon;
+grant execute on function public.apply_reserved_movement(uuid, uuid, uuid, uuid, numeric) to authenticated, service_role;
+
+revoke execute on function public.apply_stocktake_session(uuid) from public, anon;
+grant execute on function public.apply_stocktake_session(uuid) to authenticated, service_role;
+
+revoke execute on function public.count_distinct_tenants(text) from public, anon;
+grant execute on function public.count_distinct_tenants(text) to authenticated, service_role;
+
+revoke execute on function public.count_multi_location_tenants() from public, anon;
+grant execute on function public.count_multi_location_tenants() to authenticated, service_role;

@@ -10,7 +10,7 @@
 --   psql -f supabase/patches/2026-09-02-tenant-isolation-hardening.sql
 --   psql -f supabase/__tests__/2026-09-02-tenant-isolation-hardening.verify.sql
 --
--- Expected: T1/T5/T6 succeed, T2/T3/T4/T7 each print "PASS: denied".
+-- Expected: T1/T5/T6 succeed, T2/T3/T4/T7/T8 each print "PASS: denied".
 --
 \set ON_ERROR_STOP on
 -- tenant context driven by a GUC so we can impersonate
@@ -79,5 +79,25 @@ set request.jwt.claims = '{"role":"authenticated"}';
 do $$ begin
   perform public.count_multi_location_tenants();
   raise exception 'FAIL: dev count RPC allowed for non-operator';
+exception when insufficient_privilege then raise notice 'PASS: denied (%)', sqlerrm;
+end $$;
+
+\echo '--- T8: caller with NO tenant context at all (expect DENIED) ---'
+-- Regression guard. The first version of assert_tenant_write_access wrote
+--   if not (p_tenant_id = current_tenant_id() or is_super_admin())
+-- which is NULL when current_tenant_id() is NULL, so `if not NULL` never
+-- fired and a tenant-less caller passed straight through. Caught on prod,
+-- not here, because every earlier test had a tenant set.
+set test.tenant = '';
+set request.jwt.claims = '{"role":"authenticated"}';
+do $$ begin
+  perform public.assert_tenant_write_access('11111111-1111-1111-1111-111111111111');
+  raise exception 'FAIL: tenant-less caller was allowed';
+exception when insufficient_privilege then raise notice 'PASS: denied (%)', sqlerrm;
+end $$;
+
+do $$ begin
+  perform public.apply_reserved_movement('11111111-1111-1111-1111-111111111111','aaaaaaaa-0000-0000-0000-000000000001','aaaaaaaa-0000-0000-0000-000000000002', null, 5);
+  raise exception 'FAIL: tenant-less caller wrote a reserved movement';
 exception when insufficient_privilege then raise notice 'PASS: denied (%)', sqlerrm;
 end $$;
