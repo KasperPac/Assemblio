@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { isAdminRole } from "@/lib/tenant/authz";
 import { logActivity } from "@/lib/activity/log";
 
 export async function updateOrderSourceSla(formData: FormData) {
@@ -12,6 +13,8 @@ export async function updateOrderSourceSla(formData: FormData) {
 
   const context = await getServerTenantContext();
   if (!context) return;
+  // Order SLA is workspace configuration — admins only.
+  if (!isAdminRole(context.role)) return;
   const { supabase, tenantId } = context;
 
   await supabase

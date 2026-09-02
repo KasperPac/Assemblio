@@ -541,6 +541,20 @@ For each report below: sortable table, CSV export, correct date-range default, a
 - [ ] `super_admin`: all super-admin pages + lifecycle/plan/member mutations
 - [ ] `platform_observer`: read-only super-admin + view-as, no mutations
 
+#### Server-side enforcement of admin-only mutations (2026-09-02)
+Server actions and route handlers are directly invocable, so each check is
+server-side, not a hidden button. Shared helper: `src/lib/tenant/authz.ts`.
+- [ ] `member` calling billing checkout/portal directly gets 403; paywall and
+      past-due screens tell them to ask an admin instead of erroring
+- [ ] `member` cannot archive a BOM or delete a BOM draft
+- [ ] `member` cannot delete a BOM or labour template
+- [ ] `member` cannot delete a warehouse sub-location, aisle or bay (creating
+      and renaming stays open to members)
+- [ ] `member` cannot restore from trash or empty the trash
+- [ ] `member` cannot change the order-source SLA
+- [ ] Members can still do everyday ops: stocktake counts, goods inwards,
+      inventory adjustments, order allocation, POs, floor steps
+
 ### Subscription / plan enforcement
 - [ ] Paywall redirect for no-subscription/canceled/expired-trial
 - [ ] Past-due soft-lock after 3-day grace
@@ -608,3 +622,4 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-06-19 — amended Activity log: People/System/All tabs split the log by actor_type (default People) to separate the human audit trail from Shopify/system noise.
 - 2026-07-01 — added product categories & filters: sync Shopify product_type/tags/category/collections, filter and group the products page by them.
 - 2026-09-02 — amended Security & integrity: tenant guards on the SECURITY DEFINER inventory RPCs (H1/H2), tenant-scoped `inventory_balance` uniqueness, component-images bucket listing locked down, dev-dashboard count RPCs gated to platform operators.
+- 2026-09-02 — amended RBAC: billing checkout/portal, BOM archive/delete, template deletes, warehouse bin/aisle/bay deletes, trash restore/empty and order-SLA config are now admin-only server-side; middleware verifies the JWT via getUser().
