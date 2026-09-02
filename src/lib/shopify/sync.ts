@@ -212,11 +212,27 @@ async function fetchOrders(shopDomain: string, accessToken: string) {
   return orders;
 }
 
+export type SyncOptions = {
+  /**
+   * Whether to write a `shopify.sync_completed` row to the activity log.
+   * Manual syncs always do. Webhook-driven syncs pass false for the chatty
+   * topics (see shouldLogSyncActivity) so a single order's lifecycle does
+   * not produce 5-10 near-identical audit lines.
+   */
+  logActivity?: boolean;
+  /** Recorded in the activity metadata so the log says what caused the sync. */
+  trigger?: "manual" | "webhook";
+  /** The webhook topic, when trigger is "webhook". */
+  webhookTopic?: string | null;
+};
+
 export async function syncShopifyStoreData(
   tenantId: string,
   shopDomain: string,
-  accessToken: string
+  accessToken: string,
+  options: SyncOptions = {}
 ): Promise<SyncResult> {
+  const { logActivity = true, trigger = "manual", webhookTopic = null } = options;
   const admin = createSupabaseAdminClient();
 
   const { data: storeRow } = await admin
@@ -527,23 +543,27 @@ export async function syncShopifyStoreData(
     }
   }
 
-  await logSystemActivity({
-    supabase: admin,
-    tenantId,
-    event: "shopify.sync_completed",
-    actorType: "shopify",
-    actorLabel: "Shopify sync",
-    metadata: {
-      shop_domain: shopDomain,
-      products: products.length,
-      variants: variantRows.length,
-      orders: orderRows.length,
-      order_lines: orderLineRows.length,
-      allocation_runs: allocationRuns,
-      plan_runs: planRuns,
-      plan_errors: planErrors,
-    },
-  });
+  if (logActivity) {
+    await logSystemActivity({
+      supabase: admin,
+      tenantId,
+      event: "shopify.sync_completed",
+      actorType: "shopify",
+      actorLabel: "Shopify sync",
+      metadata: {
+        shop_domain: shopDomain,
+        trigger,
+        webhook_topic: webhookTopic,
+        products: products.length,
+        variants: variantRows.length,
+        orders: orderRows.length,
+        order_lines: orderLineRows.length,
+        allocation_runs: allocationRuns,
+        plan_runs: planRuns,
+        plan_errors: planErrors,
+      },
+    });
+  }
 
   return {
     products: products.length,

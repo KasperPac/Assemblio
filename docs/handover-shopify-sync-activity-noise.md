@@ -1,7 +1,10 @@
 # Handover — Shopify sync noise in the activity log
 
 **Date:** 2026-06-19
-**Status:** Investigation complete, no code changes yet. Pick a fix option below.
+**Status:** RESOLVED 2026-09-02 — options 1 and 3 implemented together (see
+"Resolution" at the bottom). Option 2 was deliberately not taken.
+
+**Original status:** Investigation complete, no code changes yet. Pick a fix option below.
 
 ## Problem
 
@@ -76,3 +79,34 @@ high-frequency webhook is just bound to a full-store sync that always logs.
   ops). Use `git diff` / `git show`.
 - Activity-log audit trail feature is already merged to local `main` (was unpushed
   as of the prior session) and the migration is applied to prod.
+
+---
+
+## Resolution (2026-09-02)
+
+Implemented options **1 (stop logging routine webhook syncs)** and **3 (debounce)**
+together, scoped to the two chatty topics rather than applied across the board.
+Option 2 (dropping `orders/updated`) was rejected: it would lose real order edits.
+
+`SHOPIFY_QUIET_SYNC_TOPICS = { orders/updated, products/update }` in
+`src/lib/shopify/webhook.ts`:
+
+- **`shouldLogSyncActivity(topic)`** — quiet topics write no `shopify.sync_completed`
+  row. Lifecycle topics (`orders/create`, `cancelled`, `fulfilled`, `products/create`)
+  still do, now carrying `trigger` and `webhook_topic` in the metadata. Manual and
+  embedded syncs always log, unchanged.
+- **`shouldDebounceSync({ topic, lastSyncedAt })`** — a quiet topic skips the full
+  store sync entirely if one completed within `QUIET_SYNC_DEBOUNCE_MS` (60s), so a
+  burst of `orders/updated` collapses to one sync. Lifecycle topics are never
+  debounced, so order and product freshness is unaffected. A bad or future
+  timestamp fails open rather than wedging syncing off.
+- `syncShopifyStoreData` takes a `SyncOptions` argument (`logActivity`, `trigger`,
+  `webhookTopic`); it defaults to logging, so the manual-sync callers were untouched.
+
+Nothing is lost from the audit trail: `event_log` still records every webhook, and
+`shopify_store.last_synced_at` / `last_sync_meta` still record every sync outcome.
+
+This also cuts real load — the amplifier was a *full store re-pull* per webhook,
+not just a log line.
+
+Covered by 7 new cases in `src/lib/shopify/webhook.test.ts`. Suite: 557 passing.

@@ -425,6 +425,17 @@ For each report below: sortable table, CSV export, correct date-range default, a
 - [ ] Webhooks (`/api/shopify/webhooks`): HMAC (either app secret), dedupe by webhook_id, store event, auto-sync on product/order change, app/uninstalled handled, failure metadata persisted
 - [ ] Embedded app session/token-exchange/sync routes function
 
+#### Sync noise controls (2026-09-02)
+`orders/updated` and `products/update` fire for near-any touch of a record, and
+each fired a full store sync plus an activity row — 5–10 "Shopify sync" lines
+per order lifecycle.
+- [ ] A burst of `orders/updated` inside 60s produces **one** store sync, not one per webhook
+- [ ] `orders/create` / `cancelled` / `fulfilled` and `products/create` still sync immediately — never debounced
+- [ ] Quiet topics (`orders/updated`, `products/update`) write no `shopify.sync_completed` activity row
+- [ ] Lifecycle topics still write one, with `trigger` and `webhook_topic` in the metadata
+- [ ] Manual and embedded syncs always log, unchanged
+- [ ] The trail is still complete elsewhere: `event_log` has every webhook; `shopify_store.last_synced_at` / `last_sync_meta` have every sync outcome
+
 ### GDPR webhooks
 - [ ] customers-redact / customers-data-request / shop-redact: HMAC validated, topic checked, request logged (idempotent by webhook_id), status created→completed/failed (error captured), 200 returned regardless
 
@@ -623,3 +634,4 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-07-01 — added product categories & filters: sync Shopify product_type/tags/category/collections, filter and group the products page by them.
 - 2026-09-02 — amended Security & integrity: tenant guards on the SECURITY DEFINER inventory RPCs (H1/H2), tenant-scoped `inventory_balance` uniqueness, component-images bucket listing locked down, dev-dashboard count RPCs gated to platform operators.
 - 2026-09-02 — amended RBAC: billing checkout/portal, BOM archive/delete, template deletes, warehouse bin/aisle/bay deletes, trash restore/empty and order-SLA config are now admin-only server-side; middleware verifies the JWT via getUser().
+- 2026-09-02 — amended Shopify sync: chatty webhook topics (`orders/updated`, `products/update`) no longer write an activity row and are debounced to one full store sync per 60s; lifecycle topics unchanged.
