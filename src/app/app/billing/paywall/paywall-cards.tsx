@@ -70,9 +70,11 @@ const PRICED_TIERS: ReadonlyArray<PricedTier> = [
 export default function PaywallCards({
   initialTier,
   initialBilling,
+  canManageBilling,
 }: {
   initialTier: PlanTier;
   initialBilling: BillingInterval;
+  canManageBilling: boolean;
 }) {
   const [billing, setBilling] = useState<BillingInterval>(initialBilling);
 
@@ -161,6 +163,12 @@ export default function PaywallCards({
 
               <button
                 type="submit"
+                disabled={!canManageBilling}
+                title={
+                  canManageBilling
+                    ? undefined
+                    : "Only workspace admins can change the plan."
+                }
                 className={`${styles.ctaBtn} ${
                   tier.featured ? styles.ctaPrimary : styles.ctaOutline
                 }`}

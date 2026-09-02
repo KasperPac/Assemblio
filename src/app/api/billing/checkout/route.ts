@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { isAdminRole } from "@/lib/tenant/authz";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { stripeClient } from "@/lib/stripe/client";
 import { priceIdFor } from "@/lib/stripe/price-resolution";
@@ -29,6 +30,11 @@ export async function POST(req: Request) {
   const ctx = await getServerTenantContext();
   if (!ctx || !ctx.tenantId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+  // Route handlers are directly invocable — a member who never sees the
+  // billing screen could still POST here and change the tenant's plan.
+  if (!isAdminRole(ctx.role)) {
+    return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
 
   const form = await req.formData();

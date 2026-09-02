@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { isAdminRole } from "@/lib/tenant/authz";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { stripeClient } from "@/lib/stripe/client";
 
@@ -7,6 +8,10 @@ export async function POST() {
   const ctx = await getServerTenantContext();
   if (!ctx) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+  // The Stripe portal can cancel the subscription — admins only.
+  if (!isAdminRole(ctx.role)) {
+    return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
 
   const admin = createSupabaseAdminClient();

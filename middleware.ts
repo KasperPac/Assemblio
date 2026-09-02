@@ -30,11 +30,15 @@ export async function middleware(request: NextRequest) {
     }
   );
 
+  // getUser() revalidates the JWT with the auth server; getSession() only
+  // decodes whatever cookie the request carried. This is a redirect gate
+  // (RLS is the real boundary), but it should not accept an unverified
+  // cookie as proof of a session.
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session && request.nextUrl.pathname.startsWith("/app")) {
+  if (!user && request.nextUrl.pathname.startsWith("/app")) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/login";
     redirectUrl.searchParams.set("redirect", request.nextUrl.pathname);
