@@ -33,12 +33,15 @@ describe("inventory invariant checks", () => {
       },
     ]);
 
-    expect(issues.map((issue) => issue.type)).toEqual([
-      "negative_on_hand",
-      "negative_in_prod",
-      "negative_reserved",
-      "over_reserved",
-      "over_reserved",
+    // Steel Insert is negative on all three counters, but available is
+    // -2 - (-5) = +3, so it is not over-reserved. Only IO Module is
+    // (5 - 9 = -4). Asserting the owning row as well as the type keeps
+    // that distinction from silently rotting.
+    expect(issues.map((issue) => [issue.componentName, issue.type])).toEqual([
+      ["Steel Insert", "negative_on_hand"],
+      ["Steel Insert", "negative_in_prod"],
+      ["Steel Insert", "negative_reserved"],
+      ["IO Module", "over_reserved"],
     ]);
   });
 });
