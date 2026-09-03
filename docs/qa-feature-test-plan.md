@@ -363,6 +363,38 @@ Tabs: Overview, Stock, BOM Usage, Receipts, Suppliers, Location.
 - [ ] `createActualTimeEntry` via RPC (hours > 0); recent entries table (staff or "Department entry", hours, labor cost)
 - [ ] Actual cost rollups table (job link, total cost, margin); metrics (entries, hours, labor cost); empty states; revalidates capacity/costing/reports
 
+### Automated cover added 2026-09-03
+These three subsystems shipped with zero automated tests. The pure logic was
+extracted out of `page.tsx` / `"use server"` actions (which can only export
+async functions, so helpers there were untestable) and covered:
+- `src/lib/capacity/aggregate.ts` — per-department roll-up, embedded relation
+  as object *or* array, staff with no department skipped, zero rows still
+  written for empty departments so a stale week cannot stand
+- `src/lib/staffing/hours.ts` — net available = contracted − leave − training
+  − non-productive + overtime, not clamped at zero; form parsing fallbacks
+- `src/lib/actual-time/entry.ts` — required fields, hours > 0, timestamp
+  normalisation, unparseable timestamp dropped rather than throwing
+- `src/lib/costing/variance.ts` — actual − planned, null (awaiting actuals)
+  distinct from zero (on plan), over-budget flag
+- `src/lib/accounting/push-bill.test.ts` — Xero bill push: no connection,
+  token refresh + refresh failure, unpriced lines filtered, supplier-name
+  fallback chain, synced vs failed sync events
+
+**Still not automated — needs a manual pass before a partner relies on it.**
+The generation/rollup logic itself lives in Postgres and is not reachable from
+Vitest: `generate_financial_plans_for_open_orders`, `generate_job_financial_plan`,
+`refresh_department_utilization_week`, `create_job_actual_time_entry`.
+Checked on prod 2026-09-03: all four are SECURITY DEFINER with a pinned
+search_path, derive the tenant from `current_tenant_id()` (no client-supplied
+tenant), and refuse with "No tenant context for user" when there is none —
+verified by calling `refresh_department_utilization_week` from a tenant-less
+connection. They remain `anon`-executable via the default PUBLIC grant, which
+is inert given that guard, but is part of the broader 24-function advisor
+warning worth a separate tidy-up.
+- [ ] Manual: generate financial plans for a week, confirm planned cost/margin appear
+- [ ] Manual: refresh a capacity week, confirm utilisation rows match the roster
+- [ ] Manual: log an actual-time entry, confirm labour cost and rollups update
+
 ---
 
 ## 13. Reports
@@ -638,3 +670,4 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-09-03 — amended Security & integrity: hardening migration applied to prod (Assemblio `svhaotzrtfbwmphaacjj`); guard made NULL-safe so a tenant-less caller is refused, and `EXECUTE` revoked from `anon`/PUBLIC on every function the patch touches.
 - 2026-09-02 — amended RBAC: billing checkout/portal, BOM archive/delete, template deletes, warehouse bin/aisle/bay deletes, trash restore/empty and order-SLA config are now admin-only server-side; middleware verifies the JWT via getUser().
 - 2026-09-02 — amended Shopify sync: chatty webhook topics (`orders/updated`, `products/update`) no longer write an activity row and are debounced to one full store sync per 60s; lifecycle topics unchanged.
+- 2026-09-03 — amended Capacity/Staffing/Actual time/Costing/Xero: first automated cover for the four subsystems that shipped untested; pure logic extracted to `src/lib/{capacity,staffing,actual-time,costing}` and `push-bill` covered with mocks. DB-side generation RPCs remain manual-pass only.

@@ -4,6 +4,11 @@ import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { logActivity } from "@/lib/activity/log";
+import {
+  aggregateCapacityByDepartment,
+  buildCapacityWeekRows,
+  type AvailabilityWithDepartment,
+} from "@/lib/capacity/aggregate";
 
 function encodeMessage(message: string) {
   return encodeURIComponent(message);
@@ -45,49 +50,16 @@ export async function refreshCapacityWeek(formData: FormData) {
     redirect(`/app/capacity?week=${week}&error=${encodeMessage(availabilityError.message)}`);
   }
 
-  type AvailabilityWithDepartment = {
-    available_hours_net: number | null;
-    overtime_hours: number | null;
-    staff_member:
-      | { department_id: string | null }
-      | Array<{ department_id: string | null }>
-      | null;
-  };
+  const capacityByDepartment = aggregateCapacityByDepartment(
+    (availability ?? []) as AvailabilityWithDepartment[]
+  );
 
-  const capacityByDepartment = new Map<
-    string,
-    { availableHours: number; overtimeHours: number }
-  >();
-
-  for (const row of (availability ?? []) as AvailabilityWithDepartment[]) {
-    const relation = Array.isArray(row.staff_member)
-      ? row.staff_member[0] ?? null
-      : row.staff_member;
-    const departmentId = relation?.department_id ?? null;
-    if (!departmentId) continue;
-    const current = capacityByDepartment.get(departmentId) ?? {
-      availableHours: 0,
-      overtimeHours: 0,
-    };
-    current.availableHours += Number(row.available_hours_net ?? 0);
-    current.overtimeHours += Number(row.overtime_hours ?? 0);
-    capacityByDepartment.set(departmentId, current);
-  }
-
-  const upsertRows = (departments ?? []).map((department) => {
-    const totals = capacityByDepartment.get(department.id) ?? {
-      availableHours: 0,
-      overtimeHours: 0,
-    };
-    return {
-      tenant_id: tenantId,
-      department_id: department.id,
-      week_start: week,
-      available_hours: totals.availableHours,
-      overtime_hours: totals.overtimeHours,
-      capacity_hours_total: totals.availableHours + totals.overtimeHours,
-      updated_at: new Date().toISOString(),
-    };
+  const upsertRows = buildCapacityWeekRows({
+    departments: departments ?? [],
+    capacityByDepartment,
+    tenantId: tenantId!,
+    weekStart: week,
+    updatedAt: new Date().toISOString(),
   });
 
   const { error: upsertError } = await supabase
