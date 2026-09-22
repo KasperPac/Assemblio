@@ -42,7 +42,7 @@ const PRICED_TIERS: ReadonlyArray<PricedTier> = [
     annualYearly: 2988,
     features: [
       "Everything in Starter",
-      "Multi-location + bin management",
+      "Multi-location inventory",
       "Advanced BOM (yield %, versions)",
       "Costing module",
       "Reports suite",
@@ -61,7 +61,6 @@ const PRICED_TIERS: ReadonlyArray<PricedTier> = [
       "Capacity planning + staffing",
       "Financial profitability",
       "PDF + CSV export",
-      "API access",
       "Priority support (< 4hr)",
     ],
   },

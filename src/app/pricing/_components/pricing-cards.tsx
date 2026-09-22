@@ -15,7 +15,7 @@ const STARTER_FEATURES = [
 
 const GROWTH_FEATURES = [
   "Everything in Starter",
-  "Multi-location + bin management",
+  "Multi-location inventory",
   "Advanced BOM (yield %, versions)",
   "Costing module",
   "Reports suite",
@@ -26,7 +26,6 @@ const PRO_FEATURES = [
   "Capacity planning + staffing",
   "Financial profitability",
   "Advanced reports + PDF/CSV export",
-  "API access",
   "Priority support (< 4hr)",
 ];
 

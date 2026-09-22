@@ -93,7 +93,6 @@ export const FEATURE_MODULES: FeatureModule[] = [
       { name: "Product + variant sync",           starter: true,  growth: true,  pro: true,  enterprise: true  },
       { name: "Order sync + allocation",           starter: true,  growth: true,  pro: true,  enterprise: true  },
       { name: "Webhook-driven real-time sync",     starter: true,  growth: true,  pro: true,  enterprise: true  },
-      { name: "Multiple Shopify stores",           starter: false, growth: false, pro: true,  enterprise: true  },
     ],
   },
   {
@@ -104,7 +103,6 @@ export const FEATURE_MODULES: FeatureModule[] = [
       { name: "Stocktake",                        starter: true,  growth: true,  pro: true,  enterprise: true  },
       { name: "Activity log",                     starter: true,  growth: true,  pro: true,  enterprise: true  },
       { name: "Low stock alerts",                 starter: true,  growth: true,  pro: true,  enterprise: true  },
-      { name: "Bin / aisle locations",            starter: false, growth: true,  pro: true,  enterprise: true  },
     ],
   },
   {
@@ -157,7 +155,6 @@ export const FEATURE_MODULES: FeatureModule[] = [
   {
     name: "Platform & Support",
     features: [
-      { name: "API access",                           starter: false, growth: false, pro: true,  enterprise: true  },
       { name: "Email support",                        starter: true,  growth: true,  pro: true,  enterprise: true  },
       { name: "Priority support (< 4hr response)",   starter: false, growth: false, pro: true,  enterprise: true  },
       { name: "Dedicated account manager",            starter: false, growth: false, pro: false, enterprise: true  },
