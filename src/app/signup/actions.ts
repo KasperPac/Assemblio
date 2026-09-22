@@ -1,5 +1,7 @@
 "use server";
 
+import { trialEndDate } from "@/lib/plans";
+
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "../../lib/supabase/server";
 import { createSupabaseAdminClient } from "../../lib/supabase/admin";
@@ -22,7 +24,7 @@ function parseInterval(raw: string | null | undefined): BillingInterval {
 }
 
 /**
- * Self-serve signup that creates a tenant + 14-day trial atomically (best-effort).
+ * Self-serve signup that creates a tenant + TRIAL_DAYS-day trial atomically (best-effort).
  *
  * Operational requirement: the linked Supabase Auth project MUST have email
  * confirmation DISABLED. The trial spec ("clock starts at signup") depends on
@@ -109,7 +111,7 @@ export async function signUpTenant(
     tenantId = tenantRow.id as string;
 
     const now = new Date();
-    const trialEnds = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
+    const trialEnds = trialEndDate(now);
 
     // Step 3: child rows in parallel.
     // allSettled so we wait for every in-flight insert before rolling back —

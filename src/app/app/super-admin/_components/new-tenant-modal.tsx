@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { TRIAL_DAYS } from "@/lib/plans";
 import { useState, useTransition } from "react";
 import { createTenant } from "../actions";
 import styles from "./new-tenant-modal.module.css";
@@ -59,7 +60,7 @@ export default function NewTenantModal({ defaultTimezone }: { defaultTimezone: s
           </label>
           <label className={styles.field}>
             <span>Trial days</span>
-            <input name="trialDays" type="number" defaultValue={14} min={0} max={365} required />
+            <input name="trialDays" type="number" defaultValue={TRIAL_DAYS} min={0} max={365} required />
           </label>
           <label className={styles.field}>
             <span>Reason (optional)</span>

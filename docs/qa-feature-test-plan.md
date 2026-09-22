@@ -500,6 +500,7 @@ per order lifecycle.
 - [ ] No row / canceled / expired-trial → paywall; malformed row → paywall + log
 - [ ] active → ok; trialing → ok + daysLeft; past_due <3d grace → ok (soft warn); past_due ≥3d → past_due_locked
 - [ ] effectiveTier = pro during trial (if not expired) else selected_tier
+- [ ] New workspace trial = `TRIAL_DAYS` (30) from signup; the same constant drives the signup and pricing copy and the super-admin "New tenant" default
 - [ ] Layout checks access before rendering protected pages
 
 ---
@@ -671,3 +672,4 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-09-02 — amended RBAC: billing checkout/portal, BOM archive/delete, template deletes, warehouse bin/aisle/bay deletes, trash restore/empty and order-SLA config are now admin-only server-side; middleware verifies the JWT via getUser().
 - 2026-09-02 — amended Shopify sync: chatty webhook topics (`orders/updated`, `products/update`) no longer write an activity row and are debounced to one full store sync per 60s; lifecycle topics unchanged.
 - 2026-09-03 — amended Capacity/Staffing/Actual time/Costing/Xero: first automated cover for the four subsystems that shipped untested; pure logic extracted to `src/lib/{capacity,staffing,actual-time,costing}` and `push-bill` covered with mocks. DB-side generation RPCs remain manual-pass only.
+- 2026-09-22 — amended Subscription: free trial is 30 days (`TRIAL_DAYS` in `src/lib/plans`) instead of 14; existing trialing tenants on prod extended to 2026-10-22; `CRON_SECRET` set so trial-reminder emails send.

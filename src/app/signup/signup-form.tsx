@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useActionState } from "react";
 import styles from "./signup.module.css";
 import { signUpTenant, type SignUpState } from "./actions";
-import { PLANS, type PlanTier, type BillingInterval } from "../../lib/plans";
+import { PLANS, TRIAL_DAYS, type PlanTier, type BillingInterval } from "../../lib/plans";
 
 const initialState: SignUpState = { error: "", message: "" };
 const PLAN_OPTIONS: PlanTier[] = ["starter", "growth", "pro"];
@@ -45,7 +45,7 @@ export default function SignupForm({
       <div className={styles.left}>
         <div className={styles.leftInner}>
           <div className={styles.heading}>
-            <h1>Start your 14-day free trial</h1>
+            <h1>Start your {TRIAL_DAYS}-day free trial</h1>
             <p>Full Pro-level access. No credit card required.</p>
           </div>
 
@@ -162,7 +162,7 @@ export default function SignupForm({
             <span className={styles.taglineAccent}>finally simple.</span>
           </h2>
           <p className={styles.lede}>
-            14 days, full Pro access, no credit card.
+            {TRIAL_DAYS} days, full Pro access, no credit card.
           </p>
         </div>
       </aside>

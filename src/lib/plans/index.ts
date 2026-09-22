@@ -115,7 +115,16 @@ export const PLANS: Record<PlanTier, PlanDefinition> = {
   },
 };
 
-const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+/** Length of the free trial every new workspace starts on. */
+export const TRIAL_DAYS = 30;
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+export function trialEndDate(from: Date): Date {
+  return new Date(from.getTime() + TRIAL_DAYS * DAY_MS);
+}
+
+const THREE_DAYS_MS = 3 * DAY_MS;
 
 export function effectiveTier(
   sub: Pick<TenantSubscriptionRow, "status" | "selected_tier" | "trial_ends_at">,
