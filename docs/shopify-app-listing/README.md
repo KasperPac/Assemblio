@@ -155,6 +155,11 @@ Required for app review. Reviewer logs in to your demo Shopify dev store with th
 > does not request protected customer data — synced orders deliberately store no customer
 > name or email.
 
+**Verified 2026-09-22** — the Shopify Review tenant holds 33 products / 74 variants,
+3 orders (1 open), 32 components with inventory balances, 48 active BOMs, 3 locations
+and 5 suppliers. Reviewer sign-in confirmed: lands in Shopify Review with Products and
+Orders populated.
+
 The demo store should have:
 - At least 12 products with variants
 - At least 1 paid order in the last 30 days
