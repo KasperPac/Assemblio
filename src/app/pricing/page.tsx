@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import PricingCards from "./_components/pricing-cards";
 import FeatureMatrix from "./_components/feature-matrix";
 import styles from "./pricing.module.css";
+import { TRIAL_DAYS } from "@/lib/plans";
 
 export const metadata: Metadata = {
   title: "Pricing — Manuva",
@@ -15,7 +16,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "What do I get during the free trial?",
-    a: "Full Pro-level access for 14 days — no credit card required. At the end of the trial, your account downgrades to the tier you selected at sign-up. You can add a card and upgrade at any time during or after the trial.",
+    a: `Full Pro-level access for ${TRIAL_DAYS} days — no credit card required. At the end of the trial, your account downgrades to the tier you selected at sign-up. You can add a card and upgrade at any time during or after the trial.`,
   },
   {
     q: "Can I change tiers after signing up?",
@@ -47,7 +48,7 @@ export default function PricingPage() {
           <h1 id="hero-heading" className={styles.headline}>Simple pricing for manufacturing teams</h1>
           <p className={styles.subhead}>
             One price per tier. No per-seat fees. No usage meters.
-            Start free for 14 days — no credit card required.
+            Start free for {TRIAL_DAYS} days — no credit card required.
           </p>
         </section>
 

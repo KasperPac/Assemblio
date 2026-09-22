@@ -321,3 +321,7 @@ textarea:focus {
     scroll-behavior: auto !important;
   }
 }
+
+@page {
+  margin: 14mm 12mm;
+}

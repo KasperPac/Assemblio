@@ -42,5 +42,12 @@
     border: none;
     border-radius: 0;
     overflow: visible;
+    box-shadow: none;
+  }
+  .wrapper thead {
+    display: table-header-group;
+  }
+  .wrapper tr {
+    break-inside: avoid;
   }
 }

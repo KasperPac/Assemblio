@@ -19,12 +19,12 @@ All copy and metadata for the Partner Dashboard listing. Review and edit before 
 
 ## Pricing — IMPORTANT for review
 
-> **Free to install.** Manuva is a standalone manufacturing-operations SaaS that connects to your Shopify store as a read-only integration. A Manuva subscription (starting at **USD $99/month** when billed annually) is required to sync products and orders. Subscriptions are managed at [manuva.app/pricing](https://manuva.app/pricing) and billed independently of your Shopify invoice. A free trial is available.
+> **Free to install.** Manuva is a standalone manufacturing-operations SaaS that connects to your Shopify store as a read-only integration. Every new Manuva workspace starts with a **free 30-day trial** with full access; after that a Manuva subscription (from **USD $99/month** when billed annually) is required to keep syncing products and orders. Subscriptions are managed at [manuva.app/pricing](https://manuva.app/pricing) and billed independently of your Shopify invoice.
 
 In the Partner Dashboard, list the pricing as:
 
 - **Type:** Free
-- **Description:** "Free to install. A Manuva subscription is required to sync products and orders, starting at USD $99/month (billed annually). Plans and billing are managed at manuva.app/pricing — Manuva does not charge merchants through Shopify."
+- **Description:** "Free to install. Includes a free 30-day trial of Manuva; after that a Manuva subscription is required to sync products and orders, from USD $99/month (billed annually). Plans and billing are managed at manuva.app/pricing — Manuva does not charge merchants through Shopify."
 
 This pattern is the standard "connector SaaS" model used by Shopify apps like HubSpot, ShipStation, and Zoho. Disclosure is in the description, app surface, and on the embedded page itself.
 
@@ -72,7 +72,7 @@ This pattern is the standard "connector SaaS" model used by Shopify apps like Hu
 >
 > **Pricing**
 >
-> Free to install. Syncing requires a Manuva subscription starting at **USD $99/month** (billed annually). Free 14-day trial. Plans and billing live at manuva.app/pricing. Manuva does not charge merchants through Shopify.
+> Free to install. Syncing requires a Manuva subscription starting at **USD $99/month** (billed annually). Free 30-day trial. Plans and billing live at manuva.app/pricing. Manuva does not charge merchants through Shopify.
 >
 > **Privacy and compliance**
 >

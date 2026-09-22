@@ -492,3 +492,24 @@
     border-bottom-color: rgba(255, 255, 255, 0.09);
   }
 }
+
+/* Print: drop the chrome (sidebar rail, topbar, banners) so only the page
+   content — reports in practice — reaches the page. */
+@media print {
+  .shell {
+    display: block;
+    min-height: 0;
+    background: #fff;
+  }
+  .shell::before,
+  .sidebar,
+  .main > :not(.content) {
+    display: none !important;
+  }
+  .main {
+    min-height: 0;
+  }
+  .content {
+    padding: 0;
+  }
+}

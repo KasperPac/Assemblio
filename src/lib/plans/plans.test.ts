@@ -4,6 +4,8 @@ import {
   effectiveTier,
   paywallRequired,
   pastDueSoftLocked,
+  TRIAL_DAYS,
+  trialEndDate,
   type TenantSubscriptionRow,
 } from "./index";
 
@@ -117,5 +119,16 @@ describe("pastDueSoftLocked", () => {
 
   it("false for non-past_due status", () => {
     expect(pastDueSoftLocked(sub({ status: "active" }), now)).toBe(false);
+  });
+});
+
+describe("trial length", () => {
+  it("is 30 days for every new workspace", () => {
+    expect(TRIAL_DAYS).toBe(30);
+  });
+
+  it("trialEndDate is exactly TRIAL_DAYS after the start", () => {
+    const start = new Date("2026-09-22T00:00:00Z");
+    expect(trialEndDate(start).toISOString()).toBe("2026-10-22T00:00:00.000Z");
   });
 });
