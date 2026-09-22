@@ -7,13 +7,19 @@
  * tenant, which is wrong for any account that already belongs somewhere (the
  * Shopify reviewer account, for one).
  *
+ * Takes the user's UUID, not an email: auth.admin.listUsers() returns
+ * "Database error finding users" against this project, and the id avoids the
+ * lookup entirely. Find it with:
+ *   select id from auth.users where email = '...';
+ *
  * The password is read from stdin, never from argv, so it stays out of shell
  * history and the process list.
  *
- *   node scripts/set_user_password.mjs --email reviewer@manuva.app
+ *   node scripts/set_user_password.mjs --id 3b2620ec-6a1f-40be-b086-cac67936e895
  */
 import fs from "node:fs";
-import readline from "node:readline";
+import readline from "node:readline/promises";
+import { stdin, stdout } from "node:process";
 import { createClient } from "@supabase/supabase-js";
 
 function loadEnvFile(path) {
@@ -32,78 +38,61 @@ function loadEnvFile(path) {
   }
 }
 
-function readSecret(prompt) {
-  return new Promise((resolve) => {
-    const rl = readline.createInterface({ input: process.stdin, output: process.stdout, terminal: true });
-    const onData = (char) => {
-      if (["\n", "\r", "\u0004"].includes(char.toString())) {
-        process.stdin.removeListener("data", onData);
-      } else {
-        readline.clearLine(process.stdout, 0);
-        readline.cursorTo(process.stdout, 0);
-        process.stdout.write(prompt + "*".repeat(rl.line.length));
-      }
-    };
-    process.stdin.on("data", onData);
-    rl.question(prompt, (answer) => {
-      rl.close();
-      process.stdout.write("\n");
-      resolve(answer);
-    });
-  });
-}
-
 async function main() {
   const argv = process.argv.slice(2);
-  const emailIdx = argv.indexOf("--email");
-  const email = emailIdx !== -1 ? argv[emailIdx + 1] : "";
-  if (!email) throw new Error("Usage: node scripts/set_user_password.mjs --email someone@example.com");
+  const idIdx = argv.indexOf("--id");
+  const userId = idIdx !== -1 ? argv[idIdx + 1] : "";
+  if (!userId) {
+    throw new Error("Usage: node scripts/set_user_password.mjs --id <user-uuid>");
+  }
 
   loadEnvFile(".env.local");
   loadEnvFile(".env");
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
   const service = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
-  if (!url || !service) throw new Error("NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set");
+  if (!url || !service) {
+    throw new Error("NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set");
+  }
 
   const supabase = createClient(url, service, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 
-  const listed = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
-  if (listed.error) throw new Error(listed.error.message);
-  const user = (listed.data?.users ?? []).find(
-    (u) => (u.email ?? "").toLowerCase() === email.toLowerCase()
-  );
-  if (!user?.id) throw new Error(`No auth user found for ${email}`);
+  const { data: found, error: findError } = await supabase.auth.admin.getUserById(userId);
+  if (findError) throw new Error(findError.message);
+  if (!found?.user) throw new Error(`No auth user with id ${userId}`);
 
-  // Show where this account lives before changing anything, so a wrong email
-  // is obvious before the password is typed.
+  // Show where this account lives before changing anything, so a wrong id is
+  // obvious before the password is typed.
   const { data: profile } = await supabase
     .from("profiles")
     .select("role, tenant:tenant_id(name)")
-    .eq("id", user.id)
+    .eq("id", userId)
     .maybeSingle();
-  const tenantName = profile?.tenant?.name ?? "(no tenant)";
-  console.log(`User:   ${user.email}`);
+  console.log(`User:   ${found.user.email}`);
   console.log(`Role:   ${profile?.role ?? "(none)"}`);
-  console.log(`Tenant: ${tenantName}`);
+  console.log(`Tenant: ${profile?.tenant?.name ?? "(no tenant)"}`);
   console.log("");
 
-  const password = await readSecret("New password (min 12 chars): ");
-  if (password.length < 12) throw new Error("Password must be at least 12 characters");
-  const confirm = await readSecret("Confirm: ");
-  if (password !== confirm) throw new Error("Passwords do not match");
+  const rl = readline.createInterface({ input: stdin, output: stdout });
+  try {
+    const password = await rl.question("New password (min 12 chars, input is visible): ");
+    if (password.length < 12) throw new Error("Password must be at least 12 characters");
+    const confirm = await rl.question("Confirm: ");
+    if (password !== confirm) throw new Error("Passwords do not match");
 
-  const res = await supabase.auth.admin.updateUserById(user.id, {
-    password,
-    email_confirm: true,
-  });
-  if (res.error) throw new Error(res.error.message);
-
-  console.log(`\nPassword updated for ${user.email}. Role and tenant unchanged.`);
+    const { error } = await supabase.auth.admin.updateUserById(userId, {
+      password,
+      email_confirm: true,
+    });
+    if (error) throw new Error(error.message);
+    console.log(`\nPassword updated for ${found.user.email}. Role and tenant unchanged.`);
+  } finally {
+    rl.close();
+  }
 }
 
 main().catch((err) => {
   console.error(`\nFailed: ${err.message}`);
-  process.exit(1);
+  process.exitCode = 1;
 });
