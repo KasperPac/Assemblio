@@ -25,23 +25,34 @@ Estimated time: 45-60 minutes.
 - [ ] After clicking "Install", land back on `app.manuva.app/app/settings/integrations` (or embedded surface if Shopify-managed install)
 - [x] In the database, `shopify_store` has a new row with status `connected` (or `active`)
 - [x] In the database, `shopify_install_tokens` has a matching access token row
-- [ ] All webhooks are registered: open Partner Dashboard &rarr; App &rarr; Webhooks. Verify ALL of these are present:
+- [x] All webhooks are registered: open Partner Dashboard &rarr; App &rarr; Webhooks. Verify ALL of these are present:
   - [ ] `customers/data_request` &rarr; `https://app.manuva.app/api/shopify/webhooks/gdpr/customers-data-request`
   - [ ] `customers/redact` &rarr; `.../gdpr/customers-redact`
   - [ ] `shop/redact` &rarr; `.../gdpr/shop-redact`
   - [ ] `app/uninstalled` &rarr; `https://app.manuva.app/api/shopify/webhooks`
-  - [ ] `orders/create`, `orders/updated`, `orders/cancelled`, `orders/fulfilled` &rarr; main webhook URL
-  - [ ] `products/create`, `products/update` &rarr; main webhook URL
+  - [x] `orders/create`, `orders/updated`, `orders/cancelled`, `orders/fulfilled` &rarr; main webhook URL
+  - [x] `products/create`, `products/update` &rarr; main webhook URL
 
 ---
 
 ## Embedded surface
 
-- [ ] In Shopify Admin nav, click Apps &rarr; Manuva
-- [ ] Embedded surface loads inside an iframe (URL bar still shows `admin.shopify.com`)
-- [ ] No console errors in browser devtools
+> 2026-09-22: verified in Chrome on `manuvatraining`. The surface renders inside the admin
+> iframe (address bar stays on `admin.shopify.com`), shows Store / Last synced / Last status
+> `ok` with **Sync now** and **Open Manuva**, and logs no console errors. Webhook delivery
+> proved live end-to-end: a product rename fired `products/update` and the new title reached
+> `product` in Manuva; marking draft #D11 paid fired `orders/updated` + `orders/create`, and
+> order **#1001** landed with a matching `shopify_order_id` and one line —
+> `customer_email` / `customer_first_name` both null, as the read-only scope set intends.
+>
+> The two items below still need a human click: synthetic clicks do not reach a cross-origin
+> iframe, so "Sync now" and "Open Manuva" could not be exercised by automation.
+
+- [x] In Shopify Admin nav, click Apps &rarr; Manuva
+- [x] Embedded surface loads inside an iframe (URL bar still shows `admin.shopify.com`)
+- [x] No console errors in browser devtools
 - [ ] If the merchant has no Manuva subscription: surface shows the "Subscription required" message + "View pricing" CTA
-- [ ] If the merchant has an active subscription: surface shows "Last synced" + "Sync now" + "Open Manuva"
+- [x] If the merchant has an active subscription: surface shows "Last synced" + "Sync now" + "Open Manuva"
 - [ ] Click "Sync now" &rarr; status updates to "Sync queued at HH:MM:SS" within 2 seconds
 - [ ] After the sync completes, `shopify_store.last_synced_at` advances and `last_sync_status` is `ok`
 - [ ] Click "Open Manuva" &rarr; new tab opens to `https://app.manuva.app/app`
@@ -56,12 +67,12 @@ Estimated time: 45-60 minutes.
 > `read_customers` — with a refresh token stored. First sync returned `last_sync_status = ok`
 > and imported 17 products / 74 variants. Orders and webhook delivery still to test.
 
-- [ ] Manually create 3-5 products in the Shopify dev store admin
-- [ ] Trigger a sync (either from embedded surface or `/app/settings/integrations`)
+- [x] Manually create 3-5 products in the Shopify dev store admin
+- [x] Trigger a sync (either from embedded surface or `/app/settings/integrations`)
 - [x] All products appear in Manuva at `/app/products` with `source = "shopify"`
-- [ ] Place a test order in the dev store (Shopify lets you mark orders as paid in dev mode)
+- [x] Place a test order in the dev store (Shopify lets you mark orders as paid in dev mode)
 - [ ] Trigger a sync
-- [ ] The order appears in Manuva at `/app/orders` with `shopify_order_id` populated
+- [x] The order appears in Manuva at `/app/orders` with `shopify_order_id` populated
 
 ---
 
