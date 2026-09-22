@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "../planning.module.css";
 import { generateFinancialPlans } from "./actions";
+import { costVariance, isOverBudget } from "@/lib/costing/variance";
 
 type SnapshotRow = {
   id: string;
@@ -212,9 +213,7 @@ export default async function CostingPage({ searchParams }: Props) {
               const orderLine = firstRelation(row.order_line);
               const variant = firstRelation(orderLine?.variant);
               const actual = row.order_line_id ? actualMap.get(row.order_line_id) : null;
-              const variance = actual
-                ? Number(actual.actual_total_cost ?? 0) - Number(row.planned_total_cost ?? 0)
-                : null;
+              const variance = costVariance(row.planned_total_cost, actual);
 
               return (
                 <div key={row.id} className={styles.tableRow}>
@@ -236,7 +235,7 @@ export default async function CostingPage({ searchParams }: Props) {
                       Margin {formatCurrency(row.planned_margin)}
                     </div>
                   </span>
-                  <span className={`${styles.status} ${variance !== null && variance > 0 ? styles.warning : ""}`}>
+                  <span className={`${styles.status} ${isOverBudget(variance) ? styles.warning : ""}`}>
                     {variance === null ? "Awaiting actuals" : formatCurrency(variance)}
                   </span>
                 </div>

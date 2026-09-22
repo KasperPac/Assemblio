@@ -35,18 +35,21 @@ describe("allocation engine", () => {
     expect(grouped.get("c2")?.totalQty).toBe(2);
   });
 
+  // Reserving moves the reserved counter only — on_hand is untouched and
+  // availability is derived as on_hand - reserved. deltaOnHand is therefore
+  // always 0 on a reservation mutation, in both directions.
   it("produces paired reservation mutation details", () => {
     const reserve = buildReservedMutation(7);
     const release = buildReservedMutation(-4);
 
     expect(reserve).toEqual({
       deltaReserved: 7,
-      deltaOnHand: -7,
+      deltaOnHand: 0,
       reason: "order_reserve",
     });
     expect(release).toEqual({
       deltaReserved: -4,
-      deltaOnHand: 4,
+      deltaOnHand: 0,
       reason: "order_release",
     });
     expect(buildReservedMutation(0)).toBeNull();

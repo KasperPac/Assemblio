@@ -4,21 +4,11 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { logActivity } from "@/lib/activity/log";
-
-function parseNumber(value: FormDataEntryValue | null) {
-  if (value === null) return null;
-  const parsed = Number(value.toString());
-  if (Number.isNaN(parsed)) return null;
-  return parsed;
-}
-
-function parseTimestamp(value: FormDataEntryValue | null) {
-  const raw = value?.toString().trim();
-  if (!raw) return null;
-  const parsed = new Date(raw);
-  if (Number.isNaN(parsed.getTime())) return null;
-  return parsed.toISOString();
-}
+import {
+  parseEntryHours as parseNumber,
+  parseEntryTimestamp as parseTimestamp,
+  validateActualTimeEntry,
+} from "@/lib/actual-time/entry";
 
 export async function createActualTimeEntry(formData: FormData) {
   const orderLineId = formData.get("order_line_id")?.toString();
@@ -29,12 +19,9 @@ export async function createActualTimeEntry(formData: FormData) {
   const startedAt = parseTimestamp(formData.get("started_at"));
   const endedAt = parseTimestamp(formData.get("ended_at"));
 
-  if (!orderLineId || !departmentId) {
-    redirect("/app/actual-time?error=Order+line+and+department+are+required.");
-  }
-
-  if (hours === null || hours <= 0) {
-    redirect("/app/actual-time?error=Hours+must+be+greater+than+zero.");
+  const validation = validateActualTimeEntry({ orderLineId, departmentId, hours });
+  if (!validation.ok) {
+    redirect(`/app/actual-time?error=${encodeURIComponent(validation.error)}`);
   }
 
   const supabase = await createSupabaseServerClient();

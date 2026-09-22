@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { isAdminRole } from "@/lib/tenant/authz";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { logActivity } from "@/lib/activity/log";
 import { evaluateBlockers } from "@/lib/housekeeping/blockers";
@@ -153,6 +154,8 @@ export async function setBomArchived(formData: FormData) {
 
   const context = await getServerTenantContext();
   if (!context) return;
+  // Server actions are directly invocable — archiving a BOM is destructive.
+  if (!isAdminRole(context.role)) return;
   const { supabase, tenantId } = context;
 
   const { data: bom } = await supabase
@@ -321,6 +324,7 @@ export async function deleteBomDraft(formData: FormData) {
 
   const context = await getServerTenantContext();
   if (!context) return;
+  if (!isAdminRole(context.role)) return;
   const { supabase, tenantId } = context;
 
   const { data: bom } = await supabase

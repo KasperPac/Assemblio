@@ -5,28 +5,12 @@ import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { logActivity } from "@/lib/activity/log";
-
-function parseNumber(value: FormDataEntryValue | null, fallback = 0) {
-  const raw = value?.toString().trim();
-  if (!raw) return fallback;
-  const parsed = Number(raw);
-  return Number.isFinite(parsed) ? parsed : fallback;
-}
-
-function parseNullableNumber(value: FormDataEntryValue | null) {
-  const raw = value?.toString().trim();
-  if (!raw) return null;
-  const parsed = Number(raw);
-  return Number.isFinite(parsed) ? parsed : null;
-}
-
-function parseCheckbox(value: FormDataEntryValue | null) {
-  return value === "on";
-}
-
-function netAvailable(contracted: number, leave: number, training: number, nonProductive: number, overtime: number) {
-  return contracted - leave - training - nonProductive + overtime;
-}
+import {
+  parseHours as parseNumber,
+  parseNullableHours as parseNullableNumber,
+  parseCheckbox,
+  netAvailableHours as netAvailable,
+} from "@/lib/staffing/hours";
 
 function encodeMessage(message: string) {
   return encodeURIComponent(message);

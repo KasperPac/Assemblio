@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { isAdminRole } from "@/lib/tenant/authz";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { buildPublishedLines, inheritStatus } from "@/lib/templates/publish";
 import { logActivity } from "@/lib/activity/log";
@@ -95,6 +96,9 @@ export async function deleteTemplate(
 
   const context = await getServerTenantContext();
   if (!context) return { error: "Missing tenant context." };
+  if (!isAdminRole(context.role)) {
+    return { error: "Only admins can delete templates." };
+  }
   const { supabase, tenantId } = context;
 
   // Deleting a template never breaks BOMs: provenance FKs are on delete set null.
@@ -259,6 +263,9 @@ export async function deleteLaborTemplate(
 
   const context = await getServerTenantContext();
   if (!context) return { error: "Missing tenant context." };
+  if (!isAdminRole(context.role)) {
+    return { error: "Only admins can delete templates." };
+  }
   const { supabase, tenantId } = context;
 
   const { error } = await supabase

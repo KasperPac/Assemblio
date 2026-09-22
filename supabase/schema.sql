@@ -277,7 +277,10 @@ create table public.inventory_balance (
   in_prod numeric not null default 0,
   reserved numeric not null default 0,
   updated_at timestamptz not null default now(),
-  unique (component_id, location_id)
+  -- Tenant-scoped: an unscoped (component_id, location_id) key let a
+  -- cross-tenant upsert land on another tenant's balance row.
+  -- See patches/2026-09-02-tenant-isolation-hardening.sql
+  unique (tenant_id, component_id, location_id)
 );
 
 create table public.inventory_movement (
@@ -701,7 +704,7 @@ begin
     p_delta_in_prod,
     now()
   )
-  on conflict (component_id, location_id)
+  on conflict (tenant_id, component_id, location_id)
   do update set
     on_hand = public.inventory_balance.on_hand + excluded.on_hand,
     in_prod = public.inventory_balance.in_prod + excluded.in_prod,

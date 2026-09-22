@@ -363,6 +363,38 @@ Tabs: Overview, Stock, BOM Usage, Receipts, Suppliers, Location.
 - [ ] `createActualTimeEntry` via RPC (hours > 0); recent entries table (staff or "Department entry", hours, labor cost)
 - [ ] Actual cost rollups table (job link, total cost, margin); metrics (entries, hours, labor cost); empty states; revalidates capacity/costing/reports
 
+### Automated cover added 2026-09-03
+These three subsystems shipped with zero automated tests. The pure logic was
+extracted out of `page.tsx` / `"use server"` actions (which can only export
+async functions, so helpers there were untestable) and covered:
+- `src/lib/capacity/aggregate.ts` — per-department roll-up, embedded relation
+  as object *or* array, staff with no department skipped, zero rows still
+  written for empty departments so a stale week cannot stand
+- `src/lib/staffing/hours.ts` — net available = contracted − leave − training
+  − non-productive + overtime, not clamped at zero; form parsing fallbacks
+- `src/lib/actual-time/entry.ts` — required fields, hours > 0, timestamp
+  normalisation, unparseable timestamp dropped rather than throwing
+- `src/lib/costing/variance.ts` — actual − planned, null (awaiting actuals)
+  distinct from zero (on plan), over-budget flag
+- `src/lib/accounting/push-bill.test.ts` — Xero bill push: no connection,
+  token refresh + refresh failure, unpriced lines filtered, supplier-name
+  fallback chain, synced vs failed sync events
+
+**Still not automated — needs a manual pass before a partner relies on it.**
+The generation/rollup logic itself lives in Postgres and is not reachable from
+Vitest: `generate_financial_plans_for_open_orders`, `generate_job_financial_plan`,
+`refresh_department_utilization_week`, `create_job_actual_time_entry`.
+Checked on prod 2026-09-03: all four are SECURITY DEFINER with a pinned
+search_path, derive the tenant from `current_tenant_id()` (no client-supplied
+tenant), and refuse with "No tenant context for user" when there is none —
+verified by calling `refresh_department_utilization_week` from a tenant-less
+connection. They remain `anon`-executable via the default PUBLIC grant, which
+is inert given that guard, but is part of the broader 24-function advisor
+warning worth a separate tidy-up.
+- [ ] Manual: generate financial plans for a week, confirm planned cost/margin appear
+- [ ] Manual: refresh a capacity week, confirm utilisation rows match the roster
+- [ ] Manual: log an actual-time entry, confirm labour cost and rollups update
+
 ---
 
 ## 13. Reports
@@ -424,6 +456,17 @@ For each report below: sortable table, CSV export, correct date-range default, a
 - [ ] **(Regression)** Sync upserts products/variants by shopify_id and never touches `product_bom` → existing BOMs preserved
 - [ ] Webhooks (`/api/shopify/webhooks`): HMAC (either app secret), dedupe by webhook_id, store event, auto-sync on product/order change, app/uninstalled handled, failure metadata persisted
 - [ ] Embedded app session/token-exchange/sync routes function
+
+#### Sync noise controls (2026-09-02)
+`orders/updated` and `products/update` fire for near-any touch of a record, and
+each fired a full store sync plus an activity row — 5–10 "Shopify sync" lines
+per order lifecycle.
+- [ ] A burst of `orders/updated` inside 60s produces **one** store sync, not one per webhook
+- [ ] `orders/create` / `cancelled` / `fulfilled` and `products/create` still sync immediately — never debounced
+- [ ] Quiet topics (`orders/updated`, `products/update`) write no `shopify.sync_completed` activity row
+- [ ] Lifecycle topics still write one, with `trigger` and `webhook_topic` in the metadata
+- [ ] Manual and embedded syncs always log, unchanged
+- [ ] The trail is still complete elsewhere: `event_log` has every webhook; `shopify_store.last_synced_at` / `last_sync_meta` have every sync outcome
 
 ### GDPR webhooks
 - [ ] customers-redact / customers-data-request / shop-redact: HMAC validated, topic checked, request logged (idempotent by webhook_id), status created→completed/failed (error captured), 200 returned regardless
@@ -541,6 +584,20 @@ For each report below: sortable table, CSV export, correct date-range default, a
 - [ ] `super_admin`: all super-admin pages + lifecycle/plan/member mutations
 - [ ] `platform_observer`: read-only super-admin + view-as, no mutations
 
+#### Server-side enforcement of admin-only mutations (2026-09-02)
+Server actions and route handlers are directly invocable, so each check is
+server-side, not a hidden button. Shared helper: `src/lib/tenant/authz.ts`.
+- [ ] `member` calling billing checkout/portal directly gets 403; paywall and
+      past-due screens tell them to ask an admin instead of erroring
+- [ ] `member` cannot archive a BOM or delete a BOM draft
+- [ ] `member` cannot delete a BOM or labour template
+- [ ] `member` cannot delete a warehouse sub-location, aisle or bay (creating
+      and renaming stays open to members)
+- [ ] `member` cannot restore from trash or empty the trash
+- [ ] `member` cannot change the order-source SLA
+- [ ] Members can still do everyday ops: stocktake counts, goods inwards,
+      inventory adjustments, order allocation, POs, floor steps
+
 ### Subscription / plan enforcement
 - [ ] Paywall redirect for no-subscription/canceled/expired-trial
 - [ ] Past-due soft-lock after 3-day grace
@@ -553,6 +610,19 @@ For each report below: sortable table, CSV export, correct date-range default, a
 - [ ] Shopify token auto-refresh on expiry
 - [ ] Tenant isolation (RLS) — no cross-tenant data leakage
 - [ ] Audit logging for super-admin actions, Shopify webhook events, GDPR requests
+
+#### SECURITY DEFINER RPC tenant guards (patch 2026-09-02)
+These functions bypass RLS by design, so each enforces the RLS predicate itself.
+Reusable proof: `supabase/__tests__/2026-09-02-tenant-isolation-hardening.verify.sql`.
+- [ ] `apply_stocktake_session` on another tenant's approved session is refused (was: applied it)
+- [ ] `apply_reserved_movement` with another tenant's `p_tenant_id` is refused (was: wrote to it)
+- [ ] `apply_inventory_movement` with a component or location owned by another tenant is refused
+- [ ] Shopify sync (service-role client, no `auth.uid()`) can still reserve/release stock
+- [ ] `inventory_balance` is unique on `(tenant_id, component_id, location_id)`; repeat movements accumulate on the caller's own row
+- [ ] `component-images`: an anon or other-tenant client cannot **list** the bucket; owning-tenant upload/delete and existing `<img>` URLs still work
+- [ ] `count_distinct_tenants` / `count_multi_location_tenants` refuse non platform-operator callers; dev dashboard still loads
+- [ ] **(Regression)** A caller with NO tenant context (fresh profile, platform operator with no active tenant) is refused, not passed through — the first guard used `p_tenant_id = current_tenant_id()`, which is NULL-not-false when there is no tenant
+- [ ] `anon` cannot execute any of these RPCs (`EXECUTE` revoked from PUBLIC, which `anon` inherited by default)
 
 ---
 
@@ -596,3 +666,8 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-06-17 — amended Activity log: full audit-trail coverage of all mutations, real/typed actors, server-side paged filtering.
 - 2026-06-19 — amended Activity log: People/System/All tabs split the log by actor_type (default People) to separate the human audit trail from Shopify/system noise.
 - 2026-07-01 — added product categories & filters: sync Shopify product_type/tags/category/collections, filter and group the products page by them.
+- 2026-09-02 — amended Security & integrity: tenant guards on the SECURITY DEFINER inventory RPCs (H1/H2), tenant-scoped `inventory_balance` uniqueness, component-images bucket listing locked down, dev-dashboard count RPCs gated to platform operators.
+- 2026-09-03 — amended Security & integrity: hardening migration applied to prod (Assemblio `svhaotzrtfbwmphaacjj`); guard made NULL-safe so a tenant-less caller is refused, and `EXECUTE` revoked from `anon`/PUBLIC on every function the patch touches.
+- 2026-09-02 — amended RBAC: billing checkout/portal, BOM archive/delete, template deletes, warehouse bin/aisle/bay deletes, trash restore/empty and order-SLA config are now admin-only server-side; middleware verifies the JWT via getUser().
+- 2026-09-02 — amended Shopify sync: chatty webhook topics (`orders/updated`, `products/update`) no longer write an activity row and are debounced to one full store sync per 60s; lifecycle topics unchanged.
+- 2026-09-03 — amended Capacity/Staffing/Actual time/Costing/Xero: first automated cover for the four subsystems that shipped untested; pure logic extracted to `src/lib/{capacity,staffing,actual-time,costing}` and `push-bill` covered with mocks. DB-side generation RPCs remain manual-pass only.

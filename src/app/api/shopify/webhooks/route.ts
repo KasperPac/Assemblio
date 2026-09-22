@@ -7,6 +7,8 @@ import {
   isDuplicateWebhookEvent,
   parseWebhookPayload,
   shouldRunStoreSync,
+  shouldDebounceSync,
+  shouldLogSyncActivity,
 } from "@/lib/shopify/webhook";
 import { handleAppUninstalled } from "@/lib/shopify/uninstall";
 import { getValidAccessToken } from "@/lib/shopify/token-refresh";
@@ -54,7 +56,7 @@ export async function POST(request: NextRequest) {
 
   const { data: store } = await admin
     .from("shopify_store")
-    .select("id,tenant_id")
+    .select("id,tenant_id,last_synced_at")
     .eq("store_domain", shop)
     .maybeSingle();
 
@@ -73,7 +75,12 @@ export async function POST(request: NextRequest) {
     return new NextResponse("OK", { status: 200 });
   }
 
-  if (store?.id && store?.tenant_id && shouldRunStoreSync({ topic, storeId: store.id, tenantId: store.tenant_id, accessToken: "present" })) {
+  if (
+    store?.id &&
+    store?.tenant_id &&
+    shouldRunStoreSync({ topic, storeId: store.id, tenantId: store.tenant_id, accessToken: "present" }) &&
+    !shouldDebounceSync({ topic, lastSyncedAt: store.last_synced_at })
+  ) {
     let accessToken: string;
     try {
       const tokenSet = await getValidAccessToken(admin, store.tenant_id, shop);
@@ -94,7 +101,12 @@ export async function POST(request: NextRequest) {
       const result = await syncShopifyStoreData(
         store.tenant_id,
         shop,
-        accessToken
+        accessToken,
+        {
+          logActivity: shouldLogSyncActivity(topic),
+          trigger: "webhook",
+          webhookTopic: topic,
+        }
       );
       await admin
         .from("shopify_store")

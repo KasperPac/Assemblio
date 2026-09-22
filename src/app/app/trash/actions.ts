@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { isAdminRole } from "@/lib/tenant/authz";
 import { logActivity } from "@/lib/activity/log";
 
 export async function restorePurchaseOrder(formData: FormData) {
@@ -10,6 +11,7 @@ export async function restorePurchaseOrder(formData: FormData) {
 
   const context = await getServerTenantContext();
   if (!context) return;
+  if (!isAdminRole(context.role)) return;
   const { supabase, tenantId } = context;
 
   await supabase
@@ -30,6 +32,7 @@ export async function restoreStocktakeSession(formData: FormData) {
 
   const context = await getServerTenantContext();
   if (!context) return;
+  if (!isAdminRole(context.role)) return;
   const { supabase, tenantId } = context;
 
   await supabase
@@ -49,6 +52,7 @@ export async function restoreBom(formData: FormData) {
 
   const context = await getServerTenantContext();
   if (!context) return;
+  if (!isAdminRole(context.role)) return;
   const { supabase, tenantId } = context;
 
   await supabase
@@ -73,6 +77,7 @@ function readErrorMessage(error: unknown) {
 export async function emptyTrash() {
   const context = await getServerTenantContext();
   if (!context) return;
+  if (!isAdminRole(context.role)) return;
   const { supabase, tenantId } = context;
 
   const [

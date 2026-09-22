@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { getSubscriptionAccess } from "@/lib/subscription/access";
+import { isAdminRole } from "@/lib/tenant/authz";
 import styles from "./past-due.module.css";
 
 export const dynamic = "force-dynamic";
@@ -26,15 +27,22 @@ export default async function PastDuePage() {
           We weren&apos;t able to charge your card on file. Update your payment
           method to keep your workspace active.
         </p>
-        <form
-          action="/api/billing/portal"
-          method="POST"
-          className={styles.actions}
-        >
-          <button type="submit" className={styles.primary}>
-            Update payment method
-          </button>
-        </form>
+        {isAdminRole(ctx.role) ? (
+          <form
+            action="/api/billing/portal"
+            method="POST"
+            className={styles.actions}
+          >
+            <button type="submit" className={styles.primary}>
+              Update payment method
+            </button>
+          </form>
+        ) : (
+          <p className={styles.footnote}>
+            Only workspace admins can update the payment method. Ask an admin on
+            your team to fix this.
+          </p>
+        )}
         <p className={styles.footnote}>
           Already fixed? Stripe will notify us automatically — refresh in a
           moment.

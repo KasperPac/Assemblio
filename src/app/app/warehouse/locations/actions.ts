@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { isAdminRole } from "@/lib/tenant/authz";
 import { logActivity } from "@/lib/activity/log";
 import { evaluateBlockers } from "@/lib/housekeeping/blockers";
 
@@ -10,6 +11,15 @@ const REVALIDATE = "/app/warehouse/locations";
 async function ctx() {
   const context = await getServerTenantContext();
   if (!context) throw new Error("Unauthorized");
+  return context;
+}
+
+// Deleting a bin/aisle/bay tears down warehouse structure that stock is
+// filed against, so it is admin-only. Creating and renaming stays open to
+// members doing day-to-day warehouse setup.
+async function adminCtx() {
+  const context = await ctx();
+  if (!isAdminRole(context.role)) throw new Error("Unauthorized");
   return context;
 }
 
@@ -63,7 +73,7 @@ export async function editSubLocation(formData: FormData): Promise<{ error: stri
 export async function deleteSubLocation(formData: FormData): Promise<{ error?: string }> {
   const id = formData.get("id")?.toString();
   if (!id) return {};
-  const { supabase, tenantId } = await ctx();
+  const { supabase, tenantId } = await adminCtx();
   const { count } = await supabase
     .from("component")
     .select("id", { count: "exact", head: true })
@@ -112,7 +122,7 @@ export async function editAisle(formData: FormData): Promise<{ error: string } |
 export async function deleteAisle(formData: FormData): Promise<{ error?: string; bayCount?: number }> {
   const id = formData.get("id")?.toString();
   if (!id) return {};
-  const { supabase, tenantId } = await ctx();
+  const { supabase, tenantId } = await adminCtx();
 
   // Block if components are assigned to this aisle
   const { count: compCount } = await supabase
@@ -165,7 +175,7 @@ export async function editBay(formData: FormData): Promise<{ error: string } | v
 export async function deleteBay(formData: FormData): Promise<{ error?: string }> {
   const id = formData.get("id")?.toString();
   if (!id) return {};
-  const { supabase, tenantId } = await ctx();
+  const { supabase, tenantId } = await adminCtx();
   const { count } = await supabase
     .from("component")
     .select("id", { count: "exact", head: true })

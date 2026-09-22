@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { getSubscriptionAccess } from "@/lib/subscription/access";
+import { isAdminRole } from "@/lib/tenant/authz";
 import PaywallCards from "./paywall-cards";
 import styles from "./paywall.module.css";
 
@@ -11,6 +12,7 @@ export default async function PaywallPage() {
   if (!ctx) redirect("/login");
   const tenantId = ctx.tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
+  const canManageBilling = isAdminRole(ctx.role);
   const access = await getSubscriptionAccess(ctx.supabase, tenantId);
   const sub = access.sub;
   const selectedTier = sub?.selected_tier ?? "growth";
@@ -38,7 +40,17 @@ export default async function PaywallPage() {
         <h1 className={styles.title}>{heading}</h1>
         <p className={styles.subtitle}>{subheading}</p>
       </header>
-      <PaywallCards initialTier={selectedTier} initialBilling={initialBilling} />
+      <PaywallCards
+        initialTier={selectedTier}
+        initialBilling={initialBilling}
+        canManageBilling={canManageBilling}
+      />
+      {canManageBilling ? null : (
+        <p className={styles.footnote}>
+          Only workspace admins can choose a plan. Ask an admin on your team to
+          activate the workspace.
+        </p>
+      )}
       <p className={styles.footnote}>
         Need something custom?{" "}
         <a href="/contact" className={styles.footnoteLink}>
