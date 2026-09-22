@@ -46,16 +46,19 @@ Estimated time: 45-60 minutes.
 > `customer_email` / `customer_first_name` both null, as the read-only scope set intends.
 >
 > The two items below still need a human click: synthetic clicks do not reach a cross-origin
-> iframe, so "Sync now" and "Open Manuva" could not be exercised by automation.
+> iframe, so "Sync now" and "Open Manuva" were clicked by hand. The sync came back
+> `source: "embedded"` with `products:17, variants:26, orders:1, orderLines:1,
+> allocations:1, plan_runs:1, plan_errors:0` — the button also drives allocation and
+> production planning, not just catalogue import.
 
 - [x] In Shopify Admin nav, click Apps &rarr; Manuva
 - [x] Embedded surface loads inside an iframe (URL bar still shows `admin.shopify.com`)
 - [x] No console errors in browser devtools
 - [ ] If the merchant has no Manuva subscription: surface shows the "Subscription required" message + "View pricing" CTA
 - [x] If the merchant has an active subscription: surface shows "Last synced" + "Sync now" + "Open Manuva"
-- [ ] Click "Sync now" &rarr; status updates to "Sync queued at HH:MM:SS" within 2 seconds
-- [ ] After the sync completes, `shopify_store.last_synced_at` advances and `last_sync_status` is `ok`
-- [ ] Click "Open Manuva" &rarr; new tab opens to `https://app.manuva.app/app`
+- [x] Click "Sync now" &rarr; status updates to "Sync queued at HH:MM:SS" within 2 seconds
+- [x] After the sync completes, `shopify_store.last_synced_at` advances and `last_sync_status` is `ok`
+- [x] Click "Open Manuva" &rarr; new tab opens to `https://app.manuva.app/app`
 
 ---
 
@@ -139,10 +142,10 @@ shopify webhook trigger \
 
 ## Listing readiness
 
-- [ ] All TODO items in `README.md` resolved (terms URL, support page/email)
+- [x] All TODO items in `README.md` resolved (terms URL, support page/email)
 - [x] All icon + screenshot files in `assets/` exist and meet dimensions
 - [ ] Demo store credentials filled in
-- [ ] Pricing description matches the actual `manuva.app/pricing` page
+- [x] Pricing description matches the actual `manuva.app/pricing` page
 - [x] Privacy policy link works
 
 ---

@@ -121,12 +121,39 @@ These are declared in `shopify.app.toml` at the repo root and registered automat
 
 Required for app review. Reviewer logs in to your demo Shopify dev store with the app installed and exercises the integration.
 
-| Field             | Value                                                |
-| ----------------- | ---------------------------------------------------- |
-| Demo store URL    | `https://manuva-demo.myshopify.com` _(TODO: create)_ |
-| Username          | _(TODO: create reviewer account)_                    |
-| Password          | _(TODO: create reviewer account)_                    |
-| Manuva account    | _(TODO: create matching Manuva tenant)_              |
+| Field             | Value                                                        |
+| ----------------- | ------------------------------------------------------------ |
+| Demo store URL    | `https://manuvatraining.myshopify.com`                        |
+| Manuva login      | `reviewer@manuva.app`                                         |
+| Manuva password   | _(set at signup — paste into the Partner Dashboard, not here)_ |
+| Manuva tenant     | **Shopify Review** — store connected, catalogue + orders synced |
+
+### App testing information — paste this into the Partner Dashboard
+
+> **Important — read before installing.** Manuva is a standalone manufacturing-operations
+> SaaS (like ShipStation or HubSpot); the Shopify app is a read-only connector to an
+> existing Manuva workspace. Installing from the App Store alone will show
+> "This Shopify store isn't connected to a Manuva account yet" — that is expected, not a
+> failure. A store is linked from inside Manuva, not from Shopify.
+>
+> **The demo store below is already installed and linked, so you can skip straight to
+> testing:**
+>
+> 1. In the dev store's admin, open **Apps → Manuva**. The embedded panel shows the
+>    connected store, the last sync time and status.
+> 2. Click **Sync now** — the status timestamp advances within a couple of seconds.
+> 3. Click **Open Manuva** — a new tab opens the full workspace at `app.manuva.app/app`.
+>    Sign in with the credentials above if prompted.
+> 4. In Manuva, **Products** shows the store's catalogue and **Orders** shows the synced
+>    orders, each with its Shopify order number.
+>
+> **If you want to verify the connect flow yourself on a different store:** sign in to
+> `app.manuva.app` first, then go to **Settings → Integrations → Shopify → Manage**, enter
+> the store domain and click Connect. That is the OAuth path merchants use.
+>
+> **Scopes.** `read_products` and `read_orders` only. Manuva never writes to Shopify, and
+> does not request protected customer data — synced orders deliberately store no customer
+> name or email.
 
 The demo store should have:
 - At least 12 products with variants
