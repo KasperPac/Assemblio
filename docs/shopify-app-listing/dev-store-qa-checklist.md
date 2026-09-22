@@ -10,9 +10,9 @@ Estimated time: 45-60 minutes.
 
 - [ ] `shopify.app.toml` has real `client_id` (not the placeholder)
 - [ ] `shopify app deploy` succeeded
-- [ ] `NEXT_PUBLIC_APP_URL` in production env is `https://app.manuva.app`
+- [x] `NEXT_PUBLIC_APP_URL` in production env is `https://app.manuva.app`
 - [ ] `SHOPIFY_API_KEY` and `SHOPIFY_API_SECRET` in production env match the Partner Dashboard app
-- [ ] `supabase/patches/shopify_gdpr_audit.sql` has been applied to the production database
+- [x] `supabase/patches/shopify_gdpr_audit.sql` has been applied to the production database
 - [ ] You have access to a fresh Shopify development store with no Manuva install
 - [ ] You have Shopify CLI installed: `shopify version` works
 
@@ -104,22 +104,29 @@ shopify webhook trigger \
 
 ## Security spot checks
 
-- [ ] HTTPS is enforced on all endpoints (test: `curl http://app.manuva.app/api/shopify/install` should fail or redirect to HTTPS)
-- [ ] Webhook endpoints reject requests with no HMAC header (401)
-- [ ] Webhook endpoints reject requests with wrong HMAC (401)
-- [ ] Embedded session endpoint rejects requests with no Authorization header (401)
-- [ ] Embedded session endpoint rejects expired session tokens (401)
-- [ ] Embedded session endpoint rejects session tokens signed with a different secret (401)
+> Verified against production 2026-09-22 by probing the live endpoints. HTTP → HTTPS
+> returns 308. All four webhook routes (main + three GDPR) return 401 with a bad HMAC.
+> The embedded session route is POST-only (a GET returns 405) and returns 401 for a
+> missing header, a malformed bearer, a token signed with the wrong secret, and an
+> expired token; an `alg:none` token is refused with 403 rather than 401 — a different
+> code path, still refused.
+
+- [x] HTTPS is enforced on all endpoints (test: `curl http://app.manuva.app/api/shopify/install` should fail or redirect to HTTPS)
+- [x] Webhook endpoints reject requests with no HMAC header (401)
+- [x] Webhook endpoints reject requests with wrong HMAC (401)
+- [x] Embedded session endpoint rejects requests with no Authorization header (401)
+- [x] Embedded session endpoint rejects expired session tokens (401)
+- [x] Embedded session endpoint rejects session tokens signed with a different secret (401)
 
 ---
 
 ## Listing readiness
 
 - [ ] All TODO items in `README.md` resolved (terms URL, support page/email)
-- [ ] All icon + screenshot files in `assets/` exist and meet dimensions
+- [x] All icon + screenshot files in `assets/` exist and meet dimensions
 - [ ] Demo store credentials filled in
 - [ ] Pricing description matches the actual `manuva.app/pricing` page
-- [ ] Privacy policy link works
+- [x] Privacy policy link works
 
 ---
 

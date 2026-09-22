@@ -80,7 +80,7 @@ This pattern is the standard "connector SaaS" model used by Shopify apps like Hu
 >
 > **Support**
 >
-> Email: `hello@manuva.app` — typical response within one business day. Or reach the team via the contact form at [manuva.app/#contact](https://manuva.app/#contact).
+> Email: `hello@manuva.app` — typical response within one business day. Or reach the team via the contact form at [manuva.app/about#contact](https://manuva.app/about#contact).
 
 ---
 
@@ -93,13 +93,13 @@ This pattern is the standard "connector SaaS" model used by Shopify apps like Hu
 | **Embedded URL**       | https://app.manuva.app/shopify/embedded   | Confirmed (Task 5)                    |
 | **Privacy policy**     | https://manuva.app/privacy                | Confirmed live                         |
 | **Terms of service**   | https://manuva.app/terms                  | Confirmed live                         |
-| **Support email**      | hello@manuva.app                          | Confirmed in homepage `#contact` block |
-| **Support URL**        | https://manuva.app/#contact               | Anchor on homepage; no standalone page |
+| **Support email**      | hello@manuva.app                          | Confirmed in the `/about#contact` block |
+| **Support URL**        | https://manuva.app/about#contact          | Anchor on /about; no standalone page. NOT `/#contact` — the homepage has no `id="contact"`, that section moved to /about. |
 
 Action items before submission:
 
 - [ ] Confirm `hello@manuva.app` is monitored within one business day (already advertised on site)
-- [ ] Decide whether to point the Partner Dashboard "Support URL" at the `#contact` anchor or skip the URL field and use email-only (Shopify accepts either)
+- [ ] Decide whether to point the Partner Dashboard "Support URL" at the `/about#contact` anchor or skip the URL field and use email-only (Shopify accepts either)
 
 ---
 
@@ -164,7 +164,7 @@ Visual assets to produce before submission. Briefs are in `assets/`:
 Before clicking submit in Partner Dashboard:
 
 - [ ] `shopify.app.toml` deployed via `shopify app deploy` with real `client_id`
-- [ ] Decide support URL (`/#contact` anchor) vs email-only in Partner Dashboard
+- [ ] Decide support URL (`/about#contact` anchor) vs email-only in Partner Dashboard
 - [ ] Demo store credentials filled in
 - [ ] All visual assets uploaded
 - [ ] `hello@manuva.app` monitored
