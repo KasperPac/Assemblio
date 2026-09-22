@@ -8,13 +8,13 @@ Estimated time: 45-60 minutes.
 
 ## Pre-flight
 
-- [ ] `shopify.app.toml` has real `client_id` (not the placeholder)
-- [ ] `shopify app deploy` succeeded
+- [x] `shopify.app.toml` has real `client_id` (not the placeholder)
+- [x] `shopify app deploy` succeeded
 - [x] `NEXT_PUBLIC_APP_URL` in production env is `https://app.manuva.app`
-- [ ] `SHOPIFY_API_KEY` and `SHOPIFY_API_SECRET` in production env match the Partner Dashboard app
+- [x] `SHOPIFY_API_KEY` and `SHOPIFY_API_SECRET` in production env match the Partner Dashboard app
 - [x] `supabase/patches/shopify_gdpr_audit.sql` has been applied to the production database
-- [ ] You have access to a fresh Shopify development store with no Manuva install
-- [ ] You have Shopify CLI installed: `shopify version` works
+- [x] You have access to a fresh Shopify development store with no Manuva install
+- [x] You have Shopify CLI installed: `shopify version` works
 
 ---
 
@@ -23,8 +23,8 @@ Estimated time: 45-60 minutes.
 - [ ] From Partner Dashboard, click "Test on development store" &rarr; select fresh dev store
 - [ ] OAuth consent screen appears with these scopes: `read_products`, `read_orders` (no others)
 - [ ] After clicking "Install", land back on `app.manuva.app/app/settings/integrations` (or embedded surface if Shopify-managed install)
-- [ ] In the database, `shopify_store` has a new row with status `connected` (or `active`)
-- [ ] In the database, `shopify_install_tokens` has a matching access token row
+- [x] In the database, `shopify_store` has a new row with status `connected` (or `active`)
+- [x] In the database, `shopify_install_tokens` has a matching access token row
 - [ ] All webhooks are registered: open Partner Dashboard &rarr; App &rarr; Webhooks. Verify ALL of these are present:
   - [ ] `customers/data_request` &rarr; `https://app.manuva.app/api/shopify/webhooks/gdpr/customers-data-request`
   - [ ] `customers/redact` &rarr; `.../gdpr/customers-redact`
@@ -50,9 +50,15 @@ Estimated time: 45-60 minutes.
 
 ## Catalog + order sync
 
+> 2026-09-22: `manuvatraining.myshopify.com` connected to the **Shopify Review** tenant via
+> Settings → Integrations (the OAuth path — a Shopify-managed install alone does NOT create
+> the store row). Granted scopes read back as exactly `read_orders,read_products` — no
+> `read_customers` — with a refresh token stored. First sync returned `last_sync_status = ok`
+> and imported 17 products / 74 variants. Orders and webhook delivery still to test.
+
 - [ ] Manually create 3-5 products in the Shopify dev store admin
 - [ ] Trigger a sync (either from embedded surface or `/app/settings/integrations`)
-- [ ] All products appear in Manuva at `/app/products` with `source = "shopify"`
+- [x] All products appear in Manuva at `/app/products` with `source = "shopify"`
 - [ ] Place a test order in the dev store (Shopify lets you mark orders as paid in dev mode)
 - [ ] Trigger a sync
 - [ ] The order appears in Manuva at `/app/orders` with `shopify_order_id` populated
