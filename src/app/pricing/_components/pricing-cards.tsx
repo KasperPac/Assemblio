@@ -15,7 +15,7 @@ const STARTER_FEATURES = [
 
 const GROWTH_FEATURES = [
   "Everything in Starter",
-  "Multi-location inventory",
+  "Multi-location + bin locations",
   "Advanced BOM (yield %, versions)",
   "Costing module",
   "Reports suite",

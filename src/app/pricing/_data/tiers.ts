@@ -101,6 +101,7 @@ export const FEATURE_MODULES: FeatureModule[] = [
       { name: "Component inventory + balances",   starter: true,  growth: true,  pro: true,  enterprise: true  },
       { name: "Inventory movements ledger",       starter: true,  growth: true,  pro: true,  enterprise: true  },
       { name: "Stocktake",                        starter: true,  growth: true,  pro: true,  enterprise: true  },
+      { name: "Bin / aisle locations",            starter: false, growth: true,  pro: true,  enterprise: true  },
       { name: "Activity log",                     starter: true,  growth: true,  pro: true,  enterprise: true  },
       { name: "Low stock alerts",                 starter: true,  growth: true,  pro: true,  enterprise: true  },
     ],
