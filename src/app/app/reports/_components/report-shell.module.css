@@ -19,3 +19,40 @@
   text-align: right;
   margin: 0 0 4px 0;
 }
+
+/* Printed header — screen never shows it; print hides the topbar instead. */
+.printHeader {
+  display: none;
+}
+
+@media print {
+  .printHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    padding: 0 0 8px;
+    margin: 0 0 12px;
+    border-bottom: 1px solid var(--stroke-strong);
+  }
+  .printBrand {
+    font-weight: var(--fw-semibold);
+    letter-spacing: -0.02em;
+    color: var(--ink-strong);
+  }
+  .printMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    font-size: var(--fs-xs);
+    color: var(--ink-muted);
+  }
+  .printMeta span + span::before {
+    content: "·";
+    margin-right: 12px;
+    color: var(--ink-faint);
+  }
+  .refreshed {
+    display: none;
+  }
+}

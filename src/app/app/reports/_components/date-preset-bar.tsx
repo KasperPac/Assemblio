@@ -2,6 +2,7 @@
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { fmtParam } from "../_lib/date-range";
+import { printWithLightTheme } from "../_lib/print";
 import styles from "./date-preset-bar.module.css";
 
 const PRESETS = [
@@ -124,10 +125,12 @@ export function DatePresetBar({ csvHref, hideDateRange }: Props) {
         </a>
         <button
           type="button"
-          onClick={() => window.print()}
+          onClick={() =>
+            printWithLightTheme(document.documentElement, () => window.print())
+          }
           className={styles.actionBtn}
         >
-          Print / PDF
+          Export PDF
         </button>
       </div>
     </div>

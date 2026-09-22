@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import PageHeader from "@/app/app/_ui/page-header";
+import { getServerTenantContext } from "@/lib/tenant/context";
+import { rangeLabel } from "../_lib/print";
 import { DatePresetBar } from "./date-preset-bar";
 import styles from "./report-shell.module.css";
 
@@ -13,7 +15,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-export function ReportShell({
+export async function ReportShell({
   eyebrow,
   title,
   description,
@@ -27,6 +29,25 @@ export function ReportShell({
   if (typeof searchParams.to === "string") sp.set("to", searchParams.to);
   const csvHref = `/app/reports/${csvSlug}/export?${sp.toString()}`;
 
+  // Printed header only — the screen shows the workspace in the topbar,
+  // which is hidden in print.
+  const ctx = await getServerTenantContext();
+  let workspace = "";
+  if (ctx?.tenantId) {
+    const { data } = await ctx.supabase
+      .from("tenant")
+      .select("name")
+      .eq("id", ctx.tenantId)
+      .maybeSingle();
+    workspace = data?.name ?? "";
+  }
+  const range = hideDateRange
+    ? null
+    : rangeLabel({
+        from: typeof searchParams.from === "string" ? searchParams.from : undefined,
+        to: typeof searchParams.to === "string" ? searchParams.to : undefined,
+      });
+
   const refreshed = new Date().toLocaleString("en-AU", {
     dateStyle: "short",
     timeStyle: "short",
@@ -34,6 +55,15 @@ export function ReportShell({
 
   return (
     <div className={styles.shell}>
+      <header className={styles.printHeader} aria-hidden="true">
+        <div className={styles.printBrand}>Manuva</div>
+        <div className={styles.printMeta}>
+          {workspace ? <span>{workspace}</span> : null}
+          <span>{title}</span>
+          {range ? <span>{range}</span> : null}
+          <span>Generated {refreshed}</span>
+        </div>
+      </header>
       <PageHeader
         eyebrow={eyebrow}
         title={title}

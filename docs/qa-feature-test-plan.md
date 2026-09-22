@@ -405,6 +405,8 @@ warning worth a separate tidy-up.
 - [ ] System card: Inventory integrity (red if issues, else "Healthy"); each card links to its report
 
 For each report below: sortable table, CSV export, correct date-range default, and empty state.
+- [ ] Every report renders (no "Functions cannot be passed directly to Client Components" error); clicking a column header sorts the rows, a second click reverses
+- [ ] **Export PDF** on every report: print preview shows no sidebar/topbar/banner, a header line with workspace · report title · date range (or none on undated reports) · generated timestamp, table headers repeat on page 2+, rows and charts don't split across pages, output is light-themed even when the app is in Midnight mode and the theme is restored after the dialog closes
 - [ ] **Stock on hand** `/reports/stock-on-hand`: name/SKU/location/on-hand/reserved/in-prod/value, status (Out/Low/OK); only on_hand>0; stat cards; no date filter
 - [ ] **Valuation** `/reports/valuation`: on-hand cost + % of total (desc); on-hand/in-prod/reserved value cards; no date filter
 - [ ] **Movements** `/reports/movements`: date/component/type badge/signed qty; daily in/out bar chart; default 30d
@@ -674,3 +676,5 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-09-03 — amended Capacity/Staffing/Actual time/Costing/Xero: first automated cover for the four subsystems that shipped untested; pure logic extracted to `src/lib/{capacity,staffing,actual-time,costing}` and `push-bill` covered with mocks. DB-side generation RPCs remain manual-pass only.
 - 2026-09-22 — amended Subscription: free trial is 30 days (`TRIAL_DAYS` in `src/lib/plans`) instead of 14; existing trialing tenants on prod extended to 2026-10-22; `CRON_SECRET` set so trial-reminder emails send.
 - 2026-09-22 — amended Pricing page & paywall cards: removed API access, Multiple Shopify stores and Bin/aisle locations (unbuilt); "Multi-location + bin management" is now "Multi-location inventory". Same edits on the marketing site (ManuvaMarketingBold).
+- 2026-09-22 — fixed Reports: every sortable report (9 of 10) crashed with "Functions cannot be passed directly to Client Components" since 2026-06-01; `SortableReportTable` is now a server wrapper that pre-renders cells for a client sorter. PO summary's Total value / Lines columns now sort.
+- 2026-09-22 — amended Reports: "Print / PDF" is now "Export PDF" on all 10 reports — forces the Daylight theme while printing, hides sidebar/topbar/banners, prints a header line (workspace · report · date range · generated at), repeats table headers across pages and keeps rows and charts unbroken.
