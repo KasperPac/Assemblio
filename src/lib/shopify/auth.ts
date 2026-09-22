@@ -1,4 +1,5 @@
 import { createHmac, timingSafeEqual, randomBytes } from "crypto";
+import { OAUTH_SCOPES } from "./scopes";
 
 const SHOP_REGEX = /^[a-z0-9][a-z0-9-]*\.myshopify\.com$/i;
 
@@ -53,7 +54,7 @@ export function isAcceptableAppUrl(appUrl: string): boolean {
 export function getShopifyOAuthConfig() {
   const apiKey = process.env.SHOPIFY_API_KEY ?? "";
   const apiSecret = process.env.SHOPIFY_API_SECRET ?? "";
-  const scopes = process.env.SHOPIFY_SCOPES ?? "read_products,read_orders,read_customers";
+  const scopes = process.env.SHOPIFY_SCOPES ?? OAUTH_SCOPES;
   const appUrlRaw = process.env.NEXT_PUBLIC_APP_URL ?? "";
   const appUrl = appUrlRaw.trim().replace(/\/+$/, "");
 
