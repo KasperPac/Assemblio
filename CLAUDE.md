@@ -49,3 +49,7 @@ document in the same change:**
 - Use `(admin)` / `(super_admin)` / `(gated)` markers for any role- or plan-gated behavior.
 
 A change that ships a feature without updating this doc is incomplete.
+
+## Task tracking
+
+monday.com board **Manuva** (`5099992950`, Software Automation). Task code prefix: `MANUVA`.
