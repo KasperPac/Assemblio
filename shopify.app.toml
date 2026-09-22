@@ -17,7 +17,7 @@ embedded = true
 [access_scopes]
 # Match these to SHOPIFY_SCOPES env var. Read-only by design — Manuva never writes
 # back to Shopify inventory or catalog.
-scopes = "read_products,read_orders,read_customers"
+scopes = "read_products,read_orders"
 
 [auth]
 redirect_urls = [
