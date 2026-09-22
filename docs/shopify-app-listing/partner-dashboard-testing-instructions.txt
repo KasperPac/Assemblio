@@ -1,0 +1,37 @@
+Testing Manuva (free to install; requires a Manuva subscription billed externally at manuva.app/pricing).
+
+PREREQUISITE
+The test store below is already installed and linked to the Manuva account whose credentials are provided. No signup is required — Manuva is invite-only during beta, so please use the supplied credentials rather than creating an account.
+
+HOW LINKING WORKS
+Manuva is a standalone manufacturing SaaS; a Shopify store is linked from inside Manuva, not from the Shopify side. Installing the app on a store that has no Manuva account shows "This Shopify store isn't connected to a Manuva account yet" — that is expected, not a failure.
+To see the linking flow yourself: sign in at app.manuva.app, then Settings > Integrations > Shopify > Manage, enter a store domain and click Connect. That is the OAuth path merchants use; the consent screen requests read_orders and read_products only.
+
+EMBEDDED SURFACE
+1. In the test store's Shopify admin, open Apps > Manuva.
+2. The embedded card shows the store domain, last sync time and last sync status.
+3. Click "Sync now" — products and orders sync from Shopify into Manuva; the timestamp advances within a few seconds.
+4. Click "Open Manuva" — opens app.manuva.app in a new tab.
+
+FULL WORKSPACE (app.manuva.app)
+5. Sign in with the credentials provided.
+6. Products — synced Shopify products appear with their variants.
+7. Any product > Variant Detail > Bill of Materials tab to view or edit the BOM.
+8. Orders — synced Shopify orders appear with allocation status.
+9. Any allocated order shows components reserved, planned margin and labour.
+10. Components — multi-location inventory with reorder points.
+11. Settings > Integrations — the Shopify card shows Connected with per-store sync stats.
+
+DISCONNECT
+From Settings > Integrations > Manage, click Disconnect to revoke. Or uninstall via Shopify Admin > Apps: the app/uninstalled webhook fires and the store's access token is removed from Manuva's database. Synced records are retained until shop/redact.
+
+GDPR WEBHOOKS
+The mandatory privacy webhooks (customers/data_request, customers/redact, shop/redact) are declared in the app config and audited in Manuva's shopify_gdpr_request table. Trigger with:
+shopify webhook trigger --topic customers/redact --api-version 2026-01 --address https://app.manuva.app/api/shopify/webhooks/gdpr/customers-redact --client-secret <secret>
+Requests with a missing or invalid HMAC are rejected with 401 and no row is written.
+
+READ-ONLY, NO CUSTOMER DATA
+Manuva never writes back to products, variants or inventory; store data in Shopify is never modified. Manuva also requests no protected customer data — synced orders deliberately store no customer name or email.
+
+SUPPORT
+hello@manuva.app — response within one business day.
