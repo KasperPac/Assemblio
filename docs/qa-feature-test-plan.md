@@ -507,6 +507,8 @@ per order lifecycle.
 - [ ] No row / canceled / expired-trial → paywall; malformed row → paywall + log
 - [ ] active → ok; trialing → ok + daysLeft; past_due <3d grace → ok (soft warn); past_due ≥3d → past_due_locked
 - [ ] effectiveTier = pro during trial (if not expired) else selected_tier
+- [ ] A Shopify sync writes a `job_cost_snapshot` per synced order line that has an active BOM; the order's Planned margin shows a real figure, not $0
+- [ ] A sync whose planning RPC fails increments `plan_errors` in the `shopify.sync_completed` activity row (it must never report 0 while writing nothing)
 - [ ] New workspace trial = `TRIAL_DAYS` (30) from signup; the same constant drives the signup and pricing copy and the super-admin "New tenant" default
 - [ ] Layout checks access before rendering protected pages
 
@@ -686,3 +688,4 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-09-22 — amended Pricing page & paywall cards: Bin / aisle locations restored (bin_aisle/bin_bay/bin_sub_location ship behind the binManagement flag; only per-bin balances are missing). API access and Multiple Shopify stores stay out — neither is built.
 - 2026-09-22 — fixed Shopify OAuth: dropped `read_customers` from the requested scopes (shopify.app.toml, the auth fallback and SHOPIFY_SCOPES on Vercel). It is protected customer data, the order sync writes customer fields as null, and neither live install was ever granted it. Requested scopes now come from one constant, `OAUTH_SCOPES`.
 - 2026-09-23 — fixed Shopify install: a Shopify-managed install had no self-serve way to link a store (the embedded surface dead-ended on "sign up and reinstall"). The surface now mints a signed, shop-only handoff and routes the merchant into the existing `/shopify-connect` sign-in-and-link flow; the access token is captured on the next embedded load. Manual domain entry is hidden once a store is connected.
+- 2026-09-24 — fixed Shopify sync costing: `generate_job_financial_plan` resolved its tenant from `current_tenant_id()`, which is null on the service-role client the sync uses, so no synced order had ever received a cost snapshot and planned margin always read $0. The RPC now takes the tenant from the order line and defers to `assert_tenant_write_access`; the sync reads the returned `error` so a failure can no longer report `plan_errors: 0`.
