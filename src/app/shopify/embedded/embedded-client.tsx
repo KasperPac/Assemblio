@@ -67,6 +67,31 @@ async function authenticatedFetch(path: string, init?: RequestInit): Promise<Res
   return fetch(path, { ...init, headers });
 }
 
+/**
+ * Mints a signed handoff and opens /shopify-connect so the merchant can link
+ * this store to a Manuva workspace. A Shopify-managed install never reaches our
+ * OAuth callback, so this is the only self-serve way out of "not installed".
+ * Opened in a new tab: the connect page needs a top-level context to sign in.
+ */
+async function openConnectFlow(): Promise<string | null> {
+  try {
+    const res = await authenticatedFetch("/api/shopify/embedded/link-handoff", {
+      method: "POST",
+    });
+    if (!res.ok) return "Couldn't start the connect flow. Please try again.";
+    const body = (await res.json()) as { handoff?: string };
+    if (!body.handoff) return "Couldn't start the connect flow. Please try again.";
+    window.open(
+      `https://app.manuva.app/shopify-connect?handoff=${encodeURIComponent(body.handoff)}`,
+      "_blank",
+      "noopener"
+    );
+    return null;
+  } catch {
+    return "Couldn't start the connect flow. Please try again.";
+  }
+}
+
 async function tryTokenExchange(): Promise<{ ok: boolean }> {
   try {
     const res = await authenticatedFetch("/api/shopify/embedded/token-exchange", {
@@ -80,6 +105,8 @@ async function tryTokenExchange(): Promise<{ ok: boolean }> {
 
 export default function EmbeddedClient({ shop: _shop }: { shop: string }) {
   const [ui, setUi] = useState<UiState>({ kind: "loading" });
+  const [connecting, setConnecting] = useState(false);
+  const [connectError, setConnectError] = useState<string | null>(null);
 
   const loadSession = useCallback(async () => {
     setUi({ kind: "loading" });
@@ -177,12 +204,28 @@ export default function EmbeddedClient({ shop: _shop }: { shop: string }) {
         {ui.kind === "ready" && ui.session.status === "not-installed" && (
           <div className={styles.body}>
             <p>
-              This Shopify store isn&apos;t connected to a Manuva account yet.
-              Sign up for free at <strong>manuva.app</strong> and reinstall to start syncing.
+              This store isn&apos;t linked to a Manuva workspace yet. Connect it to
+              start syncing products and orders — you can sign in with an existing
+              Manuva account, or apply for access.
             </p>
-            <a className={styles.primaryButton} href="https://manuva.app/signup" target="_blank" rel="noreferrer">
-              Sign up at manuva.app
-            </a>
+            {connectError && <p className={styles.errorText}>{connectError}</p>}
+            <button
+              type="button"
+              className={styles.primaryButton}
+              disabled={connecting}
+              onClick={async () => {
+                setConnecting(true);
+                setConnectError(null);
+                const error = await openConnectFlow();
+                setConnectError(error);
+                setConnecting(false);
+              }}
+            >
+              {connecting ? "Opening…" : "Connect your Manuva account →"}
+            </button>
+            <p className={styles.muted}>
+              Once connected, return here and refresh to start syncing.
+            </p>
           </div>
         )}
 

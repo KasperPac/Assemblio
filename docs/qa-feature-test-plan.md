@@ -45,6 +45,11 @@ testable checks. Use this to verify ALL features work as expected.
 - [ ] Actual GP % = sell − (material + labour + overhead); variants without BOMs show "—"
 - [ ] Product image renders or shows fallback initial
 - [ ] "Import Products" triggers Shopify sync
+- [ ] **(Shopify-managed install)** A store installed from the App Store with no Manuva link shows "This store isn't linked to a Manuva workspace yet" with a **Connect your Manuva account →** button — not a dead end
+- [ ] That button opens `/shopify-connect?handoff=…` in a new tab; signing in there links the store and returns the merchant to their Shopify admin
+- [ ] The handoff carries only the shop domain and expires after 5 minutes; a tampered or expired handoff lands on `?shopify=install-expired`
+- [ ] After linking, reloading the embedded surface captures the access token via token-exchange and registers webhooks
+- [ ] Settings → Integrations hides the manual `your-store.myshopify.com` field once a store is connected
 
 ### Product categories & filters — `/app/products`
 Shopify sync captures product type, tags, Standard-Taxonomy category, and collection membership (read-only). The filter bar can filter and group by them.
@@ -680,3 +685,4 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-09-22 — amended Reports: "Print / PDF" is now "Export PDF" on all 10 reports — forces the Daylight theme while printing, hides sidebar/topbar/banners, prints a header line (workspace · report · date range · generated at), repeats table headers across pages and keeps rows and charts unbroken.
 - 2026-09-22 — amended Pricing page & paywall cards: Bin / aisle locations restored (bin_aisle/bin_bay/bin_sub_location ship behind the binManagement flag; only per-bin balances are missing). API access and Multiple Shopify stores stay out — neither is built.
 - 2026-09-22 — fixed Shopify OAuth: dropped `read_customers` from the requested scopes (shopify.app.toml, the auth fallback and SHOPIFY_SCOPES on Vercel). It is protected customer data, the order sync writes customer fields as null, and neither live install was ever granted it. Requested scopes now come from one constant, `OAUTH_SCOPES`.
+- 2026-09-23 — fixed Shopify install: a Shopify-managed install had no self-serve way to link a store (the embedded surface dead-ended on "sign up and reinstall"). The surface now mints a signed, shop-only handoff and routes the merchant into the existing `/shopify-connect` sign-in-and-link flow; the access token is captured on the next embedded load. Manual domain entry is hidden once a store is connected.

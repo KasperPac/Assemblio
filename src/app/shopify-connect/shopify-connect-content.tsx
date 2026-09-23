@@ -9,8 +9,11 @@ const initial = { error: undefined };
 
 export default function ShopifyConnectContent({
   shopDomain,
+  handoff,
 }: {
   shopDomain: string;
+  /** Present on a Shopify-managed install; forwarded so the action can re-verify it. */
+  handoff: string | null;
 }) {
   const [tab, setTab] = useState<"signin" | "signup">("signin");
   const [signInState, signInAction, signInPending] = useActionState(
@@ -46,6 +49,7 @@ export default function ShopifyConnectContent({
 
         {tab === "signin" && (
           <form className={styles.form} action={signInAction}>
+            {handoff ? <input type="hidden" name="handoff" value={handoff} /> : null}
             <label>
               Email
               <input

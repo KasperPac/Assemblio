@@ -4,15 +4,15 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { verifyPendingInstall } from "@/lib/shopify/pending-install";
+import { resolveLinkSource, type LinkSource } from "./link-source";
 import { registerRequiredWebhooks } from "@/lib/shopify/client";
 
 export type ActionState = { error?: string };
 
-async function getPendingInstall() {
+async function getLinkSource(handoffParam: string | null): Promise<LinkSource> {
   const cookieStore = await cookies();
   const raw = cookieStore.get("shopify_pending_install")?.value ?? "";
-  return verifyPendingInstall(raw);
+  return resolveLinkSource(raw, handoffParam);
 }
 
 async function clearPendingCookie() {
@@ -29,7 +29,7 @@ async function clearPendingCookie() {
 async function upsertStoreAndToken(
   tenantId: string,
   shop: string,
-  accessToken: string,
+  accessToken: string | null,
   scopes: string,
   refreshToken: string | null = null,
   expiresInSeconds: number | null = null
@@ -57,6 +57,11 @@ async function upsertStoreAndToken(
     .select("id")
     .single();
   if (storeError || !store) return "Failed to save Shopify store.";
+
+  // A Shopify-managed install gives us no access token here. The store row is
+  // enough: the embedded surface runs token-exchange on its next load and
+  // stores the token then (see api/shopify/embedded/token-exchange).
+  if (!accessToken) return null;
 
   const expiresAt =
     expiresInSeconds && expiresInSeconds > 0
@@ -88,8 +93,8 @@ export async function signInAndLink(
   const password = formData.get("password")?.toString() ?? "";
   if (!email || !password) return { error: "Email and password are required." };
 
-  const pending = await getPendingInstall();
-  if (!pending) return { error: "Install session expired. Start again from Shopify." };
+  const source = await getLinkSource(formData.get("handoff")?.toString() ?? null);
+  if (!source) return { error: "Install session expired. Start again from Shopify." };
 
   const supabase = await createSupabaseServerClient();
   const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -112,18 +117,22 @@ export async function signInAndLink(
 
   const linkError = await upsertStoreAndToken(
     profile.tenant_id,
-    pending.shop,
-    pending.accessToken,
-    pending.scopes,
-    pending.refreshToken,
-    pending.expiresInSeconds
+    source.shop,
+    source.mode === "pending" ? source.accessToken : null,
+    source.mode === "pending" ? source.scopes : "",
+    source.mode === "pending" ? source.refreshToken : null,
+    source.mode === "pending" ? source.expiresInSeconds : null
   );
   if (linkError) return { error: linkError };
 
-  await registerRequiredWebhooks(pending.shop, pending.accessToken).catch(() => {});
+  // Webhooks need a token. On a managed install we have none yet, so
+  // token-exchange registers them when it captures one.
+  if (source.mode === "pending") {
+    await registerRequiredWebhooks(source.shop, source.accessToken).catch(() => {});
+  }
   await clearPendingCookie();
 
-  redirect(`https://${pending.shop}/admin`);
+  redirect(`https://${source.shop}/admin`);
 }
 
 export async function signUpAndLink(
@@ -140,8 +149,8 @@ export async function signUpAndLink(
   const domain = email.split("@")[1]?.toLowerCase();
   if (!domain) return { error: "Invalid email address." };
 
-  const pending = await getPendingInstall();
-  if (!pending) return { error: "Install session expired. Start again from Shopify." };
+  const source = await getLinkSource(formData.get("handoff")?.toString() ?? null);
+  if (!source) return { error: "Install session expired. Start again from Shopify." };
 
   const admin = createSupabaseAdminClient();
 
@@ -234,16 +243,20 @@ export async function signUpAndLink(
 
   const linkError = await upsertStoreAndToken(
     tenant.id,
-    pending.shop,
-    pending.accessToken,
-    pending.scopes,
-    pending.refreshToken,
-    pending.expiresInSeconds
+    source.shop,
+    source.mode === "pending" ? source.accessToken : null,
+    source.mode === "pending" ? source.scopes : "",
+    source.mode === "pending" ? source.refreshToken : null,
+    source.mode === "pending" ? source.expiresInSeconds : null
   );
   if (linkError) return { error: linkError };
 
-  await registerRequiredWebhooks(pending.shop, pending.accessToken).catch(() => {});
+  // Webhooks need a token. On a managed install we have none yet, so
+  // token-exchange registers them when it captures one.
+  if (source.mode === "pending") {
+    await registerRequiredWebhooks(source.shop, source.accessToken).catch(() => {});
+  }
   await clearPendingCookie();
 
-  redirect(`https://${pending.shop}/admin`);
+  redirect(`https://${source.shop}/admin`);
 }
