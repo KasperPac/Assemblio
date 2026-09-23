@@ -37,7 +37,11 @@ export default function ShopifyManage({ stores }: Props) {
 
       {open && (
         <div className={styles.manageContent}>
-          <ShopifyConnect />
+          {/* The manual domain field is the fallback, not the front door: a
+              merchant arriving from Shopify is linked through the embedded
+              surface's handoff instead. Hidden once a store is connected so it
+              is not the primary path (App Store requirement 2.3.1). */}
+          {stores.some((s) => s.status === "active") ? null : <ShopifyConnect />}
 
           {stores.length > 0 && (
             <div className={styles.storeList}>

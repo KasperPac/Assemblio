@@ -1,16 +1,25 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { verifyPendingInstall } from "@/lib/shopify/pending-install";
+import { resolveLinkSource } from "./link-source";
 import ShopifyConnectContent from "./shopify-connect-content";
 
-export default async function ShopifyConnectPage() {
+interface Props {
+  searchParams: Promise<{ handoff?: string }>;
+}
+
+export default async function ShopifyConnectPage({ searchParams }: Props) {
   const cookieStore = await cookies();
   const raw = cookieStore.get("shopify_pending_install")?.value ?? "";
-  const pending = verifyPendingInstall(raw);
+  const { handoff } = await searchParams;
 
-  if (!pending) {
+  // Two ways in: the OAuth callback's cookie, or a signed handoff minted by the
+  // embedded surface after a Shopify-managed install (which never reaches the
+  // callback, so never sets the cookie).
+  const source = resolveLinkSource(raw, handoff ?? null);
+
+  if (!source) {
     redirect("/app/settings/integrations?shopify=install-expired");
   }
 
-  return <ShopifyConnectContent shopDomain={pending.shop} />;
+  return <ShopifyConnectContent shopDomain={source.shop} handoff={source.mode === "handoff" ? (handoff ?? null) : null} />;
 }
