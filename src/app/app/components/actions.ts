@@ -5,6 +5,11 @@ import { getServerTenantContext } from "@/lib/tenant/context";
 import { validateGroupName } from "./helpers";
 import { searchComponentImage } from "@/lib/nexar/client";
 import { logActivity } from "@/lib/activity/log";
+import {
+  COMPONENT_IMAGE_BUCKET,
+  componentImagePath,
+  componentImageSrc,
+} from "@/lib/storage/component-image";
 
 type ComponentState = {
   error?: string;
@@ -371,7 +376,7 @@ export async function uploadComponentImage(
   formData: FormData
 ): Promise<{ imageUrl?: string; error?: string }> {
   const ctx = await getServerTenantContext();
-  if (!ctx) return { error: "Not authenticated" };
+  if (!ctx?.tenantId) return { error: "Not authenticated" };
 
   const file = formData.get("image") as File | null;
   if (!file || file.size === 0) return { error: "No file selected" };
@@ -390,18 +395,16 @@ export async function uploadComponentImage(
   if (fetchErr || !comp) return { error: "Component not found" };
 
   // Fixed path without extension — re-uploads always overwrite cleanly
-  const storagePath = `${ctx.tenantId}/${componentId}`;
+  const storagePath = componentImagePath(ctx.tenantId, componentId);
   const bytes = await file.arrayBuffer();
 
   const { error: uploadErr } = await ctx.supabase.storage
-    .from("component-images")
+    .from(COMPONENT_IMAGE_BUCKET)
     .upload(storagePath, bytes, { contentType: file.type, upsert: true });
   if (uploadErr) return { error: uploadErr.message };
 
-  const {
-    data: { publicUrl },
-  } = ctx.supabase.storage.from("component-images").getPublicUrl(storagePath);
-  const versioned = `${publicUrl}?v=${Date.now()}`;
+  // The bucket is private: store the signing route, not a public URL.
+  const versioned = componentImageSrc(componentId);
 
   const { error: dbErr } = await ctx.supabase
     .from("component")
@@ -422,7 +425,7 @@ export async function fetchComponentImageFromNexar(componentId: string): Promise
   | { found: false; reason: "no_part_number" | "no_results" | "api_error" }
 > {
   const ctx = await getServerTenantContext();
-  if (!ctx) return { found: false, reason: "api_error" };
+  if (!ctx?.tenantId) return { found: false, reason: "api_error" };
 
   // Verify the component belongs to the caller's tenant
   const { data: comp, error: compErr } = await ctx.supabase
@@ -477,19 +480,17 @@ export async function fetchComponentImageFromNexar(componentId: string): Promise
     return { found: false, reason: "api_error" };
   }
 
-  const storagePath = `${ctx.tenantId}/${componentId}`;
+  const storagePath = componentImagePath(ctx.tenantId, componentId);
   const { error: uploadErr } = await ctx.supabase.storage
-    .from("component-images")
+    .from(COMPONENT_IMAGE_BUCKET)
     .upload(storagePath, imageBytes, { contentType, upsert: true });
   if (uploadErr) {
     console.error("component-images upload failed:", uploadErr.message);
     return { found: false, reason: "api_error" };
   }
 
-  const {
-    data: { publicUrl },
-  } = ctx.supabase.storage.from("component-images").getPublicUrl(storagePath);
-  const versioned = `${publicUrl}?v=${Date.now()}`;
+  // The bucket is private: store the signing route, not a public URL.
+  const versioned = componentImageSrc(componentId);
 
   const { error: dbErr } = await ctx.supabase
     .from("component")
@@ -512,11 +513,11 @@ export async function removeComponentImage(
   componentId: string
 ): Promise<{ error?: string }> {
   const ctx = await getServerTenantContext();
-  if (!ctx) return { error: "Not authenticated" };
+  if (!ctx?.tenantId) return { error: "Not authenticated" };
 
-  const storagePath = `${ctx.tenantId}/${componentId}`;
+  const storagePath = componentImagePath(ctx.tenantId, componentId);
   // Ignore storage delete errors — file may not exist
-  await ctx.supabase.storage.from("component-images").remove([storagePath]);
+  await ctx.supabase.storage.from(COMPONENT_IMAGE_BUCKET).remove([storagePath]);
 
   const { error: dbErr } = await ctx.supabase
     .from("component")
