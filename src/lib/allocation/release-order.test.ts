@@ -25,20 +25,27 @@ function makeQuery(
 
 function buildChain(
   rows: TableData | null,
-  rpcMock: ReturnType<typeof vi.fn>
+  rpcMock: ReturnType<typeof vi.fn>,
+  deleteQueue?: TableData[]
 ) {
-  // A chainable proxy that resolves to { data, error } when awaited.
-  const result = { data: rows ?? [], error: null };
-
   const chain: Record<string, unknown> = {};
 
   const returnSelf = () => chain;
+
+  // Tracks whether this chain is a DELETE, so the awaited result can model
+  // `.delete().select()` — which returns the rows the DELETE actually removed.
+  // That distinction is the whole point of the concurrency tests below: a
+  // release that deletes nothing must write no movement.
+  let isDelete = false;
 
   chain.select = returnSelf;
   chain.insert = returnSelf;
   chain.upsert = returnSelf;
   chain.update = returnSelf;
-  chain.delete = returnSelf;
+  chain.delete = () => {
+    isDelete = true;
+    return chain;
+  };
   chain.eq = returnSelf;
   chain.in = returnSelf;
 
@@ -53,7 +60,13 @@ function buildChain(
   chain.then = (
     onfulfilled?: ((v: unknown) => unknown) | null,
     onrejected?: ((r: unknown) => unknown) | null
-  ) => Promise.resolve(result).then(onfulfilled, onrejected);
+  ) => {
+    const result =
+      isDelete && deleteQueue
+        ? { data: deleteQueue.shift() ?? [], error: null }
+        : { data: rows ?? [], error: null };
+    return Promise.resolve(result).then(onfulfilled, onrejected);
+  };
 
   return chain;
 }
@@ -66,10 +79,17 @@ function buildChain(
  */
 function makeFakeClient(
   tableData: Record<string, TableData | null>,
-  rpcMock: ReturnType<typeof vi.fn>
+  rpcMock: ReturnType<typeof vi.fn>,
+  /**
+   * Successive results for `.delete().select()` per table. Lets a test model
+   * two concurrent releases: the first DELETE returns the rows, the second
+   * returns none because the first already removed them.
+   */
+  deleteData?: Record<string, TableData[]>
 ) {
   return {
-    from: (table: string) => buildChain(tableData[table] ?? null, rpcMock),
+    from: (table: string) =>
+      buildChain(tableData[table] ?? null, rpcMock, deleteData?.[table]),
     rpc: rpcMock,
   };
 }
@@ -194,5 +214,84 @@ describe("reconcileOrderAllocations", () => {
       clearedOnly: false,
     });
     expect(rpcMock).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Concurrency — MANUVA-20
+// ---------------------------------------------------------------------------
+// clearLineAllocations used to read the allocation rows, delete them, then
+// write a compensating reserved movement unconditionally. Two concurrent
+// releases for the same order both completed the read before either deleted,
+// so both wrote a full -totalQty movement. Production shows exactly that:
+// order 1fab7489 has four identical -1 release rows 613ms apart, and order
+// d1e08db8 two identical rows 19ms apart, leaving 19 inventory_balance rows
+// whose ledger sums negative while the balance correctly sits at 0.
+//
+// The movement must therefore be derived from what the DELETE actually
+// removed, not from what the earlier read saw.
+describe("releaseOrderAllocations — concurrent release", () => {
+  const fixtures = {
+    location: [{ id: "loc-1" }],
+    order_line: [{ id: "line-1", variant_id: "var-1", quantity: 1 }],
+    order_component_allocation: [{ id: "alloc-1", component_id: "c1", quantity: 5 }],
+  };
+
+  it("writes a movement for the quantity the DELETE actually removed", async () => {
+    const rpcMock = vi.fn().mockResolvedValue({ data: null, error: null });
+    const client = makeFakeClient(fixtures, rpcMock, {
+      order_component_allocation: [[{ id: "alloc-1", component_id: "c1", quantity: 5 }]],
+    });
+
+    await releaseOrderAllocations(
+      client as Parameters<typeof releaseOrderAllocations>[0],
+      "tenant-1",
+      "order-1"
+    );
+
+    expect(rpcMock).toHaveBeenCalledTimes(1);
+    const args = rpcMock.mock.calls[0][1] as Record<string, number>;
+    expect(args.p_delta_reserved).toBe(-5);
+  });
+
+  it("writes NO movement when the DELETE removed nothing (lost the race)", async () => {
+    const rpcMock = vi.fn().mockResolvedValue({ data: null, error: null });
+    // The read still sees the allocation, but a concurrent release already
+    // deleted it, so this DELETE returns no rows.
+    const client = makeFakeClient(fixtures, rpcMock, {
+      order_component_allocation: [[]],
+    });
+
+    await releaseOrderAllocations(
+      client as Parameters<typeof releaseOrderAllocations>[0],
+      "tenant-1",
+      "order-1"
+    );
+
+    expect(rpcMock).not.toHaveBeenCalled();
+  });
+
+  it("releases once across two sequential calls, not twice", async () => {
+    const rpcMock = vi.fn().mockResolvedValue({ data: null, error: null });
+    const client = makeFakeClient(fixtures, rpcMock, {
+      // first call deletes the row, second finds nothing left
+      order_component_allocation: [
+        [{ id: "alloc-1", component_id: "c1", quantity: 5 }],
+        [],
+      ],
+    });
+
+    await releaseOrderAllocations(
+      client as Parameters<typeof releaseOrderAllocations>[0],
+      "tenant-1",
+      "order-1"
+    );
+    await releaseOrderAllocations(
+      client as Parameters<typeof releaseOrderAllocations>[0],
+      "tenant-1",
+      "order-1"
+    );
+
+    expect(rpcMock).toHaveBeenCalledTimes(1);
   });
 });
