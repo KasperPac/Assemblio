@@ -119,13 +119,30 @@ async function clearLineAllocations(
   for (const [componentId, grouped] of groupAllocationRows(
     (existingAllocations ?? []) as AllocationRow[]
   ).entries()) {
-    const { error: deleteError } = await asQuery(
+    // The DELETE is the serialisation point. Two concurrent releases for the
+    // same order both complete the read above before either deletes, so the
+    // movement must be derived from the rows this DELETE actually removed —
+    // not from what the read saw. Postgres hands the rows to exactly one of
+    // them; the loser gets none and writes no movement.
+    //
+    // Writing -grouped.totalQty unconditionally is what produced MANUVA-20:
+    // order 1fab7489 carries four identical release rows 613ms apart and
+    // d1e08db8 two rows 19ms apart, leaving 19 inventory_balance rows whose
+    // ledger sums negative while the balance correctly sits at 0.
+    const { data: deletedRows, error: deleteError } = await asQuery(
       client.from("order_component_allocation")
     )
       .delete()
       .eq("tenant_id", tenantId)
-      .in("id", grouped.ids);
+      .in("id", grouped.ids)
+      .select("quantity");
     if (deleteError) throw deleteError;
+
+    const releasedQty = ((deletedRows ?? []) as { quantity: number | null }[]).reduce(
+      (sum, row) => sum + Number(row.quantity ?? 0),
+      0
+    );
+    if (releasedQty <= 0) continue;
 
     await updateReservedWithMovement(
       client,
@@ -133,7 +150,7 @@ async function clearLineAllocations(
       orderId,
       componentId,
       locationId,
-      -grouped.totalQty
+      -releasedQty
     );
     released += 1;
   }
