@@ -17,6 +17,7 @@ type SyncResult = {
   orders: number;
   orderLines: number;
   allocations: number;
+  allocationErrors: number;
   planRuns: number;
   planErrors: number;
 };
@@ -500,12 +501,17 @@ export async function syncShopifyStoreData(
   const liveOrderLocalIds = orderLocalIds.filter((id) => !historicalSet.has(id));
 
   let allocationRuns = 0;
+  let allocationErrors = 0;
   for (const localOrderId of liveOrderLocalIds) {
     try {
       await reconcileOrderAllocations(admin, tenantId, localOrderId);
       allocationRuns += 1;
-    } catch {
-      continue;
+    } catch (err) {
+      allocationErrors += 1;
+      console.error(
+        `[shopify-sync] reconcileOrderAllocations failed for ${localOrderId}:`,
+        err instanceof Error ? err.message : err
+      );
     }
   }
 
@@ -559,6 +565,7 @@ export async function syncShopifyStoreData(
         orders: orderRows.length,
         order_lines: orderLineRows.length,
         allocation_runs: allocationRuns,
+        allocation_errors: allocationErrors,
         plan_runs: planRuns,
         plan_errors: planErrors,
       },
@@ -571,6 +578,7 @@ export async function syncShopifyStoreData(
     orders: orderRows.length,
     orderLines: orderLineRows.length,
     allocations: allocationRuns,
+    allocationErrors,
     planRuns,
     planErrors,
   };
