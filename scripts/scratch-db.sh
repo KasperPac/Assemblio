@@ -13,6 +13,7 @@ PATCHES=(
   product_bom_unique_active.sql
   apply_reserved_movement_rpc.sql
   2026-09-02-tenant-isolation-hardening.sql
+  bom_component_position.sql
   2026-09-25-retail-stock-foundation.sql
 )
 

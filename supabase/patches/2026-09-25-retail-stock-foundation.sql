@@ -24,6 +24,15 @@ alter table public.product_variant add column if not exists barcode text;
 create index if not exists product_variant_tenant_barcode_idx
   on public.product_variant (tenant_id, barcode) where barcode is not null;
 
+-- product_bom_component.yield_pct: schema.sql lags production (see header).
+-- The patch that originally added this column (bom_builder_redesign_schema.sql)
+-- also alters a shopify_variant table that no longer exists post-rename
+-- (generalize_variant_schema.sql renamed it to product_variant), so it can't
+-- be replayed as-is against current schema.sql. Re-declare just the column here.
+alter table public.product_bom_component
+  add column if not exists yield_pct numeric not null default 1.0
+    check (yield_pct > 0 and yield_pct <= 1.0);
+
 -- One row per order line whose sale has been consumed. The unique key on
 -- order_line_id is the serialisation point: two concurrent consumers race
 -- on this INSERT, Postgres hands it to exactly one, and the loser writes
@@ -95,7 +104,9 @@ begin
   select p.kind into v_kind
   from public.product_variant v
   join public.product p on p.id = v.product_id
-  where v.id = v_line.variant_id;
+  where v.id = v_line.variant_id
+    and v.tenant_id = p_tenant_id
+    and p.tenant_id = p_tenant_id;
   if v_kind is distinct from 'retail' then
     raise exception 'sale consumption applies to retail items only';
   end if;
@@ -157,3 +168,124 @@ $$;
 
 revoke all on function public.apply_sale_consumption(uuid, uuid, uuid) from public, anon;
 grant execute on function public.apply_sale_consumption(uuid, uuid, uuid) to authenticated, service_role;
+
+-- Retail item scaffold, one transaction. A retail item is a normal variant
+-- whose product has kind = 'retail' and whose active BOM is a single
+-- component at qty 1; the component carries cost, supplier, reorder point
+-- and the stock. p_variant_id null → create product + variant. Non-null →
+-- attach to that variant (a Shopify-imported one, typically).
+create or replace function public.create_retail_item(
+  p_tenant_id uuid,
+  p_variant_id uuid,
+  p_name text,
+  p_sku text,
+  p_barcode text,
+  p_cost_per_unit numeric,
+  p_supplier_id uuid,
+  p_location_id uuid,
+  p_reorder_point numeric
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_name text := nullif(trim(p_name), '');
+  v_sku text := nullif(trim(p_sku), '');
+  v_barcode text := nullif(trim(p_barcode), '');
+  v_product_id uuid;
+  v_variant_id uuid;
+  v_component_id uuid;
+  v_location_id uuid;
+  v_bom_id uuid;
+  v_version integer;
+begin
+  perform public.assert_tenant_write_access(p_tenant_id);
+
+  if v_name is null then
+    raise exception 'name is required';
+  end if;
+
+  v_location_id := coalesce(
+    p_location_id,
+    (select l.id from public.location l where l.tenant_id = p_tenant_id and l.is_default limit 1)
+  );
+  if v_location_id is null then
+    raise exception 'no default location: set one in Settings → Locations first';
+  end if;
+  if not exists (select 1 from public.location l where l.id = v_location_id and l.tenant_id = p_tenant_id) then
+    raise exception 'forbidden: location does not belong to this tenant' using errcode = '42501';
+  end if;
+  if p_supplier_id is not null and not exists (
+    select 1 from public.suppliers s where s.id = p_supplier_id and s.tenant_id = p_tenant_id
+  ) then
+    raise exception 'forbidden: supplier does not belong to this tenant' using errcode = '42501';
+  end if;
+
+  if p_variant_id is null then
+    insert into public.product (tenant_id, title, source, kind)
+    values (p_tenant_id, v_name, 'manual', 'retail')
+    returning id into v_product_id;
+
+    insert into public.product_variant (tenant_id, product_id, title, sku, barcode, source)
+    values (p_tenant_id, v_product_id, 'Default', v_sku, v_barcode, 'manual')
+    returning id into v_variant_id;
+  else
+    select v.id, v.product_id into v_variant_id, v_product_id
+    from public.product_variant v
+    where v.id = p_variant_id and v.tenant_id = p_tenant_id
+    for update;
+    if v_variant_id is null then
+      raise exception 'forbidden: variant does not belong to this tenant' using errcode = '42501';
+    end if;
+    if exists (
+      select 1 from public.product_bom b
+      where b.tenant_id = p_tenant_id and b.variant_id = v_variant_id and b.is_active
+    ) then
+      raise exception 'this variant already has an active BOM';
+    end if;
+
+    update public.product set kind = 'retail' where id = v_product_id;
+    update public.product_variant
+      set barcode = coalesce(barcode, v_barcode)
+      where id = v_variant_id;
+  end if;
+
+  insert into public.component (tenant_id, name, sku, cost_per_unit, supplier_id, location_id, reorder_point)
+  values (p_tenant_id, v_name, v_sku, coalesce(p_cost_per_unit, 0), p_supplier_id, v_location_id, coalesce(p_reorder_point, 0))
+  returning id into v_component_id;
+
+  insert into public.inventory_balance (tenant_id, component_id, location_id)
+  values (p_tenant_id, v_component_id, v_location_id)
+  on conflict (tenant_id, component_id, location_id) do nothing;
+
+  select coalesce(max(b.version), 0) + 1 into v_version
+  from public.product_bom b
+  where b.tenant_id = p_tenant_id and b.variant_id = v_variant_id;
+
+  insert into public.product_bom (tenant_id, variant_id, version, status, is_active)
+  values (p_tenant_id, v_variant_id, v_version, 'active', true)
+  returning id into v_bom_id;
+
+  insert into public.product_bom_component (tenant_id, product_bom_id, component_id, quantity, yield_pct, position)
+  values (p_tenant_id, v_bom_id, v_component_id, 1, 1.0, 0);
+
+  -- Baseline: sales already fulfilled (or imported as historical) before
+  -- this variant became retail are reflected in the opening stock count.
+  -- Mark them consumed so a later sync never takes them off the shelf again.
+  insert into public.order_line_consumption (tenant_id, order_line_id, order_id, location_id, baseline)
+  select p_tenant_id, ol.id, ol.order_id, v_location_id, true
+  from public.order_line ol
+  join public.orders o on o.id = ol.order_id
+  where ol.tenant_id = p_tenant_id
+    and ol.variant_id = v_variant_id
+    and (lower(o.status) = 'fulfilled' or o.historical)
+  on conflict (order_line_id) do nothing;
+
+  return v_variant_id;
+end;
+$$;
+
+revoke all on function public.create_retail_item(uuid, uuid, text, text, text, numeric, uuid, uuid, numeric) from public, anon;
+grant execute on function public.create_retail_item(uuid, uuid, text, text, text, numeric, uuid, uuid, numeric) to authenticated, service_role;
