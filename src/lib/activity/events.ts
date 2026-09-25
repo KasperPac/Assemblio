@@ -45,6 +45,8 @@ export const ACTIVITY_EVENTS = {
   "bom.labor_template_applied": { entityType: "bom", summary: (m) => `Applied labor template ${s(m.templateName)}`.trim() },
   "product.notification_set": { entityType: "product", summary: () => `Set product notification trigger` },
   "product.notification_removed": { entityType: "product", summary: () => `Removed product notification trigger` },
+  "product.retail_created": { entityType: "product", summary: (m) => `Created retail item ${s(m.name)}`.trim() },
+  "product.retail_attached": { entityType: "product", summary: (m) => `Attached retail item ${s(m.name)}`.trim() },
 
   // --- Templates ---
   "template.created": { entityType: "bom_template", summary: (m) => `Created template ${s(m.name)}`.trim() },
