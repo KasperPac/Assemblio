@@ -76,6 +76,8 @@ export type ReconcileOrderResult = {
   applied: number;
   skippedMissingBom: number;
   clearedOnly: boolean;
+  // Order lines consumed as a retail sale — not component allocation
+  // changes, which `applied` counts.
   consumed: number;
 };
 
@@ -246,12 +248,19 @@ export async function reconcileOrderAllocations(
   for (const line of lines) {
     if (shouldClearOnly) {
       // A fulfilled retail line is a sale off the shelf: consume it (which
-      // also releases its reservation, in the same transaction). Everything
-      // else keeps today's behaviour — release only.
+      // releases its own reservation atomically in the same transaction).
+      // Then still run clearLineAllocations — the SQL only ever deletes the
+      // allocation rows it consumed, so a component that dropped out of the
+      // active BOM, or a line the SQL skipped (already claimed, no active
+      // BOM: it returns 0, not an error), can leave allocation rows behind.
+      // clearLineAllocations is safe to run unconditionally here: it only
+      // releases what its own DELETE actually removes, so it is a no-op once
+      // the SQL has already cleared everything.
       if (status === "fulfilled" && isRetailLine(line)) {
         if ((await consumeOrderLineSale(client, { tenantId, orderLineId: line.id, locationId })) > 0) {
           consumed += 1;
         }
+        applied += await clearLineAllocations(client, tenantId, orderId, locationId, line.id);
         continue;
       }
       applied += await clearLineAllocations(client, tenantId, orderId, locationId, line.id);

@@ -310,7 +310,11 @@ describe("reconcileOrderAllocations — retail consumption", () => {
         order_line: [retailLine],
         order_component_allocation: [{ id: "a1", component_id: "c1", quantity: 3 }],
       },
-      rpc
+      rpc,
+      // The consuming RPC already cleared the allocation row in its own
+      // transaction, so the follow-up clearLineAllocations DELETE finds
+      // nothing left to release.
+      { order_component_allocation: [[]] }
     );
     const result = await reconcileOrderAllocations(
       client as Parameters<typeof reconcileOrderAllocations>[0],
@@ -322,6 +326,33 @@ describe("reconcileOrderAllocations — retail consumption", () => {
     });
     expect(rpc).not.toHaveBeenCalledWith("apply_reserved_movement", expect.anything());
     expect(result.consumed).toBe(1);
+  });
+
+  it("fulfilled retail line, consume returns 0: orphaned allocation is still released", async () => {
+    // The SQL returns 0 without error when the line was already claimed or
+    // has no active BOM — it does not touch order_component_allocation in
+    // that case. The follow-up clearLineAllocations must release whatever
+    // allocation rows are still sitting there.
+    const rpc = vi.fn().mockResolvedValue({ data: 0, error: null });
+    const client = makeFakeClient(
+      {
+        orders: [{ id: "o1", status: "fulfilled", historical: false }],
+        location: [{ id: "loc" }],
+        order_line: [retailLine],
+        order_component_allocation: [{ id: "a1", component_id: "c1", quantity: 3 }],
+      },
+      rpc
+    );
+    const result = await reconcileOrderAllocations(
+      client as Parameters<typeof reconcileOrderAllocations>[0],
+      "t",
+      "o1"
+    );
+    expect(rpc).toHaveBeenCalledWith(
+      "apply_reserved_movement",
+      expect.objectContaining({ p_delta_reserved: -3 })
+    );
+    expect(result.consumed).toBe(0);
   });
 
   it("mixed order: retail line consumes, manufactured line only releases", async () => {
@@ -362,6 +393,10 @@ describe("reconcileOrderAllocations — retail consumption", () => {
       "o1"
     );
     expect(rpc).not.toHaveBeenCalledWith("apply_sale_consumption", expect.anything());
+    expect(rpc).toHaveBeenCalledWith(
+      "apply_reserved_movement",
+      expect.objectContaining({ p_delta_reserved: -3 })
+    );
   });
 
   it("consumption error propagates instead of reporting success", async () => {
