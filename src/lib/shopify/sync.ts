@@ -8,6 +8,7 @@ import { logSystemActivity } from "@/lib/activity/log";
 import { normalizeProductCategories } from "./product-categories";
 import { chunk } from "./chunk";
 import { assertNoError } from "@/lib/supabase/assert-no-error";
+import { normaliseBarcode } from "./variant-fields";
 
 export { assertNoError };
 
@@ -32,7 +33,7 @@ type ShopifyProductNode = {
   tags: string[] | null;
   category: { name: string | null; fullName: string | null } | null;
   collections: { nodes: Array<{ id: string; title: string; handle: string | null }> } | null;
-  variants: { nodes: Array<{ id: string; title: string | null; sku: string | null; price: string | null }> };
+  variants: { nodes: Array<{ id: string; title: string | null; sku: string | null; barcode: string | null; price: string | null }> };
 };
 
 type ShopifyOrderNode = {
@@ -132,7 +133,7 @@ async function fetchProducts(shopDomain: string, accessToken: string) {
           category { name fullName }
           collections(first: 50) { nodes { id title handle } }
           variants(first: 100) {
-            nodes { id title sku price }
+            nodes { id title sku barcode price }
           }
         }
       }
@@ -367,6 +368,7 @@ export async function syncShopifyStoreData(
         shopify_id: variant.id,
         title: variant.title ?? "",
         sku: variant.sku,
+        barcode: normaliseBarcode(variant.barcode),
         price: variant.price ? parseFloat(variant.price) : null,
         source: "shopify" as const,
       }))
