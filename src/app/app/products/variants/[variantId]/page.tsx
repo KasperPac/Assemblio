@@ -342,15 +342,15 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
   const activeBom = typedBoms.find((bom) => bom.is_active) ?? null;
   const draftBom = typedBoms.find((bom) => !bom.is_active && bom.status === "draft") ?? null;
 
-  const canOfferRetailAttach = productKind !== "retail" && !activeBom && canManageBom;
-  const [{ data: retailSuppliersData }, { data: retailLocationsData }] = canOfferRetailAttach
-    ? await Promise.all([
-        supabase.from("suppliers").select("id,name").eq("tenant_id", tenantId).order("name"),
-        supabase.from("location").select("id,name").eq("tenant_id", tenantId).order("name"),
-      ])
-    : [{ data: [] }, { data: [] }];
+  // Ruling 14: the offer to track as retail is keyed on whether the variant
+  // itself has an active BOM, not on product.kind — an already-retail
+  // product can carry an untracked sibling variant (e.g. freshly
+  // Shopify-imported) that still needs its own component and BOM.
+  const canOfferRetailAttach = !activeBom && canManageBom;
+  const { data: retailSuppliersData } = canOfferRetailAttach
+    ? await supabase.from("suppliers").select("id,name").eq("tenant_id", tenantId).order("name")
+    : { data: [] };
   const retailSuppliers = (retailSuppliersData ?? []) as { id: string; name: string }[];
-  const retailLocations = (retailLocationsData ?? []) as { id: string; name: string }[];
   // Show active BOM by default; show draft when one exists (user is mid-edit)
   const editorBom = draftBom ?? activeBom;
 
@@ -577,18 +577,22 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
       <section className={styles.card}>
         <h3>{variantTitle}</h3>
         <p className={styles.meta}>{typedVariant.sku ? `SKU ${typedVariant.sku}` : "No SKU"}</p>
-        {productKind === "retail" ? (
+        {productKind === "retail" && activeBom ? (
           <StatusBadge variant="info">Retail item</StatusBadge>
-        ) : canOfferRetailAttach ? (
-          <RetailItemDialog
-            mode="attach"
-            variantId={variantId}
-            defaultName={`${typedProduct?.title ?? ""} ${variantTitle}`.trim()}
-            defaultSku={typedVariant.sku}
-            suppliers={retailSuppliers}
-            locations={retailLocations}
-          />
-        ) : null}
+        ) : (
+          <>
+            {productKind === "retail" ? <StatusBadge>Not tracked</StatusBadge> : null}
+            {canOfferRetailAttach ? (
+              <RetailItemDialog
+                mode="attach"
+                variantId={variantId}
+                defaultName={`${typedProduct?.title ?? ""} ${variantTitle}`.trim()}
+                defaultSku={typedVariant.sku}
+                suppliers={retailSuppliers}
+              />
+            ) : null}
+          </>
+        )}
       </section>
 
       <VariantTabs

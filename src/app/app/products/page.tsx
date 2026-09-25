@@ -112,14 +112,10 @@ export default async function ProductsPage({ searchParams }: Props) {
     return <div className={styles.page}>No tenant access.</div>;
   }
 
-  const [{ data: suppliersData }, { data: locationsData }] = canCreateRetailItem
-    ? await Promise.all([
-        supabase.from("suppliers").select("id,name").eq("tenant_id", tenantId).order("name"),
-        supabase.from("location").select("id,name").eq("tenant_id", tenantId).order("name"),
-      ])
-    : [{ data: [] }, { data: [] }];
+  const { data: suppliersData } = canCreateRetailItem
+    ? await supabase.from("suppliers").select("id,name").eq("tenant_id", tenantId).order("name")
+    : { data: [] };
   const retailSuppliers = (suppliersData ?? []) as { id: string; name: string }[];
-  const retailLocations = (locationsData ?? []) as { id: string; name: string }[];
 
   // Page through every variant: PostgREST caps an un-paginated response at 1000
   // rows, so tenants with >1000 variants would otherwise have products silently
@@ -470,7 +466,7 @@ export default async function ProductsPage({ searchParams }: Props) {
         actions={
           <>
             {canCreateRetailItem ? (
-              <RetailItemDialog mode="create" suppliers={retailSuppliers} locations={retailLocations} />
+              <RetailItemDialog mode="create" suppliers={retailSuppliers} />
             ) : null}
             <form method="post" action="/api/shopify/sync?return_to=/app/products">
               <button type="submit" className={styles.importButton}>

@@ -297,3 +297,55 @@ exception when others then
 end $$;
 select pg_temp.check((select count(*) = 0 from public.order_line_consumption
   where order_line_id = 'aaaaaaaa-0000-0000-0000-00000000ad07'), 'S8 no consumption row for cross-tenant variant');
+
+-- S9 (Ruling 16): a historical order line is refused before any write —
+-- historical rows are backfilled records of sales that predate Manuva
+-- tracking stock for the item, so there is no shelf to take them off.
+insert into public.orders (id, tenant_id, status, historical) values
+  ('aaaaaaaa-0000-0000-0000-0000000000a7','11111111-1111-1111-1111-111111111111','fulfilled',true);
+insert into public.order_line (id, tenant_id, order_id, variant_id, quantity) values
+  ('aaaaaaaa-0000-0000-0000-00000000ad08','11111111-1111-1111-1111-111111111111','aaaaaaaa-0000-0000-0000-0000000000a7','aaaaaaaa-0000-0000-0000-0000000000f1',1);
+do $$ begin
+  perform public.apply_sale_consumption('11111111-1111-1111-1111-111111111111',
+    'aaaaaaaa-0000-0000-0000-00000000ad08','aaaaaaaa-0000-0000-0000-0000000000d1');
+  raise exception 'FAIL: S9 historical order line consumed';
+exception when others then
+  if sqlerrm like 'FAIL:%' then raise; end if;
+  if sqlerrm not like '%historical orders%' then raise exception 'FAIL: S9 wrong error: %', sqlerrm; end if;
+  raise notice 'PASS: S9 %', sqlerrm;
+end $$;
+select pg_temp.check((select count(*) = 0 from public.order_line_consumption
+  where order_line_id = 'aaaaaaaa-0000-0000-0000-00000000ad08'), 'S9 no consumption row for historical order line');
+
+-- R11 (Ruling 14): attaching a second variant to an ALREADY-retail product
+-- succeeds — this is the untracked-sibling case the variant-page badge and
+-- "Track as retail item" button depend on. f5/ad06 are the S7 fixtures: a
+-- 500ml sibling of the retail 'Shampoo' product with no active BOM of its
+-- own, and a fulfilled order line against it that S7 confirmed is not
+-- consumed while untracked.
+select public.create_retail_item('11111111-1111-1111-1111-111111111111',
+  'aaaaaaaa-0000-0000-0000-0000000000f5', 'Shampoo 500ml', 'SHA-500', null, 15, null, null, 3) as r11_variant \gset
+select pg_temp.check((select count(*) = 1 from public.product_bom b
+  where b.tenant_id = '11111111-1111-1111-1111-111111111111' and b.variant_id = :'r11_variant' and b.is_active),
+  'R11 sibling variant of already-retail product gets its own active BOM');
+select pg_temp.check((select p.kind = 'retail' from public.product p
+  join public.product_variant v on v.product_id = p.id
+  where v.id = :'r11_variant'), 'R11 product remains retail');
+select pg_temp.check((select baseline from public.order_line_consumption
+  where order_line_id = 'aaaaaaaa-0000-0000-0000-00000000ad06'), 'R11 pre-existing fulfilled line for f5 baselined');
+
+-- R12 (Ruling 18a): create_retail_item baselines a line from a
+-- historical = true order, not only a fulfilled one — an imported order can
+-- carry a status other than 'fulfilled' and still predate stock tracking.
+insert into public.product (id, tenant_id, title) values
+  ('aaaaaaaa-0000-0000-0000-0000000000e5','11111111-1111-1111-1111-111111111111','Conditioner XL');
+insert into public.product_variant (id, tenant_id, product_id, title, sku) values
+  ('aaaaaaaa-0000-0000-0000-0000000000f6','11111111-1111-1111-1111-111111111111','aaaaaaaa-0000-0000-0000-0000000000e5','1L','CO-1000');
+insert into public.orders (id, tenant_id, status, historical) values
+  ('aaaaaaaa-0000-0000-0000-0000000000a8','11111111-1111-1111-1111-111111111111','open',true);
+insert into public.order_line (id, tenant_id, order_id, variant_id, quantity) values
+  ('aaaaaaaa-0000-0000-0000-00000000ad10','11111111-1111-1111-1111-111111111111','aaaaaaaa-0000-0000-0000-0000000000a8','aaaaaaaa-0000-0000-0000-0000000000f6',2);
+select public.create_retail_item('11111111-1111-1111-1111-111111111111',
+  'aaaaaaaa-0000-0000-0000-0000000000f6', 'Conditioner XL 1L', null, null, 11, null, null, 1);
+select pg_temp.check((select baseline from public.order_line_consumption
+  where order_line_id = 'aaaaaaaa-0000-0000-0000-00000000ad10'), 'R12 historical (non-fulfilled) line baselined');

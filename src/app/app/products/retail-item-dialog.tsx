@@ -12,12 +12,11 @@ type Props = {
   defaultName?: string;
   defaultSku?: string | null;
   suppliers: Option[];
-  locations: Option[];
 };
 
 const initialState: RetailItemState = {};
 
-export default function RetailItemDialog({ mode, variantId, defaultName, defaultSku, suppliers, locations }: Props) {
+export default function RetailItemDialog({ mode, variantId, defaultName, defaultSku, suppliers }: Props) {
   const [state, formAction, pending] = React.useActionState(createRetailItem, initialState);
   const [open, setOpen] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -76,13 +75,6 @@ export default function RetailItemDialog({ mode, variantId, defaultName, default
             <select name="supplier_id" className={styles.input} defaultValue="">
               <option value="">—</option>
               {suppliers.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-            </select>
-          </label>
-          <label className={styles.field}>
-            <span className={styles.label}>Stock location</span>
-            <select name="location_id" className={styles.input} defaultValue="">
-              <option value="">Default location</option>
-              {locations.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
             </select>
           </label>
           {state.error ? <p className={styles.error} role="alert">{state.error}</p> : null}

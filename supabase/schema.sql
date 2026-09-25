@@ -866,13 +866,22 @@ begin
 
   perform public.assert_tenant_write_access(p_tenant_id);
 
-  select ol.id, ol.order_id, ol.variant_id, ol.quantity
+  select ol.id, ol.order_id, ol.variant_id, ol.quantity, o.historical
   into v_line
   from public.order_line ol
+  join public.orders o on o.id = ol.order_id
   where ol.id = p_order_line_id and ol.tenant_id = p_tenant_id;
   if v_line.id is null then
     raise exception 'forbidden: order line does not belong to this tenant'
       using errcode = '42501';
+  end if;
+
+  -- Ruling 16: a historical order is a backfilled record of a sale that
+  -- already happened before Manuva tracked stock for this item — there is
+  -- no shelf to take it off. Refused before any write, same as the other
+  -- validation above.
+  if v_line.historical then
+    raise exception 'sale consumption does not apply to historical orders';
   end if;
 
   if not exists (
