@@ -90,6 +90,13 @@ Tabs: Overview, BOM, Routing, Versions, Notifications.
 - [ ] **Notifications tab:** upsert trigger (routing_sequence, message_template, channel=email); remove trigger
 - [ ] **Versions tab:** lists active + archived with line count, material cost, status badge
 
+### Retail items — `/app/products` (New retail item), variant detail (Track as retail item) **(admin)**
+- [ ] New retail item creates product + variant + component + active 1-line BOM; lands on the variant page with a "Retail item" badge
+- [ ] Track as retail item on a variant with no active BOM attaches a component + BOM; offered only when there is no active BOM
+- [ ] Name required; negative cost / reorder point rejected with a message
+- [ ] No default location → clear error pointing at Settings → Locations
+- [ ] Converting a variant with already-fulfilled orders does not consume stock for those orders on the next sync (baseline)
+
 ---
 
 ## 3. BOMs, Templates & Costing
@@ -247,6 +254,10 @@ Tabs: Overview, Stock, BOM Usage, Receipts, Suppliers, Location.
 - [ ] Reserved adjusted atomically via `apply_reserved_movement` (+ movement log); never negative (floored at 0)
 - [ ] Missing default location → graceful 0-count exit; 0-line order → 0 counts
 - [ ] `releaseOrderAllocations` reverses all allocations on cancel/fulfil
+- [ ] Fulfilled **retail** line → `apply_sale_consumption`: on_hand down by qty, reservation released, one `sale` movement; re-running is a no-op
+- [ ] Fulfilled manufactured line → unchanged (release only); mixed orders handle each line by its product kind
+- [ ] Consumption failure → surfaced as `allocation_errors` in the sync result, not swallowed
+- [ ] Shopify sync stores variant barcode; blank barcode stored as null
 
 ### Derived states (pipeline)
 - [ ] Components state: empty / bom-needed / in-stock / partial (n of m + earliest ETA) / awaiting (ETA) / no-eta
@@ -682,6 +693,7 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-07-01 — added product categories & filters: sync Shopify product_type/tags/category/collections, filter and group the products page by them.
 - 2026-09-02 — amended Security & integrity: tenant guards on the SECURITY DEFINER inventory RPCs (H1/H2), tenant-scoped `inventory_balance` uniqueness, component-images bucket listing locked down, dev-dashboard count RPCs gated to platform operators.
 - 2026-09-03 — amended Security & integrity: hardening migration applied to prod (Assemblio `svhaotzrtfbwmphaacjj`); guard made NULL-safe so a tenant-less caller is refused, and `EXECUTE` revoked from `anon`/PUBLIC on every function the patch touches.
+- 2026-09-25 — added Retail items + sale consumption (MANUVA-27 plan 1): retail products carry shelf stock through a one-line BOM, and a fulfilled sale of one decrements on_hand exactly once via apply_sale_consumption. Manufactured products are unchanged. Shopify sync now stores variant barcodes and reports allocation errors instead of swallowing them.
 - 2026-09-02 — amended RBAC: billing checkout/portal, BOM archive/delete, template deletes, warehouse bin/aisle/bay deletes, trash restore/empty and order-SLA config are now admin-only server-side; middleware verifies the JWT via getUser().
 - 2026-09-02 — amended Shopify sync: chatty webhook topics (`orders/updated`, `products/update`) no longer write an activity row and are debounced to one full store sync per 60s; lifecycle topics unchanged.
 - 2026-09-03 — amended Capacity/Staffing/Actual time/Costing/Xero: first automated cover for the four subsystems that shipped untested; pure logic extracted to `src/lib/{capacity,staffing,actual-time,costing}` and `push-bill` covered with mocks. DB-side generation RPCs remain manual-pass only.
