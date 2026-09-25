@@ -143,6 +143,21 @@ create table public.component_group (
   created_at timestamptz not null default now()
 );
 
+create table public.location (
+  id uuid primary key default gen_random_uuid(),
+  tenant_id uuid not null references public.tenant(id),
+  name text not null,
+  is_default boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+create table public.suppliers (
+  id uuid primary key default gen_random_uuid(),
+  tenant_id uuid not null references public.tenant(id),
+  name text not null,
+  created_at timestamptz not null default now()
+);
+
 create table public.component (
   id uuid primary key default gen_random_uuid(),
   tenant_id uuid not null references public.tenant(id),
@@ -155,14 +170,6 @@ create table public.component (
   cost_per_unit numeric not null default 0,
   reorder_point numeric not null default 0,
   low_stock_level numeric not null default 0,
-  created_at timestamptz not null default now()
-);
-
-create table public.location (
-  id uuid primary key default gen_random_uuid(),
-  tenant_id uuid not null references public.tenant(id),
-  name text not null,
-  is_default boolean not null default false,
   created_at timestamptz not null default now()
 );
 
@@ -535,13 +542,6 @@ create table public.stocktake_line (
   component_id uuid not null references public.component(id),
   expected_on_hand numeric not null default 0,
   counted numeric not null,
-  created_at timestamptz not null default now()
-);
-
-create table public.suppliers (
-  id uuid primary key default gen_random_uuid(),
-  tenant_id uuid not null references public.tenant(id),
-  name text not null,
   created_at timestamptz not null default now()
 );
 
