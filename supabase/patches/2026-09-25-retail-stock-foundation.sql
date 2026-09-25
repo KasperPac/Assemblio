@@ -24,15 +24,6 @@ alter table public.product_variant add column if not exists barcode text;
 create index if not exists product_variant_tenant_barcode_idx
   on public.product_variant (tenant_id, barcode) where barcode is not null;
 
--- product_bom_component.yield_pct: schema.sql lags production (see header).
--- The patch that originally added this column (bom_builder_redesign_schema.sql)
--- also alters a shopify_variant table that no longer exists post-rename
--- (generalize_variant_schema.sql renamed it to product_variant), so it can't
--- be replayed as-is against current schema.sql. Re-declare just the column here.
-alter table public.product_bom_component
-  add column if not exists yield_pct numeric not null default 1.0
-    check (yield_pct > 0 and yield_pct <= 1.0);
-
 -- One row per order line whose sale has been consumed. The unique key on
 -- order_line_id is the serialisation point: two concurrent consumers race
 -- on this INSERT, Postgres hands it to exactly one, and the loser writes
@@ -101,6 +92,20 @@ begin
       using errcode = '42501';
   end if;
 
+  -- Guard a corrupt/cross-tenant order_line.variant_id: the FK on
+  -- order_line.variant_id only checks that the variant exists, not that it
+  -- belongs to the same tenant as the order line. Without this, the
+  -- tenant-scoped kind join below would just find no row and fall through
+  -- to the generic "retail items only" refusal, which reads like an
+  -- ordinary manufactured-item refusal rather than the tenant breach it is.
+  if not exists (
+    select 1 from public.product_variant v
+    where v.id = v_line.variant_id and v.tenant_id = p_tenant_id
+  ) then
+    raise exception 'forbidden: variant does not belong to this tenant'
+      using errcode = '42501';
+  end if;
+
   select p.kind into v_kind
   from public.product_variant v
   join public.product p on p.id = v.product_id
@@ -111,18 +116,26 @@ begin
     raise exception 'sale consumption applies to retail items only';
   end if;
 
+  -- Looked up BEFORE the claim insert (Ruling 7b): a retail product can
+  -- carry an untracked sibling variant with no active BOM of its own (e.g.
+  -- freshly Shopify-imported, not yet run through create_retail_item).
+  -- Selling it is a no-op, not an error, and must never claim the order
+  -- line — a later create_retail_item call still needs to see it
+  -- unbaselined so it can decide whether to baseline it itself.
+  select b.id into v_bom_id
+  from public.product_bom b
+  where b.tenant_id = p_tenant_id and b.variant_id = v_line.variant_id and b.is_active;
+  if v_bom_id is null then
+    return 0;
+  end if;
+
+  -- The claim insert stays the serialisation point for everything after it:
+  -- two concurrent consumers race on this INSERT and the loser returns here.
   insert into public.order_line_consumption (tenant_id, order_line_id, order_id, location_id)
   values (p_tenant_id, v_line.id, v_line.order_id, p_location_id)
   on conflict (order_line_id) do nothing;
   if not found then
     return 0;
-  end if;
-
-  select b.id into v_bom_id
-  from public.product_bom b
-  where b.tenant_id = p_tenant_id and b.variant_id = v_line.variant_id and b.is_active;
-  if v_bom_id is null then
-    raise exception 'retail item has no active BOM';
   end if;
 
   for v_comp in
@@ -195,6 +208,7 @@ declare
   v_sku text := nullif(trim(p_sku), '');
   v_barcode text := nullif(trim(p_barcode), '');
   v_product_id uuid;
+  v_product_kind text;
   v_variant_id uuid;
   v_component_id uuid;
   v_location_id uuid;
@@ -246,7 +260,23 @@ begin
       raise exception 'this variant already has an active BOM';
     end if;
 
-    update public.product set kind = 'retail' where id = v_product_id;
+    -- Ruling 7a: kind lives on the product, not the variant. Flipping it
+    -- to retail here would apply to every variant of the product — if a
+    -- manufactured sibling still has its own active (multi-line) BOM, its
+    -- sale would start silently consuming those components too.
+    select p.kind into v_product_kind from public.product p where p.id = v_product_id;
+    if v_product_kind = 'manufactured' and exists (
+      select 1 from public.product_bom b
+      join public.product_variant v2 on v2.id = b.variant_id
+      where v2.tenant_id = p_tenant_id
+        and v2.product_id = v_product_id
+        and v2.id <> v_variant_id
+        and b.is_active
+    ) then
+      raise exception 'this product has manufactured variants with active BOMs; retail tracking applies to the whole product';
+    end if;
+
+    update public.product set kind = 'retail' where id = v_product_id and tenant_id = p_tenant_id;
     update public.product_variant
       set barcode = coalesce(barcode, v_barcode)
       where id = v_variant_id;

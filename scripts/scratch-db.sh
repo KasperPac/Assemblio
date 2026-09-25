@@ -26,6 +26,7 @@ case "${1:-}" in
     until docker exec "$NAME" pg_isready -U postgres >/dev/null 2>&1; do sleep 1; done
     run_sql "$ROOT/supabase/__tests__/scratch-prelude.sql"
     run_sql "$ROOT/supabase/schema.sql"
+    run_sql "$ROOT/supabase/__tests__/scratch-prereq-yield-pct.sql"
     for p in "${PATCHES[@]}"; do run_sql "$ROOT/supabase/patches/$p"; done
     echo "scratch db up on :$PORT"
     ;;
