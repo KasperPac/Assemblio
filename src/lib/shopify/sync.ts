@@ -7,6 +7,9 @@ import { mapProductStatus } from "./product-status";
 import { logSystemActivity } from "@/lib/activity/log";
 import { normalizeProductCategories } from "./product-categories";
 import { chunk } from "./chunk";
+import { assertNoError } from "@/lib/supabase/assert-no-error";
+
+export { assertNoError };
 
 type SyncResult = {
   products: number;
@@ -66,22 +69,6 @@ type OrdersQueryResult = {
     nodes: ShopifyOrderNode[];
   };
 };
-
-/**
- * supabase-js resolves with { data, error } rather than rejecting, so an
- * unchecked call looks like a success. Every write in this file funnels through
- * here; MANUVA-16 was a call that did not, and reported plan_errors: 0 for
- * months while writing nothing.
- */
-export function assertNoError(
-  error: { message?: string } | null,
-  context: string
-) {
-  if (!error) return;
-  // `||` not `??`: an error object with an empty message is still a failure,
-  // and "context: " alone tells a reader nothing.
-  throw new Error(`${context}: ${error.message || "Unknown Supabase error"}`);
-}
 
 // Upserts products and returns a shopify_id -> local id map built from the rows
 // the upsert returns, avoiding a follow-up .in() select (which would 414 on
