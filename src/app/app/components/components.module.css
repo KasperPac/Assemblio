@@ -142,60 +142,32 @@
   font-size: 0.9rem;
 }
 
-/* ── Toolbar with tabs + search ─── */
+/* ── Filter rail + results (design-system §2 "Filter rail" exception) ─── */
 
-.toolbar {
+.headerActions {
   display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
   gap: 12px;
-  align-items: center;
+  min-width: 0;
 }
 
-.tabs {
-  display: flex;
-  gap: 4px;
-  flex-shrink: 0;
-}
-
-.tab,
-.tabActive {
-  padding: 7px 14px;
-  border-radius: var(--radius-md);
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.tab {
-  color: var(--ink-muted);
-  background: transparent;
-}
-
-.tab:hover {
-  background: var(--surface-1);
-  color: var(--ink-strong);
-}
-
-.tabActive {
-  background: var(--brand-dim);
-  color: var(--brand-1);
-}
-
-.tabCount {
-  color: var(--ink-faint);
-  font-weight: 400;
-  font-size: 12px;
-}
-
-.tabBadge {
-  background: rgba(239, 68, 68, 0.18);
-  color: var(--danger);
-  border-radius: var(--radius-lg);
-  padding: 1px 7px;
-  font-size: 11px;
-  font-weight: 700;
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .search {

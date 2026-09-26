@@ -12,6 +12,7 @@ export type ComponentItem = {
   available: number;
   reorder_point: number | null;
   status: "ok" | "low" | "critical";
+  costPerUnit: number;
   description: string | null;
 };
 
@@ -26,24 +27,20 @@ interface SortHeaderProps {
   label: string;
   currentSort: string;
   currentDir: string;
-  rawQ: string;
-  filterLowStock: boolean;
+  /** Current search + filter params, carried through every link. */
+  baseParams: string;
 }
 
-function sortHref(col: string, currentSort: string, currentDir: string, rawQ: string, filterLowStock: boolean) {
+function sortHref(col: string, currentSort: string, currentDir: string, baseParams: string) {
   const newDir = currentSort === col && currentDir === "asc" ? "desc" : "asc";
-  const p = new URLSearchParams();
-  if (filterLowStock) p.set("filter", "lowstock");
-  if (rawQ) p.set("q", rawQ);
+  const p = new URLSearchParams(baseParams);
   p.set("sort", col);
   p.set("dir", newDir);
   return `/app/components?${p.toString()}`;
 }
 
-function detailHref(id: string, currentSort: string, currentDir: string, rawQ: string, filterLowStock: boolean) {
-  const p = new URLSearchParams();
-  if (rawQ) p.set("q", rawQ);
-  if (filterLowStock) p.set("filter", "lowstock");
+function detailHref(id: string, currentSort: string, currentDir: string, baseParams: string) {
+  const p = new URLSearchParams(baseParams);
   if (currentSort !== "name" || currentDir !== "asc") {
     p.set("sort", currentSort);
     p.set("dir", currentDir);
@@ -52,11 +49,11 @@ function detailHref(id: string, currentSort: string, currentDir: string, rawQ: s
   return qs ? `/app/components/${id}?${qs}` : `/app/components/${id}`;
 }
 
-function SortTh({ col, label, currentSort, currentDir, rawQ, filterLowStock }: SortHeaderProps) {
+function SortTh({ col, label, currentSort, currentDir, baseParams }: SortHeaderProps) {
   const active = currentSort === col;
   return (
     <th>
-      <a href={sortHref(col, currentSort, currentDir, rawQ, filterLowStock)} className={styles.sortHeader}>
+      <a href={sortHref(col, currentSort, currentDir, baseParams)} className={styles.sortHeader}>
         {label} {active ? (currentDir === "asc" ? "▲" : "▼") : ""}
       </a>
     </th>
@@ -67,11 +64,10 @@ interface Props {
   sections: ComponentSection[];
   sortCol: string;
   sortDir: string;
-  rawQ: string;
-  filterLowStock: boolean;
+  baseParams: string;
 }
 
-export default function ComponentTable({ sections, sortCol, sortDir, rawQ, filterLowStock }: Props) {
+export default function ComponentTable({ sections, sortCol, sortDir, baseParams }: Props) {
   // All groups start expanded; keyed by groupId (null → "ungrouped")
   const [collapsed, setCollapsed] = useState<Set<string | null>>(new Set());
 
@@ -88,11 +84,12 @@ export default function ComponentTable({ sections, sortCol, sortDir, rawQ, filte
     <table className={styles.table}>
       <thead>
         <tr>
-          <SortTh col="name" label="Component" currentSort={sortCol} currentDir={sortDir} rawQ={rawQ} filterLowStock={filterLowStock} />
-          <SortTh col="sku" label="SKU" currentSort={sortCol} currentDir={sortDir} rawQ={rawQ} filterLowStock={filterLowStock} />
-          <SortTh col="on_hand" label="On hand" currentSort={sortCol} currentDir={sortDir} rawQ={rawQ} filterLowStock={filterLowStock} />
-          <SortTh col="available" label="Available" currentSort={sortCol} currentDir={sortDir} rawQ={rawQ} filterLowStock={filterLowStock} />
-          <SortTh col="reorder_point" label="Reorder point" currentSort={sortCol} currentDir={sortDir} rawQ={rawQ} filterLowStock={filterLowStock} />
+          <SortTh col="name" label="Component" currentSort={sortCol} currentDir={sortDir} baseParams={baseParams} />
+          <SortTh col="sku" label="SKU" currentSort={sortCol} currentDir={sortDir} baseParams={baseParams} />
+          <SortTh col="on_hand" label="On hand" currentSort={sortCol} currentDir={sortDir} baseParams={baseParams} />
+          <SortTh col="available" label="Available" currentSort={sortCol} currentDir={sortDir} baseParams={baseParams} />
+          <SortTh col="reorder_point" label="Reorder point" currentSort={sortCol} currentDir={sortDir} baseParams={baseParams} />
+          <SortTh col="cost" label="Unit cost" currentSort={sortCol} currentDir={sortDir} baseParams={baseParams} />
         </tr>
       </thead>
       <tbody>
@@ -107,7 +104,7 @@ export default function ComponentTable({ sections, sortCol, sortDir, rawQ, filte
                   onClick={() => toggle(section.groupId)}
                   aria-expanded={!isCollapsed}
                 >
-                  <td colSpan={5} className={styles.groupHeader}>
+                  <td colSpan={6} className={styles.groupHeader}>
                     <span className={styles.groupChevron} aria-hidden="true">
                       {isCollapsed ? "▶" : "▼"}
                     </span>
@@ -129,7 +126,7 @@ export default function ComponentTable({ sections, sortCol, sortDir, rawQ, filte
                     }
                   >
                     <td>
-                      <Link href={detailHref(component.id, sortCol, sortDir, rawQ, filterLowStock)} className={styles.nameCell}>
+                      <Link href={detailHref(component.id, sortCol, sortDir, baseParams)} className={styles.nameCell}>
                         <span
                           className={`${styles.dot} ${
                             component.status === "critical"
@@ -157,6 +154,7 @@ export default function ComponentTable({ sections, sortCol, sortDir, rawQ, filte
                       {component.available}
                     </td>
                     <td className={styles.meta}>{component.reorder_point ?? 0}</td>
+                    <td className={styles.meta}>${component.costPerUnit.toFixed(2)}</td>
                   </tr>
                 ))}
             </>
