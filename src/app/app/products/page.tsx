@@ -12,6 +12,7 @@ import { fetchAllRows } from "@/lib/supabase/paginate";
 import ProductsPagination from "./products-pagination";
 import { buildFacets } from "@/lib/products/facets";
 import { matchesCategoryFilters, resolveGroupKey, type GroupBy } from "@/lib/products/grouping";
+import RetailItemDialog from "./retail-item-dialog";
 
 const PAGE_SIZE = 25;
 
@@ -104,10 +105,17 @@ export default async function ProductsPage({ searchParams }: Props) {
   const ctx = await getServerTenantContext();
   const supabase = ctx?.supabase;
   const tenantId = ctx?.tenantId;
+  const role = ctx?.role;
+  const canCreateRetailItem = role === "admin" || role === "super_admin";
 
   if (!supabase || !tenantId) {
     return <div className={styles.page}>No tenant access.</div>;
   }
+
+  const { data: suppliersData } = canCreateRetailItem
+    ? await supabase.from("suppliers").select("id,name").eq("tenant_id", tenantId).order("name")
+    : { data: [] };
+  const retailSuppliers = (suppliersData ?? []) as { id: string; name: string }[];
 
   // Page through every variant: PostgREST caps an un-paginated response at 1000
   // rows, so tenants with >1000 variants would otherwise have products silently
@@ -456,11 +464,16 @@ export default async function ProductsPage({ searchParams }: Props) {
         title="Products"
         description={`${totalFiltered} of ${products.length} products`}
         actions={
-          <form method="post" action="/api/shopify/sync?return_to=/app/products">
-            <button type="submit" className={styles.importButton}>
-              Import Products
-            </button>
-          </form>
+          <>
+            {canCreateRetailItem ? (
+              <RetailItemDialog mode="create" suppliers={retailSuppliers} />
+            ) : null}
+            <form method="post" action="/api/shopify/sync?return_to=/app/products">
+              <button type="submit" className={styles.importButton}>
+                Import Products
+              </button>
+            </form>
+          </>
         }
       />
 

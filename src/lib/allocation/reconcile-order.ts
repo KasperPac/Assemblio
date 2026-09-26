@@ -4,6 +4,7 @@ import {
   getNextReserved,
   groupAllocationRows,
 } from "./engine";
+import { consumeOrderLineSale, isRetailLine } from "@/lib/inventory/sale-consumption";
 
 type DbClient = {
   from: (table: string) => unknown;
@@ -53,6 +54,7 @@ type OrderLineRow = {
   id: string;
   variant_id: string;
   quantity: number;
+  variant?: unknown;
 };
 
 type BomRow = {
@@ -74,6 +76,9 @@ export type ReconcileOrderResult = {
   applied: number;
   skippedMissingBom: number;
   clearedOnly: boolean;
+  // Order lines consumed as a retail sale — not component allocation
+  // changes, which `applied` counts.
+  consumed: number;
 };
 
 async function updateReservedWithMovement(
@@ -203,13 +208,13 @@ export async function reconcileOrderAllocations(
     .maybeSingle();
   if (orderError) throw orderError;
   const order = orderData as OrderRow | null;
-  if (!order?.id) return { applied: 0, skippedMissingBom: 0, clearedOnly: false };
+  if (!order?.id) return { applied: 0, skippedMissingBom: 0, clearedOnly: false, consumed: 0 };
 
   // Historical orders are imported for stats/reporting only — they must never
   // reserve stock or drive allocation, even if a caller (e.g. the manual
   // "Re-run allocation" UI action) reaches this function with one.
   if (order.historical) {
-    return { applied: 0, skippedMissingBom: 0, clearedOnly: false };
+    return { applied: 0, skippedMissingBom: 0, clearedOnly: false, consumed: 0 };
   }
 
   const { data: locationData, error: locationError } = await asQuery(
@@ -222,26 +227,42 @@ export async function reconcileOrderAllocations(
   if (locationError) throw locationError;
   const location = locationData as LocationRow | null;
   const locationId = location?.id;
-  if (!locationId) return { applied: 0, skippedMissingBom: 0, clearedOnly: false };
+  if (!locationId) return { applied: 0, skippedMissingBom: 0, clearedOnly: false, consumed: 0 };
 
   const { data: orderLineData, error: lineError } = await asQuery(
     client.from("order_line")
   )
-    .select("id,variant_id,quantity")
+    .select("id,variant_id,quantity,variant:variant_id(product:product_id(kind))")
     .eq("tenant_id", tenantId)
     .eq("order_id", orderId);
   if (lineError) throw lineError;
   const lines = (orderLineData ?? []) as OrderLineRow[];
-  if (lines.length === 0) return { applied: 0, skippedMissingBom: 0, clearedOnly: false };
+  if (lines.length === 0) return { applied: 0, skippedMissingBom: 0, clearedOnly: false, consumed: 0 };
 
-  const shouldClearOnly = ["fulfilled", "cancelled"].includes(
-    String(order.status ?? "").toLowerCase()
-  );
+  const status = String(order.status ?? "").toLowerCase();
+  const shouldClearOnly = ["fulfilled", "cancelled"].includes(status);
   let applied = 0;
   let skippedMissingBom = 0;
+  let consumed = 0;
 
   for (const line of lines) {
     if (shouldClearOnly) {
+      // A fulfilled retail line is a sale off the shelf: consume it (which
+      // releases its own reservation atomically in the same transaction).
+      // Then still run clearLineAllocations — the SQL only ever deletes the
+      // allocation rows it consumed, so a component that dropped out of the
+      // active BOM, or a line the SQL skipped (already claimed, no active
+      // BOM: it returns 0, not an error), can leave allocation rows behind.
+      // clearLineAllocations is safe to run unconditionally here: it only
+      // releases what its own DELETE actually removes, so it is a no-op once
+      // the SQL has already cleared everything.
+      if (status === "fulfilled" && isRetailLine(line)) {
+        if ((await consumeOrderLineSale(client, { tenantId, orderLineId: line.id, locationId })) > 0) {
+          consumed += 1;
+        }
+        applied += await clearLineAllocations(client, tenantId, orderId, locationId, line.id);
+        continue;
+      }
       applied += await clearLineAllocations(client, tenantId, orderId, locationId, line.id);
       continue;
     }
@@ -365,5 +386,5 @@ export async function reconcileOrderAllocations(
     }
   }
 
-  return { applied, skippedMissingBom, clearedOnly: shouldClearOnly };
+  return { applied, skippedMissingBom, clearedOnly: shouldClearOnly, consumed };
 }

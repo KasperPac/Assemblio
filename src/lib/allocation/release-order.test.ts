@@ -212,6 +212,7 @@ describe("reconcileOrderAllocations", () => {
       applied: 0,
       skippedMissingBom: 0,
       clearedOnly: false,
+      consumed: 0,
     });
     expect(rpcMock).not.toHaveBeenCalled();
   });
@@ -293,5 +294,127 @@ describe("releaseOrderAllocations — concurrent release", () => {
     );
 
     expect(rpcMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("reconcileOrderAllocations — retail consumption", () => {
+  const retailLine = { id: "ol-r", variant_id: "v-r", quantity: 3, variant: { product: { kind: "retail" } } };
+  const madeLine = { id: "ol-m", variant_id: "v-m", quantity: 1, variant: { product: { kind: "manufactured" } } };
+
+  it("fulfilled retail line → apply_sale_consumption, no reserved release", async () => {
+    const rpc = vi.fn().mockResolvedValue({ data: 1, error: null });
+    const client = makeFakeClient(
+      {
+        orders: [{ id: "o1", status: "fulfilled", historical: false }],
+        location: [{ id: "loc" }],
+        order_line: [retailLine],
+        order_component_allocation: [{ id: "a1", component_id: "c1", quantity: 3 }],
+      },
+      rpc,
+      // The consuming RPC already cleared the allocation row in its own
+      // transaction, so the follow-up clearLineAllocations DELETE finds
+      // nothing left to release.
+      { order_component_allocation: [[]] }
+    );
+    const result = await reconcileOrderAllocations(
+      client as Parameters<typeof reconcileOrderAllocations>[0],
+      "t",
+      "o1"
+    );
+    expect(rpc).toHaveBeenCalledWith("apply_sale_consumption", {
+      p_tenant_id: "t", p_order_line_id: "ol-r", p_location_id: "loc",
+    });
+    expect(rpc).not.toHaveBeenCalledWith("apply_reserved_movement", expect.anything());
+    expect(result.consumed).toBe(1);
+  });
+
+  it("fulfilled retail line, consume returns 0: orphaned allocation is still released", async () => {
+    // The SQL returns 0 without error when the line was already claimed or
+    // has no active BOM — it does not touch order_component_allocation in
+    // that case. The follow-up clearLineAllocations must release whatever
+    // allocation rows are still sitting there.
+    const rpc = vi.fn().mockResolvedValue({ data: 0, error: null });
+    const client = makeFakeClient(
+      {
+        orders: [{ id: "o1", status: "fulfilled", historical: false }],
+        location: [{ id: "loc" }],
+        order_line: [retailLine],
+        order_component_allocation: [{ id: "a1", component_id: "c1", quantity: 3 }],
+      },
+      rpc
+    );
+    const result = await reconcileOrderAllocations(
+      client as Parameters<typeof reconcileOrderAllocations>[0],
+      "t",
+      "o1"
+    );
+    expect(rpc).toHaveBeenCalledWith(
+      "apply_reserved_movement",
+      expect.objectContaining({ p_delta_reserved: -3 })
+    );
+    expect(result.consumed).toBe(0);
+  });
+
+  it("mixed order: retail line consumes, manufactured line only releases", async () => {
+    const rpc = vi.fn().mockResolvedValue({ data: 1, error: null });
+    const client = makeFakeClient(
+      {
+        orders: [{ id: "o1", status: "fulfilled", historical: false }],
+        location: [{ id: "loc" }],
+        order_line: [retailLine, madeLine],
+        order_component_allocation: [{ id: "a1", component_id: "c1", quantity: 1 }],
+      },
+      rpc
+    );
+    await reconcileOrderAllocations(
+      client as Parameters<typeof reconcileOrderAllocations>[0],
+      "t",
+      "o1"
+    );
+    const names = rpc.mock.calls.map((c) => c[0]);
+    expect(names.filter((n) => n === "apply_sale_consumption")).toHaveLength(1);
+    expect(names).toContain("apply_reserved_movement");
+  });
+
+  it("cancelled retail order releases, never consumes", async () => {
+    const rpc = vi.fn().mockResolvedValue({ data: null, error: null });
+    const client = makeFakeClient(
+      {
+        orders: [{ id: "o1", status: "cancelled", historical: false }],
+        location: [{ id: "loc" }],
+        order_line: [retailLine],
+        order_component_allocation: [{ id: "a1", component_id: "c1", quantity: 3 }],
+      },
+      rpc
+    );
+    await reconcileOrderAllocations(
+      client as Parameters<typeof reconcileOrderAllocations>[0],
+      "t",
+      "o1"
+    );
+    expect(rpc).not.toHaveBeenCalledWith("apply_sale_consumption", expect.anything());
+    expect(rpc).toHaveBeenCalledWith(
+      "apply_reserved_movement",
+      expect.objectContaining({ p_delta_reserved: -3 })
+    );
+  });
+
+  it("consumption error propagates instead of reporting success", async () => {
+    const rpc = vi.fn().mockResolvedValue({ data: null, error: { message: "retail item has no active BOM" } });
+    const client = makeFakeClient(
+      {
+        orders: [{ id: "o1", status: "fulfilled", historical: false }],
+        location: [{ id: "loc" }],
+        order_line: [retailLine],
+      },
+      rpc
+    );
+    await expect(
+      reconcileOrderAllocations(
+        client as Parameters<typeof reconcileOrderAllocations>[0],
+        "t",
+        "o1"
+      )
+    ).rejects.toThrow("no active BOM");
   });
 });

@@ -7,6 +7,10 @@ import { mapProductStatus } from "./product-status";
 import { logSystemActivity } from "@/lib/activity/log";
 import { normalizeProductCategories } from "./product-categories";
 import { chunk } from "./chunk";
+import { assertNoError } from "@/lib/supabase/assert-no-error";
+import { normaliseBarcode } from "./variant-fields";
+
+export { assertNoError };
 
 type SyncResult = {
   products: number;
@@ -14,6 +18,7 @@ type SyncResult = {
   orders: number;
   orderLines: number;
   allocations: number;
+  allocationErrors: number;
   planRuns: number;
   planErrors: number;
 };
@@ -28,7 +33,7 @@ type ShopifyProductNode = {
   tags: string[] | null;
   category: { name: string | null; fullName: string | null } | null;
   collections: { nodes: Array<{ id: string; title: string; handle: string | null }> } | null;
-  variants: { nodes: Array<{ id: string; title: string | null; sku: string | null; price: string | null }> };
+  variants: { nodes: Array<{ id: string; title: string | null; sku: string | null; barcode: string | null; price: string | null }> };
 };
 
 type ShopifyOrderNode = {
@@ -66,22 +71,6 @@ type OrdersQueryResult = {
     nodes: ShopifyOrderNode[];
   };
 };
-
-/**
- * supabase-js resolves with { data, error } rather than rejecting, so an
- * unchecked call looks like a success. Every write in this file funnels through
- * here; MANUVA-16 was a call that did not, and reported plan_errors: 0 for
- * months while writing nothing.
- */
-export function assertNoError(
-  error: { message?: string } | null,
-  context: string
-) {
-  if (!error) return;
-  // `||` not `??`: an error object with an empty message is still a failure,
-  // and "context: " alone tells a reader nothing.
-  throw new Error(`${context}: ${error.message || "Unknown Supabase error"}`);
-}
 
 // Upserts products and returns a shopify_id -> local id map built from the rows
 // the upsert returns, avoiding a follow-up .in() select (which would 414 on
@@ -144,7 +133,7 @@ async function fetchProducts(shopDomain: string, accessToken: string) {
           category { name fullName }
           collections(first: 50) { nodes { id title handle } }
           variants(first: 100) {
-            nodes { id title sku price }
+            nodes { id title sku barcode price }
           }
         }
       }
@@ -379,6 +368,7 @@ export async function syncShopifyStoreData(
         shopify_id: variant.id,
         title: variant.title ?? "",
         sku: variant.sku,
+        barcode: normaliseBarcode(variant.barcode),
         price: variant.price ? parseFloat(variant.price) : null,
         source: "shopify" as const,
       }))
@@ -513,12 +503,17 @@ export async function syncShopifyStoreData(
   const liveOrderLocalIds = orderLocalIds.filter((id) => !historicalSet.has(id));
 
   let allocationRuns = 0;
+  let allocationErrors = 0;
   for (const localOrderId of liveOrderLocalIds) {
     try {
       await reconcileOrderAllocations(admin, tenantId, localOrderId);
       allocationRuns += 1;
-    } catch {
-      continue;
+    } catch (err) {
+      allocationErrors += 1;
+      console.error(
+        `[shopify-sync] reconcileOrderAllocations failed for ${localOrderId}:`,
+        err instanceof Error ? err.message : err
+      );
     }
   }
 
@@ -572,6 +567,7 @@ export async function syncShopifyStoreData(
         orders: orderRows.length,
         order_lines: orderLineRows.length,
         allocation_runs: allocationRuns,
+        allocation_errors: allocationErrors,
         plan_runs: planRuns,
         plan_errors: planErrors,
       },
@@ -584,6 +580,7 @@ export async function syncShopifyStoreData(
     orders: orderRows.length,
     orderLines: orderLineRows.length,
     allocations: allocationRuns,
+    allocationErrors,
     planRuns,
     planErrors,
   };

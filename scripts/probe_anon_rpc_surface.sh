@@ -50,6 +50,8 @@ probe generate_financial_plans_for_open_orders '{"p_start_week":"2026-09-21"}'  
 # migration that re-creates them cannot quietly restore the PUBLIC default.
 probe apply_inventory_movement                 "{\"p_component_id\":\"$Z\",\"p_location_id\":\"$Z\",\"p_delta_on_hand\":0,\"p_delta_in_prod\":0,\"p_reason\":\"probe\",\"p_reference_type\":\"probe\",\"p_reference_id\":null}" deny
 probe apply_reserved_movement                  "{\"p_tenant_id\":\"$Z\",\"p_component_id\":\"$Z\",\"p_location_id\":\"$Z\",\"p_order_id\":null,\"p_delta_reserved\":0}" deny
+probe apply_sale_consumption                   "{\"p_tenant_id\":\"$Z\",\"p_order_line_id\":\"$Z\",\"p_location_id\":\"$Z\"}" deny
+probe create_retail_item                       "{\"p_tenant_id\":\"$Z\",\"p_variant_id\":null,\"p_name\":\"probe\",\"p_sku\":null,\"p_barcode\":null,\"p_cost_per_unit\":0,\"p_supplier_id\":null,\"p_location_id\":null,\"p_reorder_point\":0}" deny
 
 echo "--- must stay reachable (RLS evaluates these as the querying role) ---"
 probe current_tenant_id                        '{}'                                    allow

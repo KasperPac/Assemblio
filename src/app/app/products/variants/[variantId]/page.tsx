@@ -9,6 +9,8 @@ import BomEditor from "../../bom-editor";
 import BomVersionsTab from "../../bom-versions-tab";
 import VariantTabs, { type Tab } from "../../variant-tabs";
 import NotificationsTab from "./notifications-tab";
+import StatusBadge from "@/app/app/_ui/status-badge";
+import RetailItemDialog from "../../retail-item-dialog";
 import {
   createBomLaborLine,
   deleteBomLaborLine,
@@ -30,10 +32,12 @@ type VariantRecord = {
     | {
         id: string;
         title: string;
+        kind: string;
       }
     | Array<{
         id: string;
         title: string;
+        kind: string;
       }>
     | null;
 };
@@ -149,7 +153,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
   ] = await Promise.all([
     supabase
       .from("product_variant")
-      .select("id,title,sku,shopify_id,price,created_at,product:product_id(id,title)")
+      .select("id,title,sku,shopify_id,price,created_at,product:product_id(id,title,kind)")
       .eq("id", variantId)
       .eq("tenant_id", tenantId)
       .maybeSingle(),
@@ -225,6 +229,7 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
   const typedProduct = Array.isArray(typedVariant.product)
     ? typedVariant.product[0] ?? null
     : typedVariant.product;
+  const productKind = typedProduct?.kind ?? "manufactured";
   const typedBoms = (boms ?? []) as BomRecord[];
   const editableBoms = typedBoms.filter((b) => b.status !== "archived");
   const archivedBoms = typedBoms.filter((b) => b.status === "archived");
@@ -336,6 +341,16 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
 
   const activeBom = typedBoms.find((bom) => bom.is_active) ?? null;
   const draftBom = typedBoms.find((bom) => !bom.is_active && bom.status === "draft") ?? null;
+
+  // Ruling 14: the offer to track as retail is keyed on whether the variant
+  // itself has an active BOM, not on product.kind — an already-retail
+  // product can carry an untracked sibling variant (e.g. freshly
+  // Shopify-imported) that still needs its own component and BOM.
+  const canOfferRetailAttach = !activeBom && canManageBom;
+  const { data: retailSuppliersData } = canOfferRetailAttach
+    ? await supabase.from("suppliers").select("id,name").eq("tenant_id", tenantId).order("name")
+    : { data: [] };
+  const retailSuppliers = (retailSuppliersData ?? []) as { id: string; name: string }[];
   // Show active BOM by default; show draft when one exists (user is mid-edit)
   const editorBom = draftBom ?? activeBom;
 
@@ -562,6 +577,22 @@ export default async function VariantDetailPage({ params, searchParams }: Props)
       <section className={styles.card}>
         <h3>{variantTitle}</h3>
         <p className={styles.meta}>{typedVariant.sku ? `SKU ${typedVariant.sku}` : "No SKU"}</p>
+        {productKind === "retail" && activeBom ? (
+          <StatusBadge variant="info">Retail item</StatusBadge>
+        ) : (
+          <>
+            {productKind === "retail" ? <StatusBadge>Not tracked</StatusBadge> : null}
+            {canOfferRetailAttach ? (
+              <RetailItemDialog
+                mode="attach"
+                variantId={variantId}
+                defaultName={`${typedProduct?.title ?? ""} ${variantTitle}`.trim()}
+                defaultSku={typedVariant.sku}
+                suppliers={retailSuppliers}
+              />
+            ) : null}
+          </>
+        )}
       </section>
 
       <VariantTabs

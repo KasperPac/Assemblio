@@ -90,6 +90,15 @@ Tabs: Overview, BOM, Routing, Versions, Notifications.
 - [ ] **Notifications tab:** upsert trigger (routing_sequence, message_template, channel=email); remove trigger
 - [ ] **Versions tab:** lists active + archived with line count, material cost, status badge
 
+### Retail items — `/app/products` (New retail item), variant detail (Track as retail item) **(admin)**
+- [ ] New retail item creates product + variant + component + active 1-line BOM; no stock-location picker — stock always lands at the tenant's default location; lands on the variant page with a "Retail item" badge (shown once the variant has an active BOM)
+- [ ] Track as retail item is offered on any variant with no active BOM, regardless of the product's kind — including a second, untracked variant of a product that is already retail
+- [ ] A retail-kind variant with no active BOM shows a neutral "Not tracked" badge instead of "Retail item"
+- [ ] Name required; negative cost / reorder point rejected with a message
+- [ ] No default location → clear error pointing at Settings → Locations
+- [ ] Converting a variant with already-fulfilled or historical orders does not consume stock for those orders on the next sync (baseline)
+- [ ] Selling a line on a historical order is refused (`sale consumption does not apply to historical orders`) rather than consuming stock
+
 ---
 
 ## 3. BOMs, Templates & Costing
@@ -247,6 +256,10 @@ Tabs: Overview, Stock, BOM Usage, Receipts, Suppliers, Location.
 - [ ] Reserved adjusted atomically via `apply_reserved_movement` (+ movement log); never negative (floored at 0)
 - [ ] Missing default location → graceful 0-count exit; 0-line order → 0 counts
 - [ ] `releaseOrderAllocations` reverses all allocations on cancel/fulfil
+- [ ] Fulfilled **retail** line → `apply_sale_consumption`: on_hand down by qty, reservation released, one `sale` movement; re-running is a no-op
+- [ ] Fulfilled manufactured line → unchanged (release only); mixed orders handle each line by its product kind
+- [ ] Consumption failure → surfaced as `allocation_errors` in the sync result, not swallowed
+- [ ] Shopify sync stores variant barcode; blank barcode stored as null
 
 ### Derived states (pipeline)
 - [ ] Components state: empty / bom-needed / in-stock / partial (n of m + earliest ETA) / awaiting (ETA) / no-eta
@@ -696,3 +709,5 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-09-24 — fixed Security: `get_slow_queries` was an unguarded SECURITY DEFINER function with EXECUTE granted to `anon` (the CREATE FUNCTION PUBLIC default), so an unauthenticated caller holding the public anon key could read production query text and timings from `pg_stat_statements`. It now requires `is_platform_operator()`, pins `search_path`, and is revoked from `anon`/`PUBLIC` along with nine other definer functions. The RLS helpers are deliberately left granted. `scripts/probe_anon_rpc_surface.sh` re-checks the surface.
 - 2026-09-24 — fixed Allocation: `clearLineAllocations` read the allocation rows, deleted them, then wrote a compensating reserved movement unconditionally, so two concurrent releases for the same order each wrote a full `-totalQty` row. The movement is now derived from the rows the DELETE actually removed, making the DELETE the serialisation point. Root cause of the 19 drifted `inventory_balance` rows; the `greatest(0, …)` clamp was never the cause, it is what kept the balances correct.
 - 2026-09-24 — fixed Security: the `component-images` bucket was public, so a public-object URL bypassed RLS entirely and every uploaded image was readable by anyone holding the link. The bucket is now private and reads go through `GET /api/component-images/[componentId]`, which checks the caller's tenant and redirects to a 60-second signed URL. Done while the bucket held 0 objects, so no backfill was needed.
+- 2026-09-25 — added Retail items + sale consumption (MANUVA-27 plan 1): retail products carry shelf stock through a one-line BOM, and a fulfilled sale of one decrements on_hand exactly once via apply_sale_consumption. Manufactured products are unchanged. Shopify sync now stores variant barcodes and reports allocation errors instead of swallowing them.
+- 2026-09-25 — amended Retail items + sale consumption (MANUVA-27 plan 1 final review): removed the stock-location picker (stock always lands at the tenant's default location); "Track as retail item" is now offered on any variant with no active BOM regardless of product kind, with a neutral "Not tracked" badge on an untracked retail-kind variant; `apply_sale_consumption` now refuses a historical order's line before any write.
