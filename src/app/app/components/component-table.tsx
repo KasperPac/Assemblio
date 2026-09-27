@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
 import styles from "./components.module.css";
 
@@ -8,18 +5,14 @@ export type ComponentItem = {
   id: string;
   name: string;
   sku: string | null;
+  /** Group name, or null when ungrouped. */
+  groupName: string | null;
   onHand: number;
   available: number;
   reorder_point: number | null;
   status: "ok" | "low" | "critical";
   costPerUnit: number;
   description: string | null;
-};
-
-export type ComponentSection = {
-  groupId: string | null;
-  groupName: string | null;
-  items: ComponentItem[];
 };
 
 interface SortHeaderProps {
@@ -61,105 +54,72 @@ function SortTh({ col, label, currentSort, currentDir, baseParams }: SortHeaderP
 }
 
 interface Props {
-  sections: ComponentSection[];
+  items: ComponentItem[];
   sortCol: string;
   sortDir: string;
   baseParams: string;
 }
 
-export default function ComponentTable({ sections, sortCol, sortDir, baseParams }: Props) {
-  // All groups start expanded; keyed by groupId (null → "ungrouped")
-  const [collapsed, setCollapsed] = useState<Set<string | null>>(new Set());
-
-  function toggle(groupId: string | null) {
-    setCollapsed((prev) => {
-      const next = new Set(prev);
-      if (next.has(groupId)) next.delete(groupId);
-      else next.add(groupId);
-      return next;
-    });
-  }
-
+export default function ComponentTable({ items, sortCol, sortDir, baseParams }: Props) {
+  const th = { currentSort: sortCol, currentDir: sortDir, baseParams };
   return (
     <table className={styles.table}>
       <thead>
         <tr>
-          <SortTh col="name" label="Component" currentSort={sortCol} currentDir={sortDir} baseParams={baseParams} />
-          <SortTh col="sku" label="SKU" currentSort={sortCol} currentDir={sortDir} baseParams={baseParams} />
-          <SortTh col="on_hand" label="On hand" currentSort={sortCol} currentDir={sortDir} baseParams={baseParams} />
-          <SortTh col="available" label="Available" currentSort={sortCol} currentDir={sortDir} baseParams={baseParams} />
-          <SortTh col="reorder_point" label="Reorder point" currentSort={sortCol} currentDir={sortDir} baseParams={baseParams} />
-          <SortTh col="cost" label="Unit cost" currentSort={sortCol} currentDir={sortDir} baseParams={baseParams} />
+          <SortTh col="name" label="Component" {...th} />
+          <SortTh col="sku" label="SKU" {...th} />
+          <SortTh col="group" label="Group" {...th} />
+          <SortTh col="on_hand" label="On hand" {...th} />
+          <SortTh col="available" label="Available" {...th} />
+          <SortTh col="reorder_point" label="Reorder point" {...th} />
+          <SortTh col="cost" label="Unit cost" {...th} />
         </tr>
       </thead>
       <tbody>
-        {sections.map((section) => {
-          const isCollapsed = collapsed.has(section.groupId);
-          return (
-            <>
-              {section.groupName !== null && (
-                <tr
-                  key={`group-${section.groupId}`}
-                  className={styles.groupHeaderRow}
-                  onClick={() => toggle(section.groupId)}
-                  aria-expanded={!isCollapsed}
+        {items.map((component) => (
+          <tr
+            key={component.id}
+            className={
+              component.status === "critical"
+                ? styles.rowCritical
+                : component.status === "low"
+                ? styles.rowLow
+                : ""
+            }
+          >
+            <td>
+              <Link href={detailHref(component.id, sortCol, sortDir, baseParams)} className={styles.nameCell}>
+                <span
+                  className={`${styles.dot} ${
+                    component.status === "critical"
+                      ? styles.dotCritical
+                      : component.status === "low"
+                      ? styles.dotLow
+                      : styles.dotOk
+                  }`}
                 >
-                  <td colSpan={6} className={styles.groupHeader}>
-                    <span className={styles.groupChevron} aria-hidden="true">
-                      {isCollapsed ? "▶" : "▼"}
-                    </span>
-                    {section.groupName}
-                    <span className={styles.groupCount}>{section.items.length}</span>
-                  </td>
-                </tr>
-              )}
-              {!isCollapsed &&
-                section.items.map((component) => (
-                  <tr
-                    key={component.id}
-                    className={
-                      component.status === "critical"
-                        ? styles.rowCritical
-                        : component.status === "low"
-                        ? styles.rowLow
-                        : ""
-                    }
-                  >
-                    <td>
-                      <Link href={detailHref(component.id, sortCol, sortDir, baseParams)} className={styles.nameCell}>
-                        <span
-                          className={`${styles.dot} ${
-                            component.status === "critical"
-                              ? styles.dotCritical
-                              : component.status === "low"
-                              ? styles.dotLow
-                              : styles.dotOk
-                          }`}
-                        >
-                          <span className={styles.srOnly}>
-                            {component.status === "critical" ? "Critical" : component.status === "low" ? "Low" : "OK"}
-                          </span>
-                        </span>
-                        <span className={styles.nameWrap}>
-                          <span>{component.name}</span>
-                          {component.description && (
-                            <span className={styles.descLine}>{component.description}</span>
-                          )}
-                        </span>
-                      </Link>
-                    </td>
-                    <td className={styles.meta}>{component.sku ?? "—"}</td>
-                    <td>{component.onHand}</td>
-                    <td className={component.status !== "ok" ? styles.availableLow : ""}>
-                      {component.available}
-                    </td>
-                    <td className={styles.meta}>{component.reorder_point ?? 0}</td>
-                    <td className={styles.meta}>${component.costPerUnit.toFixed(2)}</td>
-                  </tr>
-                ))}
-            </>
-          );
-        })}
+                  <span className={styles.srOnly}>
+                    {component.status === "critical" ? "Critical" : component.status === "low" ? "Low" : "OK"}
+                  </span>
+                </span>
+                <span className={styles.nameWrap}>
+                  <span>{component.name}</span>
+                  {component.description && (
+                    <span className={styles.descLine}>{component.description}</span>
+                  )}
+                </span>
+              </Link>
+            </td>
+            <td className={styles.meta}>{component.sku ?? "—"}</td>
+            <td className={styles.meta}>{component.groupName ?? "—"}</td>
+            <td>{component.onHand}</td>
+            <td className={component.status !== "ok" ? styles.availableLow : ""}>
+              {component.available}
+            </td>
+            <td className={styles.meta}>{component.reorder_point ?? 0}</td>
+            <td className={styles.meta}>${component.costPerUnit.toFixed(2)}</td>
+          </tr>
+        ))}
       </tbody>
     </table>
   );

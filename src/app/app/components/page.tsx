@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "./components.module.css";
 import ComponentCreateForm from "./component-create-form";
-import ComponentTable, { type ComponentSection } from "./component-table";
+import ComponentTable from "./component-table";
 import FilterRail, { ActiveFilterChips, type Chip } from "./filter-rail";
 import { createComponent } from "./actions";
 import PageHeader from "../_ui/page-header";
@@ -38,7 +38,7 @@ type BalanceRow = {
   reserved: number;
 };
 
-type SortCol = "name" | "sku" | "on_hand" | "available" | "reorder_point" | "cost";
+type SortCol = "name" | "sku" | "group" | "on_hand" | "available" | "reorder_point" | "cost";
 
 type Props = {
   searchParams?: Promise<ComponentFilterParams & {
@@ -87,7 +87,7 @@ export default async function ComponentsPage({ searchParams }: Props) {
 
   const groupList = (groups ?? []) as Array<{ id: string; name: string }>;
   const supplierList = (suppliers ?? []) as Array<{ id: string; name: string }>;
-  const knownGroupIds = new Set(groupList.map((g) => g.id));
+  const groupNames = new Map(groupList.map((g) => [g.id, g.name]));
   const knownSupplierIds = new Set(supplierList.map((s) => s.id));
 
   const allComponents = (components ?? []) as ComponentRow[];
@@ -98,15 +98,16 @@ export default async function ComponentsPage({ searchParams }: Props) {
     const reserved = balance?.reserved ?? 0;
     const available = onHand - reserved;
     const status = getStockStatus(available, c.reorder_point ?? 0);
+    // A group or supplier that no longer exists counts as none.
+    const groupName = c.group_id ? groupNames.get(c.group_id) ?? null : null;
     return {
       ...c,
       onHand,
       available,
       status,
       costPerUnit: Number(c.cost_per_unit ?? 0),
-      // A group or supplier that no longer exists counts as none, same as
-      // the ungrouped section always has.
-      groupKey: c.group_id && knownGroupIds.has(c.group_id) ? c.group_id : NONE,
+      groupName,
+      groupKey: groupName !== null ? (c.group_id as string) : NONE,
       supplierKey: c.supplier_id && knownSupplierIds.has(c.supplier_id) ? c.supplier_id : NONE,
     };
   });
@@ -116,6 +117,8 @@ export default async function ComponentsPage({ searchParams }: Props) {
     let bVal: number | string;
     switch (sortCol) {
       case "sku":           aVal = (a.sku ?? "").toLowerCase();   bVal = (b.sku ?? "").toLowerCase();   break;
+      // Ungrouped sorts last in ascending order ("~" follows letters and digits).
+      case "group":         aVal = (a.groupName ?? "~").toLowerCase(); bVal = (b.groupName ?? "~").toLowerCase(); break;
       case "on_hand":       aVal = a.onHand;                     bVal = b.onHand;                     break;
       case "available":     aVal = a.available;                  bVal = b.available;                  break;
       case "reorder_point": aVal = a.reorder_point ?? 0;         bVal = b.reorder_point ?? 0;         break;
@@ -137,15 +140,6 @@ export default async function ComponentsPage({ searchParams }: Props) {
   const filtered = filterComponents(searched, filters);
   const counts = buildFacetCounts(searched, filters);
   const bounds = costBounds(withStatus);
-
-  // Group filtered components by their group, in group-name order, ungrouped last
-  const groupedSections: ComponentSection[] = [];
-  for (const group of groupList) {
-    const items = filtered.filter((c) => c.groupKey === group.id);
-    if (items.length > 0) groupedSections.push({ groupId: group.id, groupName: group.name, items });
-  }
-  const ungrouped = filtered.filter((c) => c.groupKey === NONE);
-  if (ungrouped.length > 0) groupedSections.push({ groupId: null, groupName: null, items: ungrouped });
 
   const hasUngrouped = withStatus.some((c) => c.groupKey === NONE);
   const hasNoSupplier = withStatus.some((c) => c.supplierKey === NONE);
@@ -242,7 +236,7 @@ export default async function ComponentsPage({ searchParams }: Props) {
           ) : (
             <div className={styles.tableCard}>
               <ComponentTable
-                sections={groupedSections}
+                items={filtered}
                 sortCol={sortCol}
                 sortDir={sortDir}
                 baseParams={baseParams.toString()}

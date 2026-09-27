@@ -142,9 +142,11 @@ Tabs: Overview, BOM, Routing, Versions, Notifications.
   - [ ] Supplier checkboxes incl. "No supplier", with Select all / Clear and "only"
   - [ ] Unit cost range (slider + min/max boxes), bounded by the catalogue's cheapest and dearest component
   - [ ] Each option's count reflects the *other* active filters plus search; ticking a group never zeroes the other groups' counts
-  - [ ] Filters AND across facets, OR within one; hidden groups drop out of the grouped table
+  - [ ] Filters AND across facets, OR within one
 - [ ] Active-filter chips above the table, each removable; one chip for the cost range; "Clear all" resets every facet
 - [ ] Filters live in the URL: reload/bookmark keeps them; sorting a column and opening a component keep them
+- [ ] One flat table (no group section rows), following the active column sort
+- [ ] Group column ("—" when ungrouped), sortable; ungrouped sorts last ascending
 - [ ] Unit cost column, sortable
 - [ ] Stock status badge: OK / Low (orange) / Critical (red)
 - [ ] Empty states (no components / nothing matches the filters)
@@ -722,3 +724,4 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-09-25 — added Retail items + sale consumption (MANUVA-27 plan 1): retail products carry shelf stock through a one-line BOM, and a fulfilled sale of one decrements on_hand exactly once via apply_sale_consumption. Manufactured products are unchanged. Shopify sync now stores variant barcodes and reports allocation errors instead of swallowing them.
 - 2026-09-25 — amended Retail items + sale consumption (MANUVA-27 plan 1 final review): removed the stock-location picker (stock always lands at the tenant's default location); "Track as retail item" is now offered on any variant with no active BOM regardless of product kind, with a neutral "Not tracked" badge on an untracked retail-kind variant; `apply_sale_consumption` now refuses a historical order's line before any write.
 - 2026-09-26 — amended Components list (MANUVA-30): the All / Low Stock tabs are replaced by a left filter rail (stock status, groups, supplier, unit-cost range) with flight-search counts, removable filter chips and a Unit cost column. Filters live in the URL, and sort and detail links carry every active filter. The design system gains a documented "filter rail" exception to the single-column rule.
+- 2026-09-28 — amended Components list (MANUVA-31): the table is one flat list following the active sort; the collapsible group section rows are replaced by a sortable Group column. Group filtering stays in the filter rail.
