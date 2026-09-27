@@ -4,11 +4,22 @@ import { getServerTenantContext } from "@/lib/tenant/context";
 import styles from "./components.module.css";
 import ComponentCreateForm from "./component-create-form";
 import ComponentTable, { type ComponentSection } from "./component-table";
+import FilterRail, { ActiveFilterChips, type Chip } from "./filter-rail";
 import { createComponent } from "./actions";
 import PageHeader from "../_ui/page-header";
 import EmptyState from "../_ui/empty-state";
 import SearchInput from "../_ui/search-input";
 import { getStockStatus } from "./helpers";
+import {
+  NONE,
+  STOCK_STATUSES,
+  buildFacetCounts,
+  costBounds,
+  filterComponents,
+  parseComponentFilters,
+  type ComponentFilterParams,
+  type StockStatus,
+} from "@/lib/components/filters";
 
 type ComponentRow = {
   id: string;
@@ -16,6 +27,8 @@ type ComponentRow = {
   sku: string | null;
   reorder_point: number | null;
   group_id: string | null;
+  supplier_id: string | null;
+  cost_per_unit: number | null;
   description: string | null;
 };
 
@@ -25,22 +38,29 @@ type BalanceRow = {
   reserved: number;
 };
 
+type SortCol = "name" | "sku" | "on_hand" | "available" | "reorder_point" | "cost";
+
 type Props = {
-  searchParams?: Promise<{
+  searchParams?: Promise<ComponentFilterParams & {
     q?: string;
-    filter?: string;
     sort?: string;
     dir?: string;
   }>;
 };
 
+const STATUS_LABELS: Record<StockStatus, string> = { ok: "OK", low: "Low", critical: "Critical" };
+
+function money(n: number) {
+  return `$${n.toFixed(2)}`;
+}
 
 export default async function ComponentsPage({ searchParams }: Props) {
   const params = (await searchParams) ?? {};
   const rawQ = params.q ?? "";
   const q = rawQ.trim().toLowerCase();
-  const sortCol = (params.sort ?? "name") as "name" | "sku" | "on_hand" | "available" | "reorder_point";
+  const sortCol = (params.sort ?? "name") as SortCol;
   const sortDir = params.dir === "desc" ? "desc" : "asc";
+  const filters = parseComponentFilters(params);
 
   const context = await getServerTenantContext();
   if (!context) redirect("/auth/login");
@@ -53,7 +73,7 @@ export default async function ComponentsPage({ searchParams }: Props) {
     { data: locations },
     { data: groups },
   ] = await Promise.all([
-    supabase.from("component").select("id,name,sku,reorder_point,group_id,description").eq("tenant_id", tenantId).is("archived_at", null).order("name"),
+    supabase.from("component").select("id,name,sku,reorder_point,group_id,supplier_id,cost_per_unit,description").eq("tenant_id", tenantId).is("archived_at", null).order("name"),
     supabase.from("inventory_balance").select("component_id,on_hand,reserved").eq("tenant_id", tenantId),
     supabase.from("suppliers").select("id,name").eq("tenant_id", tenantId).order("name"),
     supabase.from("location").select("id,name").eq("tenant_id", tenantId).order("name"),
@@ -65,8 +85,12 @@ export default async function ComponentsPage({ searchParams }: Props) {
     return acc;
   }, {});
 
+  const groupList = (groups ?? []) as Array<{ id: string; name: string }>;
+  const supplierList = (suppliers ?? []) as Array<{ id: string; name: string }>;
+  const knownGroupIds = new Set(groupList.map((g) => g.id));
+  const knownSupplierIds = new Set(supplierList.map((s) => s.id));
+
   const allComponents = (components ?? []) as ComponentRow[];
-  const filterLowStock = params.filter === "lowstock";
 
   const withStatus = allComponents.map((c) => {
     const balance = balanceMap[c.id];
@@ -74,7 +98,17 @@ export default async function ComponentsPage({ searchParams }: Props) {
     const reserved = balance?.reserved ?? 0;
     const available = onHand - reserved;
     const status = getStockStatus(available, c.reorder_point ?? 0);
-    return { ...c, onHand, available, status };
+    return {
+      ...c,
+      onHand,
+      available,
+      status,
+      costPerUnit: Number(c.cost_per_unit ?? 0),
+      // A group or supplier that no longer exists counts as none, same as
+      // the ungrouped section always has.
+      groupKey: c.group_id && knownGroupIds.has(c.group_id) ? c.group_id : NONE,
+      supplierKey: c.supplier_id && knownSupplierIds.has(c.supplier_id) ? c.supplier_id : NONE,
+    };
   });
 
   const sortedComponents = [...withStatus].sort((a, b) => {
@@ -85,6 +119,7 @@ export default async function ComponentsPage({ searchParams }: Props) {
       case "on_hand":       aVal = a.onHand;                     bVal = b.onHand;                     break;
       case "available":     aVal = a.available;                  bVal = b.available;                  break;
       case "reorder_point": aVal = a.reorder_point ?? 0;         bVal = b.reorder_point ?? 0;         break;
+      case "cost":          aVal = a.costPerUnit;                bVal = b.costPerUnit;                break;
       default:              aVal = a.name.toLowerCase();         bVal = b.name.toLowerCase();
     }
     if (aVal < bVal) return sortDir === "asc" ? -1 : 1;
@@ -92,34 +127,68 @@ export default async function ComponentsPage({ searchParams }: Props) {
     return 0;
   });
 
-  const lowStockCount = withStatus.filter((c) => c.status !== "ok").length;
-
-  const filtered = sortedComponents.filter((c) => {
-    const matchesSearch =
-      q.length === 0 ||
-      c.name.toLowerCase().includes(q) ||
-      (c.sku ?? "").toLowerCase().includes(q) ||
-      (c.description ?? "").toLowerCase().includes(q);
-    const matchesFilter = !filterLowStock || c.status !== "ok";
-    return matchesSearch && matchesFilter;
-  });
+  // Search narrows the pool the rail counts against; the facets then filter it.
+  const searched = sortedComponents.filter((c) =>
+    q.length === 0 ||
+    c.name.toLowerCase().includes(q) ||
+    (c.sku ?? "").toLowerCase().includes(q) ||
+    (c.description ?? "").toLowerCase().includes(q)
+  );
+  const filtered = filterComponents(searched, filters);
+  const counts = buildFacetCounts(searched, filters);
+  const bounds = costBounds(withStatus);
 
   // Group filtered components by their group, in group-name order, ungrouped last
-  type Section = { groupId: string | null; groupName: string | null; items: typeof filtered };
-  const knownGroupIds = new Set((groups ?? []).map((g) => g.id));
-  const groupedSections: Section[] = [];
-  for (const group of (groups ?? [])) {
-    const items = filtered.filter((c) => c.group_id === group.id);
+  const groupedSections: ComponentSection[] = [];
+  for (const group of groupList) {
+    const items = filtered.filter((c) => c.groupKey === group.id);
     if (items.length > 0) groupedSections.push({ groupId: group.id, groupName: group.name, items });
   }
-  const ungrouped = filtered.filter((c) => !c.group_id || !knownGroupIds.has(c.group_id));
+  const ungrouped = filtered.filter((c) => c.groupKey === NONE);
   if (ungrouped.length > 0) groupedSections.push({ groupId: null, groupName: null, items: ungrouped });
 
-  const lookups = {
-    suppliers: (suppliers ?? []) as Array<{ id: string; name: string }>,
-    locations: (locations ?? []) as Array<{ id: string; name: string }>,
-    groups: (groups ?? []) as Array<{ id: string; name: string }>,
+  const hasUngrouped = withStatus.some((c) => c.groupKey === NONE);
+  const hasNoSupplier = withStatus.some((c) => c.supplierKey === NONE);
+  const groupOptions = [
+    ...groupList.map((g) => ({ key: g.id, label: g.name, count: counts.groups.get(g.id) ?? 0 })),
+    ...(hasUngrouped ? [{ key: NONE, label: "Ungrouped", count: counts.groups.get(NONE) ?? 0 }] : []),
+  ];
+  const supplierOptions = [
+    ...supplierList.map((s) => ({ key: s.id, label: s.name, count: counts.suppliers.get(s.id) ?? 0 })),
+    ...(hasNoSupplier ? [{ key: NONE, label: "No supplier", count: counts.suppliers.get(NONE) ?? 0 }] : []),
+  ];
+  const statusOptions = STOCK_STATUSES.map((s) => ({ key: s, label: STATUS_LABELS[s], count: counts.statuses[s] }));
+
+  const selected = {
+    statuses: [...(filters.statuses ?? [])],
+    groups: [...(filters.groups ?? [])],
+    suppliers: [...(filters.suppliers ?? [])],
   };
+  const labelFor = (options: Array<{ key: string; label: string }>, key: string) =>
+    options.find((o) => o.key === key)?.label ?? key;
+  const chips: Chip[] = [
+    ...selected.statuses.map((v) => ({ label: STATUS_LABELS[v as StockStatus], param: "status", value: v })),
+    ...selected.groups.map((v) => ({ label: labelFor(groupOptions, v), param: "groups", value: v })),
+    ...selected.suppliers.map((v) => ({ label: labelFor(supplierOptions, v), param: "suppliers", value: v })),
+    ...(filters.costMin !== null || filters.costMax !== null
+      ? [{
+          label: `Cost ${money(filters.costMin ?? bounds.min)}–${money(filters.costMax ?? bounds.max)}`,
+          param: "cost",
+          value: null,
+        }]
+      : []),
+  ];
+
+  // Sort and detail links carry every current filter, so sorting never drops them.
+  const baseParams = new URLSearchParams();
+  for (const key of ["q", "status", "groups", "suppliers", "cost_min", "cost_max"] as const) {
+    const value = params[key];
+    if (value) baseParams.set(key, value);
+  }
+  if (params.filter === "lowstock" && !params.status) baseParams.set("status", "low,critical");
+
+  const filtersActive = chips.length > 0;
+  const lookups = { suppliers: supplierList, locations: (locations ?? []) as Array<{ id: string; name: string }>, groups: groupList };
 
   return (
     <div className={styles.page}>
@@ -128,7 +197,7 @@ export default async function ComponentsPage({ searchParams }: Props) {
         title="Components"
         description={`${filtered.length} of ${allComponents.length} components in the current catalog.`}
         actions={
-          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+          <div className={styles.headerActions}>
             {(role === "admin" || role === "super_admin") && (
               <Link href="/app/components/import" className={styles.importLink}>
                 Import CSV
@@ -139,57 +208,49 @@ export default async function ComponentsPage({ searchParams }: Props) {
         }
       />
 
-      <div className={styles.toolbar}>
-        <div className={styles.tabs}>
-          <a
-            href={rawQ ? `/app/components?q=${encodeURIComponent(rawQ)}` : "/app/components"}
-            className={!filterLowStock ? styles.tabActive : styles.tab}
-          >
-            All <span className={styles.tabCount}>{allComponents.length}</span>
-          </a>
-          <a
-            href={rawQ ? `/app/components?filter=lowstock&q=${encodeURIComponent(rawQ)}` : "/app/components?filter=lowstock"}
-            className={filterLowStock ? styles.tabActive : styles.tab}
-          >
-            Low Stock{" "}
-            {lowStockCount > 0 && (
-              <span className={styles.tabBadge}>{lowStockCount}</span>
-            )}
-          </a>
-        </div>
-        <div className={styles.search}>
-          <SearchInput
-            param="q"
-            placeholder="Search by name, SKU, or description"
-            ariaLabel="Search by name, SKU, or description"
-          />
+      <div className={styles.layout}>
+        <FilterRail
+          statuses={statusOptions}
+          groups={groupOptions}
+          suppliers={supplierOptions}
+          selected={selected}
+          cost={{ bounds, min: filters.costMin, max: filters.costMax }}
+        />
+
+        <div className={styles.results}>
+          <div className={styles.search}>
+            <SearchInput
+              param="q"
+              placeholder="Search by name, SKU, or description"
+              ariaLabel="Search by name, SKU, or description"
+            />
+          </div>
+
+          <ActiveFilterChips chips={chips} />
+
+          {error ? (
+            <EmptyState title="Failed to load" message="Could not load components. Please refresh." />
+          ) : filtered.length === 0 ? (
+            <EmptyState
+              title={filtersActive || q.length > 0 ? "No results" : "No components yet"}
+              message={
+                filtersActive || q.length > 0
+                  ? "No components match those filters. Try widening or clearing them."
+                  : "Add your first component to get started."
+              }
+            />
+          ) : (
+            <div className={styles.tableCard}>
+              <ComponentTable
+                sections={groupedSections}
+                sortCol={sortCol}
+                sortDir={sortDir}
+                baseParams={baseParams.toString()}
+              />
+            </div>
+          )}
         </div>
       </div>
-
-      {error ? (
-        <EmptyState title="Failed to load" message="Could not load components. Please refresh." />
-      ) : filtered.length === 0 ? (
-        <EmptyState
-          title={filterLowStock ? "All stocked up" : q.length > 0 ? "No results" : "No components yet"}
-          message={
-            filterLowStock
-              ? "All components have sufficient available stock."
-              : q.length > 0
-              ? "No components match that search."
-              : "Add your first component to get started."
-          }
-        />
-      ) : (
-        <div className={styles.tableCard}>
-          <ComponentTable
-            sections={groupedSections as ComponentSection[]}
-            sortCol={sortCol}
-            sortDir={sortDir}
-            rawQ={rawQ}
-            filterLowStock={filterLowStock}
-          />
-        </div>
-      )}
     </div>
   );
 }

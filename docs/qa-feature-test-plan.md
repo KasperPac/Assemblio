@@ -135,9 +135,19 @@ Tabs: Overview, BOM, Routing, Versions, Notifications.
 - [ ] Supplier link auto-created `is_preferred=true` when supplier set on create
 - [ ] **(admin)** Create component group inline; non-admin sees only "Import CSV" link
 - [ ] Archive blocked if: active BOM usage, stock on-hand >0, open POs, or open order allocations exist; archived excluded from list
-- [ ] Search (name/SKU/description) + low-stock filter (available < reorder_point)
+- [ ] Search (name/SKU/description) above the results
+- [ ] Filter rail (left; under 900px behind a "Filters (n)" button):
+  - [ ] Stock status checkboxes (OK / Low / Critical); an old `?filter=lowstock` link opens with Low + Critical ticked
+  - [ ] Groups checkboxes incl. "Ungrouped", with Select all / Clear and a per-row "only"
+  - [ ] Supplier checkboxes incl. "No supplier", with Select all / Clear and "only"
+  - [ ] Unit cost range (slider + min/max boxes), bounded by the catalogue's cheapest and dearest component
+  - [ ] Each option's count reflects the *other* active filters plus search; ticking a group never zeroes the other groups' counts
+  - [ ] Filters AND across facets, OR within one; hidden groups drop out of the grouped table
+- [ ] Active-filter chips above the table, each removable; one chip for the cost range; "Clear all" resets every facet
+- [ ] Filters live in the URL: reload/bookmark keeps them; sorting a column and opening a component keep them
+- [ ] Unit cost column, sortable
 - [ ] Stock status badge: OK / Low (orange) / Critical (red)
-- [ ] Empty states (no components / all filtered out)
+- [ ] Empty states (no components / nothing matches the filters)
 - [ ] **(admin)** CSV import 4-step (upload → preview → resolve suppliers/groups → commit); hard errors block, soft errors (unknown supplier/group) require resolve; fuzzy suggestions; same csvValue resolved once applies to all rows
 
 ### Component detail — `/app/components/{componentId}`
@@ -711,3 +721,4 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-09-24 — fixed Security: the `component-images` bucket was public, so a public-object URL bypassed RLS entirely and every uploaded image was readable by anyone holding the link. The bucket is now private and reads go through `GET /api/component-images/[componentId]`, which checks the caller's tenant and redirects to a 60-second signed URL. Done while the bucket held 0 objects, so no backfill was needed.
 - 2026-09-25 — added Retail items + sale consumption (MANUVA-27 plan 1): retail products carry shelf stock through a one-line BOM, and a fulfilled sale of one decrements on_hand exactly once via apply_sale_consumption. Manufactured products are unchanged. Shopify sync now stores variant barcodes and reports allocation errors instead of swallowing them.
 - 2026-09-25 — amended Retail items + sale consumption (MANUVA-27 plan 1 final review): removed the stock-location picker (stock always lands at the tenant's default location); "Track as retail item" is now offered on any variant with no active BOM regardless of product kind, with a neutral "Not tracked" badge on an untracked retail-kind variant; `apply_sale_consumption` now refuses a historical order's line before any write.
+- 2026-09-26 — amended Components list (MANUVA-30): the All / Low Stock tabs are replaced by a left filter rail (stock status, groups, supplier, unit-cost range) with flight-search counts, removable filter chips and a Unit cost column. Filters live in the URL, and sort and detail links carry every active filter. The design system gains a documented "filter rail" exception to the single-column rule.

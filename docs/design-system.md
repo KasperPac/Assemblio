@@ -165,9 +165,32 @@ the same `.page` wrapper:
 ### Layout rules
 
 - **Single column only** on all list/index pages — no `grid-template-columns` at page level.
+  The one sanctioned exception is the **filter rail** below.
 - **No embedded create forms** in the page body — create/edit flows go in `<dialog>` modals.
 - **Action buttons** (e.g. "New PO") live in `PageHeader`'s `actions` prop — never floating elsewhere.
 - **Back links** are small, muted, and sit below the last card — not a button.
+
+### Filter rail (list pages with faceted filters)
+
+A list page whose results are narrowed by several facets may put a filter rail
+beside its results, like a flight-search results page. Reference implementation:
+`/app/components` (`components/filter-rail.tsx`, `filter-rail.module.css`).
+
+- Layout sits **below** `PageHeader`: `grid-template-columns: 240px minmax(0, 1fr)`.
+  The rail is one card (`--bg-card` / `--stroke-card` / `--radius-xl`); facets inside
+  it are separated by `--stroke` dividers, not nested cards.
+- Under 900px the grid collapses to one column and the rail hides behind a
+  secondary **"Filters (n)"** button.
+- Facet headings use the caps-label pattern. Each option shows the count it would
+  give with the *other* facets applied, so unselected options never read 0 for the
+  wrong reason.
+- Filter state lives in the URL, so a filtered view is bookmarkable, and every sort
+  or detail link carries it.
+- Active filters repeat above the results as removable chips (`--radius-pill`)
+  with a **Clear all** link.
+
+Search, tabs or a single filter do not justify a rail. Those stay in a toolbar
+above a single-column table.
 
 ---
 
@@ -333,6 +356,8 @@ If unsure whether a token exists, check `C:\dev\manuva-tokens\Manuva Design Syst
 /* Right */
 .page { display: flex; flex-direction: column; gap: 18px; }
 ```
+
+Exception: the filter rail (§2), which is a grid *below* the header, not the page itself.
 
 ### ❌ PageHeader without `eyebrow`
 
