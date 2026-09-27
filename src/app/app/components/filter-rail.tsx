@@ -89,7 +89,7 @@ function CheckboxFacet({
                     checked={chosen.has(o.key)}
                     onChange={(e) => toggle(o.key, e.target.checked)}
                   />
-                  <span className={styles.optionName}>{o.label}</span>
+                  <span className={styles.optionName} title={o.label}>{o.label}</span>
                 </label>
                 <button
                   type="button"

@@ -108,7 +108,14 @@
   color: var(--ink-faint);
 }
 
+.label input,
+.labelEmpty input {
+  flex-shrink: 0;
+}
+
+/* min-width: 0 lets a long name shrink to its ellipsis instead of pushing the count out of the rail. */
 .optionName {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -133,6 +140,7 @@
   font-size: var(--fs-xs);
   color: var(--ink-faint);
   min-width: 2ch;
+  flex-shrink: 0;
   text-align: right;
 }
 
