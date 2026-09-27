@@ -195,43 +195,6 @@
   box-shadow: var(--shadow-focus);
 }
 
-/* ── Group header rows ─── */
-
-.groupHeaderRow {
-  cursor: pointer;
-  user-select: none;
-}
-
-.groupHeaderRow:hover .groupHeader {
-  background: var(--surface-hover);
-}
-
-.groupHeader {
-  background: var(--bg-card);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
-  color: var(--ink-strong);
-  padding-top: 12px;
-  padding-bottom: 12px;
-  border-top: 2px solid var(--stroke-card);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.groupChevron {
-  font-size: 10px;
-  color: var(--ink-faint);
-  flex-shrink: 0;
-}
-
-.groupCount {
-  margin-left: auto;
-  font-size: var(--fs-xs);
-  font-weight: 400;
-  color: var(--ink-faint);
-}
-
 /* ── Stock status indicators ─── */
 
 .nameCell {
