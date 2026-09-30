@@ -2,6 +2,10 @@
 
 # Git worktrees
 .worktrees/
+.claude/worktrees/
+
+# Playwright MCP session logs and snapshots
+.playwright-mcp/
 
 # dependencies
 /node_modules
