@@ -23,7 +23,13 @@ type ShopifyOrderNode = {
   name: string;
   cancelledAt: string | null;
   displayFulfillmentStatus: string | null;
-  lineItems: { nodes: Array<{ quantity: number; variant: { id: string } | null }> };
+  lineItems: {
+    nodes: Array<{
+      quantity: number;
+      variant: { id: string } | null;
+      discountedUnitPriceSet: { shopMoney: { amount: string } } | null;
+    }>;
+  };
 };
 
 type ProductsQueryResult = {
@@ -151,6 +157,9 @@ async function fetchOrders(shopDomain: string, accessToken: string) {
             nodes {
               quantity
               variant { id }
+              discountedUnitPriceSet {
+                shopMoney { amount }
+              }
             }
           }
         }
@@ -173,6 +182,47 @@ async function fetchOrders(shopDomain: string, accessToken: string) {
   }
 
   return orders;
+}
+
+type OrderLineRow = {
+  tenant_id: string;
+  order_id: string;
+  variant_id: string;
+  quantity: number;
+  unit_sell_price: number;
+  line_sell_price: number;
+};
+
+export function buildOrderLineRows(
+  lineItems: ShopifyOrderNode["lineItems"]["nodes"],
+  orderId: string,
+  variantMap: Map<string, string>,
+  tenantId: string
+): OrderLineRow[] {
+  const variantData = new Map<string, { quantity: number; unitPrice: number }>();
+  for (const lineItem of lineItems) {
+    const shopifyVariantId = lineItem.variant?.id;
+    const localVariantId = shopifyVariantId
+      ? variantMap.get(shopifyVariantId)
+      : undefined;
+    if (!localVariantId) continue;
+    const unitPrice = parseFloat(
+      lineItem.discountedUnitPriceSet?.shopMoney?.amount ?? "0"
+    );
+    const existing = variantData.get(localVariantId);
+    variantData.set(localVariantId, {
+      quantity: (existing?.quantity ?? 0) + lineItem.quantity,
+      unitPrice: existing?.unitPrice ?? unitPrice,
+    });
+  }
+  return Array.from(variantData.entries()).map(([variantId, data]) => ({
+    tenant_id: tenantId,
+    order_id: orderId,
+    variant_id: variantId,
+    quantity: data.quantity,
+    unit_sell_price: data.unitPrice,
+    line_sell_price: data.unitPrice * data.quantity,
+  }));
 }
 
 export async function syncShopifyStoreData(
@@ -270,24 +320,7 @@ export async function syncShopifyStoreData(
   const orderLineRows = orders.flatMap((order) => {
     const orderId = orderMap.get(order.id);
     if (!orderId) return [];
-
-    const quantityByVariant = new Map<string, number>();
-    for (const lineItem of order.lineItems.nodes) {
-      const variantId = lineItem.variant?.id;
-      const localVariantId = variantId ? variantMap.get(variantId) : undefined;
-      if (!localVariantId) continue;
-      quantityByVariant.set(
-        localVariantId,
-        (quantityByVariant.get(localVariantId) ?? 0) + lineItem.quantity
-      );
-    }
-
-    return Array.from(quantityByVariant.entries()).map(([variantId, quantity]) => ({
-      tenant_id: tenantId,
-      order_id: orderId,
-      variant_id: variantId,
-      quantity,
-    }));
+    return buildOrderLineRows(order.lineItems.nodes, orderId, variantMap, tenantId);
   });
 
   if (orderLineRows.length > 0) {
