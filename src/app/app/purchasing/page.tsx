@@ -74,6 +74,9 @@ export default async function PurchasingPage() {
         description="Create inbound purchase orders, manage status changes, and keep received quantities aligned with component demand."
         actions={
           <div className={styles.headerActions}>
+            <Link href="/app/purchasing/invoices" className={styles.secondaryBtn}>
+              Supplier invoices
+            </Link>
             <PurchaseOrderLineForm
               purchaseOrders={(data ?? []).map((po) => ({
                 id: po.id,
