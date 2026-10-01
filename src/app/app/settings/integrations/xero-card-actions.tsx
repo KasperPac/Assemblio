@@ -2,8 +2,14 @@
 
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useFormStatus } from "react-dom";
 import { disconnectXeroAction, retryAccountingJob } from "./xero/actions";
 import styles from "./xero/xero.module.css";
+
+function ConfirmDisconnect() {
+  const { pending } = useFormStatus();
+  return <button type="submit" className={styles.primaryBtn} disabled={pending}>{pending ? "Disconnecting..." : "Disconnect"}</button>;
+}
 
 export function DisconnectXeroButton({ orgName }: { orgName: string }) {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -14,7 +20,7 @@ export function DisconnectXeroButton({ orgName }: { orgName: string }) {
         <p className={styles.help}>Disconnect {orgName}? Manuva&apos;s access is revoked in Xero and queued bills are cancelled. Bills already in Xero stay there.</p>
         <form action={disconnectXeroAction} className={styles.actions}>
           <button type="button" className={styles.secondaryBtn} onClick={() => dialog.current?.close()}>Cancel</button>
-          <button type="submit" className={styles.primaryBtn}>Disconnect</button>
+          <ConfirmDisconnect />
         </form>
       </dialog>
     </>

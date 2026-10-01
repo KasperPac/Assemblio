@@ -6,6 +6,7 @@ import { getXeroConfig } from "@/lib/accounting/xero/config";
 import { cardBadge, redirectMessage, type CardBadge } from "@/lib/accounting/xero/card-state";
 import { isFailedForGood } from "@/lib/accounting/outbox/state";
 import { jobBadge, OPERATION_LABELS } from "@/lib/accounting/supplier-invoice/labels";
+import { scrubSecrets } from "@/lib/accounting/xero/scrub";
 import { assertNoError } from "@/lib/supabase/assert-no-error";
 import StatusBadge from "../../_ui/status-badge";
 import EmptyState from "../../_ui/empty-state";
@@ -44,6 +45,7 @@ export default async function XeroCard({ xeroParam, reason }: { xeroParam?: stri
 
   let live: Conn | null = null;
   let jobs: Job[] = [];
+  let problems = 0;
   const invoiceNumbers = new Map<string, string>();
   try {
     const { data: conn, error: connErr } = await ctx.supabase
@@ -63,6 +65,15 @@ export default async function XeroCard({ xeroParam, reason }: { xeroParam?: stri
         .limit(50);
       assertNoError(error, "read accounting_outbox");
       jobs = (data ?? []) as Job[];
+      // Same query as the banner, so both count every job, not just the last 50.
+      const { count, error: countErr } = await ctx.supabase
+        .from("accounting_outbox")
+        .select("id", { count: "exact", head: true })
+        .eq("connection_id", live.id)
+        // Mirrors isFailedForGood() in lib/accounting/outbox/state.ts.
+        .or("status.eq.gave_up,and(status.eq.failed,error_class.eq.fixable)");
+      assertNoError(countErr, "count accounting_outbox");
+      problems = count ?? 0;
       const ids = jobs.filter((j) => j.entity_type === "supplier_invoice").map((j) => j.entity_id);
       if (ids.length) {
         const { data: invs, error: invErr } = await ctx.supabase.from("supplier_invoice").select("id, invoice_number").in("id", ids);
@@ -70,7 +81,8 @@ export default async function XeroCard({ xeroParam, reason }: { xeroParam?: stri
         for (const i of (invs ?? []) as Array<{ id: string; invoice_number: string }>) invoiceNumbers.set(i.id, i.invoice_number);
       }
     }
-  } catch {
+  } catch (e) {
+    console.error("[xero] card load failed", scrubSecrets(e instanceof Error ? e.message : String(e)));
     return (
       <Shell>
         {notice}
@@ -95,7 +107,6 @@ export default async function XeroCard({ xeroParam, reason }: { xeroParam?: stri
   }
 
   const lastSent = jobs.find((j) => j.status === "sent")?.completed_at ?? null;
-  const problems = jobs.filter((j) => isFailedForGood(j)).length;
 
   return (
     <Shell badge={cardBadge(live)}>
