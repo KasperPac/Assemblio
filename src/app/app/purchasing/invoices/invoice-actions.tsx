@@ -13,6 +13,8 @@ export default function InvoiceActions({ invoiceId, canVoid, retryJobId }: { inv
   const [reason, setReason] = useState("");
   const [retryMessage, setRetryMessage] = useState<string | null>(null);
   const [voidMessage, setVoidMessage] = useState<string | null>(null);
+  // Shown after a void that left something to do in Xero (it was disconnected); outlives the refresh.
+  const [voidNotice, setVoidNotice] = useState<string | null>(null);
   const [pending, start] = useTransition();
 
   const doVoid = () =>
@@ -20,6 +22,7 @@ export default function InvoiceActions({ invoiceId, canVoid, retryJobId }: { inv
       setVoidMessage(null);
       const r = await voidSupplierInvoice(invoiceId, reason);
       if (!r.ok) return setVoidMessage(r.message);
+      setVoidNotice(r.message ?? null);
       dialog.current?.close();
       router.refresh();
     });
@@ -32,9 +35,10 @@ export default function InvoiceActions({ invoiceId, canVoid, retryJobId }: { inv
       router.refresh();
     });
 
-  if (!canVoid && !retryJobId) return null;
+  if (!canVoid && !retryJobId && !voidNotice) return null;
   return (
     <>
+      {voidNotice ? <p className={styles.error} role="status">{voidNotice}</p> : null}
       {retryMessage ? <p className={styles.error} role="status">{retryMessage}</p> : null}
       {retryJobId ? <button type="button" className={styles.secondaryBtn} disabled={pending} onClick={doRetry}>Retry sending to Xero</button> : null}
       {canVoid ? <button type="button" className={styles.dangerBtn} onClick={() => { setVoidMessage(null); dialog.current?.showModal(); }}>Void invoice</button> : null}

@@ -16,6 +16,14 @@ export function invoiceBadge(status: string, syncStatus: string): Badge {
   }
 }
 
+/** What a successful void left in Xero, when the admin must act there (void_supplier_invoice's returned sync status). */
+export function voidOutcomeMessage(syncStatus: string): string | null {
+  // A void only returns sent when no live connection could queue the void_bill.
+  if (syncStatus === "sent") return "Voided in Manuva. Xero is disconnected, so the bill stays in Xero. Void it there.";
+  if (syncStatus === "failed") return "Voided in Manuva. A bill may already exist in Xero. Check Xero and void it there.";
+  return null;
+}
+
 export function jobBadge(status: string, errorClass: string | null): Badge {
   switch (status) {
     case "pending": return errorClass === "auth" ? { variant: "warning", label: "Paused: reconnect Xero" } : { variant: "info", label: "Queued" };

@@ -120,6 +120,33 @@ async function finish(db: SupabaseClient, job: OutboxJob, outcome: HandlerOutcom
   return update;
 }
 
+/**
+ * The inverse of finish()'s "dependent invoices failed": bills waiting on these create_contact jobs can go again
+ * (the contact job was retried, or the supplier was linked), so their invoices read queued, not failed.
+ * Call it before clearing the bills' depends_on.
+ */
+export async function requeueDependentInvoices(db: SupabaseClient, tenantId: string, contactJobIds: string[]): Promise<void> {
+  if (!contactJobIds.length) return;
+  const { data, error } = await db
+    .from("accounting_outbox")
+    .select("entity_id")
+    .eq("tenant_id", tenantId)
+    .eq("operation", "create_bill")
+    .in("depends_on", contactJobIds)
+    .in("status", ["pending"]);
+  assertNoError(error, "read dependent outbox jobs");
+  const ids = [...new Set((data ?? []).map((d) => (d as { entity_id: string }).entity_id))];
+  if (!ids.length) return;
+  const { error: e2 } = await db
+    .from("supplier_invoice")
+    .update({ sync_status: "queued", updated_at: new Date().toISOString() })
+    .eq("tenant_id", tenantId)
+    .in("id", ids)
+    .eq("status", "posted")
+    .eq("sync_status", "failed");
+  assertNoError(e2, "requeue dependent invoices");
+}
+
 /** Returns claimed-but-unrun jobs to `pending`. Conditional so it can't touch a job another worker now owns. */
 async function releaseJobs(db: SupabaseClient, ids: string[], nextAt: string, worker: string): Promise<void> {
   if (!ids.length) return;

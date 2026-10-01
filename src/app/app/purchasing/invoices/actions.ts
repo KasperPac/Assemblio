@@ -11,6 +11,7 @@ import { parseDraftPayload } from "@/lib/accounting/supplier-invoice/draft";
 import { invoiceTotals, lineAmounts } from "@/lib/accounting/supplier-invoice/calc";
 import { UUID } from "@/lib/accounting/supplier-invoice/util";
 import { dbErrorMessage } from "@/lib/accounting/supplier-invoice/errors";
+import { voidOutcomeMessage } from "@/lib/accounting/supplier-invoice/labels";
 import { supabaseConnectionRepo } from "@/lib/accounting/connection";
 import { isXeroPilotTenant } from "@/lib/accounting/xero/config";
 import { xeroAccessFor } from "@/lib/accounting/xero/access";
@@ -18,7 +19,7 @@ import { getContact, searchContacts } from "@/lib/accounting/xero/org";
 import { classifyXeroFailure } from "@/lib/accounting/xero/errors";
 import { XeroAuthError } from "@/lib/accounting/xero/tokens";
 import { scrubSecrets } from "@/lib/accounting/xero/scrub";
-import { kickOutbox } from "@/lib/accounting/outbox/process";
+import { kickOutbox, requeueDependentInvoices } from "@/lib/accounting/outbox/process";
 
 type Fail = { ok: false; message: string };
 type DbErr = { code?: string; message?: string };
@@ -151,7 +152,7 @@ export async function postSupplierInvoice(id: string, opts: { updateComponentCos
   return { ok: true, syncStatus };
 }
 
-export async function voidSupplierInvoice(id: string, reason: string): Promise<{ ok: true; syncStatus: string } | Fail> {
+export async function voidSupplierInvoice(id: string, reason: string): Promise<{ ok: true; syncStatus: string; message?: string } | Fail> {
   const ctx = await getServerTenantContext();
   if (!ctx?.tenantId) return NO_WORKSPACE;
   if (!isAdminRole(ctx.role)) return { ok: false, message: "Only admins can void supplier invoices." };
@@ -170,7 +171,9 @@ export async function voidSupplierInvoice(id: string, reason: string): Promise<{
   const tenantId = ctx.tenantId;
   if (syncStatus === "queued" && isXeroPilotTenant(tenantId)) after(() => kickOutbox({ tenantId }));
   revalidateInvoices(id);
-  return { ok: true, syncStatus };
+  // Voiding while Xero is disconnected queues nothing; say what the admin must still do in Xero.
+  const message = voidOutcomeMessage(syncStatus);
+  return message ? { ok: true, syncStatus, message } : { ok: true, syncStatus };
 }
 
 async function connectedXero(tenantId: string) {
@@ -234,7 +237,8 @@ export async function linkSupplierToXeroContact(supplierId: string, contactId: s
 
   let kick = false;
   try {
-    // An open "create contact" for this supplier is now unnecessary: cancel it and unblock the bills waiting on it.
+    // An open or gave-up "create contact" for this supplier is now unnecessary: cancel it and unblock the bills
+    // waiting on it.
     const { data: jobs, error: je } = await x.db
       .from("accounting_outbox")
       .select("id, status")
@@ -242,7 +246,7 @@ export async function linkSupplierToXeroContact(supplierId: string, contactId: s
       .eq("entity_type", "supplier")
       .eq("entity_id", supplierId)
       .eq("operation", "create_contact")
-      .in("status", ["pending", "working", "failed"]);
+      .in("status", ["pending", "working", "failed", "gave_up"]);
     assertNoError(je, "find create_contact jobs");
     const open = (jobs ?? []) as { id: string; status: string }[];
     // A job in flight may already have created the contact at Xero; don't race it.
@@ -259,8 +263,10 @@ export async function linkSupplierToXeroContact(supplierId: string, contactId: s
         .from("accounting_outbox")
         .update({ status: "cancelled", completed_at: new Date().toISOString(), error_message: "Supplier linked to an existing Xero contact" })
         .in("id", ids)
-        .in("status", ["pending", "failed"]);
+        .in("status", ["pending", "failed", "gave_up"]);
       assertNoError(e1, "cancel create_contact jobs");
+      // Bills a failed-for-good contact marked failed can go now; read them while depends_on still points here.
+      await requeueDependentInvoices(x.db, tenantId, ids);
       const { error: e2 } = await x.db.from("accounting_outbox").update({ depends_on: null }).eq("tenant_id", tenantId).in("depends_on", ids);
       assertNoError(e2, "unblock dependent bill jobs");
       kick = true;

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { kickOutbox, processConnectionOutbox, processDueOutboxes } from "./process";
+import { kickOutbox, processConnectionOutbox, processDueOutboxes, requeueDependentInvoices } from "./process";
 import { XeroAuthError } from "../xero/tokens";
 import type { OutboxJob } from "./handlers";
 
@@ -277,5 +277,27 @@ describe("processDueOutboxes and kickOutbox pilot gate", () => {
     vi.stubEnv("XERO_PILOT_TENANTS", "t1");
     await kickOutbox({ connectionId: "c1" }, { db: f.db, getAccess, now, handlers: { create_bill: async () => ({ kind: "sent", externalId: "x" }) } });
     expect(f.rpc).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("requeueDependentInvoices", () => {
+  it("moves the invoices of bills waiting on these contact jobs from failed back to queued", async () => {
+    const f = fakeDb({ connection: conn, jobs: [], selectRows: { accounting_outbox: [{ entity_id: "inv-1" }, { entity_id: "inv-1" }, { entity_id: "inv-2" }] } });
+    await requeueDependentInvoices(f.db, "t1", ["contact-job"]);
+    const w = f.writes.filter((x) => x.table === "supplier_invoice");
+    expect(w).toHaveLength(1);
+    expect(w[0].values).toMatchObject({ sync_status: "queued" });
+    expect(w[0].filters).toEqual(expect.arrayContaining([["eq", "tenant_id", "t1"], ["in", "id", ["inv-1", "inv-2"]], ["eq", "status", "posted"], ["eq", "sync_status", "failed"]]));
+  });
+  it("writes nothing when no bill waits on the jobs", async () => {
+    const f = fakeDb({ connection: conn, jobs: [], selectRows: { accounting_outbox: [] } });
+    await requeueDependentInvoices(f.db, "t1", ["contact-job"]);
+    expect(f.writes).toEqual([]);
+    await requeueDependentInvoices(f.db, "t1", []);
+    expect(f.writes).toEqual([]);
+  });
+  it("surfaces a failed invoice update", async () => {
+    const f = fakeDb({ connection: conn, jobs: [], selectRows: { accounting_outbox: [{ entity_id: "inv-1" }] }, tableError: { supplier_invoice: "nope" } });
+    await expect(requeueDependentInvoices(f.db, "t1", ["contact-job"])).rejects.toThrow(/requeue dependent invoices: nope/);
   });
 });

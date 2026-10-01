@@ -18,7 +18,7 @@ import { assertNoError } from "@/lib/supabase/assert-no-error";
 import { fetchAccounts, fetchTaxRates } from "@/lib/accounting/xero/org";
 import { setupTaxRates, validateSetup, type SetupInput } from "@/lib/accounting/xero/setup";
 import { XeroAuthError } from "@/lib/accounting/xero/tokens";
-import { kickOutbox } from "@/lib/accounting/outbox/process";
+import { kickOutbox, requeueDependentInvoices } from "@/lib/accounting/outbox/process";
 import { isFailedForGood } from "@/lib/accounting/outbox/state";
 
 export async function chooseXeroOrganisation(formData: FormData): Promise<void> {
@@ -187,18 +187,20 @@ export async function retryAccountingJob(jobId: string): Promise<{ ok: boolean; 
       .eq("id", jobId)
       .eq("tenant_id", tenantId)
       .eq("status", current.status)
-      .select("entity_type, entity_id");
+      .select("entity_type, entity_id, operation");
     if (error) {
       if (error.code === "23505") return { ok: false, message: "Another attempt for this item is already queued." };
       console.error("[xero] retry job failed", scrubSecrets({ code: error.code, message: error.message }));
       return { ok: false, message: "Couldn't retry that item. Try again." };
     }
-    const job = (data ?? [])[0] as { entity_type: string; entity_id: string } | undefined;
+    const job = (data ?? [])[0] as { entity_type: string; entity_id: string; operation: string } | undefined;
     if (!job) return { ok: false, message: "That item can't be retried." };
     if (job.entity_type === "supplier_invoice") {
       const { error: e2 } = await db.from("supplier_invoice").update({ sync_status: "queued", updated_at: new Date().toISOString() }).eq("id", job.entity_id).eq("tenant_id", tenantId);
       assertNoError(e2, "requeue supplier_invoice");
     }
+    // The bills waiting on a retried contact were marked failed with it; they are queued again too.
+    if (job.operation === "create_contact") await requeueDependentInvoices(db, tenantId, [jobId]);
   } catch (err) {
     console.error("[xero] retry job failed", scrubSecrets(err instanceof Error ? err.message : String(err)));
     return { ok: false, message: "Couldn't retry that item. Try again." };

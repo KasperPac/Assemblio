@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { invoiceBadge, jobBadge } from "./labels";
+import { invoiceBadge, jobBadge, voidOutcomeMessage } from "./labels";
 
 describe("invoiceBadge", () => {
   it.each([
@@ -29,5 +29,16 @@ describe("jobBadge", () => {
     ["cancelled", null, "Cancelled", "default"],
   ])("%s/%s → %s", (status, cls, label, variant) => {
     expect(jobBadge(status, cls)).toEqual({ label, variant });
+  });
+});
+
+describe("voidOutcomeMessage", () => {
+  it("explains a void that left a bill in Xero", () => {
+    expect(voidOutcomeMessage("sent")).toBe("Voided in Manuva. Xero is disconnected, so the bill stays in Xero. Void it there.");
+    expect(voidOutcomeMessage("failed")).toBe("Voided in Manuva. A bill may already exist in Xero. Check Xero and void it there.");
+  });
+  it("says nothing extra when Xero is handled or never involved", () => {
+    expect(voidOutcomeMessage("queued")).toBeNull();
+    expect(voidOutcomeMessage("not_synced")).toBeNull();
   });
 });
