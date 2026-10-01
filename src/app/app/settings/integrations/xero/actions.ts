@@ -2,6 +2,7 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { after } from "next/server";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/tenant/authz";
@@ -17,6 +18,8 @@ import { assertNoError } from "@/lib/supabase/assert-no-error";
 import { fetchAccounts, fetchTaxRates } from "@/lib/accounting/xero/org";
 import { validateSetup, type SetupInput } from "@/lib/accounting/xero/setup";
 import { XeroAuthError } from "@/lib/accounting/xero/tokens";
+import { kickOutbox } from "@/lib/accounting/outbox/process";
+import { isFailedForGood } from "@/lib/accounting/outbox/state";
 
 export async function chooseXeroOrganisation(formData: FormData): Promise<void> {
   const ctx = await requireAdmin();
@@ -152,4 +155,52 @@ export async function saveXeroSetup(_prev: SetupState, formData: FormData): Prom
   await logActivity({ event: "accounting.setup_completed", entityId: conn.id, metadata: { sales_source: v.value.salesSource } });
   revalidatePath("/app/settings/integrations");
   redirect("/app/settings/integrations?xero=setup-complete");
+}
+
+/** Admin Retry (spec 6.3): puts a failed-for-good job back to pending so the next claim picks it up. */
+export async function retryAccountingJob(jobId: string): Promise<{ ok: boolean; message?: string }> {
+  const ctx = await requireAdmin();
+  if (!ctx.tenantId) return { ok: false, message: "Choose a workspace first." };
+  const tenantId = ctx.tenantId;
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(jobId)) return { ok: false, message: "That item can't be retried." };
+  const db = createSupabaseAdminClient();
+  try {
+    const { data: found, error: findErr } = await db
+      .from("accounting_outbox")
+      .select("id, status, error_class")
+      .eq("id", jobId)
+      .eq("tenant_id", tenantId)
+      .maybeSingle();
+    assertNoError(findErr, "read accounting_outbox job");
+    const current = found as { status: string; error_class: string | null } | null;
+    if (!current || !isFailedForGood(current)) return { ok: false, message: "That item can't be retried." };
+
+    // first_attempt_at is reset so the 24-hour retry window starts again; attempts is kept so the
+    // duplicate check in handleCreateBill still runs.
+    const { data, error } = await db
+      .from("accounting_outbox")
+      .update({ status: "pending", error_class: null, error_message: null, first_attempt_at: null, next_attempt_at: new Date().toISOString(), locked_at: null, locked_by: null })
+      .eq("id", jobId)
+      .eq("tenant_id", tenantId)
+      .eq("status", current.status)
+      .select("entity_type, entity_id");
+    if (error) {
+      if (error.code === "23505") return { ok: false, message: "Another attempt for this item is already queued." };
+      console.error("[xero] retry job failed", scrubSecrets({ code: error.code, message: error.message }));
+      return { ok: false, message: "Couldn't retry that item. Try again." };
+    }
+    const job = (data ?? [])[0] as { entity_type: string; entity_id: string } | undefined;
+    if (!job) return { ok: false, message: "That item can't be retried." };
+    if (job.entity_type === "supplier_invoice") {
+      const { error: e2 } = await db.from("supplier_invoice").update({ sync_status: "queued", updated_at: new Date().toISOString() }).eq("id", job.entity_id).eq("tenant_id", tenantId);
+      assertNoError(e2, "requeue supplier_invoice");
+    }
+  } catch (err) {
+    console.error("[xero] retry job failed", scrubSecrets(err instanceof Error ? err.message : String(err)));
+    return { ok: false, message: "Couldn't retry that item. Try again." };
+  }
+  if (isXeroPilotTenant(tenantId)) after(() => kickOutbox({ tenantId }));
+  revalidatePath("/app/settings/integrations");
+  revalidatePath("/app/purchasing/invoices");
+  return { ok: true };
 }
