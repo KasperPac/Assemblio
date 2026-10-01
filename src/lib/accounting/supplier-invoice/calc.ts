@@ -1,7 +1,24 @@
 export type AmountsMode = "inclusive" | "exclusive";
 
-export const round2 = (n: number) => Math.round((n + Number.EPSILON) * 100) / 100;
-export const round4 = (n: number) => Math.round((n + Number.EPSILON) * 10000) / 10000;
+/** Rounds using half-away-from-zero (like Postgres round(numeric, n)), not banker's rounding. */
+function roundHalfAway(n: number, dp: number): number {
+  if (!Number.isFinite(n)) return n;
+  const clean = Number(n.toPrecision(15)); // strip binary float noise (40.15*0.1 → 4.015)
+  const absClean = Math.abs(clean);
+  // For very small numbers at these precisions, round to 0.
+  if (absClean < 1e-7) return 0;
+  // For very large exponents, use a safer fallback: toFixed + parseFloat
+  if (absClean >= 1e15) {
+    const sign = clean < 0 ? -1 : 1;
+    return sign * Number(absClean.toFixed(dp));
+  }
+  const sign = clean < 0 ? -1 : 1;
+  const shifted = Math.round(Number(`${absClean}e${dp}`));
+  return sign * Number(`${shifted}e-${dp}`);
+}
+
+export const round2 = (n: number) => roundHalfAway(n, 2);
+export const round4 = (n: number) => roundHalfAway(n, 4);
 
 /** Used when the tenant has no Xero connection: tax types stay null. */
 export const FALLBACK_TAX_OPTIONS = [

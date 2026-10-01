@@ -1,5 +1,26 @@
 import { describe, expect, it } from "vitest";
-import { invoiceTotals, isInvoiceableReceipt, lineAmounts, lineVariance, totalMismatch } from "./calc";
+import { invoiceTotals, isInvoiceableReceipt, lineAmounts, lineVariance, round2, round4, totalMismatch } from "./calc";
+
+describe("rounding", () => {
+  it("handles 0.1 + 0.2 === 0.3", () => {
+    expect(round2(0.1 + 0.2)).toBe(0.3);
+  });
+  it("rounds 1.005 to 1.01 (half away from zero)", () => {
+    expect(round2(1.005)).toBe(1.01);
+  });
+  it("rounds 10.005 to 10.01", () => {
+    expect(round2(10.005)).toBe(10.01);
+  });
+  it("rounds 1234.565 to 1234.57", () => {
+    expect(round2(1234.565)).toBe(1234.57);
+  });
+  it("rounds -1.005 to -1.01", () => {
+    expect(round2(-1.005)).toBe(-1.01);
+  });
+  it("round4: 1.00005 to 1.0001", () => {
+    expect(round4(1.00005)).toBe(1.0001);
+  });
+});
 
 describe("lineAmounts", () => {
   it("exclusive: tax on top", () => {
@@ -11,6 +32,12 @@ describe("lineAmounts", () => {
   it("keeps sub-cent unit costs to 4dp", () => {
     expect(lineAmounts({ quantity: 10000, unitAmount: 0.0125, taxRatePercent: 0 }, "exclusive").lineAmount).toBe(125);
   });
+  it("exclusive: 40.15 at 10% tax should be 4.02 (half-away rounding)", () => {
+    expect(lineAmounts({ quantity: 1, unitAmount: 40.15, taxRatePercent: 10 }, "exclusive")).toEqual({ lineAmount: 40.15, taxAmount: 4.02, exTaxUnitAmount: 40.15 });
+  });
+  it("inclusive: 110.00 at 10% should give tax 10.00", () => {
+    expect(lineAmounts({ quantity: 1, unitAmount: 110, taxRatePercent: 10 }, "inclusive")).toEqual({ lineAmount: 110, taxAmount: 10, exTaxUnitAmount: 100 });
+  });
 });
 
 describe("invoiceTotals", () => {
@@ -19,6 +46,9 @@ describe("invoiceTotals", () => {
   });
   it("inclusive", () => {
     expect(invoiceTotals([{ lineAmount: 110, taxAmount: 10 }], "inclusive")).toEqual({ subtotal: 100, taxTotal: 10, total: 110 });
+  });
+  it("handles binary float noise: 0.1 + 0.2 + 0.3 = 0.6", () => {
+    expect(invoiceTotals([{ lineAmount: 0.1, taxAmount: 0 }, { lineAmount: 0.2, taxAmount: 0 }, { lineAmount: 0.3, taxAmount: 0 }], "exclusive")).toEqual({ subtotal: 0.6, taxTotal: 0, total: 0.6 });
   });
 });
 

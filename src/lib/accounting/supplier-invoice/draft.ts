@@ -27,7 +27,14 @@ export type DraftPayload = {
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
-const isDate = (v: unknown): v is string => typeof v === "string" && ISO_DATE.test(v) && !Number.isNaN(Date.parse(`${v}T00:00:00Z`));
+const isDate = (v: unknown): v is string => {
+  if (typeof v !== "string" || !ISO_DATE.test(v)) return false;
+  // Check that Date.parse doesn't reject it
+  if (Number.isNaN(Date.parse(`${v}T00:00:00Z`))) return false;
+  // Round-trip through ISO string to reject impossible dates (e.g., 2026-02-31 rolls to 2026-03-03)
+  const d = new Date(`${v}T00:00:00Z`);
+  return d.toISOString().slice(0, 10) === v;
+};
 const isNum = (v: unknown): v is number => typeof v === "number" && Number.isFinite(v);
 const optUuid = (v: unknown) => v === null || (typeof v === "string" && UUID.test(v));
 
@@ -52,6 +59,8 @@ export function parseDraftPayload(raw: unknown): { ok: true; value: DraftPayload
   const seen = new Set<string>();
   for (const [i, l] of (r.lines as Record<string, unknown>[]).entries()) {
     const n = i + 1;
+    // Guard against non-object lines (null, primitives, arrays)
+    if (!l || typeof l !== "object" || Array.isArray(l)) return { ok: false, error: `Line ${n}: invalid line object.` };
     if (l.kind !== "stock" && l.kind !== "other") return { ok: false, error: `Line ${n}: unknown line type.` };
     if (!optUuid(l.deliveryReceiptLineId) || !optUuid(l.componentId)) return { ok: false, error: `Line ${n}: invalid reference.` };
     if (l.kind === "stock" && !l.deliveryReceiptLineId) return { ok: false, error: `Line ${n}: stock lines must come from a receipt.` };

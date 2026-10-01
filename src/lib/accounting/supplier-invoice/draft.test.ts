@@ -32,4 +32,18 @@ describe("parseDraftPayload", () => {
   it("rejects the same receipt line twice", () => {
     expect(parseDraftPayload({ ...base, lines: [base.lines[0], base.lines[0]] }).ok).toBe(false);
   });
+  it("does not throw on invalid line objects; returns error instead", () => {
+    expect(parseDraftPayload({ ...base, lines: [null] }).ok).toBe(false);
+    expect(parseDraftPayload({ ...base, lines: [1] }).ok).toBe(false);
+    expect(parseDraftPayload({ ...base, lines: ["x"] }).ok).toBe(false);
+  });
+  it("rejects impossible dates like 2026-02-31", () => {
+    const r = parseDraftPayload({ ...base, invoiceDate: "2026-02-31" });
+    expect(r.ok).toBe(false);
+  });
+  it("accepts valid leap year date 2028-02-29", () => {
+    const r = parseDraftPayload({ ...base, invoiceDate: "2028-02-29", dueDate: "2028-03-31" });
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.value.invoiceDate).toBe("2028-02-29");
+  });
 });
