@@ -16,7 +16,7 @@ import { scrubSecrets } from "@/lib/accounting/xero/scrub";
 import { logActivity } from "@/lib/activity/log";
 import { assertNoError } from "@/lib/supabase/assert-no-error";
 import { fetchAccounts, fetchTaxRates } from "@/lib/accounting/xero/org";
-import { validateSetup, type SetupInput } from "@/lib/accounting/xero/setup";
+import { setupTaxRates, validateSetup, type SetupInput } from "@/lib/accounting/xero/setup";
 import { XeroAuthError } from "@/lib/accounting/xero/tokens";
 import { kickOutbox } from "@/lib/accounting/outbox/process";
 import { isFailedForGood } from "@/lib/accounting/outbox/state";
@@ -128,6 +128,8 @@ export async function saveXeroSetup(_prev: SetupState, formData: FormData): Prom
 
   const v = validateSetup(input, accounts, rates);
   if (!v.ok) return { errors: v.errors };
+  // Stored so the invoice form can offer these rates while live Xero reads are unavailable.
+  const taxRates = setupTaxRates(rates, v.value.purchaseTaxType, v.value.gstFreeTaxType);
 
   const now = new Date().toISOString();
   const { data: saved, error } = await db
@@ -137,6 +139,8 @@ export async function saveXeroSetup(_prev: SetupState, formData: FormData): Prom
       other_charges_account_code: v.value.otherChargesAccountCode,
       purchase_tax_type: v.value.purchaseTaxType,
       gst_free_tax_type: v.value.gstFreeTaxType,
+      purchase_tax_rate: taxRates.purchaseTaxRate,
+      gst_free_tax_rate: taxRates.gstFreeTaxRate,
       default_amounts_mode: v.value.defaultAmountsMode,
       bills_start_date: v.value.billsStartDate,
       sales_source: v.value.salesSource,

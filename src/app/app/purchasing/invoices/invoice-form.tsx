@@ -3,7 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { dueDateFromTerms } from "@/lib/accounting/supplier-invoice/terms";
-import { invoiceTotals, lineAmounts, lineVariance, totalMismatch, type AmountsMode } from "@/lib/accounting/supplier-invoice/calc";
+import { invoiceTotals, lineAmounts, lineVariance, prefillUnitAmount, totalMismatch, type AmountsMode } from "@/lib/accounting/supplier-invoice/calc";
 import type { DraftLine } from "@/lib/accounting/supplier-invoice/draft";
 import { postSupplierInvoice, saveSupplierInvoiceDraft } from "./actions";
 import EmptyState from "../../_ui/empty-state";
@@ -28,16 +28,20 @@ type Props = {
   currency: string;
   taxOptions: TaxOption[];
   accountOptions: AccountOption[];
-  xeroLoadError: boolean;
+  /** Why the options aren't live from Xero, when that matters to the user. */
+  xeroNotice: { text: string; error: boolean } | null;
+  /** Live Xero reads worked, so contacts can be searched and linked here. */
+  xeroLive: boolean;
   canCreateContact: boolean;
   xero: XeroDefaults | null;
   draft: DraftInit | null;
 };
 
-type Row = DraftLine & { key: string };
+/** `priceEdited`: the user typed this line's price (or it came from a saved draft), so it is never re-derived. */
+type Row = DraftLine & { key: string; priceEdited: boolean };
 const taxKey = (t: { taxType: string | null; rate: number }) => t.taxType ?? `rate:${t.rate}`;
 const today = () => new Date().toLocaleDateString("en-CA"); // local date: the UTC date is yesterday before ~10am in AU
-const strip = ({ key, ...line }: Row): DraftLine => { void key; return line; };
+const strip = ({ key, priceEdited, ...line }: Row): DraftLine => { void key; void priceEdited; return line; };
 
 export default function InvoiceForm(p: Props) {
   const router = useRouter();
@@ -64,9 +68,15 @@ export default function InvoiceForm(p: Props) {
       .filter((l) => !l.taken)
       .map((l) => ({
         key: l.id, kind: "stock", deliveryReceiptLineId: l.id, componentId: l.componentId,
-        description: l.sku ? `${l.sku} ${l.name}` : l.name, quantity: l.received, unitAmount: l.cost,
+        description: l.sku ? `${l.sku} ${l.name}` : l.name, quantity: l.received,
+        unitAmount: prefillUnitAmount(l.cost, defaultTax?.rate ?? 0, mode), priceEdited: false,
         taxType: defaultTax?.taxType ?? null, taxRatePercent: defaultTax?.rate ?? 0, accountCode: p.xero?.inventoryAccountCode ?? null,
       }));
+  // The receipt's cost is ex-tax: re-derive an untouched stock price when the amounts mode or its tax rate changes.
+  const reprice = (r: Row, m: AmountsMode): Row => {
+    const src = r.kind === "stock" && !r.priceEdited && r.deliveryReceiptLineId ? receiptLines.get(r.deliveryReceiptLineId) : undefined;
+    return src ? { ...r, unitAmount: prefillUnitAmount(src.cost, r.taxRatePercent, m) } : r;
+  };
 
   const [selected, setSelected] = useState<Set<string>>(() => {
     if (!p.draft) return new Set(p.preselectedReceiptIds);
@@ -75,7 +85,7 @@ export default function InvoiceForm(p: Props) {
   });
   const [rows, setRows] = useState<Row[]>(() =>
     p.draft
-      ? p.draft.lines.map((l, i) => ({ ...l, key: l.deliveryReceiptLineId ?? `other-${i}` }))
+      ? p.draft.lines.map((l, i) => ({ ...l, key: l.deliveryReceiptLineId ?? `other-${i}`, priceEdited: true }))
       : p.preselectedReceiptIds.flatMap(stockRowsFor)
   );
 
@@ -92,12 +102,18 @@ export default function InvoiceForm(p: Props) {
     setSelected(next);
   }
   const update = (key: string, patch: Partial<Row>) => setRows((rs) => rs.map((r) => (r.key === key ? { ...r, ...patch } : r)));
+  const changeMode = (m: AmountsMode) => {
+    setMode(m);
+    setRows((rs) => rs.map((r) => reprice(r, m)));
+  };
+  const changeTax = (key: string, t: TaxOption) =>
+    setRows((rs) => rs.map((r) => (r.key === key ? reprice({ ...r, taxType: t.taxType, taxRatePercent: t.rate }, mode) : r)));
   const addOther = () =>
     setRows((rs) => [
       ...rs,
       {
         key: `other-${rs.length}-${invoiceNumber.length}-${Math.random().toString(36).slice(2, 8)}`,
-        kind: "other", deliveryReceiptLineId: null, componentId: null, description: "Freight", quantity: 1, unitAmount: 0,
+        kind: "other", deliveryReceiptLineId: null, componentId: null, description: "Freight", quantity: 1, unitAmount: 0, priceEdited: false,
         taxType: defaultTax?.taxType ?? null, taxRatePercent: defaultTax?.rate ?? 0, accountCode: p.xero?.otherChargesAccountCode ?? null,
       },
     ]);
@@ -151,7 +167,7 @@ export default function InvoiceForm(p: Props) {
           </label>
           <label className={styles.field}>
             <span className={styles.caps}>Amounts are</span>
-            <select className={styles.select} value={mode} onChange={(e) => setMode(e.target.value as AmountsMode)}>
+            <select className={styles.select} value={mode} onChange={(e) => changeMode(e.target.value as AmountsMode)}>
               <option value="exclusive">Excluding GST</option>
               <option value="inclusive">Including GST</option>
             </select>
@@ -161,8 +177,11 @@ export default function InvoiceForm(p: Props) {
             <input inputMode="decimal" className={styles.input} value={enteredTotal} onChange={(e) => setEnteredTotal(e.target.value)} placeholder="Optional cross-check" />
           </label>
         </div>
-        {p.xero ? (
+        {p.xero && p.xeroLive ? (
           <SupplierLink supplierId={p.supplier.id} supplierName={p.supplier.name} linkedName={contactName} onLinked={(n) => { setContactName(n); setCreateContact(false); }} />
+        ) : null}
+        {p.xero && !p.xeroLive && contactName ? (
+          <div className={styles.receiptRow}><span className={styles.caps}>Xero contact</span><span>{contactName}</span></div>
         ) : null}
         {p.xero && !contactName ? (
           p.canCreateContact ? (
@@ -177,7 +196,7 @@ export default function InvoiceForm(p: Props) {
         {p.supplier.currency && p.supplier.currency !== p.currency ? (
           <p className={styles.mismatch}>This supplier is set to {p.supplier.currency}. The bill will post in {p.currency}; multi-currency isn&apos;t supported yet.</p>
         ) : null}
-        {p.xeroLoadError ? <p className={styles.error}>Couldn&apos;t load tax rates and accounts from Xero. You can save a draft and post once Xero responds.</p> : null}
+        {p.xeroNotice ? <p className={p.xeroNotice.error ? styles.error : styles.help}>{p.xeroNotice.text}</p> : null}
       </div>
 
       <div className={styles.formCard}>
@@ -218,10 +237,10 @@ export default function InvoiceForm(p: Props) {
                 <tr key={row.key}>
                   <td><input className={styles.input} value={row.description} onChange={(e) => update(row.key, { description: e.target.value })} aria-label="Description" /></td>
                   <td className={styles.num}><input type="number" step="0.0001" min="0" className={styles.input} value={row.quantity} onChange={(e) => update(row.key, { quantity: Number(e.target.value) })} aria-label="Quantity" /></td>
-                  <td className={styles.num}><input type="number" step="0.0001" min="0" className={styles.input} value={row.unitAmount} onChange={(e) => update(row.key, { unitAmount: Number(e.target.value) })} aria-label="Unit price" /></td>
+                  <td className={styles.num}><input type="number" step="0.0001" min="0" className={styles.input} value={row.unitAmount} onChange={(e) => update(row.key, { unitAmount: Number(e.target.value), priceEdited: true })} aria-label="Unit price" /></td>
                   <td>
                     <select className={styles.select} value={taxKey({ taxType: row.taxType, rate: row.taxRatePercent })} aria-label="Tax rate"
-                      onChange={(e) => { const t = p.taxOptions.find((o) => taxKey(o) === e.target.value); if (t) update(row.key, { taxType: t.taxType, taxRatePercent: t.rate }); }}>
+                      onChange={(e) => { const t = p.taxOptions.find((o) => taxKey(o) === e.target.value); if (t) changeTax(row.key, t); }}>
                       {!p.taxOptions.some((o) => taxKey(o) === taxKey({ taxType: row.taxType, rate: row.taxRatePercent })) ? (
                         <option value={taxKey({ taxType: row.taxType, rate: row.taxRatePercent })}>{row.taxType ?? `${row.taxRatePercent}%`}</option>
                       ) : null}

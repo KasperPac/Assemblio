@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { invoiceTotals, isInvoiceableReceipt, lineAmounts, lineVariance, round2, round4, totalMismatch } from "./calc";
+import { invoiceTotals, isInvoiceableReceipt, lineAmounts, lineVariance, prefillUnitAmount, round2, round4, totalMismatch } from "./calc";
 
 describe("rounding", () => {
   it("handles 0.1 + 0.2 === 0.3", () => {
@@ -49,6 +49,25 @@ describe("lineAmounts", () => {
   });
   it("inclusive: 110.00 at 10% should give tax 10.00", () => {
     expect(lineAmounts({ quantity: 1, unitAmount: 110, taxRatePercent: 10 }, "inclusive")).toEqual({ lineAmount: 110, taxAmount: 10, exTaxUnitAmount: 100 });
+  });
+});
+
+describe("prefillUnitAmount", () => {
+  it("exclusive: the receipt's ex-tax cost as it is", () => {
+    expect(prefillUnitAmount(2.5, 10, "exclusive")).toBe(2.5);
+    expect(prefillUnitAmount(1.2345, 10, "exclusive")).toBe(1.2345);
+  });
+  it("inclusive at 10%: cost x 1.1, rounded to 4 dp", () => {
+    expect(prefillUnitAmount(2.5, 10, "inclusive")).toBe(2.75);
+    expect(prefillUnitAmount(1.2345, 10, "inclusive")).toBe(1.358);
+    expect(prefillUnitAmount(0.0125, 10, "inclusive")).toBe(0.0138);
+  });
+  it("inclusive at 0%: unchanged", () => {
+    expect(prefillUnitAmount(3, 0, "inclusive")).toBe(3);
+  });
+  it("round-trips: an inclusive prefill's ex-tax unit amount is the cost again", () => {
+    const unit = prefillUnitAmount(2.5, 10, "inclusive");
+    expect(lineAmounts({ quantity: 1, unitAmount: unit, taxRatePercent: 10 }, "inclusive").exTaxUnitAmount).toBe(2.5);
   });
 });
 

@@ -53,3 +53,49 @@ export function validateSetup(input: SetupInput, accounts: XeroAccount[], rates:
   if (Object.keys(errors).length) return { ok: false, errors };
   return { ok: true, value: { ...input, defaultAmountsMode: input.defaultAmountsMode as AmountsMode, salesSource: input.salesSource as SalesSource } };
 }
+
+const percent = (v: unknown): number | null => {
+  if (v === null || v === undefined || v === "") return null;
+  const n = Number(v);
+  return Number.isFinite(n) && n >= 0 && n <= 100 ? n : null;
+};
+
+/** The live rates of the two chosen tax types, stored at setup (EffectiveRate, else DisplayTaxRate). */
+export function setupTaxRates(rates: XeroTaxRate[], purchaseTaxType: string, gstFreeTaxType: string) {
+  const rateOf = (taxType: string) => {
+    const r = rates.find((x) => x.TaxType === taxType);
+    return r ? (percent(r.EffectiveRate) ?? percent(r.DisplayTaxRate)) : null;
+  };
+  return { purchaseTaxRate: rateOf(purchaseTaxType), gstFreeTaxRate: rateOf(gstFreeTaxType) };
+}
+
+type StoredSetup = {
+  inventory_account_code: string | null;
+  other_charges_account_code: string | null;
+  purchase_tax_type: string | null;
+  purchase_tax_rate: number | string | null;
+  gst_free_tax_type: string | null;
+  gst_free_tax_rate: number | string | null;
+};
+
+/** Tax options from the stored setup, for when live Xero reads are unavailable (needs reconnect, read failed). */
+export function storedTaxOptions(c: Pick<StoredSetup, "purchase_tax_type" | "purchase_tax_rate" | "gst_free_tax_type" | "gst_free_tax_rate">) {
+  const out: Array<{ taxType: string; name: string; rate: number }> = [];
+  const add = (label: string, taxType: string | null, raw: number | string | null) => {
+    const rate = percent(raw);
+    if (taxType && rate !== null && !out.some((o) => o.taxType === taxType)) out.push({ taxType, name: `${label}: ${taxType} (${rate}%)`, rate });
+  };
+  add("Purchases", c.purchase_tax_type, c.purchase_tax_rate);
+  add("GST-free", c.gst_free_tax_type, c.gst_free_tax_rate);
+  return out;
+}
+
+/** The two accounts chosen at setup, so lines carry codes while live Xero reads are unavailable. */
+export function storedAccountOptions(c: Pick<StoredSetup, "inventory_account_code" | "other_charges_account_code">) {
+  const out: Array<{ code: string; name: string }> = [];
+  if (c.inventory_account_code) out.push({ code: c.inventory_account_code, name: "Inventory (from Xero setup)" });
+  if (c.other_charges_account_code && c.other_charges_account_code !== c.inventory_account_code) {
+    out.push({ code: c.other_charges_account_code, name: "Freight and other charges (from Xero setup)" });
+  }
+  return out;
+}

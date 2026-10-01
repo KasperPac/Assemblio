@@ -9,6 +9,7 @@ import { isXeroPilotTenant } from "@/lib/accounting/xero/config";
 import { supabaseConnectionRepo } from "@/lib/accounting/connection";
 import { xeroAccessFor } from "@/lib/accounting/xero/access";
 import { accountOptions, fetchAccounts, fetchTaxRates, INVENTORY_ACCOUNT_TYPES, OTHER_CHARGE_ACCOUNT_TYPES, purchaseTaxOptions } from "@/lib/accounting/xero/org";
+import { storedAccountOptions, storedTaxOptions } from "@/lib/accounting/xero/setup";
 import { chunk, isUuid, one } from "@/lib/accounting/supplier-invoice/util";
 import PageHeader from "../../../_ui/page-header";
 import EmptyState from "../../../_ui/empty-state";
@@ -114,7 +115,12 @@ export default async function NewSupplierInvoicePage({ searchParams }: Props) {
       .eq("stock_in_reason", "supplier_delivery")
       .order("received_at", { ascending: false })
       .limit(50),
-    supabase.from("accounting_connection").select("status, setup_completed_at, base_currency, inventory_account_code, other_charges_account_code, purchase_tax_type, default_amounts_mode").eq("tenant_id", tenantId).eq("provider", "xero").maybeSingle(),
+    supabase
+      .from("accounting_connection")
+      .select("status, setup_completed_at, base_currency, inventory_account_code, other_charges_account_code, purchase_tax_type, purchase_tax_rate, gst_free_tax_type, gst_free_tax_rate, default_amounts_mode")
+      .eq("tenant_id", tenantId)
+      .eq("provider", "xero")
+      .maybeSingle(),
     supabase.from("accounting_contact_link").select("external_name").eq("tenant_id", tenantId).eq("provider", "xero").eq("supplier_id", supplierId).maybeSingle(),
     supabase.from("tenant").select("currency").eq("id", tenantId).maybeSingle(),
   ]);
@@ -136,8 +142,9 @@ export default async function NewSupplierInvoicePage({ searchParams }: Props) {
   // Lines on the draft being edited stay offered. The post-time SQL guard still covers races.
   const lineIds = rows.flatMap((r) => r.delivery_receipt_line.map((l) => l.id));
   const takenRows: unknown[] = [];
-  // Chunked: a supplier with many receipt lines would otherwise overflow the request URL.
-  for (const ids of chunk(lineIds, 200)) {
+  // Chunked: a supplier with many receipt lines would otherwise overflow the request URL. 100 uuids keep the
+  // request line under 8 KB; 200 can exceed it.
+  for (const ids of chunk(lineIds, 100)) {
     const { data, error } = await supabase
       .from("supplier_invoice_line")
       .select("delivery_receipt_line_id, supplier_invoice:supplier_invoice_id(id, status)")
@@ -169,12 +176,20 @@ export default async function NewSupplierInvoicePage({ searchParams }: Props) {
     }),
   }));
 
-  const c = connRes.data as { status: string; setup_completed_at: string | null; base_currency: string; inventory_account_code: string; other_charges_account_code: string; purchase_tax_type: string; default_amounts_mode: AmountsMode } | null;
-  const xeroOn = isXeroPilotTenant(tenantId) && c?.status === "connected" && !!c.setup_completed_at;
+  const c = connRes.data as {
+    status: string; setup_completed_at: string | null; base_currency: string; inventory_account_code: string; other_charges_account_code: string;
+    purchase_tax_type: string; purchase_tax_rate: number | string | null; gst_free_tax_type: string; gst_free_tax_rate: number | string | null;
+    default_amounts_mode: AmountsMode;
+  } | null;
+  // Set up and not disconnected: post_supplier_invoice queues bills for this connection (it ignores a
+  // disconnected one), so every line needs Xero codes, whether or not Xero can be read right now.
+  const setUp = !!c && c.status !== "disconnected" && !!c.setup_completed_at;
+  const canReadXero = setUp && c?.status === "connected" && isXeroPilotTenant(tenantId);
   let taxOptions: TaxOption[] = FALLBACK_TAX_OPTIONS.map((t) => ({ ...t }));
   let accounts: AccountOption[] = [];
-  let xeroLoadError = false;
-  if (xeroOn) {
+  let xeroLive = false;
+  let readFailed = false;
+  if (canReadXero) {
     try {
       const db = createSupabaseAdminClient();
       const full = await supabaseConnectionRepo(db).findByTenant(tenantId);
@@ -184,11 +199,32 @@ export default async function NewSupplierInvoicePage({ searchParams }: Props) {
       if (t.ok && a.ok) {
         taxOptions = purchaseTaxOptions(t.data.TaxRates ?? []);
         accounts = [...accountOptions(a.data.Accounts ?? [], INVENTORY_ACCOUNT_TYPES), ...accountOptions(a.data.Accounts ?? [], OTHER_CHARGE_ACCOUNT_TYPES)].map((x) => ({ code: x.code, name: x.name }));
-      } else xeroLoadError = true;
+        xeroLive = true;
+      } else readFailed = true;
     } catch (err) {
       console.error("[xero] new invoice page: couldn't load tax rates and accounts", err instanceof Error ? err.message : "unknown error");
-      xeroLoadError = true;
+      readFailed = true;
     }
+  }
+  // Live reads unavailable (needs reconnect, not a pilot tenant, or the read failed): use the stored setup, so
+  // posting still queues the bill and it waits for Xero (spec 7). With no set-up connection, keep the fallback.
+  let storedOk = false;
+  if (setUp && c && !xeroLive) {
+    const stored = storedTaxOptions(c);
+    if (stored.length) {
+      taxOptions = stored;
+      accounts = storedAccountOptions(c);
+      storedOk = true;
+    }
+  }
+  const xeroDefaults = setUp && (xeroLive || storedOk);
+  let xeroNotice: { text: string; error: boolean } | null = null;
+  if (readFailed) {
+    xeroNotice = storedOk
+      ? { text: "Couldn't load tax rates and accounts from Xero, so the ones chosen in Xero setup are offered. Posting still works.", error: true }
+      : { text: "Couldn't load tax rates and accounts from Xero. You can save a draft and post once Xero responds.", error: true };
+  } else if (storedOk && c?.status === "needs_reconnect") {
+    xeroNotice = { text: "Xero needs reconnecting. You can still post: the bill waits and is sent once an admin reconnects Xero.", error: false };
   }
 
   const s = supplier as { id: string; name: string | null; payment_terms: string | null; default_currency: string | null };
@@ -203,9 +239,10 @@ export default async function NewSupplierInvoicePage({ searchParams }: Props) {
         currency={c?.base_currency ?? (tenantRes.data as { currency: string | null } | null)?.currency ?? "AUD"}
         taxOptions={taxOptions}
         accountOptions={accounts}
-        xeroLoadError={xeroLoadError}
+        xeroNotice={xeroNotice}
+        xeroLive={xeroLive}
         canCreateContact={isAdminRole(ctx.role)}
-        xero={xeroOn && c ? {
+        xero={xeroDefaults && c ? {
           inventoryAccountCode: c.inventory_account_code, otherChargesAccountCode: c.other_charges_account_code,
           purchaseTaxType: c.purchase_tax_type, defaultAmountsMode: c.default_amounts_mode,
           contactName: (linkRes.data as { external_name: string } | null)?.external_name ?? null,

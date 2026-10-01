@@ -36,6 +36,14 @@ export function lineAmounts(line: { quantity: number; unitAmount: number; taxRat
   return { lineAmount, taxAmount, exTaxUnitAmount };
 }
 
+/**
+ * A stock line's starting unit price from the receipt's ex-tax cost. In inclusive mode the price is grossed up by
+ * the line's tax rate, so the ex-tax cost written back on posting is the receipt's cost, not understated.
+ */
+export function prefillUnitAmount(costExTax: number, ratePercent: number, mode: AmountsMode): number {
+  return mode === "inclusive" ? round4(costExTax * (1 + ratePercent / 100)) : costExTax;
+}
+
 /** Must match the SQL in post_supplier_invoice (Task 11). */
 export function invoiceTotals(lines: { lineAmount: number; taxAmount: number }[], mode: AmountsMode) {
   const amt = round2(lines.reduce((s, l) => s + l.lineAmount, 0));

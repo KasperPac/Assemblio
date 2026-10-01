@@ -2,7 +2,7 @@ import { isDate } from "../supplier-invoice/draft";
 import { xeroRequest, type XeroAccess } from "./client";
 
 export type XeroAccount = { AccountID: string; Code?: string; Name: string; Type: string; Status: string };
-export type XeroTaxRate = { TaxType: string; Name: string; Status: string; CanApplyToExpenses?: boolean; EffectiveRate?: number | string };
+export type XeroTaxRate = { TaxType: string; Name: string; Status: string; CanApplyToExpenses?: boolean; EffectiveRate?: number | string; DisplayTaxRate?: number | string };
 export type XeroOrganisation = { Name: string; BaseCurrency: string; PeriodLockDate?: string | null; EndOfYearLockDate?: string | null };
 export type XeroContact = { ContactID: string; Name: string; ContactStatus?: string; EmailAddress?: string };
 
