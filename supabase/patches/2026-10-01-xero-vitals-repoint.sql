@@ -1,5 +1,5 @@
 -- ---------------------------------------------------------------------
--- MANUVA-34 — repoint super-admin vitals/health at the rebuilt accounting
+-- MANUVA-34 â€” repoint super-admin vitals/health at the rebuilt accounting
 -- tables. Generated from pg_get_functiondef after MANUVA-44; the ONLY edits
 -- are the accounting reads. Apply AFTER 2026-10-01-xero-supplier-bills.sql.
 -- Idempotent.
