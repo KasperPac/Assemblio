@@ -360,3 +360,7 @@
 .bannerDismiss:hover {
   opacity: 1;
 }
+
+/* xero-card.tsx sync log */
+.tableCard { composes: tableCard from "../../_ui/table.module.css"; }
+.table { composes: table from "../../_ui/table.module.css"; }

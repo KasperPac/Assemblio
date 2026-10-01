@@ -4,6 +4,8 @@ import PageHeader from "../../_ui/page-header";
 import StatusBadge from "../../_ui/status-badge";
 import ShopifyManage from "./shopify-manage";
 import StatusBanner from "./status-banner";
+import XeroCard from "./xero-card";
+import { isXeroPilotTenant } from "@/lib/accounting/xero/config";
 import styles from "./integrations.module.css";
 
 type Props = {
@@ -12,6 +14,8 @@ type Props = {
     sync_error?: string;
     products?: string;
     orders?: string;
+    reason?: string;
+    xero?: string;
   }>;
 };
 
@@ -23,7 +27,7 @@ export default async function IntegrationsPage({ searchParams }: Props) {
   }
 
   const params = (await searchParams) ?? {};
-  const { supabase } = ctx;
+  const { supabase, tenantId } = ctx;
 
   const { data: stores } = await supabase
     .from("shopify_store")
@@ -65,6 +69,7 @@ export default async function IntegrationsPage({ searchParams }: Props) {
           </div>
           <ShopifyManage stores={stores ?? []} />
         </div>
+        {isXeroPilotTenant(tenantId) ? <XeroCard xeroParam={params.xero} reason={params.reason} /> : null}
       </div>
     </>
   );
