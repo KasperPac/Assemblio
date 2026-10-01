@@ -99,6 +99,7 @@ create table if not exists public.supplier_invoice (
 create unique index if not exists supplier_invoice_live_number_uq
   on public.supplier_invoice (tenant_id, supplier_id, lower(invoice_number)) where status <> 'voided';
 create index if not exists supplier_invoice_tenant_created_idx on public.supplier_invoice (tenant_id, created_at desc);
+create index if not exists supplier_invoice_purchase_order_idx on public.supplier_invoice (purchase_order_id);
 
 create table if not exists public.supplier_invoice_line (
   id                       uuid primary key default gen_random_uuid(),
@@ -122,6 +123,7 @@ create table if not exists public.supplier_invoice_line (
   unique (supplier_invoice_id, line_no)
 );
 create index if not exists supplier_invoice_line_receipt_line_idx on public.supplier_invoice_line (delivery_receipt_line_id);
+create index if not exists supplier_invoice_line_component_idx on public.supplier_invoice_line (component_id);
 -- A receipt line appears at most once per invoice (the draft parser refuses
 -- it too); this also keeps the cost write-back in post_supplier_invoice
 -- deterministic. Across invoices the rule depends on the parent's status, so
@@ -158,6 +160,7 @@ create unique index if not exists accounting_outbox_live_uq
   on public.accounting_outbox (entity_type, entity_id, operation) where status in ('pending', 'working', 'failed');
 create index if not exists accounting_outbox_due_idx on public.accounting_outbox (connection_id, status, next_attempt_at);
 create index if not exists accounting_outbox_tenant_created_idx on public.accounting_outbox (tenant_id, created_at desc);
+create index if not exists accounting_outbox_depends_on_idx on public.accounting_outbox (depends_on);
 
 -- 6. RLS and grants ------------------------------------------------------
 alter table public.accounting_connection   enable row level security;
@@ -194,13 +197,25 @@ grant select, insert, update, delete on public.supplier_invoice, public.supplier
 drop policy if exists supplier_invoice_select on public.supplier_invoice;
 create policy supplier_invoice_select on public.supplier_invoice for select to authenticated
   using (tenant_id = public.current_tenant_id());
+-- A draft carries none of the server-owned values: sync state, the Xero link
+-- (external_url is the admin's "View in Xero" link) and the posted/voided
+-- audit columns are written only by the functions below (definer, so RLS
+-- does not apply to them) and by the service-role sync worker. A member
+-- could otherwise forge them on a draft and have them survive posting.
 drop policy if exists supplier_invoice_insert on public.supplier_invoice;
 create policy supplier_invoice_insert on public.supplier_invoice for insert to authenticated
-  with check (tenant_id = public.current_tenant_id() and status = 'draft' and sync_status = 'not_synced' and external_id is null);
+  with check (tenant_id = public.current_tenant_id() and status = 'draft' and sync_status = 'not_synced'
+              and external_id is null and external_url is null
+              and posted_by is null and posted_at is null
+              and voided_by is null and voided_at is null and void_reason is null
+              and created_by is not distinct from auth.uid());
 drop policy if exists supplier_invoice_update on public.supplier_invoice;
 create policy supplier_invoice_update on public.supplier_invoice for update to authenticated
   using (tenant_id = public.current_tenant_id() and status = 'draft')
-  with check (tenant_id = public.current_tenant_id() and status = 'draft' and sync_status = 'not_synced' and external_id is null);
+  with check (tenant_id = public.current_tenant_id() and status = 'draft' and sync_status = 'not_synced'
+              and external_id is null and external_url is null
+              and posted_by is null and posted_at is null
+              and voided_by is null and voided_at is null and void_reason is null);
 drop policy if exists supplier_invoice_delete on public.supplier_invoice;
 create policy supplier_invoice_delete on public.supplier_invoice for delete to authenticated
   using (tenant_id = public.current_tenant_id() and status = 'draft');
@@ -222,9 +237,12 @@ create policy supplier_invoice_line_write on public.supplier_invoice_line for al
 -- would land on a posted invoice, unvalidated (and could repeat a receipt
 -- line that is already on another posted invoice). Locking the parent FOR
 -- SHARE waits for the poster's FOR UPDATE lock, then reads the committed
--- status. Runs as definer so RLS cannot hide a posted parent. Only a parent
--- in the line's own tenant is locked or inspected; a line pointing at another
--- tenant's invoice is left to RLS (and the FK) to refuse.
+-- status. Runs as definer so RLS cannot hide a posted parent.
+-- Tenant: the row's tenant_id is caller-controlled and this trigger runs
+-- before RLS, so a row outside the caller's tenant (or a caller with no
+-- tenant) is passed straight through for RLS to refuse (42501). Otherwise a
+-- member could lock another tenant's invoice and read its status from the
+-- error code. The service role is trusted and always guarded.
 -- Deletes are guarded the same way, except cascades (deleting an invoice or a
 -- tenant: trigger depth > 1) and service-role purges, which are not edits.
 create or replace function public.supplier_invoice_line_draft_guard()
@@ -240,6 +258,9 @@ begin
     if pg_trigger_depth() > 1 or public.is_service_role() then
       return old;
     end if;
+    if old.tenant_id is distinct from public.current_tenant_id() then
+      return old;
+    end if;
     select si.status into v_status
       from public.supplier_invoice si
      where si.id = old.supplier_invoice_id and si.tenant_id = old.tenant_id
@@ -248,6 +269,12 @@ begin
       raise exception 'only draft invoices can have their lines changed' using errcode = 'P0001';
     end if;
     return old;
+  end if;
+
+  -- (For members, RLS USING hides an UPDATE's old row outside their tenant
+  -- before the row is fetched, so only the new row needs checking here.)
+  if not public.is_service_role() and new.tenant_id is distinct from public.current_tenant_id() then
+    return new;
   end if;
 
   select si.status into v_status
@@ -278,6 +305,15 @@ create trigger supplier_invoice_line_draft_guard
   for each row execute function public.supplier_invoice_line_draft_guard();
 
 -- 8. post_supplier_invoice -------------------------------------------------
+-- Lock order, shared by post and void so they cannot deadlock each other:
+--   supplier_invoice (FOR UPDATE)
+--   → delivery_receipt_line (FOR UPDATE, in id order; post only)
+--   → accounting_connection (FOR SHARE)
+--   → accounting_outbox (insert, or FOR UPDATE of the live create_bill job).
+-- FOR SHARE on the connection makes a concurrent disconnect's status UPDATE
+-- wait for this transaction, so its follow-up "cancel pending jobs" sees the
+-- job queued here; and a disconnect that committed first is seen (the locked
+-- row is re-read), so nothing is queued on a disconnected connection.
 create or replace function public.post_supplier_invoice(
   p_invoice_id uuid,
   p_update_component_costs boolean default true,
@@ -344,6 +380,12 @@ begin
     order by drl.id
       for update;
 
+  -- The connection (if any) that decides whether this post queues for Xero.
+  select * into v_conn
+    from public.accounting_connection
+   where tenant_id = v_tenant and provider = 'xero' and status <> 'disconnected'
+     for share;
+
   if exists (
     select 1
       from public.supplier_invoice_line l
@@ -384,6 +426,12 @@ begin
     left join public.purchase_order_line pol on pol.id = drl.purchase_order_line_id
    where l.supplier_invoice_id = p_invoice_id
      and drl.id = l.delivery_receipt_line_id;
+  -- Other-charge lines have nothing to vary against; clear anything a draft
+  -- write left there.
+  update public.supplier_invoice_line
+     set qty_variance = null, price_variance = null
+   where supplier_invoice_id = p_invoice_id and kind = 'other'
+     and (qty_variance is not null or price_variance is not null);
 
   -- Totals: must match invoiceTotals() in src/lib/accounting/supplier-invoice/calc.ts.
   update public.supplier_invoice si
@@ -420,12 +468,9 @@ begin
      where c.id = x.component_id and c.tenant_id = v_tenant;
   end if;
 
-  -- Queue for Xero when connected, set up, and on/after the bills start date.
-  select * into v_conn
-    from public.accounting_connection
-   where tenant_id = v_tenant and provider = 'xero' and status <> 'disconnected';
-
-  if found and v_conn.setup_completed_at is not null and v_inv.invoice_date >= v_conn.bills_start_date then
+  -- Queue for Xero when connected, set up, and on/after the bills start date
+  -- (v_conn was read and share-locked above).
+  if v_conn.id is not null and v_conn.setup_completed_at is not null and v_inv.invoice_date >= v_conn.bills_start_date then
     if exists (select 1 from public.supplier_invoice_line
                 where supplier_invoice_id = p_invoice_id and (tax_type is null or account_code is null)) then
       raise exception 'every line needs a Xero tax rate and account before posting' using errcode = 'P0001';
@@ -496,6 +541,12 @@ begin
     raise exception 'only posted invoices can be voided' using errcode = 'P0001';
   end if;
 
+  -- Lock order as in post: invoice → connection (FOR SHARE) → outbox job.
+  select id into v_conn_id
+    from public.accounting_connection
+   where tenant_id = v_tenant and provider = 'xero' and status <> 'disconnected'
+     for share;
+
   select * into v_job
     from public.accounting_outbox
    where entity_type = 'supplier_invoice' and entity_id = p_invoice_id and operation = 'create_bill'
@@ -511,9 +562,6 @@ begin
      where id = v_job.id;
     v_sync := 'not_synced';
   elsif v_inv.external_id is not null then
-    select id into v_conn_id
-      from public.accounting_connection
-     where tenant_id = v_tenant and provider = 'xero' and status <> 'disconnected';
     if v_conn_id is null then
       raise exception 'Xero is disconnected. Reconnect Xero to void this bill.' using errcode = 'P0001';
     end if;
@@ -549,28 +597,33 @@ begin
   -- sees the other's uncommitted claim) and take disjoint batches. The lock
   -- is held to commit; the next claimer's statement then sees the batch.
   perform pg_advisory_xact_lock(hashtextextended('accounting_outbox:' || p_connection_id::text, 0));
+  -- MATERIALIZED: the LIMIT … SKIP LOCKED pick runs exactly once. As an
+  -- IN (subquery) the planner may re-scan it, and a re-scan with SKIP LOCKED
+  -- can return different rows, claiming more than p_limit.
   return query
+  with picked as materialized (
+    select j.id
+      from public.accounting_outbox j
+      join public.accounting_connection c on c.id = j.connection_id and c.status = 'connected'
+      left join public.accounting_outbox dep on dep.id = j.depends_on
+     where j.connection_id = p_connection_id
+       and j.next_attempt_at <= now()
+       and (j.status = 'pending'
+            or (j.status = 'failed' and j.error_class in ('transient', 'daily_limit'))
+            or (j.status = 'working' and j.locked_at < now() - interval '5 minutes'))
+       and (j.depends_on is null or dep.status = 'sent')
+       and not exists (select 1 from public.accounting_outbox w
+                        where w.connection_id = p_connection_id and w.status = 'working'
+                          and w.locked_at >= now() - interval '5 minutes' and w.id <> j.id)
+     order by j.created_at
+     limit p_limit
+       for update of j skip locked
+  )
   update public.accounting_outbox o
      set status = 'working', locked_at = now(), locked_by = p_worker,
          first_attempt_at = coalesce(o.first_attempt_at, now())
-   where o.id in (
-     select j.id
-       from public.accounting_outbox j
-       join public.accounting_connection c on c.id = j.connection_id and c.status = 'connected'
-       left join public.accounting_outbox dep on dep.id = j.depends_on
-      where j.connection_id = p_connection_id
-        and j.next_attempt_at <= now()
-        and (j.status = 'pending'
-             or (j.status = 'failed' and j.error_class in ('transient', 'daily_limit'))
-             or (j.status = 'working' and j.locked_at < now() - interval '5 minutes'))
-        and (j.depends_on is null or dep.status = 'sent')
-        and not exists (select 1 from public.accounting_outbox w
-                         where w.connection_id = p_connection_id and w.status = 'working'
-                           and w.locked_at >= now() - interval '5 minutes' and w.id <> j.id)
-      order by j.created_at
-      limit p_limit
-        for update of j skip locked
-   )
+    from picked
+   where o.id = picked.id
   returning o.*;
 end;
 $$;

@@ -32,6 +32,13 @@
 -- Expected: every check prints PASS; the script stops on the first FAIL.
 -- A FAIL is raised with errcode XX000, which no check catches.
 \set ON_ERROR_STOP on
+-- Refuse to run on a real Supabase database (it has the vault schema): the
+-- next statements replace current_tenant_id() and current_profile_role().
+do $$ begin
+  if exists (select 1 from pg_namespace where nspname = 'vault') then
+    raise exception 'verify script is scratch-only: this database has a vault schema (Supabase)';
+  end if;
+end $$;
 -- Results are noise; PASS notices and errors go to stderr and still show.
 \o /dev/null
 
@@ -87,10 +94,13 @@ end $$;
 
 -- Fixtures -----------------------------------------------------------------
 -- Tenant T1: supplier S1, components C1 (Bolt) and C2 (Nut), location F1,
--- PO1 (line POL1: 10 @ 2.00), receipts R1 (supplier_delivery, line L1 qty 10,
--- on PO1) and R2 (sample, line L2), and a set-up Xero connection E1.
+-- PO1 (line POL1: 10 @ 2.00), receipts R1 (supplier_delivery, line L1 qty 10
+-- on PO1, plus off-PO lines L3 and L4 of Nut) and R2 (sample, line L2), and a
+-- set-up Xero connection E1. User a2 exists only to be impersonated.
 -- Tenant T2: supplier, component and PO that T1 must never be able to use.
-insert into auth.users (id, email) values ('00000000-0000-0000-0000-0000000000a1', 'admin@t1.test') on conflict do nothing;
+insert into auth.users (id, email) values
+  ('00000000-0000-0000-0000-0000000000a1', 'admin@t1.test'),
+  ('00000000-0000-0000-0000-0000000000a2', 'other@t1.test') on conflict do nothing;
 insert into public.tenant (id, name) values
   ('11111111-1111-1111-1111-111111111111', 'T1'),
   ('22222222-2222-2222-2222-222222222222', 'T2') on conflict do nothing;
@@ -111,7 +121,9 @@ insert into public.delivery_receipt (id, tenant_id, supplier_id, supplier_refere
   ('11111111-0000-0000-0000-0000000000d2', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-000000000051', 'SAMPLE', '11111111-0000-0000-0000-0000000000f1', 'sample', null, '00000000-0000-0000-0000-0000000000a1') on conflict do nothing;
 insert into public.delivery_receipt_line (id, tenant_id, delivery_receipt_id, component_id, quantity_delivered, cost_per_unit, purchase_order_line_id) values
   ('11111111-0000-0000-0000-00000000d101', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-0000000000d1', '11111111-0000-0000-0000-0000000000c1', 10, 2.00, '11111111-0000-0000-0000-00000000b101'),
-  ('11111111-0000-0000-0000-00000000d102', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-0000000000d2', '11111111-0000-0000-0000-0000000000c1', 1, 0, null) on conflict do nothing;
+  ('11111111-0000-0000-0000-00000000d102', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-0000000000d2', '11111111-0000-0000-0000-0000000000c1', 1, 0, null),
+  ('11111111-0000-0000-0000-00000000d103', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-0000000000d1', '11111111-0000-0000-0000-0000000000c2', 4, 1.00, null),
+  ('11111111-0000-0000-0000-00000000d104', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-0000000000d1', '11111111-0000-0000-0000-0000000000c2', 5, 1.00, null) on conflict do nothing;
 insert into public.accounting_connection (id, tenant_id, provider, status, external_org_id, external_connection_id, org_name, base_currency,
   inventory_account_code, other_charges_account_code, purchase_tax_type, gst_free_tax_type, bills_start_date, sales_source, setup_completed_at)
 values ('11111111-0000-0000-0000-0000000000e1', '11111111-1111-1111-1111-111111111111', 'xero', 'connected', 'org-1', 'conn-1', 'Acme Pty', 'AUD',
@@ -133,6 +145,14 @@ insert into public.supplier_invoice_line (tenant_id, supplier_invoice_id, line_n
   ('11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-0000000000aa', 2, 'other', null, null, 'Freight', 1, 10, 'INPUT', 10, '425', 10.00, 1.00),
   ('11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-0000000000ab', 1, 'stock', '11111111-0000-0000-0000-00000000d101', '11111111-0000-0000-0000-0000000000c1', 'Bolt', 10, 2, 'INPUT', 10, '630', 20.00, 2.00),
   ('11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-0000000000ac', 1, 'stock', '11111111-0000-0000-0000-00000000d102', '11111111-0000-0000-0000-0000000000c1', 'Sample', 1, 0, 'INPUT', 10, '630', 0, 0);
+
+-- 0. A member can edit a draft's lines, including the variance columns
+-- (case 3 checks that posting clears them on the other-charge line).
+select pg_temp.check(pg_temp.as_role('authenticated', $q$
+  with u as (update public.supplier_invoice_line set qty_variance = 5, price_variance = 1
+              where supplier_invoice_id = '11111111-0000-0000-0000-0000000000aa' and line_no = 2 returning 1)
+  select count(*) = 1 from u $q$),
+  '0: a member can edit a draft line');
 
 -- 1. Posting without a contact link and without create_contact is refused.
 select pg_temp.expect_error('1: contact link required',
@@ -171,9 +191,11 @@ do $$ declare inv record; l record; begin
   end if;
   select qty_variance, price_variance into l from public.supplier_invoice_line where supplier_invoice_id = '11111111-0000-0000-0000-0000000000aa' and line_no = 1;
   if l.qty_variance is distinct from -1.0 or l.price_variance is distinct from 0.5 then raise exception 'FAIL 3: variance %', l using errcode = 'XX000'; end if;
+  select qty_variance, price_variance into l from public.supplier_invoice_line where supplier_invoice_id = '11111111-0000-0000-0000-0000000000aa' and line_no = 2;
+  if l.qty_variance is not null or l.price_variance is not null then raise exception 'FAIL 3: other-charge line kept variances %', l using errcode = 'XX000'; end if;
   if (select cost_per_unit from public.delivery_receipt_line where id = '11111111-0000-0000-0000-00000000d101') is distinct from 2.5 then raise exception 'FAIL 3: receipt cost not written back' using errcode = 'XX000'; end if;
   if (select cost_per_unit from public.component where id = '11111111-0000-0000-0000-0000000000c1') is distinct from 2.5 then raise exception 'FAIL 3: component cost not written back' using errcode = 'XX000'; end if;
-  raise notice 'PASS 3: totals, variances, cost write-back';
+  raise notice 'PASS 3: totals, variances (cleared on other-charge lines), cost write-back';
 end $$;
 
 -- 4. Second posting of the same receipt line is refused (Review Focus 4).
@@ -285,9 +307,9 @@ do $$ declare v text; inv record; begin
   if (select status from public.accounting_outbox where operation = 'create_bill' and entity_id = '11111111-0000-0000-0000-0000000000aa') is distinct from 'cancelled' then
     raise exception 'FAIL 9: bill job not cancelled' using errcode = 'XX000';
   end if;
-  select status, sync_status, void_reason, voided_by into inv from public.supplier_invoice where id = '11111111-0000-0000-0000-0000000000aa';
+  select status, sync_status, void_reason, voided_by, voided_at into inv from public.supplier_invoice where id = '11111111-0000-0000-0000-0000000000aa';
   if inv.status <> 'voided' or inv.sync_status <> 'not_synced' or inv.void_reason <> 'wrong price'
-     or inv.voided_by is distinct from '00000000-0000-0000-0000-0000000000a1' then
+     or inv.voided_by is distinct from '00000000-0000-0000-0000-0000000000a1' or inv.voided_at is null then
     raise exception 'FAIL 9: invoice %', inv using errcode = 'XX000';
   end if;
   raise notice 'PASS 9: void permissions and pending-job cancel';
@@ -364,6 +386,13 @@ select pg_temp.check(
                     'public.claim_accounting_refresh_lease(uuid,int)'::regprocedure,
                     'public.supplier_invoice_line_draft_guard()'::regprocedure)),
   '12d: every SECURITY DEFINER function pins search_path');
+select pg_temp.check(
+  (select count(*) = 3 from pg_index i
+    where (i.indrelid, i.indkey[0]) in (
+            ('public.supplier_invoice'::regclass,      (select attnum from pg_attribute where attrelid = 'public.supplier_invoice'::regclass and attname = 'purchase_order_id')),
+            ('public.supplier_invoice_line'::regclass, (select attnum from pg_attribute where attrelid = 'public.supplier_invoice_line'::regclass and attname = 'component_id')),
+            ('public.accounting_outbox'::regclass,     (select attnum from pg_attribute where attrelid = 'public.accounting_outbox'::regclass and attname = 'depends_on')))),
+  '12e: FK columns purchase_order_id, component_id and depends_on are indexed');
 
 -- 13. Tenant isolation for authenticated reads.
 select set_config('test.tenant', '22222222-2222-2222-2222-222222222222', false);
@@ -418,7 +447,44 @@ select pg_temp.expect_error('14g: a member cannot attach a line to another tenan
   $q$insert into public.supplier_invoice_line (tenant_id, supplier_invoice_id, line_no, kind, description, quantity, unit_amount)
      values ('22222222-2222-2222-2222-222222222222', '11111111-0000-0000-0000-0000000000ac', 9, 'other', 'Sneaky', 1, 1)$q$,
   '42501', 'new row violates row-level security policy%', 'authenticated');
+-- The same T2 member claiming T1's tenant_id on a line for T1's POSTED
+-- invoice B: RLS refuses it (42501). The draft guard must not answer first:
+-- its P0001 would tell T2 that B is posted, after locking T1's row.
+select pg_temp.expect_error('14g2: a cross-tenant line write is refused by RLS, not by the draft guard',
+  $q$insert into public.supplier_invoice_line (tenant_id, supplier_invoice_id, line_no, kind, description, quantity, unit_amount)
+     values ('11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-0000000000ab', 9, 'other', 'Sneaky', 1, 1)$q$,
+  '42501', 'new row violates row-level security policy%', 'authenticated');
 select set_config('test.tenant', '11111111-1111-1111-1111-111111111111', false);
+
+-- 14h-14m. A draft carries none of the server-owned columns, so a member
+-- cannot plant a "View in Xero" link or a forged void that would survive
+-- posting. Ordinary draft edits still work.
+select pg_temp.expect_error('14h: a member cannot set external_url on a draft',
+  $q$update public.supplier_invoice set external_url = 'https://evil.example/bill' where id = '11111111-0000-0000-0000-0000000000ac'$q$,
+  '42501', 'new row violates row-level security policy%', 'authenticated');
+select pg_temp.expect_error('14i: a member cannot set voided_at on a draft',
+  $q$update public.supplier_invoice set voided_at = now() where id = '11111111-0000-0000-0000-0000000000ac'$q$,
+  '42501', 'new row violates row-level security policy%', 'authenticated');
+select pg_temp.expect_error('14j: a member cannot set posted_by on a draft',
+  $q$update public.supplier_invoice set posted_by = '00000000-0000-0000-0000-0000000000a2' where id = '11111111-0000-0000-0000-0000000000ac'$q$,
+  '42501', 'new row violates row-level security policy%', 'authenticated');
+select pg_temp.expect_error('14k: a member cannot insert a draft with an external_url',
+  $q$insert into public.supplier_invoice (tenant_id, supplier_id, invoice_number, invoice_date, due_date, amounts_mode, currency, external_url)
+     values ('11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-000000000051', 'FORGED-URL', '2026-10-01', '2026-10-31', 'exclusive', 'AUD', 'https://evil.example/bill')$q$,
+  '42501', 'new row violates row-level security policy%', 'authenticated');
+select pg_temp.expect_error('14l: a member cannot insert a draft as someone else (created_by)',
+  $q$insert into public.supplier_invoice (tenant_id, supplier_id, invoice_number, invoice_date, due_date, amounts_mode, currency, created_by)
+     values ('11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-000000000051', 'FORGED-BY', '2026-10-01', '2026-10-31', 'exclusive', 'AUD', '00000000-0000-0000-0000-0000000000a2')$q$,
+  '42501', 'new row violates row-level security policy%', 'authenticated');
+select pg_temp.check(pg_temp.as_role('authenticated', $q$
+  with u as (update public.supplier_invoice set entered_total = 1.23, invoice_number = 'INV-C2', updated_at = now()
+              where id = '11111111-0000-0000-0000-0000000000ac' returning 1)
+  select count(*) = 1 from u $q$),
+  '14m: a member can still edit a draft''s own fields');
+select pg_temp.check((select external_url is null and voided_at is null and posted_by is null
+                             and created_by = '00000000-0000-0000-0000-0000000000a1' and invoice_number = 'INV-C2'
+                        from public.supplier_invoice where id = '11111111-0000-0000-0000-0000000000ac'),
+  '14m2: the draft holds the edit and no server-owned value');
 
 -- 15. The draft-only line guard fires even where RLS does not (superuser here).
 select pg_temp.expect_error('15a: no line can be added to a posted invoice, RLS or not',
@@ -528,3 +594,39 @@ delete from public.supplier_invoice where id = '11111111-0000-0000-0000-00000000
 select pg_temp.check(not exists (select 1 from public.supplier_invoice where id = '11111111-0000-0000-0000-0000000000b0')
   and not exists (select 1 from public.supplier_invoice_line where supplier_invoice_id = '11111111-0000-0000-0000-0000000000b0'),
   '19b: deleting a posted invoice cascades its lines past the guard');
+
+-- 20. Money paths: an inclusive stock line writes back its ex-tax unit cost,
+-- and p_update_component_costs = false leaves the component's cost alone.
+insert into public.supplier_invoice (id, tenant_id, supplier_id, invoice_number, invoice_date, due_date, amounts_mode, currency) values
+  ('11111111-0000-0000-0000-0000000000b7', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-000000000051', 'INV-G', '2026-10-01', '2026-10-31', 'inclusive', 'AUD'),
+  ('11111111-0000-0000-0000-0000000000b8', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-000000000051', 'INV-H', '2026-10-01', '2026-10-31', 'exclusive', 'AUD');
+insert into public.supplier_invoice_line (tenant_id, supplier_invoice_id, line_no, kind, delivery_receipt_line_id, component_id, description, quantity, unit_amount, tax_type, tax_rate, account_code, line_amount, tax_amount) values
+  ('11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-0000000000b7', 1, 'stock', '11111111-0000-0000-0000-00000000d103', '11111111-0000-0000-0000-0000000000c2', 'Nut', 2, 2.75, 'INPUT', 10, '630', 5.50, 0.50),
+  ('11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-0000000000b8', 1, 'stock', '11111111-0000-0000-0000-00000000d104', '11111111-0000-0000-0000-0000000000c2', 'Nut', 5, 3.00, 'INPUT', 10, '630', 15.00, 1.50);
+do $$ declare v text; inv record; l record; begin
+  v := public.post_supplier_invoice('11111111-0000-0000-0000-0000000000b7', true, false);
+  if v is distinct from 'queued' then raise exception 'FAIL 20: G expected queued, got %', v using errcode = 'XX000'; end if;
+  if (select cost_per_unit from public.delivery_receipt_line where id = '11111111-0000-0000-0000-00000000d103') is distinct from 2.5000 then
+    raise exception 'FAIL 20: inclusive 2.75 @ 10%% wrote back %, expected 2.5000',
+      (select cost_per_unit from public.delivery_receipt_line where id = '11111111-0000-0000-0000-00000000d103') using errcode = 'XX000';
+  end if;
+  if (select cost_per_unit from public.component where id = '11111111-0000-0000-0000-0000000000c2') is distinct from 2.5000 then
+    raise exception 'FAIL 20: component cost not set to the ex-tax 2.5000' using errcode = 'XX000';
+  end if;
+  select subtotal, tax_total, total into inv from public.supplier_invoice where id = '11111111-0000-0000-0000-0000000000b7';
+  if inv.subtotal <> 5.00 or inv.tax_total <> 0.50 or inv.total <> 5.50 then raise exception 'FAIL 20: inclusive totals %', inv using errcode = 'XX000'; end if;
+  select qty_variance, price_variance into l from public.supplier_invoice_line where supplier_invoice_id = '11111111-0000-0000-0000-0000000000b7';
+  if l.qty_variance is distinct from -2.0 or l.price_variance is not null then raise exception 'FAIL 20: variances % (off-PO line has no price variance)', l using errcode = 'XX000'; end if;
+  raise notice 'PASS 20: inclusive stock line writes back ex-tax 2.5000 to receipt line and component; totals 5.00 + 0.50 = 5.50';
+end $$;
+do $$ declare v text; begin
+  v := public.post_supplier_invoice('11111111-0000-0000-0000-0000000000b8', false, false);
+  if v is distinct from 'queued' then raise exception 'FAIL 20b: H expected queued, got %', v using errcode = 'XX000'; end if;
+  if (select cost_per_unit from public.delivery_receipt_line where id = '11111111-0000-0000-0000-00000000d104') is distinct from 3.0000 then
+    raise exception 'FAIL 20b: receipt line cost not written back' using errcode = 'XX000';
+  end if;
+  if (select cost_per_unit from public.component where id = '11111111-0000-0000-0000-0000000000c2') is distinct from 2.5000 then
+    raise exception 'FAIL 20b: p_update_component_costs = false still changed the component cost' using errcode = 'XX000';
+  end if;
+  raise notice 'PASS 20b: p_update_component_costs = false writes the receipt line (3.0000) but leaves the component (2.5000)';
+end $$;
