@@ -409,9 +409,6 @@ async functions, so helpers there were untestable) and covered:
   normalisation, unparseable timestamp dropped rather than throwing
 - `src/lib/costing/variance.ts` — actual − planned, null (awaiting actuals)
   distinct from zero (on plan), over-budget flag
-- `src/lib/accounting/push-bill.test.ts` — Xero bill push: no connection,
-  token refresh + refresh failure, unpriced lines filtered, supplier-name
-  fallback chain, synced vs failed sync events
 
 **Still not automated — needs a manual pass before a partner relies on it.**
 The generation/rollup logic itself lives in Postgres and is not reachable from
@@ -510,10 +507,13 @@ per order lifecycle.
 
 ## 16. Xero / Accounting **(admin)**
 
-- [ ] Connect (`/api/xero/install` → `/callback`): role check; signed state `nonce:tenantId`; mismatch blocks; exchanges code; fetches orgs ("no orgs" handled); deactivates prior connections; stores token_expires_at
-- [ ] Disconnect (`/api/xero/disconnect`): role check; sets is_active=false
-- [ ] Integrations page: connected status badge, account name, recent sync events (synced_at, status, external_id, error); empty state when not connected
-- [ ] Bill push (`lib/accounting/push-bill`) posts accounting events
+Removed 2026-10-01 pending the MANUVA-34 rebuild (spec:
+`docs/superpowers/specs/2026-10-01-xero-supplier-bills-design.md`). The May
+2026 integration was never live: no tables in prod, no Xero app, invalid
+scope. No Xero UI or routes exist until the rebuild ships.
+
+- [ ] Settings → Integrations shows Shopify only (no Xero card)
+- [ ] Creating a goods receipt makes no accounting call
 
 ---
 
@@ -725,3 +725,4 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-09-25 — amended Retail items + sale consumption (MANUVA-27 plan 1 final review): removed the stock-location picker (stock always lands at the tenant's default location); "Track as retail item" is now offered on any variant with no active BOM regardless of product kind, with a neutral "Not tracked" badge on an untracked retail-kind variant; `apply_sale_consumption` now refuses a historical order's line before any write.
 - 2026-09-26 — amended Components list (MANUVA-30): the All / Low Stock tabs are replaced by a left filter rail (stock status, groups, supplier, unit-cost range) with flight-search counts, removable filter chips and a Unit cost column. Filters live in the URL, and sort and detail links carry every active filter. The design system gains a documented "filter rail" exception to the single-column rule.
 - 2026-09-28 — amended Components list (MANUVA-31): the table is one flat list following the active sort; the collapsible group section rows are replaced by a sortable Group column. Group filtering stays in the filter rail.
+- 2026-10-01 — amended Xero / Accounting: removed the never-live May integration (UI card, /api/xero routes, receipt bill push) pending the MANUVA-34 rebuild.
