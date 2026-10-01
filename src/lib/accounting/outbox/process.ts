@@ -56,7 +56,7 @@ function thrownOutcome(err: unknown): HandlerOutcome {
     error: {
       errorClass: "transient",
       message: "Something went wrong sending this to Xero. Manuva will retry.",
-      detail: scrubSecrets(err instanceof Error ? err.message : String(err)),
+      detail: scrubbed(err),
       retryAfterSec: null,
     },
   };
@@ -132,6 +132,15 @@ async function releaseJobs(db: SupabaseClient, ids: string[], nextAt: string, wo
   assertNoError(error, "release accounting_outbox jobs");
 }
 
+/** After a thrown error: give back jobs that never ran. A failed release is logged; the original error still surfaces. */
+async function releaseAfterThrow(db: SupabaseClient, rest: OutboxJob[], now: Date, worker: string): Promise<void> {
+  try {
+    await releaseJobs(db, rest.map((j) => j.id), now.toISOString(), worker);
+  } catch (e) {
+    console.error("[xero] could not release unrun outbox jobs after an error", scrubbed(e));
+  }
+}
+
 /** Spec section 7: a daily limit stops the whole organisation, so every retryable job waits for the same time. */
 async function deferConnection(db: SupabaseClient, connectionId: string, nextAt: string): Promise<void> {
   const { error } = await db
@@ -174,10 +183,19 @@ export async function processConnectionOutbox(
     access = await (deps.getAccess ?? ((x) => xeroAccessFor(db, x)))(c);
   } catch (err) {
     const outcome = thrownOutcome(err);
-    for (const job of jobs) {
-      if (await finish(db, job, outcome, now(), worker)) result.failed++;
+    let at = -1;
+    try {
+      for (let i = 0; i < jobs.length; i++) {
+        at = i;
+        if (await finish(db, jobs[i], outcome, now(), worker)) result.failed++;
+      }
+      if (outcome.kind === "error" && outcome.error.errorClass === "auth") {
+        await supabaseCredentialStore(db).markNeedsReconnect(connectionId, "Xero needs reconnecting");
+      }
+    } catch (e) {
+      await releaseAfterThrow(db, jobs.slice(at + 1), now(), worker);
+      throw e;
     }
-    if (outcome === AUTH_OUTCOME) await supabaseCredentialStore(db).markNeedsReconnect(connectionId, "Xero needs reconnecting");
     return result;
   }
 
@@ -185,44 +203,54 @@ export async function processConnectionOutbox(
   const ctx: JobContext = { store: deps.store ?? supabaseHandlerStore(db), access, fetchImpl, cache: createOrgCache(access, fetchImpl) };
   const handlers = { ...HANDLERS, ...deps.handlers };
 
-  for (let i = 0; i < jobs.length; i++) {
-    if (timeLeft() < MIN_JOB_WINDOW_MS) {
-      // Out of time: hand the rest back now rather than leave them `working` for the stale-lease reclaim.
-      await releaseJobs(db, jobs.slice(i).map((j) => j.id), now().toISOString(), worker);
-      break;
+  // Index of the last job whose handler was started. A throw releases only the jobs after it: the one in
+  // flight may already have had a Xero side effect, so only the stale reclaim (which forces the duplicate
+  // search) is safe for it.
+  let started = -1;
+  try {
+    for (let i = 0; i < jobs.length; i++) {
+      if (timeLeft() < MIN_JOB_WINDOW_MS) {
+        // Out of time: hand the rest back now rather than leave them `working` for the stale-lease reclaim.
+        await releaseJobs(db, jobs.slice(i).map((j) => j.id), now().toISOString(), worker);
+        break;
+      }
+      started = i;
+      const job = jobs[i];
+      let outcome: HandlerOutcome;
+      try {
+        outcome = await handlers[job.operation](job, ctx);
+      } catch (err) {
+        outcome = thrownOutcome(err);
+      }
+      const update = await finish(db, job, outcome, now(), worker);
+      if (update) {
+        if (update.status === "sent") result.sent++;
+        else result.failed++;
+      }
+      if (outcome.kind === "error" && (outcome.error.errorClass === "auth" || outcome.error.errorClass === "daily_limit")) {
+        // Nothing else for this organisation can succeed now: return the rest without spending an attempt.
+        const nextAt = update?.next_attempt_at ?? nextJobState(job, outcome, now()).next_attempt_at;
+        if (outcome.error.errorClass === "auth") await supabaseCredentialStore(db).markNeedsReconnect(connectionId, outcome.error.message);
+        await releaseJobs(db, jobs.slice(i + 1).map((j) => j.id), nextAt, worker);
+        if (outcome.error.errorClass === "daily_limit") await deferConnection(db, connectionId, nextAt);
+        break;
+      }
     }
-    const job = jobs[i];
-    let outcome: HandlerOutcome;
-    try {
-      outcome = await handlers[job.operation](job, ctx);
-    } catch (err) {
-      outcome = thrownOutcome(err);
-    }
-    const update = await finish(db, job, outcome, now(), worker);
-    if (update) {
-      if (update.status === "sent") result.sent++;
-      else result.failed++;
-    }
-    if (outcome.kind === "error" && (outcome.error.errorClass === "auth" || outcome.error.errorClass === "daily_limit")) {
-      // Nothing else for this organisation can succeed now: return the rest without spending an attempt.
-      const nextAt = update?.next_attempt_at ?? nextJobState(job, outcome, now()).next_attempt_at;
-      await releaseJobs(db, jobs.slice(i + 1).map((j) => j.id), nextAt, worker);
-      if (outcome.error.errorClass === "daily_limit") await deferConnection(db, connectionId, nextAt);
-      if (outcome.error.errorClass === "auth") await supabaseCredentialStore(db).markNeedsReconnect(connectionId, outcome.error.message);
-      break;
-    }
+  } catch (err) {
+    await releaseAfterThrow(db, jobs.slice(started + 1), now(), worker);
+    throw err;
   }
   return result;
 }
 
 /** The cron entry: every connection with due work, inside one run budget. Pilot gating happens per connection. */
-export async function processOutbox(deps: ProcessDeps, budgetMs = RUN_BUDGET_MS): Promise<ProcessResult & { connections: number }> {
+export async function processDueOutboxes(deps: ProcessDeps, budgetMs = RUN_BUDGET_MS): Promise<ProcessResult & { connections: number }> {
   const now = deps.now ?? (() => new Date());
   const deadlineAt = now().getTime() + Math.min(budgetMs, RUN_BUDGET_MS);
   const { data, error } = await deps.db
     .from("accounting_outbox")
     .select("connection_id")
-    .in("status", ["pending", "failed", "working"])
+    .or("status.eq.pending,and(status.eq.failed,error_class.in.(transient,daily_limit)),status.eq.working")
     .lte("next_attempt_at", now().toISOString())
     .limit(1000);
   assertNoError(error, "list due accounting_outbox");
@@ -242,9 +270,6 @@ export async function processOutbox(deps: ProcessDeps, budgetMs = RUN_BUDGET_MS)
   }
   return total;
 }
-
-/** Same as processOutbox; the name the brief gave it. */
-export const processDueOutboxes = processOutbox;
 
 /** Called from after() in server actions. Never throws. Pilot-gated like the cron path. */
 export async function kickOutbox(target: { connectionId: string } | { tenantId: string }, deps?: Partial<ProcessDeps>): Promise<void> {

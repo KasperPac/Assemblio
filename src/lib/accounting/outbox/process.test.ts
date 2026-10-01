@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { kickOutbox, processConnectionOutbox, processOutbox } from "./process";
+import { kickOutbox, processConnectionOutbox, processDueOutboxes } from "./process";
 import { XeroAuthError } from "../xero/tokens";
 import type { OutboxJob } from "./handlers";
 
@@ -15,6 +15,7 @@ function fakeDb(opts: {
   rpcError?: string;
   outboxUpdate?: (st: St) => Result;
   selectRows?: Record<string, unknown[]>;
+  tableError?: Record<string, string>;
 }) {
   const writes: Write[] = [];
   const from = (table: string) => {
@@ -45,6 +46,7 @@ function fakeDb(opts: {
       maybeSingle: async () => ({ data: table === "accounting_connection" ? opts.connection : null, error: null }),
       then: (resolve: (v: Result) => void) => {
         if (st.op !== "select") writes.push({ table, op: st.op, values: st.values, filters: st.filters });
+        if (st.op === "update" && opts.tableError?.[table]) return resolve({ data: null, error: { message: opts.tableError[table] } });
         if (table === "accounting_outbox" && st.op === "update" && opts.outboxUpdate) return resolve(opts.outboxUpdate(st));
         if (table === "accounting_outbox" && st.op === "update" && st.selected) {
           const id = st.filters.find(([o, c]) => o === "eq" && c === "id")?.[2];
@@ -155,6 +157,58 @@ describe("processConnectionOutbox", () => {
     const r = await processConnectionOutbox("c1", { db: f.db, ...base, getAccess: async () => { throw new XeroAuthError("dead"); } });
     expect(r.failed).toBe(2);
     expect(outboxWrites(f.writes).every((w) => w.values.status === "pending")).toBe(true);
+    expect(f.writes.some((w) => w.table === "accounting_connection" && w.values.status === "needs_reconnect")).toBe(true);
+  });
+
+  it("treats a plain Error thrown by a handler as transient", async () => {
+    const f = fakeDb({ connection: conn, jobs: [job("1")] });
+    const r = await processConnectionOutbox("c1", { db: f.db, ...base, handlers: { create_bill: async () => { throw new Error("boom Bearer abc.def.ghi"); } } });
+    expect(r.failed).toBe(1);
+    expect(outboxWrites(f.writes)[0].values).toMatchObject({ status: "failed", error_class: "transient", attempts: 1 });
+    expect(JSON.stringify(outboxWrites(f.writes)[0].values)).not.toContain("abc.def.ghi");
+  });
+
+  it("treats a XeroAuthError thrown by a handler as auth and marks the connection", async () => {
+    const f = fakeDb({ connection: conn, jobs: [job("1"), job("2")] });
+    await processConnectionOutbox("c1", { db: f.db, ...base, handlers: { create_bill: async () => { throw new XeroAuthError("dead"); } } });
+    expect(outboxWrites(f.writes)[0].values).toMatchObject({ status: "pending", error_class: "auth", attempts: 0 });
+    expect(f.writes.some((w) => w.table === "accounting_connection" && w.values.status === "needs_reconnect")).toBe(true);
+  });
+
+  it("marks dependent invoices failed when a create_contact fails for good", async () => {
+    const f = fakeDb({ connection: conn, jobs: [job("1", "create_contact")], selectRows: { accounting_outbox: [{ entity_id: "inv-9" }] } });
+    await processConnectionOutbox("c1", { db: f.db, ...base, handlers: { create_contact: async () => errResult("fixable") } });
+    const w = f.writes.find((x) => x.table === "supplier_invoice");
+    expect(w?.values).toMatchObject({ sync_status: "failed" });
+    expect(w?.filters).toEqual(expect.arrayContaining([["in", "id", ["inv-9"]]]));
+  });
+
+  it("logs sync_gave_up when a transient failure runs out of time", async () => {
+    const old = { ...job("1"), attempts: 7, first_attempt_at: "2026-09-30T00:00:00Z" };
+    const f = fakeDb({ connection: conn, jobs: [old] });
+    await processConnectionOutbox("c1", { db: f.db, ...base, handlers: { create_bill: async () => ({ kind: "error", error: { errorClass: "transient", message: "m", detail: null, retryAfterSec: null } }) } });
+    expect(outboxWrites(f.writes)[0].values).toMatchObject({ status: "gave_up" });
+    expect(activityWrites(f.writes)[0].values).toMatchObject({ event: "accounting.sync_gave_up" });
+  });
+
+  it("releases jobs after the current one, not the current one, when a write throws mid-batch", async () => {
+    const f = fakeDb({ connection: conn, jobs: [job("1"), job("2"), job("3")], tableError: { supplier_invoice: "mirror failed" } });
+    const create_bill = vi.fn(async () => errResult("fixable"));
+    await expect(processConnectionOutbox("c1", { db: f.db, ...base, handlers: { create_bill } })).rejects.toThrow(/mirror failed/);
+    expect(create_bill).toHaveBeenCalledTimes(1);
+    const released = outboxWrites(f.writes).find((w) => w.filters.some(([o, c, v]) => o === "in" && c === "id" && Array.isArray(v)));
+    const ids = released?.filters.find(([o, c]) => o === "in" && c === "id")?.[2] as string[];
+    expect(ids).toEqual(["2", "3"]);
+    expect(released?.values).toMatchObject({ status: "pending", locked_at: null, locked_by: null });
+  });
+
+  it("marks the connection before releasing the rest on auth", async () => {
+    const f = fakeDb({ connection: conn, jobs: [job("1"), job("2")] });
+    await processConnectionOutbox("c1", { db: f.db, ...base, handlers: { create_bill: async () => errResult("auth") } });
+    const iConn = f.writes.findIndex((w) => w.table === "accounting_connection");
+    const iRel = f.writes.findIndex((w) => w.table === "accounting_outbox" && w.filters.some(([o, c]) => o === "in" && c === "id"));
+    expect(iConn).toBeGreaterThanOrEqual(0);
+    expect(iConn).toBeLessThan(iRel);
   });
 
   it("does nothing for a disconnected connection", async () => {
@@ -205,12 +259,12 @@ describe("processConnectionOutbox", () => {
   });
 });
 
-describe("processOutbox and kickOutbox pilot gate", () => {
+describe("processDueOutboxes and kickOutbox pilot gate", () => {
   afterEach(() => vi.unstubAllEnvs());
 
-  it("processOutbox skips connections whose tenant is not in the pilot", async () => {
+  it("processDueOutboxes skips connections whose tenant is not in the pilot", async () => {
     const f = fakeDb({ connection: conn, jobs: [job("1")], selectRows: { accounting_outbox: [{ connection_id: "c1" }] } });
-    const r = await processOutbox({ db: f.db, ...base, isPilotTenant: () => false });
+    const r = await processDueOutboxes({ db: f.db, ...base, isPilotTenant: () => false });
     expect(r.claimed).toBe(0);
     expect(f.rpc).not.toHaveBeenCalled();
   });

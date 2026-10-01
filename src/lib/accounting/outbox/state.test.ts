@@ -41,10 +41,10 @@ describe("invoiceSyncStatusFor", () => {
 });
 
 describe("isFailedForGood", () => {
-  it("is true for gave_up and for failed fixable or auth, false otherwise", () => {
+  it("is true for gave_up and for failed fixable, false otherwise", () => {
     expect(isFailedForGood({ status: "gave_up", error_class: "transient" })).toBe(true);
     expect(isFailedForGood({ status: "failed", error_class: "fixable" })).toBe(true);
-    expect(isFailedForGood({ status: "failed", error_class: "auth" })).toBe(true);
+    expect(isFailedForGood({ status: "failed", error_class: "auth" })).toBe(false);
     expect(isFailedForGood({ status: "failed", error_class: "transient" })).toBe(false);
     expect(isFailedForGood({ status: "failed", error_class: "daily_limit" })).toBe(false);
     expect(isFailedForGood({ status: "pending", error_class: "auth" })).toBe(false);

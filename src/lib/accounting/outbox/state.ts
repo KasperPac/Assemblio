@@ -52,9 +52,9 @@ export function nextJobState(
   }
 }
 
-/** True when nothing will retry this job without a human: gave up, or failed for a reason only a person can fix. */
+/** True when nothing will retry this job without a human: gave up, or failed with a fixable error. */
 export function isFailedForGood(job: { status: string; error_class: ErrorClass | string | null }): boolean {
-  return job.status === "gave_up" || (job.status === "failed" && (job.error_class === "fixable" || job.error_class === "auth"));
+  return job.status === "gave_up" || (job.status === "failed" && job.error_class === "fixable");
 }
 
 /** Handlers write the success states themselves; this mirrors failures and retries onto the invoice. */
