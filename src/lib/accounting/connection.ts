@@ -47,6 +47,8 @@ export type ConnectionRow = {
   other_charges_account_code: string | null;
   purchase_tax_type: string | null;
   gst_free_tax_type: string | null;
+  purchase_tax_rate: number | null;
+  gst_free_tax_rate: number | null;
   default_amounts_mode: "inclusive" | "exclusive";
   bills_start_date: string | null;
   sales_source: string | null;
@@ -121,6 +123,8 @@ const SETUP_RESET = {
   other_charges_account_code: null,
   purchase_tax_type: null,
   gst_free_tax_type: null,
+  purchase_tax_rate: null,
+  gst_free_tax_rate: null,
   bills_start_date: null,
   sales_source: null,
   setup_completed_at: null,
@@ -249,6 +253,13 @@ export function supabaseConnectionRepo(db: SupabaseClient): ConnectionRepo {
         .update({ status: "connected", connected_at: nowIso, connected_by: userId, last_refreshed_at: nowIso, last_error: null, disconnected_at: null, updated_at: nowIso })
         .eq("id", connectionId);
       assertNoError(error, "mark accounting_connection connected");
+      // Jobs waiting out an auth pause restart their 24-hour retry window, so the pause does not use it up.
+      const { error: e2 } = await db
+        .from("accounting_outbox")
+        .update({ first_attempt_at: null })
+        .eq("connection_id", connectionId)
+        .or("status.eq.pending,and(status.eq.failed,error_class.eq.transient)");
+      assertNoError(e2, "reset accounting_outbox retry window");
     },
     async cancelOpenJobs(connectionId, reason) {
       const { data: cancelled, error } = await db
@@ -256,31 +267,58 @@ export function supabaseConnectionRepo(db: SupabaseClient): ConnectionRepo {
         .update({ status: "cancelled", error_message: reason, completed_at: new Date().toISOString(), locked_at: null, locked_by: null })
         .eq("connection_id", connectionId)
         .in("status", ["pending", "working", "failed", "gave_up"])
-        .select("entity_id, operation");
+        .select("id, entity_id, operation, attempts");
       assertNoError(error, "cancel accounting_outbox jobs");
-      const rows = (cancelled ?? []) as { entity_id: string; operation: string }[];
-      const createIds = rows.filter((r) => r.operation === "create_bill").map((r) => r.entity_id);
+      const rows = (cancelled ?? []) as { id: string; entity_id: string; operation: string; attempts?: number | null }[];
+      const creates = rows.filter((r) => r.operation === "create_bill");
+      // An attempted create may have reached Xero without its response coming back.
+      const attempted = creates.filter((r) => (r.attempts ?? 0) > 0);
+      const unattempted = creates.filter((r) => (r.attempts ?? 0) === 0);
       const voidIds = rows.filter((r) => r.operation === "void_bill").map((r) => r.entity_id);
-      if (createIds.length) {
-        // The bill never reached Xero: the posted invoice is simply not synced.
+      if (attempted.length) {
+        const { error: e1 } = await db
+          .from("accounting_outbox")
+          .update({ error_message: `${reason}; a bill may already exist in Xero. Check Xero before re-entering.` })
+          .in("id", attempted.map((r) => r.id))
+          .eq("status", "cancelled");
+        assertNoError(e1, "explain cancelled accounting_outbox jobs");
         const { error: e2 } = await db
           .from("supplier_invoice")
-          .update({ sync_status: "not_synced" })
-          .in("id", createIds)
+          .update({ sync_status: "failed" })
+          .in("id", attempted.map((r) => r.entity_id))
           .eq("status", "posted")
           .in("sync_status", ["queued", "failed"]);
-        assertNoError(e2, "reset supplier_invoice sync_status");
+        assertNoError(e2, "mark supplier_invoice sync failed");
+      }
+      if (unattempted.length) {
+        // Never attempted: nothing can exist in Xero, so the posted invoice is simply not synced.
+        const { error: e3 } = await db
+          .from("supplier_invoice")
+          .update({ sync_status: "not_synced" })
+          .in("id", unattempted.map((r) => r.entity_id))
+          .eq("status", "posted")
+          .in("sync_status", ["queued", "failed"]);
+        assertNoError(e3, "reset supplier_invoice sync_status");
       }
       if (voidIds.length) {
         // The bill still exists in Xero; without this the invoice reads "Voiding in Xero" forever.
-        const { error: e3 } = await db
+        const { error: e4 } = await db
           .from("supplier_invoice")
           .update({ sync_status: "sent" })
           .in("id", voidIds)
           .eq("status", "voided")
           .in("sync_status", ["queued", "failed"])
           .not("external_id", "is", null);
-        assertNoError(e3, "reset voided supplier_invoice sync_status");
+        assertNoError(e4, "reset voided supplier_invoice sync_status");
+        // A chase (no external_id) was looking for a bill an earlier create may have made: that bill may exist.
+        const { error: e5 } = await db
+          .from("supplier_invoice")
+          .update({ sync_status: "failed" })
+          .in("id", voidIds)
+          .eq("status", "voided")
+          .eq("sync_status", "queued")
+          .is("external_id", null);
+        assertNoError(e5, "mark voided supplier_invoice sync failed");
       }
     },
     async deleteContactLinks(tenantId) {

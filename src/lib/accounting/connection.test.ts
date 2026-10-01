@@ -103,6 +103,12 @@ describe("saveConnection", () => {
     expect(m.calls).toEqual(["cancelOpenJobs:Xero organisation changed", "deleteContactLinks", "upsertConnection", "upsertCredential", "markConnected"]);
   });
 
+  it("an organisation change also clears the stored setup tax rates", async () => {
+    const m = memoryRepo({ id: "conn-1", external_org_id: "o1" });
+    await saveConnection(m.repo, args);
+    expect(m.upserted).toMatchObject({ purchase_tax_rate: null, gst_free_tax_rate: null });
+  });
+
   it("writes needs_reconnect first and only flips to connected after the credential is stored", async () => {
     const m = memoryRepo(null);
     await saveConnection(m.repo, args);
@@ -230,7 +236,7 @@ function fakeDb(results: Record<string, Scripted[]>) {
       log.push(entry);
       const next = (): Scripted => (results[table] ?? []).shift() ?? { data: null, error: null };
       const chain: Record<string, unknown> = {};
-      for (const m of ["select", "update", "upsert", "delete", "eq", "in", "not"]) {
+      for (const m of ["select", "update", "upsert", "delete", "eq", "in", "not", "is", "or"]) {
         chain[m] = (...a: unknown[]) => {
           entry.ops.push(`${m}:${JSON.stringify(a)}`);
           return chain;
@@ -285,21 +291,82 @@ describe("supabaseConnectionRepo", () => {
       accounting_outbox: [
         {
           data: [
-            { entity_id: "i1", operation: "create_bill" },
-            { entity_id: "i2", operation: "void_bill" },
-            { entity_id: "s1", operation: "create_contact" },
+            { id: "j1", entity_id: "i1", operation: "create_bill", attempts: 0 },
+            { id: "j2", entity_id: "i2", operation: "void_bill", attempts: 0 },
+            { id: "j3", entity_id: "s1", operation: "create_contact", attempts: 0 },
           ],
           error: null,
         },
       ],
-      supplier_invoice: [{ data: null, error: null }, { data: null, error: null }],
+      supplier_invoice: [{ data: null, error: null }, { data: null, error: null }, { data: null, error: null }],
     });
     await supabaseConnectionRepo(f.db).cancelOpenJobs("c", "r");
     const inv = f.log.filter((l) => l.table === "supplier_invoice");
-    expect(inv).toHaveLength(2);
+    expect(inv).toHaveLength(3);
     expect(inv[0].ops.join()).toContain('"sync_status":"not_synced"');
     expect(inv[0].ops.join()).toContain('["i1"]');
     expect(inv[1].ops.join()).toContain('"sync_status":"sent"');
     expect(inv[1].ops.join()).toContain('["i2"]');
+    expect(inv[1].ops.join()).toContain('not:["external_id","is",null]');
+  });
+
+  it("cancelOpenJobs sets failed for an attempted create and not_synced for an unattempted one", async () => {
+    const f = fakeDb({
+      accounting_outbox: [
+        {
+          data: [
+            { id: "j1", entity_id: "i1", operation: "create_bill", attempts: 2 },
+            { id: "j2", entity_id: "i2", operation: "create_bill", attempts: 0 },
+          ],
+          error: null,
+        },
+        { data: null, error: null },
+      ],
+      supplier_invoice: [{ data: null, error: null }, { data: null, error: null }],
+    });
+    await supabaseConnectionRepo(f.db).cancelOpenJobs("c", "Xero disconnected");
+    const jobs = f.log.filter((l) => l.table === "accounting_outbox");
+    expect(jobs).toHaveLength(2);
+    // The attempted create's job explains why its invoice now reads failed.
+    expect(jobs[1].ops.join()).toContain('"error_message":"Xero disconnected; a bill may already exist in Xero. Check Xero before re-entering."');
+    expect(jobs[1].ops.join()).toContain('["j1"]');
+    const inv = f.log.filter((l) => l.table === "supplier_invoice");
+    expect(inv).toHaveLength(2);
+    expect(inv[0].ops.join()).toContain('"sync_status":"failed"');
+    expect(inv[0].ops.join()).toContain('["i1"]');
+    expect(inv[0].ops.join()).toContain('eq:["status","posted"]');
+    expect(inv[1].ops.join()).toContain('"sync_status":"not_synced"');
+    expect(inv[1].ops.join()).toContain('["i2"]');
+  });
+
+  it("cancelOpenJobs marks a cancelled void chase (no external_id) failed, and a void of a sent bill sent", async () => {
+    const f = fakeDb({
+      accounting_outbox: [{ data: [{ id: "j1", entity_id: "i1", operation: "void_bill", attempts: 1 }], error: null }],
+      supplier_invoice: [{ data: null, error: null }, { data: null, error: null }],
+    });
+    await supabaseConnectionRepo(f.db).cancelOpenJobs("c", "Xero disconnected");
+    const inv = f.log.filter((l) => l.table === "supplier_invoice");
+    expect(inv).toHaveLength(2);
+    expect(inv[0].ops.join()).toContain('"sync_status":"sent"');
+    expect(inv[0].ops.join()).toContain('not:["external_id","is",null]');
+    expect(inv[1].ops.join()).toContain('"sync_status":"failed"');
+    expect(inv[1].ops.join()).toContain('is:["external_id",null]');
+    expect(inv[1].ops.join()).toContain('eq:["status","voided"]');
+    expect(inv[1].ops.join()).toContain('["i1"]');
+  });
+
+  it("markConnected restarts the 24 h retry window of the connection's pending and transient-failed jobs", async () => {
+    const f = fakeDb({ accounting_connection: [{ data: null, error: null }], accounting_outbox: [{ data: null, error: null }] });
+    await supabaseConnectionRepo(f.db).markConnected("c", "u1", "2026-10-01T00:00:00.000Z");
+    const jobs = f.log.filter((l) => l.table === "accounting_outbox");
+    expect(jobs).toHaveLength(1);
+    expect(jobs[0].ops.join()).toContain('"first_attempt_at":null');
+    expect(jobs[0].ops.join()).toContain('eq:["connection_id","c"]');
+    expect(jobs[0].ops.join()).toContain('or:["status.eq.pending,and(status.eq.failed,error_class.eq.transient)"]');
+  });
+
+  it("markConnected throws when the retry-window reset fails", async () => {
+    const f = fakeDb({ accounting_connection: [{ data: null, error: null }], accounting_outbox: [{ data: null, error: err }] });
+    await expect(supabaseConnectionRepo(f.db).markConnected("c", "u1", "2026-10-01T00:00:00.000Z")).rejects.toThrow("reset accounting_outbox retry window: boom");
   });
 });
