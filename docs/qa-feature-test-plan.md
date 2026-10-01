@@ -550,11 +550,14 @@ Bills
 - [ ] Posting a supplier invoice dated on or after the start date queues a bill. It appears in Xero as Awaiting Approval with the supplier's invoice number
 - [ ] Stock lines carry no item code; the PO number appears in the line description
 - [ ] A retry after a lost response does not create a second bill (the existing bill is found and adopted)
-- [ ] An invoice dated inside a Xero lock period fails with "Xero is locked for this invoice date…" naming the fix
-- [ ] An archived account, invalid tax rate or archived contact each shows a plain-English error with Retry (admin)
+- [ ] An invoice dated inside a Xero lock period fails with "Xero is locked up to {date}. Ask your accountant to move the lock date in Xero, or void this invoice and re-enter it with a later date. Then retry."
+- [ ] An archived account, invalid tax rate or archived contact each shows a plain-English error ("… is archived or inactive in Xero. Restore it in Xero and retry, or void this invoice and re-enter it …") with Retry (admin). No message asks to edit the posted invoice
+- [ ] A retry never adopts a Xero bill that another Manuva invoice already holds; if Xero has two unlinked live bills with the supplier's invoice number, the job fails with "Xero has several bills from this supplier with invoice number X. Void the extra one in Xero, then retry."
+- [ ] Inclusive mode: a stock line's starting price is the receipt's ex-GST cost plus GST (10% → ×1.1); switching Excluding/Including GST or a line's tax rate updates untouched stock prices but never a price you typed
 - [ ] (admin) "Create in Xero" for a missing supplier contact is offered to admins only; a member sees "Ask an admin to create this contact in Xero, or link an existing one."
 - [ ] Voiding deletes (draft / awaiting approval) or voids (approved) the bill; a bill with payments or credits refuses with "This bill has payments or credits in Xero. Remove them in Xero first, then retry."
-- [ ] Voiding an invoice whose bill creation may already have reached Xero finds that bill (by contact and invoice number) and deletes or voids it; if Xero is not connected, Void is refused
+- [ ] Voiding an invoice whose bill creation may already have reached Xero (failed or stopped retrying after an attempt) finds that bill (by contact and invoice number) and deletes or voids it
+- [ ] (admin) Voiding while Xero is disconnected still voids in Manuva and frees the receipt lines, and queues nothing. A sent bill shows "Voided in Manuva. Xero is disconnected, so the bill stays in Xero. Void it there."; a failed one shows "Voided in Manuva. A bill may already exist in Xero. Check Xero and void it there."
 - [ ] Voiding a bill that is already deleted or voided in Xero completes without error
 
 Connection health
@@ -563,10 +566,14 @@ Connection health
 - [ ] Quiet connections are refreshed by the daily job (last refreshed date moves)
 - [ ] (admin) Disconnect revokes access in Xero and deletes stored tokens; Manuva disappears from Xero → Connected apps
 - [ ] A failed Disconnect shows "Couldn't disconnect Xero. Try again."; retrying finishes the local cleanup (connection marked disconnected, jobs cancelled, credential deleted). The Disconnect button cannot be double-submitted
+- [ ] Disconnecting (or switching organisation) while a bill was mid-retry marks that invoice "Xero sync failed" with "…a bill may already exist in Xero. Check Xero before re-entering."; a bill never attempted goes back to Posted (not synced)
+- [ ] Reconnecting restarts the 24 h retry window of jobs that were waiting on the reconnect
+- [ ] (admin) Linking a supplier whose "create contact" stopped retrying, or retrying that contact job, puts its waiting bills back to "Queued for Xero"
 
 Roles
 - [ ] A read-only platform observer cannot save, post, link or search supplier invoices or contacts; the new/edit invoice page shows "Read-only access"
-- [ ] A member posting while the connection needs reconnecting gets "Xero needs reconnecting. Ask an admin to reconnect it from Integrations."
+- [ ] A member posting while the connection needs reconnecting succeeds: the form offers the tax rates and accounts saved in Xero setup, notes "Xero needs reconnecting. You can still post…", and the bill waits until Xero is reconnected, then sends
+- [ ] (admin) Only an admin can post with "Create in Xero" for a contact; the database refuses a member too ("Only admins can create a contact in Xero.")
 
 Security
 - [ ] `accounting_credential` cannot be read through the REST API by any signed-in user
@@ -785,3 +792,4 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-09-28 — amended Components list (MANUVA-31): the table is one flat list following the active sort; the collapsible group section rows are replaced by a sortable Group column. Group filtering stays in the filter rail.
 - 2026-10-01 — amended Xero / Accounting: removed the never-live May integration (UI card, /api/xero routes, receipt bill push) pending the MANUVA-34 rebuild.
 - 2026-10-01 — added Supplier invoices + Xero supplier bills (MANUVA-34): supplier tax invoices against receipts; production-grade Xero connect, setup, bill/void sync via outbox; pilot-gated. §16 rewritten; the Xero webhook claim in Security & integrity is corrected.
+- 2026-10-01 — amended Supplier invoices + Xero supplier bills (MANUVA-34 final review): posting works while Xero needs reconnecting (stored setup rates; the bill waits); inclusive prefill adds GST to the receipt cost; void works while disconnected and chases a gave-up create; disconnect marks a possibly-created bill failed; retries never adopt another invoice's bill; fixable messages name fixes in Xero or void and re-enter; create-contact is admin-only in SQL.
