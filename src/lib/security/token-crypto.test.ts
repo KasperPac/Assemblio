@@ -23,6 +23,12 @@ describe("token-crypto", () => {
     expect(() => decryptToken([v, iv, tag, flipped.toString("base64url")].join("."), key)).toThrow();
   });
 
+  it("fails on a truncated auth tag", () => {
+    const [v, iv, tag, ct] = encryptToken("secret", key).split(".");
+    const truncated = Buffer.from(tag, "base64url").slice(0, 4).toString("base64url");
+    expect(() => decryptToken([v, iv, truncated, ct].join("."), key)).toThrow();
+  });
+
   it("fails on the wrong key or version", () => {
     const env = encryptToken("secret", key);
     expect(() => decryptToken(env, { key: randomBytes(32), version: 1 })).toThrow();

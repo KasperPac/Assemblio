@@ -16,7 +16,7 @@ export function loadTokenKey(env: Record<string, string | undefined> = process.e
 
 export function encryptToken(plaintext: string, k: TokenKey): string {
   const iv = randomBytes(12);
-  const cipher = createCipheriv("aes-256-gcm", k.key, iv);
+  const cipher = createCipheriv("aes-256-gcm", k.key, iv, { authTagLength: 16 });
   const ct = Buffer.concat([cipher.update(plaintext, "utf8"), cipher.final()]);
   const tag = cipher.getAuthTag();
   return `v${k.version}.${iv.toString("base64url")}.${tag.toString("base64url")}.${ct.toString("base64url")}`;
@@ -29,7 +29,12 @@ export function decryptToken(envelope: string, k: TokenKey): string {
   if (version !== k.version) {
     throw new Error(`Token encrypted with key v${version}; current key is v${k.version}`);
   }
-  const decipher = createDecipheriv("aes-256-gcm", k.key, Buffer.from(parts[1], "base64url"));
-  decipher.setAuthTag(Buffer.from(parts[2], "base64url"));
+  const iv = Buffer.from(parts[1], "base64url");
+  const tag = Buffer.from(parts[2], "base64url");
+  if (iv.length !== 12 || tag.length !== 16) {
+    throw new Error("Malformed token envelope");
+  }
+  const decipher = createDecipheriv("aes-256-gcm", k.key, iv, { authTagLength: 16 });
+  decipher.setAuthTag(tag);
   return Buffer.concat([decipher.update(Buffer.from(parts[3], "base64url")), decipher.final()]).toString("utf8");
 }
