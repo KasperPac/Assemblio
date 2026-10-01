@@ -3,7 +3,7 @@
 import { after } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getServerTenantContext } from "@/lib/tenant/context";
-import { isAdminRole } from "@/lib/tenant/authz";
+import { isAdminRole, isReadOnlyRole } from "@/lib/tenant/authz";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { assertNoError } from "@/lib/supabase/assert-no-error";
 import { logActivity } from "@/lib/activity/log";
@@ -23,6 +23,7 @@ type Fail = { ok: false; message: string };
 type DbErr = { code?: string; message?: string };
 type Supabase = NonNullable<Awaited<ReturnType<typeof getServerTenantContext>>>["supabase"];
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const READ_ONLY: Fail = { ok: false, message: "Read-only access." };
 const NO_WORKSPACE: Fail = { ok: false, message: "You're not signed in to a workspace." };
 const RECONNECT: Fail = { ok: false, message: "Xero needs reconnecting. Ask an admin to reconnect it from Integrations." };
 
@@ -58,6 +59,7 @@ async function invoiceNumberOf(supabase: Supabase, id: string): Promise<string |
 export async function saveSupplierInvoiceDraft(raw: unknown): Promise<{ ok: true; id: string } | Fail> {
   const ctx = await getServerTenantContext();
   if (!ctx?.tenantId) return NO_WORKSPACE;
+  if (isReadOnlyRole(ctx.role)) return READ_ONLY;
   const parsed = parseDraftPayload(raw);
   if (!parsed.ok) return { ok: false, message: parsed.error };
   const d = parsed.value;
@@ -127,6 +129,7 @@ export async function saveSupplierInvoiceDraft(raw: unknown): Promise<{ ok: true
 export async function postSupplierInvoice(id: string, opts: { updateComponentCosts: boolean; createContact: boolean }): Promise<{ ok: true; syncStatus: string } | Fail> {
   const ctx = await getServerTenantContext();
   if (!ctx?.tenantId) return NO_WORKSPACE;
+  if (isReadOnlyRole(ctx.role)) return READ_ONLY;
   if (!UUID.test(id)) return { ok: false, message: "Invoice not found." };
   if (opts.createContact && !isAdminRole(ctx.role)) return { ok: false, message: "Only admins can create a contact in Xero. Ask an admin to link or create it." };
   const createContact = opts.createContact && isXeroPilotTenant(ctx.tenantId);
@@ -136,7 +139,11 @@ export async function postSupplierInvoice(id: string, opts: { updateComponentCos
     p_create_contact: createContact,
   });
   if (error) return failWith("post_supplier_invoice", error, "Couldn't post the invoice.");
-  const syncStatus = String(data);
+  if (typeof data !== "string" || !data) {
+    console.error("[supplier-invoice] post_supplier_invoice returned no sync status", scrubSecrets(data));
+    return { ok: false, message: "Couldn't confirm the invoice was posted. Check the invoice before trying again." };
+  }
+  const syncStatus = data;
   await logActivity({ event: "supplier_invoice.posted", entityId: id, metadata: { invoice_number: await invoiceNumberOf(ctx.supabase, id), sync_status: syncStatus } });
   const tenantId = ctx.tenantId;
   if (syncStatus === "queued" && isXeroPilotTenant(tenantId)) after(() => kickOutbox({ tenantId }));
@@ -149,10 +156,17 @@ export async function voidSupplierInvoice(id: string, reason: string): Promise<{
   if (!ctx?.tenantId) return NO_WORKSPACE;
   if (!isAdminRole(ctx.role)) return { ok: false, message: "Only admins can void supplier invoices." };
   if (!UUID.test(id)) return { ok: false, message: "Invoice not found." };
-  const { data, error } = await ctx.supabase.rpc("void_supplier_invoice", { p_invoice_id: id, p_reason: reason });
+  const why = typeof reason === "string" ? reason.trim() : "";
+  if (!why) return { ok: false, message: "Enter a reason for voiding this invoice." };
+  if (why.length > 500) return { ok: false, message: "The void reason is too long (500 characters at most)." };
+  const { data, error } = await ctx.supabase.rpc("void_supplier_invoice", { p_invoice_id: id, p_reason: why });
   if (error) return failWith("void_supplier_invoice", error, "Couldn't void the invoice.");
-  const syncStatus = String(data);
-  await logActivity({ event: "supplier_invoice.voided", entityId: id, metadata: { invoice_number: await invoiceNumberOf(ctx.supabase, id), reason } });
+  if (typeof data !== "string" || !data) {
+    console.error("[supplier-invoice] void_supplier_invoice returned no sync status", scrubSecrets(data));
+    return { ok: false, message: "Couldn't confirm the invoice was voided. Check the invoice before trying again." };
+  }
+  const syncStatus = data;
+  await logActivity({ event: "supplier_invoice.voided", entityId: id, metadata: { invoice_number: await invoiceNumberOf(ctx.supabase, id), reason: why } });
   const tenantId = ctx.tenantId;
   if (syncStatus === "queued" && isXeroPilotTenant(tenantId)) after(() => kickOutbox({ tenantId }));
   revalidateInvoices(id);
@@ -169,6 +183,7 @@ async function connectedXero(tenantId: string) {
 export async function searchXeroContactsAction(term: string): Promise<{ ok: true; contacts: { id: string; name: string }[] } | Fail> {
   const ctx = await getServerTenantContext();
   if (!ctx?.tenantId) return NO_WORKSPACE;
+  if (isReadOnlyRole(ctx.role)) return READ_ONLY;
   const q = String(term ?? "").trim().slice(0, 100);
   if (q.length < 2) return { ok: true, contacts: [] };
   try {
@@ -191,6 +206,7 @@ export async function searchXeroContactsAction(term: string): Promise<{ ok: true
 export async function linkSupplierToXeroContact(supplierId: string, contactId: string): Promise<{ ok: true; name: string } | Fail> {
   const ctx = await getServerTenantContext();
   if (!ctx?.tenantId) return NO_WORKSPACE;
+  if (isReadOnlyRole(ctx.role)) return READ_ONLY;
   if (!UUID.test(supplierId) || !UUID.test(contactId)) return { ok: false, message: "Invalid supplier or contact." };
   const tenantId = ctx.tenantId;
 
@@ -218,23 +234,26 @@ export async function linkSupplierToXeroContact(supplierId: string, contactId: s
 
   let kick = false;
   try {
+    // An open "create contact" for this supplier is now unnecessary: cancel it and unblock the bills waiting on it.
+    const { data: jobs, error: je } = await x.db
+      .from("accounting_outbox")
+      .select("id, status")
+      .eq("tenant_id", tenantId)
+      .eq("entity_type", "supplier")
+      .eq("entity_id", supplierId)
+      .eq("operation", "create_contact")
+      .in("status", ["pending", "working", "failed"]);
+    assertNoError(je, "find create_contact jobs");
+    const open = (jobs ?? []) as { id: string; status: string }[];
+    // A job in flight may already have created the contact at Xero; don't race it.
+    if (open.some((j) => j.status === "working")) return { ok: false, message: "Xero is creating this contact right now. Try again in a minute." };
+    const ids = open.map((j) => j.id);
+
     const { error } = await x.db.from("accounting_contact_link").upsert(
       { tenant_id: tenantId, provider: "xero", supplier_id: supplierId, external_contact_id: contactId, external_name: name, linked_by: ctx.userId, linked_at: new Date().toISOString() },
       { onConflict: "tenant_id,provider,supplier_id" }
     );
     assertNoError(error, "save accounting_contact_link");
-
-    // An open "create contact" for this supplier is now unnecessary: cancel it and unblock the bills waiting on it.
-    const { data: jobs, error: je } = await x.db
-      .from("accounting_outbox")
-      .select("id")
-      .eq("tenant_id", tenantId)
-      .eq("entity_type", "supplier")
-      .eq("entity_id", supplierId)
-      .eq("operation", "create_contact")
-      .in("status", ["pending", "failed"]);
-    assertNoError(je, "find create_contact jobs");
-    const ids = (jobs ?? []).map((j) => (j as { id: string }).id);
     if (ids.length) {
       const { error: e1 } = await x.db
         .from("accounting_outbox")

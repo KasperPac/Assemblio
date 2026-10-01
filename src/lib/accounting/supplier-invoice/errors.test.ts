@@ -18,6 +18,12 @@ describe("dbErrorMessage", () => {
     expect(dbErrorMessage({ code: "55P03", message: "could not obtain lock on row" }, "x"))
       .toBe("This invoice is being sent to Xero right now. Try again in a minute.");
   });
+  it("never shows raw RLS text", () => {
+    expect(dbErrorMessage({ code: "42501", message: 'new row violates row-level security policy for table "supplier_invoice"' }, "x"))
+      .toBe("You don't have access to do that.");
+    expect(dbErrorMessage({ code: "42501", message: "only admins can void supplier invoices" }, "x"))
+      .toBe("Only admins can void supplier invoices.");
+  });
   it("hides anything else behind the fallback", () => {
     expect(dbErrorMessage({ code: "XX000", message: "internal detail" }, "Couldn't save.")).toBe("Couldn't save.");
     expect(dbErrorMessage({ code: "23505", message: "duplicate key value violates unique constraint \"other_uq\"" }, "Couldn't save.")).toBe("Couldn't save.");
