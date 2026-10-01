@@ -15,7 +15,7 @@ const c = (p: Partial<MaintenanceConnection> = {}): MaintenanceConnection => ({
 });
 
 type Res = { data?: unknown; count?: number | null; error: { message: string } | null };
-type Upd = { id: unknown; values: Record<string, unknown> };
+type Upd = { id: unknown; values: Record<string, unknown>; or?: string; eqs: Array<[string, unknown]>; claim: boolean };
 // Minimal chainable fake: every builder method returns itself and awaiting resolves the table's result.
 function fakeDb(results: {
   connections: Res;
@@ -32,13 +32,20 @@ function fakeDb(results: {
     const result = (): Res => {
       if (upd) {
         log.push(`update:${String(upd.values.last_alert_at)}`);
-        return typeof results.update === "function" ? results.update(upd) : (results.update ?? { error: null });
+        return typeof results.update === "function" ? results.update(upd) : (results.update ?? { data: upd.claim ? [{ id: upd.id }] : null, error: null });
       }
       if (table === "accounting_connection") return results.connections;
       const g = results.gaveUp ?? { count: 0, error: null };
       return typeof g === "function" ? g(connId) : g;
     };
     for (const m of ["select", "neq"]) b[m] = () => b;
+    b.or = (expr: string) => {
+      if (upd) {
+        upd.or = expr;
+        upd.claim = true;
+      }
+      return b;
+    };
     b.gt = (col: string, val: unknown) => {
       filters.push({ table, col, val, op: "gt" });
       return b;
@@ -47,10 +54,11 @@ function fakeDb(results: {
       filters.push({ table, col, val, op: "eq" });
       if (col === "connection_id") connId = String(val);
       if (upd && col === "id") upd.id = val;
+      if (upd) upd.eqs.push([col, val]);
       return b;
     };
     b.update = (values: Record<string, unknown>) => {
-      upd = { id: undefined, values };
+      upd = { id: undefined, values, eqs: [], claim: false };
       updates.push(upd);
       return b;
     };
@@ -212,7 +220,7 @@ describe("sendDueAlerts", () => {
         data: [c({ id: "a", status: "needs_reconnect" }), c({ id: "b", status: "needs_reconnect" })],
         error: null,
       },
-      update: (u) => (u.id === "a" ? { error: { message: "write failed" } } : { error: null }),
+      update: (u) => (u.id === "a" ? { error: { message: "write failed" } } : { data: [{ id: u.id }], error: null }),
     });
     const sendAlert = vi.fn(async () => true);
     const spy = vi.spyOn(console, "error").mockImplementation(() => {});
@@ -237,7 +245,58 @@ describe("sendDueAlerts", () => {
     spy.mockRestore();
     expect(out).toEqual({ alerted: 1, failed: 1 });
     // a's throttle was claimed and never rolled back, so the next run does not resend
-    expect(updates).toEqual([{ id: "a", values: { last_alert_at: now.toISOString() } }]);
+    expect(updates).toHaveLength(1);
+    expect(updates[0]).toMatchObject({ id: "a", values: { last_alert_at: now.toISOString() } });
+  });
+
+  it("claims conditionally, with the 24h boundary matching alertKind", async () => {
+    const { db, updates } = fakeDb({ connections: { data: [c({ status: "needs_reconnect" })], error: null } });
+    await sendDueAlerts(db, { sendAlert: async () => true, now: () => now });
+    expect(updates[0].or).toBe("last_alert_at.is.null,last_alert_at.lte.2026-10-07T00:00:00.000Z");
+    expect(updates[0].eqs).toContainEqual(["id", "c1"]);
+  });
+
+  it("does not send, and counts nothing failed, when the claim returns no row (another run won)", async () => {
+    const { db, updates } = fakeDb({
+      connections: { data: [c({ status: "needs_reconnect" })], error: null },
+      update: { data: [], error: null },
+    });
+    const sendAlert = vi.fn(async () => true);
+    const out = await sendDueAlerts(db, { sendAlert, now: () => now });
+    expect(out).toEqual({ alerted: 0, failed: 0 });
+    expect(sendAlert).not.toHaveBeenCalled();
+    expect(updates).toHaveLength(1); // no restore either
+  });
+
+  it("restores only while the row still holds our claim", async () => {
+    const { db, updates } = fakeDb({
+      connections: { data: [c({ status: "needs_reconnect", last_alert_at: "2026-10-05T00:00:00Z", updated_at: "2026-10-06T00:00:00Z" })], error: null },
+    });
+    await sendDueAlerts(db, { sendAlert: async () => false, now: () => now });
+    expect(updates).toHaveLength(2);
+    expect(updates[1].values).toEqual({ last_alert_at: "2026-10-05T00:00:00Z" });
+    expect(updates[1].eqs).toContainEqual(["last_alert_at", now.toISOString()]);
+  });
+
+  it("two overlapping runs send exactly once", async () => {
+    const claimed = new Set<unknown>();
+    const { db } = fakeDb({
+      connections: { data: [c({ status: "needs_reconnect" })], error: null },
+      update: (u) => {
+        if (!u.claim) return { error: null };
+        if (claimed.has(u.id)) return { data: [], error: null };
+        claimed.add(u.id);
+        return { data: [{ id: u.id }], error: null };
+      },
+    });
+    const sendAlert = vi.fn(async () => true);
+    const [r1, r2] = await Promise.all([
+      sendDueAlerts(db, { sendAlert, now: () => now }),
+      sendDueAlerts(db, { sendAlert, now: () => now }),
+    ]);
+    expect(sendAlert).toHaveBeenCalledTimes(1);
+    expect(r1.alerted + r2.alerted).toBe(1);
+    expect(r1.failed + r2.failed).toBe(0);
   });
 
   it("surfaces a failed connection list", async () => {

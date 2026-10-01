@@ -1,6 +1,6 @@
 -- ---------------------------------------------------------------------
 -- MANUVA-34 - schedule the accounting outbox (every 5 min) and maintenance
--- (daily 17:00 UTC, about 03:00-04:00 AEST/AEDT). Vercel Hobby can't run crons
+-- (daily 17:07 UTC, staggered off the 5-minute outbox run so the two never fire together, about 03:00-04:00 AEST/AEDT). Vercel Hobby can't run crons
 -- this often, so Postgres calls the app.
 --
 -- The Vault secret 'accounting_cron_secret' MUST equal the CRON_SECRET
@@ -31,7 +31,7 @@ select cron.schedule('accounting-outbox', '*/5 * * * *', $job$
   );
 $job$);
 
-select cron.schedule('accounting-maintenance', '0 17 * * *', $job$
+select cron.schedule('accounting-maintenance', '7 17 * * *', $job$
   select net.http_post(
     url := (select decrypted_secret from vault.decrypted_secrets where name = 'app_base_url') || '/api/cron/accounting-maintenance',
     headers := jsonb_build_object(

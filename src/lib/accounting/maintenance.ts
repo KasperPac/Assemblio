@@ -90,14 +90,24 @@ export async function sendDueAlerts(
       const kind = alertKind(c, count ?? 0, now());
       if (!kind) continue;
 
-      const { error: ce } = await db.from("accounting_connection").update({ last_alert_at: now().toISOString() }).eq("id", c.id);
+      // Winner-only claim: the 24h boundary matches alertKind (allowed when last_alert_at <= now - 24h).
+      // The outbox and maintenance routes can fire together; only the run that gets a row back sends.
+      const claimedAt = now().toISOString();
+      const staleBefore = new Date(now().getTime() - ALERT_EVERY_MS).toISOString();
+      const { data: won, error: ce } = await db
+        .from("accounting_connection")
+        .update({ last_alert_at: claimedAt })
+        .eq("id", c.id)
+        .or(`last_alert_at.is.null,last_alert_at.lte.${staleBefore}`)
+        .select("id");
       assertNoError(ce, "claim alert throttle");
+      if (!won || won.length === 0) continue; // another run won the claim
 
       let sent = false;
       try {
         sent = await deps.sendAlert(c, kind, count ?? 0);
       } finally {
-        if (!sent) await restoreThrottle(db, c);
+        if (!sent) await restoreThrottle(db, c, claimedAt);
       }
       if (sent) out.alerted++;
     } catch (err) {
@@ -108,9 +118,10 @@ export async function sendDueAlerts(
   return out;
 }
 
-async function restoreThrottle(db: SupabaseClient, c: MaintenanceConnection): Promise<void> {
+// Only restores while the row still holds OUR claim, so a newer claim from an overlapping run is never overwritten.
+async function restoreThrottle(db: SupabaseClient, c: MaintenanceConnection, claimedAt: string): Promise<void> {
   try {
-    const { error } = await db.from("accounting_connection").update({ last_alert_at: c.last_alert_at }).eq("id", c.id);
+    const { error } = await db.from("accounting_connection").update({ last_alert_at: c.last_alert_at }).eq("id", c.id).eq("last_alert_at", claimedAt);
     if (error) console.error("[xero] could not restore alert throttle", c.id, scrubSecrets(error.message));
   } catch (err) {
     console.error("[xero] could not restore alert throttle", c.id, scrubSecrets(err instanceof Error ? err.message : String(err)));
