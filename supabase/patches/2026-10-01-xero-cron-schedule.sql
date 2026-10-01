@@ -6,6 +6,9 @@
 -- The Vault secret 'accounting_cron_secret' MUST equal the CRON_SECRET
 -- environment variable set in Vercel, or every call gets a 401.
 --
+-- If a Vault secret is missing, the job's request fails; check
+-- net._http_response for the status.
+--
 -- PREREQUISITE (run by a human in the SQL editor; values come from
 -- 1Password and are NEVER written to a file):
 --   select vault.create_secret('<CRON_SECRET value>', 'accounting_cron_secret');

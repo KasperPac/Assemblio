@@ -16,7 +16,10 @@ export function emailAlertSender(db: SupabaseClient, baseUrl: string): AlertSend
       console.error("[xero] alert recipient lookup failed", c.id, scrubSecrets(error.message));
       return false;
     }
-    if (!u.user?.email) return false;
+    if (!u.user?.email) {
+      console.error("[xero] alert recipient has no email", c.id);
+      return false;
+    }
 
     const { data: t, error: te } = await db.from("tenant").select("name").eq("id", c.tenant_id).maybeSingle();
     if (te) console.error("[xero] alert tenant name lookup failed", c.id, scrubSecrets(te.message));
