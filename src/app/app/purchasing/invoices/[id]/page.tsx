@@ -1,36 +1,29 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
+import { isUuid, one } from "@/lib/accounting/supplier-invoice/util";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { isAdminRole } from "@/lib/tenant/authz";
 import { invoiceBadge, jobBadge, OPERATION_LABELS } from "@/lib/accounting/supplier-invoice/labels";
 import { isFailedForGood } from "@/lib/accounting/outbox/state";
 import PageHeader from "../../../_ui/page-header";
 import StatusBadge from "../../../_ui/status-badge";
-import EmptyState from "../../../_ui/empty-state";
+import LoadFailed from "../load-failed";
 import InvoiceActions from "../invoice-actions";
 import styles from "../invoices.module.css";
 
 type Props = { params: Promise<{ id: string }> };
-const one = <T,>(v: T | T[] | null | undefined): T | null => (Array.isArray(v) ? v[0] ?? null : v ?? null);
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export default async function SupplierInvoicePage({ params }: Props) {
   const { id } = await params;
   const ctx = await getServerTenantContext();
   if (!ctx) redirect("/app/auth/login");
   if (!ctx.tenantId) redirect("/app");
-  if (!UUID.test(id)) notFound();
+  if (!isUuid(id)) notFound();
   const { supabase, tenantId } = ctx;
 
-  const loadFailed = (what: string, error: { message?: string }) => {
-    console.error(`[supplier-invoice] detail page: ${what}`, error.message);
-    return (
-      <section className={styles.page}>
-        <PageHeader eyebrow="Operations" breadcrumbs={[{ label: "Supplier invoices", href: "/app/purchasing/invoices" }, { label: "Invoice" }]} title="Supplier invoice" />
-        <EmptyState title="Couldn't load this invoice" message={`We couldn't load ${what}. Refresh to try again.`} />
-      </section>
-    );
-  };
+  const loadFailed = (what: string, error: { message?: string }) => (
+    <LoadFailed title="Supplier invoice" crumb="Invoice" what={what} error={error} />
+  );
 
   const { data, error } = await supabase
     .from("supplier_invoice")

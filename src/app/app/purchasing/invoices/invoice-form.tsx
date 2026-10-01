@@ -6,6 +6,7 @@ import { dueDateFromTerms } from "@/lib/accounting/supplier-invoice/terms";
 import { invoiceTotals, lineAmounts, lineVariance, totalMismatch, type AmountsMode } from "@/lib/accounting/supplier-invoice/calc";
 import type { DraftLine } from "@/lib/accounting/supplier-invoice/draft";
 import { postSupplierInvoice, saveSupplierInvoiceDraft } from "./actions";
+import EmptyState from "../../_ui/empty-state";
 import SupplierLink from "./supplier-link";
 import styles from "./invoices.module.css";
 
@@ -28,6 +29,7 @@ type Props = {
   taxOptions: TaxOption[];
   accountOptions: AccountOption[];
   xeroLoadError: boolean;
+  canCreateContact: boolean;
   xero: XeroDefaults | null;
   draft: DraftInit | null;
 };
@@ -53,6 +55,7 @@ export default function InvoiceForm(p: Props) {
   const [contactName, setContactName] = useState<string | null>(p.xero?.contactName ?? null);
 
   const money = (n: number) => new Intl.NumberFormat("en-AU", { style: "currency", currency: p.currency }).format(n);
+  const unitMoney = (n: number) => new Intl.NumberFormat("en-AU", { style: "currency", currency: p.currency, minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(n);
   const defaultTax = p.taxOptions.find((t) => t.taxType === p.xero?.purchaseTaxType) ?? p.taxOptions[0];
   const receiptLines = useMemo(() => new Map(p.receipts.flatMap((r) => r.lines.map((l) => [l.id, l] as const))), [p.receipts]);
 
@@ -162,10 +165,14 @@ export default function InvoiceForm(p: Props) {
           <SupplierLink supplierId={p.supplier.id} supplierName={p.supplier.name} linkedName={contactName} onLinked={(n) => { setContactName(n); setCreateContact(false); }} />
         ) : null}
         {p.xero && !contactName ? (
-          <label className={styles.help}>
-            <input type="checkbox" checked={createContact} onChange={(e) => setCreateContact(e.target.checked)} />
-            Create {p.supplier.name} as a new contact in Xero when posting
-          </label>
+          p.canCreateContact ? (
+            <label className={styles.help}>
+              <input type="checkbox" checked={createContact} onChange={(e) => setCreateContact(e.target.checked)} />
+              Create {p.supplier.name} as a new contact in Xero when posting
+            </label>
+          ) : (
+            <p className={styles.help}>Ask an admin to create this contact in Xero, or link an existing one.</p>
+          )
         ) : null}
         {p.supplier.currency && p.supplier.currency !== p.currency ? (
           <p className={styles.mismatch}>This supplier is set to {p.supplier.currency}. The bill will post in {p.currency}; multi-currency isn&apos;t supported yet.</p>
@@ -191,6 +198,9 @@ export default function InvoiceForm(p: Props) {
         )}
       </div>
 
+      {rows.length === 0 ? (
+        <EmptyState title="No lines yet" message="Choose a receipt above, or add a freight or other charge." />
+      ) : (
       <div className={styles.tableCard}>
         <table className={styles.table}>
           <thead>
@@ -212,6 +222,9 @@ export default function InvoiceForm(p: Props) {
                   <td>
                     <select className={styles.select} value={taxKey({ taxType: row.taxType, rate: row.taxRatePercent })} aria-label="Tax rate"
                       onChange={(e) => { const t = p.taxOptions.find((o) => taxKey(o) === e.target.value); if (t) update(row.key, { taxType: t.taxType, taxRatePercent: t.rate }); }}>
+                      {!p.taxOptions.some((o) => taxKey(o) === taxKey({ taxType: row.taxType, rate: row.taxRatePercent })) ? (
+                        <option value={taxKey({ taxType: row.taxType, rate: row.taxRatePercent })}>{row.taxType ?? `${row.taxRatePercent}%`}</option>
+                      ) : null}
                       {p.taxOptions.map((t) => <option key={taxKey(t)} value={taxKey(t)}>{t.name}</option>)}
                     </select>
                   </td>
@@ -219,13 +232,14 @@ export default function InvoiceForm(p: Props) {
                     <td>
                       <select className={styles.select} value={row.accountCode ?? ""} aria-label="Account" onChange={(e) => update(row.key, { accountCode: e.target.value || null })}>
                         <option value="">Not set</option>
+                        {row.accountCode && !p.accountOptions.some((a) => a.code === row.accountCode) ? <option value={row.accountCode}>{row.accountCode}</option> : null}
                         {p.accountOptions.map((a) => <option key={a.code} value={a.code}>{a.code} · {a.name}</option>)}
                       </select>
                     </td>
                   ) : null}
                   <td className={styles.num}>{money(lineAmount)}</td>
                   <td className={`${styles.num} ${v && v.qtyVariance !== 0 ? styles.variance : ""}`}>{v ? (v.qtyVariance === 0 ? "—" : v.qtyVariance > 0 ? `+${v.qtyVariance}` : v.qtyVariance) : ""}</td>
-                  <td className={`${styles.num} ${v?.priceVariance ? styles.variance : ""}`}>{v ? (v.priceVariance ? money(v.priceVariance) : "—") : ""}</td>
+                  <td className={`${styles.num} ${v?.priceVariance ? styles.variance : ""}`}>{v ? (v.priceVariance ? unitMoney(v.priceVariance) : "—") : ""}</td>
                   <td>{row.kind === "other" ? <button type="button" className={styles.secondaryBtn} onClick={() => setRows((rs) => rs.filter((x) => x.key !== row.key))}>Remove</button> : null}</td>
                 </tr>
               );
@@ -233,6 +247,7 @@ export default function InvoiceForm(p: Props) {
           </tbody>
         </table>
       </div>
+      )}
 
       <div className={styles.formCard}>
         <div className={styles.actions}>

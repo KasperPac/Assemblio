@@ -1,5 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { isReadOnlyRole } from "@/lib/tenant/authz";
+import { isInvoiceableReceipt } from "@/lib/accounting/supplier-invoice/calc";
+import { one } from "@/lib/accounting/supplier-invoice/util";
 import Link from "next/link";
 import ReceiptDetail from "../receipt-detail";
 import InvoiceStatusPanel, { type PanelInvoice } from "../../purchasing/invoices/invoice-status-panel";
@@ -98,12 +101,12 @@ export default async function ReceiptDetailPage({ params }: Props) {
   const receiptInvoices = [
     ...new Map(
       (invLines as Array<{ supplier_invoice: unknown }>)
-        .map((r) => (Array.isArray(r.supplier_invoice) ? r.supplier_invoice[0] : r.supplier_invoice) as PanelInvoice | null)
+        .map((r) => one(r.supplier_invoice as PanelInvoice | PanelInvoice[] | null))
         .filter((x): x is PanelInvoice => !!x)
         .map((x) => [x.id, x] as const)
     ).values(),
   ];
-  const invoiceable = receipt.stock_in_reason === "supplier_delivery" && !!receipt.supplier_id;
+  const invoiceable = !!receipt.supplier_id && isInvoiceableReceipt({ stock_in_reason: receipt.stock_in_reason, supplier_id: receipt.supplier_id }, receipt.supplier_id);
 
   return (
     <ReceiptDetail
@@ -113,7 +116,7 @@ export default async function ReceiptDetailPage({ params }: Props) {
         ) : null
       }
       headerActions={
-        invoiceable ? (
+        invoiceable && !isReadOnlyRole(ctx.role) ? (
           <Link href={`/app/purchasing/invoices/new?receipt=${receipt.id}`} className={styles.secondary}>
             Enter supplier invoice
           </Link>

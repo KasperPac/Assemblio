@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { isReadOnlyRole } from "@/lib/tenant/authz";
 import PageHeader from "../../_ui/page-header";
 import StatusBadge from "../../_ui/status-badge";
 import InvoiceStatusPanel, { type PanelInvoice } from "../invoices/invoice-status-panel";
@@ -84,6 +85,8 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
   const supplier = rawSupplier as { id: string; name: string } | null;
   const supplierName = supplier?.name ?? "Unknown supplier";
   const canReceive = po.status === "open" || po.status === "in_transit";
+  // Not for read-only roles, and not for a PO that is still a draft or has been cancelled.
+  const canInvoice = !!supplier?.id && !isReadOnlyRole(ctx.role) && po.status !== "draft" && po.status !== "cancelled";
   const lines = (po.purchase_order_line ?? []) as POLine[];
   const poLabel = (po.po_number as string | null) ?? `PO-${id.slice(0, 8).toUpperCase()}`;
 
@@ -96,9 +99,9 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
         ]}
         title={poLabel}
         actions={
-          supplier?.id || canReceive ? (
+          canInvoice || canReceive ? (
             <div className={styles.headerActions}>
-              {supplier?.id ? (
+              {canInvoice ? (
                 <Link
                   href={`/app/purchasing/invoices/new?po=${id}`}
                   className={styles.secondaryBtn}

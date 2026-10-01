@@ -1,4 +1,5 @@
 import type { AmountsMode } from "./calc";
+import { UUID } from "./util";
 
 export type DraftLine = {
   kind: "stock" | "other";
@@ -25,7 +26,6 @@ export type DraftPayload = {
   lines: DraftLine[];
 };
 
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 export const isDate = (v: unknown): v is string => {
   if (typeof v !== "string" || !ISO_DATE.test(v)) return false;

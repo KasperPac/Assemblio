@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { one } from "@/lib/accounting/supplier-invoice/util";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { INVOICE_TABS, invoiceBadge } from "@/lib/accounting/supplier-invoice/labels";
 import PageHeader from "../../_ui/page-header";
@@ -8,7 +9,6 @@ import EmptyState from "../../_ui/empty-state";
 import styles from "./invoices.module.css";
 
 type Props = { searchParams?: Promise<{ tab?: string }> };
-const one = <T,>(v: T | T[] | null | undefined): T | null => (Array.isArray(v) ? v[0] ?? null : v ?? null);
 
 export default async function SupplierInvoicesPage({ searchParams }: Props) {
   const ctx = await getServerTenantContext();
@@ -24,6 +24,8 @@ export default async function SupplierInvoicesPage({ searchParams }: Props) {
     .order("created_at", { ascending: false })
     .limit(200);
   if (tab === "draft" || tab === "voided") q = q.eq("status", tab);
+  // A failed or queued sync can belong to a voided invoice too (a failed void leaves a live bill in Xero).
+  else if (tab === "failed" || tab === "queued") q = q.in("status", ["posted", "voided"]).eq("sync_status", tab);
   else if (tab !== "all") q = q.eq("status", "posted").eq("sync_status", tab);
   const { data, error } = await q;
   if (error) console.error("[supplier-invoice] list page", error.message);

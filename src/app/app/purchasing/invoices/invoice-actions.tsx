@@ -11,36 +11,39 @@ export default function InvoiceActions({ invoiceId, canVoid, retryJobId }: { inv
   const router = useRouter();
   const dialog = useRef<HTMLDialogElement>(null);
   const [reason, setReason] = useState("");
-  const [message, setMessage] = useState<string | null>(null);
+  const [retryMessage, setRetryMessage] = useState<string | null>(null);
+  const [voidMessage, setVoidMessage] = useState<string | null>(null);
   const [pending, start] = useTransition();
 
   const doVoid = () =>
     start(async () => {
+      setVoidMessage(null);
       const r = await voidSupplierInvoice(invoiceId, reason);
-      if (!r.ok) return setMessage(r.message);
+      if (!r.ok) return setVoidMessage(r.message);
       dialog.current?.close();
       router.refresh();
     });
   const doRetry = () =>
     start(async () => {
       if (!retryJobId) return;
+      setRetryMessage(null);
       const r = await retryAccountingJob(retryJobId);
-      if (!r.ok) return setMessage(r.message ?? "Couldn't retry.");
+      if (!r.ok) return setRetryMessage(r.message ?? "Couldn't retry.");
       router.refresh();
     });
 
   if (!canVoid && !retryJobId) return null;
   return (
     <>
-      {message ? <p className={styles.error} role="status">{message}</p> : null}
+      {retryMessage ? <p className={styles.error} role="status">{retryMessage}</p> : null}
       {retryJobId ? <button type="button" className={styles.secondaryBtn} disabled={pending} onClick={doRetry}>Retry sending to Xero</button> : null}
-      {canVoid ? <button type="button" className={styles.dangerBtn} onClick={() => dialog.current?.showModal()}>Void invoice</button> : null}
+      {canVoid ? <button type="button" className={styles.dangerBtn} onClick={() => { setVoidMessage(null); dialog.current?.showModal(); }}>Void invoice</button> : null}
       <dialog ref={dialog} className={styles.dialog}>
         <div className={styles.field}>
           <label className={styles.caps} htmlFor="void-reason">Reason for voiding</label>
           <textarea id="void-reason" className={styles.input} rows={3} value={reason} onChange={(e) => setReason(e.target.value)} />
           <p className={styles.help}>The bill is deleted or voided in Xero, and the receipt lines can be invoiced again.</p>
-          {message ? <p className={styles.error} role="alert">{message}</p> : null}
+          {voidMessage ? <p className={styles.error} role="alert">{voidMessage}</p> : null}
         </div>
         <div className={styles.actions}>
           <button type="button" className={styles.secondaryBtn} onClick={() => dialog.current?.close()}>Cancel</button>

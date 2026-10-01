@@ -1,22 +1,23 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { isAdminRole, isReadOnlyRole } from "@/lib/tenant/authz";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { FALLBACK_TAX_OPTIONS, type AmountsMode } from "@/lib/accounting/supplier-invoice/calc";
+import { FALLBACK_TAX_OPTIONS, isInvoiceableReceipt, type AmountsMode } from "@/lib/accounting/supplier-invoice/calc";
 import type { DraftLine } from "@/lib/accounting/supplier-invoice/draft";
 import { isXeroPilotTenant } from "@/lib/accounting/xero/config";
 import { supabaseConnectionRepo } from "@/lib/accounting/connection";
 import { xeroAccessFor } from "@/lib/accounting/xero/access";
 import { accountOptions, fetchAccounts, fetchTaxRates, INVENTORY_ACCOUNT_TYPES, OTHER_CHARGE_ACCOUNT_TYPES, purchaseTaxOptions } from "@/lib/accounting/xero/org";
+import { chunk, isUuid, one } from "@/lib/accounting/supplier-invoice/util";
 import PageHeader from "../../../_ui/page-header";
 import EmptyState from "../../../_ui/empty-state";
 import InvoiceForm, { type AccountOption, type ReceiptOption, type TaxOption } from "../invoice-form";
+import LoadFailed from "../load-failed";
 import styles from "../invoices.module.css";
 
 type Props = { searchParams?: Promise<{ po?: string; receipt?: string; draft?: string }> };
-const one = <T,>(v: T | T[] | null | undefined): T | null => (Array.isArray(v) ? v[0] ?? null : v ?? null);
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const uuidOrNull = (v: string | undefined) => (v && UUID.test(v) ? v : null);
+const uuidOrNull = (v: string | undefined) => (isUuid(v) ? v : null);
 
 export default async function NewSupplierInvoicePage({ searchParams }: Props) {
   const ctx = await getServerTenantContext();
@@ -28,15 +29,17 @@ export default async function NewSupplierInvoicePage({ searchParams }: Props) {
   const receiptParam = uuidOrNull(sp.receipt);
   const poParam = uuidOrNull(sp.po);
 
-  const loadFailed = (what: string, error: { message?: string }) => {
-    console.error(`[supplier-invoice] new page: ${what}`, error.message);
+  if (isReadOnlyRole(ctx.role)) {
     return (
       <section className={styles.page}>
         <PageHeader eyebrow="Operations" breadcrumbs={[{ label: "Supplier invoices", href: "/app/purchasing/invoices" }, { label: "New" }]} title="Enter supplier invoice" />
-        <EmptyState title="Couldn't load this page" message={`We couldn't load ${what}. Refresh to try again.`} />
+        <EmptyState title="Read-only access" message="Your role can view supplier invoices but not enter or edit them." />
       </section>
     );
-  };
+  }
+  const loadFailed = (what: string, error: { message?: string }) => (
+    <LoadFailed title="Enter supplier invoice" crumb="New" what={what} error={error} />
+  );
 
   type DraftRow = {
     id: string; supplier_id: string; purchase_order_id: string | null; invoice_number: string; invoice_date: string; due_date: string;
@@ -60,6 +63,7 @@ export default async function NewSupplierInvoicePage({ searchParams }: Props) {
   let supplierId = draft?.supplier_id ?? null;
   let poId = draft?.purchase_order_id ?? poParam;
   const preselect: string[] = [];
+  let startedFromReceipt = false;
   if (!supplierId && receiptParam) {
     const { data, error } = await supabase
       .from("delivery_receipt")
@@ -69,10 +73,11 @@ export default async function NewSupplierInvoicePage({ searchParams }: Props) {
       .maybeSingle();
     if (error) return loadFailed("the goods receipt", error);
     const r = data as { id: string; supplier_id: string | null; purchase_order_id: string | null; stock_in_reason: string | null } | null;
-    if (r && r.stock_in_reason === "supplier_delivery") {
+    if (r && r.supplier_id && isInvoiceableReceipt(r, r.supplier_id)) {
       supplierId = r.supplier_id;
       poId = poId ?? r.purchase_order_id;
       preselect.push(r.id);
+      startedFromReceipt = true;
     }
   }
   if (!supplierId && poParam) {
@@ -124,19 +129,21 @@ export default async function NewSupplierInvoicePage({ searchParams }: Props) {
   type RLine = { id: string; component_id: string; quantity_delivered: number; cost_per_unit: number | null; component: unknown; purchase_order_line: unknown };
   type RRow = { id: string; supplier_reference: string | null; received_at: string | null; purchase_order_id: string | null; purchase_order: unknown; delivery_receipt_line: RLine[] };
   const rows = (receiptRes.data ?? []) as unknown as RRow[];
-  if (poId) for (const r of rows) if (r.purchase_order_id === poId && !preselect.includes(r.id)) preselect.push(r.id);
+  // Preselect PO-wide only when the user started from the PO; starting from a receipt preselects just that receipt.
+  if (!startedFromReceipt && !draft && poParam) for (const r of rows) if (r.purchase_order_id === poParam && !preselect.includes(r.id)) preselect.push(r.id);
 
   // A receipt line already on another live (non-voided) invoice, draft or posted, is not offered (spec 3.4).
   // Lines on the draft being edited stay offered. The post-time SQL guard still covers races.
   const lineIds = rows.flatMap((r) => r.delivery_receipt_line.map((l) => l.id));
-  let takenRows: unknown[] = [];
-  if (lineIds.length) {
+  const takenRows: unknown[] = [];
+  // Chunked: a supplier with many receipt lines would otherwise overflow the request URL.
+  for (const ids of chunk(lineIds, 200)) {
     const { data, error } = await supabase
       .from("supplier_invoice_line")
       .select("delivery_receipt_line_id, supplier_invoice:supplier_invoice_id(id, status)")
-      .in("delivery_receipt_line_id", lineIds);
+      .in("delivery_receipt_line_id", ids);
     if (error) return loadFailed("which receipt lines are already invoiced", error);
-    takenRows = data ?? [];
+    takenRows.push(...(data ?? []));
   }
   const takenSet = new Set(
     (takenRows as Array<{ delivery_receipt_line_id: string; supplier_invoice: unknown }>)
@@ -197,6 +204,7 @@ export default async function NewSupplierInvoicePage({ searchParams }: Props) {
         taxOptions={taxOptions}
         accountOptions={accounts}
         xeroLoadError={xeroLoadError}
+        canCreateContact={isAdminRole(ctx.role)}
         xero={xeroOn && c ? {
           inventoryAccountCode: c.inventory_account_code, otherChargesAccountCode: c.other_charges_account_code,
           purchaseTaxType: c.purchase_tax_type, defaultAmountsMode: c.default_amounts_mode,
