@@ -5,8 +5,8 @@ function roundHalfAway(n: number, dp: number): number {
   if (!Number.isFinite(n)) return n;
   const clean = Number(n.toPrecision(15)); // strip binary float noise (40.15*0.1 → 4.015)
   const absClean = Math.abs(clean);
-  // For very small numbers at these precisions, round to 0.
-  if (absClean < 1e-7) return 0;
+  // For very small numbers, return 0 (below 1e-6 everything rounds to 0 at 2dp and 4dp; 1e-6 itself is 0.000001)
+  if (absClean < 1e-6) return 0;
   // For very large exponents, use a safer fallback: toFixed + parseFloat
   if (absClean >= 1e15) {
     const sign = clean < 0 ? -1 : 1;
@@ -14,6 +14,8 @@ function roundHalfAway(n: number, dp: number): number {
   }
   const sign = clean < 0 ? -1 : 1;
   const shifted = Math.round(Number(`${absClean}e${dp}`));
+  // If shifted to 0, return positive 0 (not -0)
+  if (shifted === 0) return 0;
   return sign * Number(`${shifted}e-${dp}`);
 }
 

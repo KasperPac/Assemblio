@@ -20,6 +20,18 @@ describe("rounding", () => {
   it("round4: 1.00005 to 1.0001", () => {
     expect(round4(1.00005)).toBe(1.0001);
   });
+  it("rounds tiny magnitudes to 0: 5e-7", () => {
+    expect(round2(5e-7)).toBe(0);
+  });
+  it("rounds tiny magnitudes to 0: 9.99e-7 at 4dp", () => {
+    expect(round4(9.99e-7)).toBe(0);
+  });
+  it("rounds negative tiny magnitudes to 0: -5e-7", () => {
+    expect(round2(-5e-7)).toBe(0);
+  });
+  it("returns positive 0, not -0, for small negatives", () => {
+    expect(Object.is(round2(-0.004), 0)).toBe(true);
+  });
 });
 
 describe("lineAmounts", () => {
