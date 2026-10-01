@@ -20,4 +20,9 @@ describe("validateSetup", () => {
     expect(r.ok).toBe(false);
     if (!r.ok) expect(Object.keys(r.errors).sort()).toEqual(["billsStartDate", "defaultAmountsMode", "gstFreeTaxType", "inventoryAccountCode", "otherChargesAccountCode", "purchaseTaxType", "salesSource"]);
   });
+  it("rejects impossible start dates like 2026-02-31", () => {
+    const r = validateSetup({ ...good, billsStartDate: "2026-02-31" }, accounts, rates);
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.errors.billsStartDate).toBeDefined();
+  });
 });

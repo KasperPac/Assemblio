@@ -1,3 +1,4 @@
+import { isDate } from "../supplier-invoice/draft";
 import { xeroRequest, type XeroAccess } from "./client";
 
 export type XeroAccount = { AccountID: string; Code?: string; Name: string; Type: string; Status: string };
@@ -38,9 +39,13 @@ export function purchaseTaxOptions(rates: XeroTaxRate[]) {
 export function parseXeroDate(value: string | null | undefined): string | null {
   if (!value) return null;
   const ms = value.match(/\/Date\((-?\d+)/);
-  if (ms) return new Date(Number(ms[1])).toISOString().slice(0, 10);
+  if (ms) {
+    const d = new Date(Number(ms[1]));
+    if (!Number.isFinite(d.getTime())) return null;
+    return d.toISOString().slice(0, 10);
+  }
   const iso = value.match(/^(\d{4}-\d{2}-\d{2})/);
-  return iso ? iso[1] : null;
+  return iso && isDate(iso[1]) ? iso[1] : null;
 }
 
 /** Returns the lock date that blocks this invoice date, or null. Xero locks dates on or before the lock date. */

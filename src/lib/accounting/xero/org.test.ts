@@ -33,6 +33,12 @@ describe("org helpers", () => {
     expect(parseXeroDate("2026-06-30T00:00:00")).toBe("2026-06-30");
     expect(parseXeroDate(null)).toBeNull();
   });
+  it("rejects out-of-range epochs in /Date()/", () => {
+    expect(parseXeroDate("/Date(100000000000000000000+0000)/")).toBeNull();
+  });
+  it("rejects impossible ISO dates", () => {
+    expect(parseXeroDate("2026-13-45T00:00:00")).toBeNull();
+  });
   it("blocks on or before the latest lock date", () => {
     const org = { PeriodLockDate: "/Date(1782777600000+0000)/", EndOfYearLockDate: "/Date(1751241600000+0000)/" };
     expect(lockDateBlocking("2026-06-30", org)).toBe("2026-06-30");

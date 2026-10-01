@@ -1,3 +1,4 @@
+import { isDate } from "../supplier-invoice/draft";
 import type { AmountsMode } from "../supplier-invoice/calc";
 import { accountOptions, INVENTORY_ACCOUNT_TYPES, OTHER_CHARGE_ACCOUNT_TYPES, purchaseTaxOptions, type XeroAccount, type XeroTaxRate } from "./org";
 
@@ -47,7 +48,7 @@ export function validateSetup(input: SetupInput, accounts: XeroAccount[], rates:
   if (!tax.has(input.purchaseTaxType)) errors.purchaseTaxType = "Choose a purchase tax rate from your Xero organisation.";
   if (!tax.has(input.gstFreeTaxType)) errors.gstFreeTaxType = "Choose a GST-free purchase tax rate from your Xero organisation.";
   if (input.defaultAmountsMode !== "inclusive" && input.defaultAmountsMode !== "exclusive") errors.defaultAmountsMode = "Choose whether amounts include GST.";
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(input.billsStartDate) || Number.isNaN(Date.parse(`${input.billsStartDate}T00:00:00Z`))) errors.billsStartDate = "Enter a valid start date.";
+  if (!isDate(input.billsStartDate)) errors.billsStartDate = "Enter a valid start date.";
   if (!(SALES_SOURCES as readonly string[]).includes(input.salesSource)) errors.salesSource = "Tell us what sends your sales to Xero.";
   if (Object.keys(errors).length) return { ok: false, errors };
   return { ok: true, value: { ...input, defaultAmountsMode: input.defaultAmountsMode as AmountsMode, salesSource: input.salesSource as SalesSource } };

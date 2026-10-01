@@ -27,7 +27,7 @@ export type DraftPayload = {
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
-const isDate = (v: unknown): v is string => {
+export const isDate = (v: unknown): v is string => {
   if (typeof v !== "string" || !ISO_DATE.test(v)) return false;
   // Check that Date.parse doesn't reject it
   if (Number.isNaN(Date.parse(`${v}T00:00:00Z`))) return false;
