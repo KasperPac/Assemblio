@@ -299,6 +299,27 @@ Tabs: Overview, Stock, BOM Usage, Receipts, Suppliers, Location.
 - [ ] Status lifecycle: open / in_transit / received / cancelled / archived
 - [ ] Empty states; validation messages
 
+### Supplier invoices — `/app/purchasing/invoices`, `/new`, `/{id}`
+Entry: Purchasing → Supplier invoices; PO detail and receipt detail → "Enter supplier invoice".
+
+- [ ] List tabs: All / Draft / Not synced / Queued / Sent / Failed / Voided; an empty tab shows "No supplier invoices here"
+- [ ] The Failed tab includes invoices whose void failed in Xero (a failed void leaves a live bill in Xero)
+- [ ] Only supplier-delivery receipts from the same supplier can be added; returns, opening stock and samples can't
+- [ ] The receipt-line picker hides lines already on another non-voided invoice
+- [ ] Quantity and price differences against the receipt and PO are highlighted but don't block posting
+- [ ] A printed total that differs by more than 5c is highlighted
+- [ ] The due date defaults from supplier payment terms (Net 30, 30 EOM, EOM…), otherwise +30 days; it stays editable
+- [ ] A duplicate invoice number for the same supplier is refused ("You've already entered invoice … for this supplier.")
+- [ ] A receipt line can't be on two posted invoices, or twice on one invoice
+- [ ] Posting writes the invoiced ex-GST unit cost back to the receipt line, and to the component when ticked
+- [ ] Posted invoices are read-only; (admin) Void needs a reason and frees the receipt lines
+- [ ] Posting or voiding while the invoice is being sent to Xero shows "This invoice is being sent to Xero right now. Try again in a minute."
+- [ ] Works without Xero (status "Posted", not synced)
+- [ ] (admin) A failed-for-good sync shows Retry on the invoice; members do not see it
+- [ ] A read-only platform observer sees the "Read-only access" empty state ("Your role can view supplier invoices but not enter or edit them.") and every save, post, link and search action is refused
+- [ ] The new-invoice page with no PO or receipt shows "Start from a purchase order or goods receipt"
+- [ ] PO and receipt pages show Not invoiced / Invoiced with the invoice and its status
+
 ---
 
 ## 9. Goods Inwards / Receiving
@@ -505,15 +526,52 @@ per order lifecycle.
 
 ---
 
-## 16. Xero / Accounting **(admin)**
+## 16. Xero / Accounting **(admin)** **(gated: XERO_PILOT_TENANTS)**
 
-Removed 2026-10-01 pending the MANUVA-34 rebuild (spec:
-`docs/superpowers/specs/2026-10-01-xero-supplier-bills-design.md`). The May
-2026 integration was never live: no tables in prod, no Xero app, invalid
-scope. No Xero UI or routes exist until the rebuild ships.
+Entry: Settings → Integrations → Xero card. Spec: `docs/superpowers/specs/2026-10-01-xero-supplier-bills-design.md`.
 
-- [ ] Settings → Integrations shows Shopify only (no Xero card)
-- [ ] Creating a goods receipt makes no accounting call
+Connect
+- [ ] (admin) Connect Xero → Xero consent → back to Manuva. One organisation → setup wizard; several → organisation picker
+- [ ] A member cannot start the connection ("Only admins can connect Xero.")
+- [ ] (gated) A workspace outside the pilot list sees no Xero card or banner and gets "Xero isn't available for this workspace yet." from the install route
+- [ ] A tampered or expired state, or one started by another user, browser or workspace, is refused with a clear message ("The connection link was invalid", "The connection took too long", "…started in another browser", "…started by a different user or workspace")
+- [ ] Missing server config shows "Xero isn't set up on this server yet." (no broken redirect)
+- [ ] Declining access in Xero returns to Manuva with "Access was declined in Xero."
+- [ ] Consenting to too many organisations at once shows "That login has too many Xero organisations. Choose one when asked."
+- [ ] Reconnecting to a different organisation clears setup, cancels queued jobs (including gave-up ones) and drops supplier links
+
+Setup
+- [ ] Inventory account options list only active current-asset accounts; freight lists expense / overheads / direct-cost accounts
+- [ ] Tax options are the organisation's active purchase rates; Manuva never creates a tax rate
+- [ ] The sales-source answer shows matching guidance; Manuva never posts sales
+- [ ] Nothing is sent to Xero until setup is finished; finishing shows "Xero is set up. Posted supplier invoices will be sent as bills."
+
+Bills
+- [ ] Posting a supplier invoice dated on or after the start date queues a bill. It appears in Xero as Awaiting Approval with the supplier's invoice number
+- [ ] Stock lines carry no item code; the PO number appears in the line description
+- [ ] A retry after a lost response does not create a second bill (the existing bill is found and adopted)
+- [ ] An invoice dated inside a Xero lock period fails with "Xero is locked for this invoice date…" naming the fix
+- [ ] An archived account, invalid tax rate or archived contact each shows a plain-English error with Retry (admin)
+- [ ] (admin) "Create in Xero" for a missing supplier contact is offered to admins only; a member sees "Ask an admin to create this contact in Xero, or link an existing one."
+- [ ] Voiding deletes (draft / awaiting approval) or voids (approved) the bill; a bill with payments or credits refuses with "This bill has payments or credits in Xero. Remove them in Xero first, then retry."
+- [ ] Voiding an invoice whose bill creation may already have reached Xero finds that bill (by contact and invoice number) and deletes or voids it; if Xero is not connected, Void is refused
+- [ ] Voiding a bill that is already deleted or voided in Xero completes without error
+
+Connection health
+- [ ] Removing Manuva in Xero → the connection shows Needs reconnect, the admin banner appears, and the connecting admin is emailed
+- [ ] Alerts are emailed only when the connection changes to Needs reconnect, or when a job stops retrying after the last alert. Fixable errors are never emailed. At most one email per connection per 24 h
+- [ ] Quiet connections are refreshed by the daily job (last refreshed date moves)
+- [ ] (admin) Disconnect revokes access in Xero and deletes stored tokens; Manuva disappears from Xero → Connected apps
+- [ ] A failed Disconnect shows "Couldn't disconnect Xero. Try again."; retrying finishes the local cleanup (connection marked disconnected, jobs cancelled, credential deleted). The Disconnect button cannot be double-submitted
+
+Roles
+- [ ] A read-only platform observer cannot save, post, link or search supplier invoices or contacts; the new/edit invoice page shows "Read-only access"
+- [ ] A member posting while the connection needs reconnecting gets "Xero needs reconnecting. Ask an admin to reconnect it from Integrations."
+
+Security
+- [ ] `accounting_credential` cannot be read through the REST API by any signed-in user
+- [ ] `claim_accounting_jobs` / `claim_accounting_refresh_lease` refuse non-service callers
+- [ ] The Xero callback state is signed and expires (Xero has no webhooks here)
 
 ---
 
@@ -644,7 +702,7 @@ server-side, not a hidden button. Shared helper: `src/lib/tenant/authz.ts`.
 - [ ] Feature gating (planning module, bin management) shows upsell when off
 
 ### Security & integrity
-- [ ] All Shopify + Stripe + Xero webhooks/callbacks verify HMAC/signature
+- [ ] All Shopify + Stripe webhooks/callbacks verify HMAC/signature (the Xero callback uses a signed, expiring state: see §16)
 - [ ] OAuth state cookies signed + nonce (CSRF/replay safe)
 - [ ] Shopify token auto-refresh on expiry
 - [ ] Tenant isolation (RLS) — no cross-tenant data leakage
@@ -726,3 +784,4 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-09-26 — amended Components list (MANUVA-30): the All / Low Stock tabs are replaced by a left filter rail (stock status, groups, supplier, unit-cost range) with flight-search counts, removable filter chips and a Unit cost column. Filters live in the URL, and sort and detail links carry every active filter. The design system gains a documented "filter rail" exception to the single-column rule.
 - 2026-09-28 — amended Components list (MANUVA-31): the table is one flat list following the active sort; the collapsible group section rows are replaced by a sortable Group column. Group filtering stays in the filter rail.
 - 2026-10-01 — amended Xero / Accounting: removed the never-live May integration (UI card, /api/xero routes, receipt bill push) pending the MANUVA-34 rebuild.
+- 2026-10-01 — added Supplier invoices + Xero supplier bills (MANUVA-34): supplier tax invoices against receipts; production-grade Xero connect, setup, bill/void sync via outbox; pilot-gated. §16 rewritten; the Xero webhook claim in Security & integrity is corrected.

@@ -436,3 +436,49 @@ Then run `scripts/probe_anon_rpc_surface.sh` against prod after the migration.
   - `docs/research/manuva-gtm/results/28_…`: the 85/15 economics are obsolete after 2026-03-02.
 
   Do this when the COGS release is specced.
+
+## 13. Deviations recorded during implementation (2026-10-01)
+
+The build was run task by task from the plan, and each task was reviewed. Where the implementation departs from, or adds to, the text above, the decision is recorded here.
+
+**Codes and process**
+- The cleanup bugs were logged as MANUVA-35 and MANUVA-36, but a marketing-site task had already taken both numbers on the board. They were renumbered **MANUVA-44** (vitals functions) and **MANUVA-45** (dead Xero code); see §4.3 and §11 step 1.
+- The cleanup PR (#31) shipped first. The feature branch is stacked on it.
+
+**Auth and connection (§5)**
+- **Disconnect order (§3.6, §5.5).** The plan calls `DELETE /connections` while the access token is still valid, then revokes the refresh token. Revoking first would invalidate the token the delete needs. After the Xero calls, Manuva marks the connection disconnected, then cancels jobs, then deletes the credential. Each is a separate statement, so a failed disconnect can be retried.
+- **Saving a connection.** The row is saved as `needs_reconnect` until the credential is stored, then flipped to `connected`. An organisation change cancels open jobs (including `gave_up`) and drops contact links before the row switches.
+- **Pilot gate (§9).** It applies to the install and callback routes and to the outbox processor, as well as to the card and banner.
+- **Credential `version`.** It is bumped on reconnect rather than reset to 1, so a refresh that leased an older version cannot overwrite the new grant.
+
+**Setup (§3.2)**
+- **Other-charges account.** It may also be of type `OVERHEADS`. Xero's expense types are EXPENSE, OVERHEADS and DIRECTCOSTS.
+
+**Supplier invoices (§3.4–§3.5, §6.1)**
+- **Receipt-line picker.** It hides lines that are on any other non-voided invoice, whether draft or posted. `post_supplier_invoice` refuses a line that is already on another *posted* invoice, under row locks. Two concurrent drafts can therefore share a line until one of them posts.
+- **Read-only access.** `platform_observer` (read-only) is refused on every supplier-invoice write action. Spec §8 says entering follows goods inwards, which has no role gate. The supplier-invoice actions add one because posting has an external effect in Xero. The goods-inwards gap is MANUVA-48.
+- **Create in Xero.** The "Create in Xero" contact option is shown to admins only.
+- **Void when a create may have reached Xero.** If a voided invoice's `create_bill` job has already been attempted, it is cancelled *and* a `void_bill` job is queued. That job finds the bill by contact and invoice number, then deletes or voids it, so a bill created by a lost response is never left in Xero untracked. If Xero is not connected in that case, Void is refused.
+- **Draft protection.** Draft rows cannot set server-owned columns (`external_url`, `posted_*`, `voided_*`). Lines on a posted invoice cannot be changed.
+
+**Sync engine (§6.3–§7)**
+- **A reclaim counts as an attempt.** A stale `working` job that is reclaimed has its attempt count increased. That forces the duplicate search before any new create, so a worker killed after Xero created the bill cannot create a second one.
+- **Duplicate search on retries.** On a retry (attempts > 0), the duplicate search runs *before* the pre-checks. Adoption sends nothing to Xero, so a pre-check that has started failing cannot block it.
+- **Bills that can't be adopted.** Adoption skips bills that are DELETED or VOIDED. When an adopted bill's total differs from Manuva's, the difference is recorded, as it is for a new create.
+- **`daily_limit` jobs.** They stay claimable once `next_attempt_at` passes. All of the connection's pending jobs, and its transient-failed jobs, are deferred to the same time.
+- **Failed for good.** "Failed for good" means `gave_up`, or `failed` with class `fixable`. `auth` jobs stay `pending`, as §7 requires.
+- **Activity log.** A new `accounting.bill_sent` event is written when a bill is created or adopted (§6.4 step 4).
+- **Wording.** Unknown Xero errors read "Xero rejected this: …", not "…this bill: …", because the same catalogue serves contacts and voids. A paid bill's void message mentions payments or credits.
+- **Database additions to the original design.** These are all enforced in SQL:
+  - `post_supplier_invoice` refuses another tenant's PO, component or receipt line.
+  - A receipt line can appear only once per invoice.
+  - A trigger keeps lines draft-only.
+  - The claim takes a per-connection advisory lock, which enforces one job at a time.
+  - Post and void take a share lock on the connection row, so a concurrent disconnect waits for them.
+
+**Health and scheduling (§3.7, §6.2)**
+- **When alerts are sent.** An alert is sent when the connection *changes* to `needs_reconnect`, or when a job reaches `gave_up` after the last alert. Fixable failures are never emailed; the banner covers them. At most one alert goes out per connection in any 24 hours. The throttle is claimed by a winner-only conditional update before sending, and restored if the send fails.
+- **Cron times.** The maintenance job runs at **17:07 UTC**, not 17:00, so it does not coincide with the 5-minute outbox run. Both routes set `maxDuration = 60`, because the Vercel team is on Hobby. A run killed mid-job is safe, because the reclaim counts as an attempt.
+
+**Rollout notes (§11)**
+- **Applying the migrations.** Both new migrations are applied at rollout with the owner's approval. First re-dump the vitals functions and compare them, in case they changed after the repoint patch was written. The Vault `accounting_cron_secret` must equal Vercel's `CRON_SECRET`. After the migration, add the four new functions to `scripts/probe_anon_rpc_surface.sh`.
