@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { assertNoError } from "@/lib/supabase/assert-no-error";
 import type { AmountsMode } from "../supplier-invoice/calc";
 import { xeroRequest, type XeroAccess } from "../xero/client";
-import { classifyXeroFailure, fixableError, xeroValidationMessages, type ClassifiedError } from "../xero/errors";
+import { DUPLICATE_CONTACT_PATTERN, classifyXeroFailure, fixableError, xeroValidationMessages, type ClassifiedError } from "../xero/errors";
 import { fetchAccounts, fetchOrganisation, fetchTaxRates, lockDateBlocking, type XeroAccount, type XeroOrganisation, type XeroTaxRate } from "../xero/org";
 import { buildXeroBill, buildXeroContact, decideVoidAction, existingBillWhere, stockLineDescription, voidPayload, xeroBillUrl, type XeroBillState } from "../xero/bill";
 
@@ -39,8 +39,8 @@ export type HandlerStore = {
   loadBillSource(invoiceId: string, tenantId: string): Promise<BillSource | null>;
   contactLink(tenantId: string, supplierId: string): Promise<string | null>;
   recordBill(invoiceId: string, xeroId: string, url: string, xeroTotal: number | null): Promise<void>;
-  loadInvoiceExternal(invoiceId: string, tenantId: string): Promise<{ external_id: string | null } | null>;
-  markVoidedInXero(invoiceId: string): Promise<void>;
+  loadInvoiceExternal(invoiceId: string, tenantId: string): Promise<{ external_id: string | null; supplier_id?: string; invoice_number?: string } | null>;
+  markVoidedInXero(invoiceId: string, tenantId: string): Promise<void>;
   loadSupplier(tenantId: string, supplierId: string): Promise<{ name: string | null; contact_email: string | null; contact_phone: string | null; address: string | null } | null>;
   saveContactLink(tenantId: string, supplierId: string, contactId: string, name: string): Promise<void>;
 };
@@ -69,6 +69,23 @@ export function createOrgCache(access: XeroAccess, f: typeof fetch): OrgCache {
 
 type WithErrors = { HasErrors?: boolean };
 
+const transient = (message: string, detail: unknown): ClassifiedError => ({ errorClass: "transient", message, detail, retryAfterSec: null });
+const isLive = (b: XeroBillState) => !["DELETED", "VOIDED"].includes(String(b.Status ?? "").toUpperCase());
+const roundingNote = (manuva: number, xero: number | null) =>
+  xero !== null && Math.abs(xero - manuva) >= 0.005 ? { rounding: { manuva, xero } } : null;
+
+/** Looks for a live (not deleted, not voided) ACCPAY bill with this number for this contact. A body-less 2xx counts as a failed search, never as "no bill". */
+async function findLiveBill(ctx: JobContext, contactId: string, invoiceNumber: string): Promise<{ bill: XeroBillState | null } | { error: ClassifiedError }> {
+  const found = await xeroRequest<{ Invoices?: XeroBillState[] } | null>(
+    ctx.access,
+    { method: "GET", path: "/Invoices", query: { where: existingBillWhere(contactId, invoiceNumber) } },
+    ctx.fetchImpl
+  );
+  if (!found.ok) return { error: classifyXeroFailure(found) };
+  if (!found.data) return { error: transient("Xero returned an empty response. Manuva will retry automatically.", { status: found.status }) };
+  return { bill: (found.data.Invoices ?? []).find(isLive) ?? null };
+}
+
 export async function handleCreateBill(job: OutboxJob, ctx: JobContext): Promise<HandlerOutcome> {
   const src = await ctx.store.loadBillSource(job.entity_id, job.tenant_id);
   if (!src || src.invoice.status !== "posted") return fail(fixableError("This invoice is no longer posted in Manuva."));
@@ -77,6 +94,18 @@ export async function handleCreateBill(job: OutboxJob, ctx: JobContext): Promise
 
   const contactId = await ctx.store.contactLink(inv.tenant_id, inv.supplier_id);
   if (!contactId) return fail(fixableError("Link this supplier to a Xero contact, then retry."));
+
+  if (job.attempts > 0) {
+    // Xero's Idempotency-Key only lasts 6 minutes; after that, look before creating. Adoption sends nothing,
+    // so it runs before the pre-checks: a lost-response create must be adopted even if a pre-check now fails.
+    const found = await findLiveBill(ctx, contactId, inv.invoice_number);
+    if ("error" in found) return fail(found.error);
+    if (found.bill) {
+      const xeroTotal = typeof found.bill.Total === "number" ? found.bill.Total : null;
+      await ctx.store.recordBill(inv.id, found.bill.InvoiceID, xeroBillUrl(found.bill.InvoiceID), xeroTotal);
+      return { kind: "sent", externalId: found.bill.InvoiceID, note: { adopted: true, ...roundingNote(Number(inv.total), xeroTotal) } };
+    }
+  }
 
   const org = await ctx.cache.organisation();
   if (isErr(org)) return fail(org);
@@ -90,28 +119,13 @@ export async function handleCreateBill(job: OutboxJob, ctx: JobContext): Promise
   const rates = await ctx.cache.taxRates();
   if (isErr(rates)) return fail(rates);
   const activeCodes = new Set(accounts.filter((a) => a.Status === "ACTIVE" && a.Code).map((a) => a.Code!));
-  const activeTax = new Set(rates.filter((r) => r.Status === "ACTIVE").map((r) => r.TaxType));
+  const activeTax = new Set(rates.filter((r) => r.Status === "ACTIVE" && r.CanApplyToExpenses !== false).map((r) => r.TaxType));
   for (const l of src.lines) {
     if (!l.account_code || !activeCodes.has(l.account_code)) {
       return fail(fixableError(`Account ${l.account_code ?? "(none)"} is archived or missing in Xero. Update Xero setup or the line, then retry.`));
     }
     if (!l.tax_type || !activeTax.has(l.tax_type)) {
-      return fail(fixableError(`Tax rate ${l.tax_type ?? "(none)"} can't be used in Xero. Update Xero setup or the line, then retry.`));
-    }
-  }
-
-  if (job.attempts > 0) {
-    // Xero's Idempotency-Key only lasts 6 minutes; after that, look before creating.
-    const found = await xeroRequest<{ Invoices: XeroBillState[] }>(
-      ctx.access,
-      { method: "GET", path: "/Invoices", query: { where: existingBillWhere(contactId, inv.invoice_number) } },
-      ctx.fetchImpl
-    );
-    if (!found.ok) return fail(classifyXeroFailure(found));
-    const live = (found.data.Invoices ?? []).find((b) => !["DELETED", "VOIDED"].includes(b.Status.toUpperCase()));
-    if (live) {
-      await ctx.store.recordBill(inv.id, live.InvoiceID, xeroBillUrl(live.InvoiceID), live.Total ?? null);
-      return { kind: "sent", externalId: live.InvoiceID, note: { adopted: true } };
+      return fail(fixableError(`Tax rate ${l.tax_type ?? "(none)"} is inactive or can't be used on purchases in Xero. Update Xero setup or the line, then retry.`));
     }
   }
 
@@ -132,32 +146,51 @@ export async function handleCreateBill(job: OutboxJob, ctx: JobContext): Promise
       taxType: l.tax_type!,
     })),
   });
-  const res = await xeroRequest<{ Invoices: Array<XeroBillState & WithErrors> }>(
+  const res = await xeroRequest<{ Invoices?: Array<XeroBillState & WithErrors> } | null>(
     ctx.access,
     { method: "POST", path: "/Invoices", query: { unitdp: "4", summarizeErrors: "false" }, body: payload, idempotencyKey: job.idempotency_key },
     ctx.fetchImpl
   );
   if (!res.ok) return fail(classifyXeroFailure(res));
-  const created = res.data.Invoices?.[0];
-  if (!created || created.HasErrors || !created.InvoiceID) {
-    return fail(classifyXeroFailure({ ok: false, status: 400, body: res.data, rate: res.rate }));
-  }
+  const created = res.data?.Invoices?.[0];
+  if (created?.HasErrors) return fail(classifyXeroFailure({ ok: false, status: 400, body: res.data, rate: res.rate }));
+  // A 2xx with no invoice in the body may still have created one: transient, so the retry searches first.
+  if (!created?.InvoiceID) return fail(transient("Xero returned an unexpected response. Manuva will retry automatically.", { status: res.status, body: res.data }));
   const xeroTotal = typeof created.Total === "number" ? created.Total : null;
   await ctx.store.recordBill(inv.id, created.InvoiceID, xeroBillUrl(created.InvoiceID), xeroTotal);
-  const note = xeroTotal !== null && Math.abs(xeroTotal - Number(inv.total)) >= 0.005 ? { rounding: { manuva: Number(inv.total), xero: xeroTotal } } : undefined;
+  const note = roundingNote(Number(inv.total), xeroTotal);
   return { kind: "sent", externalId: created.InvoiceID, ...(note ? { note } : {}) };
 }
 
 export async function handleVoidBill(job: OutboxJob, ctx: JobContext): Promise<HandlerOutcome> {
   const inv = await ctx.store.loadInvoiceExternal(job.entity_id, job.tenant_id);
-  if (!inv?.external_id) {
-    await ctx.store.markVoidedInXero(job.entity_id);
-    return { kind: "sent", externalId: null };
+  if (!inv) return fail(fixableError("This invoice wasn't found in Manuva."));
+
+  let id = inv.external_id;
+  let bill: XeroBillState | undefined;
+  if (!id) {
+    // A create may have reached Xero without its response coming back, so there is no external_id to void.
+    const contactId = inv.supplier_id ? await ctx.store.contactLink(job.tenant_id, inv.supplier_id) : null;
+    if (contactId && inv.invoice_number) {
+      const found = await findLiveBill(ctx, contactId, inv.invoice_number);
+      if ("error" in found) return fail(found.error);
+      if (found.bill) {
+        bill = found.bill;
+        id = found.bill.InvoiceID;
+      }
+    }
+    if (!id) {
+      await ctx.store.markVoidedInXero(job.entity_id, job.tenant_id);
+      return { kind: "sent", externalId: null };
+    }
   }
-  const id = inv.external_id;
-  const got = await xeroRequest<{ Invoices: XeroBillState[] }>(ctx.access, { method: "GET", path: `/Invoices/${encodeURIComponent(id)}` }, ctx.fetchImpl);
-  if (!got.ok) return fail(classifyXeroFailure(got));
-  const bill = got.data.Invoices?.[0];
+
+  if (!bill) {
+    const got = await xeroRequest<{ Invoices?: XeroBillState[] } | null>(ctx.access, { method: "GET", path: `/Invoices/${encodeURIComponent(id)}` }, ctx.fetchImpl);
+    if (!got.ok) return fail(classifyXeroFailure(got));
+    if (!got.data) return fail(transient("Xero returned an empty response. Manuva will retry automatically.", { status: got.status }));
+    bill = got.data.Invoices?.[0];
+  }
   if (!bill) return fail(fixableError("Xero couldn't find this bill. It may have been deleted in Xero."));
   const decision = decideVoidAction(bill);
   if (decision.kind === "blocked") return fail(fixableError(decision.message));
@@ -169,16 +202,14 @@ export async function handleVoidBill(job: OutboxJob, ctx: JobContext): Promise<H
     );
     if (!res.ok) return fail(classifyXeroFailure(res));
   }
-  await ctx.store.markVoidedInXero(job.entity_id);
+  await ctx.store.markVoidedInXero(job.entity_id, job.tenant_id);
   return { kind: "sent", externalId: id };
 }
-
-const DUPLICATE_CONTACT = /contact name .* already (assigned|exists)/i;
 
 /** A name clash is never auto-linked: the admin links the supplier to the existing contact (spec 6.6). */
 function contactFailure(f: Parameters<typeof classifyXeroFailure>[0], name: string): ClassifiedError {
   const classified = classifyXeroFailure(f);
-  if (f.status === 400 && xeroValidationMessages(f.body).some((m) => DUPLICATE_CONTACT.test(m))) {
+  if (f.status === 400 && xeroValidationMessages(f.body).some((m) => DUPLICATE_CONTACT_PATTERN.test(m))) {
     return fixableError(`A contact named ${name} already exists in Xero — link to it instead.`, classified.detail);
   }
   return classified;
@@ -190,7 +221,7 @@ export async function handleCreateContact(job: OutboxJob, ctx: JobContext): Prom
   const sup = await ctx.store.loadSupplier(job.tenant_id, job.entity_id);
   if (!sup) return fail(fixableError("Supplier not found."));
   if (!sup.name?.trim()) return fail(fixableError("This supplier has no name. Add one, then retry."));
-  const res = await xeroRequest<{ Contacts: Array<{ ContactID: string; Name: string } & WithErrors> }>(
+  const res = await xeroRequest<{ Contacts?: Array<{ ContactID: string; Name: string } & WithErrors> } | null>(
     ctx.access,
     {
       method: "POST",
@@ -202,8 +233,9 @@ export async function handleCreateContact(job: OutboxJob, ctx: JobContext): Prom
     ctx.fetchImpl
   );
   if (!res.ok) return fail(contactFailure(res, sup.name));
-  const c = res.data.Contacts?.[0];
-  if (!c || c.HasErrors || !c.ContactID) return fail(contactFailure({ ok: false, status: 400, body: res.data, rate: res.rate }, sup.name));
+  const c = res.data?.Contacts?.[0];
+  if (c?.HasErrors) return fail(contactFailure({ ok: false, status: 400, body: res.data, rate: res.rate }, sup.name));
+  if (!c?.ContactID) return fail(transient("Xero returned an unexpected response. Manuva will retry automatically.", { status: res.status, body: res.data }));
   await ctx.store.saveContactLink(job.tenant_id, job.entity_id, c.ContactID, c.Name);
   return { kind: "sent", externalId: c.ContactID };
 }
@@ -309,12 +341,12 @@ export function supabaseHandlerStore(db: SupabaseClient): HandlerStore {
       assertNoError(error, "record Xero bill");
     },
     async loadInvoiceExternal(invoiceId, tenantId) {
-      const { data, error } = await db.from("supplier_invoice").select("external_id").eq("tenant_id", tenantId).eq("id", invoiceId).maybeSingle();
+      const { data, error } = await db.from("supplier_invoice").select("external_id, supplier_id, invoice_number").eq("tenant_id", tenantId).eq("id", invoiceId).maybeSingle();
       assertNoError(error, "load supplier_invoice external_id");
-      return (data as { external_id: string | null } | null) ?? null;
+      return (data as { external_id: string | null; supplier_id: string; invoice_number: string } | null) ?? null;
     },
-    async markVoidedInXero(invoiceId) {
-      const { error } = await db.from("supplier_invoice").update({ sync_status: "voided_in_xero", updated_at: new Date().toISOString() }).eq("id", invoiceId);
+    async markVoidedInXero(invoiceId, tenantId) {
+      const { error } = await db.from("supplier_invoice").update({ sync_status: "voided_in_xero", updated_at: new Date().toISOString() }).eq("tenant_id", tenantId).eq("id", invoiceId);
       assertNoError(error, "mark supplier_invoice voided_in_xero");
     },
     async loadSupplier(tenantId, supplierId) {

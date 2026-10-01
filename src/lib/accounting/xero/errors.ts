@@ -3,13 +3,16 @@ import type { XeroFailure } from "./client";
 export type ErrorClass = "transient" | "fixable" | "auth" | "daily_limit";
 export type ClassifiedError = { errorClass: ErrorClass; message: string; detail: unknown; retryAfterSec: number | null };
 
+/** Xero's "contact name ... already assigned" validation message; shared with the contact handler. */
+export const DUPLICATE_CONTACT_PATTERN = /contact name .* already (assigned|exists)/i;
+
 export const XERO_ERROR_CATALOGUE: ReadonlyArray<{ pattern: RegExp; message: string }> = [
   { pattern: /account code .*(is not a valid code|has been archived|cannot be used)/i, message: "The Xero account on this bill is archived or missing. Pick another account in Xero setup, then retry." },
   { pattern: /(taxtype|tax type|tax rate).*(not valid|cannot be used|does not exist|invalid)/i, message: "The tax rate on this bill can't be used in Xero any more. Update the tax mapping in Xero setup or change the line's tax rate, then retry." },
   { pattern: /contact.*archived/i, message: "This supplier's Xero contact is archived. Restore it in Xero or relink the supplier, then retry." },
   { pattern: /(lock date|period.*locked|locked period)/i, message: "Xero is locked for this invoice date. Change the invoice date or ask your accountant to move the lock date, then retry." },
   { pattern: /(invoice #|invoice number).*(must be unique|already)/i, message: "Xero already has a bill with this invoice number for this supplier. Check Xero for a duplicate before retrying." },
-  { pattern: /contact name .* already (assigned|exists)/i, message: "A contact with this name already exists in Xero. Link the supplier to it instead of creating a new one." },
+  { pattern: DUPLICATE_CONTACT_PATTERN, message: "A contact with this name already exists in Xero. Link the supplier to it instead of creating a new one." },
   { pattern: /(organisation|subscription).*(not active|expired|cancelled)/i, message: "The connected Xero organisation is not active. Check the Xero subscription, then retry." },
 ];
 

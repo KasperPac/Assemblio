@@ -229,7 +229,7 @@ describe("supabaseHandlerStore", () => {
     await expect(supabaseHandlerStore(f.db).loadSupplier("t1", "s1")).rejects.toThrow(/load suppliers: boom/);
     const g = fakeDb({ supplier_invoice: { data: null, error: { message: "denied" } } });
     await expect(supabaseHandlerStore(g.db).loadInvoiceExternal("inv-1", "t1")).rejects.toThrow(/denied/);
-    await expect(supabaseHandlerStore(g.db).markVoidedInXero("inv-1")).rejects.toThrow(/denied/);
+    await expect(supabaseHandlerStore(g.db).markVoidedInXero("inv-1", "t1")).rejects.toThrow(/denied/);
     await expect(supabaseHandlerStore(g.db).recordBill("inv-1", "x", "u", null)).rejects.toThrow(/denied/);
   });
 
@@ -255,5 +255,132 @@ describe("supabaseHandlerStore", () => {
       purchase_order: { data: null, error: { message: "po down" } },
     });
     await expect(supabaseHandlerStore(f.db).loadBillSource("inv-1", "t1")).rejects.toThrow(/load purchase_order: po down/);
+  });
+});
+
+const keyOf = (f: typeof fetch, method: string) => {
+  const call = (f as unknown as { mock: { calls: Array<[string, RequestInit]> } }).mock.calls.find((c) => c[1].method === method)!;
+  return new Headers(call[1].headers).get("Idempotency-Key");
+};
+const SEARCH = (invoices: unknown[]) => ({ method: "GET", path: /\/Invoices\?where=/, respond: () => json({ Invoices: invoices }) });
+
+describe("handleCreateBill: exactly-once hardening", () => {
+  it("adoption records Xero's total and reports a difference", async () => {
+    const x = fakeXero([ORG, ACCOUNTS, TAX, SEARCH([{ InvoiceID: "xero-existing", Status: "AUTHORISED", Total: 33.02 }])]);
+    const m = memoryStore(source());
+    const out = await handleCreateBill(job({ attempts: 1 }), ctxFor(x.f, m.store));
+    expect(out).toEqual({ kind: "sent", externalId: "xero-existing", note: { adopted: true, rounding: { manuva: 33, xero: 33.02 } } });
+    expect(m.recorded).toEqual([["inv-1", "xero-existing", "https://go.xero.com/AccountsPayable/View.aspx?InvoiceID=xero-existing", 33.02]]);
+  });
+
+  it("adopts on a retry even when a pre-check would now fail", async () => {
+    const x = fakeXero([SEARCH([{ InvoiceID: "xero-existing", Status: "SUBMITTED", Total: 33 }])]);
+    const m = memoryStore(source({ invoice_date: "2026-06-30" }));
+    const out = await handleCreateBill(job({ attempts: 2 }), ctxFor(x.f, m.store));
+    expect(out).toEqual({ kind: "sent", externalId: "xero-existing", note: { adopted: true } });
+    expect(x.calls.map((c) => c.method)).toEqual(["GET"]);
+  });
+
+  it.each([
+    ["503", () => json({ Message: "down" }, 503)],
+    ["a thrown fetch", () => { throw new Error("socket hang up"); }],
+    ["an empty 200", () => new Response("", { status: 200 })],
+  ])("a failed duplicate search (%s) is transient and never creates", async (_n, respond) => {
+    const x = fakeXero([ORG, ACCOUNTS, TAX, { method: "GET", path: /\/Invoices\?where=/, respond }, { method: "POST", path: /\/Invoices/, respond: () => json({ Invoices: [{ InvoiceID: "dup", Status: "SUBMITTED" }] }) }]);
+    const out = await handleCreateBill(job({ attempts: 1 }), ctxFor(x.f, memoryStore(source()).store));
+    expect(out.kind === "error" && out.error.errorClass).toBe("transient");
+    expect(x.calls.some((c) => c.method === "POST")).toBe(false);
+  });
+
+  it("a 2xx create with no invoice in the body is transient", async () => {
+    const x = fakeXero([ORG, ACCOUNTS, TAX, { method: "POST", path: /\/Invoices/, respond: () => new Response("", { status: 200 }) }]);
+    const m = memoryStore(source());
+    const out = await handleCreateBill(job(), ctxFor(x.f, m.store));
+    expect(out.kind === "error" && out.error.errorClass).toBe("transient");
+    expect(m.recorded).toEqual([]);
+  });
+
+  it("fails fixable when the tax type is active but cannot apply to purchases", async () => {
+    const salesOnly = { ...TAX, respond: () => json({ TaxRates: [{ TaxType: "INPUT", Name: "GST", Status: "ACTIVE", CanApplyToExpenses: false, EffectiveRate: 10 }] }) };
+    const x = fakeXero([ORG, ACCOUNTS, salesOnly]);
+    const out = await handleCreateBill(job(), ctxFor(x.f, memoryStore(source()).store));
+    expect(out.kind === "error" && out.error.errorClass).toBe("fixable");
+    expect(out.kind === "error" && out.error.message).toMatch(/Tax rate INPUT .*purchases/);
+    expect(x.calls.some((c) => c.method === "POST")).toBe(false);
+  });
+});
+
+describe("handleVoidBill: keys and untracked bills", () => {
+  const voidJob = job({ operation: "void_bill", idempotency_key: "si-inv-1-void" });
+  const GET_ONE = (status: string) => ({ method: "GET", path: /\/Invoices\/xero-inv-1$/, respond: () => json({ Invoices: [{ InvoiceID: "xero-inv-1", Status: status }] }) });
+  const POST_ONE = { method: "POST", path: /\/Invoices\/xero-inv-1$/, respond: () => json({ Invoices: [{ InvoiceID: "xero-inv-1" }] }) };
+
+  it("sends si-{id}-void as the Idempotency-Key", async () => {
+    const x = fakeXero([GET_ONE("SUBMITTED"), POST_ONE]);
+    await handleVoidBill(voidJob, ctxFor(x.f, memoryStore(source()).store));
+    expect(keyOf(x.f, "POST")).toBe("si-inv-1-void");
+  });
+
+  it("does not mark anything voided when the invoice is not found for this tenant", async () => {
+    const m = memoryStore(source());
+    m.store.loadInvoiceExternal = async () => null;
+    const x = fakeXero([]);
+    const out = await handleVoidBill(voidJob, ctxFor(x.f, m.store));
+    expect(out.kind === "error" && out.error.errorClass).toBe("fixable");
+    expect(m.recorded).toEqual([]);
+  });
+
+  const untracked = () => {
+    const m = memoryStore(source());
+    m.store.loadInvoiceExternal = async () => ({ external_id: null, supplier_id: "s1", invoice_number: "INV-9" });
+    return m;
+  };
+
+  it("with no external_id, finds the bill that reached Xero, voids it and marks voided_in_xero", async () => {
+    const x = fakeXero([SEARCH([{ InvoiceID: "xero-inv-1", Status: "AUTHORISED", Total: 33 }]), POST_ONE]);
+    const m = untracked();
+    expect(await handleVoidBill(voidJob, ctxFor(x.f, m.store))).toEqual({ kind: "sent", externalId: "xero-inv-1" });
+    expect((x.calls.find((c) => c.method === "POST")!.body as { Invoices: Array<{ Status: string }> }).Invoices[0].Status).toBe("VOIDED");
+    expect(m.recorded).toContainEqual(["voided", "inv-1"]);
+  });
+
+  it("with no external_id and no match, succeeds as nothing-to-void", async () => {
+    const x = fakeXero([SEARCH([{ InvoiceID: "gone", Status: "DELETED" }])]);
+    const m = untracked();
+    expect(await handleVoidBill(voidJob, ctxFor(x.f, m.store))).toEqual({ kind: "sent", externalId: null });
+    expect(m.recorded).toContainEqual(["voided", "inv-1"]);
+    expect(x.calls.some((c) => c.method === "POST")).toBe(false);
+  });
+
+  it("with no external_id and a failed search, is transient and marks nothing", async () => {
+    const x = fakeXero([{ method: "GET", path: /\/Invoices\?where=/, respond: () => json({}, 503) }]);
+    const m = untracked();
+    const out = await handleVoidBill(voidJob, ctxFor(x.f, m.store));
+    expect(out.kind === "error" && out.error.errorClass).toBe("transient");
+    expect(m.recorded).toEqual([]);
+  });
+});
+
+describe("handleCreateContact: key and empty body", () => {
+  const contactJob = job({ operation: "create_contact", entity_type: "supplier", entity_id: "s1", idempotency_key: "sup-s1-contact" });
+  it("sends sup-{id}-contact as the Idempotency-Key", async () => {
+    const x = fakeXero([{ method: "POST", path: /\/Contacts\?summarizeErrors=false$/, respond: () => json({ Contacts: [{ ContactID: "c", Name: "Acme" }] }) }]);
+    await handleCreateContact(contactJob, ctxFor(x.f, memoryStore(null, null).store));
+    expect(keyOf(x.f, "POST")).toBe("sup-s1-contact");
+  });
+  it("an empty 2xx is transient", async () => {
+    const x = fakeXero([{ method: "POST", path: /\/Contacts/, respond: () => new Response("", { status: 200 }) }]);
+    const out = await handleCreateContact(contactJob, ctxFor(x.f, memoryStore(null, null).store));
+    expect(out.kind === "error" && out.error.errorClass).toBe("transient");
+  });
+});
+
+describe("supabaseHandlerStore: tenant-filtered void writes", () => {
+  it("markVoidedInXero and loadInvoiceExternal filter by tenant_id", async () => {
+    const f = fakeDb({ supplier_invoice: { data: { external_id: null, supplier_id: "s1", invoice_number: "INV-9" }, error: null } });
+    const store = supabaseHandlerStore(f.db);
+    await store.markVoidedInXero("inv-1", "t1");
+    await store.loadInvoiceExternal("inv-1", "t1");
+    for (const l of f.log) expect(l.filters).toEqual([["tenant_id", "t1"], ["id", "inv-1"]]);
   });
 });
