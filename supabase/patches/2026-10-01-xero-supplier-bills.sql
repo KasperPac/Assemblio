@@ -555,7 +555,23 @@ begin
 
   if found and v_job.status = 'working' then
     raise exception 'this invoice is being sent to Xero right now; try again in a minute' using errcode = '55P03';
+  elsif found and v_job.attempts > 0 then
+    -- A previous attempt may have created the bill in Xero (a lost response),
+    -- so cancelling alone could leave a SUBMITTED bill nobody tracks. Cancel
+    -- the create and chase it with a void_bill: the handler finds the bill by
+    -- contact + invoice number and voids it, or finds none and succeeds.
+    if v_conn_id is null then
+      raise exception 'Xero is disconnected. Reconnect Xero to void this bill.' using errcode = 'P0001';
+    end if;
+    update public.accounting_outbox
+       set status = 'cancelled', completed_at = now(), locked_at = null, locked_by = null,
+           error_message = 'Invoice voided; any bill an earlier attempt created will be voided in Xero'
+     where id = v_job.id;
+    insert into public.accounting_outbox (tenant_id, connection_id, provider, operation, entity_type, entity_id, idempotency_key)
+    values (v_tenant, v_job.connection_id, 'xero', 'void_bill', 'supplier_invoice', p_invoice_id, 'si-' || p_invoice_id || '-void');
+    v_sync := 'queued';
   elsif found then
+    -- Never attempted: nothing can exist in Xero.
     update public.accounting_outbox
        set status = 'cancelled', completed_at = now(), locked_at = null, locked_by = null,
            error_message = 'Invoice voided before it reached Xero'
@@ -619,8 +635,15 @@ begin
      limit p_limit
        for update of j skip locked
   )
+  -- A reclaimed stale 'working' row counts as an attempt: its worker may have
+  -- died after Xero created the bill but before recording it, and the
+  -- handler only runs its duplicate search when attempts > 0 (Xero's
+  -- Idempotency-Key outlives a 5-minute reclaim by just one minute). Pending
+  -- and failed claims keep their count. SET reads the pre-update row, so
+  -- o.status here is the status before this claim.
   update public.accounting_outbox o
      set status = 'working', locked_at = now(), locked_by = p_worker,
+         attempts = o.attempts + (o.status = 'working')::int,
          first_attempt_at = coalesce(o.first_attempt_at, now())
     from picked
    where o.id = picked.id

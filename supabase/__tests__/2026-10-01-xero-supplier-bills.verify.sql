@@ -229,6 +229,9 @@ do $$ declare n int; op text; begin
         from public.accounting_outbox where operation = 'create_contact') then
     raise exception 'FAIL 7: claimed job not marked working' using errcode = 'XX000';
   end if;
+  if (select attempts from public.accounting_outbox where operation = 'create_contact') is distinct from 0 then
+    raise exception 'FAIL 7: claiming a pending job changed its attempts' using errcode = 'XX000';
+  end if;
   -- While it is working, nothing else is claimable for this connection.
   select count(*) into n from public.claim_accounting_jobs('11111111-0000-0000-0000-0000000000e1', 10, 'verify-2');
   if n <> 0 then raise exception 'FAIL 7: second worker claimed % jobs', n using errcode = 'XX000'; end if;
@@ -241,14 +244,14 @@ do $$ declare n int; op text; begin
 end $$;
 
 -- 7b. Which failed jobs are claimable: transient and daily_limit once due;
--- fixable never; nothing before next_attempt_at; a stale 'working' lock is
--- reclaimed. Jobs J1-J4 are scratch rows, deleted afterwards.
+-- fixable never; nothing before next_attempt_at. Claiming a pending or failed
+-- job keeps its attempts. Jobs J1-J4 are scratch rows, deleted afterwards.
 do $$ declare v_ids uuid[]; begin
-  insert into public.accounting_outbox (id, tenant_id, connection_id, provider, operation, entity_type, entity_id, status, error_class, next_attempt_at, idempotency_key) values
-    ('11111111-0000-0000-0000-00000000f001', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-0000000000e1', 'xero', 'create_bill', 'supplier_invoice', gen_random_uuid(), 'failed', 'daily_limit', now() - interval '1 minute', 'j1'),
-    ('11111111-0000-0000-0000-00000000f002', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-0000000000e1', 'xero', 'create_bill', 'supplier_invoice', gen_random_uuid(), 'failed', 'fixable',     now() - interval '1 minute', 'j2'),
-    ('11111111-0000-0000-0000-00000000f003', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-0000000000e1', 'xero', 'create_bill', 'supplier_invoice', gen_random_uuid(), 'failed', 'daily_limit', now() + interval '1 hour',   'j3'),
-    ('11111111-0000-0000-0000-00000000f004', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-0000000000e1', 'xero', 'create_bill', 'supplier_invoice', gen_random_uuid(), 'failed', 'transient',   now() - interval '1 minute', 'j4');
+  insert into public.accounting_outbox (id, tenant_id, connection_id, provider, operation, entity_type, entity_id, status, error_class, next_attempt_at, attempts, idempotency_key) values
+    ('11111111-0000-0000-0000-00000000f001', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-0000000000e1', 'xero', 'create_bill', 'supplier_invoice', gen_random_uuid(), 'failed', 'daily_limit', now() - interval '1 minute', 2, 'j1'),
+    ('11111111-0000-0000-0000-00000000f002', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-0000000000e1', 'xero', 'create_bill', 'supplier_invoice', gen_random_uuid(), 'failed', 'fixable',     now() - interval '1 minute', 1, 'j2'),
+    ('11111111-0000-0000-0000-00000000f003', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-0000000000e1', 'xero', 'create_bill', 'supplier_invoice', gen_random_uuid(), 'failed', 'daily_limit', now() + interval '1 hour',   1, 'j3'),
+    ('11111111-0000-0000-0000-00000000f004', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-0000000000e1', 'xero', 'create_bill', 'supplier_invoice', gen_random_uuid(), 'failed', 'transient',   now() - interval '1 minute', 1, 'j4');
   perform set_config('request.jwt.claims', '{"role":"service_role"}', false);
   select array_agg(id order by id) into v_ids from public.claim_accounting_jobs('11111111-0000-0000-0000-0000000000e1', 10, 'verify');
   if v_ids is distinct from array(select id from public.accounting_outbox
@@ -257,19 +260,36 @@ do $$ declare v_ids uuid[]; begin
                                    order by id) then
     raise exception 'FAIL 7b: claimed %', v_ids using errcode = 'XX000';
   end if;
+  if (select attempts from public.accounting_outbox where id = '11111111-0000-0000-0000-00000000f001') is distinct from 2
+     or (select attempts from public.accounting_outbox where id = '11111111-0000-0000-0000-00000000f004') is distinct from 1
+     or (select attempts from public.accounting_outbox where operation = 'create_bill' and entity_id = '11111111-0000-0000-0000-0000000000aa') is distinct from 0 then
+    raise exception 'FAIL 7b: claiming pending/failed jobs changed their attempts' using errcode = 'XX000';
+  end if;
   delete from public.accounting_outbox where id in ('11111111-0000-0000-0000-00000000f001', '11111111-0000-0000-0000-00000000f002',
                                                     '11111111-0000-0000-0000-00000000f003', '11111111-0000-0000-0000-00000000f004');
-  -- A's bill is now 'working'; age its lock past 5 minutes and it is reclaimable.
-  update public.accounting_outbox set locked_at = now() - interval '6 minutes', locked_by = 'dead-worker'
-   where operation = 'create_bill' and entity_id = '11111111-0000-0000-0000-0000000000aa';
-  select array_agg(id) into v_ids from public.claim_accounting_jobs('11111111-0000-0000-0000-0000000000e1', 10, 'verify-3');
-  if cardinality(v_ids) is distinct from 1
-     or (select locked_by from public.accounting_outbox where id = v_ids[1]) is distinct from 'verify-3' then
-    raise exception 'FAIL 7b: stale lock not reclaimed (%)', v_ids using errcode = 'XX000';
-  end if;
-  update public.accounting_outbox set status = 'pending', locked_at = null, locked_by = null where id = v_ids[1];
   perform set_config('request.jwt.claims', '', false);
-  raise notice 'PASS 7b: transient/daily_limit claimable when due, fixable and not-yet-due skipped, stale lock reclaimed';
+  raise notice 'PASS 7b: transient/daily_limit claimable when due, fixable and not-yet-due skipped, attempts kept';
+end $$;
+
+-- 7c. A stale 'working' job (worker died, possibly after Xero created the
+-- bill) is reclaimed AND counted as an attempt, so the handler runs its
+-- duplicate search instead of POSTing again (Review Focus 1).
+do $$ declare v_ids uuid[]; j public.accounting_outbox%rowtype; begin
+  -- A's bill is 'working' from 7b with attempts = 0; age its lock past 5 minutes.
+  update public.accounting_outbox set locked_at = now() - interval '6 minutes', locked_by = 'dead-worker'
+   where operation = 'create_bill' and entity_id = '11111111-0000-0000-0000-0000000000aa' and status = 'working' and attempts = 0;
+  if not found then raise exception 'FAIL 7c: setup expected a working job with attempts 0' using errcode = 'XX000'; end if;
+  perform set_config('request.jwt.claims', '{"role":"service_role"}', false);
+  select array_agg(id) into v_ids from public.claim_accounting_jobs('11111111-0000-0000-0000-0000000000e1', 10, 'verify-3');
+  perform set_config('request.jwt.claims', '', false);
+  select * into j from public.accounting_outbox where operation = 'create_bill' and entity_id = '11111111-0000-0000-0000-0000000000aa';
+  if cardinality(v_ids) is distinct from 1 or v_ids[1] is distinct from j.id
+     or j.status <> 'working' or j.locked_by is distinct from 'verify-3' or j.attempts is distinct from 1 then
+    raise exception 'FAIL 7c: reclaim gave status=% locked_by=% attempts=% (claimed %)', j.status, j.locked_by, j.attempts, v_ids using errcode = 'XX000';
+  end if;
+  -- Scaffolding: case 9 needs A's bill as a never-attempted pending job.
+  update public.accounting_outbox set status = 'pending', locked_at = null, locked_by = null, attempts = 0 where id = j.id;
+  raise notice 'PASS 7c: a stale working job is reclaimed as an attempt (attempts 0 -> 1, status working, locked_by verify-3)';
 end $$;
 
 -- 8. Claim functions refuse non-service callers.
@@ -302,17 +322,25 @@ select pg_temp.expect_error('9b: a void needs a reason',
 select pg_temp.expect_error('9c: drafts cannot be voided',
   $q$select public.void_supplier_invoice('11111111-0000-0000-0000-0000000000ab', 'x')$q$, 'P0001', 'only posted invoices can be voided');
 do $$ declare v text; inv record; begin
+  if not exists (select 1 from public.accounting_outbox where operation = 'create_bill' and entity_id = '11111111-0000-0000-0000-0000000000aa'
+                    and status = 'pending' and attempts = 0) then
+    raise exception 'FAIL 9: setup expected a pending create_bill with attempts 0' using errcode = 'XX000';
+  end if;
   v := public.void_supplier_invoice('11111111-0000-0000-0000-0000000000aa', 'wrong price');
   if v is distinct from 'not_synced' then raise exception 'FAIL 9: expected not_synced, got %', v using errcode = 'XX000'; end if;
   if (select status from public.accounting_outbox where operation = 'create_bill' and entity_id = '11111111-0000-0000-0000-0000000000aa') is distinct from 'cancelled' then
     raise exception 'FAIL 9: bill job not cancelled' using errcode = 'XX000';
+  end if;
+  -- Never attempted (attempts = 0): nothing can exist in Xero, so no void_bill.
+  if exists (select 1 from public.accounting_outbox where operation = 'void_bill' and entity_id = '11111111-0000-0000-0000-0000000000aa') then
+    raise exception 'FAIL 9: a never-attempted create was chased with a void_bill' using errcode = 'XX000';
   end if;
   select status, sync_status, void_reason, voided_by, voided_at into inv from public.supplier_invoice where id = '11111111-0000-0000-0000-0000000000aa';
   if inv.status <> 'voided' or inv.sync_status <> 'not_synced' or inv.void_reason <> 'wrong price'
      or inv.voided_by is distinct from '00000000-0000-0000-0000-0000000000a1' or inv.voided_at is null then
     raise exception 'FAIL 9: invoice %', inv using errcode = 'XX000';
   end if;
-  raise notice 'PASS 9: void permissions and pending-job cancel';
+  raise notice 'PASS 9: void of a never-attempted (attempts 0) pending create: cancelled, no void_bill, not_synced';
 end $$;
 
 -- 10. After voiding A, B may now post the freed receipt line.
@@ -569,6 +597,29 @@ select pg_temp.expect_error('17c: void refused while the bill is being sent',
 select pg_temp.check((select status = 'posted' from public.supplier_invoice where id = '11111111-0000-0000-0000-0000000000ad'),
   '17d: the refused void left the invoice posted');
 
+-- 17e. D's create then failed after one attempt (e.g. a lost response: the
+-- bill may exist in Xero with no external_id here). Voiding cancels the
+-- create AND queues a void_bill to chase that possible bill.
+update public.accounting_outbox set status = 'failed', error_class = 'transient', attempts = 1, locked_at = null, locked_by = null
+ where operation = 'create_bill' and entity_id = '11111111-0000-0000-0000-0000000000ad';
+do $$ declare v text; v_job public.accounting_outbox%rowtype; begin
+  v := public.void_supplier_invoice('11111111-0000-0000-0000-0000000000ad', 'duplicate');
+  if v is distinct from 'queued' then raise exception 'FAIL 17e: expected queued, got %', v using errcode = 'XX000'; end if;
+  if (select status from public.accounting_outbox where operation = 'create_bill' and entity_id = '11111111-0000-0000-0000-0000000000ad') is distinct from 'cancelled' then
+    raise exception 'FAIL 17e: create_bill not cancelled' using errcode = 'XX000';
+  end if;
+  select * into v_job from public.accounting_outbox where operation = 'void_bill' and entity_id = '11111111-0000-0000-0000-0000000000ad';
+  if v_job.id is null or v_job.status <> 'pending' or v_job.idempotency_key is distinct from 'si-11111111-0000-0000-0000-0000000000ad-void'
+     or v_job.connection_id is distinct from '11111111-0000-0000-0000-0000000000e1' or v_job.tenant_id is distinct from '11111111-1111-1111-1111-111111111111' then
+    raise exception 'FAIL 17e: void job %', v_job using errcode = 'XX000';
+  end if;
+  if (select status <> 'voided' or sync_status <> 'queued' or external_id is not null
+        from public.supplier_invoice where id = '11111111-0000-0000-0000-0000000000ad') then
+    raise exception 'FAIL 17e: invoice not voided/queued' using errcode = 'XX000';
+  end if;
+  raise notice 'PASS 17e: void of an attempted (attempts 1) failed create: cancelled, void_bill si-{id}-void pending, sync queued';
+end $$;
+
 -- 18. Before the bills start date (or without a set-up connection) an invoice
 -- posts as not_synced and queues nothing.
 insert into public.supplier_invoice (id, tenant_id, supplier_id, invoice_number, invoice_date, due_date, amounts_mode, currency) values
@@ -589,7 +640,7 @@ do $$ begin
   perform set_config('request.jwt.claims', '', false);
 end $$;
 select pg_temp.check(not exists (select 1 from public.supplier_invoice_line where supplier_invoice_id = '11111111-0000-0000-0000-0000000000ad'),
-  '19: the service role can purge a posted invoice''s lines');
+  '19: the service role can purge a non-draft (voided) invoice''s lines');
 delete from public.supplier_invoice where id = '11111111-0000-0000-0000-0000000000b0';
 select pg_temp.check(not exists (select 1 from public.supplier_invoice where id = '11111111-0000-0000-0000-0000000000b0')
   and not exists (select 1 from public.supplier_invoice_line where supplier_invoice_id = '11111111-0000-0000-0000-0000000000b0'),
