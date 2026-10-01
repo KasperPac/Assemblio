@@ -154,6 +154,15 @@ select pg_temp.check(pg_temp.as_role('authenticated', $q$
   select count(*) = 1 from u $q$),
   '0: a member can edit a draft line');
 
+-- 0b. The setup's two default tax rates are stored, so the invoice form can
+-- offer them while live Xero reads are unavailable (needs_reconnect).
+select pg_temp.check(
+  (select count(*) = 2 from information_schema.columns
+    where table_schema = 'public' and table_name = 'accounting_connection'
+      and column_name in ('purchase_tax_rate', 'gst_free_tax_rate')
+      and data_type = 'numeric' and numeric_precision = 7 and numeric_scale = 4 and is_nullable = 'YES'),
+  '0b: accounting_connection has purchase_tax_rate and gst_free_tax_rate (numeric(7,4), nullable)');
+
 -- 1. Posting without a contact link and without create_contact is refused.
 select pg_temp.expect_error('1: contact link required',
   $q$select public.post_supplier_invoice('11111111-0000-0000-0000-0000000000aa', true, false)$q$,
@@ -162,6 +171,16 @@ select pg_temp.check((select status = 'draft' from public.supplier_invoice where
   and (select cost_per_unit = 2.00 from public.delivery_receipt_line where id = '11111111-0000-0000-0000-00000000d101')
   and not exists (select 1 from public.accounting_outbox),
   '1b: the refused post changed nothing');
+
+-- 1c. Creating a Xero contact is admin-only in SQL too, not only in the action.
+select set_config('test.role', 'member', false);
+select pg_temp.expect_error('1c: a member cannot post with create_contact',
+  $q$select public.post_supplier_invoice('11111111-0000-0000-0000-0000000000aa', true, true)$q$,
+  '42501', 'Only admins can create a contact in Xero');
+select pg_temp.check((select status = 'draft' from public.supplier_invoice where id = '11111111-0000-0000-0000-0000000000aa')
+  and not exists (select 1 from public.accounting_outbox),
+  '1d: the refused create-contact post changed nothing');
+select set_config('test.role', 'admin', false);
 
 -- 2. Posting with create_contact queues a contact job and a dependent bill job.
 do $$ declare v text; v_contact public.accounting_outbox%rowtype; v_bill public.accounting_outbox%rowtype; begin
@@ -681,3 +700,126 @@ do $$ declare v text; begin
   end if;
   raise notice 'PASS 20b: p_update_component_costs = false writes the receipt line (3.0000) but leaves the component (2.5000)';
 end $$;
+
+-- 21. A create that GAVE UP after an attempt may have reached Xero (a lost
+-- response), so a void chases it exactly like a failed one: the create is
+-- cancelled, a void_bill is queued, and the invoice reads queued. A gave-up
+-- create that was never attempted is just cancelled (not_synced).
+insert into public.supplier_invoice (id, tenant_id, supplier_id, invoice_number, invoice_date, due_date, amounts_mode, currency) values
+  ('11111111-0000-0000-0000-00000000a001', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-000000000051', 'INV-I', '2026-10-01', '2026-10-31', 'exclusive', 'AUD'),
+  ('11111111-0000-0000-0000-00000000a002', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-000000000051', 'INV-J', '2026-10-01', '2026-10-31', 'exclusive', 'AUD');
+insert into public.supplier_invoice_line (tenant_id, supplier_invoice_id, line_no, kind, description, quantity, unit_amount, tax_type, tax_rate, account_code, line_amount, tax_amount) values
+  ('11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-00000000a001', 1, 'other', 'Freight', 1, 10, 'INPUT', 10, '425', 10.00, 1.00),
+  ('11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-00000000a002', 1, 'other', 'Freight', 1, 10, 'INPUT', 10, '425', 10.00, 1.00);
+select pg_temp.check(public.post_supplier_invoice('11111111-0000-0000-0000-00000000a001', false, false) = 'queued', '21-setup: I posts queued');
+select pg_temp.check(public.post_supplier_invoice('11111111-0000-0000-0000-00000000a002', false, false) = 'queued', '21-setup: J posts queued');
+update public.accounting_outbox set status = 'gave_up', error_class = 'transient', attempts = 3, completed_at = now()
+ where operation = 'create_bill' and entity_id = '11111111-0000-0000-0000-00000000a001';
+update public.supplier_invoice set sync_status = 'failed' where id = '11111111-0000-0000-0000-00000000a001';
+update public.accounting_outbox set status = 'gave_up', error_class = 'transient', attempts = 0, completed_at = now()
+ where operation = 'create_bill' and entity_id = '11111111-0000-0000-0000-00000000a002';
+do $$ declare v text; v_job public.accounting_outbox%rowtype; begin
+  v := public.void_supplier_invoice('11111111-0000-0000-0000-00000000a001', 'gave up');
+  if v is distinct from 'queued' then raise exception 'FAIL 21: expected queued, got %', v using errcode = 'XX000'; end if;
+  if (select status from public.accounting_outbox where operation = 'create_bill' and entity_id = '11111111-0000-0000-0000-00000000a001') is distinct from 'cancelled' then
+    raise exception 'FAIL 21: the gave_up create_bill was not cancelled' using errcode = 'XX000';
+  end if;
+  select * into v_job from public.accounting_outbox where operation = 'void_bill' and entity_id = '11111111-0000-0000-0000-00000000a001';
+  if v_job.id is null or v_job.status <> 'pending' or v_job.idempotency_key is distinct from 'si-11111111-0000-0000-0000-00000000a001-void'
+     or v_job.connection_id is distinct from '11111111-0000-0000-0000-0000000000e1' then
+    raise exception 'FAIL 21: void chase %', v_job using errcode = 'XX000';
+  end if;
+  if (select status <> 'voided' or sync_status <> 'queued' from public.supplier_invoice where id = '11111111-0000-0000-0000-00000000a001') then
+    raise exception 'FAIL 21: invoice not voided/queued' using errcode = 'XX000';
+  end if;
+  raise notice 'PASS 21: void of a gave_up create (attempts 3): cancelled, void_bill chase pending, sync queued';
+end $$;
+do $$ declare v text; begin
+  v := public.void_supplier_invoice('11111111-0000-0000-0000-00000000a002', 'gave up early');
+  if v is distinct from 'not_synced' then raise exception 'FAIL 21b: expected not_synced, got %', v using errcode = 'XX000'; end if;
+  if (select status from public.accounting_outbox where operation = 'create_bill' and entity_id = '11111111-0000-0000-0000-00000000a002') is distinct from 'cancelled' then
+    raise exception 'FAIL 21b: the gave_up create_bill was not cancelled' using errcode = 'XX000';
+  end if;
+  if exists (select 1 from public.accounting_outbox where operation = 'void_bill' and entity_id = '11111111-0000-0000-0000-00000000a002') then
+    raise exception 'FAIL 21b: a never-attempted gave_up create was chased' using errcode = 'XX000';
+  end if;
+  if (select status <> 'voided' or sync_status <> 'not_synced' from public.supplier_invoice where id = '11111111-0000-0000-0000-00000000a002') then
+    raise exception 'FAIL 21b: invoice not voided/not_synced' using errcode = 'XX000';
+  end if;
+  raise notice 'PASS 21b: void of a gave_up create with attempts 0: cancelled, no chase, not_synced';
+end $$;
+
+-- 22. Voiding while Xero is disconnected is allowed: the invoice is voided in
+-- Manuva (its receipt lines freed), nothing is queued, and sync_status says
+-- what is left in Xero. K was sent (the bill stays in Xero: sent). L's create
+-- was cancelled by the disconnect after an attempt (a bill may exist: failed).
+-- M's attempted create is still open (a partly-finished disconnect): it is
+-- cancelled and, as for L, reads failed. N was never attempted: not_synced.
+insert into public.supplier_invoice (id, tenant_id, supplier_id, invoice_number, invoice_date, due_date, amounts_mode, currency) values
+  ('11111111-0000-0000-0000-00000000a003', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-000000000051', 'INV-K', '2026-10-01', '2026-10-31', 'exclusive', 'AUD'),
+  ('11111111-0000-0000-0000-00000000a004', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-000000000051', 'INV-L', '2026-10-01', '2026-10-31', 'exclusive', 'AUD'),
+  ('11111111-0000-0000-0000-00000000a005', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-000000000051', 'INV-M', '2026-10-01', '2026-10-31', 'exclusive', 'AUD'),
+  ('11111111-0000-0000-0000-00000000a006', '11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-000000000051', 'INV-N', '2026-10-01', '2026-10-31', 'exclusive', 'AUD');
+insert into public.supplier_invoice_line (tenant_id, supplier_invoice_id, line_no, kind, description, quantity, unit_amount, tax_type, tax_rate, account_code, line_amount, tax_amount) values
+  ('11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-00000000a003', 1, 'other', 'Freight', 1, 10, 'INPUT', 10, '425', 10.00, 1.00),
+  ('11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-00000000a004', 1, 'other', 'Freight', 1, 10, 'INPUT', 10, '425', 10.00, 1.00),
+  ('11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-00000000a005', 1, 'other', 'Freight', 1, 10, 'INPUT', 10, '425', 10.00, 1.00),
+  ('11111111-1111-1111-1111-111111111111', '11111111-0000-0000-0000-00000000a006', 1, 'other', 'Freight', 1, 10, 'INPUT', 10, '425', 10.00, 1.00);
+select pg_temp.check(public.post_supplier_invoice('11111111-0000-0000-0000-00000000a003', false, false) = 'queued', '22-setup: K posts queued');
+select pg_temp.check(public.post_supplier_invoice('11111111-0000-0000-0000-00000000a004', false, false) = 'queued', '22-setup: L posts queued');
+select pg_temp.check(public.post_supplier_invoice('11111111-0000-0000-0000-00000000a005', false, false) = 'queued', '22-setup: M posts queued');
+select pg_temp.check(public.post_supplier_invoice('11111111-0000-0000-0000-00000000a006', false, false) = 'queued', '22-setup: N posts queued');
+-- K's bill reached Xero.
+update public.accounting_outbox set status = 'sent', completed_at = now(), external_id = 'xero-bill-k', attempts = 1
+ where operation = 'create_bill' and entity_id = '11111111-0000-0000-0000-00000000a003';
+update public.supplier_invoice set sync_status = 'sent', external_id = 'xero-bill-k' where id = '11111111-0000-0000-0000-00000000a003';
+-- L: the disconnect cancelled its attempted create and marked it failed.
+update public.accounting_outbox set status = 'cancelled', completed_at = now(), attempts = 1, error_message = 'Xero disconnected'
+ where operation = 'create_bill' and entity_id = '11111111-0000-0000-0000-00000000a004';
+update public.supplier_invoice set sync_status = 'failed' where id = '11111111-0000-0000-0000-00000000a004';
+-- M: an attempted create left open.
+update public.accounting_outbox set status = 'failed', error_class = 'transient', attempts = 1
+ where operation = 'create_bill' and entity_id = '11111111-0000-0000-0000-00000000a005';
+update public.accounting_connection set status = 'disconnected', disconnected_at = now() where id = '11111111-0000-0000-0000-0000000000e1';
+do $$ declare v text; begin
+  v := public.void_supplier_invoice('11111111-0000-0000-0000-00000000a003', 'duplicate');
+  if v is distinct from 'sent' then raise exception 'FAIL 22: expected sent, got %', v using errcode = 'XX000'; end if;
+  if (select status <> 'voided' or sync_status <> 'sent' or external_id is distinct from 'xero-bill-k'
+        from public.supplier_invoice where id = '11111111-0000-0000-0000-00000000a003') then
+    raise exception 'FAIL 22: K not voided with sync_status sent' using errcode = 'XX000';
+  end if;
+  if exists (select 1 from public.accounting_outbox where operation = 'void_bill' and entity_id = '11111111-0000-0000-0000-00000000a003') then
+    raise exception 'FAIL 22: a void_bill was queued on a disconnected connection' using errcode = 'XX000';
+  end if;
+  raise notice 'PASS 22: void of a sent invoice while disconnected: voided, sync_status stays sent, no job';
+end $$;
+do $$ declare v text; begin
+  v := public.void_supplier_invoice('11111111-0000-0000-0000-00000000a004', 'duplicate');
+  if v is distinct from 'failed' then raise exception 'FAIL 22b: expected failed, got %', v using errcode = 'XX000'; end if;
+  if (select status <> 'voided' or sync_status <> 'failed' from public.supplier_invoice where id = '11111111-0000-0000-0000-00000000a004')
+     or exists (select 1 from public.accounting_outbox where operation = 'void_bill' and entity_id = '11111111-0000-0000-0000-00000000a004') then
+    raise exception 'FAIL 22b: L not voided/failed, or a job was queued' using errcode = 'XX000';
+  end if;
+  raise notice 'PASS 22b: void of a failed invoice while disconnected: voided, sync_status stays failed, no job';
+end $$;
+do $$ declare v text; begin
+  v := public.void_supplier_invoice('11111111-0000-0000-0000-00000000a005', 'duplicate');
+  if v is distinct from 'failed' then raise exception 'FAIL 22c: expected failed, got %', v using errcode = 'XX000'; end if;
+  if (select status from public.accounting_outbox where operation = 'create_bill' and entity_id = '11111111-0000-0000-0000-00000000a005') is distinct from 'cancelled'
+     or exists (select 1 from public.accounting_outbox where operation = 'void_bill' and entity_id = '11111111-0000-0000-0000-00000000a005')
+     or (select status <> 'voided' or sync_status <> 'failed' from public.supplier_invoice where id = '11111111-0000-0000-0000-00000000a005') then
+    raise exception 'FAIL 22c: M create not cancelled, chased, or not voided/failed' using errcode = 'XX000';
+  end if;
+  raise notice 'PASS 22c: void of an attempted open create while disconnected: create cancelled, no chase, sync failed';
+end $$;
+do $$ declare v text; begin
+  v := public.void_supplier_invoice('11111111-0000-0000-0000-00000000a006', 'duplicate');
+  if v is distinct from 'not_synced' then raise exception 'FAIL 22d: expected not_synced, got %', v using errcode = 'XX000'; end if;
+  if (select status from public.accounting_outbox where operation = 'create_bill' and entity_id = '11111111-0000-0000-0000-00000000a006') is distinct from 'cancelled'
+     or exists (select 1 from public.accounting_outbox where operation = 'void_bill' and entity_id = '11111111-0000-0000-0000-00000000a006')
+     or (select status <> 'voided' or sync_status <> 'not_synced' from public.supplier_invoice where id = '11111111-0000-0000-0000-00000000a006') then
+    raise exception 'FAIL 22d: N create not cancelled, chased, or not voided/not_synced' using errcode = 'XX000';
+  end if;
+  raise notice 'PASS 22d: void of a never-attempted create while disconnected: cancelled, no chase, not_synced';
+end $$;
+update public.accounting_connection set status = 'connected', disconnected_at = null where id = '11111111-0000-0000-0000-0000000000e1';

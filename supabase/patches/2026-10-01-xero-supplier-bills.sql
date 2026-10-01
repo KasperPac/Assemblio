@@ -31,6 +31,10 @@ create table if not exists public.accounting_connection (
   other_charges_account_code text,
   purchase_tax_type          text,
   gst_free_tax_type          text,
+  -- Xero's rates for the two tax types above, stored at setup, so the invoice
+  -- form can still offer them when live Xero reads are unavailable.
+  purchase_tax_rate          numeric(7,4) check (purchase_tax_rate >= 0 and purchase_tax_rate <= 100),
+  gst_free_tax_rate          numeric(7,4) check (gst_free_tax_rate >= 0 and gst_free_tax_rate <= 100),
   default_amounts_mode       text not null default 'exclusive' check (default_amounts_mode in ('inclusive', 'exclusive')),
   bills_start_date           date,
   sales_source               text check (sales_source in ('a2x', 'link_my_books', 'xero_shopify', 'square', 'amaka', 'none', 'other')),
@@ -39,6 +43,11 @@ create table if not exists public.accounting_connection (
   updated_at                 timestamptz not null default now(),
   unique (tenant_id, provider)
 );
+-- Idempotent for a database that already has the table from an earlier draft.
+alter table public.accounting_connection
+  add column if not exists purchase_tax_rate numeric(7,4) check (purchase_tax_rate >= 0 and purchase_tax_rate <= 100);
+alter table public.accounting_connection
+  add column if not exists gst_free_tax_rate numeric(7,4) check (gst_free_tax_rate >= 0 and gst_free_tax_rate <= 100);
 
 -- 2. Credentials (server only) -----------------------------------------
 create table if not exists public.accounting_credential (
@@ -333,6 +342,11 @@ begin
   if v_tenant is null then
     raise exception 'not signed in to a workspace' using errcode = '42501';
   end if;
+  -- Creating a Xero contact is admin-only. The server action checks this too;
+  -- this is the authority, because members can call the function directly.
+  if p_create_contact and coalesce(public.current_profile_role(), '') not in ('admin', 'super_admin') then
+    raise exception 'Only admins can create a contact in Xero' using errcode = '42501';
+  end if;
 
   -- Tenant-filtered, so another tenant's invoice is never even locked.
   select * into v_inv
@@ -507,6 +521,11 @@ end;
 $$;
 
 -- 9. void_supplier_invoice -------------------------------------------------
+-- Voiding always succeeds in Manuva (bar a send in flight), which frees the
+-- invoice's receipt lines: the picker and post's guard ignore voided invoices.
+-- With a live (not disconnected) connection it also undoes what it can in
+-- Xero. With none, nothing is queued, because nothing could run it, and
+-- sync_status says what may be left in Xero for the admin to void there.
 create or replace function public.void_supplier_invoice(p_invoice_id uuid, p_reason text)
 returns text
 language plpgsql
@@ -517,6 +536,7 @@ declare
   v_tenant  uuid := public.current_tenant_id();
   v_inv     public.supplier_invoice%rowtype;
   v_job     public.accounting_outbox%rowtype;
+  v_has_job boolean;
   v_conn_id uuid;
   v_sync    text;
 begin
@@ -547,30 +567,48 @@ begin
    where tenant_id = v_tenant and provider = 'xero' and status <> 'disconnected'
      for share;
 
+  -- gave_up counts as open: a create that gave up after an attempt may still
+  -- have reached Xero (a lost response), so it is handled like a failed one.
   select * into v_job
     from public.accounting_outbox
    where entity_type = 'supplier_invoice' and entity_id = p_invoice_id and operation = 'create_bill'
-     and status in ('pending', 'working', 'failed')
+     and status in ('pending', 'working', 'failed', 'gave_up')
+   order by created_at desc
+   limit 1
      for update;
+  v_has_job := found;
 
-  if found and v_job.status = 'working' then
+  if v_has_job and v_job.status = 'working' then
     raise exception 'this invoice is being sent to Xero right now; try again in a minute' using errcode = '55P03';
-  elsif found and v_job.attempts > 0 then
+  elsif v_conn_id is null then
+    -- Xero is disconnected. An open create can never run now, so cancel it.
+    -- sent stays sent (the bill stays in Xero) and failed stays failed (a bill
+    -- may exist). An attempted create also reads failed, as cancelOpenJobs
+    -- marks one on disconnect; anything else is not_synced.
+    if v_has_job then
+      update public.accounting_outbox
+         set status = 'cancelled', completed_at = now(), locked_at = null, locked_by = null,
+             error_message = 'Invoice voided while Xero was disconnected'
+       where id = v_job.id;
+    end if;
+    v_sync := case
+                when v_inv.sync_status in ('sent', 'failed') then v_inv.sync_status
+                when v_has_job and v_job.attempts > 0 then 'failed'
+                else 'not_synced'
+              end;
+  elsif v_has_job and v_job.attempts > 0 then
     -- A previous attempt may have created the bill in Xero (a lost response),
     -- so cancelling alone could leave a SUBMITTED bill nobody tracks. Cancel
     -- the create and chase it with a void_bill: the handler finds the bill by
     -- contact + invoice number and voids it, or finds none and succeeds.
-    if v_conn_id is null then
-      raise exception 'Xero is disconnected. Reconnect Xero to void this bill.' using errcode = 'P0001';
-    end if;
     update public.accounting_outbox
        set status = 'cancelled', completed_at = now(), locked_at = null, locked_by = null,
            error_message = 'Invoice voided; any bill an earlier attempt created will be voided in Xero'
      where id = v_job.id;
     insert into public.accounting_outbox (tenant_id, connection_id, provider, operation, entity_type, entity_id, idempotency_key)
-    values (v_tenant, v_job.connection_id, 'xero', 'void_bill', 'supplier_invoice', p_invoice_id, 'si-' || p_invoice_id || '-void');
+    values (v_tenant, v_conn_id, 'xero', 'void_bill', 'supplier_invoice', p_invoice_id, 'si-' || p_invoice_id || '-void');
     v_sync := 'queued';
-  elsif found then
+  elsif v_has_job then
     -- Never attempted: nothing can exist in Xero.
     update public.accounting_outbox
        set status = 'cancelled', completed_at = now(), locked_at = null, locked_by = null,
@@ -578,9 +616,6 @@ begin
      where id = v_job.id;
     v_sync := 'not_synced';
   elsif v_inv.external_id is not null then
-    if v_conn_id is null then
-      raise exception 'Xero is disconnected. Reconnect Xero to void this bill.' using errcode = 'P0001';
-    end if;
     insert into public.accounting_outbox (tenant_id, connection_id, provider, operation, entity_type, entity_id, idempotency_key)
     values (v_tenant, v_conn_id, 'xero', 'void_bill', 'supplier_invoice', p_invoice_id, 'si-' || p_invoice_id || '-void');
     v_sync := 'queued';
