@@ -209,6 +209,7 @@ function fakeDb(results: Record<string, Result>) {
       for (const m of ["select", "order", "update", "upsert"]) b[m] = () => b;
       b.eq = (c: string, v: unknown) => { entry.filters.push([c, v]); return b; };
       b.in = (c: string, v: unknown) => { entry.filters.push([c, v]); return b; };
+      b.neq = (c: string, v: unknown) => { entry.filters.push([`${c}!`, v]); return b; };
       b.maybeSingle = async () => res;
       b.then = (ok: (r: Result) => unknown, bad: (e: unknown) => unknown) => Promise.resolve(res).then(ok, bad);
       return b;
@@ -382,5 +383,106 @@ describe("supabaseHandlerStore: tenant-filtered void writes", () => {
     await store.markVoidedInXero("inv-1", "t1");
     await store.loadInvoiceExternal("inv-1", "t1");
     for (const l of f.log) expect(l.filters).toEqual([["tenant_id", "t1"], ["id", "inv-1"]]);
+  });
+});
+
+describe("pre-check messages name fixes that work on a posted invoice", () => {
+  it("lock date: move it in Xero, or void and re-enter", async () => {
+    const x = fakeXero([ORG, ACCOUNTS, TAX]);
+    const out = await handleCreateBill(job(), ctxFor(x.f, memoryStore(source({ invoice_date: "2026-06-30" })).store));
+    expect(out.kind === "error" && out.error.message).toBe(
+      "Xero is locked up to 2026-06-30. Ask your accountant to move the lock date in Xero, or void this invoice and re-enter it with a later date. Then retry."
+    );
+  });
+  it("archived account: restore it in Xero, or void and re-enter", async () => {
+    const x = fakeXero([ORG, ACCOUNTS, TAX]);
+    const src = { ...source(), lines: [{ ...source().lines[0], account_code: "999" }] };
+    const out = await handleCreateBill(job(), ctxFor(x.f, memoryStore(src).store));
+    expect(out.kind === "error" && out.error.message).toBe(
+      "Account 999 is archived or inactive in Xero. Restore it in Xero and retry, or void this invoice and re-enter it with a different account or tax rate."
+    );
+  });
+  it("inactive tax rate: restore it in Xero, or void and re-enter", async () => {
+    const x = fakeXero([ORG, ACCOUNTS, TAX]);
+    const src = { ...source(), lines: [{ ...source().lines[0], tax_type: "OLDGST" }] };
+    const out = await handleCreateBill(job(), ctxFor(x.f, memoryStore(src).store));
+    expect(out.kind === "error" && out.error.message).toBe(
+      "Tax rate OLDGST is archived or inactive in Xero, or can't be used on purchases. Restore it in Xero and retry, or void this invoice and re-enter it with a different account or tax rate."
+    );
+  });
+});
+
+describe("duplicate search never adopts another invoice's bill", () => {
+  const linkedElsewhere = (ids: string[]) => {
+    const m = memoryStore(source());
+    const asked: unknown[] = [];
+    m.store.billIdsLinkedElsewhere = async (...args) => { asked.push(args); return ids; };
+    return { ...m, asked };
+  };
+  const POST_NEW = { method: "POST", path: /\/Invoices\?unitdp=4&summarizeErrors=false$/, respond: () => json({ Invoices: [{ InvoiceID: "xero-new", Status: "SUBMITTED", Total: 33 }] }) };
+
+  it("ignores a live bill already linked to another invoice, so the create proceeds", async () => {
+    const x = fakeXero([ORG, ACCOUNTS, TAX, SEARCH([{ InvoiceID: "xero-other", Status: "AUTHORISED", Total: 33 }]), POST_NEW]);
+    const m = linkedElsewhere(["xero-other"]);
+    const out = await handleCreateBill(job({ attempts: 1 }), ctxFor(x.f, m.store));
+    expect(out).toEqual({ kind: "sent", externalId: "xero-new" });
+    expect(m.asked).toEqual([["t1", ["xero-other"], "inv-1"]]);
+    expect(m.recorded).toEqual([["inv-1", "xero-new", "https://go.xero.com/AccountsPayable/View.aspx?InvoiceID=xero-new", 33]]);
+  });
+
+  it("adopts the one unlinked candidate when another candidate is linked elsewhere", async () => {
+    const x = fakeXero([SEARCH([{ InvoiceID: "xero-other", Status: "SUBMITTED", Total: 33 }, { InvoiceID: "xero-mine", Status: "SUBMITTED", Total: 33 }])]);
+    const m = linkedElsewhere(["xero-other"]);
+    const out = await handleCreateBill(job({ attempts: 1 }), ctxFor(x.f, m.store));
+    expect(out).toEqual({ kind: "sent", externalId: "xero-mine", note: { adopted: true } });
+  });
+
+  it("fails as fixable, and creates nothing, when two unlinked live bills match", async () => {
+    const x = fakeXero([ORG, ACCOUNTS, TAX, SEARCH([{ InvoiceID: "a", Status: "SUBMITTED" }, { InvoiceID: "b", Status: "AUTHORISED" }]), POST_NEW]);
+    const m = memoryStore(source());
+    const out = await handleCreateBill(job({ attempts: 1 }), ctxFor(x.f, m.store));
+    expect(out.kind === "error" && out.error.errorClass).toBe("fixable");
+    expect(out.kind === "error" && out.error.message).toBe(
+      "Xero has several bills from this supplier with invoice number INV-9. Void the extra one in Xero, then retry."
+    );
+    expect(x.calls.some((c) => c.method === "POST")).toBe(false);
+    expect(m.recorded).toEqual([]);
+  });
+
+  const voidJob = job({ operation: "void_bill", idempotency_key: "si-inv-1-void" });
+  const chase = (linked: string[]) => {
+    const m = linkedElsewhere(linked);
+    m.store.loadInvoiceExternal = async () => ({ external_id: null, supplier_id: "s1", invoice_number: "INV-9" });
+    return m;
+  };
+
+  it("a void chase ignores another invoice's bill and voids nothing", async () => {
+    const x = fakeXero([SEARCH([{ InvoiceID: "xero-other", Status: "AUTHORISED" }])]);
+    const m = chase(["xero-other"]);
+    expect(await handleVoidBill(voidJob, ctxFor(x.f, m.store))).toEqual({ kind: "sent", externalId: null });
+    expect(x.calls.some((c) => c.method === "POST")).toBe(false);
+    expect(m.recorded).toEqual([["voided", "inv-1"]]);
+  });
+
+  it("a void chase with two unlinked candidates is fixable and voids nothing", async () => {
+    const x = fakeXero([SEARCH([{ InvoiceID: "a", Status: "SUBMITTED" }, { InvoiceID: "b", Status: "SUBMITTED" }])]);
+    const m = chase([]);
+    const out = await handleVoidBill(voidJob, ctxFor(x.f, m.store));
+    expect(out.kind === "error" && out.error.errorClass).toBe("fixable");
+    expect(out.kind === "error" && out.error.message).toMatch(/several bills .* invoice number INV-9/);
+    expect(x.calls.some((c) => c.method === "POST")).toBe(false);
+    expect(m.recorded).toEqual([]);
+  });
+});
+
+describe("supabaseHandlerStore.billIdsLinkedElsewhere", () => {
+  it("reads other invoices' external_id in this tenant, excluding this invoice", async () => {
+    const f = fakeDb({ supplier_invoice: { data: [{ external_id: "x1" }, { external_id: "x1" }], error: null } });
+    expect(await supabaseHandlerStore(f.db).billIdsLinkedElsewhere!("t1", ["x1", "x2"], "inv-1")).toEqual(["x1"]);
+    expect(f.log[0]).toEqual({ table: "supplier_invoice", filters: [["tenant_id", "t1"], ["external_id", ["x1", "x2"]], ["id!", "inv-1"]] });
+  });
+  it("throws when the read fails", async () => {
+    const f = fakeDb({ supplier_invoice: { data: null, error: { message: "down" } } });
+    await expect(supabaseHandlerStore(f.db).billIdsLinkedElsewhere!("t1", ["x1"], "inv-1")).rejects.toThrow(/down/);
   });
 });

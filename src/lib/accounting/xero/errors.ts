@@ -6,11 +6,14 @@ export type ClassifiedError = { errorClass: ErrorClass; message: string; detail:
 /** Xero's "contact name ... already assigned" validation message; shared with the contact handler. */
 export const DUPLICATE_CONTACT_PATTERN = /contact name .* already (assigned|exists)/i;
 
+/** A posted invoice is never edited: a fixable message names a fix in Xero, or void and re-enter. */
+const VOID_AND_REENTER = "or void this invoice and re-enter it";
+
 export const XERO_ERROR_CATALOGUE: ReadonlyArray<{ pattern: RegExp; message: string }> = [
-  { pattern: /account code .*(is not a valid code|has been archived|cannot be used)/i, message: "The Xero account on this bill is archived or missing. Pick another account in Xero setup, then retry." },
-  { pattern: /(taxtype|tax type|tax rate).*(not valid|cannot be used|does not exist|invalid)/i, message: "The tax rate on this bill can't be used in Xero any more. Update the tax mapping in Xero setup or change the line's tax rate, then retry." },
-  { pattern: /contact.*archived/i, message: "This supplier's Xero contact is archived. Restore it in Xero or relink the supplier, then retry." },
-  { pattern: /(lock date|period.*locked|locked period)/i, message: "Xero is locked for this invoice date. Change the invoice date or ask your accountant to move the lock date, then retry." },
+  { pattern: /account code .*(is not a valid code|has been archived|cannot be used)/i, message: `The account on this bill is archived or inactive in Xero. Restore it in Xero and retry, ${VOID_AND_REENTER} with a different account or tax rate.` },
+  { pattern: /(taxtype|tax type|tax rate).*(not valid|cannot be used|does not exist|invalid)/i, message: `The tax rate on this bill is archived or inactive in Xero, or can't be used with its account. Restore it in Xero and retry, ${VOID_AND_REENTER} with a different account or tax rate.` },
+  { pattern: /contact.*archived/i, message: `This supplier's Xero contact is archived or inactive in Xero. Restore it in Xero and retry, ${VOID_AND_REENTER} once the supplier is linked to an active contact.` },
+  { pattern: /(lock date|period.*locked|locked period)/i, message: `Xero is locked for this invoice date. Ask your accountant to move the lock date in Xero, ${VOID_AND_REENTER} with a later date. Then retry.` },
   { pattern: /(invoice #|invoice number).*(must be unique|already)/i, message: "Xero already has a bill with this invoice number for this supplier. Check Xero for a duplicate before retrying." },
   { pattern: DUPLICATE_CONTACT_PATTERN, message: "A contact with this name already exists in Xero. Link the supplier to it instead of creating a new one." },
   { pattern: /(organisation|subscription).*(not active|expired|cancelled)/i, message: "The connected Xero organisation is not active. Check the Xero subscription, then retry." },
@@ -44,6 +47,12 @@ export function toUserMessage(xeroMessage: string): string {
   const hit = XERO_ERROR_CATALOGUE.find((e) => e.pattern.test(xeroMessage));
   return hit ? hit.message : `Xero rejected this: ${xeroMessage}`;
 }
+
+/** Pre-check wording shared with the outbox handlers, so the catalogue and the pre-checks say the same thing. */
+export const lockDateMessage = (lockDate: string) =>
+  `Xero is locked up to ${lockDate}. Ask your accountant to move the lock date in Xero, ${VOID_AND_REENTER} with a later date. Then retry.`;
+export const inactiveInXeroMessage = (what: string, extra = "") =>
+  `${what} is archived or inactive in Xero${extra}. Restore it in Xero and retry, ${VOID_AND_REENTER} with a different account or tax rate.`;
 
 export function fixableError(message: string, detail: unknown = null): ClassifiedError {
   return { errorClass: "fixable", message, detail, retryAfterSec: null };

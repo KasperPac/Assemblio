@@ -3,7 +3,9 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { assertNoError } from "@/lib/supabase/assert-no-error";
 import type { AmountsMode } from "../supplier-invoice/calc";
 import { xeroRequest, type XeroAccess } from "../xero/client";
-import { DUPLICATE_CONTACT_PATTERN, classifyXeroFailure, fixableError, xeroValidationMessages, type ClassifiedError } from "../xero/errors";
+import {
+  DUPLICATE_CONTACT_PATTERN, classifyXeroFailure, fixableError, inactiveInXeroMessage, lockDateMessage, xeroValidationMessages, type ClassifiedError,
+} from "../xero/errors";
 import { fetchAccounts, fetchOrganisation, fetchTaxRates, lockDateBlocking, type XeroAccount, type XeroOrganisation, type XeroTaxRate } from "../xero/org";
 import { buildXeroBill, buildXeroContact, decideVoidAction, existingBillWhere, stockLineDescription, voidPayload, xeroBillUrl, type XeroBillState } from "../xero/bill";
 
@@ -43,6 +45,8 @@ export type HandlerStore = {
   markVoidedInXero(invoiceId: string, tenantId: string): Promise<void>;
   loadSupplier(tenantId: string, supplierId: string): Promise<{ name: string | null; contact_email: string | null; contact_phone: string | null; address: string | null } | null>;
   saveContactLink(tenantId: string, supplierId: string, contactId: string, name: string): Promise<void>;
+  /** The Xero InvoiceIDs among `xeroIds` that another supplier_invoice in this tenant already holds. Omitted: none. */
+  billIdsLinkedElsewhere?(tenantId: string, xeroIds: string[], exceptInvoiceId: string): Promise<string[]>;
 };
 
 type Maybe<T> = T | ClassifiedError;
@@ -74,16 +78,36 @@ const isLive = (b: XeroBillState) => !["DELETED", "VOIDED"].includes(String(b.St
 const roundingNote = (manuva: number, xero: number | null) =>
   xero !== null && Math.abs(xero - manuva) >= 0.005 ? { rounding: { manuva, xero } } : null;
 
-/** Looks for a live (not deleted, not voided) ACCPAY bill with this number for this contact. A body-less 2xx counts as a failed search, never as "no bill". */
-async function findLiveBill(ctx: JobContext, contactId: string, invoiceNumber: string): Promise<{ bill: XeroBillState | null } | { error: ClassifiedError }> {
+/**
+ * Looks for this invoice's live (not deleted, not voided) ACCPAY bill: this number, this contact. A bill another
+ * Manuva invoice already holds is never this one's. More than one candidate is never guessed between. A body-less
+ * 2xx counts as a failed search, never as "no bill".
+ */
+async function findLiveBill(
+  ctx: JobContext,
+  where: { tenantId: string; invoiceId: string; contactId: string; invoiceNumber: string }
+): Promise<{ bill: XeroBillState | null } | { error: ClassifiedError }> {
   const found = await xeroRequest<{ Invoices?: XeroBillState[] } | null>(
     ctx.access,
-    { method: "GET", path: "/Invoices", query: { where: existingBillWhere(contactId, invoiceNumber) } },
+    { method: "GET", path: "/Invoices", query: { where: existingBillWhere(where.contactId, where.invoiceNumber) } },
     ctx.fetchImpl
   );
   if (!found.ok) return { error: classifyXeroFailure(found) };
   if (!found.data) return { error: transient("Xero returned an empty response. Manuva will retry automatically.", { status: found.status }) };
-  return { bill: (found.data.Invoices ?? []).find(isLive) ?? null };
+  let live = (found.data.Invoices ?? []).filter((b) => isLive(b) && !!b.InvoiceID);
+  if (live.length && ctx.store.billIdsLinkedElsewhere) {
+    const taken = new Set(await ctx.store.billIdsLinkedElsewhere(where.tenantId, live.map((b) => b.InvoiceID), where.invoiceId));
+    live = live.filter((b) => !taken.has(b.InvoiceID));
+  }
+  if (live.length > 1) {
+    return {
+      error: fixableError(
+        `Xero has several bills from this supplier with invoice number ${where.invoiceNumber}. Void the extra one in Xero, then retry.`,
+        { candidates: live.map((b) => b.InvoiceID) }
+      ),
+    };
+  }
+  return { bill: live[0] ?? null };
 }
 
 export async function handleCreateBill(job: OutboxJob, ctx: JobContext): Promise<HandlerOutcome> {
@@ -98,7 +122,7 @@ export async function handleCreateBill(job: OutboxJob, ctx: JobContext): Promise
   if (job.attempts > 0) {
     // Xero's Idempotency-Key only lasts 6 minutes; after that, look before creating. Adoption sends nothing,
     // so it runs before the pre-checks: a lost-response create must be adopted even if a pre-check now fails.
-    const found = await findLiveBill(ctx, contactId, inv.invoice_number);
+    const found = await findLiveBill(ctx, { tenantId: inv.tenant_id, invoiceId: inv.id, contactId, invoiceNumber: inv.invoice_number });
     if ("error" in found) return fail(found.error);
     if (found.bill) {
       const xeroTotal = typeof found.bill.Total === "number" ? found.bill.Total : null;
@@ -110,7 +134,7 @@ export async function handleCreateBill(job: OutboxJob, ctx: JobContext): Promise
   const org = await ctx.cache.organisation();
   if (isErr(org)) return fail(org);
   const locked = lockDateBlocking(inv.invoice_date, org);
-  if (locked) return fail(fixableError(`Xero is locked up to ${locked}. Change the invoice date or ask your accountant to move the lock date, then retry.`));
+  if (locked) return fail(fixableError(lockDateMessage(locked)));
   if (inv.currency !== org.BaseCurrency) {
     return fail(fixableError(`This invoice is in ${inv.currency} but Xero's base currency is ${org.BaseCurrency}. Multi-currency bills aren't supported yet.`));
   }
@@ -122,10 +146,10 @@ export async function handleCreateBill(job: OutboxJob, ctx: JobContext): Promise
   const activeTax = new Set(rates.filter((r) => r.Status === "ACTIVE" && r.CanApplyToExpenses !== false).map((r) => r.TaxType));
   for (const l of src.lines) {
     if (!l.account_code || !activeCodes.has(l.account_code)) {
-      return fail(fixableError(`Account ${l.account_code ?? "(none)"} is archived or missing in Xero. Update Xero setup or the line, then retry.`));
+      return fail(fixableError(inactiveInXeroMessage(`Account ${l.account_code ?? "(none)"}`)));
     }
     if (!l.tax_type || !activeTax.has(l.tax_type)) {
-      return fail(fixableError(`Tax rate ${l.tax_type ?? "(none)"} is inactive or can't be used on purchases in Xero. Update Xero setup or the line, then retry.`));
+      return fail(fixableError(inactiveInXeroMessage(`Tax rate ${l.tax_type ?? "(none)"}`, ", or can't be used on purchases")));
     }
   }
 
@@ -172,7 +196,7 @@ export async function handleVoidBill(job: OutboxJob, ctx: JobContext): Promise<H
     // A create may have reached Xero without its response coming back, so there is no external_id to void.
     const contactId = inv.supplier_id ? await ctx.store.contactLink(job.tenant_id, inv.supplier_id) : null;
     if (contactId && inv.invoice_number) {
-      const found = await findLiveBill(ctx, contactId, inv.invoice_number);
+      const found = await findLiveBill(ctx, { tenantId: job.tenant_id, invoiceId: job.entity_id, contactId, invoiceNumber: inv.invoice_number });
       if ("error" in found) return fail(found.error);
       if (found.bill) {
         bill = found.bill;
@@ -344,6 +368,17 @@ export function supabaseHandlerStore(db: SupabaseClient): HandlerStore {
       const { data, error } = await db.from("supplier_invoice").select("external_id, supplier_id, invoice_number").eq("tenant_id", tenantId).eq("id", invoiceId).maybeSingle();
       assertNoError(error, "load supplier_invoice external_id");
       return (data as { external_id: string | null; supplier_id: string; invoice_number: string } | null) ?? null;
+    },
+    async billIdsLinkedElsewhere(tenantId, xeroIds, exceptInvoiceId) {
+      if (!xeroIds.length) return [];
+      const { data, error } = await db
+        .from("supplier_invoice")
+        .select("external_id")
+        .eq("tenant_id", tenantId)
+        .in("external_id", xeroIds)
+        .neq("id", exceptInvoiceId);
+      assertNoError(error, "load supplier_invoice bills held by other invoices");
+      return uniq(((data ?? []) as Array<{ external_id: string | null }>).map((r) => r.external_id));
     },
     async markVoidedInXero(invoiceId, tenantId) {
       const { error } = await db.from("supplier_invoice").update({ sync_status: "voided_in_xero", updated_at: new Date().toISOString() }).eq("tenant_id", tenantId).eq("id", invoiceId);
