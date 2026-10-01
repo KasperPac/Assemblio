@@ -48,15 +48,26 @@ export async function xeroRequest<T>(
     return { ok: false, status: 0, body: null, rate: EMPTY_RATE, networkError: String(scrubSecrets(message)) };
   }
   const rate = parseRateHeaders(res.headers);
-  const text = await res.text().catch(() => "");
+  let text: string;
+  try {
+    text = await res.text();
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return { ok: false, status: 0, body: null, rate, networkError: String(scrubSecrets(message)) };
+  }
   let parsed: unknown = null;
+  let unparseable = false;
   if (text) {
     try {
       parsed = JSON.parse(text);
     } catch {
       parsed = text.slice(0, 2000);
+      unparseable = true;
     }
   }
   if (!res.ok) return { ok: false, status: res.status, body: scrubSecrets(parsed), rate };
+  if (unparseable) {
+    return { ok: false, status: 0, body: null, rate, networkError: "Xero returned an unreadable response" };
+  }
   return { ok: true, status: res.status, data: parsed as T, rate };
 }

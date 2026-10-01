@@ -33,4 +33,23 @@ describe("xeroRequest", () => {
     const h = new Headers({ "retry-after": "42", "x-rate-limit-problem": "day", "x-daylimit-remaining": "0" });
     expect(parseRateHeaders(h)).toEqual({ minRemaining: null, dayRemaining: 0, retryAfterSec: 42, problem: "day" });
   });
+
+  it("treats a body-read failure as a network failure", async () => {
+    const res = { ok: true, status: 200, headers: new Headers(), text: () => Promise.reject(new Error("aborted Bearer abc")) };
+    const f = vi.fn().mockResolvedValue(res);
+    const r = await xeroRequest(access, { method: "POST", path: "/Invoices", body: {} }, f);
+    expect(r).toMatchObject({ ok: false, status: 0, networkError: "aborted Bearer [redacted]" });
+  });
+
+  it("treats a non-JSON 2xx body as a failure", async () => {
+    const f = vi.fn().mockResolvedValue(new Response("<html>gateway</html>", { status: 200 }));
+    const r = await xeroRequest(access, { method: "GET", path: "/Accounts" }, f);
+    expect(r).toMatchObject({ ok: false, status: 0, networkError: "Xero returned an unreadable response" });
+  });
+
+  it("keeps empty 2xx bodies ok with null data", async () => {
+    const f = vi.fn().mockResolvedValueOnce(new Response(null, { status: 204 })).mockResolvedValueOnce(new Response("", { status: 200 }));
+    expect(await xeroRequest(access, { method: "PUT", path: "/x" }, f)).toMatchObject({ ok: true, status: 204, data: null });
+    expect(await xeroRequest(access, { method: "GET", path: "/x" }, f)).toMatchObject({ ok: true, status: 200, data: null });
+  });
 });

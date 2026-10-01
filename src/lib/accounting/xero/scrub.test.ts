@@ -12,4 +12,12 @@ describe("scrubSecrets", () => {
   it("leaves ordinary values alone", () => {
     expect(scrubSecrets(["x", 2, null, { Message: "Account code '300' is not valid" }])).toEqual(["x", 2, null, { Message: "Account code '300' is not valid" }]);
   });
+  it("redacts Basic credentials in text", () => {
+    expect(scrubSecrets("sent Basic Y2lkOnNlYw== upstream")).toBe("sent Basic [redacted] upstream");
+  });
+  it("redacts camelCase and kebab-case secret keys", () => {
+    expect(scrubSecrets({ accessToken: "a", refreshToken: "r", clientSecret: "c", "id-token": "i", Message: "hi" })).toEqual({
+      accessToken: "[redacted]", refreshToken: "[redacted]", clientSecret: "[redacted]", "id-token": "[redacted]", Message: "hi",
+    });
+  });
 });
