@@ -28,6 +28,7 @@ describe("validateCallback", () => {
   });
   it.each([
     [{ error: "access_denied" }, "xero-denied"],
+    [{ error: "invalid_scope" }, "xero-error"],
     [{ session: null }, "no-session"],
     [{ session: { tenantId: "t1", userId: "u1", role: "member" } }, "not-admin"],
     [{ nonceCookie: "other" }, "nonce-mismatch"],
@@ -60,19 +61,29 @@ describe("pending cookie", () => {
   });
 });
 
-function memoryRepo(existing: Partial<ConnectionRow> | null) {
+function memoryRepo(existing: Partial<ConnectionRow> | null, opts: { failOn?: string } = {}) {
   const calls: string[] = [];
+  const state: Partial<ConnectionRow> | null = existing ? { ...existing } : null;
   let upserted: Record<string, unknown> | null = null;
-  const repo: ConnectionRepo = {
-    async findByTenant() { return existing as ConnectionRow | null; },
-    async upsertConnection(row) { upserted = row; calls.push("upsertConnection"); return (existing?.id as string) ?? "new-id"; },
-    async upsertCredential() { calls.push("upsertCredential"); },
-    async cancelOpenJobs(_id, reason) { calls.push(`cancelOpenJobs:${reason}`); },
-    async deleteContactLinks() { calls.push("deleteContactLinks"); },
-    async deleteCredential() { calls.push("deleteCredential"); },
-    async markDisconnected() { calls.push("markDisconnected"); },
+  const maybeFail = (name: string) => {
+    if (opts.failOn === name) throw new Error(`${name} failed`);
   };
-  return { repo, calls, get upserted() { return upserted; } };
+  const repo: ConnectionRepo = {
+    async findByTenant() { return state as ConnectionRow | null; },
+    async upsertConnection(row) {
+      calls.push("upsertConnection");
+      upserted = row;
+      if (state) Object.assign(state, row);
+      return (state?.id as string) ?? "new-id";
+    },
+    async upsertCredential() { calls.push("upsertCredential"); maybeFail("upsertCredential"); },
+    async markConnected() { calls.push("markConnected"); if (state) state.status = "connected"; },
+    async cancelOpenJobs(_id, reason) { calls.push(`cancelOpenJobs:${reason}`); maybeFail("cancelOpenJobs"); },
+    async deleteContactLinks() { calls.push("deleteContactLinks"); },
+    async deleteCredential() { calls.push("deleteCredential"); maybeFail("deleteCredential"); },
+    async markDisconnected() { calls.push("markDisconnected"); if (state) state.status = "disconnected"; },
+  };
+  return { repo, calls, state, get upserted() { return upserted; } };
 }
 
 describe("saveConnection", () => {
@@ -82,14 +93,44 @@ describe("saveConnection", () => {
     const m = memoryRepo({ id: "conn-1", external_org_id: "o2" });
     expect(await saveConnection(m.repo, args)).toEqual({ connectionId: "conn-1", orgChanged: false });
     expect(m.upserted).not.toHaveProperty("setup_completed_at");
-    expect(m.calls).toEqual(["upsertConnection", "upsertCredential"]);
+    expect(m.calls).toEqual(["upsertConnection", "upsertCredential", "markConnected"]);
   });
 
   it("saveConnection cancels jobs and drops links when the organisation changes", async () => {
     const m = memoryRepo({ id: "conn-1", external_org_id: "o1" });
     expect(await saveConnection(m.repo, args)).toEqual({ connectionId: "conn-1", orgChanged: true });
     expect(m.upserted).toMatchObject({ setup_completed_at: null, inventory_account_code: null, external_org_id: "o2" });
-    expect(m.calls).toEqual(["upsertConnection", "upsertCredential", "cancelOpenJobs:Xero organisation changed", "deleteContactLinks"]);
+    expect(m.calls).toEqual(["cancelOpenJobs:Xero organisation changed", "deleteContactLinks", "upsertConnection", "upsertCredential", "markConnected"]);
+  });
+
+  it("writes needs_reconnect first and only flips to connected after the credential is stored", async () => {
+    const m = memoryRepo(null);
+    await saveConnection(m.repo, args);
+    expect(m.upserted).toMatchObject({ status: "needs_reconnect" });
+  });
+
+  it("never reads as connected when the credential write throws, on first connect", async () => {
+    const m = memoryRepo(null, { failOn: "upsertCredential" });
+    await expect(saveConnection(m.repo, args)).rejects.toThrow("upsertCredential failed");
+    expect(m.calls).not.toContain("markConnected");
+    expect(m.upserted).toMatchObject({ status: "needs_reconnect" });
+  });
+
+  it("an org change whose credential write fails has already cancelled and dropped, and is not connected", async () => {
+    const m = memoryRepo({ id: "conn-1", external_org_id: "o1", status: "connected" }, { failOn: "upsertCredential" });
+    await expect(saveConnection(m.repo, args)).rejects.toThrow();
+    expect(m.state?.status).toBe("needs_reconnect");
+    expect(m.calls.slice(0, 3)).toEqual(["cancelOpenJobs:Xero organisation changed", "deleteContactLinks", "upsertConnection"]);
+  });
+
+  it("a failed cleanup leaves the old organisation in place so a retry still cleans up", async () => {
+    const m = memoryRepo({ id: "conn-1", external_org_id: "o1", status: "connected" }, { failOn: "cancelOpenJobs" });
+    await expect(saveConnection(m.repo, args)).rejects.toThrow();
+    expect(m.state?.external_org_id).toBe("o1");
+    expect(m.state?.status).toBe("connected");
+    expect(m.calls).not.toContain("upsertConnection");
+    const retry = memoryRepo({ id: "conn-1", external_org_id: "o1", status: "connected" });
+    expect((await saveConnection(retry.repo, args)).orgChanged).toBe(true);
   });
 });
 
@@ -118,6 +159,50 @@ describe("disconnectXero", () => {
     });
     expect(deleteXeroConnection).toHaveBeenCalledWith("at", "xc-1");
     expect(r).toEqual({ revokedAtXero: true });
+  });
+  it("retries local cleanup for an already-disconnected row without calling Xero", async () => {
+    const m = memoryRepo({ id: "conn-1", status: "disconnected" });
+    const deleteXeroConnection = vi.fn();
+    const revoke = vi.fn();
+    const r = await disconnectXero(m.repo, {
+      connection: { id: "conn-1", external_connection_id: "xc-1", status: "disconnected" },
+      getAccessToken: vi.fn(),
+      readRefreshToken: vi.fn(),
+      revoke,
+      deleteXeroConnection,
+    });
+    expect(r).toEqual({ revokedAtXero: false });
+    expect(deleteXeroConnection).not.toHaveBeenCalled();
+    expect(revoke).not.toHaveBeenCalled();
+    expect(m.calls).toEqual(["cancelOpenJobs:Xero disconnected", "deleteCredential"]);
+  });
+  it("a failed cleanup throws, and a second attempt completes it", async () => {
+    const deps = (status: string) => ({
+      connection: { id: "conn-1", external_connection_id: "xc-1", status },
+      getAccessToken: async () => "at",
+      readRefreshToken: async () => "rt",
+      revoke: async () => true,
+      deleteXeroConnection: async () => true,
+    });
+    const first = memoryRepo({ id: "conn-1", status: "connected" }, { failOn: "cancelOpenJobs" });
+    await expect(disconnectXero(first.repo, deps("connected"))).rejects.toThrow();
+    expect(first.state?.status).toBe("disconnected");
+    const second = memoryRepo({ id: "conn-1", status: "disconnected" });
+    await disconnectXero(second.repo, deps(first.state?.status as string));
+    expect(second.calls).toEqual(["cancelOpenJobs:Xero disconnected", "deleteCredential"]);
+  });
+  it("logs when Xero declines the delete or the revoke", async () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const m = memoryRepo({ id: "conn-1" });
+    await disconnectXero(m.repo, {
+      connection: { id: "conn-1", external_connection_id: "xc-1" },
+      getAccessToken: async () => "at",
+      readRefreshToken: async () => "rt",
+      revoke: async () => false,
+      deleteXeroConnection: async () => false,
+    });
+    expect(spy).toHaveBeenCalledTimes(2);
+    spy.mockRestore();
   });
   it("calls DELETE /connections before revoking the refresh token", async () => {
     const m = memoryRepo({ id: "conn-1" });
@@ -174,6 +259,16 @@ describe("supabaseConnectionRepo", () => {
     await expect(supabaseConnectionRepo(fakeDb({ accounting_credential: [{ data: null, error: err }] }).db).upsertCredential("c", {} as never)).rejects.toThrow("boom");
     await expect(supabaseConnectionRepo(fakeDb({ accounting_connection: [{ data: null, error: err }] }).db).markDisconnected("c")).rejects.toThrow("boom");
     await expect(supabaseConnectionRepo(fakeDb({ accounting_credential: [{ data: null, error: err }] }).db).deleteCredential("c")).rejects.toThrow("boom");
+  });
+  it("upsertCredential bumps the existing version instead of resetting it to 1", async () => {
+    const f = fakeDb({ accounting_credential: [{ data: { version: 4 }, error: null }, { data: null, error: null }] });
+    await supabaseConnectionRepo(f.db).upsertCredential("c", {} as never);
+    expect(f.log[1].ops.join()).toContain('"version":5');
+  });
+  it("cancelOpenJobs also cancels gave_up jobs", async () => {
+    const f = fakeDb({ accounting_outbox: [{ data: [], error: null }] });
+    await supabaseConnectionRepo(f.db).cancelOpenJobs("c", "r");
+    expect(f.log[0].ops.join()).toContain("gave_up");
   });
   it("cancelOpenJobs throws when the cancel fails and when the invoice reset fails", async () => {
     await expect(

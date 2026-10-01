@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/tenant/authz";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { loadTokenKey } from "@/lib/security/token-crypto";
-import { getXeroConfig } from "@/lib/accounting/xero/config";
+import { getXeroConfig, isXeroPilotTenant } from "@/lib/accounting/xero/config";
 import { deleteConnection, revokeRefreshToken } from "@/lib/accounting/xero/identity";
 import { readRefreshToken, xeroAccessFor } from "@/lib/accounting/xero/access";
 import { disconnectXero, finishConnection, openPending, PENDING_COOKIE, supabaseConnectionRepo } from "@/lib/accounting/connection";
@@ -16,8 +16,15 @@ import { logActivity } from "@/lib/activity/log";
 
 export async function chooseXeroOrganisation(formData: FormData): Promise<void> {
   const ctx = await requireAdmin();
+  if (!isXeroPilotTenant(ctx.tenantId)) redirect("/app/settings/integrations?xero=error&reason=not-available");
   const jar = await cookies();
-  const key = loadTokenKey();
+  let key;
+  try {
+    key = loadTokenKey();
+  } catch (err) {
+    console.error("[xero] token key unavailable", scrubSecrets(err instanceof Error ? err.message : String(err)));
+    redirect("/app/settings/integrations?xero=error&reason=not-configured");
+  }
   const pending = openPending(jar.get(PENDING_COOKIE)?.value ?? "", key);
   jar.set(PENDING_COOKIE, "", { path: "/app/settings/integrations/xero", maxAge: 0 });
   if (!pending || pending.tenantId !== ctx.tenantId || pending.userId !== ctx.userId) {
@@ -47,15 +54,22 @@ export async function disconnectXeroAction(): Promise<void> {
   const db = createSupabaseAdminClient();
   const repo = supabaseConnectionRepo(db);
   const conn = await repo.findByTenant(ctx.tenantId);
-  if (!conn || conn.status === "disconnected") redirect("/app/settings/integrations");
+  if (!conn) redirect("/app/settings/integrations");
+  // A "disconnected" row is retried too: disconnectXero then only finishes the local cleanup.
 
-  const result = await disconnectXero(repo, {
-    connection: conn,
-    getAccessToken: async () => (await xeroAccessFor(db, conn)).accessToken,
-    readRefreshToken: () => readRefreshToken(db, conn.id),
-    revoke: (rt) => (cfg.ok ? revokeRefreshToken(cfg, rt) : Promise.resolve(false)),
-    deleteXeroConnection: (at, id) => deleteConnection(at, id),
-  });
+  let result;
+  try {
+    result = await disconnectXero(repo, {
+      connection: conn,
+      getAccessToken: async () => (await xeroAccessFor(db, conn)).accessToken,
+      readRefreshToken: () => readRefreshToken(db, conn.id),
+      revoke: (rt) => (cfg.ok ? revokeRefreshToken(cfg, rt) : Promise.resolve(false)),
+      deleteXeroConnection: (at, id) => deleteConnection(at, id),
+    });
+  } catch (err) {
+    console.error("[xero] disconnect failed", scrubSecrets(err instanceof Error ? err.message : String(err)));
+    redirect("/app/settings/integrations?xero=error&reason=disconnect-failed");
+  }
   await logActivity({ event: "accounting.disconnected", entityId: conn.id, metadata: { revoked_at_xero: result.revokedAtXero } });
   revalidatePath("/app/settings/integrations");
   redirect(`/app/settings/integrations?xero=${result.revokedAtXero ? "disconnected" : "disconnected-local"}`);

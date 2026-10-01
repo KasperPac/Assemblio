@@ -13,6 +13,13 @@ export const STATE_COOKIE = "xero_oauth_nonce";
 export const PENDING_COOKIE = "xero_pending";
 export const STATE_TTL_MS = 10 * 60_000;
 export const PENDING_TTL_MS = 10 * 60_000;
+/** Browsers silently drop cookies over ~4096 bytes; stay well under it. */
+export const PENDING_COOKIE_MAX = 3800;
+
+/** `secure` cookies are dropped on http://localhost, which would break local OAuth testing. */
+export function secureCookies(): boolean {
+  return process.env.NODE_ENV === "production";
+}
 
 export function settingsUrl(base: string, xero: string, reason?: string): URL {
   const u = new URL("/app/settings/integrations", base);
@@ -73,7 +80,11 @@ export function validateCallback(input: {
   secret: string;
   now?: number;
 }): CallbackCheck {
-  if (input.error) return { ok: false, reason: "xero-denied" };
+  if (input.error) {
+    if (input.error === "access_denied") return { ok: false, reason: "xero-denied" };
+    console.error("[xero] authorise returned an error", scrubSecrets(input.error));
+    return { ok: false, reason: "xero-error" };
+  }
   if (!input.session) return { ok: false, reason: "no-session" };
   if (!isAdminRole(input.session.role)) return { ok: false, reason: "not-admin" };
   if (!input.code || !input.state) return { ok: false, reason: "bad-state" };
@@ -98,6 +109,7 @@ export type ConnectionRepo = {
   findByTenant(tenantId: string): Promise<ConnectionRow | null>;
   upsertConnection(row: ConnectionUpsert): Promise<string>;
   upsertCredential(connectionId: string, cred: SealedCredential): Promise<void>;
+  markConnected(connectionId: string, userId: string, nowIso: string): Promise<void>;
   cancelOpenJobs(connectionId: string, reason: string): Promise<void>;
   deleteContactLinks(tenantId: string): Promise<void>;
   deleteCredential(connectionId: string): Promise<void>;
@@ -122,27 +134,27 @@ export async function saveConnection(
   const nowIso = new Date(now).toISOString();
   const existing = await repo.findByTenant(args.tenantId);
   const orgChanged = !!existing && existing.external_org_id !== args.org.tenantId;
+  if (orgChanged && existing) {
+    // Queued work targets the old organisation and its ContactIDs mean nothing in the new one.
+    // Do this BEFORE switching the row: if a later write fails, a retry still sees the old
+    // organisation and repeats the cleanup, instead of seeing the new one and skipping it.
+    await repo.cancelOpenJobs(existing.id, "Xero organisation changed");
+    await repo.deleteContactLinks(args.tenantId);
+  }
+  // Not "connected" until the credential is stored: a failure in between must never read as connected.
   const connectionId = await repo.upsertConnection({
     tenant_id: args.tenantId,
     provider: "xero",
-    status: "connected",
+    status: "needs_reconnect",
     external_org_id: args.org.tenantId,
     external_connection_id: args.org.connectionId,
     org_name: args.org.name,
     base_currency: args.baseCurrency,
-    connected_by: args.userId,
-    connected_at: nowIso,
     disconnected_at: null,
-    last_refreshed_at: nowIso,
-    last_error: null,
     ...(orgChanged ? SETUP_RESET : {}),
   });
   await repo.upsertCredential(connectionId, sealTokens(args.tokens, args.key, now));
-  if (orgChanged) {
-    // Queued work targets the old organisation and its ContactIDs mean nothing in the new one.
-    await repo.cancelOpenJobs(connectionId, "Xero organisation changed");
-    await repo.deleteContactLinks(args.tenantId);
-  }
+  await repo.markConnected(connectionId, args.userId, nowIso);
   return { connectionId, orgChanged };
 }
 
@@ -152,7 +164,13 @@ export async function finishConnection(
 ): Promise<{ ok: true; connectionId: string; orgChanged: boolean; orgName: string } | { ok: false; reason: string }> {
   const res = await fetchOrganisation({ accessToken: args.tokens.accessToken, xeroTenantId: args.org.tenantId }, args.fetchImpl);
   const org = res.ok ? res.data.Organisations?.[0] : undefined;
-  if (!org) return { ok: false, reason: "organisation-read" };
+  if (!org) {
+    console.error(
+      "[xero] organisation read failed",
+      res.ok ? "no organisation returned" : scrubSecrets({ status: res.status, body: res.body, networkError: res.networkError })
+    );
+    return { ok: false, reason: "organisation-read" };
+  }
   const name = org.Name || args.org.name;
   const saved = await saveConnection(repo, { ...args, org: { ...args.org, name }, baseCurrency: org.BaseCurrency });
   return { ok: true, ...saved, orgName: name };
@@ -161,7 +179,7 @@ export async function finishConnection(
 export async function disconnectXero(
   repo: ConnectionRepo,
   deps: {
-    connection: { id: string; external_connection_id: string };
+    connection: { id: string; external_connection_id: string; status?: string };
     getAccessToken: () => Promise<string>;
     readRefreshToken: () => Promise<string | null>;
     revoke: (refreshToken: string) => Promise<boolean>;
@@ -169,22 +187,31 @@ export async function disconnectXero(
   }
 ): Promise<{ revokedAtXero: boolean }> {
   let revokedAtXero = false;
-  try {
-    const at = await deps.getAccessToken();
-    await deps.deleteXeroConnection(at, deps.connection.external_connection_id);
-  } catch (err) {
-    console.error("[xero] delete connection failed", scrubSecrets(err instanceof Error ? err.message : String(err)));
+  // An already-disconnected row means a previous attempt failed part-way through the local
+  // cleanup. The tokens may be gone, so skip Xero and just finish the idempotent cleanup.
+  const retry = deps.connection.status === "disconnected";
+  if (!retry) {
+    try {
+      const at = await deps.getAccessToken();
+      const deleted = await deps.deleteXeroConnection(at, deps.connection.external_connection_id);
+      if (!deleted) console.error("[xero] delete connection was not accepted by Xero");
+    } catch (err) {
+      console.error("[xero] delete connection failed", scrubSecrets(err instanceof Error ? err.message : String(err)));
+    }
+    try {
+      const rt = await deps.readRefreshToken();
+      if (rt) {
+        revokedAtXero = await deps.revoke(rt);
+        if (!revokedAtXero) console.error("[xero] refresh token revocation was not accepted by Xero");
+      }
+    } catch (err) {
+      console.error("[xero] revoke failed", scrubSecrets(err instanceof Error ? err.message : String(err)));
+    }
+    // Mark disconnected first so an in-flight post sees a dead connection before we cancel its jobs.
+    // Separate statements on purpose: post_supplier_invoice locks invoice -> receipt lines -> connection,
+    // so one transaction touching the connection and then invoices would deadlock with it.
+    await repo.markDisconnected(deps.connection.id);
   }
-  try {
-    const rt = await deps.readRefreshToken();
-    if (rt) revokedAtXero = await deps.revoke(rt);
-  } catch (err) {
-    console.error("[xero] revoke failed", scrubSecrets(err instanceof Error ? err.message : String(err)));
-  }
-  // Mark disconnected first so an in-flight post sees a dead connection before we cancel its jobs.
-  // Separate statements on purpose: post_supplier_invoice locks invoice -> receipt lines -> connection,
-  // so one transaction touching the connection and then invoices would deadlock with it.
-  await repo.markDisconnected(deps.connection.id);
   await repo.cancelOpenJobs(deps.connection.id, "Xero disconnected");
   await repo.deleteCredential(deps.connection.id);
   return { revokedAtXero };
@@ -207,17 +234,28 @@ export function supabaseConnectionRepo(db: SupabaseClient): ConnectionRepo {
       return (data as { id: string }).id;
     },
     async upsertCredential(connectionId, cred) {
+      // Never reset version to 1: a refresher that leased an older version must not match the new row.
+      const { data: current, error: e1 } = await db.from("accounting_credential").select("version").eq("connection_id", connectionId).maybeSingle();
+      assertNoError(e1, "read accounting_credential version");
+      const version = ((current as { version: number } | null)?.version ?? 0) + 1;
       const { error } = await db
         .from("accounting_credential")
-        .upsert({ connection_id: connectionId, ...cred, version: 1, refresh_lease_until: null, updated_at: new Date().toISOString() }, { onConflict: "connection_id" });
+        .upsert({ connection_id: connectionId, ...cred, version, refresh_lease_until: null, updated_at: new Date().toISOString() }, { onConflict: "connection_id" });
       assertNoError(error, "upsert accounting_credential");
+    },
+    async markConnected(connectionId, userId, nowIso) {
+      const { error } = await db
+        .from("accounting_connection")
+        .update({ status: "connected", connected_at: nowIso, connected_by: userId, last_refreshed_at: nowIso, last_error: null, disconnected_at: null, updated_at: nowIso })
+        .eq("id", connectionId);
+      assertNoError(error, "mark accounting_connection connected");
     },
     async cancelOpenJobs(connectionId, reason) {
       const { data: cancelled, error } = await db
         .from("accounting_outbox")
         .update({ status: "cancelled", error_message: reason, completed_at: new Date().toISOString(), locked_at: null, locked_by: null })
         .eq("connection_id", connectionId)
-        .in("status", ["pending", "working", "failed"])
+        .in("status", ["pending", "working", "failed", "gave_up"])
         .select("entity_id, operation");
       assertNoError(error, "cancel accounting_outbox jobs");
       const rows = (cancelled ?? []) as { entity_id: string; operation: string }[];

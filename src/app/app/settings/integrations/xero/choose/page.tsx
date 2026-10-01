@@ -13,7 +13,14 @@ export default async function ChooseXeroOrganisationPage() {
   const ctx = await getServerTenantContext();
   if (!ctx) redirect("/login");
   if (!isAdminRole(ctx.role)) redirect("/app/settings/profile");
-  const pending = openPending((await cookies()).get(PENDING_COOKIE)?.value ?? "", loadTokenKey());
+  let key;
+  try {
+    key = loadTokenKey();
+  } catch {
+    key = null;
+  }
+  if (!key) redirect("/app/settings/integrations?xero=error&reason=not-configured");
+  const pending = openPending((await cookies()).get(PENDING_COOKIE)?.value ?? "", key);
   if (!pending || pending.tenantId !== ctx.tenantId) redirect("/app/settings/integrations?xero=error&reason=expired");
 
   return (
