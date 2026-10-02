@@ -6,5 +6,6 @@ import type { ManualSlug } from "./manuals";
  * the registry stays importable in tests, which do not compile MDX.
  */
 export const MANUAL_CONTENT: Partial<Record<ManualSlug, () => Promise<{ default: MDXContent }>>> = {
+  "getting-started": () => import("./getting-started.mdx"),
   "purchasing-and-xero": () => import("./purchasing-and-xero.mdx"),
 };

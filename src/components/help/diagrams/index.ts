@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import GettingStartedDiagram from "./getting-started";
 import PurchasingAndXeroDiagram from "./purchasing-and-xero";
 
 /**
@@ -7,5 +8,6 @@ import PurchasingAndXeroDiagram from "./purchasing-and-xero";
  * Drawings are SVG components coloured only with design tokens.
  */
 export const DIAGRAMS: Record<string, ComponentType> = {
+  "getting-started": GettingStartedDiagram,
   "purchasing-and-xero": PurchasingAndXeroDiagram,
 };
