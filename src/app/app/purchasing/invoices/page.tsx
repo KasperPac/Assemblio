@@ -6,6 +6,7 @@ import { INVOICE_TABS, invoiceBadge } from "@/lib/accounting/supplier-invoice/la
 import PageHeader from "../../_ui/page-header";
 import StatusBadge from "../../_ui/status-badge";
 import EmptyState from "../../_ui/empty-state";
+import { poLabel } from "@/lib/purchasing/po-label";
 import styles from "./invoices.module.css";
 
 type Props = { searchParams?: Promise<{ tab?: string }> };
@@ -19,7 +20,7 @@ export default async function SupplierInvoicesPage({ searchParams }: Props) {
 
   let q = ctx.supabase
     .from("supplier_invoice")
-    .select("id, invoice_number, invoice_date, due_date, total, currency, status, sync_status, external_url, purchase_order_id, supplier:supplier_id(name), purchase_order:purchase_order_id(po_number)")
+    .select("id, invoice_number, invoice_date, due_date, total, currency, status, sync_status, external_url, purchase_order_id, supplier:supplier_id(name), purchase_order:purchase_order_id(id, po_number)")
     .eq("tenant_id", ctx.tenantId)
     .order("created_at", { ascending: false })
     .limit(200);
@@ -56,7 +57,10 @@ export default async function SupplierInvoicesPage({ searchParams }: Props) {
                   <tr key={r.id}>
                     <td><Link className={styles.link} href={`/app/purchasing/invoices/${r.id}`}>{String(r.invoice_number)}</Link></td>
                     <td>{one(r.supplier as { name: string | null } | null)?.name ?? "—"}</td>
-                    <td>{one(r.purchase_order as { po_number: string | null } | null)?.po_number ?? "—"}</td>
+                    <td>{(() => {
+                      const po = one(r.purchase_order as { id: string; po_number: string | null } | null);
+                      return po ? <Link className={styles.link} href={`/app/purchasing/${po.id}`}>{poLabel(po)}</Link> : "—";
+                    })()}</td>
                     <td>{String(r.invoice_date)}</td>
                     <td>{String(r.due_date)}</td>
                     <td className={styles.num}>{new Intl.NumberFormat("en-AU", { style: "currency", currency: r.currency }).format(Number(r.total))}</td>

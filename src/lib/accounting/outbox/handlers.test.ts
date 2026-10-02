@@ -1,6 +1,7 @@
 // src/lib/accounting/outbox/handlers.test.ts
 import { describe, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { stockLineDescription } from "../xero/bill";
 import { createOrgCache, handleCreateBill, handleCreateContact, handleVoidBill, supabaseHandlerStore, type BillSource, type HandlerStore, type OutboxJob } from "./handlers";
 
 const access = { accessToken: "tok", xeroTenantId: "org-1" };
@@ -248,6 +249,18 @@ describe("supabaseHandlerStore", () => {
     expect(src?.lines[0]).toMatchObject({ quantity: 10, unit_amount: 2, component_sku: "B-1", receipt_ref: "DN-1" });
     expect(f.log.map((l) => l.table)).toEqual(["supplier_invoice", "purchase_order", "supplier_invoice_line", "component", "delivery_receipt_line", "delivery_receipt"]);
     for (const l of f.log) expect(l.filters).toContainEqual(["tenant_id", "t1"]);
+  });
+
+  it("loadBillSource labels a PO without a number by its short id, so line descriptions still carry the PO", async () => {
+    const poId = "abcd1234-0000-4000-8000-000000000000";
+    const f = fakeDb({
+      supplier_invoice: { data: { id: "inv-1", tenant_id: "t1", supplier_id: "s1", purchase_order_id: poId, invoice_number: "INV-9", invoice_date: "2026-10-02", due_date: "2026-11-01", amounts_mode: "exclusive", currency: "AUD", status: "posted", total: "33.00", external_id: null }, error: null },
+      purchase_order: { data: { po_number: null }, error: null },
+      supplier_invoice_line: { data: [], error: null },
+    });
+    const src = await supabaseHandlerStore(f.db).loadBillSource("inv-1", "t1");
+    expect(src?.invoice.po_number).toBe("PO-ABCD1234");
+    expect(stockLineDescription({ sku: "B-1", name: "Bolt", poNumber: src?.invoice.po_number ?? null, receiptRef: "DN-1" })).toBe("B-1 Bolt · PO-ABCD1234 · receipt DN-1");
   });
 
   it("loadBillSource throws when a related read fails", async () => {

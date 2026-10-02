@@ -9,6 +9,7 @@ import PageHeader from "../../../_ui/page-header";
 import StatusBadge from "../../../_ui/status-badge";
 import LoadFailed from "../load-failed";
 import InvoiceActions from "../invoice-actions";
+import { poLabel } from "@/lib/purchasing/po-label";
 import styles from "../invoices.module.css";
 
 type Props = { params: Promise<{ id: string }> };
@@ -27,7 +28,7 @@ export default async function SupplierInvoicePage({ params }: Props) {
 
   const { data, error } = await supabase
     .from("supplier_invoice")
-    .select("id, invoice_number, invoice_date, due_date, amounts_mode, currency, subtotal, tax_total, total, entered_total, status, sync_status, external_url, posted_at, voided_at, void_reason, purchase_order_id, supplier:supplier_id(name), purchase_order:purchase_order_id(po_number), supplier_invoice_line(line_no, kind, description, quantity, unit_amount, tax_type, tax_rate, account_code, line_amount, tax_amount, qty_variance, price_variance)")
+    .select("id, invoice_number, invoice_date, due_date, amounts_mode, currency, subtotal, tax_total, total, entered_total, status, sync_status, external_url, posted_at, voided_at, void_reason, purchase_order_id, supplier:supplier_id(name), purchase_order:purchase_order_id(id, po_number), supplier_invoice_line(line_no, kind, description, quantity, unit_amount, tax_type, tax_rate, account_code, line_amount, tax_amount, qty_variance, price_variance)")
     .eq("id", id)
     .eq("tenant_id", tenantId)
     .maybeSingle();
@@ -54,7 +55,7 @@ export default async function SupplierInvoicePage({ params }: Props) {
   const unitMoney = (n: unknown) => new Intl.NumberFormat("en-AU", { style: "currency", currency: inv.currency, minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(Number(n ?? 0));
   const badge = invoiceBadge(inv.status, inv.sync_status);
   const supplierName = one(inv.supplier as { name: string | null } | null)?.name ?? "Supplier";
-  const poNumber = one(inv.purchase_order as { po_number: string | null } | null)?.po_number;
+  const po = one(inv.purchase_order as { id: string; po_number: string | null } | null);
   const lines = [...inv.supplier_invoice_line].sort((a, b) => a.line_no - b.line_no);
   const latestBadge = latest ? jobBadge(latest.status, latest.error_class) : null;
 
@@ -78,7 +79,7 @@ export default async function SupplierInvoicePage({ params }: Props) {
       <div className={styles.formCard}>
         <div className={styles.fields}>
           <div className={styles.field}><span className={styles.caps}>Status</span><StatusBadge variant={badge.variant}>{badge.label}</StatusBadge></div>
-          <div className={styles.field}><span className={styles.caps}>Purchase order</span>{poNumber && inv.purchase_order_id ? <Link className={styles.link} href={`/app/purchasing/${inv.purchase_order_id as string}`}>{poNumber}</Link> : <span>—</span>}</div>
+          <div className={styles.field}><span className={styles.caps}>Purchase order</span>{po ? <Link className={styles.link} href={`/app/purchasing/${po.id}`}>{poLabel(po)}</Link> : <span>—</span>}</div>
           <div className={styles.field}><span className={styles.caps}>Invoice date</span><span>{String(inv.invoice_date)}</span></div>
           <div className={styles.field}><span className={styles.caps}>Due date</span><span>{String(inv.due_date)}</span></div>
           <div className={styles.field}><span className={styles.caps}>Amounts</span><span>{inv.amounts_mode === "inclusive" ? "Including GST" : "Excluding GST"}</span></div>

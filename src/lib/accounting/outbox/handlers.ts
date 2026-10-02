@@ -1,6 +1,7 @@
 // src/lib/accounting/outbox/handlers.ts
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { assertNoError } from "@/lib/supabase/assert-no-error";
+import { poLabel } from "@/lib/purchasing/po-label";
 import type { AmountsMode } from "../supplier-invoice/calc";
 import { xeroRequest, type XeroAccess } from "../xero/client";
 import {
@@ -299,7 +300,8 @@ export function supabaseHandlerStore(db: SupabaseClient): HandlerStore {
           .eq("id", row.purchase_order_id)
           .maybeSingle();
         assertNoError(pe, "load purchase_order");
-        poNumber = (po as { po_number: string | null } | null)?.po_number ?? null;
+        // A PO without a number is still named (short id), so the accountant sees which PO a bill line came from.
+        poNumber = poLabel({ id: row.purchase_order_id, po_number: (po as { po_number: string | null } | null)?.po_number });
       }
 
       const { data: lines, error: le } = await db

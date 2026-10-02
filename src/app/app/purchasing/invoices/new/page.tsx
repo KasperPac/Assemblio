@@ -15,6 +15,7 @@ import PageHeader from "../../../_ui/page-header";
 import EmptyState from "../../../_ui/empty-state";
 import InvoiceForm, { type AccountOption, type ReceiptOption, type TaxOption } from "../invoice-form";
 import LoadFailed from "../load-failed";
+import { poLabel } from "@/lib/purchasing/po-label";
 import styles from "../invoices.module.css";
 
 type Props = { searchParams?: Promise<{ po?: string; receipt?: string; draft?: string }> };
@@ -109,7 +110,7 @@ export default async function NewSupplierInvoicePage({ searchParams }: Props) {
     supabase.from("suppliers").select("id, name, payment_terms, default_currency").eq("id", supplierId).eq("tenant_id", tenantId).maybeSingle(),
     supabase
       .from("delivery_receipt")
-      .select("id, supplier_reference, received_at, purchase_order_id, purchase_order:purchase_order_id(po_number), delivery_receipt_line(id, component_id, quantity_delivered, cost_per_unit, component:component_id(name, sku), purchase_order_line:purchase_order_line_id(unit_cost))")
+      .select("id, supplier_reference, received_at, purchase_order_id, purchase_order:purchase_order_id(id, po_number), delivery_receipt_line(id, component_id, quantity_delivered, cost_per_unit, component:component_id(name, sku), purchase_order_line:purchase_order_line_id(unit_cost))")
       .eq("tenant_id", tenantId)
       .eq("supplier_id", supplierId)
       .eq("stock_in_reason", "supplier_delivery")
@@ -163,7 +164,7 @@ export default async function NewSupplierInvoicePage({ searchParams }: Props) {
 
   const receipts: ReceiptOption[] = rows.map((r) => ({
     id: r.id,
-    label: [r.supplier_reference ?? "Receipt", one(r.purchase_order as { po_number: string | null } | null)?.po_number, r.received_at?.slice(0, 10)].filter(Boolean).join(" · "),
+    label: [r.supplier_reference ?? "Receipt", (() => { const po = one(r.purchase_order as { id: string; po_number: string | null } | null); return po ? poLabel(po) : null; })(), r.received_at?.slice(0, 10)].filter(Boolean).join(" · "),
     lines: r.delivery_receipt_line.map((l) => {
       const c = one(l.component as { name: string; sku: string | null } | null);
       const poCost = one(l.purchase_order_line as { unit_cost: number | null } | null)?.unit_cost;
