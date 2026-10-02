@@ -6,8 +6,8 @@ const SX = 24;
 const SW = 232;
 const LX = 288;
 const LW = 200;
-const RX = 536;
-const RW = 200;
+const RX = 524;
+const RW = 212;
 
 type Box = { x: number; y: number; w: number; h: number; name: string; lines: string[]; accent?: boolean };
 
@@ -34,7 +34,7 @@ const BALANCE: Box = {
   w: RW,
   h: 92,
   name: "Stock balance",
-  lines: ["Per component and warehouse", "On hand, In prod, Reserved"],
+  lines: ["Per warehouse", "On hand, In prod, Reserved"],
 };
 const AVAILABLE: Box = {
   x: RX,
@@ -42,7 +42,7 @@ const AVAILABLE: Box = {
   w: RW,
   h: 72,
   name: "Available",
-  lines: ["On hand minus Reserved", "Shown on a component's page"],
+  lines: ["On hand minus Reserved", "On a component's page"],
 };
 
 function BoxShape({ b }: { b: Box }) {
@@ -92,7 +92,7 @@ export default function InventoryAndWarehouseDiagram() {
         {SOURCES.map((s, i) => (
           <path
             key={s.name}
-            d={`M${SX + SW} ${s.y + s.h / 2}H${SX + SW + 16}V${LEDGER.y + 12 + i * 17}H${LX}`}
+            d={`M${SX + SW} ${s.y + s.h / 2}H${SX + SW + 8 + i * 5}V${LEDGER.y + 12 + i * 17}H${LX}`}
             markerEnd="url(#m-inventory-arrow)"
           />
         ))}

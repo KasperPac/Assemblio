@@ -24,7 +24,7 @@ What the numbers mean:
 - **Reserved** is stock set aside for open orders. It comes from order allocation and does not reduce **On hand**.
 - **Available** is **On hand** minus **Reserved**, added up across your warehouses. The Inventory list does not show it. A component's own page does: see [Reading a component's page](/help/components-and-templates#reading-a-components-page).
 
-A **Below reorder** badge appears beside **On hand** when that row's **On hand** is lower than the component's reorder point. A component with a reorder point of 0 never shows it. The badge looks at one warehouse at a time, whereas the low-stock banner on a component's page compares **Available** across all of them.
+A **Below reorder** badge appears beside **On hand** when that row's **On hand** is lower than the component's reorder point. A component with no reorder point shows it only when its **On hand** is negative. The badge looks at one warehouse at a time, whereas the low-stock banner on a component's page compares **Available** across all of them.
 
 With no rows yet, the page says "No inventory balances yet": "Receive stock or run a stocktake to establish your first component balances." See [Receiving goods](/help/purchasing-and-xero#receiving-goods) and [Stocktake](/help/stocktake).
 
@@ -43,7 +43,7 @@ Use **Log Movement** to put stock in the system or correct it outside a stocktak
 <Screenshot src="/help/inventory-and-warehouse/log-movement.png" alt="The Log Inventory Movement dialog with component, location, reason, delta on-hand, delta in-prod and reference fields" caption="Logging a movement" />
 
 <Callout type="warning">
-Manuva does not stop **On hand** going below zero, and a saved movement cannot be edited or deleted. To correct a mistake, log a second movement with the opposite amount.
+Manuva does not stop **On hand** going below zero, and Manuva has no screen for editing or deleting a movement, so a mistake stays in the ledger. To correct a mistake, log a second movement with the opposite amount.
 </Callout>
 
 A new retail item starts with no stock. To give it an opening quantity, use **Log Movement** with a positive **Delta on-hand** at its warehouse, or receive it with the reason Opening stock. See [Tracking a variant as a retail item](/help/products-and-boms#tracking-a-variant-as-a-retail-item).
@@ -86,12 +86,12 @@ Each row shows a six-character code, plus counts such as "2 aisles", "3 bays" an
 
 The default location is set in **Settings → Locations**, not here. See [Setting the default location](/help/getting-started#setting-the-default-location).
 
-To put a component in a bin, use the **Location** tab on its page ([Setting a storage location](/help/components-and-templates#setting-a-storage-location)), or the scanner below. A component has one storage location, and choosing a new one replaces the old one.
+To put a component in a bin, use the **Location** tab on its page *(admin)* ([Setting a storage location](/help/components-and-templates#setting-a-storage-location)), or the scanner below. A component has one storage location, and choosing a new one replaces the old one.
 
 To delete something, click **Delete** on its row and confirm.
 
-- A sub-location or bay asks "Delete this sub-location? This cannot be undone." (or "…this bay?…"). The delete is refused while components are assigned to it.
-- An aisle that has bays asks "This aisle has [n] bay(s) that will also be deleted. Continue?". Click **Delete aisle and bays**. It is refused while components are assigned to the aisle itself.
+- A sub-location or bay asks "Delete this sub-location? This cannot be undone." (or "…this bay?…"). The delete is refused while components are assigned to it. Deleting a sub-location does not delete its aisles. They drop out of the Locations tree but still appear in the scanner's picker, so move or delete its aisles first.
+- An aisle with no bays is deleted at once, with no confirmation. An aisle that has bays asks "This aisle has [n] bay(s) that will also be deleted. Continue?". Click **Delete aisle and bays**. It is refused while components are assigned to the aisle itself.
 - A warehouse asks "Delete warehouse "[name]"? This permanently removes it and any empty bins inside. This cannot be undone." Click **Delete warehouse**. The button shows only to admins, and only when you have more than one warehouse and this one is not the default. A warehouse that has components, stock, movements, stocktake sessions or goods receipts cannot be deleted.
 
 ## Printing location barcodes
@@ -110,7 +110,7 @@ The code is the last six characters of the location's internal ID, in capitals. 
 
 The scanner is a separate mobile screen at `/app/scan`. Opening the app's home page on a phone or tablet sends you there. There is no link to it in the sidebar, so on a computer type the address. It needs no plan and no admin role.
 
-The home screen is titled **Warehouse Scanner** and has two modes: **Count Stock** and **Set Locations**. **↗ Open desktop app** goes back to the main app.
+The home screen is titled **Warehouse Scanner** and has two modes: **Count Stock** and **Set Locations**. **↗ Open desktop app** opens the main app address, which on a phone or tablet returns you to the scanner, so use a computer for the main app.
 
 To assign components to a location:
 
@@ -144,7 +144,7 @@ The Inventory page has one label.
 | "[n] component(s) assigned — reassign before deleting." | Move the components to another location, then delete again. |
 | "Can't delete — still referenced by [list]. Move or clear it first." | The list names what still uses the warehouse: components assigned here, on-hand stock, movement history, stocktake sessions or goods-in receipts. A warehouse that has held stock cannot be deleted. |
 | "Failed to load locations: [message]" with **Try again** | Click **Try again**. |
-| A message about a duplicate or unique key when saving a location | The name is already used in that place. Choose another. |
+| A location will not save and nothing changes | Names must be unique in their place: a sub-location within its warehouse, an aisle within its sub-location, a bay within its aisle. Try another name. |
 | "Location not found — check the label" | The code is not one of your locations. Check the label, or choose the location manually. |
 | "No warehouses found. Add them in the desktop app first." | The manual picker has no warehouses to show. Add one on the Locations page. |
 | "No active stocktake sessions." and "Create one from the desktop app first." | Count Stock lists only open sessions. Start one from Stocktake on the desktop. |
@@ -162,9 +162,10 @@ The Inventory page has one label.
 | Delete a sub-location, aisle or bay | No | Yes |
 | Delete a warehouse | No | Yes |
 | Set the default location | No | Yes |
+| Set a component's storage location from its **Location** tab | No | Yes |
 | Scan and assign components to locations | Yes | Yes |
 
-The **Delete** buttons for sub-locations, aisles and bays are shown to everyone, but the server refuses a member. The member sees no message and nothing is deleted. The warehouse **Delete** button is hidden from members.
+The **Delete** buttons for sub-locations, aisles and bays are shown to everyone, but the server refuses a member. Nothing is deleted, and the member gets no confirmation that it was refused. The warehouse **Delete** button is hidden from members.
 
 ## Common questions
 
