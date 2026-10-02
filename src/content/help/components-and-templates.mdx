@@ -1,4 +1,4 @@
-Components are the parts you buy or make and keep in stock. Templates are saved packs of components, or saved sets of labour operations, that you reuse when you build a bill of materials (BOM). Anyone in the workspace can add a component and use a template. Admins edit, archive and import components.
+Components are the parts you buy or make and keep in stock. Templates are saved packs of components, or saved sets of labour operations, that you reuse when you build a bill of materials (BOM). Anyone in the workspace can add a component and create or edit a template. Admins edit, archive and import components, and use a template to build a BOM.
 
 ## How it fits together
 
@@ -38,7 +38,7 @@ Click **+ Add Component** at the top of the page. Anyone in the workspace can do
    - **Description**, **SKU** and **Unit**. Unit is free text, such as ea or m. Leave it blank and the component page shows ea.
    - **Supplier** and **Group**. Click **+ New group** under Group to type a name and click **Create**. Only admins can create a group *(admin)*.
    - **Supplier Part Number**. It appears once you choose a supplier.
-   - **Location**.
+   - **Location**. This is the component's location. Nothing in the app changes it after you create the component, so choose carefully. A component with none shows the location of its first stock balance, or N/A.
    - **Cost per Unit** and **Reorder Point**. Both start at 0.
    - **Low Stock Level**, which starts at 0. The form says it "Triggers a low stock alarm" and "Should be lower than the reorder point". The stock status on the list uses the reorder point, not this field.
 3. Click **Create Component**.
@@ -49,12 +49,12 @@ If you chose a supplier, Manuva also links that supplier to the component as its
 
 ## Reading a component's page
 
-Click a component's name in the list. The left side shows its picture, SKU, description and a summary: **Unit of Measure**, **Location**, **On Hand**, **Reorder Point**, **Unit Cost**, **Stock Value**, **Primary Supplier** and **Group**. A banner appears when stock is short: "Critical — no available stock", or "Low stock — [n] available, reorder point is [n]". **Receive stock** starts a goods receipt for this component, and **← Back** returns to your list with the same search and sort.
+Click a component's name in the list. The left side shows its picture, SKU, description and a summary: **Unit of Measure**, **Location**, **On Hand**, **Reorder Point**, **Unit Cost**, **Stock Value**, **Primary Supplier** and **Group**. A banner appears when stock is short: "Critical — no available stock ([n] committed to production)", where the bracket appears only when stock is reserved, or "Low stock — [n] available, reorder point is [n]". **Receive stock** starts a goods receipt for this component, and **← Back** returns to your list with the same search and sort.
 
 The right side has tabs:
 
 - **Overview**: cards for **On Hand**, **Available**, **Reserved**, **In Production** and **Reorder Point**, then **Recent receipts** (**Date**, **Supplier**, **Docket**, **Qty received**) when there are any.
-- **Movements**: the latest 50 stock changes, with **Date**, **On Hand**, **In Prod**, **Reason** and **Ref**. Where a change came from a goods receipt or a production order, the **Ref** links to it. If there are none it says "No inventory movements recorded."
+- **Movements**: the latest 50 stock changes, with **Date**, **On Hand**, **In Prod**, **Reason** and **Ref**. **Ref** is plain text and does not link anywhere. If there are none it says "No inventory movements recorded."
 - **BOM Usage**: every BOM that uses the component, with **Qty per unit** and a **Status** of **Active** or **Draft**. If there are none it says "Not used in any BOMs."
 - **Suppliers (n)**: see Linking suppliers to a component.
 - **Location**: shown to admins only. See Setting a storage location.
@@ -68,13 +68,13 @@ Open the component and click **✎ Edit** at the bottom of the summary. *(admin)
 1. In **Edit Component**, change any of **Name**, **Description**, **SKU**, **Unit**, **Supplier**, **Group**, **Cost per Unit**, **Reorder Point** and **Low Stock Level**.
 2. Click **Save Changes**.
 
-The window has no **Location** field and no supplier part number. Set a location on the **Location** tab, and the part number on the **Suppliers** tab.
+The window has no **Location** field and no supplier part number. The component's location cannot be changed after it is created. Set the part number on the **Suppliers** tab. The **Location** tab sets something different: see Setting a storage location.
 
 **Cost per Unit** is the component's own cost. Each supplier link has its own **Unit cost** as well, and the two are separate. Posting a supplier invoice or updating costs from a receipt can also change a component's cost. See [Posting an invoice](/help/purchasing-and-xero#posting-an-invoice).
 
 ## Linking suppliers to a component
 
-The **Suppliers** tab lists each supplier you can buy the component from, with **Supplier**, **Part #**, **Unit Cost**, **MOQ**, **Lead Time**, **Avg Actual** and **Pref**. A **best price** tag marks the lowest unit cost, and a **fastest** tag marks the shortest lead time. **Avg Actual** is the average lead time of past receipts, shown green when it is no longer than the promised lead time and red when it is longer.
+The **Suppliers** tab lists each supplier you can buy the component from, with **Supplier**, **Part #**, **Unit Cost**, **MOQ**, **Lead Time**, **Avg Actual** and **Pref**. A **best price** tag marks the lowest unit cost, and a **fastest** tag marks the shortest lead time. A row that is both shows only **best price**. **Avg Actual** is the average lead time of past receipts, shown green when it is no longer than the promised lead time and red when it is longer.
 
 1. Click **+ Link Supplier**. *(admin)*
 2. Choose a supplier from **Select supplier…** and fill in any of **Part #**, **Unit cost**, **Lead time (days)** and **MOQ**.
@@ -90,7 +90,7 @@ On the component page, click **↑ Upload** under the picture and choose a file.
 
 ## Setting a storage location
 
-The **Location** tab sets where the component is kept inside a warehouse. *(admin)*
+The **Location** tab sets the default storage bin for the component. It says "When stock is received, it will be directed to this bin." It does not change the **Location** shown in the summary. *(admin)*
 
 1. Choose a **Warehouse**. Then, if you want, choose a **Sub-location**, **Aisle** and **Bay**.
 2. Click **Save location**. The tab then shows the **Assigned location**.
@@ -120,9 +120,10 @@ Use an import to load a whole catalogue at once. It adds new components and neve
 3. Fill it in, then drop the file on **Drop your CSV here**, or click to browse. It must be a .csv file, with a maximum of 5 MB.
 4. On the **Preview** step, check each row's **Status**. A good row shows "✓ OK".
 5. If a row shows a red "✗" message, fix your file and click **Re-upload CSV**. Nothing imports while any row has an error.
-6. If a row shows an amber "⚠" message, click **Next: Resolve →**. A supplier or group name that Manuva does not know is shown once, with how many rows it affects. For each one, choose **Pick an existing supplier…** (or group), use the suggestion if there is one (**Use [name]**), or click **+ Create new**, edit the name and click **Create supplier** (or **Create group**). Your choice applies to every row with that value. Click **undo** to change your mind.
-7. When the count reads "[n] of [n] resolved", click **Import [n] Components**.
-8. The last step says "[n] components imported successfully." Click **View Components**, or **Import another file**.
+6. If your file has no errors or warnings, the **Preview** step shows **Import [n] Components** straight away. Click it and go to step 9.
+7. If a row shows an amber "⚠" message, click **Next: Resolve →**. A supplier or group name that Manuva does not know is listed with how many rows it affects. A row with both an unknown supplier and an unknown group is flagged only for the supplier. Its group imports as none, so fix that group in your file first. For each one, choose **Pick an existing supplier…** (or group), use the suggestion if there is one (**Use [name]**), or click **+ Create new**, edit the name and click **Create supplier** (or **Create group**). Your choice applies to every row with that value. Click **undo** to change your mind.
+8. When the count reads "[n] of [n] resolved", click **Import [n] Components**.
+9. The last step says "[n] components imported successfully." Click **View Components**, or **Import another file**.
 
 Supplier, group and location names are matched without regard to capital letters. A supplier or group that is not found can be resolved in step 6, but a **location** that is not found is an error you must fix in the file. For each row that has a supplier, the import also links that supplier as the preferred supplier, with the part number from the file.
 
@@ -142,7 +143,7 @@ A template is a reusable starting point for a BOM. There are two kinds, each on 
 
 An open template lists its lines with **Component**, **SKU**, **Unit**, **Qty**, **Unit cost** and **Line cost**, and a **Materials total**. Change a quantity with the **−** and **+** buttons or by typing, drag the ⠿ handle to reorder, and click the cross to remove a line. Each change saves as you make it.
 
-You can also make a component template from an existing BOM with **Save as template**. See [Editing a BOM](/help/products-and-boms#editing-a-bom).
+You can also make a component template from an existing BOM with **Save as template**. See [Editing a BOM](/help/products-and-boms#editing-a-bom). *(admin)*
 
 **A labour template**
 
@@ -150,9 +151,9 @@ You can also make a component template from an existing BOM with **Save as templ
 2. In **New Labor Template**, enter a **Name** and a **Description**, and choose a **Mode**: "Basic — departments and operations only", or "Advanced — all labor-line fields". Click **Create Template**.
 3. Click the new row to open it, then click **+ Add operation**.
 4. Fill in the **Operation** and choose a **Department**. The number in the first column is the sequence. In Advanced mode there are also **Setup h**, **Run h/u**, **Admin h/u**, **kWh/u**, **Gas/u** and **Notes**.
-5. Click **Save operations**. Nothing on this tab saves until you do.
+5. Click **Save operations**. Changes to operations do not save until you do.
 
-A new operation takes the next sequence number and the first of your active departments. **Switch to advanced** or **Switch to basic**, beside the **Dynamic link** switch, changes the mode. Switching to basic hides the hours columns but keeps their values.
+A new operation takes the next sequence number and the first of your active departments. **Switch to advanced** or **Switch to basic**, beside the **Dynamic link** switch, changes the mode. Switching the mode saves straight away. Switching to basic hides the hours columns but keeps their values.
 
 <Screenshot src="/help/components-and-templates/templates-list.png" alt="The Templates page with the Components and Labor and Routing tabs and an open component template showing its lines and materials total" caption="A component template" />
 
@@ -160,17 +161,17 @@ A new operation takes the next sequence number and the first of your active depa
 
 Using a template copies its lines into a BOM. The template itself is not changed.
 
-- **A component template:** open a variant with no BOM and start from the template. See [Creating a BOM](/help/products-and-boms#creating-a-bom).
-- **A labour template:** click **Apply template** on a BOM's **Labour & Routing** tab. See [Applying a labour template](/help/products-and-boms#applying-a-labour-template).
+- **A component template:** open a variant with no BOM and start from the template. See [Creating a BOM](/help/products-and-boms#creating-a-bom). *(admin)*
+- **A labour template:** click **Apply template** on a BOM's **Labour & Routing** tab. See [Applying a labour template](/help/products-and-boms#applying-a-labour-template). *(admin)*
 
-Either way, the BOM remembers which template it came from. That memory is what lets a template push changes to it later. The **Used by** column on the Templates page counts those BOMs, and an open template says "Used by [n] BOMs" or "Not used yet".
+Either way, the BOM remembers which template it came from. That memory is what lets a template push changes to it later. The **Used by** column on the Templates page counts the BOMs currently using it, and an open template says "Used by [n] BOMs" or "Not used yet". A BOM counts through its latest version for each variant, unless that version is archived.
 
 ## Changing a template and updating BOMs
 
 Editing a template does not change any BOM. BOMs made from it keep the lines they were given. To roll a change out, use **Dynamic link**.
 
 1. Open the template and switch **Dynamic link** on. Hover the **i** beside it for a reminder of what it does. The template's **Status** shows **Linked**.
-2. Change the template's lines. A linked template then shows an **Unpublished changes** badge, once at least one change has been saved.
+2. A linked template that has been edited and never pushed shows an **Unpublished changes** badge. That includes edits made before you linked it. Further changes keep it there.
 3. Click **Push update to [n] BOMs**. It shows only when the template is linked, has unpublished changes, and is used by at least one BOM.
 4. In **Push template update to BOMs**, untick any BOM you do not want to update. Each shows its variant, SKU and current version, and what it becomes, such as "v2 → v3 active".
 5. Click **Update [n] BOMs**.
@@ -181,6 +182,9 @@ Each BOM you update gets a new version, one higher than its current one:
 - A draft BOM becomes a new draft version, and the old draft is left as it was.
 - The lines that came from the template are rebuilt from the template as it is now. Quantities you changed on those lines go back to the template's.
 - Lines you added to the BOM by hand are kept.
+- The other kind of line is copied across unchanged: labour operations on a component push, components on a labour push.
+- A new version of a live BOM is live straight away. There is no **Activate BOM** step.
+- The new version starts without notifications. Notification settings belong to one BOM version and are not copied, so set them up again on the **Notifications** tab.
 
 The window explains: "Deselected BOMs keep their current version and stay linked — they'll be offered again on the next publish." A BOM is refused if a newer version of that variant already exists. Manuva updates the others and shows what failed, for example "Updated 2 BOMs; 1 failed: BOM v2: a newer version already exists".
 
@@ -266,6 +270,8 @@ Available is on hand less reserved.
 | Create a template, change its lines or mode, switch **Dynamic link** | Yes | Yes |
 | **Push update to [n] BOMs** | Yes | Yes |
 | Delete a template | No | Yes |
+| Use a template on a BOM (new BOM from a template, **Apply template**) | No | Yes |
+| **Save as template** from a BOM | No | Yes |
 
 Several of the Yes entries for members have no role check in the code. They are open to members even where the matching action elsewhere is admin-only. Pushing a template update, for example, creates new BOM versions, although creating and editing a BOM is admin-only. The **Edit**, **Archive**, **Location** and supplier-link buttons are hidden from members. The template **Delete** button is shown to everyone, but a member who clicks it sees no message and nothing is deleted.
 
@@ -275,7 +281,7 @@ Several of the Yes entries for members have no role check in the code. They are 
 - **Where do I change how much stock a component has?** Not on the component. Stock changes come from goods receipts and other stock movements, and the **Movements** tab lists them.
 - **Does changing a template change my BOMs?** No. A BOM copies the template's lines when you use it. Only **Push update to [n] BOMs** on a linked template changes BOMs.
 - **Why is the Unit cost filter missing?** It appears only when your components have different costs.
-- **Why is the Push update button missing?** The template needs **Dynamic link** on, at least one change saved since the last push, and at least one BOM that uses it.
+- **Why is the Push update button missing?** The template needs **Dynamic link** on, edits not yet pushed, and at least one BOM that uses it.
 - **Does an import change components I already have?** No. It only adds. A row whose SKU already exists is an error.
 - **Can I delete a component?** No. You can archive it when nothing is using it. See Archiving a component.
 - **Why can I not edit a component?** Editing is for admins. Ask one, or ask for a role change.
