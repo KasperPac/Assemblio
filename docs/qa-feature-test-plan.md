@@ -319,6 +319,10 @@ Entry: Purchasing → Supplier invoices; PO detail and receipt detail → "Enter
 - [ ] A read-only platform observer sees the "Read-only access" empty state ("Your role can view supplier invoices but not enter or edit them.") and every save, post, link and search action is refused
 - [ ] The new-invoice page with no PO or receipt shows "Start from a purchase order or goods receipt"
 - [ ] PO and receipt pages show Not invoiced / Invoiced with the invoice and its status
+- [ ] The foreign-currency warning ("This supplier is set to X, but Xero's base currency is Y") shows only when Xero is set up and not disconnected; with no Xero it never shows
+- [ ] A PO with no PO number shows as PO-XXXXXXXX (short id) in the invoice list, the invoice detail (a link to the PO), the receipt picker and Xero bill line descriptions
+- [ ] The void dialog wording follows the state: bill sent / queued or failed with Xero connected / otherwise no Xero mention
+- [ ] "Enter supplier invoice" is hidden on a receipt, and on a PO, once every line is on a non-voided invoice; it returns when that invoice is voided
 
 ---
 
@@ -793,3 +797,4 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-10-01 — amended Xero / Accounting: removed the never-live May integration (UI card, /api/xero routes, receipt bill push) pending the MANUVA-34 rebuild.
 - 2026-10-01 — added Supplier invoices + Xero supplier bills (MANUVA-34): supplier tax invoices against receipts; production-grade Xero connect, setup, bill/void sync via outbox; pilot-gated. §16 rewritten; the Xero webhook claim in Security & integrity is corrected.
 - 2026-10-01 — amended Supplier invoices + Xero supplier bills (MANUVA-34 final review): posting works while Xero needs reconnecting (stored setup rates; the bill waits); inclusive prefill adds GST to the receipt cost; void works while disconnected and chases a gave-up create; disconnect marks a possibly-created bill failed; retries never adopt another invoice's bill; fixable messages name fixes in Xero or void and re-enter; create-contact is admin-only in SQL.
+- 2026-10-02 — amended Supplier invoices (MANUVA-49/50/51): currency warning only with a known Xero base currency; unnumbered POs show a short-id label (and in bill lines); void dialog worded by sync state; Enter supplier invoice hidden when fully invoiced.

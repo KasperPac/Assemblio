@@ -10,6 +10,7 @@ import StatusBadge from "../../../_ui/status-badge";
 import LoadFailed from "../load-failed";
 import InvoiceActions from "../invoice-actions";
 import { poLabel } from "@/lib/purchasing/po-label";
+import { voidHelpText } from "@/lib/accounting/supplier-invoice/void-help";
 import styles from "../invoices.module.css";
 
 type Props = { params: Promise<{ id: string }> };
@@ -50,6 +51,16 @@ export default async function SupplierInvoicePage({ params }: Props) {
     .limit(5);
   if (jobsErr) return loadFailed("its Xero sync status", jobsErr);
   const latest = ((jobs ?? []) as Array<{ id: string; operation: string; status: string; error_class: string | null; error_message: string | null }>)[0];
+  // A live connection (set up, not disconnected) is what queues and voids bills; if it can't be read, assume live.
+  const { data: conn, error: connErr } = await supabase
+    .from("accounting_connection")
+    .select("status, setup_completed_at")
+    .eq("tenant_id", tenantId)
+    .eq("provider", "xero")
+    .maybeSingle();
+  if (connErr) console.error("[supplier-invoice] detail: load accounting connection", connErr.message);
+  const c = conn as { status: string; setup_completed_at: string | null } | null;
+  const xeroLive = connErr ? true : !!c && c.status !== "disconnected" && !!c.setup_completed_at;
   const admin = isAdminRole(ctx.role);
   const money = (n: unknown) => new Intl.NumberFormat("en-AU", { style: "currency", currency: inv.currency }).format(Number(n ?? 0));
   const unitMoney = (n: unknown) => new Intl.NumberFormat("en-AU", { style: "currency", currency: inv.currency, minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(Number(n ?? 0));
@@ -72,6 +83,7 @@ export default async function SupplierInvoicePage({ params }: Props) {
               invoiceId={id}
               canVoid={admin && inv.status === "posted"}
               retryJobId={admin && latest && isFailedForGood(latest) ? latest.id : null}
+              voidHelp={voidHelpText({ externalId: inv.external_id as string | null, syncStatus: inv.sync_status, xeroLive })}
             />
           </div>
         }

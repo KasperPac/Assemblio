@@ -7,7 +7,7 @@ import { retryAccountingJob } from "../../settings/integrations/xero/actions";
 import styles from "./invoices.module.css";
 
 /** Rendered inside the page's PageHeader `actions`. */
-export default function InvoiceActions({ invoiceId, canVoid, retryJobId }: { invoiceId: string; canVoid: boolean; retryJobId: string | null }) {
+export default function InvoiceActions({ invoiceId, canVoid, retryJobId, voidHelp }: { invoiceId: string; canVoid: boolean; retryJobId: string | null; voidHelp: string }) {
   const router = useRouter();
   const dialog = useRef<HTMLDialogElement>(null);
   const [reason, setReason] = useState("");
@@ -46,7 +46,7 @@ export default function InvoiceActions({ invoiceId, canVoid, retryJobId }: { inv
         <div className={styles.field}>
           <label className={styles.caps} htmlFor="void-reason">Reason for voiding</label>
           <textarea id="void-reason" className={styles.input} rows={3} value={reason} onChange={(e) => setReason(e.target.value)} />
-          <p className={styles.help}>The bill is deleted or voided in Xero, and the receipt lines can be invoiced again.</p>
+          <p className={styles.help}>{voidHelp}</p>
           {voidMessage ? <p className={styles.error} role="alert">{voidMessage}</p> : null}
         </div>
         <div className={styles.actions}>

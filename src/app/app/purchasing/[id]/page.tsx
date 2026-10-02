@@ -2,6 +2,9 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { isReadOnlyRole } from "@/lib/tenant/authz";
+import { isInvoiceableReceipt } from "@/lib/accounting/supplier-invoice/calc";
+import { allLinesInvoiced } from "@/lib/accounting/supplier-invoice/invoiced";
+import { chunk } from "@/lib/accounting/supplier-invoice/util";
 import PageHeader from "../../_ui/page-header";
 import StatusBadge from "../../_ui/status-badge";
 import InvoiceStatusPanel, { type PanelInvoice } from "../invoices/invoice-status-panel";
@@ -81,12 +84,45 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
     .order("created_at");
   if (poInvoicesError) console.error("[supplier-invoice] PO detail: load invoices", poInvoicesError.message);
 
+  // Is there anything left to invoice? Every line of every invoiceable receipt already on a live invoice means no.
+  // A failed read keeps the action showing.
+  let fullyInvoiced = false;
+  {
+    const supplierId = (Array.isArray(po.supplier) ? po.supplier[0] : po.supplier)?.id as string | undefined;
+    const { data: recs, error: recsErr } = await supabase
+      .from("delivery_receipt")
+      .select("id, supplier_id, stock_in_reason, delivery_receipt_line(id)")
+      .eq("purchase_order_id", id)
+      .eq("tenant_id", tenantId);
+    if (recsErr) console.error("[supplier-invoice] PO detail: load receipt lines", recsErr.message);
+    else if (supplierId) {
+      const lineIds = ((recs ?? []) as Array<{ supplier_id: string | null; stock_in_reason: string | null; delivery_receipt_line: Array<{ id: string }> | null }>)
+        .filter((r) => isInvoiceableReceipt(r, supplierId))
+        .flatMap((r) => (r.delivery_receipt_line ?? []).map((l) => l.id));
+      const taken: Array<{ delivery_receipt_line_id: string; supplier_invoice: unknown }> = [];
+      let failed = false;
+      for (const ids of chunk(lineIds, 100)) {
+        const { data, error: takenErr } = await supabase
+          .from("supplier_invoice_line")
+          .select("delivery_receipt_line_id, supplier_invoice:supplier_invoice_id(status)")
+          .in("delivery_receipt_line_id", ids);
+        if (takenErr) {
+          console.error("[supplier-invoice] PO detail: load invoiced lines", takenErr.message);
+          failed = true;
+          break;
+        }
+        taken.push(...((data ?? []) as typeof taken));
+      }
+      fullyInvoiced = !failed && allLinesInvoiced(lineIds, taken);
+    }
+  }
+
   const rawSupplier = Array.isArray(po.supplier) ? po.supplier[0] : po.supplier;
   const supplier = rawSupplier as { id: string; name: string } | null;
   const supplierName = supplier?.name ?? "Unknown supplier";
   const canReceive = po.status === "open" || po.status === "in_transit";
   // Not for read-only roles, and not for a PO that is still a draft or has been cancelled.
-  const canInvoice = !!supplier?.id && !isReadOnlyRole(ctx.role) && po.status !== "draft" && po.status !== "cancelled";
+  const canInvoice = !!supplier?.id && !fullyInvoiced && !isReadOnlyRole(ctx.role) && po.status !== "draft" && po.status !== "cancelled";
   const lines = (po.purchase_order_line ?? []) as POLine[];
   const poLabel = (po.po_number as string | null) ?? `PO-${id.slice(0, 8).toUpperCase()}`;
 
