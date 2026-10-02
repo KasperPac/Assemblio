@@ -21,7 +21,7 @@ const STEPS: Step[] = [
     lines: ["Components and a labour routing", "Read-only. Edit BOM starts a new draft"],
     accent: true,
   },
-  { y: 432, h: 56, role: "History", name: "Older versions", lines: ["Kept under Versions; Make active restores it"] },
+  { y: 432, h: 56, role: "History", name: "Older versions", lines: ["Kept under Versions; most can be made active"] },
 ];
 
 /** Product to live BOM: one live BOM per variant, changes through a draft, and the retail shortcut. */

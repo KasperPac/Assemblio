@@ -4,7 +4,7 @@ Products and variants come from your Shopify catalogue, or from retail items you
 
 <Diagram name="products-and-boms" caption="From product to live BOM, and the retail item shortcut" />
 
-A new BOM starts as a draft and only becomes the live version when you activate it. Older versions stay in the history, so you can bring one back. A retail item skips the draft: its BOM is one line, the item itself, and it is live straight away.
+A BOM you build here starts as a draft and only becomes the live version when you activate it. Older versions stay in the history, and you can bring most of them back. A retail item skips the draft: its BOM is one line, the item itself, and it is live straight away.
 
 ## Finding products
 
@@ -80,7 +80,7 @@ If you are not an admin, the tab says "No BOM exists for this variant. Only admi
 
 A live BOM shows an **ACTIVE** badge and its version and date. Its table has the columns **Component**, **SKU**, **Unit**, **Qty**, **Yield %**, **Unit cost** and **Line cost**. A **no cost** tag marks a component with no unit cost, and clicking a component name opens its page.
 
-1. Click **Edit BOM**. Manuva copies the components, quantities, yields and order into a new draft with the next version number. It does not copy the labour operations. While the button works it reads "Opening…".
+1. Click **Edit BOM**. Manuva copies the components, quantities, yields and order into a new draft with the next version number. It does not copy the labour operations or any notifications you set up on the Notifications tab, which belong to the version they were made on. While the button works it reads "Opening…".
 2. The draft shows **Unsaved changes** and, if there is a live version, "v[n] is live". Make your changes:
    - Click **+ Add component** to add more from the same **Select Components** window.
    - Change a **Qty** with the **−** and **+** buttons or by typing. A quantity cannot be stepped down to zero or below.
@@ -131,13 +131,13 @@ The **Notifications** tab lists the steps of the live BOM's routing. *(admin)* C
 
 ## BOM versions
 
-Every BOM you create or copy takes the next version number for its variant: v1, v2, v3. Only one version of a variant is live at a time. The **Versions** tab is the history of the ones that are not drafts.
+Every BOM you create or copy takes the next version number for its variant: v1, v2, v3. A version also appears when a template is published to a BOM that is linked to it. If the old version was live, the new one goes live at once with no draft step, and the old one is archived. See [Changing a template and updating BOMs](/help/components-and-templates#changing-a-template-and-updating-boms). Only one version of a variant is live at a time. The **Versions** tab is the history of the ones that are not drafts.
 
 1. Open the variant's **Versions** tab. The **Version history** list shows each version's number, badge, date and material cost.
 2. Click a version to see its components, and its **Material cost**, **Sell price** and **Gross margin**.
 3. Click a second version to compare. The first you click is on the left. The page marks lines "New in v[n]", "Removed in v[n]" and "Not included", and shows "was [n] qty" for a changed quantity. The right-hand column shows the change in material cost. Clicking a third replaces the second. Click a selected version again to deselect it.
 4. To bring an older version back, click **Make active** on it, or **Make this the active version** when comparing and it is the one on the right. There is no confirmation. The version you replaced stays in the list.
-5. To remove a version, select it and click **Delete version**, then **Confirm delete**. **Cancel** backs out. You cannot delete the live version, or a version a costed job still refers to. *(admin)*
+5. To remove a version, select it on its own and click **Delete version**, then **Confirm delete**. **Cancel** backs out. You cannot delete the live version, or a version a costed job still refers to. *(admin)*
 
 An empty tab says "No BOM versions exist for this variant yet." With nothing selected it says "Select a version to view its components." and, when there are two or more, "Select two to compare."
 
@@ -162,7 +162,7 @@ Manuva creates a component with that name at your default location, and gives th
 
 <Screenshot src="/help/products-and-boms/retail-item.png" alt="The Track as retail item window with name, unit cost, reorder point and supplier fields and a Track stock button" caption="Tracking a variant as a retail item" />
 
-Retail tracking applies to the whole product. Manuva will not do it if another variant of the product already has a live BOM of its own. Other variants of a retail product that are not tracked show a **Not tracked** badge, and each can be tracked the same way.
+Retail tracking applies to the whole product. If the product is not yet a retail product and another variant has its own live BOM, Manuva will not make it retail. Other variants of a retail product that are not tracked show a **Not tracked** badge, and each can be tracked the same way.
 
 ## Statuses explained
 
@@ -170,7 +170,7 @@ Retail tracking applies to the whole product. Manuva will not do it if another v
 
 | Status | What it means | What moves it on |
 | --- | --- | --- |
-| ACTIVE | Active in Shopify, or Shopify gave no status. | Change it in Shopify, then **Import Products**. |
+| ACTIVE | Active in Shopify, Shopify gave no status, or it is a retail item you created here. | Change it in Shopify, then **Import Products**. |
 | DRAFT | A draft in Shopify. | The same. |
 | ARCHIVED | Archived in Shopify. | The same. |
 
@@ -189,7 +189,7 @@ Retail tracking applies to the whole product. Manuva will not do it if another v
 | DRAFT | Being prepared. Not live. Not listed on **Versions**. | **Activate BOM**, or delete it. |
 | ACTIVE, highlighted | The live version. Read-only. | **Edit BOM** starts a new draft. Activating another version replaces it. |
 | ACTIVE, not highlighted | A version that was live and has been replaced. The list still labels it ACTIVE. | **Make active**. |
-| ARCHIVED | Kept for the record. It has no **Make active** button and is left out when you copy a BOM. Nothing in the app archives a version. | **Delete version** (admin). |
+| ARCHIVED | The previous live version after a template is published to the BOM. It has no **Make active** button and is left out when you copy a BOM. See [Changing a template and updating BOMs](/help/components-and-templates#changing-a-template-and-updating-boms). | **Delete version** (admin). |
 
 **Variants on their own page**
 
@@ -220,7 +220,7 @@ Retail tracking applies to the whole product. Manuva will not do it if another v
 | "Cost must be a number of 0 or more." or "Reorder point must be a number of 0 or more." | Enter 0 or a positive number. |
 | "no default location: set one in Settings → Locations first" | Set a default location, then try again. See [Getting started](/help/getting-started#setting-the-default-location). |
 | "this variant already has an active BOM" | The variant is already live. It cannot be tracked as a retail item. |
-| "this product has manufactured variants with active BOMs; retail tracking applies to the whole product" | Another variant of the product has its own live BOM, so the product cannot become a retail product. |
+| "this product has manufactured variants with active BOMs; retail tracking applies to the whole product" | The product is not yet a retail product and another variant has its own live BOM, so Manuva will not make it retail. |
 | "No active Shopify store found. Connect one in Settings." | Connect Shopify. See [Getting started](/help/getting-started#connecting-shopify). |
 | "Failed to load" and "Could not load products: [reason]" | Reload the page. If it keeps happening, contact support. |
 
@@ -253,7 +253,7 @@ The actions marked Yes for members have no role check in the code. In practice a
 - **I saved a BOM and nothing happened. Why?** A new BOM is a draft. Click **Activate BOM** on the **Bill of Materials** tab to make it live.
 - **Can I undo Activate BOM?** Open **Versions**, select the earlier version and click **Make active**.
 - **Can a variant have two live BOMs?** No. Activating one makes every other version of that variant not live.
-- **Do labour changes need a new version?** No. Labour operations change on the version directly. Edit BOM does not carry them into the new draft, so check **Labour & Routing** on the draft before you activate it.
+- **Do labour changes need a new version?** No. Labour operations change on the version directly. Edit BOM does not carry them, or notifications, into the new draft, so check **Labour & Routing** and **Notifications** on the draft before you activate it.
 - **Why can I not edit Yield %?** Editing yield is part of the Growth plan and above. On Starter it is read-only.
 - **Why is my draft missing from Versions?** The tab lists only versions that are not drafts. Your draft is on the **Bill of Materials** tab.
 - **Why does a version I replaced still say ACTIVE?** The list labels a replaced version by its saved status. Only the live version is highlighted and has no **Make active** button.
