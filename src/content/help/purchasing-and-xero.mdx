@@ -1,5 +1,338 @@
-Purchasing covers the road from ordering stock to paying for it: purchase orders, receiving goods, supplier invoices and, once Xero is connected, bills in Xero.
+Purchasing covers the road from ordering stock to paying for it: purchase orders, receiving goods, supplier invoices and, once Xero is connected, bills in Xero. Purchasing and warehouse staff raise orders, receive deliveries and enter supplier invoices. Admins connect and look after Xero. Supplier invoices work in every workspace. The Xero connection is a pilot, shown only to workspaces on the pilot list.
 
 ## How it fits together
 
-The full manual lands in the next commit.
+<Diagram name="purchasing-and-xero" caption="Purchase to payment, and who does each step" />
+
+Steps 1 to 4 happen in Manuva whether or not Xero is connected. Posting is what sends a bill, and approval and payment stay with your accountant in Xero.
+
+## Creating a purchase order
+
+A purchase order records what you have ordered from a supplier, so you can receive against it later. Add the supplier first: a PO can only be raised for a supplier already in Manuva (see [Suppliers](/help/suppliers)).
+
+1. Open **Purchasing** in the sidebar and click **New PO +**.
+2. In **New Purchase Order**, check **PO Number**. Manuva suggests the next number by counting up the trailing digits of your most recent PO number (PO-2506001 becomes PO-2506002), or PO-001 if you have none. Type over it to use your own. If you clear the field, Manuva numbers the PO the same way.
+3. Choose the **Supplier** (required). The list shows the suppliers in your workspace.
+4. Leave **Status** as Open, or choose In Transit or Received.
+5. Click **Create PO**.
+6. Click **Add Line**. Choose the **Purchase Order**, the **Component** and the **Quantity**, then click **Add Line** again. Repeat for each component on the order.
+
+<Screenshot src="/help/purchasing-and-xero/po-form.png" alt="The New Purchase Order dialog over the Purchasing page, with the PO number suggested, a supplier chosen and the status set to Open" caption="Raising a purchase order" />
+
+To change a PO later, use the **Purchasing** page. Each row in the purchase order list has a status menu and an **Update** button. Each row in the purchase order lines list has a **Quantity** box and a **Save** button. A quantity lower than the amount already received is not saved. The page shows your 12 most recent POs and 20 most recent lines, and the **Add Line** list offers those same 12 POs.
+
+If a PO has no number, Manuva labels it PO- followed by the first eight characters of its internal ID in capitals (the Purchasing list shows the first six, in lower case). The label appears on the PO page, in Goods Inwards, on supplier invoices and in Xero.
+
+<Callout type="info">
+A purchase order holds a supplier, a status and component quantities. It has no price or expected-date fields, and Manuva does not send it to the supplier. Costs come in when you receive goods and when you enter the supplier invoice.
+</Callout>
+
+## Receiving goods
+
+Goods Inwards records a delivery and puts it into stock. You can start from the PO or from Goods Inwards.
+
+1. To receive against a PO, open the PO and click **Receive Goods →**. The button shows while the PO is Open or In Transit. Or open **Goods Inwards** and click **New Receipt**, then choose the PO under **Link to Purchase Order**.
+2. With a PO chosen, Manuva fills in the supplier and one line for each PO line that still has quantity outstanding. The outstanding quantity shows under **Expected** and is entered as **Qty delivered**. Change **Qty delivered** to what actually arrived.
+3. Enter the **Docket / reference number** (required). Check **Date received** and **Location**: the date starts as today and the location as your default location.
+4. Optionally, enter a **Cost / unit (optional)**, a note and a **Batch #** on each line.
+5. Click **Save Receipt**.
+
+<Screenshot src="/help/purchasing-and-xero/receipt.png" alt="The goods receipt form with a purchase order chosen, its lines filled in with expected and delivered quantities, and a Save Receipt button" caption="Receiving goods against a purchase order" />
+
+To receive without a PO, leave **Link to Purchase Order** empty. Choose the **Supplier** (or **Other / not in system** and type the supplier name), choose a **Reason**, then choose a component on each line and click **+ Add line** for more. The reasons are Supplier delivery, Customer return, Opening stock, Sample, Adjustment and Other. A receipt with no PO is **Unmatched**; supplier invoices can be entered only against receipts whose reason is Supplier delivery.
+
+What saving a receipt does:
+
+- Each delivered quantity is added to stock at the location you chose.
+- On a PO line, the delivered quantity is added to the line's received quantity, up to the quantity outstanding. If you deliver more than is outstanding, all of it goes into stock but only the outstanding quantity counts against the PO line.
+- A partial delivery leaves the PO open. The PO page shows **Ordered**, **Received** and **Outstanding** for each line.
+- When every line on the PO has been fully received, the PO changes to Received by itself.
+- A receipt against a PO is **PO linked**, unless a line's delivered quantity differs from its expected quantity, in which case it is **Discrepancy**.
+- Saving a receipt does not change component costs. On the receipt page, the **Update component costs** panel lists the lines that have a cost. Tick the ones you want and click **Update selected**.
+
+After saving, you can click **Edit** on the receipt to change the supplier, docket, date, location, reason, notes and line notes. Quantities cannot be edited and the receipt cannot be deleted. **Print GRN** prints the goods received note. If you saved a receipt without a PO, a banner on the receipt page reads "This receipt isn't linked to a PO". Choose a PO and click **Link PO** to attach it.
+
+The form also has a **Parse delivery docket (optional)** panel: choose a PDF and click **Parse PDF** to pre-fill the form. It works only when your administrator has enabled it, and PDFs must be under 10 MB.
+
+## Entering a supplier invoice
+
+Enter the supplier's tax invoice when it arrives, against goods you have already received. It takes one screen.
+
+1. Open the purchase order or the receipt and click **Enter supplier invoice** at the top of the page. The button is not shown once every line is already on an invoice, for a cancelled PO, for a read-only observer, or for receipts whose reason is not Supplier delivery. The invoices list is under **Purchasing**, with the **Supplier invoices** button.
+2. Under **Receipts from [supplier]**, tick the receipts this invoice covers. Starting from a PO ticks all of its receipts. Starting from a receipt ticks only that one. Each row shows the docket, the PO and the date, then "[n] lines to invoice" or "Fully invoiced". Only the supplier's 50 most recent deliveries are offered, and lines already on another live invoice are left out. Ticking a receipt adds all of its remaining lines. Individual stock lines cannot be left off.
+3. Check each line. **Qty** starts as the received quantity and **Unit price** as the receipt's cost, or 0 if the receipt had no cost. Change them to match the paper invoice, and set the **Tax** rate. With Xero set up, each line also has an **Account**.
+4. To add freight, surcharges or other costs, click **Add freight or other charge**. It adds a line described "Freight" with quantity 1 and price 0. Edit the description and price, or click **Remove** to drop it.
+5. Fill in the header:
+   - **Supplier invoice number** (required). The number can be used only once per supplier among invoices that are not voided, ignoring capitals.
+   - **Invoice date** and **Due date**. The due date follows the supplier's payment terms ("Net 30", "30 EOM", "EOM"), otherwise 30 days after the invoice date, and you can change it. Once you change it, a new invoice date no longer moves it.
+   - **Amounts are**: **Excluding GST** or **Including GST**. With Xero set up it starts from your setup choice, otherwise Excluding GST.
+   - **Total printed on the invoice** (optional): a cross-check.
+6. Look at the highlighted figures. They warn but never stop you posting:
+   - **Qty vs received**: the invoiced quantity minus the quantity received.
+   - **Price vs PO**: the ex-GST unit price minus the PO line's price. It stays blank where the PO line has no price, which is the case for every PO raised in Manuva today.
+   - "Differs from the printed total ([amount]) by [amount]." appears when the total Manuva works out is more than 5 cents from the printed total.
+7. Leave **Update component costs to the invoiced price** ticked to update component costs as well, or untick it to change only the receipt's costs.
+8. Click **Save draft** to finish later, or **Post invoice**. A saved draft shows under the **Draft** tab of the invoices list.
+
+Switching **Amounts are** recalculates every price you have not typed over, so costs stay correct. Prices you typed are never changed.
+
+<Screenshot src="/help/purchasing-and-xero/invoice-form.png" alt="The supplier invoice form with two receipt lines ticked, the totals shown and the Save draft and Post invoice buttons" caption="Entering a supplier invoice" />
+
+## Posting an invoice
+
+Posting locks the invoice and writes its costs back to your stock records. When Xero is connected, it also queues the bill.
+
+1. Click **Post invoice**. Manuva saves the form as a draft first, then posts it.
+2. Manuva takes you to the invoice page. The status badge shows where the invoice has got to.
+
+What posting does:
+
+- Checks the invoice has at least one line, that every stock line comes from a supplier delivery from this supplier, and that no receipt line is already on another posted invoice.
+- Locks the invoice. A posted invoice is never edited: to correct one, void it and enter it again.
+- Writes each stock line's ex-GST unit price, rounded to four decimal places, to the cost on its receipt line. If you left **Update component costs to the invoiced price** ticked, it also writes it to the component, and if two lines share a component the lower line sets the cost.
+- Queues a bill when Xero is connected and setup is finished, and the invoice date is on or after the **Send bills dated from** date. Every line then needs a tax rate and an account, and the supplier must be linked to a Xero contact (or you tick the box to create one). Otherwise the invoice stays **Posted** and nothing is sent.
+
+Manuva starts sending straight after you post. A background run every five minutes sends anything still waiting.
+
+The bill in Xero:
+
+- Arrives as **Awaiting Approval**. Your accountant approves and pays it in Xero as usual.
+- Uses the linked contact, the supplier's own invoice number, your invoice and due dates, your choice of amounts excluding or including GST, and Xero's base currency.
+- Has one line for each invoice line. Stock lines read "[SKU] [name] · [PO label] · receipt [docket]". Other charges use the description you gave them. Each line carries its quantity, unit price, account and tax rate, with no Xero item code.
+- Takes Xero's total if it differs from yours. Manuva records Xero's figure on the invoice.
+
+Before sending, Manuva checks the invoice date against Xero's lock dates, checks that Xero's base currency matches the invoice, and checks that each account and tax rate is still active in Xero. If a send is interrupted, Manuva looks in Xero for a live bill from that supplier with that invoice number before sending again, so the same bill is not sent twice.
+
+Click **View in Xero ↗** on the invoice page to open the bill in Xero.
+
+<Screenshot src="/help/purchasing-and-xero/invoice-detail.png" alt="A posted supplier invoice with its status badge, line table and a View in Xero button" caption="A posted invoice and its Xero status" />
+
+## Voiding and re-entering an invoice
+
+*(admin)* A posted invoice is never edited. To fix one, an admin voids it and the corrected invoice is entered again.
+
+1. Open the invoice and click **Void invoice**. The button shows for admins on posted invoices.
+2. In the dialog, enter the **Reason for voiding** (required, up to 500 characters). The dialog says what will happen in Xero. Click **Void invoice**.
+3. The receipt lines are freed at once and can go on a new invoice. Enter the corrected invoice. The same supplier invoice number can be used again once the old one is voided.
+
+If the void has to reach Xero, the invoice shows **Voiding in Xero**. What happens to the bill depends on where it has got to:
+
+| The bill in Xero | What a void does |
+| --- | --- |
+| Not sent yet | Cancels the send. Nothing reaches Xero. |
+| Draft or Awaiting Approval | Deletes the bill. |
+| Approved, no payments or credits | Voids the bill. |
+| Has payments or credits | Stops with "This bill has payments or credits in Xero. Remove them in Xero first, then retry." |
+| Already deleted or voided | Counts as done. |
+| A send was tried but never confirmed | Looks in Xero for the bill by contact and invoice number, then deletes or voids it. If it finds none, it finishes. |
+
+If Xero is disconnected when you void, the invoice is voided in Manuva only, and Manuva says so: "Voided in Manuva. Xero is disconnected, so the bill stays in Xero. Void it there." If an earlier send may have reached Xero it says "Voided in Manuva. A bill may already exist in Xero. Check Xero and void it there." Costs written to receipts and components when the invoice was posted stay as they are after a void.
+
+## Setting up Xero
+
+*(admin)* An admin connects Xero once per workspace, and nothing is sent to Xero until setup is finished. During the pilot, only admins of workspaces on the pilot list see the Xero card.
+
+1. Go to **Settings → Integrations** and click **Connect Xero** on the Xero card. If the card says "Xero isn't configured on this server yet.", Manuva can't connect to Xero until the server is configured.
+2. Sign in to Xero and approve access. Manuva asks for your sign-in details, access to invoices (which it uses for bills) and contacts, and read-only access to accounting settings.
+3. If you approved more than one Xero organisation, Manuva shows **Choose Xero organisation**: "You approved more than one organisation. Pick the one this workspace posts bills to." Choose one and click **Connect this organisation**. One workspace connects to one organisation.
+4. Complete the three steps on the **Xero setup** page: **1. Accounts**, **2. Tax** and **3. Sales**. The lists come live from your Xero organisation, and **Next** is available once the step is complete. **Back** returns to the previous step.
+   - **Accounts:** **Inventory asset account** (an active current-asset account), **Freight and other charges** (an active expense, direct-costs or overhead account) and **Send bills dated from**. Invoices dated before that date are recorded in Manuva and never sent.
+   - **Tax:** **Default purchase tax rate** and **GST-free purchase tax rate**, chosen from your Xero tax rates. Manuva never creates tax rates. Also choose whether supplier invoices are usually entered **Excluding GST** or **Including GST**.
+   - **Sales:** **What sends your sales to Xero?** Choose A2X, Link My Books, Xero's Shopify integration, Square's Xero integration, Amaka, "Nothing — we enter sales ourselves" or Something else. Manuva shows guidance for the one you pick. Manuva never sends sales.
+5. Click **Finish setup**. The card shows **Connected** with your organisation's name, and the page says "Xero is set up. Posted supplier invoices will be sent as bills."
+
+<Screenshot src="/help/purchasing-and-xero/xero-setup.png" alt="The Xero setup page on step 1, Accounts, with the inventory account, freight account and bills start date fields" caption="Setting up Xero" />
+
+Bills post in the organisation's base currency, which the setup page shows.
+
+Click **Edit setup** on the card to change any of these later. Reconnecting to the same organisation keeps your setup. Connecting a different organisation clears the setup, cancels anything still queued for the old organisation and removes the links between suppliers and Xero contacts.
+
+## Linking suppliers to Xero contacts
+
+Each supplier must be linked to its Xero contact before its first bill can go to Xero. Manuva always uses that link and never matches contacts by name. Any signed-in member can link a supplier. Creating a contact is for admins.
+
+1. Open the invoice form for a supplier's invoice. With Xero connected, the **Xero contact** row shows the current link.
+2. To set a link, type in **Search Xero contacts** and click **Search**. Type at least two characters. Manuva shows up to 10 matching contacts that are not archived.
+3. Click **Link to [contact name]** next to the right contact.
+4. To change an existing link, click **Change** and search again.
+
+If the contact does not exist in Xero yet, an admin can tick **Create [supplier] as a new contact in Xero when posting**. When the invoice is posted, Manuva creates the contact first, then the bill. Members see "Ask an admin to create this contact in Xero, or link an existing one."
+
+If Xero already has a contact with that name, the create stops with "A contact named [supplier] already exists in Xero — link to it instead." Search for that contact and link it. Linking cancels the create, and any bills waiting on it are sent.
+
+## Keeping the Xero connection healthy
+
+*(admin)* Manuva keeps its saved Xero login fresh by itself. A daily check renews it if it has not been renewed for more than seven days. You act only when Manuva asks you to.
+
+- **Needs reconnect.** If Xero stops accepting Manuva's saved login, the card shows **Needs reconnect** and the reason. Click **Reconnect Xero** and approve again. Bills wait and send after you reconnect. Anyone can keep posting invoices meanwhile: the invoice form offers the tax rates and accounts saved at setup and says "Xero needs reconnecting. You can still post: the bill waits and is sent once an admin reconnects Xero."
+- **Banner.** Admins see a banner across Manuva when Xero needs reconnecting ("Xero needs reconnecting. Bills are paused until an admin reconnects it.") or when jobs have stopped or need attention ("[n] items couldn't be sent to Xero."). Its link, **Review in Integrations →**, goes to the Xero card.
+- **Emails.** The admin who connected Xero is emailed when the connection changes to Needs reconnect ("Xero needs reconnecting in Manuva"), or when bills have stopped retrying ("Some bills didn't reach Xero"). Manuva sends at most one a day. Jobs marked **Needs attention** show only in the banner and on the card.
+- **Disconnect.** Click **Disconnect** on the card and confirm: "Disconnect [organisation]? Manuva's access is revoked in Xero and queued bills are cancelled. Bills already in Xero stay there." Manuva removes its access in Xero, deletes its saved login and cancels anything still queued. Bills already sent keep their **View in Xero ↗** links. If Xero could not be reached, Manuva says "Disconnected in Manuva; remove Manuva in Xero → Connected apps if it still appears."
+- **After a disconnect.** Invoices that never reached Xero show as **Posted**. Any whose send may have reached Xero show **Xero sync failed**, with a note to check Xero before re-entering the invoice.
+
+## Statuses explained
+
+**Purchase orders**
+
+| Status | What it means | What moves it on |
+| --- | --- | --- |
+| Open | Ordered, nothing received yet. Goods can be received. | The status menu on the Purchasing page, or a receipt. |
+| In Transit | On its way. Goods can be received. | The status menu, or a receipt. |
+| Received | Every line has been received. | Set by Manuva when the last outstanding quantity is received, or by the status menu. |
+| Cancelled | No longer expected. Goods cannot be received against it. | The status menu. |
+| Archived | Kept for the record. Goods cannot be received against it. | The status menu. |
+
+The PO page shows a status in lower case with a space ("in transit"). The Purchasing list shows the stored value, such as in_transit.
+
+**Goods receipts**
+
+| Status | What it means | What moves it on |
+| --- | --- | --- |
+| Unmatched | Saved without a PO. | **Link PO** on the receipt page. |
+| PO linked | Saved against a PO, and every delivered quantity matched what was expected. | Nothing. |
+| Discrepancy | A line's delivered quantity differs from what was expected. | Nothing. |
+
+The Goods Inwards list and the receipt page put a symbol before the label. The PO page shows **PO Linked**. The Goods Inwards list has the tabs **All**, **Unmatched**, **Discrepancy**, **This Week** and **Due In**. **Due In** lists open or in-transit POs that have an expected date within the next 14 days and no receipt yet, and the purchase order screens do not let you enter an expected date.
+
+**Supplier invoices**
+
+| Status on the invoice | What it means | What moves it on |
+| --- | --- | --- |
+| Draft | Saved, not posted. Can still be edited. | **Post invoice**. |
+| Posted | Posted in Manuva only: no Xero connection, setup not finished, or dated before the start date. | Nothing. |
+| Queued for Xero | Waiting to send. | Manuva sends it, or it fails. |
+| Sent to Xero | The bill is in Xero. **View in Xero ↗** opens it. | Nothing. |
+| Xero sync failed | Xero refused it and a person must act, Manuva stopped retrying, or Xero was disconnected after a send that may have reached Xero. | Fix the problem, then **Retry** (admin). |
+| Voided | Voided in Manuva. Nothing is left to do in Xero. | Nothing. |
+| Voiding in Xero | The void is on its way to Xero. | Manuva finishes it, or it fails. |
+| Void in Xero failed | Xero refused the void. | Fix the problem, then **Retry sending to Xero** (admin). |
+
+The invoices list has the tabs **All**, **Draft**, **Not synced**, **Queued**, **Sent**, **Failed** and **Voided**. **Queued** and **Failed** also include voids that are in progress or have failed in Xero.
+
+**Xero sync jobs** (the Status column in the card's list)
+
+| Status | What it means | What moves it on |
+| --- | --- | --- |
+| Queued | Waiting to send. | Manuva sends it. |
+| Sending | Being sent now. | It finishes or fails. |
+| Sent | Xero accepted it. | Nothing. |
+| Retrying | A temporary problem. Manuva will try again. | The next retry. |
+| Waiting for Xero's daily limit | Xero's daily limit was reached. | Manuva continues when the limit resets. |
+| Paused: reconnect Xero | Xero no longer accepts Manuva's connection. | An admin reconnects Xero. |
+| Needs attention | Something has to be fixed. It does not retry by itself. | Fix it, then **Retry** (admin). |
+| Stopped retrying | Manuva gave up. | **Retry** (admin). |
+| Cancelled | Dropped, for example because of a disconnect, a void or a link to an existing contact. | Nothing. |
+
+**The Xero card**
+
+| Badge | What it means | What moves it on |
+| --- | --- | --- |
+| Not connected | Xero is not connected. | **Connect Xero**. |
+| Finish setup | Connected, but setup is not finished. Nothing is sent. | **Finish setup**. |
+| Connected | Connected and set up. | Nothing. |
+| Needs reconnect | Xero no longer accepts Manuva's saved login. | **Reconnect Xero**. |
+
+## Fixing problems
+
+The Xero card under **Settings → Integrations** lists the last 50 sync jobs with the columns **When**, **Item**, **Action**, **Status** and **Detail**. The actions are Create bill, Void bill and Create contact. Admins see **Retry** on any job that has stopped. **Retry** puts the job back in the queue and starts its 24 hours again. It does not change the invoice.
+
+<Screenshot src="/help/purchasing-and-xero/sync-log.png" alt="The Xero card on the Integrations page with its list of sync jobs, their statuses and a Retry button on a job that needs attention" caption="The Xero sync log" />
+
+Temporary problems retry on their own after 1, 5 and 15 minutes, then after 1, 3, 6 and 12 hours, or when Xero says to wait. Manuva stops once 24 hours have passed since the first attempt, and the job shows **Stopped retrying**. Jobs that need a person show **Needs attention** and do not retry until an admin clicks **Retry**.
+
+Messages on a sync job:
+
+| Message | What to do |
+| --- | --- |
+| "Xero is locked up to [date]…" or "Xero is locked for this invoice date…" | Ask your accountant to move the lock date in Xero, or void the invoice and enter it again with a later date. Then Retry. |
+| "[Account or tax rate] is archived or inactive in Xero…" | Restore it in Xero and Retry, or void the invoice and enter it again with a different account or tax rate. If it is an account or tax rate chosen in setup, pick a new one under **Edit setup**. |
+| "This supplier's Xero contact is archived or inactive in Xero…" | Restore the contact in Xero and Retry, or void the invoice and enter it again once the supplier is linked to an active contact. |
+| "A contact with this name already exists in Xero…" or "A contact named [supplier] already exists in Xero — link to it instead." | Link the supplier to that contact. See Linking suppliers to Xero contacts. |
+| "Link this supplier to a Xero contact, then retry." | Link the supplier, then Retry. |
+| "Xero already has a bill with this invoice number for this supplier…" | Check Xero for a duplicate. Remove it or correct the number, then Retry. |
+| "Xero has several bills from this supplier with invoice number [number]…" | Void the extra bill in Xero, then Retry. |
+| "This bill has payments or credits in Xero…" | Remove the payments or credits in Xero, then Retry the void. |
+| "The Xero bill is in status [status] and Manuva can't void it." | Deal with the bill in Xero. |
+| "This invoice is in [currency] but Xero's base currency is [currency]. Multi-currency bills aren't supported yet." | Void the invoice and enter it again. |
+| "The connected Xero organisation is not active…" | Check the Xero subscription, then Retry. |
+| "Xero couldn't find this record. It may have been deleted in Xero." or "Xero couldn't find this bill. It may have been deleted in Xero." | Check Xero for the record. |
+| "Xero rejected this: [message from Xero]" or "Xero rejected this request (HTTP [code])." | Read Xero's message, fix what it names, then Retry. |
+| "Xero no longer accepts Manuva's connection…", "Manuva doesn't have permission for this in Xero…" or "Xero needs reconnecting. An admin can reconnect it from Settings → Integrations." | An admin reconnects Xero. Waiting jobs then resume. |
+| "Xero's daily limit for this organisation was reached…" | Nothing. Manuva continues when the limit resets. |
+| "Couldn't reach Xero…", "Xero had a problem…", "Xero asked Manuva to slow down…", "Something went wrong sending this to Xero…" or "Xero returned an unexpected response…" | Nothing. Manuva retries automatically. |
+| "This invoice is no longer posted in Manuva." | Nothing to send. Check the invoice's status. |
+
+Messages on the invoice, receipt and purchase order screens:
+
+| Message | What to do |
+| --- | --- |
+| "Link this supplier to a Xero contact, or choose to create one, before posting." | Link the supplier, or ask an admin to tick **Create [supplier] as a new contact in Xero when posting**. |
+| "Every line needs a Xero tax rate and account before posting." | Choose a **Tax** rate and an **Account** on every line. |
+| "You've already entered invoice [number] for this supplier." | Check the invoices list. If the earlier one was wrong, an admin voids it first. |
+| "A receipt line on this invoice is already on another posted invoice." | Untick that receipt, or void the other invoice. |
+| "Every stock line must come from a supplier delivery from this supplier." | Use only receipts from this supplier with the reason Supplier delivery. |
+| "Add at least one line before posting." | Tick a receipt or add a charge. |
+| "The due date can't be before the invoice date." | Correct the **Due date**. |
+| "This invoice is being sent to Xero right now. Try again in a minute." | Wait, then try again. |
+| "Couldn't confirm the invoice was posted. Check the invoice before trying again." | Open the invoices list and check the status before posting again. |
+| "Xero needs reconnecting. Ask an admin to reconnect it from Integrations." | An admin reconnects Xero. |
+| "Xero isn't connected." | An admin connects Xero. |
+| "No matching contacts in Xero." | Try a shorter search term, or create the contact in Xero first. |
+| "That Xero contact is archived or missing." | Restore it in Xero, or choose another contact. |
+| "Couldn't load tax rates and accounts from Xero…" | Posting still works with the rates and accounts chosen in Xero setup, or save a draft and post once Xero responds. |
+| "Read-only access." or "You don't have access to do that." | Ask an admin. Read-only observers cannot change supplier invoices. |
+| "Only admins can void supplier invoices." or "Only admins can create a contact in Xero. Ask an admin to link or create it." | Ask an admin. |
+| "Enter a reason for voiding this invoice." | Fill in **Reason for voiding**. |
+| "Supplier is required." (new PO) | Choose a supplier. |
+| "PO, component, and quantity are required." | Fill in all three fields of **Add Line**. |
+| "At least one complete line is required." | Choose a component and a quantity on at least one line. |
+| "Supplier reference is required" | Enter the **Docket / reference number**. |
+| "Reason is required for non-PO receipts" | Choose a **Reason**. |
+| "Quantity delivered must be a positive number" | Enter a quantity above zero. |
+| "Receipt is already linked to a PO" | The receipt already has a PO. |
+| "PDF parsing is not configured — contact your administrator to enable it." | Enter the receipt by hand. |
+
+Messages after connecting Xero begin "The Xero connection didn't complete." and then give a reason:
+
+| Reason | What to do |
+| --- | --- |
+| "Only admins can connect Xero." | Ask an admin. |
+| "Xero isn't available for this workspace yet." | The workspace is not on the pilot list. |
+| "Xero isn't set up on this server yet." | Manuva's Xero app has not been configured. |
+| "Access was declined in Xero." | Start again and approve access. |
+| "The connection took too long. Start again." | Start again. |
+| "The connection was started in another browser. Start again." | Start and finish in the same browser. |
+| "Your session expired. Sign in and try again." | Sign in and start again. |
+| "That login has too many Xero organisations. Choose one when asked." | Start again and approve one organisation. |
+
+## Who can do what
+
+Anyone signed in to the workspace can raise purchase orders and receive goods: those screens apply no admin check. Entering and posting supplier invoices is open to everyone except read-only observers. The Xero connection, voids and retries are for admins. *(super_admin counts as admin.)*
+
+| Task | Member | Admin | Read-only observer |
+| --- | --- | --- | --- |
+| View supplier invoices and their sync status | Yes | Yes | Yes |
+| Enter, save and post supplier invoices | Yes | Yes | No |
+| Search for and link Xero contacts | Yes | Yes | No |
+| Create a supplier as a new Xero contact | No | Yes | No |
+| Void a posted invoice | No | Yes | No |
+| Retry a sync job | No | Yes | No |
+| See the Xero card and its sync log | No | Yes (pilot workspaces) | No |
+| Connect, set up, reconnect or disconnect Xero | No | Yes (pilot workspaces) | No |
+| See the Xero banner | No | Yes (pilot workspaces) | No |
+
+Read-only observers are platform support accounts. They can look but cannot enter, post or link supplier invoices.
+
+## Common questions
+
+- **Does Manuva send sales or customer invoices to Xero?** No. The Xero card says "Manuva never sends sales." Keep whatever sends your sales to Xero today.
+- **Does Manuva record payments?** No. Bills arrive as Awaiting Approval, and you approve and pay them in Xero. Manuva does not pull payment status back from Xero.
+- **Can I post invoices without Xero?** Yes. They are posted in Manuva and update your costs. They just are not sent anywhere.
+- **What if Xero needs reconnecting when I post?** Post as normal. The bill waits and goes once an admin reconnects Xero.
+- **What about suppliers that bill in another currency?** Bills go to Xero in Xero's base currency. The invoice form warns when a supplier's currency differs: "This supplier is set to [currency], but Xero's base currency is [currency]. The bill will post in [currency]; multi-currency isn't supported yet."
+- **Can one invoice cover several deliveries?** Yes. Tick every receipt from that supplier that the invoice covers.
+- **Can I split one delivery across invoices?** Not from the form. Ticking a receipt adds all of its lines that are not already on another live invoice, and you cannot leave a stock line off.
+- **Are credit notes supported?** Manuva has no credit note screen. Void the invoice and enter it again instead.
+- **Why can't I see the Xero card?** It shows only to admins of workspaces on the pilot list.
+- **Where do I set a price or an expected date on a purchase order?** You cannot. Purchase orders have no price or expected-date fields.
+- **Why is a partial delivery marked Discrepancy?** A receipt is marked Discrepancy when a line's delivered quantity differs from the expected quantity, and that includes a delivery of less than the outstanding amount.
