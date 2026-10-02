@@ -1,0 +1,71 @@
+export type AmountsMode = "inclusive" | "exclusive";
+
+/** Rounds using half-away-from-zero (like Postgres round(numeric, n)), not banker's rounding. */
+function roundHalfAway(n: number, dp: number): number {
+  if (!Number.isFinite(n)) return n;
+  const clean = Number(n.toPrecision(15)); // strip binary float noise (40.15*0.1 → 4.015)
+  const absClean = Math.abs(clean);
+  // For very small numbers, return 0 (below 1e-6 everything rounds to 0 at 2dp and 4dp; 1e-6 itself is 0.000001)
+  if (absClean < 1e-6) return 0;
+  // For very large exponents, use a safer fallback: toFixed + parseFloat
+  if (absClean >= 1e15) {
+    const sign = clean < 0 ? -1 : 1;
+    return sign * Number(absClean.toFixed(dp));
+  }
+  const sign = clean < 0 ? -1 : 1;
+  const shifted = Math.round(Number(`${absClean}e${dp}`));
+  // If shifted to 0, return positive 0 (not -0)
+  if (shifted === 0) return 0;
+  return sign * Number(`${shifted}e-${dp}`);
+}
+
+export const round2 = (n: number) => roundHalfAway(n, 2);
+export const round4 = (n: number) => roundHalfAway(n, 4);
+
+/** Used when the tenant has no Xero connection: tax types stay null. */
+export const FALLBACK_TAX_OPTIONS = [
+  { taxType: null, name: "GST 10%", rate: 10 },
+  { taxType: null, name: "GST-free", rate: 0 },
+] as const;
+
+export function lineAmounts(line: { quantity: number; unitAmount: number; taxRatePercent: number }, mode: AmountsMode) {
+  const lineAmount = round2(line.quantity * line.unitAmount);
+  const r = line.taxRatePercent / 100;
+  const taxAmount = mode === "inclusive" ? round2(lineAmount - lineAmount / (1 + r)) : round2(lineAmount * r);
+  const exTaxUnitAmount = mode === "inclusive" ? round4(line.unitAmount / (1 + r)) : round4(line.unitAmount);
+  return { lineAmount, taxAmount, exTaxUnitAmount };
+}
+
+/**
+ * A stock line's starting unit price from the receipt's ex-tax cost. In inclusive mode the price is grossed up by
+ * the line's tax rate, so the ex-tax cost written back on posting is the receipt's cost, not understated.
+ */
+export function prefillUnitAmount(costExTax: number, ratePercent: number, mode: AmountsMode): number {
+  return mode === "inclusive" ? round4(costExTax * (1 + ratePercent / 100)) : costExTax;
+}
+
+/** Must match the SQL in post_supplier_invoice (Task 11). */
+export function invoiceTotals(lines: { lineAmount: number; taxAmount: number }[], mode: AmountsMode) {
+  const amt = round2(lines.reduce((s, l) => s + l.lineAmount, 0));
+  const tax = round2(lines.reduce((s, l) => s + l.taxAmount, 0));
+  return mode === "inclusive"
+    ? { subtotal: round2(amt - tax), taxTotal: tax, total: amt }
+    : { subtotal: amt, taxTotal: tax, total: round2(amt + tax) };
+}
+
+export function lineVariance(input: { quantity: number; exTaxUnitAmount: number; receivedQty: number; poUnitCost: number | null }) {
+  return {
+    qtyVariance: round4(input.quantity - input.receivedQty),
+    priceVariance: input.poUnitCost === null ? null : round4(input.exTaxUnitAmount - input.poUnitCost),
+  };
+}
+
+export const TOTAL_TOLERANCE = 0.05;
+
+export function totalMismatch(computedTotal: number, enteredTotal: number | null): boolean {
+  return enteredTotal !== null && Math.abs(round2(computedTotal - enteredTotal)) > TOTAL_TOLERANCE;
+}
+
+export function isInvoiceableReceipt(r: { stock_in_reason: string | null; supplier_id: string | null }, supplierId: string): boolean {
+  return r.stock_in_reason === "supplier_delivery" && r.supplier_id === supplierId;
+}

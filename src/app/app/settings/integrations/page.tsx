@@ -4,7 +4,8 @@ import PageHeader from "../../_ui/page-header";
 import StatusBadge from "../../_ui/status-badge";
 import ShopifyManage from "./shopify-manage";
 import StatusBanner from "./status-banner";
-import XeroManage from "./xero-manage";
+import XeroCard from "./xero-card";
+import { isXeroPilotTenant } from "@/lib/accounting/xero/config";
 import styles from "./integrations.module.css";
 
 type Props = {
@@ -13,6 +14,7 @@ type Props = {
     sync_error?: string;
     products?: string;
     orders?: string;
+    reason?: string;
     xero?: string;
   }>;
 };
@@ -36,24 +38,6 @@ export default async function IntegrationsPage({ searchParams }: Props) {
     .limit(10);
 
   const connected = (stores ?? []).some((s) => s.status === "active");
-
-  const { data: xeroConnection } = await supabase
-    .from("accounting_connection")
-    .select("id, account_name, is_active")
-    .eq("tenant_id", tenantId)
-    .eq("provider", "xero")
-    .eq("is_active", true)
-    .maybeSingle();
-
-  const { data: xeroSyncs } = xeroConnection
-    ? await supabase
-        .from("accounting_sync_event")
-        .select("id, status, error, synced_at, external_id")
-        .eq("tenant_id", tenantId)
-        .eq("connection_id", xeroConnection.id)
-        .order("synced_at", { ascending: false })
-        .limit(5)
-    : { data: [] };
 
   return (
     <>
@@ -85,29 +69,7 @@ export default async function IntegrationsPage({ searchParams }: Props) {
           </div>
           <ShopifyManage stores={stores ?? []} />
         </div>
-
-        <div className={styles.card}>
-          <div className={styles.cardHeader}>
-            <div className={styles.cardTitleRow}>
-              <span className={styles.cardName}>Xero</span>
-              <StatusBadge variant={xeroConnection ? "success" : "warning"}>
-                {xeroConnection ? "Connected" : "Not connected"}
-              </StatusBadge>
-            </div>
-          </div>
-          <XeroManage
-            connected={!!xeroConnection}
-            accountName={xeroConnection?.account_name ?? undefined}
-            recentSyncs={(xeroSyncs ?? []) as Array<{
-              id: string;
-              status: "synced" | "failed";
-              error: string | null;
-              synced_at: string;
-              external_id: string | null;
-            }>}
-            xeroParam={params.xero}
-          />
-        </div>
+        {isXeroPilotTenant(tenantId) ? <XeroCard xeroParam={params.xero} reason={params.reason} /> : null}
       </div>
     </>
   );

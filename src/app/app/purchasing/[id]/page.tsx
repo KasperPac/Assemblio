@@ -1,8 +1,10 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { isReadOnlyRole } from "@/lib/tenant/authz";
 import PageHeader from "../../_ui/page-header";
 import StatusBadge from "../../_ui/status-badge";
+import InvoiceStatusPanel, { type PanelInvoice } from "../invoices/invoice-status-panel";
 import { getStatusVariant } from "../status-utils";
 import styles from "../purchasing.module.css";
 
@@ -71,10 +73,20 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
 
   const receiptRows = (receipts ?? []) as ReceiptRow[];
 
+  const { data: poInvoices, error: poInvoicesError } = await supabase
+    .from("supplier_invoice")
+    .select("id, invoice_number, status, sync_status")
+    .eq("purchase_order_id", id)
+    .eq("tenant_id", tenantId)
+    .order("created_at");
+  if (poInvoicesError) console.error("[supplier-invoice] PO detail: load invoices", poInvoicesError.message);
+
   const rawSupplier = Array.isArray(po.supplier) ? po.supplier[0] : po.supplier;
   const supplier = rawSupplier as { id: string; name: string } | null;
   const supplierName = supplier?.name ?? "Unknown supplier";
   const canReceive = po.status === "open" || po.status === "in_transit";
+  // Not for read-only roles, and not for a PO that is still a draft or has been cancelled.
+  const canInvoice = !!supplier?.id && !isReadOnlyRole(ctx.role) && po.status !== "draft" && po.status !== "cancelled";
   const lines = (po.purchase_order_line ?? []) as POLine[];
   const poLabel = (po.po_number as string | null) ?? `PO-${id.slice(0, 8).toUpperCase()}`;
 
@@ -87,15 +99,32 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
         ]}
         title={poLabel}
         actions={
-          canReceive ? (
-            <Link
-              href={`/app/goods-inwards/new?po=${id}`}
-              className={styles.primary}
-            >
-              Receive Goods →
-            </Link>
+          canInvoice || canReceive ? (
+            <div className={styles.headerActions}>
+              {canInvoice ? (
+                <Link
+                  href={`/app/purchasing/invoices/new?po=${id}`}
+                  className={styles.secondaryBtn}
+                >
+                  Enter supplier invoice
+                </Link>
+              ) : null}
+              {canReceive ? (
+                <Link
+                  href={`/app/goods-inwards/new?po=${id}`}
+                  className={styles.primary}
+                >
+                  Receive Goods →
+                </Link>
+              ) : null}
+            </div>
           ) : undefined
         }
+      />
+
+      <InvoiceStatusPanel
+        invoices={(poInvoices ?? []) as PanelInvoice[]}
+        loadError={!!poInvoicesError}
       />
 
       {/* Info card */}

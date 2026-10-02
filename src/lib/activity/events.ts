@@ -132,6 +132,17 @@ export const ACTIVITY_EVENTS = {
   "settings.order_sla_updated": { entityType: null, summary: () => `Updated order SLA settings` },
   "integration.stats_only_set": { entityType: null, summary: () => `Updated Shopify import cutoff` },
 
+  // --- Accounting (Xero) ---
+  "accounting.connected": { entityType: "accounting_connection", summary: (m) => `Connected Xero organisation ${s(m.org_name)}`.trim() },
+  "accounting.disconnected": { entityType: "accounting_connection", summary: () => `Disconnected Xero` },
+  "accounting.setup_completed": { entityType: "accounting_connection", summary: () => `Completed Xero setup` },
+  "accounting.supplier_linked": { entityType: "supplier", summary: (m) => `Linked supplier to Xero contact ${s(m.contact_name)}`.trim() },
+  "accounting.sync_failed": { entityType: "accounting_outbox", summary: (m) => `Xero sync failed: ${s(m.message, "see sync log")}` },
+  "accounting.sync_gave_up": { entityType: "accounting_outbox", summary: (m) => `Xero sync stopped retrying: ${s(m.message, "see sync log")}` },
+  "accounting.bill_sent": { entityType: "supplier_invoice", summary: () => `Bill sent to Xero` },
+  "supplier_invoice.posted": { entityType: "supplier_invoice", summary: (m) => `Posted supplier invoice ${s(m.invoice_number)}`.trim() },
+  "supplier_invoice.voided": { entityType: "supplier_invoice", summary: (m) => `Voided supplier invoice ${s(m.invoice_number)}`.trim() },
+
   // --- Lifecycle / system ---
   "trash.emptied": { entityType: null, summary: () => `Emptied trash` },
   "trash.purchase_order_restored": { entityType: "purchase_order", summary: () => `Restored purchase order` },

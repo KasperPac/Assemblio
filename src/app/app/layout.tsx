@@ -10,6 +10,8 @@ import { requireActiveSubscription } from "./_lib/require-active-subscription";
 import { TrialBanner } from "./_components/trial-banner";
 import ViewAsBanner from "./_components/view-as-banner";
 import { PastDueBanner } from "./_components/past-due-banner";
+import { AccountingBanner } from "./_components/accounting-banner";
+import { isAdminRole } from "@/lib/tenant/authz";
 import { pastDueSoftLocked } from "@/lib/plans";
 import type { AccessResult } from "@/lib/subscription/access";
 
@@ -158,6 +160,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           />
         ) : null}
         {showPastDueBanner ? <PastDueBanner /> : null}
+        <AccountingBanner tenantId={profile?.tenant_id ?? null} isAdmin={isAdminRole(profile?.role)} />
         <section className={styles.content}>{children}</section>
       </div>
     </div>

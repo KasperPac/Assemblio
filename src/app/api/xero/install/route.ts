@@ -1,25 +1,22 @@
+// src/app/api/xero/install/route.ts
 import { NextResponse } from "next/server";
 import { getServerTenantContext } from "@/lib/tenant/context";
-import { buildXeroAuthUrl } from "@/lib/accounting/xero";
+import { isAdminRole } from "@/lib/tenant/authz";
+import { buildXeroAuthorizeUrl, getXeroConfig, isXeroPilotTenant } from "@/lib/accounting/xero/config";
+import { createSignedState, newNonce } from "@/lib/security/signed-state";
+import { secureCookies, settingsUrl, STATE_COOKIE, STATE_TTL_MS } from "@/lib/accounting/connection";
 
-const SETTINGS_URL = `${process.env.NEXT_PUBLIC_APP_URL}/app/settings/integrations`;
-
-export async function GET() {
+export async function GET(req: Request) {
   const ctx = await getServerTenantContext();
-  if (!ctx || (ctx.role !== "admin" && ctx.role !== "super_admin")) {
-    return NextResponse.redirect(SETTINGS_URL);
-  }
+  if (!ctx || !ctx.tenantId) return NextResponse.redirect(new URL("/login?redirect=/app/settings/integrations", req.url));
+  if (!isAdminRole(ctx.role)) return NextResponse.redirect(settingsUrl(req.url, "error", "not-admin"));
+  if (!isXeroPilotTenant(ctx.tenantId)) return NextResponse.redirect(settingsUrl(req.url, "error", "not-available"));
+  const cfg = getXeroConfig();
+  if (!cfg.ok) return NextResponse.redirect(settingsUrl(req.url, "error", "not-configured"));
 
-  const state = `${crypto.randomUUID()}:${ctx.tenantId}`;
-  const authUrl = buildXeroAuthUrl(state);
-
-  const res = NextResponse.redirect(authUrl);
-  res.cookies.set("xero_oauth_state", state, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 600,
-    sameSite: "lax",
-    path: "/",
-  });
+  const nonce = newNonce();
+  const state = createSignedState({ tenantId: ctx.tenantId, userId: ctx.userId, nonce }, cfg.clientSecret, STATE_TTL_MS);
+  const res = NextResponse.redirect(buildXeroAuthorizeUrl(cfg, state));
+  res.cookies.set(STATE_COOKIE, nonce, { httpOnly: true, secure: secureCookies(), sameSite: "lax", path: "/api/xero", maxAge: STATE_TTL_MS / 1000 });
   return res;
 }

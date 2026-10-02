@@ -1,0 +1,15 @@
+.banner {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border: 1px solid var(--stroke-card);
+  border-left: 3px solid var(--warning);
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  font-size: var(--fs-sm);
+}
+.link { color: var(--ink-strong); font-weight: var(--fw-semibold); text-decoration: none; }
+.link:hover { text-decoration: underline; }

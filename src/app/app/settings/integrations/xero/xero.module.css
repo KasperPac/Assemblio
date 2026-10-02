@@ -1,0 +1,35 @@
+/* src/app/app/settings/integrations/xero/xero.module.css */
+.page { display: flex; flex-direction: column; gap: 18px; }
+.formCard {
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+}
+.fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
+.label {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  color: var(--ink-muted);
+}
+.radioRow { display: flex; gap: 10px; align-items: center; font-size: var(--fs-base); color: var(--ink-strong); }
+.select, .input {
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  padding: 8px 10px;
+  font-size: var(--fs-base);
+}
+.help { font-size: var(--fs-sm); color: var(--ink-muted); margin: 0; }
+.error { font-size: var(--fs-sm); color: var(--danger); margin: 0; }
+.steps { display: flex; gap: 8px; font-size: var(--fs-sm); color: var(--ink-faint); }
+.stepActive { color: var(--ink-strong); font-weight: var(--fw-semibold); }
+.actions { display: flex; gap: 10px; justify-content: flex-end; }
+.primaryBtn { composes: primary from "../../../_ui/buttons.module.css"; }
+.secondaryBtn { composes: secondary from "../../../_ui/buttons.module.css"; }
