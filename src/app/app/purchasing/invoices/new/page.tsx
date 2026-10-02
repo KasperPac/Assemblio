@@ -237,6 +237,7 @@ export default async function NewSupplierInvoicePage({ searchParams }: Props) {
         receipts={receipts}
         preselectedReceiptIds={preselect}
         currency={c?.base_currency ?? (tenantRes.data as { currency: string | null } | null)?.currency ?? "AUD"}
+        xeroBaseCurrency={setUp && c ? c.base_currency : null}
         taxOptions={taxOptions}
         accountOptions={accounts}
         xeroNotice={xeroNotice}

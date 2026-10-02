@@ -8,6 +8,7 @@ import type { DraftLine } from "@/lib/accounting/supplier-invoice/draft";
 import { postSupplierInvoice, saveSupplierInvoiceDraft } from "./actions";
 import EmptyState from "../../_ui/empty-state";
 import SupplierLink from "./supplier-link";
+import { currencyMismatch } from "@/lib/purchasing/currency-mismatch";
 import styles from "./invoices.module.css";
 
 export type ReceiptLineOption = { id: string; componentId: string; name: string; sku: string | null; received: number; cost: number; poUnitCost: number | null; taken: boolean };
@@ -26,6 +27,8 @@ type Props = {
   receipts: ReceiptOption[];
   preselectedReceiptIds: string[];
   currency: string;
+  /** Base currency of the set-up, non-disconnected Xero connection; null when no bill will be posted. */
+  xeroBaseCurrency: string | null;
   taxOptions: TaxOption[];
   accountOptions: AccountOption[];
   /** Why the options aren't live from Xero, when that matters to the user. */
@@ -58,6 +61,7 @@ export default function InvoiceForm(p: Props) {
   const [createContact, setCreateContact] = useState(false);
   const [contactName, setContactName] = useState<string | null>(p.xero?.contactName ?? null);
 
+  const mismatch = currencyMismatch(p.supplier.currency, p.xeroBaseCurrency);
   const money = (n: number) => new Intl.NumberFormat("en-AU", { style: "currency", currency: p.currency }).format(n);
   const unitMoney = (n: number) => new Intl.NumberFormat("en-AU", { style: "currency", currency: p.currency, minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(n);
   const defaultTax = p.taxOptions.find((t) => t.taxType === p.xero?.purchaseTaxType) ?? p.taxOptions[0];
@@ -193,8 +197,8 @@ export default function InvoiceForm(p: Props) {
             <p className={styles.help}>Ask an admin to create this contact in Xero, or link an existing one.</p>
           )
         ) : null}
-        {p.supplier.currency && p.supplier.currency !== p.currency ? (
-          <p className={styles.mismatch}>This supplier is set to {p.supplier.currency}. The bill will post in {p.currency}; multi-currency isn&apos;t supported yet.</p>
+        {mismatch ? (
+          <p className={styles.mismatch}>This supplier is set to {mismatch.supplier}, but Xero&apos;s base currency is {mismatch.xero}. The bill will post in {mismatch.xero}; multi-currency isn&apos;t supported yet.</p>
         ) : null}
         {p.xeroNotice ? <p className={p.xeroNotice.error ? styles.error : styles.help}>{p.xeroNotice.text}</p> : null}
       </div>
