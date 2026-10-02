@@ -59,7 +59,7 @@ function firstOf<T>(value: T | T[] | null | undefined): T | undefined {
 
 export default async function TrashPage() {
   const context = await getServerTenantContext();
-  if (!context) redirect("/auth/login");
+  if (!context) redirect("/login");
   const { supabase, tenantId } = context;
 
   const [

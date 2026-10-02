@@ -10,7 +10,7 @@ import styles from "./page.module.css";
 
 export default async function LocationsPage() {
   const context = await getServerTenantContext();
-  if (!context) redirect("/auth/login");
+  if (!context) redirect("/login");
   const { supabase, tenantId: _tenantId, role } = context;
   const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
   const canDelete = role === "admin" || role === "super_admin";

@@ -5,7 +5,7 @@ import CompanyForm from "./company-form";
 
 export default async function CompanyPage() {
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/app/auth/login");
+  if (!ctx) redirect("/login");
   if (ctx.role !== "admin" && ctx.role !== "super_admin") {
     redirect("/app/settings/profile");
   }
