@@ -10,7 +10,7 @@ describe("slugify", () => {
   });
   it("drops apostrophes and trailing punctuation", () => {
     expect(slugify("What's a BOM version?")).toBe("whats-a-bom-version");
-    expect(slugify("Why can't I see the Xero card?")).toBe("why-cant-i-see-the-xero-card");
+    expect(slugify("Why can’t I see the Xero card?")).toBe("why-cant-i-see-the-xero-card");
   });
   it("trims and collapses separators", () => {
     expect(slugify("  Statuses   explained -- ")).toBe("statuses-explained");
