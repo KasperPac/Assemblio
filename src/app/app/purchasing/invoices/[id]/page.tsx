@@ -29,14 +29,14 @@ export default async function SupplierInvoicePage({ params }: Props) {
 
   const { data, error } = await supabase
     .from("supplier_invoice")
-    .select("id, invoice_number, invoice_date, due_date, amounts_mode, currency, subtotal, tax_total, total, entered_total, status, sync_status, external_url, posted_at, voided_at, void_reason, purchase_order_id, supplier:supplier_id(name), purchase_order:purchase_order_id(id, po_number), supplier_invoice_line(line_no, kind, description, quantity, unit_amount, tax_type, tax_rate, account_code, line_amount, tax_amount, qty_variance, price_variance)")
+    .select("id, invoice_number, invoice_date, due_date, amounts_mode, currency, subtotal, tax_total, total, entered_total, status, sync_status, external_id, external_url, posted_at, voided_at, void_reason, purchase_order_id, supplier:supplier_id(name), purchase_order:purchase_order_id(id, po_number), supplier_invoice_line(line_no, kind, description, quantity, unit_amount, tax_type, tax_rate, account_code, line_amount, tax_amount, qty_variance, price_variance)")
     .eq("id", id)
     .eq("tenant_id", tenantId)
     .maybeSingle();
   if (error) return loadFailed("the invoice", error);
   if (!data) notFound();
   const inv = data as unknown as Record<string, unknown> & {
-    invoice_number: string; status: string; sync_status: string; currency: string; external_url: string | null;
+    invoice_number: string; status: string; sync_status: string; currency: string; external_url: string | null; external_id: string | null;
     supplier_invoice_line: Array<Record<string, unknown> & { line_no: number }>;
   };
   if (inv.status === "draft") redirect(`/app/purchasing/invoices/new?draft=${id}`);
@@ -83,7 +83,7 @@ export default async function SupplierInvoicePage({ params }: Props) {
               invoiceId={id}
               canVoid={admin && inv.status === "posted"}
               retryJobId={admin && latest && isFailedForGood(latest) ? latest.id : null}
-              voidHelp={voidHelpText({ externalId: inv.external_id as string | null, syncStatus: inv.sync_status, xeroLive })}
+              voidHelp={voidHelpText({ externalId: inv.external_id, syncStatus: inv.sync_status, xeroLive })}
             />
           </div>
         }
