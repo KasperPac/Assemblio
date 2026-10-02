@@ -51,7 +51,7 @@ type Props = {
 
 export default async function CapacityPage({ searchParams }: Props) {
   const context = await getServerTenantContext();
-  if (!context) redirect("/auth/login");
+  if (!context) redirect("/login");
   const { supabase, tenantId } = context;
   const params = (await searchParams) ?? {};
   const weekStart = resolveWeekStart(params.week);

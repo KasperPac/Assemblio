@@ -45,7 +45,7 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
   const { id } = await params;
 
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/auth/login");
+  if (!ctx) redirect("/login");
   const { supabase, tenantId } = ctx;
 
   const { data: po, error } = await supabase

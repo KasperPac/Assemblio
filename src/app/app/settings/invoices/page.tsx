@@ -7,7 +7,7 @@ import styles from "./invoices.module.css";
 
 export default async function InvoicesPage() {
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/app/auth/login");
+  if (!ctx) redirect("/login");
   if (ctx.role !== "admin" && ctx.role !== "super_admin") {
     redirect("/app/settings/profile");
   }

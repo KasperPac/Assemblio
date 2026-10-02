@@ -5,12 +5,12 @@ import ProfileForm from "./profile-form";
 
 export default async function ProfilePage() {
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/app/auth/login");
+  if (!ctx) redirect("/login");
 
   const {
     data: { user },
   } = await ctx.supabase.auth.getUser();
-  if (!user) redirect("/app/auth/login");
+  if (!user) redirect("/login");
 
   const { data: profile } = await ctx.supabase
     .from("profiles")

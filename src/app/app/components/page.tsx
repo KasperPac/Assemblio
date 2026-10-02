@@ -63,7 +63,7 @@ export default async function ComponentsPage({ searchParams }: Props) {
   const filters = parseComponentFilters(params);
 
   const context = await getServerTenantContext();
-  if (!context) redirect("/auth/login");
+  if (!context) redirect("/login");
   const { supabase, tenantId, role } = context;
 
   const [
