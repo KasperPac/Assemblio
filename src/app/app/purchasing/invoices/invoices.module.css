@@ -1,0 +1,64 @@
+.page { display: flex; flex-direction: column; gap: 18px; }
+.tableCard { composes: tableCard from "../../_ui/table.module.css"; }
+.table { composes: table from "../../_ui/table.module.css"; }
+.formCard {
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  padding: 18px;
+  display: grid;
+  gap: 12px;
+}
+.fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.field { display: grid; gap: 4px; font-size: var(--fs-base); color: var(--ink-strong); }
+.caps {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  color: var(--ink-muted);
+}
+.input, .select {
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  color: var(--ink-strong);
+  padding: 6px 8px;
+  font-size: var(--fs-base);
+  width: 100%;
+}
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.variance { color: var(--warning); font-weight: var(--fw-semibold); }
+.mismatch { color: var(--warning); font-size: var(--fs-sm); }
+.error { color: var(--danger); font-size: var(--fs-sm); margin: 0; }
+.help { color: var(--ink-muted); font-size: var(--fs-sm); margin: 0; display: flex; gap: 8px; align-items: center; }
+.receiptRow { display: flex; gap: 10px; align-items: center; padding: 8px 10px; border-radius: var(--radius-lg); background: var(--surface-1); }
+.totals { display: grid; justify-items: end; gap: 4px; font-variant-numeric: tabular-nums; color: var(--ink-strong); }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tab {
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+  text-decoration: none;
+  border: 1px solid var(--stroke-strong);
+}
+.tabActive { composes: tab; color: var(--ink-strong); background: var(--surface-hover); }
+.actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; align-items: center; }
+.statusPanel { composes: formCard; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.panelLink { display: inline-flex; gap: 6px; align-items: center; color: var(--ink-strong); text-decoration: none; font-size: var(--fs-sm); }
+.link { color: var(--ink-strong); text-decoration: none; font-weight: var(--fw-semibold); }
+.backLink { font-size: var(--fs-sm); color: var(--ink-muted); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+.backLink:hover { color: var(--ink-strong); }
+.dialog {
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  padding: 18px;
+  width: min(480px, 100%);
+}
+.primaryBtn { composes: primary from "../../_ui/buttons.module.css"; }
+.secondaryBtn { composes: secondary from "../../_ui/buttons.module.css"; }
+.dangerBtn { composes: danger from "../../_ui/buttons.module.css"; }

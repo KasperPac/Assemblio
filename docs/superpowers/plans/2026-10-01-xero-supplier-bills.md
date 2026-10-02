@@ -7105,6 +7105,9 @@ Every step marked **[user]** needs the user to act or to say yes in this session
     - `XERO_REDIRECT_URI=https://app.manuva.app/api/xero/callback`
     - `ACCOUNTING_TOKEN_KEY`, `ACCOUNTING_TOKEN_KEY_VERSION=1`
     - `XERO_PILOT_TENANTS=<internal test tenant id>`
+    - `CRON_SECRET`: already in Vercel. The Vault secret `accounting_cron_secret` (Step 4) must equal it.
+    - `NEXT_PUBLIC_APP_URL`: already in Vercel. Confirm it is `https://app.manuva.app` (the alert email links to it).
+  - **Warning:** never change `ACCOUNTING_TOKEN_KEY_VERSION` (or the key) without a re-encrypt step. Stored tokens are sealed with the version in their envelope; changing it without re-encrypting every `accounting_credential` row locks every connection out until it is reconnected.
   - Copy the same values into Vercel project `assemblio` (Production). Confirm the names with the Vercel MCP `filter_project_envs`. Never decrypt values.
 
 - [ ] **Step 3: [user] Apply the migrations**
@@ -7123,7 +7126,7 @@ select
 
   Expected: `outbox = true`, `auth_reads_creds = false`, `anon_reads_creds = false`, `auth_claims = false`, `vitals_repointed = true`.
 
-  Then run `bash scripts/probe_anon_rpc_surface.sh`. Expected: exit 0.
+  Then add the four new functions (`post_supplier_invoice`, `void_supplier_invoice`, `claim_accounting_jobs`, `claim_accounting_refresh_lease`) to `scripts/probe_anon_rpc_surface.sh` as deny probes (anon must be refused), and run `bash scripts/probe_anon_rpc_surface.sh`. Expected: exit 0.
 
 - [ ] **Step 4: [user] Vault secrets and schedule**
   - The user runs the two `vault.create_secret` statements from the header of `2026-10-01-xero-cron-schedule.sql`, pasting `CRON_SECRET` from 1Password.
@@ -7149,8 +7152,8 @@ select status_code, created from net._http_response order by created desc limit 
   2. Complete the wizard.
   3. Link one supplier; set another to "Create in Xero".
   4. Post an inclusive invoice and an exclusive one, each with a freight line. Bills appear in Xero as Awaiting Approval, with the correct numbers, PO in the description, and no item code.
-  5. Force a transient failure: temporarily set the mapped tax code to an archived one in Xero. See Needs attention → fix → Retry → sent.
-  6. Set a lock date in the Demo Company after an invoice's date → fixable error naming the date → change the date → retry.
+  5. Force a transient failure with a network failure or a Xero 5xx (for example, block `api.xero.com` from the server briefly), not an archived tax code, which is a fixable error. See Retrying → restore the network → it sends on the next run.
+  6. Set a lock date in the Demo Company after an invoice's date → fixable error naming the date → move the lock date in Xero, or void and re-enter, then retry.
   7. Void a SUBMITTED bill (deleted) and an AUTHORISED one (voided).
   8. Pay a bill in Xero → void refuses.
   9. Disconnect → Manuva is gone from Xero → Connected apps; the credential row is deleted.
@@ -7160,6 +7163,7 @@ select status_code, created from net._http_response order by created desc limit 
 
 - [ ] **Step 7: Pilot**
   - Add 1–2 real tenants to `XERO_PILOT_TENANTS`.
+  - Rollout note: a tenant removed from `XERO_PILOT_TENANTS` while it is set up keeps queueing bill jobs when it posts (from its stored setup). They wait, unsent, until the tenant is added back.
   - After one month of real bills, with their accountant confirming bills match the supplier invoices, set `XERO_PILOT_TENANTS=*` (general release).
   - Update MANUVA-34 at each stage. Set Status = Done after general release, with the PR and commit references, and verify by read-back.
   - Then pick up MANUVA-37: move Shopify tokens onto `src/lib/security/token-crypto.ts` and server-only storage.

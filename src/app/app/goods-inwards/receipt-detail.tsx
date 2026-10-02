@@ -105,7 +105,11 @@ export default function ReceiptDetail({
   suppliers,
   locations,
   availablePOs,
+  invoiceSlot,
+  headerActions,
 }: {
+  invoiceSlot?: React.ReactNode;
+  headerActions?: React.ReactNode;
   receipt: Receipt;
   suppliers: SupplierOption[];
   locations: LocationOption[];
@@ -183,6 +187,7 @@ export default function ReceiptDetail({
 
   return (
     <div className={styles.page}>
+      {invoiceSlot}
       {/* Header card */}
       {isEditing ? (
         <form ref={editFormRef} onSubmit={handleEdit} className={styles.formCard}>
@@ -346,6 +351,7 @@ export default function ReceiptDetail({
               >
                 Print GRN
               </a>
+              {headerActions}
               <button
                 type="button"
                 className={styles.secondary}

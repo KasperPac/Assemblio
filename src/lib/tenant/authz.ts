@@ -10,6 +10,11 @@ export function isAdminRole(role: string | null | undefined): boolean {
   return role === "admin" || role === "super_admin";
 }
 
+/** `platform_observer` is read-only: it may look at a tenant but never change anything in it. */
+export function isReadOnlyRole(role: string | null | undefined): boolean {
+  return role === "platform_observer";
+}
+
 export class NotAuthorisedError extends Error {
   constructor(message = "You do not have permission to do that.") {
     super(message);

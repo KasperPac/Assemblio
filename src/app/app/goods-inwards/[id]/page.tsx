@@ -1,6 +1,12 @@
 import { notFound, redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { isReadOnlyRole } from "@/lib/tenant/authz";
+import { isInvoiceableReceipt } from "@/lib/accounting/supplier-invoice/calc";
+import { one } from "@/lib/accounting/supplier-invoice/util";
+import Link from "next/link";
 import ReceiptDetail from "../receipt-detail";
+import InvoiceStatusPanel, { type PanelInvoice } from "../../purchasing/invoices/invoice-status-panel";
+import styles from "../goods-inwards.module.css";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -78,8 +84,44 @@ export default async function ReceiptDetailPage({ params }: Props) {
       };
     });
 
+  const lineIds = ((receipt.delivery_receipt_line ?? []) as Array<{ id: string }>).map((l) => l.id);
+  let invoiceLoadError = false;
+  let invLines: unknown[] = [];
+  if (lineIds.length) {
+    const { data, error } = await supabase
+      .from("supplier_invoice_line")
+      .select("supplier_invoice:supplier_invoice_id(id, invoice_number, status, sync_status)")
+      .in("delivery_receipt_line_id", lineIds);
+    if (error) {
+      console.error("[supplier-invoice] receipt detail: load invoices", error.message);
+      invoiceLoadError = true;
+    }
+    invLines = data ?? [];
+  }
+  const receiptInvoices = [
+    ...new Map(
+      (invLines as Array<{ supplier_invoice: unknown }>)
+        .map((r) => one(r.supplier_invoice as PanelInvoice | PanelInvoice[] | null))
+        .filter((x): x is PanelInvoice => !!x)
+        .map((x) => [x.id, x] as const)
+    ).values(),
+  ];
+  const invoiceable = !!receipt.supplier_id && isInvoiceableReceipt({ stock_in_reason: receipt.stock_in_reason, supplier_id: receipt.supplier_id }, receipt.supplier_id);
+
   return (
     <ReceiptDetail
+      invoiceSlot={
+        invoiceable || receiptInvoices.length || invoiceLoadError ? (
+          <InvoiceStatusPanel invoices={receiptInvoices} loadError={invoiceLoadError} />
+        ) : null
+      }
+      headerActions={
+        invoiceable && !isReadOnlyRole(ctx.role) ? (
+          <Link href={`/app/purchasing/invoices/new?receipt=${receipt.id}`} className={styles.secondary}>
+            Enter supplier invoice
+          </Link>
+        ) : null
+      }
       receipt={receipt}
       suppliers={suppliers ?? []}
       locations={locations ?? []}
