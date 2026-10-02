@@ -61,7 +61,7 @@ export default function InvoiceForm(p: Props) {
   const [createContact, setCreateContact] = useState(false);
   const [contactName, setContactName] = useState<string | null>(p.xero?.contactName ?? null);
 
-  const mismatch = currencyMismatch(p.supplier.currency, p.xeroBaseCurrency);
+  const currencyWarning = currencyMismatch(p.supplier.currency, p.xeroBaseCurrency);
   const money = (n: number) => new Intl.NumberFormat("en-AU", { style: "currency", currency: p.currency }).format(n);
   const unitMoney = (n: number) => new Intl.NumberFormat("en-AU", { style: "currency", currency: p.currency, minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(n);
   const defaultTax = p.taxOptions.find((t) => t.taxType === p.xero?.purchaseTaxType) ?? p.taxOptions[0];
@@ -197,8 +197,8 @@ export default function InvoiceForm(p: Props) {
             <p className={styles.help}>Ask an admin to create this contact in Xero, or link an existing one.</p>
           )
         ) : null}
-        {mismatch ? (
-          <p className={styles.mismatch}>This supplier is set to {mismatch.supplier}, but Xero&apos;s base currency is {mismatch.xero}. The bill will post in {mismatch.xero}; multi-currency isn&apos;t supported yet.</p>
+        {currencyWarning ? (
+          <p className={styles.mismatch}>This supplier is set to {currencyWarning.supplier}, but Xero&apos;s base currency is {currencyWarning.xero}. The bill will post in {currencyWarning.xero}; multi-currency isn&apos;t supported yet.</p>
         ) : null}
         {p.xeroNotice ? <p className={p.xeroNotice.error ? styles.error : styles.help}>{p.xeroNotice.text}</p> : null}
       </div>
