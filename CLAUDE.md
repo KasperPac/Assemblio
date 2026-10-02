@@ -50,6 +50,16 @@ document in the same change:**
 
 A change that ships a feature without updating this doc is incomplete.
 
+## Help manuals (keep current)
+
+The public help centre (`/help`, content in `src/content/help/*.mdx`) is the user manual for
+every module, written to `docs/help-style.md`. **Whenever you add a feature or change how one
+behaves, update that module's manual in the same change**: the steps, the UI text it quotes,
+statuses, error messages and the role table. A new module gets a manual: an MDX file, an entry in
+`src/content/help/manuals.ts` and a loader in `src/content/help/content.ts`.
+
+A change that alters behaviour a manual describes, without updating the manual, is incomplete.
+
 ## Task tracking
 
 monday.com board **Manuva** (`5099992950`, Software Automation). Task code prefix: `MANUVA`.

@@ -599,11 +599,18 @@ per order lifecycle.
 
 ---
 
-## 21. Help & Documentation — `/app/help`
+## 21. Help centre — `/help` (public)
 
-- [ ] Getting Started strip + module category cards (BOM, Inventory, Orders, Production, Purchasing, Stocktake, Reports)
-- [ ] Article links route to `/app/help/{slug}` with no 404s for registered articles
-- [ ] All ~25 help pages render (getting-started, bom/*, inventory/*, orders/*, production/*, purchasing/*, reports/*, stocktake/*)
+**Entry:** `/help` (no login) — one manual per module, from `src/content/help/*.mdx`. The old `/app/help` articles stay until the cutover (MANUVA-69).
+
+- [ ] `/help` loads signed out (no redirect to `/login`) and lists every published manual in registry order
+- [ ] Typing in **Search the manuals** lists matching manuals, then sections; a result opens the manual at that section
+- [ ] A search with no matches says so; clearing the box hides the results
+- [ ] `/help/<manual>` shows the **On this page** contents; every contents link jumps to its section
+- [ ] An unknown `/help/<slug>` shows the 404 page
+- [ ] A plan-gated manual shows the **Plan feature** badge on its card and page
+- [ ] Pages read correctly in the daylight and midnight themes, and at 390px wide with no sideways page scroll
+- [ ] `/sitemap.xml` lists `/help` and every published manual
 
 ---
 
@@ -725,3 +732,4 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-09-25 — amended Retail items + sale consumption (MANUVA-27 plan 1 final review): removed the stock-location picker (stock always lands at the tenant's default location); "Track as retail item" is now offered on any variant with no active BOM regardless of product kind, with a neutral "Not tracked" badge on an untracked retail-kind variant; `apply_sale_consumption` now refuses a historical order's line before any write.
 - 2026-09-26 — amended Components list (MANUVA-30): the All / Low Stock tabs are replaced by a left filter rail (stock status, groups, supplier, unit-cost range) with flight-search counts, removable filter chips and a Unit cost column. Filters live in the URL, and sort and detail links carry every active filter. The design system gains a documented "filter rail" exception to the single-column rule.
 - 2026-09-28 — amended Components list (MANUVA-31): the table is one flat list following the active sort; the collapsible group section rows are replaced by a sortable Group column. Group filtering stays in the filter rail.
+- 2026-10-02 — added Help centre (MANUVA-58): public `/help` with one MDX manual per module, search, contents lists and a sitemap; the Purchasing & Xero manual is the first.

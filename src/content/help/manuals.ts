@@ -28,7 +28,13 @@ export type Manual = {
  * Published manuals, in ALL_MANUAL_SLUGS order. A manual is added here in the
  * same change that adds its MDX file to src/content/help/.
  */
-export const MANUALS: Manual[] = [];
+export const MANUALS: Manual[] = [
+  {
+    slug: "purchasing-and-xero",
+    title: "Purchasing & Xero",
+    description: "Raise purchase orders, receive goods, enter supplier invoices and send bills to Xero.",
+  },
+];
 
 export function findManual(slug: string): Manual | undefined {
   return MANUALS.find((m) => m.slug === slug);

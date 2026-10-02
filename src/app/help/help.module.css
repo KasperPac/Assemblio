@@ -1,0 +1,232 @@
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-page);
+}
+
+/* The bar matches the app sidebar, so the white logo reads in every theme. */
+.topbar {
+  background: var(--bg-sidebar);
+}
+
+.topbarInner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-decoration: none;
+}
+
+.brandLabel {
+  color: var(--ink-on-brand);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+}
+
+.openApp {
+  composes: primary from "../app/_ui/buttons.module.css";
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4) var(--space-10);
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.footer {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4);
+  display: flex;
+  gap: var(--space-2);
+  border-top: 1px solid var(--stroke);
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+}
+
+.footer a {
+  color: var(--ink-muted);
+  text-decoration: none;
+}
+
+.footer a:hover {
+  color: var(--ink-strong);
+}
+
+/* Search */
+.search {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.searchLabel {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  color: var(--ink-muted);
+}
+
+.searchInput {
+  min-height: 42px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-pill);
+  background: var(--bg-input);
+  color: var(--ink-strong);
+  font: inherit;
+  font-size: var(--fs-base);
+}
+
+.searchInput:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.results {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+}
+
+.result {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  color: var(--ink-strong);
+  text-decoration: none;
+}
+
+.result:hover,
+.result:focus-visible {
+  background: var(--surface-hover);
+  outline: none;
+}
+
+.resultTitle {
+  font-weight: var(--fw-medium);
+}
+
+.resultManual {
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+}
+
+.noResults {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--ink-muted);
+}
+
+/* Manual cards */
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-4);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  height: 100%;
+  padding: 18px;
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  text-decoration: none;
+}
+
+.card:hover {
+  border-color: var(--stroke-strong);
+}
+
+.card:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+  color: var(--ink-strong);
+}
+
+.cardDesc {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+  color: var(--ink-muted);
+}
+
+/* On-this-page contents */
+.contents {
+  padding: 18px;
+  border: 1px solid var(--stroke-card);
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+}
+
+.contentsLabel {
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  color: var(--ink-muted);
+}
+
+.contentsList {
+  margin: 0;
+  padding-left: var(--space-5);
+  display: grid;
+  gap: var(--space-1);
+  font-size: var(--fs-sm);
+}
+
+.contentsList a {
+  color: var(--brand-1);
+  text-decoration: none;
+}
+
+.contentsList a:hover {
+  text-decoration: underline;
+}
