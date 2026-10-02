@@ -28,7 +28,7 @@ export default async function CompanyPage() {
       <CompanyForm
         name={tenant.name}
         timezone={tenant.timezone ?? "Pacific/Auckland"}
-        currency={tenant.currency ?? "NZD"}
+        currency={tenant.currency ?? "AUD"}
         logoUrl={tenant.logo_url ?? null}
         createdAt={tenant.created_at}
       />
