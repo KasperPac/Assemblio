@@ -18,7 +18,7 @@ type Props = { params: Promise<{ id: string }> };
 export default async function SupplierInvoicePage({ params }: Props) {
   const { id } = await params;
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/app/auth/login");
+  if (!ctx) redirect("/login");
   if (!ctx.tenantId) redirect("/app");
   if (!isUuid(id)) notFound();
   const { supabase, tenantId } = ctx;

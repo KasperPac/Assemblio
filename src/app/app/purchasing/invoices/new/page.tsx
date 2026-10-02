@@ -23,7 +23,7 @@ const uuidOrNull = (v: string | undefined) => (isUuid(v) ? v : null);
 
 export default async function NewSupplierInvoicePage({ searchParams }: Props) {
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/app/auth/login");
+  if (!ctx) redirect("/login");
   if (!ctx.tenantId) redirect("/app");
   const sp = (await searchParams) ?? {};
   const { supabase, tenantId } = ctx;

@@ -13,7 +13,7 @@ type Props = { searchParams?: Promise<{ tab?: string }> };
 
 export default async function SupplierInvoicesPage({ searchParams }: Props) {
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/app/auth/login");
+  if (!ctx) redirect("/login");
   if (!ctx.tenantId) redirect("/app");
   const requested = (await searchParams)?.tab;
   const tab = INVOICE_TABS.find((t) => t.key === requested)?.key ?? "all";
