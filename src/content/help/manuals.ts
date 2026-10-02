@@ -45,6 +45,11 @@ export const MANUALS: Manual[] = [
     description: "Keep your component catalogue, costs and suppliers up to date, and reuse component packs and labour routings.",
   },
   {
+    slug: "inventory-and-warehouse",
+    title: "Inventory & warehouse",
+    description: "See stock levels, record adjustments, trace every movement and organise stock into bin locations.",
+  },
+  {
     slug: "purchasing-and-xero",
     title: "Purchasing & Xero",
     description: "Raise purchase orders, receive goods, enter supplier invoices and send bills to Xero.",

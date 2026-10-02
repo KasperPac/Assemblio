@@ -1,0 +1,179 @@
+Inventory shows how much of each component you hold and where. Warehouse and purchasing staff read the stock numbers, record adjustments and trace every change, and the Locations page and the phone scanner help them find stock on the floor. Bin locations need the Growth plan or above, or your trial.
+
+## How it fits together
+
+<Diagram name="inventory-and-warehouse" caption="Where the stock numbers come from" />
+
+Goods receipts, stocktakes, retail sales, order allocation and **Log Movement** each write a movement, and the stock balance is what the movements add up to. Nothing in production planning changes these numbers: **In prod** moves only when someone logs it with **Log Movement**.
+
+## Reading the inventory list
+
+The Inventory page lists every component you hold, one row for each warehouse it is in.
+
+1. Click **Inventory** in the sidebar.
+2. Read the three cards at the top. **On hand units**, **Reserved units** and **In production** are the totals of the table below. Under them the cards show "[n] balance rows", "[n] low stock alerts" and "[n] default location(s)".
+3. Read the table. Its columns are **Component**, **Location**, **On hand**, **In prod** and **Reserved**. The list starts with the highest **On hand**. It has no search box. Click a component's name to open its page, and see its SKU under the name ("No SKU" if it has none). **Location** reads "Unassigned" when a row has no warehouse.
+4. Click **Export CSV** to download `inventory.csv`. It has one line for each row, with the columns Component, SKU, Location, OnHand, InProd and Reserved.
+
+<Screenshot src="/help/inventory-and-warehouse/inventory-list.png" alt="The Inventory page with three summary cards, a table of components with on hand, in prod and reserved columns and a Below reorder badge, and a Recent movements panel" caption="The Inventory page" />
+
+What the numbers mean:
+
+- **On hand** is the quantity Manuva holds in that warehouse. Only movements change it.
+- **In prod** changes only when someone logs a movement with a **Delta in-prod**. No other screen in Manuva moves it.
+- **Reserved** is stock set aside for open orders. It comes from order allocation and does not reduce **On hand**.
+- **Available** is **On hand** minus **Reserved**, added up across your warehouses. The Inventory list does not show it. A component's own page does: see [Reading a component's page](/help/components-and-templates#reading-a-components-page).
+
+A **Below reorder** badge appears beside **On hand** when that row's **On hand** is lower than the component's reorder point. A component with a reorder point of 0 never shows it. The badge looks at one warehouse at a time, whereas the low-stock banner on a component's page compares **Available** across all of them.
+
+With no rows yet, the page says "No inventory balances yet": "Receive stock or run a stocktake to establish your first component balances." See [Receiving goods](/help/purchasing-and-xero#receiving-goods) and [Stocktake](/help/stocktake).
+
+## Adjusting stock
+
+Use **Log Movement** to put stock in the system or correct it outside a stocktake: opening stock, damaged stock, a counting slip. For a full count of a warehouse, use a [stocktake](/help/stocktake) instead.
+
+1. On the Inventory page, click **Log Movement +**.
+2. In **Log Inventory Movement**, choose the **Component** and the **Location**. Both are required and marked with an asterisk. The location list shows your warehouses, with "— default" beside the default one.
+3. Choose a **Reason**: **Receipt**, **Allocation**, **Adjustment** or **Production**. It starts on **Receipt**. The reason is a label for the ledger. It does not change what the movement does.
+4. Enter the **Delta on-hand**. Use a positive number to add stock and a negative number to remove it. The box takes two decimal places and starts at 0.
+5. Enter the **Delta in-prod** if stock is moving in or out of production. It also starts at 0.
+6. Optionally, enter a **Reference type** (for example "order") and a **Reference ID**. The ID should be a UUID copied from Manuva, or left empty.
+7. Click **Save Movement**. The dialog closes and the movement is the first row under **Recent movements**.
+
+<Screenshot src="/help/inventory-and-warehouse/log-movement.png" alt="The Log Inventory Movement dialog with component, location, reason, delta on-hand, delta in-prod and reference fields" caption="Logging a movement" />
+
+<Callout type="warning">
+Manuva does not stop **On hand** going below zero, and a saved movement cannot be edited or deleted. To correct a mistake, log a second movement with the opposite amount.
+</Callout>
+
+A new retail item starts with no stock. To give it an opening quantity, use **Log Movement** with a positive **Delta on-hand** at its warehouse, or receive it with the reason Opening stock. See [Tracking a variant as a retail item](/help/products-and-boms#tracking-a-variant-as-a-retail-item).
+
+## Stock movements
+
+Every change to stock is a row in the movements ledger. You can read it in three places:
+
+- **Inventory**, under **Recent movements**. It shows the latest 8, with **Component**, **Location**, **On hand Δ**, **In prod Δ**, **Reason** and **Date**.
+- A component's page, on the **Movements** tab. It shows the latest 50 for that component. See [Reading a component's page](/help/components-and-templates#reading-a-components-page).
+- **Reports**, under **Movements ledger**: every movement in a period, the last 30 days unless you choose another, with the stock in and stock out totals. See [Reports](/help/reports).
+
+The **Reason** shows exactly as stored:
+
+| Reason | Written by | What it changes |
+| --- | --- | --- |
+| receipt, allocation, adjustment, production | **Log Movement**, as you chose | Whatever you entered |
+| delivery_receipt | Saving a goods receipt | Adds the delivered quantity to **On hand** |
+| stocktake_adjustment | Committing a stocktake | Sets **On hand** to the counted figure. Only lines whose count differs from the balance get a movement |
+| order_reserve, order_release | Order allocation | **Reserved** only. **On hand Δ** and **In prod Δ** read 0 |
+| sale | Fulfilling an order line for a retail item | Takes the components the line needs off **On hand** and releases its reservation |
+
+Manuva has no screen for editing or deleting a movement. A warehouse that has any movement history cannot be deleted.
+
+## Bin locations
+
+A warehouse can be divided into sub-locations, aisles and bays, so you can say where a component is kept. They nest as warehouse, then sub-location, then aisle, then bay. Stock quantities are held per warehouse. Sub-locations, aisles and bays record where a component sits, and they do not hold quantities of their own.
+
+Locations are part of the Growth plan and above, and your trial. Without them the page says "Multi-location and bin management is available on Growth".
+
+1. Click **Locations** in the sidebar, under Warehouse. The page is titled **Locations**.
+2. To add a warehouse, click **Add Warehouse**, type a name in **Warehouse name** and click **Save**.
+3. On the warehouse's row, click **Sub-loc**. Type a **Sub-location name** and click **Save**.
+4. On the sub-location's row, click **Aisle**. Type an **Aisle name** and click **Save**. An aisle always sits inside a sub-location.
+5. On the aisle's row, click **Bay**. Type a **Bay name** and click **Save**.
+
+<Screenshot src="/help/inventory-and-warehouse/locations-tree.png" alt="The Locations page showing a warehouse with a sub-location, aisles and bays, each row with Barcode, Edit and Delete buttons" caption="Warehouses, sub-locations, aisles and bays" />
+
+Each row shows a six-character code, plus counts such as "2 aisles", "3 bays" and "4 components". **Expand all** and **Collapse all** open and close a whole warehouse. Click **Edit** to rename a row. Names must be unique: a sub-location within its warehouse, an aisle within its sub-location and a bay within its aisle.
+
+The default location is set in **Settings → Locations**, not here. See [Setting the default location](/help/getting-started#setting-the-default-location).
+
+To put a component in a bin, use the **Location** tab on its page ([Setting a storage location](/help/components-and-templates#setting-a-storage-location)), or the scanner below. A component has one storage location, and choosing a new one replaces the old one.
+
+To delete something, click **Delete** on its row and confirm.
+
+- A sub-location or bay asks "Delete this sub-location? This cannot be undone." (or "…this bay?…"). The delete is refused while components are assigned to it.
+- An aisle that has bays asks "This aisle has [n] bay(s) that will also be deleted. Continue?". Click **Delete aisle and bays**. It is refused while components are assigned to the aisle itself.
+- A warehouse asks "Delete warehouse "[name]"? This permanently removes it and any empty bins inside. This cannot be undone." Click **Delete warehouse**. The button shows only to admins, and only when you have more than one warehouse and this one is not the default. A warehouse that has components, stock, movements, stocktake sessions or goods receipts cannot be deleted.
+
+## Printing location barcodes
+
+Each warehouse, sub-location, aisle and bay can have a printed label that the scanner reads.
+
+1. On the row, click **Barcode**.
+2. The window shows the location's type, name and path, a QR code and its six-character code, labelled "location code". Click **Copy code** to copy the code.
+3. Click **🖨 Print Label** to print a label with the path, name, QR code and code. Click **⬇ Download PNG** to save the QR code as an image. If the QR code cannot be drawn, the window says "Could not generate QR code." and shows no download button.
+
+<Screenshot src="/help/inventory-and-warehouse/barcode.png" alt="The barcode window for an aisle with its path, a QR code, the six-character location code and the Copy code, Print Label and Download PNG buttons" caption="A location label" />
+
+The code is the last six characters of the location's internal ID, in capitals. It never changes, even when you rename the location. The QR code contains only that code.
+
+## Scanning with your phone
+
+The scanner is a separate mobile screen at `/app/scan`. Opening the app's home page on a phone or tablet sends you there. There is no link to it in the sidebar, so on a computer type the address. It needs no plan and no admin role.
+
+The home screen is titled **Warehouse Scanner** and has two modes: **Count Stock** and **Set Locations**. **↗ Open desktop app** goes back to the main app.
+
+To assign components to a location:
+
+1. Tap **Set Locations** and allow the camera when your browser asks. If it is refused, the screen says "📷 Camera access required" and tells you to allow camera access for the site and reload. The flashlight button turns the torch on and off where the phone supports it.
+2. Point the camera at a location label. The scanner reads QR codes only. Manuva looks the code up among your locations and shows "📍 [path]" with the components assigned there. An unknown code shows "Location not found — check the label".
+3. If you cannot scan, tap **Can't scan? Choose location manually →**. The picker is titled **Select a location**. Tap a warehouse to choose it, or tap **Aisles →** to browse its aisles, and **Bays →** to browse an aisle's bays. The picker cannot choose a sub-location. Scan its label instead.
+4. Tap **+ Add component…**. In **Add to [name]**, search under **Search components…** by name or SKU. It lists up to 30 matches. Tap **+ Add** beside the component. A component already there shows "✓ Here". The screen confirms with "Added [name]".
+5. To take a component out, tap ✕ on its row. The screen confirms with "Removed [name]".
+6. Tap **← Scan a different location** for the next label.
+
+<Screenshot src="/help/inventory-and-warehouse/scan-set-locations.png" alt="The Set Locations scanner on a phone showing a location path and the components assigned to it with an Add component button" caption="Assigning components to a location from a phone" />
+
+A warehouse shows only the components assigned to it with no finer location. If a change cannot be saved, the screen says "Failed to add — refresh" or "Failed to remove — refresh".
+
+**Count Stock** lists your open stocktake sessions, then reads location labels to show the counts to enter for that location. See [Stocktake](/help/stocktake).
+
+## Statuses explained
+
+The Inventory page has one label.
+
+| Label | What it means | What moves it on |
+| --- | --- | --- |
+| Below reorder | **On hand** in that row is lower than the component's reorder point. | Receiving or adjusting stock, or an admin lowering the reorder point. |
+
+## Fixing problems
+
+| Message | What to do |
+| --- | --- |
+| "Inventory data unavailable" with "Failed to load balances: [message]" | The Inventory page could not load the balances. Reload the page. |
+| "Name is required" | A location form was saved with an empty name. Type a name. |
+| "[n] component(s) assigned — reassign before deleting." | Move the components to another location, then delete again. |
+| "Can't delete — still referenced by [list]. Move or clear it first." | The list names what still uses the warehouse: components assigned here, on-hand stock, movement history, stocktake sessions or goods-in receipts. A warehouse that has held stock cannot be deleted. |
+| "Failed to load locations: [message]" with **Try again** | Click **Try again**. |
+| A message about a duplicate or unique key when saving a location | The name is already used in that place. Choose another. |
+| "Location not found — check the label" | The code is not one of your locations. Check the label, or choose the location manually. |
+| "No warehouses found. Add them in the desktop app first." | The manual picker has no warehouses to show. Add one on the Locations page. |
+| "No active stocktake sessions." and "Create one from the desktop app first." | Count Stock lists only open sessions. Start one from Stocktake on the desktop. |
+
+## Who can do what
+
+*(super_admin counts as admin.)* The Inventory page, **Log Movement**, the Locations page and the scanner apply no admin check, so anyone signed in to the workspace can use them. The Locations page needs the Growth plan or above, or a trial.
+
+| Task | Member | Admin |
+| --- | --- | --- |
+| View inventory, **Export CSV**, view movements | Yes | Yes |
+| **Log Movement** | Yes | Yes |
+| Add or rename a warehouse, sub-location, aisle or bay | Yes | Yes |
+| Print a location **Barcode** | Yes | Yes |
+| Delete a sub-location, aisle or bay | No | Yes |
+| Delete a warehouse | No | Yes |
+| Set the default location | No | Yes |
+| Scan and assign components to locations | Yes | Yes |
+
+The **Delete** buttons for sub-locations, aisles and bays are shown to everyone, but the server refuses a member. The member sees no message and nothing is deleted. The warehouse **Delete** button is hidden from members.
+
+## Common questions
+
+- **Why does Available not appear on the Inventory page?** The list shows **On hand**, **In prod** and **Reserved** only. Open the component to see **Available**.
+- **Does a bin hold its own stock?** No. Quantities are per warehouse. A bin records where a component is kept.
+- **Why did a sale not reduce stock?** Fulfilling an order line takes components off **On hand** only for retail items. For a product built from a BOM, fulfilling the order releases its **Reserved** quantity and leaves **On hand** as it is. Record the use with **Log Movement** or a stocktake.
+- **Why is In prod not changing?** Nothing moves it automatically. It changes only when you log a **Delta in-prod**.
+- **Why does a movement show 0 and 0?** Order allocation changes **Reserved**, which the movement list does not show.
+- **Can I move stock between warehouses?** There is no transfer. Log a negative **Delta on-hand** at one warehouse and a positive one at the other.
+- **Can I see who logged a movement?** The ledger shows no person. Manuva also writes a line to the Activity Log for each logged movement.
+- **Why can I not find my phone scanner?** Open the app's home page on the phone, or go to `/app/scan`.
+- **Can I choose a bay when I scan?** Yes, by scanning the bay's label. The manual picker offers warehouses, aisles and bays.

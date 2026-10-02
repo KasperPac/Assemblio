@@ -9,5 +9,6 @@ export const MANUAL_CONTENT: Partial<Record<ManualSlug, () => Promise<{ default:
   "getting-started": () => import("./getting-started.mdx"),
   "products-and-boms": () => import("./products-and-boms.mdx"),
   "components-and-templates": () => import("./components-and-templates.mdx"),
+  "inventory-and-warehouse": () => import("./inventory-and-warehouse.mdx"),
   "purchasing-and-xero": () => import("./purchasing-and-xero.mdx"),
 };
