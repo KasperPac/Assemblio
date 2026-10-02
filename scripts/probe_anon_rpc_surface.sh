@@ -52,6 +52,11 @@ probe apply_inventory_movement                 "{\"p_component_id\":\"$Z\",\"p_l
 probe apply_reserved_movement                  "{\"p_tenant_id\":\"$Z\",\"p_component_id\":\"$Z\",\"p_location_id\":\"$Z\",\"p_order_id\":null,\"p_delta_reserved\":0}" deny
 probe apply_sale_consumption                   "{\"p_tenant_id\":\"$Z\",\"p_order_line_id\":\"$Z\",\"p_location_id\":\"$Z\"}" deny
 probe create_retail_item                       "{\"p_tenant_id\":\"$Z\",\"p_variant_id\":null,\"p_name\":\"probe\",\"p_sku\":null,\"p_barcode\":null,\"p_cost_per_unit\":0,\"p_supplier_id\":null,\"p_location_id\":null,\"p_reorder_point\":0}" deny
+# MANUVA-34 Xero supplier bills (2026-10-01-xero-supplier-bills.sql).
+probe post_supplier_invoice                    "{\"p_invoice_id\":\"$Z\",\"p_update_component_costs\":false,\"p_create_contact\":false}" deny
+probe void_supplier_invoice                    "{\"p_invoice_id\":\"$Z\",\"p_reason\":\"probe\"}" deny
+probe claim_accounting_jobs                    "{\"p_connection_id\":\"$Z\",\"p_limit\":1,\"p_worker\":\"probe\"}" deny
+probe claim_accounting_refresh_lease           "{\"p_connection_id\":\"$Z\",\"p_lease_seconds\":1}" deny
 
 echo "--- must stay reachable (RLS evaluates these as the querying role) ---"
 probe current_tenant_id                        '{}'                                    allow
