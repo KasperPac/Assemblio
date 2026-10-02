@@ -1,5 +1,5 @@
 import ArticleLayout from "../../_ui/article-layout";
-import { Callout } from "../../_ui/callout";
+import { Callout } from "@/components/help/callout";
 
 export default function ShopfloorPage() {
   return (

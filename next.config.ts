@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import createMDX from "@next/mdx";
 import path from "path";
 
 const nextConfig: NextConfig = {
@@ -31,4 +32,14 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// MDX renders the public help centre (src/content/help/*.mdx), which is imported
+// by the /help routes, not routed itself, so pageExtensions stays as it is.
+// The plugin is named as a string so the config stays serialisable, which
+// Turbopack requires.
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: ["remark-gfm"],
+  },
+});
+
+export default withMDX(nextConfig);

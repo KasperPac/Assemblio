@@ -1,0 +1,99 @@
+/* A rendered help manual. Children are MDX output: p, ol, ul, h2, h3, table, figure. */
+.prose {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 760px;
+  font-size: var(--fs-md);
+  line-height: var(--lh-normal);
+  color: var(--ink-strong);
+}
+
+.prose > * {
+  margin: 0;
+}
+
+.h2 {
+  margin-top: var(--space-4);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--stroke);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-snug);
+  scroll-margin-top: var(--space-5);
+}
+
+.prose h3 {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+}
+
+.prose ul {
+  padding-left: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* Procedures are Markdown ordered lists, drawn as numbered steps. */
+.prose ol {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  counter-reset: step;
+}
+
+.prose ol > li {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: var(--space-3);
+  counter-increment: step;
+}
+
+.prose ol > li::before {
+  content: counter(step);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--brand-1);
+  color: var(--ink-on-brand);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  margin-top: 1px;
+}
+
+.prose ol ul,
+.prose ol ol {
+  margin-top: var(--space-2);
+}
+
+.prose code {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  background: var(--surface-1);
+  border-radius: var(--radius-xs);
+  padding: 1px 4px;
+}
+
+.prose a {
+  color: var(--brand-1);
+}
+
+/* Wide tables scroll inside their card instead of widening the page. */
+.tableWrap {
+  composes: tableCard from "../../app/app/_ui/table.module.css";
+  overflow-x: auto;
+}
+
+.table {
+  composes: table from "../../app/app/_ui/table.module.css";
+}
+
+.table td {
+  vertical-align: top;
+}

@@ -1,6 +1,6 @@
 import ArticleLayout from "../../_ui/article-layout";
 import { Steps, Step } from "../../_ui/steps";
-import { Callout } from "../../_ui/callout";
+import { Callout } from "@/components/help/callout";
 
 export default function SuppliersPage() {
   return (
