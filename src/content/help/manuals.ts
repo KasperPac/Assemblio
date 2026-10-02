@@ -40,6 +40,11 @@ export const MANUALS: Manual[] = [
     description: "Build products and variants, define their bills of materials, and manage BOM versions and retail items.",
   },
   {
+    slug: "components-and-templates",
+    title: "Components & templates",
+    description: "Keep your component catalogue, costs and suppliers up to date, and reuse component packs and labour routings.",
+  },
+  {
     slug: "purchasing-and-xero",
     title: "Purchasing & Xero",
     description: "Raise purchase orders, receive goods, enter supplier invoices and send bills to Xero.",

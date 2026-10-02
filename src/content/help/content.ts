@@ -8,5 +8,6 @@ import type { ManualSlug } from "./manuals";
 export const MANUAL_CONTENT: Partial<Record<ManualSlug, () => Promise<{ default: MDXContent }>>> = {
   "getting-started": () => import("./getting-started.mdx"),
   "products-and-boms": () => import("./products-and-boms.mdx"),
+  "components-and-templates": () => import("./components-and-templates.mdx"),
   "purchasing-and-xero": () => import("./purchasing-and-xero.mdx"),
 };
