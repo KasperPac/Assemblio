@@ -1,0 +1,260 @@
+Products and variants come from your Shopify catalogue, or from retail items you add yourself. Each variant gets a bill of materials (BOM): the components that make one unit, and the labour operations that build it. Admins build and change BOMs, and anyone in the workspace can look at them.
+
+## How it fits together
+
+<Diagram name="products-and-boms" caption="From product to live BOM, and the retail item shortcut" />
+
+A new BOM starts as a draft and only becomes the live version when you activate it. Older versions stay in the history, so you can bring one back. A retail item skips the draft: its BOM is one line, the item itself, and it is live straight away.
+
+## Finding products
+
+Open **Products** in the sidebar. The heading shows "[n] of [n] products", the number that match your filters out of all products.
+
+1. Type in **Search by name or SKU**. It matches the product title, its description, and each variant's title and SKU.
+2. Choose a status from the first list: **All statuses**, **Active**, **Draft** or **Archived**.
+3. If your products have a type or a category, **All types** and **All categories** lists appear. Choose one to narrow the list.
+4. Click **More filters** to tick **Tags** or **Collections**. It appears only when your products have tags or collections. A product must have every tag you tick, and any one of the collections you tick.
+5. To group the list, choose **Group by type**, **Group by category** or **Group by collection**. Products with no value sit under **Uncategorised**. A product in several collections is grouped under one of them. **No grouping** switches grouping off.
+6. Click a column heading to sort by it, and click again to reverse. The columns are **Products**, **Variants**, **Status**, **Sell Price**, **Material GP %** and **Actual GP %**. Rows with no value sort last.
+7. The list shows 25 products a page. Use **← Prev** and **Next →** to move between pages.
+
+Your search, filters, grouping, sort and page are all kept in the address of the page, so you can bookmark a filtered view. If nothing matches, the list says "No results" and "No products match your filters."
+
+**Sell Price** is the price of the product's first variant that has one. The two GP columns average the variants that have an active BOM and a price, and show — for the rest. Costs and margins are covered in [Production planning](/help/production-planning).
+
+<Screenshot src="/help/products-and-boms/products-list.png" alt="The Products page with the search box, status and grouping lists, and a table of products with variants, status, sell price and GP columns" caption="Finding products" />
+
+## Getting products and variants in
+
+Products and variants arrive from Shopify. The one thing you can add by hand is a retail item (see Tracking a variant as a retail item below). Manuva has no screen for adding a product or a variant by hand, and none for editing a product's title, a variant's SKU or its price.
+
+1. Connect your Shopify store. See [Connecting Shopify](/help/getting-started#connecting-shopify).
+2. On **Products**, click **Import Products**.
+3. Manuva shows "Synced [n] products and [n] orders." If the sync fails it shows "Sync failed:" and the reason, for example "No active Shopify store found. Connect one in Settings."
+
+Import brings in each product's title, description, image, status, type, tags, category and collections, and each variant's title, SKU, barcode and price. Importing again updates the same products rather than adding copies. A product's status follows its Shopify status: **ACTIVE**, **DRAFT** or **ARCHIVED**, and anything else is treated as active. To change a title, SKU or price, change it in Shopify and import again.
+
+Import also brings in orders, which are covered in [Orders & Shopify](/help/orders-and-shopify). The Import Products button has no role check, so any signed-in member can use it.
+
+## Reading a product page
+
+Click a product's name in the list. The page shows its description and image if it has them, then how many variants have a BOM.
+
+- The line under the title reads "[n] variants" followed by **Last sync** or **Added** and how long ago.
+- The coverage bar reads "[n] / [n] variants have a BOM". A badge beside it, such as "2 need BOMs", shows when some do not.
+- The table has one row per variant. **BOM status** shows **No BOM**, **Active BOM** or **Draft BOM**. A variant with an active BOM shows that one. Otherwise it shows its latest draft.
+- Under each variant's name, a line such as "v2 active · created [time]" names the BOM shown, or "No BOM created yet".
+- **Components** counts the lines on that BOM.
+- **+ Create BOM** (variants with no BOM) and **Edit BOM** (variants with one) both open the variant's page.
+
+<Screenshot src="/help/products-and-boms/product-page.png" alt="A product page with the BOM coverage bar and a table of variants showing BOM status badges and Create BOM and Edit BOM buttons" caption="A product and its variants" />
+
+On a variant's page, the title is followed by "SKU [code]" or "No SKU". There are five tabs: **Overview**, **Bill of Materials**, **Labour & Routing**, **Versions** and **Notifications**. The page opens on **Bill of Materials**. **Overview** lists the variant title, SKU, **Shopify ID**, **Price**, **Created** and the state of its BOM.
+
+## Creating a BOM
+
+*(admin)* A BOM lists the components that go into one unit of a variant. You build it from a variant that has none yet.
+
+1. Open the variant's page and stay on **Bill of Materials**. A variant with no BOM shows "No bill of materials yet": "Add components to define what goes into making this variant."
+2. Click **+ Add Components**. Two links below it, **start from a template** and **copy an existing BOM**, open the same **Select Components** window.
+3. In **Select Components**, build the list in one of three ways:
+   - **Pick components.** Search by name, SKU or description with **Search by name, SKU or description...**, or click a group in the list on the left. Tick a component to add it. Each ticked component starts at a quantity of 1, which you change with the **−** and **+** buttons or by typing.
+   - **Start from a template.** Under **Start from:**, choose a template from **Choose template…**. Each shows as "[name] ([n] lines)". Choosing one creates the BOM straight away from the template's components and quantities. If you have no templates, the bar says "No templates —" with a **create one →** link to the Templates page.
+   - **Copy another BOM.** Under **Copy from:**, click one of the other variants of the same product that has a BOM. Only the first six show, and **+[n] more** shows the rest. **Browse all products…** opens a search box, **Search products, variants, SKUs…**, across the whole workspace. Picking a variant fills the list with its components and quantities, and the save button changes to **Copy BOM**. Yield and labour operations are not copied. If you pick a BOM with no components, Manuva says "That BOM has no components to copy."
+4. Check **Selected components** at the bottom. It shows the quantity and line cost of each, and **Material cost** at the foot. If any component has no cost, it says "Cost incomplete — missing prices".
+5. Click **Save BOM (n items)** or **Copy BOM (n items)**.
+
+Manuva saves the BOM as a draft with the next version number for that variant (v1 for the first). The draft is not live yet. Carry on with Editing a BOM, and click **Activate BOM** when it is right.
+
+<Screenshot src="/help/products-and-boms/select-components.png" alt="The Select Components window with a component list, the Start from bar with a template list, and the Selected components table with a Save BOM button" caption="Choosing components for a new BOM" />
+
+<Callout type="info">
+Components come from the Components page, and templates from the Templates page. Create them first. See [Components & templates](/help/components-and-templates).
+</Callout>
+
+If you are not an admin, the tab says "No BOM exists for this variant. Only admin and super_admin can create or copy BOMs." instead.
+
+## Editing a BOM
+
+*(admin)* The live BOM is read-only. To change it, you work on a draft copy, then activate that copy.
+
+A live BOM shows an **ACTIVE** badge and its version and date. Its table has the columns **Component**, **SKU**, **Unit**, **Qty**, **Yield %**, **Unit cost** and **Line cost**. A **no cost** tag marks a component with no unit cost, and clicking a component name opens its page.
+
+1. Click **Edit BOM**. Manuva copies the components, quantities, yields and order into a new draft with the next version number. It does not copy the labour operations. While the button works it reads "Opening…".
+2. The draft shows **Unsaved changes** and, if there is a live version, "v[n] is live". Make your changes:
+   - Click **+ Add component** to add more from the same **Select Components** window.
+   - Change a **Qty** with the **−** and **+** buttons or by typing. A quantity cannot be stepped down to zero or below.
+   - Change **Yield %**, a number from 1 to 100. A line with a yield under 100% shows the extra cost of scrap. Editing yield is part of the Growth plan and above *(plan-gated)*. On Starter the yield is shown but cannot be changed, and hovering it says "Yield % editing is a Growth feature — upgrade to enable."
+   - Drag the ⠿ handle at the left of a line to change the order.
+   - Click ✕ at the right of a line to remove it.
+3. Click **Activate BOM**. The window asks "Activate this BOM? This will replace the current live version and cannot be undone." Click **Activate BOM** again to confirm.
+
+Each change is saved to the draft as you make it, even though the badge reads **Unsaved changes**. Until you activate, the live version is untouched. Once you activate, the draft becomes the live version. The window says this cannot be undone, but the version it replaced stays under **Versions**, where **Make active** can bring it back.
+
+While a draft exists, the **Bill of Materials** tab shows the draft rather than the live version. Only one draft is shown at a time.
+
+Other actions on a draft:
+
+- **Discard**, or **Delete draft** from the **⋯** menu, asks "Delete this draft? This cannot be undone." Click **Delete** to remove it. The live version stays as it was. *(admin)*
+- **Save as template** in the **⋯** menu asks "Save this BOM as a reusable template?" Enter a **Template name** and click **Save Template**. The template holds the components and quantities, and appears on the Templates page. *(admin)*
+
+The strip under the table shows cost figures for the BOM: **Materials**, **Labour**, **Overhead**, **Total BOM cost**, **Sell price** and **Gross margin**. The sell price is the variant's Shopify price. How those costs are worked out is covered in [Production planning](/help/production-planning).
+
+<Screenshot src="/help/products-and-boms/bom-editor.png" alt="A draft BOM with quantity steppers, a yield column, the Activate BOM and Discard buttons and the cost strip below the table" caption="Editing a draft BOM" />
+
+## Adding labour to a BOM
+
+Labour operations say how a BOM is built: which department does each step, in what order, and for how long. They live on the **Labour & Routing** tab. Each version has its own section, headed "Version [n]", with its status badges and "Labor routing", followed by "[n] operations".
+
+*(admin)* To add an operation by hand:
+
+1. Open **Labour & Routing** and find the version.
+2. Under the operations, fill in **Operation** and choose a **Department** from **Select department**. The list shows your active departments.
+3. Set **Sequence**, **Setup hrs**, **Run hrs / unit**, **Admin hrs / unit**, **Electricity kWh / unit** and **Gas units / unit**, and an optional **Notes**. They start at 1 for the sequence and 0 for the rest.
+4. Click **Add Labor Operation**.
+
+To change an operation, edit its row and click **Save Operation**, or click **Remove**. Once a version has more than one operation, each shows **Depends on (must complete before this step starts)** with a tick box for each other step.
+
+## Applying a labour template
+
+*(admin)* A labour template is a saved set of operations. Applying one saves you adding each by hand.
+
+1. On **Labour & Routing**, click **Apply template** in the "Labor routing" heading of the version. The button shows only when your workspace has at least one labour template.
+2. In **Apply Labor Template**, find the template. Each row shows its name, **Basic** or **Advanced**, and "[n] operations".
+3. Click **Apply** on the one you want.
+
+The window explains: "Template operations are added to this BOM. Existing manual operations are kept; lines from a previously applied template are replaced." Labour templates are made on the Templates page: see [Components & templates](/help/components-and-templates).
+
+Labour changes go straight onto the version you are looking at, whether it is the live version or a draft. They do not go through **Activate BOM**. If a labour change fails, Manuva opens **Labour & Routing** but shows the message above the table on the **Bill of Materials** tab.
+
+The **Notifications** tab lists the steps of the live BOM's routing. *(admin)* Click **Enable notification for this step** to switch one on, then edit its **Message template** and click **Save**, or click **Disable notification**. The tab says: "Configure which production steps send an email to the customer when completed." Everyone else sees which steps are set up. Until a BOM is live and has routing steps, the tab says "No active BOM. Activate a BOM version first to configure notifications." or "No routing steps in the active BOM. Add labour operations first."
+
+## BOM versions
+
+Every BOM you create or copy takes the next version number for its variant: v1, v2, v3. Only one version of a variant is live at a time. The **Versions** tab is the history of the ones that are not drafts.
+
+1. Open the variant's **Versions** tab. The **Version history** list shows each version's number, badge, date and material cost.
+2. Click a version to see its components, and its **Material cost**, **Sell price** and **Gross margin**.
+3. Click a second version to compare. The first you click is on the left. The page marks lines "New in v[n]", "Removed in v[n]" and "Not included", and shows "was [n] qty" for a changed quantity. The right-hand column shows the change in material cost. Clicking a third replaces the second. Click a selected version again to deselect it.
+4. To bring an older version back, click **Make active** on it, or **Make this the active version** when comparing and it is the one on the right. There is no confirmation. The version you replaced stays in the list.
+5. To remove a version, select it and click **Delete version**, then **Confirm delete**. **Cancel** backs out. You cannot delete the live version, or a version a costed job still refers to. *(admin)*
+
+An empty tab says "No BOM versions exist for this variant yet." With nothing selected it says "Select a version to view its components." and, when there are two or more, "Select two to compare."
+
+<Screenshot src="/help/products-and-boms/versions.png" alt="The Versions tab comparing two BOM versions side by side, with changed lines marked and a Make this the active version button" caption="Comparing two BOM versions" />
+
+<Callout type="info">
+Drafts are not listed on the Versions tab. Finish them on the **Bill of Materials** tab.
+</Callout>
+
+## Tracking a variant as a retail item
+
+*(admin)* A retail item is something you buy in and sell unchanged. You can turn a variant that has no live BOM, such as one just imported from Shopify, into a retail item. To create a brand-new one from scratch, see [Getting started](/help/getting-started#adding-your-first-product).
+
+1. Open the variant's page. Beside its title, click **Track as retail item**. It shows only while the variant has no live BOM, and only to admins.
+2. In the **Track as retail item** window, check the **Name**. It starts as the product title followed by the variant title.
+3. Optionally enter a **Unit cost** and a **Reorder point**, and choose a **Supplier**. A blank cost or reorder point is saved as 0.
+4. Click **Track stock**.
+
+The window explains: "A product you buy in and sell unchanged. Manuva tracks its shelf stock and takes it off when an order is fulfilled."
+
+Manuva creates a component with that name at your default location, and gives the variant a live BOM with a single line: that component, quantity 1. There is no draft step. Orders for the variant that were already fulfilled, or imported as historical, are counted as already reflected in your stock and are not taken off again. Manuva opens the variant's page, which now shows a **Retail item** badge.
+
+<Screenshot src="/help/products-and-boms/retail-item.png" alt="The Track as retail item window with name, unit cost, reorder point and supplier fields and a Track stock button" caption="Tracking a variant as a retail item" />
+
+Retail tracking applies to the whole product. Manuva will not do it if another variant of the product already has a live BOM of its own. Other variants of a retail product that are not tracked show a **Not tracked** badge, and each can be tracked the same way.
+
+## Statuses explained
+
+**Products** (the **Status** column and the status list)
+
+| Status | What it means | What moves it on |
+| --- | --- | --- |
+| ACTIVE | Active in Shopify, or Shopify gave no status. | Change it in Shopify, then **Import Products**. |
+| DRAFT | A draft in Shopify. | The same. |
+| ARCHIVED | Archived in Shopify. | The same. |
+
+**Variants on the product page** (the **BOM status** column)
+
+| Badge | What it means | What moves it on |
+| --- | --- | --- |
+| No BOM | The variant has no BOM yet. | **+ Create BOM**. |
+| Draft BOM | It has a draft and no live version. | **Activate BOM**. |
+| Active BOM | It has a live version. | **Edit BOM** starts a draft. |
+
+**BOM versions** (the badge on a version)
+
+| Badge | What it means | What moves it on |
+| --- | --- | --- |
+| DRAFT | Being prepared. Not live. Not listed on **Versions**. | **Activate BOM**, or delete it. |
+| ACTIVE, highlighted | The live version. Read-only. | **Edit BOM** starts a new draft. Activating another version replaces it. |
+| ACTIVE, not highlighted | A version that was live and has been replaced. The list still labels it ACTIVE. | **Make active**. |
+| ARCHIVED | Kept for the record. It has no **Make active** button and is left out when you copy a BOM. Nothing in the app archives a version. | **Delete version** (admin). |
+
+**Variants on their own page**
+
+| Badge | What it means | What moves it on |
+| --- | --- | --- |
+| Retail item | The product is a retail product and the variant has a live BOM. | Nothing. |
+| Not tracked | The product is a retail product, but this variant has no live BOM. | **Track as retail item** (admin). |
+
+## Fixing problems
+
+| Message | What to do |
+| --- | --- |
+| "Only admin and super_admin can create or copy BOMs." | Ask an admin. It also appears if a member clicks **Edit BOM**, **Apply template** or a labour button. |
+| "No BOM exists for this variant. Only admin and super_admin can create or copy BOMs." | Ask an admin to create the BOM. |
+| "Select at least one component." | Tick at least one component before you save. |
+| "That BOM has no components to copy." | Choose another BOM to copy. |
+| "Failed to load that BOM. Please try again." | Pick the BOM again. |
+| "No matching variants with a BOM." | Try other words in **Search products, variants, SKUs…**. |
+| "No other variants have a BOM yet." | Nothing is available to copy. Build the BOM from components or a template. |
+| "Labor routing values cannot be negative, and sequence must be at least 1." | Correct the **Sequence** or hours, then save again. Look on the **Bill of Materials** tab for the message. |
+| "BOM, department, and operation are required." | Fill in **Operation** and **Department**. |
+| "Delete this draft? This cannot be undone." | Click **Delete** to remove the draft, or **Cancel**. |
+| "Can't delete the active BOM. Make another version active first." | Make another version active, then delete this one. |
+| "Can't delete — still referenced by a costed job. Move or clear it first." | A costed job uses this version. Keep it. |
+| "You do not have permission to delete BOM versions." | Ask an admin. |
+| "Only admins can create retail items." | Ask an admin. |
+| "Name is required." | Enter a **Name**. |
+| "Cost must be a number of 0 or more." or "Reorder point must be a number of 0 or more." | Enter 0 or a positive number. |
+| "no default location: set one in Settings → Locations first" | Set a default location, then try again. See [Getting started](/help/getting-started#setting-the-default-location). |
+| "this variant already has an active BOM" | The variant is already live. It cannot be tracked as a retail item. |
+| "this product has manufactured variants with active BOMs; retail tracking applies to the whole product" | Another variant of the product has its own live BOM, so the product cannot become a retail product. |
+| "No active Shopify store found. Connect one in Settings." | Connect Shopify. See [Getting started](/help/getting-started#connecting-shopify). |
+| "Failed to load" and "Could not load products: [reason]" | Reload the page. If it keeps happening, contact support. |
+
+## Who can do what
+
+*(super_admin counts as admin.)* Pages in this module apply no role check, so anyone signed in to the workspace can open them. The actions below are checked as shown.
+
+| Task | Member | Admin |
+| --- | --- | --- |
+| View products, variants, BOMs, versions and routing | Yes | Yes |
+| Import Products | Yes | Yes |
+| New retail item, **Track as retail item** | No | Yes |
+| Create a BOM from components, a template or a copy | No | Yes |
+| **Edit BOM** (start a draft) | No | Yes |
+| Add, edit, remove or reorder components on a draft | Yes | Yes |
+| **Activate BOM**, **Make active** | Yes | Yes |
+| **Discard**, **Delete draft** | No | Yes |
+| **Delete version** | No | Yes |
+| **Save as template** | No | Yes |
+| Add, change or remove labour operations, **Apply template** | No | Yes |
+| Switch notifications on or off | No | Yes |
+| Change **Yield %** (Growth plan and above) | Yes | Yes |
+
+The actions marked Yes for members have no role check in the code. In practice a member can reach them only after an admin has created a draft, because creating a BOM and starting a draft are admin-only. **Edit BOM**, **Apply template** and the labour buttons are shown to everyone, but a member who clicks one is refused with the message in Fixing problems.
+
+## Common questions
+
+- **Can I add a product or a variant by hand?** Only as a retail item. Everything else comes from Shopify through **Import Products**.
+- **Where do I change a variant's price, SKU or title?** In Shopify. Manuva has no screen for them, and the next import brings Shopify's values in again.
+- **I saved a BOM and nothing happened. Why?** A new BOM is a draft. Click **Activate BOM** on the **Bill of Materials** tab to make it live.
+- **Can I undo Activate BOM?** Open **Versions**, select the earlier version and click **Make active**.
+- **Can a variant have two live BOMs?** No. Activating one makes every other version of that variant not live.
+- **Do labour changes need a new version?** No. Labour operations change on the version directly. Edit BOM does not carry them into the new draft, so check **Labour & Routing** on the draft before you activate it.
+- **Why can I not edit Yield %?** Editing yield is part of the Growth plan and above. On Starter it is read-only.
+- **Why is my draft missing from Versions?** The tab lists only versions that are not drafts. Your draft is on the **Bill of Materials** tab.
+- **Why does a version I replaced still say ACTIVE?** The list labels a replaced version by its saved status. Only the live version is highlighted and has no **Make active** button.
+- **Does a retail item need a draft?** No. Its one-line BOM is live as soon as you click **Track stock** or **Create**.

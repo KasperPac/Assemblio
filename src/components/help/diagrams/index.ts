@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import GettingStartedDiagram from "./getting-started";
+import ProductsAndBomsDiagram from "./products-and-boms";
 import PurchasingAndXeroDiagram from "./purchasing-and-xero";
 
 /**
@@ -9,5 +10,6 @@ import PurchasingAndXeroDiagram from "./purchasing-and-xero";
  */
 export const DIAGRAMS: Record<string, ComponentType> = {
   "getting-started": GettingStartedDiagram,
+  "products-and-boms": ProductsAndBomsDiagram,
   "purchasing-and-xero": PurchasingAndXeroDiagram,
 };

@@ -35,6 +35,11 @@ export const MANUALS: Manual[] = [
     description: "Set up your workspace, invite your team, connect Shopify and add your first product.",
   },
   {
+    slug: "products-and-boms",
+    title: "Products & BOMs",
+    description: "Build products and variants, define their bills of materials, and manage BOM versions and retail items.",
+  },
+  {
     slug: "purchasing-and-xero",
     title: "Purchasing & Xero",
     description: "Raise purchase orders, receive goods, enter supplier invoices and send bills to Xero.",
