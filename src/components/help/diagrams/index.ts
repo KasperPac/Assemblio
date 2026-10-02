@@ -3,6 +3,7 @@ import GettingStartedDiagram from "./getting-started";
 import ProductsAndBomsDiagram from "./products-and-boms";
 import ComponentsAndTemplatesDiagram from "./components-and-templates";
 import InventoryAndWarehouseDiagram from "./inventory-and-warehouse";
+import StocktakeDiagram from "./stocktake";
 import PurchasingAndXeroDiagram from "./purchasing-and-xero";
 
 /**
@@ -15,5 +16,6 @@ export const DIAGRAMS: Record<string, ComponentType> = {
   "products-and-boms": ProductsAndBomsDiagram,
   "components-and-templates": ComponentsAndTemplatesDiagram,
   "inventory-and-warehouse": InventoryAndWarehouseDiagram,
+  "stocktake": StocktakeDiagram,
   "purchasing-and-xero": PurchasingAndXeroDiagram,
 };

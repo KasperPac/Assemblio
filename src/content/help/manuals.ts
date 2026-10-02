@@ -50,6 +50,11 @@ export const MANUALS: Manual[] = [
     description: "See stock levels, record adjustments, trace every movement and organise stock into bin locations.",
   },
   {
+    slug: "stocktake",
+    title: "Stocktake",
+    description: "Count your stock, import counts from a spreadsheet, resolve discrepancies and commit the results.",
+  },
+  {
     slug: "purchasing-and-xero",
     title: "Purchasing & Xero",
     description: "Raise purchase orders, receive goods, enter supplier invoices and send bills to Xero.",

@@ -1,0 +1,167 @@
+A stocktake is a physical count of your stock, checked against what Manuva expects and then applied so the system matches the shelf. Anyone in the workspace can start a session and count. Admins review the differences and approve them.
+
+## How it fits together
+
+<Diagram name="stocktake" caption="A stocktake from session to commit, and where an initial count skips ahead" />
+
+Entering counts changes no stock. Stock changes only at step 5, when the count is applied, or for an initial count when you click **Apply opening stock →**.
+
+## Running a stocktake
+
+A session counts one location. It starts with a line for every component, so you count what is there and enter 0 for what is not.
+
+1. Click **Stocktake** in the sidebar, then **+ New stocktake**.
+2. In **Create session**, choose the **Count type**. **Full count** ("Count all components and reconcile variances") is already selected. **Initial count** is for opening stock: see [Setting opening stock](#setting-opening-stock).
+3. Choose the **Location** (required). Optionally, type **Notes**, such as an end-of-month count. Tick **Blind count mode** to hide the expected quantity from counters until review.
+4. Click **Start counting →**. Manuva opens the new session with a reference such as ST-2026-001. The number counts up through the year.
+5. Optional: click **Print sheet** to print a counting sheet in a new tab, or **Print** beside a group to print just that group. The sheet lists each component with its SKU, a blank **Counted** space and a **Notes** space, with lines for the counter's name and signature. It shows **Expected** unless the session is blind.
+6. Enter each count in the **Counted** box. The count saves when you click out of the box: a **…** shows while it saves, then **✓**, or **!** if it could not be saved. Clearing a box removes the count. The boxes are set up for whole numbers from 0 up.
+7. Watch the bar at the bottom: **Counted** shows how many lines have a count, out of the total, and **Variances** shows how many differ from **Expected**. **Net variance** is the dollar value of the differences at each component's cost. It is shown only to admins, and not on blind or initial counts.
+8. When every line has a count, click **Submit for review →**. The session moves to reconciliation. The button stays disabled until the **Counted** figure reaches the total.
+
+<Screenshot src="/help/stocktake/new-stocktake.png" alt="The Create session dialog with Full count selected, a location chosen and the Blind count mode box ticked" caption="Starting a stocktake" />
+
+<Screenshot src="/help/stocktake/counting-sheet.png" alt="A stocktake session in counting status, with components grouped by bin, a Counted box on each line and the summary bar at the bottom" caption="Counting by bin" />
+
+What the session starts with:
+
+- One line for every component in your workspace, not only those you keep at the location.
+- **Expected** is the **On hand** at that location when you click **Start counting →**, or 0 if there was none. It does not change if stock moves while you count.
+- Lines are grouped by each component's storage location, shown as sub-location · aisle · Bay [name], with an item count. Components with none are grouped under "No location set". You set a storage location on the component: see [Setting a storage location](/help/components-and-templates#setting-a-storage-location) and [Bin locations](/help/inventory-and-warehouse#bin-locations).
+- With **Blind count mode**, a **Blind count** badge shows next to the title while counting, and **Expected**, **Variance** and **Value** are hidden. They appear in the review.
+
+<Callout type="info">
+You can also count on a phone: open **Count Stock** on the scanner and choose the session. It saves counts the same way as the boxes here. See [Scanning with your phone](/help/inventory-and-warehouse#scanning-with-your-phone).
+</Callout>
+
+## Importing counts from CSV
+
+If you count on a spreadsheet, import the counts instead of typing them. The easiest route is to export the session, fill in the counts and import the same file.
+
+1. Open a session that is in counting status.
+2. Click **Export CSV**. The file is named after the session reference, such as ST-2026-001-stocktake.csv.
+3. Fill in the **counted** column and save the file as CSV.
+4. Click **Import CSV** and choose the file. The button shows "Importing…", then a result such as "Imported 12 lines".
+5. Reload the page to see the imported counts in the boxes. Then carry on as normal, and submit for review.
+
+**Export CSV** shows while a session is in counting or reconciliation. **Import CSV** shows only while it is in counting.
+
+The exported file has these columns, in this order: `component_id`, `component_name`, `sku`, `sub_location`, `aisle`, `bay`, `expected`, `counted`, `notes`. The importer reads only three of them, and matches the column names exactly, so keep the first row as it is:
+
+| Column | What the import does with it |
+| --- | --- |
+| `component_id` | Required. Finds the line for that component in this session. |
+| `counted` | Required. The count: a number, 0 or more. |
+| `notes` | Optional. Saved as the line's note. A blank cell clears any note already on the line. |
+
+Other columns are ignored, and row order does not matter. Each row is handled on its own: a row with no `component_id` or no `counted`, a `counted` that is not a number or is below 0, or a `component_id` that is not in the session is skipped without a message. The message only tells you how many lines were updated, so check the number against the rows you expected. A file that has no `component_id` or `counted` column imports 0 lines.
+
+The import does these checks, and shows the message in red beside the button:
+
+| Message | Meaning |
+| --- | --- |
+| "Error: Session is not in counting status" | The session has been submitted, completed or otherwise moved on. |
+| "Error: No file uploaded" | The upload carried no file. |
+| "Error: File too large (max 5 MB)" | The file is over 5 MB. |
+| "Error: Session not found" | The session does not belong to your workspace. |
+| "Error: Unauthorized" | You are not signed in to a workspace. |
+| "Error: Network failure" | The upload did not reach Manuva. Try again. |
+
+<Screenshot src="/help/stocktake/import-csv.png" alt="A stocktake in counting status with the Print sheet, Export CSV and Import CSV buttons, and the message Imported 12 lines under Import CSV" caption="Importing counts" />
+
+<Callout type="warning">
+**Export CSV** includes the `expected` column even for a blind count. Delete that column before you hand the file to a counter.
+</Callout>
+
+## Resolving discrepancies
+
+After you submit, the session shows the review. It lists every line whose count differs from **Expected**, so you can check them before anything changes.
+
+1. Open the session from the **Stocktakes** list with **Open →**.
+2. Read the cards at the top: **Lines with variance** (for example 4 / 120), **Stock gains**, **Stock losses** and **Net adjustment**. The three dollar figures value the differences at each component's cost per unit.
+3. Read the table titled "Lines with variance — sorted by $ impact". Each row shows **Component**, **Expected**, **Counted**, **Variance** and **Var %**. **Var %** reads — where the expected quantity was 0. Admins also see **Value**. The biggest dollar differences come first. Below the table, Manuva says how many lines matched exactly.
+4. For each line, you can pick a reason from **Select reason…**, type an **Optional comment…** and click **Save**. The reasons are Damage, Theft, Data Entry Error, Found Stock, Supplier Shortage and Other. Manuva adds them to your workspace the first time a session is started, and has no screen to change them.
+5. To fix a count, an admin clicks **↩ Send back for recount**. The session returns to counting with the counts kept. Change them, then click **Submit for review →** again. Counts cannot be changed while the session is in review.
+6. When you are satisfied, an admin clicks **Approve & apply →**. There is no confirmation step.
+
+<Screenshot src="/help/stocktake/review.png" alt="The stocktake review with the four summary cards, the variance table sorted by dollar value, and a reason box and Save button under a line" caption="Reviewing variances" />
+
+A reason and comment are recorded on the line only. Nothing requires a reason before you approve, and they do not change the stock.
+
+What **Approve & apply →** does:
+
+- For each line, Manuva compares the count with the **On hand** at the session's location at that moment. If they differ, it writes one stock movement for the difference and sets **On hand** to the counted figure. A line whose count already equals the balance gets no movement.
+- Each movement has the reason stocktake_adjustment, which you will see under **Recent movements** on Inventory and in the movements ledger. See [Stock movements](/help/inventory-and-warehouse#stock-movements).
+- **In prod** and **Reserved** are not changed.
+- The session becomes completed and you return to the **Stocktakes** list. No confirmation message is shown, so open the session to check its status.
+- The whole apply succeeds or fails together. If it fails, the session goes back to reconciliation and the session page shows "Apply failed: …".
+
+<Callout type="info">
+The review compares your count with **Expected**, which was fixed when the session started. The adjustment is worked out against the balance at the time you approve. If goods were received or used while you counted, the adjustment can differ from the variance you reviewed.
+</Callout>
+
+A completed session cannot be reopened or reversed. Its counts stay on screen, read-only, with **View →** on the list. To correct a mistake afterwards, log a movement: see [Adjusting stock](/help/inventory-and-warehouse#adjusting-stock).
+
+## Setting opening stock
+
+An initial count loads your starting quantities. It skips review and approval.
+
+1. Click **Start initial count →** on the **Stocktakes** page, or click **+ New stocktake** and choose **Initial count** ("Set opening stock quantities for a new inventory"). The banner "Set up your opening stock" shows only while no component has stock on hand and none of the sessions on the list is completed.
+2. Choose a **Location** and click **Start counting →**.
+3. Enter a count for every component in the **On-hand count** column. **Expected** shows — and there is no variance.
+4. Click **Apply opening stock →**. It stays disabled until every line has a count. The session goes straight to completed, with the same movements as above.
+
+## Looking back at past stocktakes
+
+Click **Reports** in the sidebar, then the **Stocktake history** card. The report is titled **Stocktake history**: "All stocktake sessions and their variance results." It lists the sessions started in the period you choose, the last 365 days unless you pick another, with **Date**, **Location**, **Status**, **Lines counted**, **Variance lines** and **Total variance qty**. It has a chart of variance lines per stocktake and cards for **Stocktakes completed**, **Total variance lines** and **Largest single variance**. See [Reports](/help/reports).
+
+The report counts every session in the period, whatever its status, and counts an uncounted line as a variance. Read it for completed sessions.
+
+## Statuses explained
+
+The status shows as a badge on the **Stocktakes** list and on the session.
+
+| Status | What it means | What moves it on |
+| --- | --- | --- |
+| counting | Counts are being entered. Boxes, **Import CSV** and the phone scanner all work. Every new session starts here. | **Submit for review →** (full count), or **Apply opening stock →** (initial count). |
+| reconciliation | Submitted and waiting for review. Counts are locked. | **Approve & apply →**, or **↩ Send back for recount** to return to counting. |
+| approved | Held for a moment while the count is applied. | Manuva moves it to completed. If the apply fails, back to reconciliation. |
+| completed | Applied. The session is read-only. | Nothing. |
+| open, draft, locked, archived | Older statuses. A new session never gets them. A session in open works like counting. The others show the session header but no counting sheet. | Not changed from any screen. |
+
+## Fixing problems
+
+The messages for **Import CSV** are in [Importing counts from CSV](#importing-counts-from-csv).
+
+| Message | What to do |
+| --- | --- |
+| "All lines must be counted before submitting for review." | At least one line has no count. Enter a count, 0 if there is none, on each line. The same check applies to **Apply opening stock →**. |
+| "Apply failed: …" | The count was not applied and no stock changed. The text after the colon is the reason the database gave, with underscores shown as spaces. On a full count the session is back in reconciliation, so an admin can try **Approve & apply →** again. |
+| A **!** beside a **Counted** box | The count did not save, for example because the session has moved on. Reload the page and enter it again. |
+| Imported counts do not show in the boxes, or **Submit for review →** stays disabled after an import | Reload the page. |
+| **Approve & apply →** and **↩ Send back for recount** are missing | Both show only to admins, and only while the session is in reconciliation. |
+
+## Who can do what
+
+The stocktake server actions apply no role check. What differs is what you see: the approval buttons and the dollar **Value** figures show only to admins. A member has no button for approving, but the action behind it does not check the role. *(super_admin counts as admin.)*
+
+| Task | Member | Admin |
+| --- | --- | --- |
+| Start a session, count, import or export a CSV, print a sheet | Yes | Yes |
+| Submit for review | Yes | Yes |
+| Apply opening stock on an initial count | Yes | Yes |
+| Save variance reasons | Yes | Yes |
+| See **Stock gains**, **Stock losses** and **Net adjustment** in review | Yes | Yes |
+| See **Net variance** and **Value** | No | Yes |
+| See the **↩ Send back for recount** and **Approve & apply →** buttons | No | Yes |
+| View **Stocktake history** | Yes | Yes |
+
+## Common questions
+
+- **Does counting change my stock?** No. Counts are saved on the session. Stock changes only when an admin clicks **Approve & apply →**, or when you click **Apply opening stock →** on an initial count.
+- **Can I count only some components?** No. A session has a line for every component and needs a count on each before you can submit. Enter 0 for components you do not hold.
+- **Can I count two locations at once?** A session is for one location. Start a second session for the next.
+- **Can I undo a completed stocktake?** No. Log a movement to correct a single component. See [Adjusting stock](/help/inventory-and-warehouse#adjusting-stock).
+- **Can I add components to a session after starting?** No. A session covers the components that existed when it started, and **Expected** stays as it was then.
+- **How many sessions does the list show?** The 50 most recent.
+- **What does a blind count hide?** The expected quantity, the variance and the value while counting, on screen, on the printed sheet and on the phone scanner. The review shows them. The CSV export does not hide them.
