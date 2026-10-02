@@ -4,7 +4,7 @@ Getting started takes you from an approved application to a workspace with your 
 
 <Diagram name="getting-started" caption="The first hour in Manuva, and who does each step" />
 
-Steps 2 to 5 are admin settings under **Settings**. Do them in this order: a default location has to exist before you can create a retail item, and Shopify has to be connected before **Import Products** has anything to import.
+Steps 2 to 5 are admin steps: company, team and Shopify are under **Settings**, and warehouses are under **Locations** in the sidebar. Step 6 is on **Products**, and **Import Products** is open to members too. Do them in this order: a default location has to exist before you can create a retail item, and Shopify has to be connected before **Import Products** has anything to import.
 
 ## Getting an account
 
@@ -15,12 +15,12 @@ Manuva is in private beta, so a workspace starts from an application.
 3. Manuva shows "Thanks for applying. We'll review your application and email you when you're in." If that address has already applied, it shows "You already have an application on file — we'll be in touch soon."
 4. When your application is approved, Manuva sends you a sign-up link. Open it. The page reads "Start your 30-day free trial" and "Full Pro-level access. No credit card required."
 5. Check **Company name** and **Work email**, which are filled in from your application. Choose a **Password** of at least 8 characters.
-6. Under **Plan after trial**, choose **Starter**, **Growth** or **Pro**, and **Annual (save ~20%)** or **Monthly**. This is the plan you move to when the trial ends. The page shows what that plan allows.
-7. Click **Start free trial**. Manuva creates your workspace, makes you its admin and opens the app.
+6. Under **Plan after trial**, choose **Starter**, **Growth** or **Pro**, and **Annual (save ~20%)** or **Monthly**. This pre-selects that plan when the trial ends. The page shows what that plan allows.
+7. Click **Start free trial**. Manuva creates your workspace, makes you its admin and opens the app. If your account needs email confirmation, Manuva shows "Check your email to confirm your account, then sign in to continue." instead, and the app does not open until you have confirmed and signed in.
 
 <Screenshot src="/help/getting-started/signup.png" alt="The sign-up page with the company name and work email filled in, the plan chips and the Start free trial button" caption="Signing up from your invite link" />
 
-During the 30-day trial you have Pro limits. A banner across the app counts the days: "[n] days left in your free trial." It links to **Upgrade now →**. After the trial you are on the plan you chose:
+During the 30-day trial you have Pro limits. A banner across the app counts the days: "[n] days left in your free trial." It links to **Upgrade now →**. When the trial ends, an admin is asked to pick a plan: the page says "Your free trial has ended" and "Pick a plan to keep using Manuva." The plan you chose at sign-up is pre-selected. These are the sign-up page's figures for each plan:
 
 | Plan | Locations | Team members |
 | --- | --- | --- |
@@ -28,16 +28,18 @@ During the 30-day trial you have Pro limits. A banner across the app counts the 
 | Growth | 5 | Unlimited |
 | Pro | Unlimited | Unlimited |
 
+The Locations pages need the Growth or Pro plan (or the trial), so a Starter workspace cannot create or choose a location, whatever the Locations figure says.
+
 To come back later, use the sign-in page: enter your **Email** and **Password** and click **Sign in**.
 
 ## Setting up your company
 
-*(admin)* Your company name, timezone, currency and logo live in one place. A new workspace starts on the timezone Pacific/Auckland and the currency NZD, so change them if you work somewhere else.
+*(admin)* Your company name, timezone, currency and logo live in one place. A new workspace starts on the timezone Pacific/Auckland and the currency AUD, so change them if you work somewhere else.
 
 1. Click your initial or picture at the top right and choose **Settings**. Admins open on **Company**.
 2. Check **Company name**.
 3. Choose your **Timezone** from Pacific/Auckland, Australia/Sydney, Australia/Melbourne, Australia/Brisbane, Australia/Perth, Asia/Singapore, America/New_York, America/Los_Angeles, Europe/London, Europe/Berlin or UTC.
-4. Choose your **Currency** from NZD, AUD, USD, GBP, EUR or SGD.
+4. Choose your **Currency** from the options offered: AUD, EUR, GBP, NZD, SGD and USD.
 5. Click **Save changes**. Manuva shows "Company settings updated".
 6. To add a logo, go to the **Logo** card, choose a PNG, JPEG, WebP or SVG file under 2 MB and click **Upload logo**. Manuva shows "Logo updated". The logo is used in exported reports.
 
@@ -47,7 +49,7 @@ To come back later, use the sign-in page: enter your **Email** and **Password** 
 Changing **Currency** only saves the setting. Manuva does not convert any amounts you have already entered.
 </Callout>
 
-The [Workspace administration](/help/workspace-admin) manual covers the settings pages in full.
+The [Workspace admin](/help/workspace-admin) manual covers the settings pages in full.
 
 ## Inviting your team
 
@@ -83,7 +85,7 @@ The person you invited opens the email and clicks **Accept invitation →**. The
 
 ## Setting the default location
 
-*(admin)* Manuva files received stock, new retail items and order allocations against your default location. Nothing sets one for you: the first warehouse you add is not the default until you say so.
+*(admin)* Manuva uses your default location in three places. The goods receipt form starts on it, and falls back to the first location in the list if there is no default. New retail items are filed against it, and a retail item cannot be created without one. Order allocation uses it too, and with no default location allocation does nothing. Nothing sets one for you: the first warehouse you add is not the default until you say so.
 
 Locations are part of the Growth and Pro plans, and your trial. Without them the page says "Multi-location and bin management is available on Growth".
 
@@ -92,7 +94,7 @@ Locations are part of the Growth and Pro plans, and your trial. Without them the
 3. Go to **Settings → Locations**. The page is titled **Default Location**.
 4. Click **Set as default** next to the warehouse. It then shows a **Default** badge.
 
-If you have no warehouse yet, the Default Location page says "No locations yet": "Create locations in the Locations module before setting a default." Its **Manage locations →** link goes to the Locations page. Sub-locations, aisles and bays are covered in [Inventory & Warehouse](/help/inventory-and-warehouse).
+If you have no warehouse yet, the Default Location page says "No locations yet": "Create locations in the Locations module before setting a default." Its **Manage locations →** link goes to the Locations page. Sub-locations, aisles and bays are covered in [Inventory & warehouse](/help/inventory-and-warehouse).
 
 ## Connecting Shopify
 
@@ -109,7 +111,7 @@ If you have no warehouse yet, the Default Location page says "No locations yet":
 
 <Screenshot src="/help/getting-started/integrations-shopify.png" alt="The Integrations page with the Shopify card open, showing a connected store, its last sync, the Historical cutoff date and the Sync and Disconnect buttons" caption="The Shopify card after connecting" />
 
-Sync reads all of your products and your whole order history. It does not stop at a recent date, which is why the **Historical cutoff** is worth setting before your first sync. When you connect, Manuva also registers Shopify webhooks for orders and products, so later changes in Shopify trigger a sync. If that step fails, Manuva shows "Store connected, but webhook registration failed. Check app URL and try reconnecting." You can still click **Sync** yourself.
+Sync imports your products and the orders Shopify makes available to Manuva. Manuva asks Shopify only for read access to products and orders. The **Historical cutoff** marks orders placed before its date as stats only, with no stock or planning, once you sync again. When you connect, Manuva also registers Shopify webhooks for orders and products, so later changes in Shopify trigger a sync. If that step fails, Manuva shows "Store connected, but webhook registration failed. Check app URL and try reconnecting." You can still click **Sync** yourself.
 
 To remove the connection, click **Disconnect** in the store's row. Manuva deletes its saved access to the store and shows "Shopify store disconnected." The connect box comes back under **Manage**.
 
@@ -136,15 +138,15 @@ The dialog explains: "A product you buy in and sell unchanged. Manuva tracks its
 ## Where to go next
 
 - [Products & BOMs](/help/products-and-boms): what each product is made of.
-- [Components & Templates](/help/components-and-templates): the parts and the reusable labour setups.
-- [Inventory & Warehouse](/help/inventory-and-warehouse): stock levels, movements and bin locations.
+- [Components & templates](/help/components-and-templates): the parts and the reusable labour setups.
+- [Inventory & warehouse](/help/inventory-and-warehouse): stock levels, movements and bin locations.
 - [Stocktake](/help/stocktake): counting what is on the shelf.
 - [Orders & Shopify](/help/orders-and-shopify): how orders arrive and get stock.
 - [Purchasing & Xero](/help/purchasing-and-xero): buying stock and sending bills to Xero.
 - [Suppliers](/help/suppliers): who you buy from.
 - [Production planning](/help/production-planning): scheduling work.
 - [Reports](/help/reports): what the numbers say.
-- [Workspace administration](/help/workspace-admin): team, company and billing settings in depth.
+- [Workspace admin](/help/workspace-admin): team, company and billing settings in depth.
 
 ## Statuses explained
 
@@ -222,26 +224,26 @@ Settings is split in two. Every signed-in person gets **Personal** (**Profile**,
 | Open Company, Team, Integrations and Locations settings | No | Yes |
 | Change company details and the logo | No | Yes |
 | Invite, resend, revoke, change a role, deactivate | No | Yes |
-| Connect or disconnect Shopify | No | Yes |
+| Connect or disconnect Shopify (the buttons are on the Integrations page) | No | Yes |
 | Click **Import Products** on the Products page | Yes | Yes |
 | Click **Sync** on the Integrations page | No | Yes |
 | Add a warehouse | Yes | Yes |
 | Set the default location | No | Yes |
 | Create a retail item | No | Yes |
 
-The **Import Products** and warehouse rows have no admin check in the code: any signed-in member can do them. The Integrations and **Sync** rows are admin-only because only admins can open the Integrations page. Adding a warehouse also needs the Growth or Pro plan, or the trial.
+The **Import Products** and warehouse rows have no admin check in the code: any signed-in member can do them. The Shopify connect, sync and disconnect routes also check only that you are signed in with a workspace, so members are kept out only because the Integrations page is hidden from them. The Integrations and **Sync** rows are admin-only because only admins can open the Integrations page. Adding a warehouse also needs the Growth or Pro plan, or the trial.
 
 `super_admin` counts as an admin. Platform support accounts (`platform_observer`) are read-only and are not admins.
 
 ## Common questions
 
 - **Does the trial need a card?** No. The sign-up page says "Full Pro-level access. No credit card required."
-- **What happens when the trial ends?** You move to the plan you chose on the sign-up page. The trial banner says so: "after it ends, you'll be on the [plan] plan."
+- **What happens when the trial ends?** An admin is asked to pick a plan. The page says "Your free trial has ended" and "Pick a plan to keep using Manuva." The plan you chose at sign-up is pre-selected.
 - **How long does an invitation last?** 7 days from when you send or resend it. Inviting the same address again sends a new link.
 - **I was invited but I already have an account.** Sign in with the address the invitation was sent to, then click **Accept invitation**. A different account is refused.
 - **Can I be in more than one workspace?** Yes. If you belong to more than one, the user menu shows a **Switch Tenant** box and a **Switch** button.
 - **Why can't I open Locations settings?** The Locations pages are part of the Growth and Pro plans, and your trial.
-- **Does Manuva import my old Shopify orders?** Yes. A sync reads the whole order history. Set the **Historical cutoff** to treat orders before a date as stats only, then sync again.
+- **Does Manuva import my old Shopify orders?** A sync imports the orders Shopify makes available to Manuva. Orders placed before the **Historical cutoff** date are imported for stats only, with no stock or planning. Sync again after changing the date.
 - **Will Manuva stay in step with Shopify after the first sync?** Manuva registers Shopify webhooks when you connect, and a change to an order or product in Shopify triggers a sync. Click **Sync** if you want one straight away.
 - **What does Disconnect do?** It deletes Manuva's saved access to the store and marks the store disconnected. Connect again from **Manage** when you want it back.
 - **Why does Manuva open a scanner on my phone?** On a phone or tablet browser, the Dashboard sends you to the Warehouse Scanner page.
