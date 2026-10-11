@@ -58,3 +58,6 @@ tasks/tasks.json
 __pycache__/
 *.pyc
 *.pyo
+
+# Private local agent instructions (read explicitly; not auto-loaded).
+AGENTS.local.md

@@ -1,3 +1,47 @@
+# Claude permissions are documented in docs/codex-migration.md.
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[sandbox_workspace_write]
+network_access = true
+
 [mcp_servers.shopify-dev-mcp]
 command = "npx"
-args = ["-y", "@shopify/dev-mcp@latest"]
+args = [
+    "-y",
+    "@shopify/dev-mcp@latest",
+]
+
+[mcp_servers.monday]
+url = "https://mcp.monday.com/mcp"
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["@playwright/mcp@latest"]
+
+[mcp_servers.playwright.env]
+NODE_OPTIONS = "--use-system-ca"
+
+[mcp_servers.square]
+command = "npx"
+args = [
+    "-y",
+    "square-mcp-server",
+    "start",
+]
+
+env_vars = ["ACCESS_TOKEN"]
+
+[mcp_servers.square.env]
+SANDBOX = "true"
+DISALLOW_WRITES = "true"
+
+# Read-only handoff notice; review/trust this definition with /hooks.
+[[hooks.SessionStart]]
+matcher = "startup|resume|clear|compact"
+
+[[hooks.SessionStart.hooks]]
+type = "command"
+command = 'node "$(git rev-parse --show-toplevel)/scripts/codex-session-start.mjs"'
+timeout = 10
+statusMessage = "Loading project handoff references"
