@@ -209,7 +209,9 @@ export default async function TemplatesPage({ searchParams }: Props) {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Products"
+        band
+        domain="products"
+        eyebrow="Operations · Products"
         title="Templates"
         description="Reusable component packs and labor routings for BOMs."
         actions={

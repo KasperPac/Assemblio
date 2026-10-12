@@ -137,7 +137,7 @@ export default function DevDashboardClient({ initialData }: { initialData: Dashb
 
   return (
     <section className={styles.page}>
-      <PageHeader eyebrow="Platform" title="Dashboard" />
+      <PageHeader band eyebrow="Overview" title="Today" />
 
       <div className={styles.tabBar}>
         {TABS.map((tab) => (

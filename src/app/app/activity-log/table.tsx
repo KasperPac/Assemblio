@@ -107,7 +107,9 @@ export default function ActivityLogClient(props: Props) {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Audit"
+        band
+        domain="audit"
+        eyebrow="Workspace · Audit"
         title="Activity log"
         description="Search and page through all platform activity, inspect event details, and review the raw metadata recorded for each action."
       />

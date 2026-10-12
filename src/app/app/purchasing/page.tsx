@@ -17,6 +17,7 @@ import StatusBadge from "../_ui/status-badge";
 import EmptyState from "../_ui/empty-state";
 import ListPanel, { ListRow } from "../_ui/list-panel";
 import HelpLink from "../_ui/help-link";
+import { AWAITING_PO_STATUSES, resolveBandTimezone, tenantDayBounds } from "@/lib/bands/metrics";
 
 type PurchaseOrderRow = {
   id: string;
@@ -45,7 +46,11 @@ export default async function PurchasingPage() {
   if (!context) redirect("/auth/login");
   const { supabase, tenantId } = context;
 
-  const [{ data, error }, { data: suppliers }, { data: components }, { data: poLines }, nextPoNumber] =
+  const { data: tenant, error: timezoneError } = await supabase
+    .from("tenant").select("timezone").eq("id", tenantId).single();
+  const day = tenantDayBounds(new Date(), resolveBandTimezone(tenant?.timezone));
+
+  const [{ data, error }, { data: suppliers }, { data: components }, { data: poLines }, nextPoNumber, awaitingRes, todayRes] =
     await Promise.all([
       supabase
         .from("purchase_order")
@@ -64,13 +69,31 @@ export default async function PurchasingPage() {
         .order("created_at", { ascending: false })
         .limit(20),
       getNextPoNumber(),
+      supabase.from("purchase_order")
+        .select("id", { count: "exact", head: true })
+        .eq("tenant_id", tenantId)
+        .in("status", [...AWAITING_PO_STATUSES]),
+      supabase.from("purchase_order")
+        .select("id", { count: "exact", head: true })
+        .eq("tenant_id", tenantId)
+        .in("status", [...AWAITING_PO_STATUSES])
+        .gte("expected_date", day.start)
+        .lt("expected_date", day.end),
     ]);
 
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Operations"
-        title="Purchasing"
+        band
+        domain="purchasing"
+        eyebrow="Operations · Purchasing"
+        title="Purchase orders"
+        stat={{
+          label: "Awaiting receipt",
+          value: awaitingRes.error || awaitingRes.count == null ? "—" : awaitingRes.count,
+          unit: "open",
+          delta: !timezoneError && !todayRes.error && todayRes.count != null ? `${todayRes.count} arrive today` : undefined,
+        }}
         description="Create inbound purchase orders, manage status changes, and keep received quantities aligned with component demand."
         actions={
           <div className={styles.headerActions}>
@@ -88,6 +111,7 @@ export default async function PurchasingPage() {
               action={createPurchaseOrderLine}
             />
             <PurchaseOrderCreateForm
+              triggerClassName={styles.bandPrimary}
               suppliers={
                 (suppliers ?? []) as Array<{ id: string; name: string | null }>
               }

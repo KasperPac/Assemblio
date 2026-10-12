@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import styles from "./shell.module.css";
 import type { ReactNode } from "react";
+import { getActiveNavHref, getRouteBand } from "./route-meta";
 
 type NavItem = {
   label: string;
@@ -278,6 +279,7 @@ export default function SidebarNav({
 }) {
   const pathname = usePathname();
   const navSections = buildNavSections(hasPlanning, isSuperAdmin, isPlatformOperator);
+  const activeHref = getActiveNavHref(pathname, navSections.flatMap((section) => section.items.map((item) => item.href)));
 
   return (
     <nav className={styles.nav}>
@@ -285,15 +287,14 @@ export default function SidebarNav({
         <div key={section.label} className={styles.navSection}>
           <p className={styles.navSectionLabel}>{section.label}</p>
           {section.items.map((item) => {
-            const isActive =
-              item.href === "/app"
-                ? pathname === "/app"
-                : pathname?.startsWith(item.href);
+            const isActive = activeHref === item.href;
 
             return (
               <a
                 key={item.href}
                 href={item.href}
+                data-domain={getRouteBand(item.href)?.domain ?? undefined}
+                aria-current={isActive ? "page" : undefined}
                 className={`${styles.navItem} ${isActive ? styles.active : ""}`}
               >
                 <span className={styles.navIcon}>{item.icon}</span>

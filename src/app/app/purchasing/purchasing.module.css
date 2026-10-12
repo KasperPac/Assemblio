@@ -10,12 +10,17 @@
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 /* ── Trigger buttons ── */
 
 .primaryBtn {
   composes: primary from "../_ui/buttons.module.css";
+}
+
+.bandPrimary {
+  composes: ink from "../_ui/buttons.module.css";
 }
 
 .secondaryBtn {

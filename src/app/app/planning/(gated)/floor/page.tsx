@@ -5,6 +5,9 @@ import { FloorBoard, type DepartmentColumn, type DrawerStep } from "./floor-boar
 import type { JobCardData } from "./job-card";
 import { UnstartedPanel, type UnstartedLine } from "./unstarted-panel";
 import HelpLink from "../../../_ui/help-link";
+import PageHeader from "../../../_ui/page-header";
+import { countOpenProductionJobs } from "@/lib/bands/metrics";
+import { fetchAllRows } from "@/lib/supabase/paginate";
 
 // ── Raw DB row shapes ──────────────────────────────────────────────────────────
 
@@ -104,13 +107,13 @@ export default async function FloorPage() {
     });
 
   // 1. Parallel-fetch departments (active) + routing steps (active/queued/blocked)
-  const [{ data: deptData }, { data: stepData }] = await Promise.all([
+  const [{ data: deptData }, { data: stepData, error: stepError }] = await Promise.all([
     supabase
       .from("department")
       .select("id,name")
       .eq("is_active", true)
       .order("name"),
-    supabase
+    fetchAllRows((from, to) => supabase
       .from("job_routing_step")
       .select(
         `id,sequence,blocked_by,status,operation_name,scheduled_start,department_id,order_line_id,
@@ -120,7 +123,9 @@ export default async function FloorPage() {
          )`
       )
       .eq("tenant_id", tenantId)
-      .in("status", ["active", "queued", "blocked"]),
+      .in("status", ["active", "queued", "blocked"])
+      .order("id")
+      .range(from, to)),
   ]);
 
   const departments = (deptData ?? []) as DeptRow[];
@@ -217,6 +222,14 @@ export default async function FloorPage() {
 
   return (
     <div className={styles.page}>
+      <PageHeader
+        band
+        domain="production"
+        eyebrow="Planning · Production"
+        title="Production planning"
+        description="Active, queued, and blocked jobs across your production departments."
+        stat={{ label: "Open jobs", value: stepError ? "—" : countOpenProductionJobs(steps) }}
+      />
       <HelpLink slug="production/planning-overview" label="How the planning module works" />
       {unstartedLines.length > 0 && (
         <UnstartedPanel lines={unstartedLines} />

@@ -17,18 +17,19 @@ type SupplierOption = {
 type Props = {
   suppliers: SupplierOption[];
   nextPoNumber: string;
+  triggerClassName?: string;
   action: (state: FormState, formData: FormData) => Promise<FormState>;
 };
 
 const initialState: FormState = {};
 
-export default function PurchaseOrderCreateForm({ suppliers, nextPoNumber, action }: Props) {
+export default function PurchaseOrderCreateForm({ suppliers, nextPoNumber, action, triggerClassName }: Props) {
   const [open, setOpen] = useState(false);
   const [state, formAction] = React.useActionState(action, initialState);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
-    if (state.success) setOpen(false);
+    if (state.success) dialogRef.current?.close();
   }, [state.success]);
 
   useEffect(() => {
@@ -42,7 +43,7 @@ export default function PurchaseOrderCreateForm({ suppliers, nextPoNumber, actio
     <>
       <button
         type="button"
-        className={styles.primaryBtn}
+        className={triggerClassName ?? styles.primaryBtn}
         onClick={() => setOpen(true)}
       >
         New PO +

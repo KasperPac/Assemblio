@@ -24,14 +24,7 @@
 }
 
 .importButton {
-  border: none;
-  border-radius: var(--radius-lg);
-  padding: 10px 14px;
-  background: var(--brand-1);
-  color: var(--ink-on-brand);
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: var(--shadow-md);
+  composes: primary from "../_ui/buttons.module.css";
 }
 
 .filters {

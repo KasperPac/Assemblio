@@ -187,7 +187,9 @@ export default async function ComponentsPage({ searchParams }: Props) {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Products"
+        band
+        domain="inventory"
+        eyebrow="Operations · Inventory"
         title="Components"
         description={`${filtered.length} of ${allComponents.length} components in the current catalog.`}
         actions={

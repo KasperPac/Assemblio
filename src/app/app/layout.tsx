@@ -141,13 +141,6 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       </aside>
 
       <div className={styles.main}>
-        <Topbar
-          tenantName={tenant?.name ?? "No tenant access"}
-          userInitial={userInitial}
-          userAvatarUrl={profile?.avatar_url ?? null}
-          selectableTenants={selectableTenants}
-          currentTenantId={profile?.tenant_id ?? ""}
-        />
         {isPlatformOperator && profile?.tenant_id && profile?.tenant_id !== profile?.super_admin_home_tenant_id && (
           <ViewAsBanner tenantName={tenant?.name ?? "tenant"} />
         )}
@@ -158,6 +151,13 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           />
         ) : null}
         {showPastDueBanner ? <PastDueBanner /> : null}
+        <Topbar
+          tenantName={tenant?.name ?? "No tenant access"}
+          userInitial={userInitial}
+          userAvatarUrl={profile?.avatar_url ?? null}
+          selectableTenants={selectableTenants}
+          currentTenantId={profile?.tenant_id ?? ""}
+        />
         <section className={styles.content}>{children}</section>
       </div>
     </div>

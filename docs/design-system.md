@@ -1,10 +1,41 @@
 # Manuva Design System
 
-Authoritative reference for building pages in the Manuva app. Loaded automatically
-into agent context via CLAUDE.md. Covers token rules, canonical page layout,
+Authoritative reference for building pages in the Manuva app. Read through AGENTS.md.
+Covers token rules, canonical page layout,
 `_ui/` component usage, and explicit anti-patterns.
 
 ---
+
+## Bold index headers (2026-10-12)
+
+Use the [18-page map and metric definitions](bold-app-bands.md) for index pages.
+The current local source library is `C:/dev/ManuvaDesignSystem`; the former
+`manuva-tokens/Manuva Design System` path is unavailable on this machine.
+Only the bold additions are adopted here; existing surface palettes remain.
+
+```tsx
+<PageHeader
+  band
+  domain="purchasing"
+  eyebrow="Operations · Purchasing"
+  title="Purchase orders"
+  stat={{ label: "Awaiting receipt", value: openCount, unit: "open", delta: todayLabel }}
+  actions={actions}
+/>
+```
+
+`domain` accepts inventory, production, purchasing, products, logistics or audit;
+omitting it uses navy. `cover` gives Reports its larger title and watermark.
+`stat` accepts `label`, `value`, optional `unit` and optional `delta`. Values come
+from tenant-scoped reads, with `—` for unavailable statistics. Do not invent metrics.
+
+The shell joins the exact index topbar to the full-width header. Keep the header
+first inside an unpadded page wrapper; content padding is supplied by the shell.
+Details and other routes keep the quiet header API described below. Nested dialogs
+automatically restore neutral tokens; non-dialog popovers use `data-band-reset`.
+Use canonical primary/secondary buttons and one lime-highlighted delta at most.
+Titles and numerals use Archivo with width 118 and weight 800, with fluid type sizes.
+
 
 ## 1. Token Rules
 

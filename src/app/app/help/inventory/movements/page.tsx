@@ -10,6 +10,12 @@ export default function MovementsPage() {
       relatedSlugs={["inventory/adjustments", "stocktake/running-a-stocktake"]}
     >
       <p>
+        The &quot;Inventory&quot; header shows &quot;Below reorder point&quot; as a count of distinct
+        components flagged in the balance table. A component stocked in several locations counts
+        once. The count compares each row&apos;s on-hand stock with its reorder point; it is not
+        the number of units to buy. A dash means the count could not be loaded.
+      </p>
+      <p>
         Every time stock levels change — through an adjustment, a goods receipt, a production
         completion, or a stocktake commit — Manuva records a movement. The movements log is a
         complete, tamper-proof audit trail.

@@ -460,7 +460,9 @@ export default async function ProductsPage({ searchParams }: Props) {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Products"
+        band
+        domain="products"
+        eyebrow="Operations · Products"
         title="Products"
         description={`${totalFiltered} of ${products.length} products`}
         actions={
