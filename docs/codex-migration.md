@@ -512,8 +512,9 @@ See [official hook documentation](https://learn.chatgpt.com/docs/hooks).
 | Shopify Skill/Read/prompt telemetry | Existing Codex plugin owns it; no new repo telemetry added |
 | 1Password PreToolUse mounted-file validation | Existing plugin; Windows uses `op run`; local-env mounts are not ported |
 
-The new hook is discovered but **untrusted** until the user reviews it with `/hooks`. No trust state was
-forged or written. Inherited user/plugin hooks are additive and can run independently; review the installed
+The new hook was initially untrusted. After the user restarted and reviewed `/hooks`, read-back confirmed
+it is enabled and **trusted**, with zero hook errors. No trust state was forged or written.
+Inherited user/plugin hooks are additive and can run independently; review the installed
 global hooks before starting a fresh session, particularly any config synchronization/automatic push behavior.
 
 ## Unmapped
@@ -547,8 +548,6 @@ global hooks before starting a fresh session, particularly any config synchroniz
 - **Work-log location/template:** the inherited work-log skill's referenced `references/work-entry.md` was absent
   from its migrated skill and checked legacy locations. Its `.claude/work/` destination conflicts with this task;
   an attributed, factual entry is recorded under `docs/agent-work/` without changing the skill or originals.
-- **Monday tracking:** connector tools unavailable; direct API fallback via beta `op run` timed out at authorization.
-  No task number was invented, board was not reconciled, and no status write was claimed.
 - **Earlier conversation history:** no May-July original JSONL sessions survived in the local project archive.
   Existing plans/ADRs are indexed as document evidence. Subagent outputs do not establish human decisions.
 - **Raw session resume:** distilled history is not imported as resumable Codex conversations. Original JSONL stays
@@ -558,16 +557,16 @@ global hooks before starting a fresh session, particularly any config synchroniz
 
 ## Manual steps
 
-1. Start a fresh Codex session from this trusted repo; inspect `/hooks` and review/trust the new read-only handoff hook.
-   Review inherited hooks first so none synchronizes Claude config or pushes unexpectedly. Do not bypass hook trust.
+1. Hook review is completed on this machine: the user restarted and reviewed the hook, and its trusted status
+   was verified. On another machine, review `/hooks` and inherited hooks before trusting them. Do not bypass hook trust.
 2. Resolve the `assemblio` Environment with 1Password's `list_environments`; launch with
    `op run --environment <resolved-ID> -- codex`. This injects `ACCESS_TOKEN` for Square without writing a secret file.
    Keep `SANDBOX=true` and `DISALLOW_WRITES=true`; no Square writes were performed by the migration.
 3. Rotate the legacy Square sandbox token, store the replacement as `ACCESS_TOKEN` in 1Password, and later reconcile
    its old Claude project registry entry only after authorizing changes to originals. No need to paste it into chat.
-4. Use `codex mcp login monday` / `codex mcp login supabase` if OAuth needs renewal. Listing proves registration,
-   not tool execution. Create/reconcile a migration item on Manuva board `5099992950` in workspace `5217812`, derive
-   `Task No`/code from existing data, attach the Brief, and link the local migration commit. Verify status read-back.
+4. Monday reconnection and migration tracking are completed below. Use `codex mcp login monday` /
+   `codex mcp login supabase` only if OAuth needs renewal. Verify actual board access rather than relying
+   on an MCP registration listing when setting up another machine.
 5. For a new workstation, install the listed Codex plugin counterparts and authenticate their services. Avoid
    duplicate Supabase/1Password servers; preserve user-global model preferences. Rube is optional and separate.
 6. Repair the machine's Windows elevated sandbox provisioning reported by `codex doctor` before depending on it.
@@ -581,7 +580,8 @@ global hooks before starting a fresh session, particularly any config synchroniz
 - TOML parses; strict app-server configuration loads. The CLI's MCP subcommand does not accept `--strict-config`;
   validation instead used strict app-server loading plus `codex mcp list --json`.
 - App-server `skills/list` detects 96 local skills, including all 11 source skill names and the two independent variants, with zero skill errors.
-- App-server `hooks/list` detects the new project SessionStart hook with no hook errors; trust status is untrusted.
+- App-server `hooks/list` detects the new project SessionStart hook with no hook errors; trust status
+  changed from untrusted to trusted after the user reviewed it.
 - Effective project config reads back `on-request` and `workspace-write`; CLI MCP listing recognizes migrated
   Monday, Playwright, Shopify-dev and Square plus inherited Supabase/1Password capabilities.
 - Research agent TOML parses and its five referenced modules exist. It was not spawned merely to test loading.
@@ -594,6 +594,30 @@ global hooks before starting a fresh session, particularly any config synchroniz
   scripts (63 in design_system.py, 3 in search.py). Those source assets are preserved; a CRLF-aware
   check excluding only those two inherited scripts passes for all other staged files.
   App source/schema/dependencies were not changed, so application suites were not re-run for this tooling task.
+
+## Post-restart verification and tracking
+
+The original migration had no Monday tools and its direct API fallback timed out during 1Password CLI
+authorization. After the user reauthenticated/retried, the Monday MCP successfully read the Manuva board.
+This resolves the earlier tracking gap; historical work records retain what happened at the time.
+
+- Verified board `5099992950` is Manuva in **Software Automation** (`5217812`), with the expected repo marker.
+- All mandatory columns were already present. Existing groups and labels were preserved.
+- Read all 115 existing items; no migration item existed and all had Task No values. Highest ordinal was 109.
+- Created first-class `MANUVA-110`, Task No 110, in the existing group, with Chore/Medium/M metadata,
+  Date Added 2026-10-12, and no Gate. Verified Working on it by read-back before recording this follow-up.
+- Attached its five-line Brief through `create_doc`. It references migration commit `35c5d125` and the docs.
+- Recorded the two remaining concrete follow-ups as independent items with Briefs. Their existing-board blank
+  Status is retained for not-started work; no new status labels or group restructuring were introduced.
+
+| Task | Link | Scope |
+| --- | --- | --- |
+| MANUVA-110 | [Migration and tracking](https://pac-technologies-company.monday.com/boards/5099992950/pulses/3275462966) | Repository migration plus verified hook/Monday setup |
+| MANUVA-111 | [Square sandbox credential rotation](https://pac-technologies-company.monday.com/boards/5099992950/pulses/3275446891) | Rotate ACCESS_TOKEN and verify runtime injection; legacy Claude config stays protected |
+| MANUVA-112 | [Windows sandbox repair](https://pac-technologies-company.monday.com/boards/5099992950/pulses/3275447050) | Repair the pre-existing provisioning failure and rerun doctor |
+
+No credentials were read/copied into these items. This follow-up remains on `chore/codex-migration` and
+adds a local commit rather than rewriting or pushing the original migration commit.
 
 ## Original agent-document path inventory
 
