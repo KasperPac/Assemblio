@@ -5,6 +5,7 @@ import StatusBadge from "../../_ui/status-badge";
 import ShopifyManage from "./shopify-manage";
 import StatusBanner from "./status-banner";
 import XeroCard from "./xero-card";
+import SquareCard from "./square-card";
 import { isXeroPilotTenant } from "@/lib/accounting/xero/config";
 import styles from "./integrations.module.css";
 
@@ -16,6 +17,7 @@ type Props = {
     orders?: string;
     reason?: string;
     xero?: string;
+    square?: string;
   }>;
 };
 
@@ -42,7 +44,7 @@ export default async function IntegrationsPage({ searchParams }: Props) {
   return (
     <>
       <PageHeader
-        eyebrow="Workspace"
+        eyebrow="Admin"
         title="Integrations"
         description="Connect external services to sync catalog, orders, and inventory."
       />
@@ -55,6 +57,7 @@ export default async function IntegrationsPage({ searchParams }: Props) {
         />
       )}
       <div className={styles.grid}>
+        <SquareCard squareParam={params.square} reason={params.reason} />
         <div className={styles.card}>
           <div className={styles.cardHeader}>
             <div className={styles.cardTitleRow}>

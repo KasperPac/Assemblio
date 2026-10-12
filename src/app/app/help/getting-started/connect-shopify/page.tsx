@@ -8,8 +8,9 @@ export default function ConnectShopifyPage() {
       title="Connect your Shopify store"
       description="Authorise Manuva to sync orders and products from your Shopify store."
       category="getting-started"
-      relatedSlugs={["orders/shopify-sync", "orders/order-statuses"]}
+      relatedSlugs={["getting-started/connect-square", "orders/shopify-sync", "orders/order-statuses"]}
     >
+      <p>Shopify is optional. For a Square-only business, use the related <strong>Connect Square and map retail stock</strong> guide instead.</p>
       <p>
         Connecting your Shopify store lets Manuva import orders automatically and match them to
         your products and BOMs. Once connected, new orders appear in Manuva within minutes of

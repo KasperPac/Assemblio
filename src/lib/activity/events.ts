@@ -132,6 +132,14 @@ export const ACTIVITY_EVENTS = {
   "settings.order_sla_updated": { entityType: null, summary: () => `Updated order SLA settings` },
   "integration.stats_only_set": { entityType: null, summary: () => `Updated Shopify import cutoff` },
 
+  // --- Square ---
+  "square.connected": { entityType: "square_connection", summary: () => "Connected Square" },
+  "square.disconnected": { entityType: "square_connection", summary: () => "Disconnected Square" },
+  "square.location_linked": { entityType: "sales_channel", summary: () => "Linked Square location" },
+  "square.item_mapping_changed": { entityType: "channel_item_link", summary: () => "Updated Square item mapping" },
+  "square.stock_writes_changed": { entityType: "sales_channel", summary: (m) => m.enabled ? "Enabled Square stock updates" : "Paused Square stock updates" },
+  "square.sync_completed": { entityType: "square_connection", summary: () => "Square sync completed" },
+
   // --- Accounting (Xero) ---
   "accounting.connected": { entityType: "accounting_connection", summary: (m) => `Connected Xero organisation ${s(m.org_name)}`.trim() },
   "accounting.disconnected": { entityType: "accounting_connection", summary: () => `Disconnected Xero` },

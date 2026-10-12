@@ -8,7 +8,7 @@ testable checks. Use this to verify ALL features work as expected.
 - Each feature lists its **entry point**, **what it does**, and a **checklist** of testable behaviors.
 - Tick `- [ ]` → `- [x]` as you verify each item. Add `⚠️` + a note for anything broken.
 - Items marked **(admin)**, **(super_admin)**, or **(gated)** require a specific role or a plan/feature flag.
-- Suggested test tenants: one with a connected Shopify store and >1000 variants (e.g. *Fabulous Fabrications*), one fresh/empty tenant (for empty states), and one with the planning module enabled.
+- Use **Pac-Technologies** for test fixtures: cover a connected Shopify store with >1000 variants, an empty workspace, and planning enabled. Never use a live customer's tenant for artificial fixtures.
 
 **Legend:** `(admin)` admin-only · `(super_admin)` super-admin-only · `(gated)` requires plan/feature flag · `RBAC` role-gated · `$` plan-limited.
 
@@ -760,7 +760,43 @@ Reusable proof: `supabase/__tests__/2026-09-02-tenant-isolation-hardening.verify
 
 ---
 
+## 24. Square retail integration (admin) (gated)
+
+**Entry:** `/app/settings/integrations` → "Manage Square" → `/app/settings/integrations/square`.
+**Behavior:** pilot-only OAuth connects a real Square merchant; catalogue items and completed
+sales are mapped to tenant-local retail variants and locations. Manuva owns inventory;
+stock writes to Square require an explicit opening-count acknowledgement. Shopify is optional.
+
+- [ ] **(admin) (gated)** Square card shows actual configured/connected/reconnect state, merchant, and sandbox/production environment; absent configuration does not offer a working connection claim.
+- [ ] **(admin) (gated)** Account owner authorises "Connect Square"; callback rejects expired/tampered state, mismatched session/tenant, and non-admin callers.
+- [ ] **RBAC** Members and platform observers cannot invoke setup, sync, disconnect, or stock-enable actions; client-supplied tenant IDs never select a workspace.
+- [ ] Signed webhooks reject a bad signature and use the exact configured public webhook URL; replays do not duplicate an order or its stock consumption.
+- [ ] "Sync Square" imports catalogue, active locations, and completed sales; failures display an error instead of a success message.
+- [ ] SKU matching precedes barcode matching; multiple matches remain "ambiguous" for manual resolution.
+- [ ] Services/non-stock catalogue entries are "ignored" and do not deduct component stock.
+- [ ] "Map location" accepts only an active location from the connected Square merchant and a Manuva location in the current workspace.
+- [ ] "Resolve mapping" links only a tenant-local retail variant with a 1:1 active BOM (one component, quantity 1, 100% yield), creates a retail item atomically, ignores with a required reason, or removes a link; services and inventory-tracking-off items cannot become retail links.
+- [ ] New retail items start at zero stock with a component and 1:1 BOM; missing default location shows a recoverable error.
+- [ ] Mapping list paginates at 50 rows; status filters and SKU narrowing retain pagination context and show correct empty states.
+- [ ] An order with any unresolved stock line waits until every line is mapped or ignored; retry then consumes all mapped lines atomically once.
+- [ ] Custom/deleted/missing catalogue sale lines appear as unmatched "Sale line" entries in "Source"; link/create/ignore resolves the pending order. Custom entries are scoped to their order and can share an existing retail variant without an independent Square stock update.
+- [ ] Opening stock is counted in Manuva; first acknowledgement sets the sales baseline and prevents historical orders being deducted again.
+- [ ] **(admin)** "Enable stock updates" requires the explicit checkbox, active connection, resolved products, and valid location mappings; a failed database gate reports failure.
+- [ ] Disable/re-enable preserves the first baseline; mapping changes pause outbound writes and require confirmation to resume.
+- [ ] Square sales, receipts, and stocktakes preserve the movement/balance invariant; duplicate events cannot double-deduct stock.
+- [ ] Converted aliases consume their Square stockable ratio and never receive independent full-stock updates. Non-echo Square counts with Manuva reservations refuse automatic application and require review; refunds do not automatically restock or post financial adjustments.
+- [ ] "Disconnect Square" requires confirmation, disables writes, removes credentials, and retains stock history; remote revocation failure instructs the owner to remove access in Square.
+- [ ] Square-only tenant has no Shopify connection or writes. Xero continues sending supplier bills only, avoiding duplicate Square revenue.
+- [ ] Credentials remain encrypted and inaccessible to tenant API reads; logs and errors contain no token or secret values.
+- [ ] In-app help indexes "Connect Square and map retail stock" at `/app/help/getting-started/connect-square`; it documents exact labels, roles, errors, opening-count setup, mapping queues, and disconnect. The Shopify article points Square-only users to that guide.
+
+Use **Pac-Technologies** sandbox fixtures. A real customer requires account-owner OAuth,
+approved migration/deployment, and operational webhook/retry setup before end-to-end sign-off.
+See [Square setup guide](square-integration.md) for manual steps and exact labels.
+
 ## Changelog
+
+- 2026-10-12 — added Square retail integration: pilot OAuth, signed sales webhooks, location/product mapping, opening stock confirmation, and explicit outbound stock updates; Shopify optional, Xero supplier bills only.
 
 Append a dated line here whenever a feature is added or amended (see CLAUDE.md → "Feature test plan").
 Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`

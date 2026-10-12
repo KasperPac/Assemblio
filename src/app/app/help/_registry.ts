@@ -30,6 +30,7 @@ export const HELP_ARTICLES: HelpArticle[] = [
   // Getting Started
   { slug: "getting-started/first-bom",             category: "getting-started", title: "Set up your first BOM",           description: "Create a bill of materials from scratch and link it to a product." },
   { slug: "getting-started/connect-shopify",        category: "getting-started", title: "Connect your Shopify store",      description: "Authorise Manuva to sync orders and products from your Shopify store." },
+  { slug: "getting-started/connect-square",         category: "getting-started", title: "Connect Square and map retail stock", description: "Authorise Square, map products and locations, and count opening stock before enabling stock updates." },
   { slug: "getting-started/first-stocktake",        category: "getting-started", title: "Run your first stocktake",        description: "Count physical stock and reconcile it against the system." },
   { slug: "getting-started/create-purchase-order",  category: "getting-started", title: "Create a purchase order",         description: "Raise a PO to a supplier and track it through to goods receipt." },
   // Inventory

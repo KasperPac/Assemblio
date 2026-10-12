@@ -1,0 +1,19 @@
+.page { display: flex; flex-direction: column; gap: 18px; }
+.formCard { border: 1px solid var(--stroke-card); border-radius: var(--radius-xl); background: var(--bg-card); box-shadow: var(--shadow-card); padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.heading { margin: 0; font-size: var(--fs-md); color: var(--ink-strong); }
+.help { margin: 0; font-size: var(--fs-sm); color: var(--ink-muted); }
+.error { margin: 0; font-size: var(--fs-sm); color: var(--danger); }
+.success { margin: 0; font-size: var(--fs-sm); color: var(--ok); }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.primaryBtn { composes: primary from "../../../_ui/buttons.module.css"; }
+.secondaryBtn { composes: secondary from "../../../_ui/buttons.module.css"; }
+.tableCard { composes: tableCard from "../../../_ui/table.module.css"; }
+.table { composes: table from "../../../_ui/table.module.css"; }
+.label { display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-sm); color: var(--ink-muted); }
+.select, .input { font-family: var(--font-body); font-size: var(--fs-sm); color: var(--ink-strong); background: var(--bg-input); border: 1px solid var(--stroke-strong); border-radius: var(--radius-sm); padding: 8px 10px; max-width: 100%; }
+.row { border-top: 1px solid var(--stroke); padding-top: 12px; display: flex; flex-direction: column; gap: 10px; }
+.check { display: flex; align-items: flex-start; gap: 8px; font-size: var(--fs-sm); color: var(--ink-strong); }
+.dialog { width: min(520px, calc(100% - 32px)); background: var(--bg-card); color: var(--ink-strong); border: 1px solid var(--stroke-card); border-radius: var(--radius-xl); padding: 24px; }
+.dialog::backdrop { background: var(--bg-overlay); }
+.backLink { color: var(--ink-muted); font-size: var(--fs-sm); text-decoration: none; }
+.backLink:hover { color: var(--ink-strong); }

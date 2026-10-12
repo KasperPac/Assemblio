@@ -33,8 +33,8 @@ describe("HELP_ARTICLES", () => {
     }
   });
 
-  it("has 26 articles", () => {
-    expect(HELP_ARTICLES).toHaveLength(26);
+  it("has 27 articles", () => {
+    expect(HELP_ARTICLES).toHaveLength(27);
   });
 });
 
