@@ -97,7 +97,9 @@ export default async function StocktakePage() {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Operations"
+        band
+        domain="inventory"
+        eyebrow="Operations · Inventory"
         title="Stocktakes"
         description="Manage physical counts and reconcile inventory discrepancies."
         actions={

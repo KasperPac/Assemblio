@@ -9,6 +9,16 @@ export default function StockOnHandPage() {
       category="reports"
       relatedSlugs={["reports/valuation", "inventory/adjustments", "bom/allocation"]}
     >
+      <div>
+        <h3>Reports overview</h3>
+        <p>
+          Open &quot;Reports&quot; to see &quot;Last 90 days in numbers.&quot;. &quot;On-time deliveries&quot;
+          is the percentage of processed, PO-linked receipts received on or before the expected
+          date in your workspace&apos;s time zone. Receipts without an expected date are excluded.
+          The highlight compares the preceding 90 days in percentage points; it is hidden without
+          comparable history. A dash means no eligible deliveries or an unavailable count.
+        </p>
+      </div>
       <p>The Stock on hand report gives you a snapshot of current inventory levels across all components and locations.</p>
       <div>
         <h3>Columns</h3>

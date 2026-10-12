@@ -7,6 +7,8 @@ import {
 } from "@/lib/inventory/audit";
 import PageHeader from "@/app/app/_ui/page-header";
 import styles from "./reports.module.css";
+import { deliveryComparisonBounds, onTimeDeliveryComparison, resolveBandTimezone, type DeliveryMetricRow } from "@/lib/bands/metrics";
+import { fetchAllRows } from "@/lib/supabase/paginate";
 
 export default async function ReportsHubPage() {
   const ctx = await getServerTenantContext();
@@ -15,6 +17,10 @@ export default async function ReportsHubPage() {
   const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 
   const now = new Date();
+  const { data: tenant, error: timezoneError } = await supabase
+    .from("tenant").select("timezone").eq("id", tenantId).single();
+  const timezone = resolveBandTimezone(tenant?.timezone);
+  const deliveryWindow = deliveryComparisonBounds(now);
   const cutoff30d = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
   const cutoff90d = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000).toISOString();
   const startOfYear = new Date(now.getFullYear(), 0, 1).toISOString();
@@ -29,6 +35,7 @@ export default async function ReportsHubPage() {
     supplierSpendRes,
     receiptsRes,
     discrepancyRes,
+    priorReceiptsRes,
   ] = await Promise.all([
     supabase
       .from("inventory_balance")
@@ -65,18 +72,36 @@ export default async function ReportsHubPage() {
       .select("supplier_id,lines:purchase_order_line(quantity,unit_cost)")
       .eq("tenant_id", tenantId)
       .gte("created_at", startOfYear),
-    supabase
+    fetchAllRows<DeliveryMetricRow>((from, to) => supabase
       .from("delivery_receipt")
-      .select("received_at,purchase_order:purchase_order_id(expected_date)")
+      .select("received_at,status,purchase_order:purchase_order_id(expected_date)")
       .eq("tenant_id", tenantId)
       .not("purchase_order_id", "is", null)
-      .gte("received_at", cutoff90d),
+      .in("status", ["po_linked", "discrepancy"])
+      .gte("received_at", deliveryWindow.currentStart)
+      .lt("received_at", deliveryWindow.end)
+      .order("id")
+      .range(from, to)),
     supabase
       .from("delivery_receipt")
       .select("id", { count: "exact", head: true })
       .eq("tenant_id", tenantId)
       .eq("status", "discrepancy"),
+    fetchAllRows<DeliveryMetricRow>((from, to) => supabase
+      .from("delivery_receipt")
+      .select("received_at,status,purchase_order:purchase_order_id(expected_date)")
+      .eq("tenant_id", tenantId)
+      .not("purchase_order_id", "is", null)
+      .in("status", ["po_linked", "discrepancy"])
+      .gte("received_at", deliveryWindow.previousStart)
+      .lt("received_at", deliveryWindow.currentStart)
+      .order("id")
+      .range(from, to)),
   ]);
+
+  const deliveryMetric = timezoneError || receiptsRes.error || priorReceiptsRes.error
+    ? { currentPercent: null, previousPercent: null, eligibleReceipts: 0, deltaPoints: null }
+    : onTimeDeliveryComparison([...receiptsRes.data, ...priorReceiptsRes.data], now, timezone);
 
   const integrity = await loadInventoryIntegrityAudit(
     supabase as unknown as AuditClient,
@@ -99,10 +124,6 @@ export default async function ReportsHubPage() {
   type SpendRow = {
     supplier_id: string;
     lines: { quantity: number; unit_cost: number }[];
-  };
-  type ReceiptRow = {
-    received_at: string;
-    purchase_order: { expected_date?: string } | null;
   };
 
   // Inventory stats
@@ -146,15 +167,7 @@ export default async function ReportsHubPage() {
   }, 0);
   const supplierCount = new Set(((supplierSpendRes.data ?? []) as SpendRow[]).map((po: SpendRow) => po.supplier_id)).size;
 
-  const receipts = (receiptsRes.data ?? []) as ReceiptRow[];
-  const onTimeReceipts = receipts.filter((r: ReceiptRow) => {
-    const po = r.purchase_order;
-    if (!po?.expected_date) return true;
-    return new Date(r.received_at) <= new Date(po.expected_date);
-  });
-  const onTimePct = receipts.length > 0
-    ? Math.round((onTimeReceipts.length / receipts.length) * 100)
-    : 100;
+  const onTimePct = deliveryMetric.currentPercent;
   const discrepancyCount = discrepancyRes.count ?? 0;
 
   // System stats
@@ -175,8 +188,17 @@ export default async function ReportsHubPage() {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Operations"
-        title="Reports"
+        band
+        domain="audit"
+        cover
+        eyebrow="Operations · Audit"
+        title="Last 90 days in numbers."
+        stat={{
+          label: "On-time deliveries",
+          value: onTimePct == null ? "—" : `${onTimePct}%`,
+          delta: deliveryMetric.deltaPoints == null ? undefined
+            : `${deliveryMetric.deltaPoints > 0 ? "+" : ""}${deliveryMetric.deltaPoints} pts vs prior 90 days`,
+        }}
         description="Live data across inventory, purchasing, and system health."
       />
 
@@ -270,23 +292,23 @@ export default async function ReportsHubPage() {
 
           <Link
             href="/app/reports/lead-time-accuracy"
-            className={`${styles.card} ${onTimePct < 80 ? styles.cardRed : ""}`}
+            className={`${styles.card} ${onTimePct != null && onTimePct < 80 ? styles.cardRed : ""}`}
           >
-            <div className={`${styles.cardName} ${onTimePct < 80 ? styles.cardNameRed : ""}`}>
+            <div className={`${styles.cardName} ${onTimePct != null && onTimePct < 80 ? styles.cardNameRed : ""}`}>
               Lead time accuracy
             </div>
             <div
               className={`${styles.cardValue} ${
-                onTimePct < 80
+                onTimePct != null && onTimePct < 80
                   ? styles.cardValueRed
-                  : onTimePct >= 95
+                  : onTimePct != null && onTimePct >= 95
                   ? styles.cardValueGreen
                   : ""
               }`}
             >
-              {onTimePct}%
+              {onTimePct == null ? "—" : `${onTimePct}%`}
             </div>
-            <div className={`${styles.cardSub} ${onTimePct < 80 ? styles.cardSubRed : ""}`}>
+            <div className={`${styles.cardSub} ${onTimePct != null && onTimePct < 80 ? styles.cardSubRed : ""}`}>
               on-time deliveries · last 90 days
             </div>
             <div className={styles.cardLink}>View report →</div>

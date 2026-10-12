@@ -10,6 +10,12 @@ export default function PurchaseOrdersPage() {
       category="purchasing"
       relatedSlugs={["purchasing/goods-inwards", "purchasing/suppliers"]}
     >
+      <p>
+        The &quot;Purchase orders&quot; header shows &quot;Awaiting receipt&quot; across all open and
+        in-transit POs, including orders beyond the displayed list. The &quot;arrive today&quot;
+        highlight uses your workspace&apos;s time zone. Received and cancelled orders are excluded.
+        A dash means the total is unavailable; the highlight is hidden if its count cannot load.
+      </p>
       <Steps>
         <Step>Open <strong>Purchasing</strong> in the sidebar and click <strong>New purchase order</strong>.</Step>
         <Step>Select the <strong>supplier</strong>. Only suppliers you have already created appear in this list.</Step>

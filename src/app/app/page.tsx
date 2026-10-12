@@ -9,6 +9,7 @@ import { FinanceChartCard } from "./_dashboard/finance-chart";
 import { OrdersChartCard } from "./_dashboard/orders-chart";
 import { deriveDashboardSalesMetrics, type ProductSalesRow } from "@/lib/dashboard/sales-metrics";
 import { shouldShowDevDashboard } from "@/lib/dev-dashboard/access";
+import PageHeader from "./_ui/page-header";
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(value);
@@ -37,6 +38,7 @@ export default async function DashboardPage() {
   if (!context) {
     return (
       <div className={styles.dashboard}>
+        <PageHeader band eyebrow="Overview" title="Today" />
         <p className={styles.emptyMsg}>Could not resolve the active tenant.</p>
       </div>
     );
@@ -52,6 +54,7 @@ export default async function DashboardPage() {
   if (!context.tenantId) {
     return (
       <div className={styles.dashboard}>
+        <PageHeader band eyebrow="Overview" title="Today" />
         <p className={styles.emptyMsg}>Could not resolve the active tenant.</p>
       </div>
     );
@@ -172,6 +175,7 @@ export default async function DashboardPage() {
 
   return (
     <div className={styles.dashboard}>
+      <PageHeader band eyebrow="Overview" title="Today" />
       {/* Quick links bar */}
       <nav className={styles.quickLinks}>
         <Link href="/app/products" className={styles.quickLink}>

@@ -86,7 +86,9 @@ export default async function SuppliersPage({
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Logistics"
+        band
+        domain="logistics"
+        eyebrow="Operations · Logistics"
         title="Suppliers"
         description="Manage suppliers used throughout purchasing and inbound stock workflows."
         actions={

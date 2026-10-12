@@ -64,8 +64,10 @@ export default async function GoodsInwardsPage() {
   return (
     <section className={styles.page}>
       <PageHeader
-        eyebrow="Operations"
-        title="Goods Inwards"
+        band
+        domain="logistics"
+        eyebrow="Operations · Logistics"
+        title="Goods inwards"
         description="Receive and reconcile supplier deliveries against purchase orders."
         actions={
           <Link href="/app/goods-inwards/new" className={styles.primary}>

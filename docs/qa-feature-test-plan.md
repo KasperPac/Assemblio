@@ -794,7 +794,37 @@ Use **Pac-Technologies** sandbox fixtures. A real customer requires account-owne
 approved migration/deployment, and operational webhook/retry setup before end-to-end sign-off.
 See [Square setup guide](square-integration.md) for manual steps and exact labels.
 
+## 25. Bold index headers — MANUVA-73
+
+Entry points: the 18 index routes in [the page map](bold-app-bands.md).
+Production planning is `(gated)`; tenant actions retain their existing `(admin)` checks;
+the three platform indexes remain `(super_admin)` / platform-observer as before.
+
+- [ ] Every mapped index opens on one joined, full-width domain band with Archivo display type.
+- [ ] Inventory/Components/Stocktakes are cobalt; Production is flare; Purchasing amber;
+  Products/Templates violet; Logistics mint; Audit aqua; remaining mapped indexes navy.
+- [ ] PO, component, product, receipt, stocktake and platform record details stay quiet.
+- [ ] Trial, past-due, accounting and view-as notices sit above the topbar; gates still work.
+- [ ] Exactly one visible navigation link is active, including nested platform audit/team routes.
+- [ ] Daylight, Midnight, Ocean and Ember preserve table/form surfaces and readable band text.
+- [ ] At 1440px, 1024px and 390px, header actions wrap, titles/stats fit and bands meet without gaps.
+- [ ] Keyboard focus is visible on band actions and avatar; dialogs and user menus restore neutral theme colours.
+- [ ] Locations upgrade view has a single h1; the feature prompt is h2.
+- [ ] Inventory counts distinct components matching its below-reorder row flags, not repeated locations.
+- [ ] Purchasing counts all open/in-transit POs, including beyond the newest twelve; arrive-today uses tenant dates and DST.
+- [ ] Production counts distinct open job/order lines across departments; finished steps are excluded.
+- [ ] Reports on-time rate counts only scheduled, processed, PO-linked receipts; missing dates and unprocessed receipts are excluded.
+- [ ] Reports shows `—` for no eligible data/read failure; no prior eligible window means no delta; comparison uses percentage points.
+- [ ] Inventory/Production failed reads display `—`; Purchasing failed counts never appear as zero.
+- [ ] Existing create/import/export/receive/restore actions retain their labels, roles and behavior.
+
+Browser fixture checks exercise the actual shared components/styles with Pac-Technologies
+fixture content; they do not substitute for a signed-in walkthrough of all live pages.
+This branch has the existing in-app help tree; public manual work remains on its separate branch.
+
 ## Changelog
+
+- 2026-10-12 — amended App design system (MANUVA-73): added domain bands on 18 index pages, Archivo typography, joined shell headers, neutral dialog/menu resets and real tenant-scoped metrics.
 
 - 2026-10-12 — added Square retail integration: pilot OAuth, signed sales webhooks, location/product mapping, opening stock confirmation, and explicit outbound stock updates; Shopify optional, Xero supplier bills only.
 

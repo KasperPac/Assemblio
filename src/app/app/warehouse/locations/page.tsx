@@ -18,10 +18,20 @@ export default async function LocationsPage() {
   const access = await getSubscriptionAccess(supabase, tenantId);
   if (!access.sub || !hasFeature(access.sub, "binManagement")) {
     return (
-      <FeatureUpsell
-        feature="Multi-location and bin management"
-        requiredTier="growth"
-      />
+      <div className={styles.page}>
+        <PageHeader
+          band
+          domain="logistics"
+          eyebrow="Warehouse · Logistics"
+          title="Locations"
+          description="Manage warehouses, sub-locations, aisles, and bays."
+        />
+        <FeatureUpsell
+          headingLevel="h2"
+          feature="Multi-location and bin management"
+          requiredTier="growth"
+        />
+      </div>
     );
   }
 
@@ -42,7 +52,20 @@ export default async function LocationsPage() {
       .is("archived_at", null),
   ]);
 
-  if (warehousesResult.error) return <p className={styles.error}>Failed to load locations: {warehousesResult.error.message}</p>;
+  if (warehousesResult.error) {
+    return (
+      <div className={styles.page}>
+        <PageHeader
+          band
+          domain="logistics"
+          eyebrow="Warehouse · Logistics"
+          title="Locations"
+          description="Manage warehouses, sub-locations, aisles, and bays."
+        />
+        <p className={styles.error}>Failed to load locations: {warehousesResult.error.message}</p>
+      </div>
+    );
+  }
 
   const componentCounts: Record<string, number> = {};
   for (const row of compLocResult.data ?? []) {
@@ -54,7 +77,9 @@ export default async function LocationsPage() {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Logistics"
+        band
+        domain="logistics"
+        eyebrow="Warehouse · Logistics"
         title="Locations"
         description="Manage warehouses, sub-locations, aisles, and bays."
       />

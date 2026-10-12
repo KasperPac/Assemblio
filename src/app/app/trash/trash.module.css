@@ -5,20 +5,7 @@
 }
 
 .primary {
-  border: 1px solid var(--danger);
-  border-radius: 999px;
-  min-height: 42px;
-  padding: 0 18px;
-  background: var(--danger-dim);
-  color: var(--danger);
-  font-size: 0.9rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  composes: primary from "../_ui/buttons.module.css";
 }
 
 .warningPanel {

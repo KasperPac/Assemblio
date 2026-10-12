@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-import { getRouteMeta, getDynamicBreadcrumbs } from "./route-meta";
+import { getRouteMeta, getDynamicBreadcrumbs, getRouteBand } from "./route-meta";
 import { signOut, switchActiveTenant } from "./actions";
 import styles from "./shell.module.css";
 
@@ -18,6 +18,7 @@ type Props = {
 export default function Topbar({ userInitial, userAvatarUrl, selectableTenants, currentTenantId, tenantName }: Props) {
   const pathname = usePathname();
   const meta = getRouteMeta(pathname);
+  const band = getRouteBand(pathname);
   const crumbs = getDynamicBreadcrumbs(pathname);
   const showBreadcrumb = crumbs.length > 0;
   const [open, setOpen] = useState(false);
@@ -32,7 +33,7 @@ export default function Topbar({ userInitial, userAvatarUrl, selectableTenants, 
   }, []);
 
   return (
-    <header className={styles.topbar}>
+    <header className={`${styles.topbar} ${band ? styles.topbarBand : ""}`} data-band={band ? "" : undefined} data-domain={band?.domain ?? undefined}>
       <div className={styles.topbarIntro}>
         {showBreadcrumb && (
           <div className={styles.breadcrumb}>
@@ -57,6 +58,7 @@ export default function Topbar({ userInitial, userAvatarUrl, selectableTenants, 
       </div>
 
       <div className={styles.topbarActions}>
+        {band ? <div className={styles.topbarTenant}><span className={styles.topbarTenantLabel}>Tenant</span><strong>{tenantName}</strong></div> : null}
         <div className={styles.avatarWrapper} ref={ref}>
           <button
             type="button"
@@ -78,7 +80,7 @@ export default function Topbar({ userInitial, userAvatarUrl, selectableTenants, 
           </button>
 
           {open && (
-            <div className={styles.dropdownMenu}>
+            <div className={styles.dropdownMenu} data-band-reset="">
               <div className={styles.dropdownHeader}>
                 <span className={styles.dropdownMeta}>{tenantName}</span>
               </div>
