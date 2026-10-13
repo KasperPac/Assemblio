@@ -16,6 +16,9 @@ below still describes production until the shared implementation is updated.
 Latest review: C felt too colourless and unfinished. D adds a soft tinted header,
 compact Archivo title, coloured section markers and a tinted navigation selection.
 The user has not accepted D yet; keep this as review evidence, not a rollout rule.
+Products and Components now have D examples in the same comparison: violet and
+blue identities respectively, soft header/table accents and neutral data rows.
+The existing Components filter rail is retained. Both are local fixture previews.
 
 ## Bold index headers (2026-10-12)
 

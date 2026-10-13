@@ -1,5 +1,30 @@
 # Reports: professional tool direction
 
+## Products and Components examples
+
+Requested next by the user: show D on denser catalogue screens. These use each
+page's real return JSX, child components, CSS Modules and shell, with isolated
+sample data and action/navigation boundaries. No live tenant queries or writes.
+
+- [Products preview](http://127.0.0.1:3218/?variant=balanced&screen=products): violet identity, softly tinted header/table heading, compact title and neutral rows.
+- [Components preview](http://127.0.0.1:3218/?variant=balanced&screen=components): blue identity, existing filter rail and flat table, low/critical stock rows retain semantic colours.
+
+![Products with balanced styling](products-balanced.jpg)
+
+![Components with balanced styling](components-balanced.jpg)
+
+Both were inspected on desktop in all four themes: correct selected navigation,
+32px heading, no page overflow; header eyebrow contrast is at least 5.96:1 for
+Products and 5.75:1 for Components. Filters/sorting are visual-only fixture
+controls; business actions return a preview-only error. Dialogs use real UI with
+stubbed actions. This is not an authenticated app QA pass or a production rollout.
+The fixture bundler warns about existing filter-rail `composes` display order;
+desktop layout was inspected, but mobile drawer behaviour was not assessed here.
+
+`node scripts/preview-reports-accents.mjs --build-only` refreshes generated assets
+without starting a second server. Catalogue boundaries live in
+`scripts/preview-catalog-fixtures.mjs`; production page source is untouched.
+
 Requested by the user on 2026-10-13, MANUVA-117. These are product UI previews,
 with the same explicitly labelled Pac-Technologies fixtures. No live writes or
 production styling changes were made for this comparison.
