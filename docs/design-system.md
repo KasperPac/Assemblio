@@ -6,6 +6,14 @@ Covers token rules, canonical page layout,
 
 ---
 
+## Professional app direction under review (2026-10-13)
+
+The user now prefers constrained, professional working screens over the bold
+marketing treatment. See the [Reports comparison](design-reviews/2026-10-13-reports/README.md),
+especially C: neutral headers, compact typography, quiet cards and purposeful
+selection/status accents. This is a local prototype; the deployed bold system
+below still describes production until the shared implementation is updated.
+
 ## Bold index headers (2026-10-12)
 
 Use the [18-page map and metric definitions](bold-app-bands.md) for index pages.

@@ -6,6 +6,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { signOut, switchActiveTenant } from "./actions";
 import SidebarNav from "./sidebar-nav";
 import Topbar from "./topbar";
+import AppContent from "./app-content";
 import { requireActiveSubscription } from "./_lib/require-active-subscription";
 import { TrialBanner } from "./_components/trial-banner";
 import ViewAsBanner from "./_components/view-as-banner";
@@ -158,7 +159,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           selectableTenants={selectableTenants}
           currentTenantId={profile?.tenant_id ?? ""}
         />
-        <section className={styles.content}>{children}</section>
+        <AppContent>{children}</AppContent>
       </div>
     </div>
   );

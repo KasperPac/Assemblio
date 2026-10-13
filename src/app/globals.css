@@ -255,6 +255,27 @@
 [data-domain="audit"] { --accent-loud: var(--domain-audit-loud); --accent-text: var(--domain-audit-text); --accent-dim: rgb(0 185 214 / .12); --accent-on: #141413; }
 [data-domain="production"], [data-domain="purchasing"], [data-domain="logistics"], [data-domain="audit"] { --accent-band-ink: #141413; }
 
+/* Use the published dark text shades for small in-page accents. */
+:is([data-theme="midnight"], [data-theme="ocean"], [data-theme="ember"]) [data-domain="inventory"] { --accent-text: var(--domain-inventory-dark); }
+:is([data-theme="midnight"], [data-theme="ocean"], [data-theme="ember"]) [data-domain="production"] { --accent-text: var(--domain-production-dark); }
+:is([data-theme="midnight"], [data-theme="ocean"], [data-theme="ember"]) [data-domain="purchasing"] { --accent-text: var(--domain-purchasing-dark); }
+:is([data-theme="midnight"], [data-theme="ocean"], [data-theme="ember"]) [data-domain="products"] { --accent-text: var(--domain-products-dark); }
+:is([data-theme="midnight"], [data-theme="ocean"], [data-theme="ember"]) [data-domain="logistics"] { --accent-text: var(--domain-logistics-dark); }
+:is([data-theme="midnight"], [data-theme="ocean"], [data-theme="ember"]) [data-domain="audit"] { --accent-text: var(--domain-audit-dark); }
+
+/* Existing links, filters and selected controls inherit the index's identity. */
+[data-app-content][data-domain] {
+  --brand-1: var(--accent-text);
+  --brand-2: var(--accent-text);
+  --brand-dim: var(--accent-dim);
+  --focus-ring: color-mix(in srgb, var(--accent-text) 18%, transparent);
+  --focus-border: color-mix(in srgb, var(--accent-text) 50%, transparent);
+  --shadow-focus: 0 0 0 3px var(--focus-ring);
+}
+:is([data-theme="midnight"], [data-theme="ocean"], [data-theme="ember"]) [data-app-content][data-domain] {
+  --ink-on-brand: var(--bg-page);
+}
+
 /* Capture neutral values where the theme resolves, before band inheritance. */
 :root, [data-theme] {
   --band-reset-ink-strong: var(--ink-strong);
@@ -268,6 +289,9 @@
   --band-reset-brand-dim: var(--brand-dim);
   --band-reset-ink-on-brand: var(--ink-on-brand);
   --band-reset-surface-hover: var(--surface-hover);
+  --band-reset-focus-ring: var(--focus-ring);
+  --band-reset-focus-border: var(--focus-border);
+  --band-reset-shadow-focus: var(--shadow-focus);
 }
 
 [data-band] {
@@ -305,6 +329,9 @@
   --brand-dim: var(--band-reset-brand-dim);
   --ink-on-brand: var(--band-reset-ink-on-brand);
   --surface-hover: var(--band-reset-surface-hover);
+  --focus-ring: var(--band-reset-focus-ring);
+  --focus-border: var(--band-reset-focus-border);
+  --shadow-focus: var(--band-reset-shadow-focus);
   color: var(--ink-strong);
 }
 

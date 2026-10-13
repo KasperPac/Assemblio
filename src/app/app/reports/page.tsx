@@ -203,10 +203,10 @@ export default async function ReportsHubPage() {
       />
 
       {/* INVENTORY */}
-      <div className={styles.section}>
-        <span className={`${styles.sectionLabel} ${styles.sectionLabelInventory}`}>
+      <section className={styles.section} data-domain="inventory">
+        <h2 className={styles.sectionLabel}>
           Inventory
-        </span>
+        </h2>
         <div className={styles.grid}>
           <Link href="/app/reports/stock-on-hand" className={styles.card}>
             <div className={styles.cardName}>Stock on hand</div>
@@ -256,13 +256,13 @@ export default async function ReportsHubPage() {
             <div className={styles.cardLink}>View report →</div>
           </Link>
         </div>
-      </div>
+      </section>
 
       {/* PURCHASING */}
-      <div className={styles.section}>
-        <span className={`${styles.sectionLabel} ${styles.sectionLabelPurchasing}`}>
+      <section className={styles.section} data-domain="purchasing">
+        <h2 className={styles.sectionLabel}>
           Purchasing
-        </span>
+        </h2>
         <div className={styles.grid}>
           <Link
             href="/app/reports/po-summary"
@@ -336,13 +336,13 @@ export default async function ReportsHubPage() {
             <div className={styles.cardLink}>View report →</div>
           </Link>
         </div>
-      </div>
+      </section>
 
       {/* SYSTEM */}
-      <div className={styles.section}>
-        <span className={`${styles.sectionLabel} ${styles.sectionLabelSystem}`}>
+      <section className={styles.section} data-domain="audit">
+        <h2 className={styles.sectionLabel}>
           System
-        </span>
+        </h2>
         <div className={styles.grid}>
           <Link
             href="/app/reports/inventory-integrity"
@@ -368,7 +368,7 @@ export default async function ReportsHubPage() {
             <div className={styles.cardLink}>View report →</div>
           </Link>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
