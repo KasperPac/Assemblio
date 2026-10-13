@@ -41,8 +41,8 @@ After comparing A and B, the user chose constrained styling and explained that
 bold marketing colours feel less appropriate for a professional working tool.
 C follows that direction; warning and healthy states retain their semantic colours.
 On reviewing C, the user said it felt too void of colour and unfinished. D restores
-some visual identity while retaining a compact professional working layout. D is
-an example for review, not an accepted direction or a production implementation.
+some visual identity while retaining a compact professional working layout. D was
+an example for review at that stage; it was subsequently approved and implemented.
 
 ![Balanced Reports preview](balanced.jpg)
 
@@ -81,17 +81,15 @@ C was also inspected in Chrome across all four themes: no coloured content band,
 28px title, no horizontal overflow; normal report-link contrast is at least 5.79:1.
 These contrast measurements concern normal links, not every pre-existing status label.
 
-Latest feedback: C needs more colour. D is the revised example awaiting review.
+Historical feedback: C needed more colour, prompting D. The user subsequently approved D.
 D was checked in four themes: no horizontal overflow; header eyebrow contrast
 is at least 5.39:1 and normal report-link contrast at least 5.79:1. Small domain
 markers and labels identify report sections; warning/health states retain their
 semantic colours. No backend actions or live customer data are used.
 
-The comparison and
-initial A source changes are local drafts, not the completed professional rollout.
-C/D overrides live only in the preview generator; apply the chosen direction to shared
-components and update the affected page map before publishing a new release.
-Original deployed release remains `41321f8c`.
+The historical A/B/C/D comparison is retained as review evidence. Shared production
+components now implement approved D (source `e6637dac`), replacing the previous bold
+release `41321f8c`. Prototype styling overrides are not used in production.
 
 ## Implementation
 
@@ -100,3 +98,16 @@ scoped table accents implement it; Reports retains its corrected wrapper, sectio
 markers and neutral cards. `?variant=implemented&screen=products` (or components/
 reports) renders the real shared implementation without prototype styling overrides.
 Original A/B/C/D screenshots above remain historical review evidence.
+
+## Production evidence
+
+Promoted deployment `dpl_5kE3bqmd7trAJMcuYSBQCJ9aoR9F` on 2026-10-13 to
+[app.manuva.app](https://app.manuva.app). Signed-in Pac-Technologies walkthrough
+verified Products search, Components low-stock filtering, Reports, and Inventory/
+Purchasing compact metrics. No writes were performed.
+
+![Live Reports](reports-live.jpg)
+
+![Live Products](products-live.jpg)
+
+![Live Components](components-live.jpg)

@@ -786,7 +786,7 @@ retain their existing `(admin)` gates. Detail routes keep quiet headers.
 - [x] Products/Components retain search, filters, table columns and create/import actions.
 - [x] Selected navigation uses a tint and narrow marker; detail-route selection remains correct.
 - [x] Reports has a compact "Reports" header, domain section markers and neutral cards; low/critical/healthy states retain their semantic colours.
-- [ ] Existing Inventory/Purchasing/Production header metrics remain live and accessible.
+- [x] Inventory/Purchasing metrics verified in the authenticated app; Production metric/header contracts retain automated coverage.
 - [x] Products/Components/Reports shared renderer has no page overflow in all four desktop themes and at 390px; 28px mobile headings. Product dialog neutral reset verified.
 - [x] Dialogs and avatar menus restore neutral theme tokens; details are not recoloured.
-- [ ] Production login/privacy, protected-route redirects, assets and authenticated index views pass after release.
+- [x] Production login/privacy, protected-route redirects, CSS assets and authenticated Products/Components/Reports/Inventory/Purchasing views pass after release. Product search and Components low-stock filter pass.
