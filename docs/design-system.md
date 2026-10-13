@@ -13,6 +13,9 @@ marketing treatment. See the [Reports comparison](design-reviews/2026-10-13-repo
 especially C: neutral headers, compact typography, quiet cards and purposeful
 selection/status accents. This is a local prototype; the deployed bold system
 below still describes production until the shared implementation is updated.
+Latest review: C felt too colourless and unfinished. D adds a soft tinted header,
+compact Archivo title, coloured section markers and a tinted navigation selection.
+The user has not accepted D yet; keep this as review evidence, not a rollout rule.
 
 ## Bold index headers (2026-10-12)
 

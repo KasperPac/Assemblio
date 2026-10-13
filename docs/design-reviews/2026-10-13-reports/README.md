@@ -9,10 +9,16 @@ production styling changes were made for this comparison.
 | A — restrained | Small uppercase section labels, fine domain rules, coloured links, narrow card accents. |
 | B — expressive | Tinted section-heading areas and cards, larger Archivo labels/numerals, stronger accent rules. |
 | C — professional tool | Neutral topbar and page heading, 28px Inter title, quiet section rules/cards, one consistent link accent and a small selected-navigation marker. |
+| D — colour with restraint | Soft aqua header with a narrow accent edge, compact 32px Archivo title, coloured section markers/links and a tinted selected-navigation state. Cards remain neutral. |
 
 After comparing A and B, the user chose constrained styling and explained that
 bold marketing colours feel less appropriate for a professional working tool.
 C follows that direction; warning and healthy states retain their semantic colours.
+On reviewing C, the user said it felt too void of colour and unfinished. D restores
+some visual identity while retaining a compact professional working layout. D is
+an example for review, not an accepted direction or a production implementation.
+
+![Balanced Reports preview](balanced.jpg)
 
 ![Professional Reports preview](professional.jpg)
 
@@ -28,6 +34,7 @@ tab: cover 1168px wide versus topbar 1678px, caused by `.page`'s extra
 Preview links (while the local server runs):
 
 - [C — professional tool](http://127.0.0.1:3218/?variant=professional)
+- [D — colour with restraint](http://127.0.0.1:3218/?variant=balanced)
 - [A — restrained](http://127.0.0.1:3218/?variant=restrained)
 - [B — expressive](http://127.0.0.1:3218/?variant=expressive)
 
@@ -48,8 +55,14 @@ C was also inspected in Chrome across all four themes: no coloured content band,
 28px title, no horizontal overflow; normal report-link contrast is at least 5.79:1.
 These contrast measurements concern normal links, not every pre-existing status label.
 
-Preferred direction: C, based on the user's latest feedback. The comparison and
+Latest feedback: C needs more colour. D is the revised example awaiting review.
+D was checked in four themes: no horizontal overflow; header eyebrow contrast
+is at least 5.39:1 and normal report-link contrast at least 5.79:1. Small domain
+markers and labels identify report sections; warning/health states retain their
+semantic colours. No backend actions or live customer data are used.
+
+The comparison and
 initial A source changes are local drafts, not the completed professional rollout.
-C overrides live only in the preview generator; apply its direction to shared
+C/D overrides live only in the preview generator; apply the chosen direction to shared
 components and update the affected page map before publishing a new release.
 Original deployed release remains `41321f8c`.

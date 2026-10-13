@@ -17,8 +17,8 @@ import shell from '${repo}/src/app/app/shell.module.css';
 import '${repo}/src/app/globals.css';
 const q=new URLSearchParams(location.search),variant=q.get('variant')||'restrained';
 document.documentElement.dataset.theme=q.get('theme')||'daylight';
-document.body.className=variant;
-createRoot(document.getElementById('root')).render(<div className={shell.shell}><aside className={shell.sidebar}><div className={shell.brand}><img src="/logo" width="140" alt="Manuva"/></div><SidebarNav hasPlanning isSuperAdmin isPlatformOperator /></aside><div className={shell.main}><div className="preview-note">{variant==='professional'?'C - Professional tool':variant==='expressive'?'B · Expressive accents':'A · Restrained accents'} · Pac-Technologies preview fixtures <nav><a href="/?variant=restrained">A · Restrained</a><a href="/?variant=expressive">B · Expressive</a><a href="/?variant=professional">C - Professional</a></nav></div><Topbar userInitial="P" userAvatarUrl={null} tenantName="Pac-Technologies" selectableTenants={[]} currentTenantId="fixture"/><AppContent><Reports/></AppContent></div></div>);
+document.body.className=variant==='balanced'?'professional balanced':variant;
+createRoot(document.getElementById('root')).render(<div className={shell.shell}><aside className={shell.sidebar}><div className={shell.brand}><img src="/logo" width="140" alt="Manuva"/></div><SidebarNav hasPlanning isSuperAdmin isPlatformOperator /></aside><div className={shell.main}><div className="preview-note">{variant==='balanced'?'D - Colour with restraint':variant==='professional'?'C - Professional tool':variant==='expressive'?'B · Expressive accents':'A · Restrained accents'} · Pac-Technologies preview fixtures <nav><a href="/?variant=restrained">A · Restrained</a><a href="/?variant=expressive">B · Expressive</a><a href="/?variant=professional">C - Professional</a><a href="/?variant=balanced">D - Balanced</a></nav></div><Topbar userInitial="P" userAvatarUrl={null} tenantName="Pac-Technologies" selectableTenants={[]} currentTenantId="fixture"/><AppContent><Reports/></AppContent></div></div>);
 `;
 fs.writeFileSync(path.join(dir,'fixture.tsx'),fixture);
 (async()=>{await build({entryPoints:[path.join(dir,'fixture.tsx')],outfile:path.join(dir,'fixture.js'),bundle:true,platform:'browser',jsx:'automatic',nodePaths:[repo+'/node_modules'],loader:{'.css':'local-css'},plugins:[{name:'preview-boundaries',setup(b){
@@ -26,7 +26,7 @@ b.onResolve({filter:/^next\/(link|navigation)$|^\.\/actions$/},a=>({path:a.path,
 b.onLoad({filter:/.*/,namespace:'preview'},a=>({contents:a.path==='next/link'?"import React from 'react'; export default function Link({href,children,...rest}) {return <a href={href} {...rest}>{children}</a>}":a.path==='next/navigation'?"export const usePathname=()=>'/app/reports';":"export const signOut=()=>{}; export const switchActiveTenant=()=>{};",loader:'jsx',resolveDir:repo}));
 b.onLoad({filter:/reports[\\/]page\.tsx$/},a=>{let s=fs.readFileSync(a.path,'utf8');const start=s.indexOf('  return (\n    <div className={styles.page}>');if(start<0)throw new Error('Reports render boundary missing');s=`import Link from 'next/link';import PageHeader from '../_ui/page-header';import styles from './reports.module.css';
 export default function ReportsPreview(){
- const professional=new URLSearchParams(location.search).get('variant')==='professional';
+ const professional=['professional','balanced'].includes(new URLSearchParams(location.search).get('variant'));
  const onTimePct=null,deliveryMetric={deltaPoints:null},balances=Array.from({length:59}),totalValue=3000000,movCount=0,deadCount=59,deadValue=3000000,stocktakeTotal=7,lastStocktakeDaysAgo=124,openPOs=[],openLiability=0,overduePOs=0,yearSpend=420000,supplierCount=8,discrepancyCount=0,totalIssues=0;
  const fmtCurrency=n=>new Intl.NumberFormat('en-AU',{style:'currency',currency:'AUD',maximumFractionDigits:0,notation:n>=100000?'compact':'standard'}).format(n);
 `+s.slice(start).replace('        band\n','        band={!professional}\n').replace('        cover\n','        cover={!professional}\n').replace('title="Last 90 days in numbers."','title={professional ? "Reports" : "Last 90 days in numbers."}');return {contents:s,loader:'tsx',resolveDir:path.dirname(a.path)};});
@@ -56,6 +56,14 @@ fs.writeFileSync(path.join(dir,'compare.css'),`
 .professional [data-app-content]>div>section[data-domain]>div>a>div:nth-child(2){font-family:var(--font-body)}
 .professional [data-app-content]>div>section[data-domain]>div>a>div:last-child{color:var(--brand-1)}
 .professional [data-app-content]>div>section[data-domain]>div>a[href$="dead-stock"]{border-color:var(--warning)}
+.balanced [data-app-content]>div>div:first-child{padding:var(--space-6);background:color-mix(in srgb,var(--accent-loud) 8%,var(--bg-card));border:1px solid color-mix(in srgb,var(--accent-loud) 24%,var(--stroke));border-left:4px solid var(--accent-loud);border-radius:var(--radius-lg)}
+.balanced [data-app-content]>div>div:first-child h1{font-family:var(--font-display);font-size:32px;font-weight:700;font-variation-settings:"wdth" 105,"wght" 700;letter-spacing:-.025em}
+.balanced [data-app-content]>div>div:first-child span{color:var(--accent-text)}
+.balanced aside a[aria-current="page"][data-domain],.balanced aside a[aria-current="page"][data-domain]:hover{background:color-mix(in srgb,var(--accent-loud) 22%,var(--bg-sidebar));border-left:3px solid var(--accent-loud)}
+.balanced [data-app-content]>div>section[data-domain]>h2{color:var(--accent-text);font-size:var(--fs-sm);font-weight:var(--fw-bold);letter-spacing:.08em}
+.balanced [data-app-content]>div>section[data-domain]>h2:before{content:"";width:4px;height:16px;background:var(--accent-loud);border-radius:var(--radius-xs)}
+.balanced [data-app-content]>div>section[data-domain]>div>a{box-shadow:var(--shadow-sm)}
+.balanced [data-app-content]>div>section[data-domain]>div>a>div:last-child{color:var(--accent-text)}
 @media(max-width:820px){.preview-note{padding:8px 12px;flex-wrap:wrap}.expressive [data-app-content]>div>section[data-domain]>h2{font-size:20px}}
 `);
 fs.writeFileSync(path.join(dir,'index.html'),'<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Manuva Reports comparison</title><link rel="stylesheet" href="/fonts.css"><link rel="stylesheet" href="/fixture.css"><link rel="stylesheet" href="/compare.css"></head><body style="--font-archivo:Archivo;--font-inter:Inter"><div id="root"></div><script src="/fixture.js"></script></body></html>');

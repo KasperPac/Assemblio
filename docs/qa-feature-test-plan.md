@@ -442,6 +442,7 @@ does not change production behaviour and has no additional role gate.
 - [x] Professional preview has a neutral header, compact 28px title, quiet section rules and small selected-navigation accent.
 - [x] Professional preview retains warning/health styling and consistent report links.
 - [x] All four preview themes have no horizontal overflow; normal report links meet 4.5:1 contrast.
+- [x] Balanced preview (`?variant=balanced`) restores a softly tinted header, compact Archivo title, section accents and tinted navigation; four themes have no horizontal overflow and normal links/header eyebrow meet 4.5:1 contrast.
 - [ ] Apply the chosen professional treatment to shared components/pages and verify the actual authenticated app before deployment.
 - [ ] Inventory cards: Stock on hand, Movements (30d), Valuation, Dead stock (amber if >0), Stocktake history
 - [ ] Purchasing cards: PO summary (red if overdue), Spend by supplier, Lead-time accuracy (color by threshold), PO variance
@@ -735,6 +736,7 @@ This branch has the existing in-app help tree; public manual work remains on its
 
 ## Changelog
 
+- 2026-10-13 — amended Reports design review: added balanced D after feedback that C felt colourless and unfinished; local preview only.
 - 2026-10-13 — amended Reports design review: added restrained, expressive and professional local previews; recorded the user's preference for neutral working screens. Production unchanged.
 
 - 2026-10-12 — amended App design system (MANUVA-73): added domain bands on 18 index pages, Archivo typography, joined shell headers, neutral dialog/menu resets and real tenant-scoped metrics.
