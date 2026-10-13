@@ -268,6 +268,7 @@
   --brand-1: var(--accent-text);
   --brand-2: var(--accent-text);
   --brand-dim: var(--accent-dim);
+  --bg-card-alt: color-mix(in srgb, var(--accent-loud) 5%, var(--band-reset-bg-card-alt));
   --focus-ring: color-mix(in srgb, var(--accent-text) 18%, transparent);
   --focus-border: color-mix(in srgb, var(--accent-text) 50%, transparent);
   --shadow-focus: 0 0 0 3px var(--focus-ring);
@@ -282,6 +283,7 @@
   --band-reset-ink-muted: var(--ink-muted);
   --band-reset-ink-faint: var(--ink-faint);
   --band-reset-bg-card: var(--bg-card);
+  --band-reset-bg-card-alt: var(--bg-card-alt);
   --band-reset-stroke: var(--stroke);
   --band-reset-stroke-strong: var(--stroke-strong);
   --band-reset-brand-1: var(--brand-1);
@@ -317,11 +319,12 @@
   box-shadow: none;
 }
 
-[data-band] :is(dialog, [data-band-reset]) {
+:is([data-band], [data-app-content]) :is(dialog, [data-band-reset]) {
   --ink-strong: var(--band-reset-ink-strong);
   --ink-muted: var(--band-reset-ink-muted);
   --ink-faint: var(--band-reset-ink-faint);
   --bg-card: var(--band-reset-bg-card);
+  --bg-card-alt: var(--band-reset-bg-card-alt);
   --stroke: var(--band-reset-stroke);
   --stroke-strong: var(--band-reset-stroke-strong);
   --brand-1: var(--band-reset-brand-1);
@@ -335,7 +338,7 @@
   color: var(--ink-strong);
 }
 
-[data-band] :is(dialog, [data-band-reset]) :is(button, a, input, select, textarea):focus-visible {
+:is([data-band], [data-app-content]) :is(dialog, [data-band-reset]) :is(button, a, input, select, textarea):focus-visible {
   outline-color: var(--brand-1);
   box-shadow: var(--shadow-focus);
 }

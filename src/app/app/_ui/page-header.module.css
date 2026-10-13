@@ -66,115 +66,78 @@
   align-items: center;
 }
 
+/* The band prop identifies compact, tinted index headers. */
 .band {
-  position: relative;
-  overflow: hidden;
-  margin: calc(-1 * var(--content-pad)) calc(-1 * var(--content-pad)) 0;
-  padding: var(--space-4) var(--content-pad) var(--space-8);
-  align-items: flex-end;
+  padding: var(--space-6);
+  background: color-mix(in srgb, var(--accent-loud) 8%, var(--bg-card));
+  border: 1px solid color-mix(in srgb, var(--accent-loud) 24%, var(--stroke));
+  border-left: 4px solid var(--accent-loud);
+  border-radius: var(--radius-lg);
+  align-items: flex-start;
   gap: var(--space-6);
-}
-
-.band .content {
-  position: relative;
   min-width: 0;
-  flex: 1 1 420px;
-  gap: var(--space-3);
 }
-
+.band:not([data-domain]) {
+  --accent-loud: var(--brand-1);
+  --accent-text: var(--brand-2);
+}
+.band .content {
+  min-width: 0;
+  flex: 1 1 300px;
+  gap: var(--space-2);
+}
 .band .eyebrow,
 .statLabel {
   padding: 0;
   border-radius: 0;
   background: transparent;
-  color: inherit;
+  color: var(--accent-text);
   font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
-  letter-spacing: 0.11em;
+  letter-spacing: 0.12em;
 }
-
 .band .title {
   font-family: var(--font-display);
-  font-variation-settings: "wdth" 118, "wght" 800;
-  font-weight: 800;
-  font-size: clamp(2.2rem, 3.4vw, 3.5rem);
-  line-height: 0.95;
-  text-wrap: balance;
+  font-size: 32px;
+  font-weight: 700;
+  font-variation-settings: "wdth" 105, "wght" 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
 }
-
-.band .description {
-  font-size: 15px;
-  max-width: 60ch;
-}
-
 .side {
-  position: relative;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   flex-wrap: wrap;
   gap: var(--space-6);
+  max-width: 100%;
 }
-
 .stat {
   display: grid;
-  gap: 6px;
+  gap: var(--space-1);
   justify-items: end;
 }
-
 .statReading {
   display: flex;
   align-items: baseline;
   gap: var(--space-2);
 }
-
-.statValue,
-.watermark {
-  font-family: var(--font-numeral);
-  font-variation-settings: "wdth" 118, "wght" 800;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums lining-nums;
-  letter-spacing: -0.035em;
-  line-height: 0.86;
+.statValue {
+  font-family: var(--font-body);
+  font-size: 28px;
+  font-weight: var(--fw-bold);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
 }
-
-.statValue { font-size: var(--fs-display-5); }
-.statUnit {
-  font-size: var(--fs-base);
-  font-weight: var(--fw-semibold);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+.statUnit { font-size: var(--fs-sm); color: var(--ink-muted); }
+.statDelta { font-size: var(--fs-sm); color: var(--ink-muted); }
+@media (max-width: 640px) {
+  .band { padding: var(--space-4); gap: var(--space-4); }
+  .band .title { font-size: 28px; }
+  .side { width: 100%; justify-content: space-between; }
+  .stat { justify-items: start; }
 }
-
-.statDelta {
-  font-size: 15px;
-  font-weight: var(--fw-semibold);
-  background: var(--field-lime);
-  color: var(--on-lime);
-  padding: 1px 6px;
-}
-
-.cover {
-  padding: var(--space-8) var(--content-pad) var(--space-10);
-  min-height: 280px;
-}
-.cover .title { font-size: clamp(2.6rem, 4.2vw, 4rem); }
-.cover .stat { justify-items: start; }
-.cover .statValue { font-size: var(--fs-display-6); }
-.watermark {
-  position: absolute;
-  right: -0.04em;
-  bottom: -0.22em;
-  font-size: var(--fs-display-7);
-  opacity: 0.12;
-  pointer-events: none;
-}
-
 @media print {
-  .band {
-    margin: 0;
-    padding: 0 0 var(--space-6);
-    min-height: 0;
-  }
-  .watermark { display: none; }
+  .band { background: transparent; border: 0; padding: 0 0 var(--space-6); }
 }

@@ -737,6 +737,8 @@ This branch has the existing in-app help tree; public manual work remains on its
 
 ## Changelog
 
+- 2026-10-13 ? amended app index styling: approved balanced D applied to shared headers, navigation and table accents; Reports uses a compact header and corrected page wrapper.
+
 - 2026-10-13 — amended catalogue design review: added Products and Components examples of balanced D using real UI and isolated sample data; production unchanged.
 - 2026-10-13 — amended Reports design review: added balanced D after feedback that C felt colourless and unfinished; local preview only.
 - 2026-10-13 — amended Reports design review: added restrained, expressive and professional local previews; recorded the user's preference for neutral working screens. Production unchanged.
@@ -772,3 +774,19 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-09-25 — amended Retail items + sale consumption (MANUVA-27 plan 1 final review): removed the stock-location picker (stock always lands at the tenant's default location); "Track as retail item" is now offered on any variant with no active BOM regardless of product kind, with a neutral "Not tracked" badge on an untracked retail-kind variant; `apply_sale_consumption` now refuses a historical order's line before any write.
 - 2026-09-26 — amended Components list (MANUVA-30): the All / Low Stock tabs are replaced by a left filter rail (stock status, groups, supplier, unit-cost range) with flight-search counts, removable filter chips and a Unit cost column. Filters live in the URL, and sort and detail links carry every active filter. The design system gains a documented "filter rail" exception to the single-column rule.
 - 2026-09-28 — amended Components list (MANUVA-31): the table is one flat list following the active sort; the collapsible group section rows are replaced by a sortable Group column. Group filtering stays in the filter rail.
+
+
+## Restrained index rollout ? MANUVA-117
+
+Entry: the 18 exact index routes in `docs/bold-app-bands.md`. Existing access rules
+remain: platform pages `(super_admin)`, planning `(gated)`; create/import actions
+retain their existing `(admin)` gates. Detail routes keep quiet headers.
+
+- [x] Index headers have soft domain tints, compact titles and no oversized cover/watermark.
+- [x] Products/Components retain search, filters, table columns and create/import actions.
+- [x] Selected navigation uses a tint and narrow marker; detail-route selection remains correct.
+- [x] Reports has a compact "Reports" header, domain section markers and neutral cards; low/critical/healthy states retain their semantic colours.
+- [ ] Existing Inventory/Purchasing/Production header metrics remain live and accessible.
+- [x] Products/Components/Reports shared renderer has no page overflow in all four desktop themes and at 390px; 28px mobile headings. Product dialog neutral reset verified.
+- [x] Dialogs and avatar menus restore neutral theme tokens; details are not recoloured.
+- [ ] Production login/privacy, protected-route redirects, assets and authenticated index views pass after release.

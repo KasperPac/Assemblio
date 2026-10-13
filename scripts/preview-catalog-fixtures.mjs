@@ -3,7 +3,7 @@ export function catalogPreviewSource(screen, source) {
   const start = source.indexOf('  return (\n    <div className={styles.page}>');
   if (start < 0) throw new Error(`${screen} render boundary missing`);
   const body = source.slice(start)
-    .replace('        band\n', '        band={false}\n')
+    .replace('        band\n', "        band={new URLSearchParams(location.search).get('variant')==='implemented'}\n")
     .replace('<div className={styles.table}>', '<div className={styles.table} data-preview-table="">')
     .replace('<div className={styles.tableCard}>', '<div className={styles.tableCard} data-preview-table="">');
 

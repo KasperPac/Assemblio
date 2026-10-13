@@ -108,17 +108,16 @@
 
 .navItem.active,
 .navItem.active:hover {
-  background: var(--field-ink);
-  color: var(--accent-band-ink);
-  border-color: var(--field-ink);
+  background: color-mix(in srgb, var(--accent-loud) 22%, var(--bg-sidebar));
+  color: var(--band-reset-ink-on-brand);
+  border-color: transparent;
+  border-left: 3px solid var(--accent-loud);
   border-radius: var(--radius-sm);
   font-weight: var(--fw-semibold);
 }
 
-.navItem.active[data-domain],
-.navItem.active[data-domain]:hover {
-  background: var(--accent-loud);
-  border-color: var(--accent-loud);
+.navItem.active:not([data-domain]) {
+  --accent-loud: var(--brand-1);
 }
 
 .active .navIcon {
@@ -273,18 +272,22 @@
   flex-wrap: wrap;
 }
 
-.topbarBand {
-  background: var(--field-ink);
+.topbarIndex {
+  background: var(--bg-page);
   padding-inline: var(--content-pad);
+  border-bottom: 1px solid var(--stroke);
+  justify-content: flex-end;
 }
 
-.topbarBand .topbarAvatar {
+.topbarIndex .topbarIntro { display: none; }
+
+.topbarIndex .topbarAvatar {
   background: transparent;
-  color: var(--accent-band-ink);
+  color: var(--ink-strong);
 }
 
-.topbarBand .topbarAvatar:focus-visible {
-  outline-color: var(--accent-band-ink);
+.topbarIndex .topbarAvatar:focus-visible {
+  outline-color: var(--brand-1);
 }
 
 .topbarIntro {

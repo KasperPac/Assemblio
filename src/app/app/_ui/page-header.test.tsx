@@ -14,30 +14,30 @@ describe("PageHeader", () => {
     expect(html).not.toContain("Unused");
     expect(html).not.toContain('aria-hidden="true"');
   });
-  it("scopes the band and all action children to its explicit domain", () => {
+  it("scopes the index header and all action children to its explicit domain", () => {
     const html = renderToStaticMarkup(<PageHeader band domain="production" eyebrow="Operations · Production" title="Production orders" stat={{ label: "Open jobs", value: 0, unit: "jobs", delta: "Ready now" }} actions={<dialog><button>Save</button></dialog>} />);
-    expect(html).toContain('data-band="" data-domain="production"');
+    expect(html).toContain('data-index-header="" data-domain="production"');
     expect(html).toContain("Open jobs");
     expect(html).toContain(">0</span>");
     expect(html).toContain("jobs");
     expect(html).toContain("Ready now");
     expect(html).toContain("<dialog>");
   });
-  it("renders a navy band without domain metadata and no fabricated metric", () => {
+  it("renders an index header without domain metadata and no fabricated metric", () => {
     const html = renderToStaticMarkup(<PageHeader band eyebrow="Operations" title="Dashboard" />);
-    expect(html).toContain('data-band=""');
+    expect(html).toContain('data-index-header=""');
     expect(html).not.toContain("data-domain");
     expect(html).not.toContain("statValue");
   });
-  it("marks only the cover watermark as decorative", () => {
+  it("keeps metrics accessible without a poster watermark", () => {
     const html = renderToStaticMarkup(<PageHeader band cover domain="audit" title="Delivery performance" stat={{ label: "On-time deliveries", value: "—" }} />);
-    expect(html.match(/aria-hidden="true"/g)).toHaveLength(1);
+    expect(html).not.toContain('aria-hidden="true"');
     expect(html).toContain("On-time deliveries");
   });
 
   it("restores every scoped control token for dialogs and the avatar menu", () => {
     const css = readFileSync(new URL("../../globals.css", import.meta.url), "utf8");
-    const reset = css.match(/\[data-band\] :is\(dialog, \[data-band-reset\]\) \{([^}]+)\}/)?.[1];
+    const reset = css.match(/:is\(\[data-band\], \[data-app-content\]\) :is\(dialog, \[data-band-reset\]\) \{([^}]+)\}/)?.[1];
     expect(reset).toBeDefined();
     for (const token of ["ink-strong", "ink-muted", "ink-faint", "bg-card", "stroke", "stroke-strong", "brand-1", "brand-2", "brand-dim", "ink-on-brand", "surface-hover"]) {
       expect(reset).toContain(`--${token}: var(--band-reset-${token})`);

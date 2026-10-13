@@ -1,7 +1,8 @@
-# Bold app bands
+# Index headers and metrics
 
-Implemented for MANUVA-73 from the October 2 marketing/app handoff; resumed by the user
-on October 12. This is a product design reference, not a build-status report.
+Initially implemented for MANUVA-73 from the October 2 marketing/app handoff.
+Revised for MANUVA-117: balanced D was approved on October 13 after reviewing
+Reports, Products and Components. This is a product design reference, not a build-status report.
 The source references are at `C:/dev/ManuvaMarketingBold/design_handoff_app_bold/`;
 the current local token library is `C:/dev/ManuvaDesignSystem`.
 
@@ -9,7 +10,7 @@ the current local token library is `C:/dev/ManuvaDesignSystem`.
 
 | Route | Domain | Title |
 | --- | --- | --- |
-| `/app` | Navy | Today |
+| `/app` | Theme brand | Today |
 | `/app/inventory` | Inventory / cobalt | Inventory |
 | `/app/components` | Inventory / cobalt | Components |
 | `/app/stocktake` | Inventory / cobalt | Stocktakes |
@@ -20,26 +21,27 @@ the current local token library is `C:/dev/ManuvaDesignSystem`.
 | `/app/goods-inwards` | Logistics / mint | Goods inwards |
 | `/app/suppliers` | Logistics / mint | Suppliers |
 | `/app/warehouse/locations` | Logistics / mint | Locations |
-| `/app/reports` | Audit / aqua, cover | Last 90 days in numbers. |
+| `/app/reports` | Audit / aqua | Reports |
 | `/app/activity-log` | Audit / aqua | Activity log |
 | `/app/super-admin/audit` | Audit / aqua | Audit log |
-| `/app/orders` | Navy | Orders |
-| `/app/trash` | Navy | Trash |
-| `/app/super-admin` | Navy | Tenants |
-| `/app/super-admin/team` | Navy | Platform team |
+| `/app/orders` | Theme brand | Orders |
+| `/app/trash` | Theme brand | Trash |
+| `/app/super-admin` | Theme brand | Tenants |
+| `/app/super-admin/team` | Theme brand | Platform team |
 
 ## Header and shell rules
 
-Index pages explicitly opt into `PageHeader`'s `band`, `domain`, `stat` and `cover`
-props. `route-meta.ts` holds the exact index map for the topbar; record details and
-other routes retain quiet headers. Trial, payment, view-as and accounting notices
-appear above the joined topbar/header band. Existing tables, forms and surface palettes
-remain in place; this does not adopt the full graphite/cobalt palette repaint.
+Index pages retain the `band`, `domain` and `stat` API with a restrained visual
+implementation. `route-meta.ts` holds the exact index map; details retain quiet
+headers. Notices stay above the neutral topbar. Tables, forms, filters and surface
+palettes remain in place; table headings use a 5% domain tint. Dialogs and menus
+restore neutral tokens, including focus and table surfaces.
 
-Titles and numerals use Archivo, weight 800 and width 118. One lime-highlighted delta
-is allowed per screen. Band text is white on cobalt, violet and navy; dark ink on flare,
-amber, mint and aqua. Header actions use the shared buttons; dialogs and popovers nested
-inside a band restore the selected theme's neutral tokens. Focus remains visible.
+Headers use an 8% domain tint, narrow accent edge, 32px Archivo title (28px mobile),
+width 105 and weight 700. Stats use compact 28px tabular Inter text. No oversized
+cover, watermark or lime delta. Reports keeps delivery performance in its report
+card rather than repeating it in the header. Navigation uses a 22% domain tint
+against the sidebar and a narrow marker; neutral modules use the theme brand.
 
 ## Live metrics
 

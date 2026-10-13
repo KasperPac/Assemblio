@@ -33,7 +33,7 @@ export default function Topbar({ userInitial, userAvatarUrl, selectableTenants, 
   }, []);
 
   return (
-    <header className={`${styles.topbar} ${band ? styles.topbarBand : ""}`} data-band={band ? "" : undefined} data-domain={band?.domain ?? undefined}>
+    <header className={`${styles.topbar} ${band ? styles.topbarIndex : ""}`}>
       <div className={styles.topbarIntro}>
         {showBreadcrumb && (
           <div className={styles.breadcrumb}>

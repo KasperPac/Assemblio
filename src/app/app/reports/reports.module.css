@@ -29,18 +29,26 @@
   align-items: center;
   gap: var(--space-3);
   color: var(--accent-text);
-  font-size: var(--fs-xs);
+  font-size: var(--fs-sm);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   margin: 0;
+}
+
+.sectionLabel::before {
+  content: "";
+  width: 4px;
+  height: 16px;
+  background: var(--accent-loud);
+  border-radius: var(--radius-xs);
 }
 
 .sectionLabel::after {
   content: "";
   flex: 1;
   height: 1px;
-  background: color-mix(in srgb, var(--accent-loud) 30%, var(--stroke));
+  background: var(--stroke);
 }
 
 .grid {
@@ -52,9 +60,9 @@
 .card {
   border: 1px solid var(--stroke);
   border-radius: var(--radius-lg);
-  border-top: 2px solid color-mix(in srgb, var(--accent-loud) 55%, var(--stroke-card));
   padding: 16px;
   background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
   text-decoration: none;
   display: block;
@@ -100,7 +108,7 @@
 .cardNameRed   { color: var(--danger); }
 
 .cardValue {
-  font-family: var(--font-numeral);
+  font-family: var(--font-body);
   font-variant-numeric: tabular-nums;
   font-size: 26px;
   font-weight: 700;

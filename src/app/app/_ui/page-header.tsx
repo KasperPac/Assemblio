@@ -29,12 +29,10 @@ export default function PageHeader({
   band = false,
   domain,
   stat,
-  cover = false,
 }: Props) {
   if (band) {
     return (
-      <div className={`${styles.header} ${styles.band} ${cover ? styles.cover : ""}`} data-band="" data-domain={domain}>
-        {cover && stat ? <span className={styles.watermark} aria-hidden="true">{stat.value}</span> : null}
+      <div className={`${styles.header} ${styles.band}`} data-index-header="" data-domain={domain}>
         <div className={styles.content}>
           {eyebrow ? <span className={styles.eyebrow}>{eyebrow}</span> : null}
           {title ? <h1 className={styles.title}>{title}</h1> : null}

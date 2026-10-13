@@ -190,15 +190,8 @@ export default async function ReportsHubPage() {
       <PageHeader
         band
         domain="audit"
-        cover
         eyebrow="Operations · Audit"
-        title="Last 90 days in numbers."
-        stat={{
-          label: "On-time deliveries",
-          value: onTimePct == null ? "—" : `${onTimePct}%`,
-          delta: deliveryMetric.deltaPoints == null ? undefined
-            : `${deliveryMetric.deltaPoints > 0 ? "+" : ""}${deliveryMetric.deltaPoints} pts vs prior 90 days`,
-        }}
+        title="Reports"
         description="Live data across inventory, purchasing, and system health."
       />
 

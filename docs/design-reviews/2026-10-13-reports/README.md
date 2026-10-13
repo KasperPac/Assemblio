@@ -1,7 +1,8 @@
-# Reports: professional tool direction
+# Approved balanced app direction
 
 ## Products and Components examples
 
+Approved by the user after reviewing these examples on 2026-10-13.
 Requested next by the user: show D on denser catalogue screens. These use each
 page's real return JSX, child components, CSS Modules and shell, with isolated
 sample data and action/navigation boundaries. No live tenant queries or writes.
@@ -91,3 +92,11 @@ initial A source changes are local drafts, not the completed professional rollou
 C/D overrides live only in the preview generator; apply the chosen direction to shared
 components and update the affected page map before publishing a new release.
 Original deployed release remains `41321f8c`.
+
+## Implementation
+
+Balanced D is now the approved direction. The shared header/topbar/navigation and
+scoped table accents implement it; Reports retains its corrected wrapper, section
+markers and neutral cards. `?variant=implemented&screen=products` (or components/
+reports) renders the real shared implementation without prototype styling overrides.
+Original A/B/C/D screenshots above remain historical review evidence.

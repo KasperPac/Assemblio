@@ -6,50 +6,41 @@ Covers token rules, canonical page layout,
 
 ---
 
-## Professional app direction under review (2026-10-13)
+## Restrained index design (approved 2026-10-13)
 
-The user now prefers constrained, professional working screens over the bold
-marketing treatment. See the [Reports comparison](design-reviews/2026-10-13-reports/README.md),
-especially C: neutral headers, compact typography, quiet cards and purposeful
-selection/status accents. This is a local prototype; the deployed bold system
-below still describes production until the shared implementation is updated.
-Latest review: C felt too colourless and unfinished. D adds a soft tinted header,
-compact Archivo title, coloured section markers and a tinted navigation selection.
-The user has not accepted D yet; keep this as review evidence, not a rollout rule.
-Products and Components now have D examples in the same comparison: violet and
-blue identities respectively, soft header/table accents and neutral data rows.
-The existing Components filter rail is retained. Both are local fixture previews.
-
-## Bold index headers (2026-10-12)
-
-Use the [18-page map and metric definitions](bold-app-bands.md) for index pages.
-The current local source library is `C:/dev/ManuvaDesignSystem`; the former
+The user approved balanced D after reviewing Reports, Products and Components.
+See the [visual examples](design-reviews/2026-10-13-reports/README.md) and the
+[18-page map and metric definitions](bold-app-bands.md).
+The local source library is `C:/dev/ManuvaDesignSystem`; the former
 `manuva-tokens/Manuva Design System` path is unavailable on this machine.
-Only the bold additions are adopted here; existing surface palettes remain.
+
+Index headers use soft domain tints, a narrow accent edge, compact Archivo titles
+(32px desktop, 28px mobile), neutral surfaces and restrained table-heading accents.
+Navigation selection uses a tint and a narrow marker. Stock/status colours keep
+their semantic roles. Existing surface palettes remain; this is not a full repaint.
 
 ```tsx
 <PageHeader
   band
   domain="purchasing"
-  eyebrow="Operations · Purchasing"
+  eyebrow="Operations ? Purchasing"
   title="Purchase orders"
   stat={{ label: "Awaiting receipt", value: openCount, unit: "open", delta: todayLabel }}
   actions={actions}
 />
 ```
 
-`domain` accepts inventory, production, purchasing, products, logistics or audit;
-omitting it uses navy. `cover` gives Reports its larger title and watermark.
-`stat` accepts `label`, `value`, optional `unit` and optional `delta`. Values come
-from tenant-scoped reads, with `—` for unavailable statistics. Do not invent metrics.
+`band` is the compatible opt-in name for the restrained index treatment;
+`data-index-header` identifies its markup. `domain` accepts inventory, production,
+purchasing, products, logistics or audit. Without a domain, use the theme brand.
+`stat` uses compact tabular text with no decorative watermark or highlighted delta.
+`cover` is retained only for compatibility and does not enlarge the header.
 
-The shell joins the exact index topbar to the full-width header. Keep the header
-first inside an unpadded page wrapper; content padding is supplied by the shell.
-Details and other routes keep the quiet header API described below. Nested dialogs
-automatically restore neutral tokens; non-dialog popovers use `data-band-reset`.
-Use canonical primary/secondary buttons and one lime-highlighted delta at most.
-Titles and numerals use Archivo with width 118 and weight 800, with fluid type sizes.
-
+The exact index map scopes content accents and suppresses duplicate topbar titles.
+Details keep the quiet header API below. Notices stay above the topbar, and the
+shell supplies page padding. Dialogs/popovers inside accented content restore
+neutral theme/control tokens. Keep canonical buttons and visible focus indicators.
+Reports uses the title "Reports" and shows delivery performance in its report card.
 
 ## 1. Token Rules
 
