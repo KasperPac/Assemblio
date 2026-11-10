@@ -11,6 +11,7 @@ import {
 import PageHeader from "../_ui/page-header";
 import EmptyState from "../_ui/empty-state";
 import ListPanel, { ListRow } from "../_ui/list-panel";
+import { poLabel } from "@/lib/purchasing/po-label";
 
 type StoreRow = {
   id: string;
@@ -209,7 +210,7 @@ export default async function TrashPage() {
                 <strong>
                   {row.id ? (
                     <Link href={`/app/purchasing/${row.id}`} className={styles.entityLink}>
-                      {row.po_number ?? `PO-${row.id.slice(0, 6)}`}
+                      {poLabel(row)}
                     </Link>
                   ) : (
                     `PO-${row.id}`

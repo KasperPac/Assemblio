@@ -290,6 +290,8 @@ Tabs: Overview, Stock, BOM Usage, Receipts, Suppliers, Location.
 
 ### Purchase orders — `/app/purchasing`, detail `/app/purchasing/{id}`
 - [ ] List sorted by created_at desc (≤12): po_number (or PO-{id}), supplier link, status badge, created, status dropdown
+- [ ] Purchasing list shows each status as a label, not the raw value (e.g. "In Transit", not `in_transit`): Open / In Transit / Received / Cancelled / Archived; the line-form PO picker uses the same labels
+- [ ] A PO with no number (or a blank one) is named `PO-` plus the first 8 characters of its id in upper case, e.g. `PO-ABCDEF12`, in the list and the line-form PO picker
 - [ ] Create PO: supplier required; PO number auto-increments (trailing digits) or custom; initial status "open"
 - [ ] Add line: component + positive qty required; quantity_received starts 0
 - [ ] Update line qty: rejected if new qty < quantity_received
@@ -305,11 +307,13 @@ Tabs: Overview, Stock, BOM Usage, Receipts, Suppliers, Location.
 
 ### List — `/app/goods-inwards`
 - [ ] Receipts sorted by received_at desc: supplier_reference link, supplier, location, PO #, date, status badge, line count
+- [ ] A linked PO without a number shows as `PO-` plus the first 8 characters of its id in upper case
 - [ ] "Due POs" widget: open/in_transit POs without a receipt, expected within window (−90d … +14d), sorted by expected_date asc; only shows when applicable
 - [ ] Empty state "No deliveries recorded"
 
 ### Create/edit — `/app/goods-inwards/new` (`?po=` / `?component_id=`), `/app/goods-inwards/{id}`
 - [ ] Pre-fills supplier from PO; PO list filtered to matching supplier
+- [ ] A PO without a number is named `PO-` plus the first 8 characters of its id in upper case in the PO picker and on the receipt detail
 - [ ] Location required (errors if none configured); supplier required (linked or override `__other__`); supplier_reference required; stock_in_reason required when no PO linked
 - [ ] Lines: qty_delivered positive; cost_per_unit ≥0 or null; batch_number, notes optional
 - [ ] Create sets status "unmatched" and calls `receive_delivery_receipt` RPC to update stock
@@ -320,6 +324,7 @@ Tabs: Overview, Stock, BOM Usage, Receipts, Suppliers, Location.
 
 ### GRN print — `/app/goods-inwards/{id}/print`
 - [ ] Header (company, GRN #, supplier, date, location, PO #), line table (component/SKU/expected/delivered/variance/cost/total/batch#/notes)
+- [ ] PO # for a PO without a number prints as `PO-` plus the first 8 characters of its id in upper case
 - [ ] Variance shows +N / −N / "—"; total value row only when a line has cost; print button; A4/letter clean; generated timestamp footer
 
 ---
@@ -340,6 +345,7 @@ Tabs: Overview, Stock, BOM Usage, Receipts, Suppliers, Location.
 - [ ] **Contacts:** add (name required) / remove; primary sorted first
 - [ ] **Catalog:** link component (searchable active list), part number, unit_cost, currency, lead_time, moq; update/unlink; toggle preferred (clears others for that component first); price breaks add/remove (min_qty, unit_cost)
 - [ ] **History:** POs (≤100, created_at desc): PO # link, status, dates, line count, delivery count, total
+- [ ] **History:** a PO without a number is named `PO-` plus the first 8 characters of its id in upper case
 - [ ] **Performance:** avg actual lead time per component (only when ≥3 receipts), promised vs actual, on-time/late status (avg ≤ promised = on-time)
 
 ### CSV import — `/app/suppliers/import` **(admin)**
@@ -459,7 +465,9 @@ For each report below: sortable table, CSV export, correct date-range default, a
 - [ ] **Spend by supplier** `/reports/spend-by-supplier`: spend, % of total, avg PO value; top-10 bar chart; default 90d
 - [ ] **Lead-time accuracy** `/reports/lead-time-accuracy`: received/on-time/late/accuracy%/avg days late (worst first); no-expected-date counts as on-time; default 90d
 - [ ] **PO variance** `/reports/po-variance`: only lines where expected≠delivered & expected not null; over/under cards; default 90d
+- [ ] **PO variance** PO column: shows the PO number (falling back to `PO-` + short id when a PO has no number) on the page and in the CSV export; a line with no PO shows `—` on the page and an empty CSV cell
 - [ ] **PO summary** `/reports/po-summary`: status badge, expected date (overdue red+⚠), total value; open liability/outstanding/overdue cards; default 90d
+- [ ] **PO summary** page and CSV export name a PO without a number `PO-` plus the first 8 characters of its id in upper case
 - [ ] **Stocktake history** `/reports/stocktake-history`: status, lines counted, variance lines/qty; variance bar chart; default 365d
 - [ ] **Inventory integrity** `/reports/inventory-integrity`: issue types (Invariant red / Reconciliation amber / Duplicate key amber / PO over-receipt blue); "Healthy" when 0; no date filter
 
@@ -484,6 +492,7 @@ For each report below: sortable table, CSV export, correct date-range default, a
 
 ### Trash — `/app/trash`
 - [ ] Sections: uninstalled Shopify stores, delete-activity log, archived POs, archived stocktakes, archived BOMs; each with empty state
+- [ ] Archived POs without a number are named `PO-` plus the first 8 characters of their id in upper case
 - [ ] Restore PO (archived→open), stocktake (archived→open), BOM (→draft, is_active false) — revalidate related pages
 - [ ] "Empty trash" shows item count, disabled when empty, irreversible warning; permanently deletes archived POs/lines, stocktakes/lines, BOMs/components, uninstalled stores; logs counts to activity_log
 
@@ -774,6 +783,8 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-09-25 — amended Retail items + sale consumption (MANUVA-27 plan 1 final review): removed the stock-location picker (stock always lands at the tenant's default location); "Track as retail item" is now offered on any variant with no active BOM regardless of product kind, with a neutral "Not tracked" badge on an untracked retail-kind variant; `apply_sale_consumption` now refuses a historical order's line before any write.
 - 2026-09-26 — amended Components list (MANUVA-30): the All / Low Stock tabs are replaced by a left filter rail (stock status, groups, supplier, unit-cost range) with flight-search counts, removable filter chips and a Unit cost column. Filters live in the URL, and sort and detail links carry every active filter. The design system gains a documented "filter rail" exception to the single-column rule.
 - 2026-09-28 — amended Components list (MANUVA-31): the table is one flat list following the active sort; the collapsible group section rows are replaced by a sortable Group column. Group filtering stays in the filter rail.
+- 2026-11-10 — amended Purchase orders and Goods Inwards (MANUVA-76): the Purchasing list shows status labels (e.g. "In Transit") instead of raw values, and a PO without a number is named `PO-` plus the first 8 characters of its id in upper case everywhere it appears (Purchasing, Goods Inwards, Suppliers history, Trash, PO summary report and export).
+- 2026-11-10 — amended PO variance report (MANUVA-120): PO column shows the PO number (page and CSV export), falling back to the short id when a PO has no number
 
 
 ## Restrained index rollout ? MANUVA-117

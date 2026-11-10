@@ -6,6 +6,7 @@ import type { ParsedReceiptLine } from "./actions";
 import ComponentPicker, { type PickerComponent } from "./component-picker";
 import ComponentThumbnail from "../_ui/component-thumbnail";
 import styles from "./goods-inwards.module.css";
+import { poLabel } from "@/lib/purchasing/po-label";
 
 type Supplier = { id: string; name: string };
 type Component = PickerComponent;
@@ -315,7 +316,7 @@ export default function ReceiptForm({
               <option value="">Select a PO to pre-fill this receipt…</option>
               {availablePOs.map((po) => (
                 <option key={po.id} value={po.id}>
-                  {po.po_number ?? `PO-${po.id.slice(0, 8).toUpperCase()}`} &middot; {po.supplier_name ?? "Unknown supplier"} &middot;{" "}
+                  {poLabel(po)} &middot; {po.supplier_name ?? "Unknown supplier"} &middot;{" "}
                   {po.lines.length} line{po.lines.length !== 1 ? "s" : ""}
                 </option>
               ))}

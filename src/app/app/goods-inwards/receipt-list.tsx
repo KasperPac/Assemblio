@@ -6,6 +6,7 @@ import type { ReceiptStatus } from "./helpers";
 import styles from "./goods-inwards.module.css";
 import EmptyState from "../_ui/empty-state";
 import StatusBadge from "../_ui/status-badge";
+import { poLabel } from "@/lib/purchasing/po-label";
 
 type Receipt = {
   id: string;
@@ -164,7 +165,7 @@ export default function ReceiptList({
                           href={`/app/purchasing/${po.id}`}
                           className={styles.link}
                         >
-                          {po.po_number ?? `PO-${po.id.slice(0, 8).toUpperCase()}`}
+                          {poLabel(po)}
                         </Link>
                       </td>
                       <td>{po.supplier_name}</td>
@@ -269,7 +270,7 @@ export default function ReceiptList({
                         >
                           {(() => {
                         const po = Array.isArray(r.purchase_order) ? r.purchase_order[0] : r.purchase_order;
-                        return po?.po_number ?? `PO ${r.purchase_order_id!.slice(0, 8).toUpperCase()}`;
+                        return poLabel({ id: r.purchase_order_id!, po_number: po?.po_number })
                       })()}
                         </Link>
                       ) : (

@@ -7,6 +7,7 @@ import { computeVariance } from "./helpers";
 import type { ReceiptStatus } from "./helpers";
 import ComponentThumbnail from "../_ui/component-thumbnail";
 import styles from "./goods-inwards.module.css";
+import { poLabel } from "@/lib/purchasing/po-label";
 
 type ReceiptLine = {
   id: string;
@@ -370,7 +371,7 @@ export default function ReceiptDetail({
                 >
                   {(() => {
                     const po = Array.isArray(receipt.purchase_order) ? receipt.purchase_order[0] : receipt.purchase_order;
-                    return po?.po_number ?? `PO-${receipt.purchase_order_id!.slice(0, 8).toUpperCase()}`;
+                    return poLabel({ id: receipt.purchase_order_id!, po_number: po?.po_number });
                   })()} →
                 </Link>
               </div>
@@ -427,7 +428,7 @@ export default function ReceiptDetail({
                 ) : (
                   availablePOs.map((po) => (
                     <option key={po.id} value={po.id}>
-                      {po.po_number ?? `PO-${po.id.slice(0, 8).toUpperCase()}`} &middot; {po.supplier_name ?? "Unknown"} &middot;{" "}
+                      {poLabel(po)} &middot; {po.supplier_name ?? "Unknown"} &middot;{" "}
                       {po.lines.length} line{po.lines.length !== 1 ? "s" : ""}
                     </option>
                   ))
