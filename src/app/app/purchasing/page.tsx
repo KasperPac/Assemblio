@@ -2,7 +2,7 @@ import Link from "next/link";
 import styles from "./purchasing.module.css";
 import { redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
-import { getStatusVariant } from "./status-utils";
+import { getStatusLabel, getStatusVariant } from "./status-utils";
 import PurchaseOrderCreateForm from "./po-create-form";
 import PurchaseOrderLineForm from "./po-line-form";
 import {
@@ -17,6 +17,7 @@ import StatusBadge from "../_ui/status-badge";
 import EmptyState from "../_ui/empty-state";
 import ListPanel, { ListRow } from "../_ui/list-panel";
 import HelpLink from "../_ui/help-link";
+import { poLabel } from "@/lib/purchasing/po-label";
 
 type PurchaseOrderRow = {
   id: string;
@@ -77,7 +78,7 @@ export default async function PurchasingPage() {
             <PurchaseOrderLineForm
               purchaseOrders={(data ?? []).map((po) => ({
                 id: po.id,
-                label: `${po.po_number ?? `PO-${po.id.slice(0, 6)}`} (${po.status})`,
+                label: `${poLabel(po)} (${getStatusLabel(po.status)})`,
               }))}
               components={(
                 (components ?? []) as Array<{ id: string; name: string | null; sku: string | null }>
@@ -128,7 +129,7 @@ export default async function PurchasingPage() {
                 className={styles.row}
               >
                 <Link href={`/app/purchasing/${row.id}`} className={styles.poLink}>
-                  {row.po_number ?? `PO-${row.id.slice(0, 6)}`}
+                  {poLabel(row)}
                 </Link>
                 {supplier?.id ? (
                   <Link
@@ -143,7 +144,7 @@ export default async function PurchasingPage() {
                   </span>
                 )}
                 <StatusBadge variant={getStatusVariant(row.status)}>
-                  {row.status}
+                  {getStatusLabel(row.status)}
                 </StatusBadge>
                 <span className={styles.meta}>
                   {new Date(row.created_at).toLocaleDateString("en-GB")}
@@ -195,7 +196,7 @@ export default async function PurchasingPage() {
               >
                 {po?.id ? (
                   <Link href={`/app/purchasing/${po.id}`} className={styles.poLink}>
-                    {po.po_number ?? `PO-${po.id.slice(0, 6)}`}
+                    {poLabel(po)}
                   </Link>
                 ) : (
                   <strong>???</strong>
