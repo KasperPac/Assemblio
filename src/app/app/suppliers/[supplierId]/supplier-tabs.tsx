@@ -11,6 +11,7 @@ import type {
 } from "@/lib/suppliers/types";
 import StatusBadge from "../../_ui/status-badge";
 import styles from "./supplier-tabs.module.css";
+import { poLabel } from "@/lib/purchasing/po-label";
 
 type PoRow = {
   id: string;
@@ -381,7 +382,7 @@ export default function SupplierTabs({
                 return (
                   <div key={po.id} className={styles.poRow}>
                     <Link href={`/app/purchasing/${po.id}`} className={styles.poRef}>
-                      {po.po_number ?? `PO-${po.id.slice(0, 8).toUpperCase()}`}
+                      {poLabel(po)}
                     </Link>
                     <span>
                       {new Date(po.created_at).toLocaleDateString("en-AU", {
