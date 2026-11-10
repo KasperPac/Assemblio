@@ -439,6 +439,18 @@ warning worth a separate tidy-up.
 ## 13. Reports
 
 ### Reports hub — `/app/reports`
+
+Local design review: `node scripts/preview-reports-accents.mjs`, then
+`http://127.0.0.1:3218/?variant=professional`. Fixture data is explicitly labelled
+Pac-Technologies; no server actions or live writes are connected. This prototype
+does not change production behaviour and has no additional role gate.
+
+- [x] Professional preview has a neutral header, compact 28px title, quiet section rules and small selected-navigation accent.
+- [x] Professional preview retains warning/health styling and consistent report links.
+- [x] All four preview themes have no horizontal overflow; normal report links meet 4.5:1 contrast.
+- [x] Balanced preview (`?variant=balanced`) restores a softly tinted header, compact Archivo title, section accents and tinted navigation; four themes have no horizontal overflow and normal links/header eyebrow meet 4.5:1 contrast.
+- [x] Catalogue design previews (`?variant=balanced&screen=products` / `components`) retain the actual page renderers, filters/rail and tables; desktop checks in four themes show correct selected navigation, no page overflow and header eyebrow contrast above 4.5:1. Sample data and stub actions only; filters/sorting are visual-only.
+- [ ] Apply the chosen professional treatment to shared components/pages and verify the actual authenticated app before deployment.
 - [ ] Inventory cards: Stock on hand, Movements (30d), Valuation, Dead stock (amber if >0), Stocktake history
 - [ ] Purchasing cards: PO summary (red if overdue), Spend by supplier, Lead-time accuracy (color by threshold), PO variance
 - [ ] System card: Inventory integrity (red if issues, else "Healthy"); each card links to its report
@@ -704,7 +716,44 @@ Reusable proof: `supabase/__tests__/2026-09-02-tenant-isolation-hardening.verify
 
 ---
 
+## 24. Bold index headers — MANUVA-73
+
+Entry points: the 18 index routes in [the page map](bold-app-bands.md).
+Production planning is `(gated)`; tenant actions retain their existing `(admin)` checks;
+the three platform indexes remain `(super_admin)` / platform-observer as before.
+
+- [ ] Every mapped index opens on one joined, full-width domain band with Archivo display type.
+- [ ] Inventory/Components/Stocktakes are cobalt; Production is flare; Purchasing amber;
+  Products/Templates violet; Logistics mint; Audit aqua; remaining mapped indexes navy.
+- [ ] PO, component, product, receipt, stocktake and platform record details stay quiet.
+- [ ] Trial, past-due, accounting and view-as notices sit above the topbar; gates still work.
+- [ ] Exactly one visible navigation link is active, including nested platform audit/team routes.
+- [ ] Daylight, Midnight, Ocean and Ember preserve table/form surfaces and readable band text.
+- [ ] At 1440px, 1024px and 390px, header actions wrap, titles/stats fit and bands meet without gaps.
+- [ ] Keyboard focus is visible on band actions and avatar; dialogs and user menus restore neutral theme colours.
+- [ ] Locations upgrade view has a single h1; the feature prompt is h2.
+- [ ] Inventory counts distinct components matching its below-reorder row flags, not repeated locations.
+- [ ] Purchasing counts all open/in-transit POs, including beyond the newest twelve; arrive-today uses tenant dates and DST.
+- [ ] Production counts distinct open job/order lines across departments; finished steps are excluded.
+- [ ] Reports on-time rate counts only scheduled, processed, PO-linked receipts; missing dates and unprocessed receipts are excluded.
+- [ ] Reports shows `—` for no eligible data/read failure; no prior eligible window means no delta; comparison uses percentage points.
+- [ ] Inventory/Production failed reads display `—`; Purchasing failed counts never appear as zero.
+- [ ] Existing create/import/export/receive/restore actions retain their labels, roles and behavior.
+
+Browser fixture checks exercise the actual shared components/styles with Pac-Technologies
+fixture content; they do not substitute for a signed-in walkthrough of all live pages.
+This branch has the existing in-app help tree; public manual work remains on its separate branch.
+
 ## Changelog
+
+- 2026-10-13 ? amended app index styling: approved balanced D applied to shared headers, navigation and table accents; Reports uses a compact header and corrected page wrapper.
+
+- 2026-10-13 — amended catalogue design review: added Products and Components examples of balanced D using real UI and isolated sample data; production unchanged.
+- 2026-10-13 — amended Reports design review: added balanced D after feedback that C felt colourless and unfinished; local preview only.
+- 2026-10-13 — amended Reports design review: added restrained, expressive and professional local previews; recorded the user's preference for neutral working screens. Production unchanged.
+
+- 2026-10-12 — amended App design system (MANUVA-73): added domain bands on 18 index pages, Archivo typography, joined shell headers, neutral dialog/menu resets and real tenant-scoped metrics.
+
 
 Append a dated line here whenever a feature is added or amended (see CLAUDE.md → "Feature test plan").
 Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
@@ -736,3 +785,19 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-09-28 — amended Components list (MANUVA-31): the table is one flat list following the active sort; the collapsible group section rows are replaced by a sortable Group column. Group filtering stays in the filter rail.
 - 2026-11-10 — amended Purchase orders and Goods Inwards (MANUVA-76): the Purchasing list shows status labels (e.g. "In Transit") instead of raw values, and a PO without a number is named `PO-` plus the first 8 characters of its id in upper case everywhere it appears (Purchasing, Goods Inwards, Suppliers history, Trash, PO summary report and export).
 - 2026-11-10 — amended PO variance report (MANUVA-120): PO column shows the PO number (page and CSV export), falling back to the short id when a PO has no number
+
+
+## Restrained index rollout ? MANUVA-117
+
+Entry: the 18 exact index routes in `docs/bold-app-bands.md`. Existing access rules
+remain: platform pages `(super_admin)`, planning `(gated)`; create/import actions
+retain their existing `(admin)` gates. Detail routes keep quiet headers.
+
+- [x] Index headers have soft domain tints, compact titles and no oversized cover/watermark.
+- [x] Products/Components retain search, filters, table columns and create/import actions.
+- [x] Selected navigation uses a tint and narrow marker; detail-route selection remains correct.
+- [x] Reports has a compact "Reports" header, domain section markers and neutral cards; low/critical/healthy states retain their semantic colours.
+- [x] Inventory/Purchasing metrics verified in the authenticated app; Production metric/header contracts retain automated coverage.
+- [x] Products/Components/Reports shared renderer has no page overflow in all four desktop themes and at 390px; 28px mobile headings. Product dialog neutral reset verified.
+- [x] Dialogs and avatar menus restore neutral theme tokens; details are not recoloured.
+- [x] Production login/privacy, protected-route redirects, CSS assets and authenticated Products/Components/Reports/Inventory/Purchasing views pass after release. Product search and Components low-stock filter pass.

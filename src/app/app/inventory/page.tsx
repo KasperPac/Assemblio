@@ -8,6 +8,7 @@ import EmptyState from "../_ui/empty-state";
 import StatusBadge from "../_ui/status-badge";
 import HelpLink from "../_ui/help-link";
 import ListPanel, { ListRow } from "../_ui/list-panel";
+import { countBelowReorderComponents } from "@/lib/bands/metrics";
 
 type InventoryRow = {
   id: string;
@@ -90,8 +91,11 @@ export default async function InventoryPage() {
     return (
       <section className={styles.page}>
         <PageHeader
-          eyebrow="Operations"
+          band
+          domain="inventory"
+          eyebrow="Operations · Inventory"
           title="Inventory"
+          stat={{ label: "Below reorder point", value: "—", unit: "components" }}
           description="Record movements and monitor live component availability across locations."
         />
         <div className={styles.errorPanel}>
@@ -109,10 +113,10 @@ export default async function InventoryPage() {
   const totalOnHand = rows.reduce((sum, row) => sum + Number(row.on_hand ?? 0), 0);
   const totalInProd = rows.reduce((sum, row) => sum + Number(row.in_prod ?? 0), 0);
   const totalReserved = rows.reduce((sum, row) => sum + Number(row.reserved ?? 0), 0);
-  const lowStockCount = rows.filter((row) => {
+  const lowStockCount = countBelowReorderComponents(rows.map((row) => {
     const component = firstOf(row.component);
-    return Number(row.on_hand ?? 0) < Number(component?.reorder_point ?? 0);
-  }).length;
+    return { componentId: component?.id ?? null, onHand: Number(row.on_hand ?? 0), reorderPoint: component?.reorder_point ?? null };
+  }));
 
   const metrics = [
     {
@@ -135,15 +139,18 @@ export default async function InventoryPage() {
   return (
     <section className={styles.page}>
       <PageHeader
-        eyebrow="Operations"
+        band
+        domain="inventory"
+        eyebrow="Operations · Inventory"
         title="Inventory"
+        stat={{ label: "Below reorder point", value: lowStockCount, unit: "components" }}
         description="Record movements, monitor component availability, and inspect the latest ledger activity."
         actions={
           <div className={styles.headerActions}>
-            <MovementForm components={components ?? []} locations={locations ?? []} />
             <a className={styles.export} href="/app/inventory/export">
               Export CSV
             </a>
+            <MovementForm components={components ?? []} locations={locations ?? []} triggerClassName={styles.bandPrimary} />
           </div>
         }
       />

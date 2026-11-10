@@ -14,13 +14,14 @@ type SelectOption = {
 type Props = {
   components: SelectOption[];
   locations: SelectOption[];
+  triggerClassName?: string;
 };
 
 const initialState = { error: "", success: "" };
 
 type MovementType = "receipt" | "allocation" | "adjustment" | "production";
 
-export default function MovementForm({ components, locations }: Props) {
+export default function MovementForm({ components, locations, triggerClassName }: Props) {
   const [open, setOpen] = useState(false);
   const [state, formAction] = useActionState(createMovement, initialState);
   const [movementType, setMovementType] = useState<MovementType>("receipt");
@@ -35,9 +36,8 @@ export default function MovementForm({ components, locations }: Props) {
     setMovementType("receipt");
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (state.success) handleClose();
+    if (state.success) dialogRef.current?.close();
   }, [state.success]);
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export default function MovementForm({ components, locations }: Props) {
     <>
       <button
         type="button"
-        className={styles.primary}
+        className={triggerClassName ?? styles.primary}
         onClick={() => setOpen(true)}
       >
         Log Movement +

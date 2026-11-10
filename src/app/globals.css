@@ -7,6 +7,7 @@
   --bg-card-2:   #E2E8F0;
   --bg-card-alt: #F1F5F9;
   --bg-input:    #F1F5F9;
+  --bg-ink:      #15314D;
 
   --ink-strong:    #0F172A;
   --ink-muted:     #475569;
@@ -57,6 +58,7 @@
   --bg-card-2:   #1C253A;
   --bg-card-alt: #131929;
   --bg-input:    #1C253A;
+  --bg-ink:      #FAFAF9;
 
   --ink-strong:    #E8ECF0;
   --ink-muted:     #8496AA;
@@ -101,6 +103,7 @@
 
 /* ── Theme: Ocean ─────────────────────── */
 [data-theme="ocean"] {
+  --bg-ink: #F2F6FA;
   --bg-page: #0a1628;
   --bg-sidebar: #0d1a2d;
   --bg-card: #112240;
@@ -128,6 +131,7 @@
 
 /* ── Theme: Ember ─────────────────────── */
 [data-theme="ember"] {
+  --bg-ink: #F7F1EC;
   --bg-page: #1a0f0b;
   --bg-sidebar: #1f1410;
   --bg-card: #2a1a14;
@@ -213,6 +217,142 @@
   --ease-inout: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Bold additions only; the shipped surface and brand palettes stay in place. */
+:root {
+  --field-ink: #15314D;
+  --field-lime: #C8FF2E;
+  --on-lime: #141413;
+  --accent-band-ink: #FFFFFF;
+  --domain-inventory-loud: #3A5EFF;
+  --domain-inventory-text: #1E36DB;
+  --domain-inventory-dark: #8B9BFF;
+  --domain-production-loud: #FF4D00;
+  --domain-production-text: #C43900;
+  --domain-production-dark: #FF8A4D;
+  --domain-purchasing-loud: #FFB300;
+  --domain-purchasing-text: #8A5A00;
+  --domain-purchasing-dark: #FFC94D;
+  --domain-products-loud: #B026FF;
+  --domain-products-text: #8B1BCC;
+  --domain-products-dark: #D08CFF;
+  --domain-logistics-loud: #00C271;
+  --domain-logistics-text: #00794A;
+  --domain-logistics-dark: #3EE39B;
+  --domain-audit-loud: #00B9D6;
+  --domain-audit-text: #00707F;
+  --domain-audit-dark: #4FDDF2;
+  --fs-display-5: clamp(38px, 6.5vw, 88px);
+  --fs-display-6: clamp(44px, 8vw, 120px);
+  --fs-display-7: clamp(56px, 12vw, 168px);
+}
+
+[data-domain] { --accent-band-ink: #FFFFFF; }
+[data-domain="inventory"] { --accent-loud: var(--domain-inventory-loud); --accent-text: var(--domain-inventory-text); --accent-dim: rgb(58 94 255 / .12); --accent-on: #FFFFFF; }
+[data-domain="production"] { --accent-loud: var(--domain-production-loud); --accent-text: var(--domain-production-text); --accent-dim: rgb(255 77 0 / .12); --accent-on: #FFFFFF; }
+[data-domain="purchasing"] { --accent-loud: var(--domain-purchasing-loud); --accent-text: var(--domain-purchasing-text); --accent-dim: rgb(255 179 0 / .14); --accent-on: #141413; }
+[data-domain="products"] { --accent-loud: var(--domain-products-loud); --accent-text: var(--domain-products-text); --accent-dim: rgb(176 38 255 / .12); --accent-on: #FFFFFF; }
+[data-domain="logistics"] { --accent-loud: var(--domain-logistics-loud); --accent-text: var(--domain-logistics-text); --accent-dim: rgb(0 194 113 / .12); --accent-on: #141413; }
+[data-domain="audit"] { --accent-loud: var(--domain-audit-loud); --accent-text: var(--domain-audit-text); --accent-dim: rgb(0 185 214 / .12); --accent-on: #141413; }
+[data-domain="production"], [data-domain="purchasing"], [data-domain="logistics"], [data-domain="audit"] { --accent-band-ink: #141413; }
+
+/* Use the published dark text shades for small in-page accents. */
+:is([data-theme="midnight"], [data-theme="ocean"], [data-theme="ember"]) [data-domain="inventory"] { --accent-text: var(--domain-inventory-dark); }
+:is([data-theme="midnight"], [data-theme="ocean"], [data-theme="ember"]) [data-domain="production"] { --accent-text: var(--domain-production-dark); }
+:is([data-theme="midnight"], [data-theme="ocean"], [data-theme="ember"]) [data-domain="purchasing"] { --accent-text: var(--domain-purchasing-dark); }
+:is([data-theme="midnight"], [data-theme="ocean"], [data-theme="ember"]) [data-domain="products"] { --accent-text: var(--domain-products-dark); }
+:is([data-theme="midnight"], [data-theme="ocean"], [data-theme="ember"]) [data-domain="logistics"] { --accent-text: var(--domain-logistics-dark); }
+:is([data-theme="midnight"], [data-theme="ocean"], [data-theme="ember"]) [data-domain="audit"] { --accent-text: var(--domain-audit-dark); }
+
+/* Existing links, filters and selected controls inherit the index's identity. */
+[data-app-content][data-domain] {
+  --brand-1: var(--accent-text);
+  --brand-2: var(--accent-text);
+  --brand-dim: var(--accent-dim);
+  --bg-card-alt: color-mix(in srgb, var(--accent-loud) 5%, var(--band-reset-bg-card-alt));
+  --focus-ring: color-mix(in srgb, var(--accent-text) 18%, transparent);
+  --focus-border: color-mix(in srgb, var(--accent-text) 50%, transparent);
+  --shadow-focus: 0 0 0 3px var(--focus-ring);
+}
+:is([data-theme="midnight"], [data-theme="ocean"], [data-theme="ember"]) [data-app-content][data-domain] {
+  --ink-on-brand: var(--bg-page);
+}
+
+/* Capture neutral values where the theme resolves, before band inheritance. */
+:root, [data-theme] {
+  --band-reset-ink-strong: var(--ink-strong);
+  --band-reset-ink-muted: var(--ink-muted);
+  --band-reset-ink-faint: var(--ink-faint);
+  --band-reset-bg-card: var(--bg-card);
+  --band-reset-bg-card-alt: var(--bg-card-alt);
+  --band-reset-stroke: var(--stroke);
+  --band-reset-stroke-strong: var(--stroke-strong);
+  --band-reset-brand-1: var(--brand-1);
+  --band-reset-brand-2: var(--brand-2);
+  --band-reset-brand-dim: var(--brand-dim);
+  --band-reset-ink-on-brand: var(--ink-on-brand);
+  --band-reset-surface-hover: var(--surface-hover);
+  --band-reset-focus-ring: var(--focus-ring);
+  --band-reset-focus-border: var(--focus-border);
+  --band-reset-shadow-focus: var(--shadow-focus);
+}
+
+[data-band] {
+  background: var(--field-ink);
+  color: var(--accent-band-ink);
+  --ink-strong: var(--accent-band-ink);
+  --ink-muted: var(--accent-band-ink);
+  --ink-faint: var(--accent-band-ink);
+  --bg-card: transparent;
+  --stroke: currentColor;
+  --stroke-strong: currentColor;
+  --brand-1: var(--bg-ink);
+  --brand-2: var(--bg-ink);
+  --ink-on-brand: var(--bg-page);
+  --brand-dim: color-mix(in srgb, var(--accent-band-ink) 16%, transparent);
+  --surface-hover: color-mix(in srgb, var(--accent-band-ink) 8%, transparent);
+}
+[data-band][data-domain] { background: var(--accent-loud); }
+
+[data-band] :is(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid var(--accent-band-ink);
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+:is([data-band], [data-app-content]) :is(dialog, [data-band-reset]) {
+  --ink-strong: var(--band-reset-ink-strong);
+  --ink-muted: var(--band-reset-ink-muted);
+  --ink-faint: var(--band-reset-ink-faint);
+  --bg-card: var(--band-reset-bg-card);
+  --bg-card-alt: var(--band-reset-bg-card-alt);
+  --stroke: var(--band-reset-stroke);
+  --stroke-strong: var(--band-reset-stroke-strong);
+  --brand-1: var(--band-reset-brand-1);
+  --brand-2: var(--band-reset-brand-2);
+  --brand-dim: var(--band-reset-brand-dim);
+  --ink-on-brand: var(--band-reset-ink-on-brand);
+  --surface-hover: var(--band-reset-surface-hover);
+  --focus-ring: var(--band-reset-focus-ring);
+  --focus-border: var(--band-reset-focus-border);
+  --shadow-focus: var(--band-reset-shadow-focus);
+  color: var(--ink-strong);
+}
+
+:is([data-band], [data-app-content]) :is(dialog, [data-band-reset]) :is(button, a, input, select, textarea):focus-visible {
+  outline-color: var(--brand-1);
+  box-shadow: var(--shadow-focus);
+}
+
+@media print {
+  [data-band], [data-band][data-domain] {
+    background: var(--bg-page);
+    color: var(--band-reset-ink-strong);
+    --ink-strong: var(--band-reset-ink-strong);
+    --ink-muted: var(--band-reset-ink-muted);
+    --ink-faint: var(--band-reset-ink-faint);
+  }
+}
+
 *,
 *::before,
 *::after {
@@ -227,6 +367,9 @@ body {
 
 body {
   --font-body: var(--font-inter), system-ui, sans-serif;
+  /* next/font variables are attached to body, so aliases resolve here. */
+  --font-display: var(--font-archivo), system-ui, sans-serif;
+  --font-numeral: var(--font-archivo), system-ui, sans-serif;
   min-height: 100vh;
   margin: 0;
   color: var(--ink-strong);

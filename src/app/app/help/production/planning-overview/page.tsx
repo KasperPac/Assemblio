@@ -9,6 +9,11 @@ export default function PlanningOverviewPage() {
       category="production"
       relatedSlugs={["production/shopfloor", "production/capacity", "orders/fulfilment"]}
     >
+      <p>
+        Open the Floor Board to see the &quot;Production planning&quot; header. &quot;Open jobs&quot;
+        counts distinct order lines with active, queued or blocked steps. The same job in several
+        departments counts once; completed steps do not count. A dash means the count is unavailable.
+      </p>
       <p>The Planning module gives you a visual timeline of all open production orders scheduled across your departments.</p>
       <div>
         <h3>Production orders</h3>

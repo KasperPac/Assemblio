@@ -6,6 +6,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { signOut, switchActiveTenant } from "./actions";
 import SidebarNav from "./sidebar-nav";
 import Topbar from "./topbar";
+import AppContent from "./app-content";
 import { requireActiveSubscription } from "./_lib/require-active-subscription";
 import { TrialBanner } from "./_components/trial-banner";
 import ViewAsBanner from "./_components/view-as-banner";
@@ -141,13 +142,6 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       </aside>
 
       <div className={styles.main}>
-        <Topbar
-          tenantName={tenant?.name ?? "No tenant access"}
-          userInitial={userInitial}
-          userAvatarUrl={profile?.avatar_url ?? null}
-          selectableTenants={selectableTenants}
-          currentTenantId={profile?.tenant_id ?? ""}
-        />
         {isPlatformOperator && profile?.tenant_id && profile?.tenant_id !== profile?.super_admin_home_tenant_id && (
           <ViewAsBanner tenantName={tenant?.name ?? "tenant"} />
         )}
@@ -158,7 +152,14 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           />
         ) : null}
         {showPastDueBanner ? <PastDueBanner /> : null}
-        <section className={styles.content}>{children}</section>
+        <Topbar
+          tenantName={tenant?.name ?? "No tenant access"}
+          userInitial={userInitial}
+          userAvatarUrl={profile?.avatar_url ?? null}
+          selectableTenants={selectableTenants}
+          currentTenantId={profile?.tenant_id ?? ""}
+        />
+        <AppContent>{children}</AppContent>
       </div>
     </div>
   );

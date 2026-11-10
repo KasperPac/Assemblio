@@ -4,6 +4,42 @@ export type AppRouteMeta = {
   crumbs: string[];
 };
 
+export type AppBandDomain = "inventory" | "production" | "purchasing" | "products" | "logistics" | "audit";
+export type AppRouteBand = { domain: AppBandDomain | null; cover?: true };
+
+/** Only these approved index screens join the shell and page header into a band. */
+const ROUTE_BANDS: Record<string, AppRouteBand> = {
+  "/app": { domain: null },
+  "/app/inventory": { domain: "inventory" },
+  "/app/components": { domain: "inventory" },
+  "/app/stocktake": { domain: "inventory" },
+  "/app/planning/floor": { domain: "production" },
+  "/app/purchasing": { domain: "purchasing" },
+  "/app/products": { domain: "products" },
+  "/app/templates": { domain: "products" },
+  "/app/goods-inwards": { domain: "logistics" },
+  "/app/suppliers": { domain: "logistics" },
+  "/app/warehouse/locations": { domain: "logistics" },
+  "/app/reports": { domain: "audit", cover: true },
+  "/app/activity-log": { domain: "audit" },
+  "/app/super-admin/audit": { domain: "audit" },
+  "/app/orders": { domain: null },
+  "/app/trash": { domain: null },
+  "/app/super-admin": { domain: null },
+  "/app/super-admin/team": { domain: null },
+};
+
+export function getRouteBand(pathname: string | null | undefined): AppRouteBand | null {
+  return pathname && Object.hasOwn(ROUTE_BANDS, pathname) ? ROUTE_BANDS[pathname] : null;
+}
+
+/** Segment boundaries prevent collisions; the most specific visible item wins. */
+export function getActiveNavHref(pathname: string | null | undefined, hrefs: readonly string[]): string | null {
+  if (!pathname) return null;
+  return hrefs.filter((href) => pathname === href || (href !== "/app" && pathname.startsWith(`${href}/`)))
+    .sort((a, b) => b.length - a.length)[0] ?? null;
+}
+
 type RouteDefinition = {
   prefix: string;
   title: string;
@@ -12,6 +48,24 @@ type RouteDefinition = {
 };
 
 const ROUTES: RouteDefinition[] = [
+  {
+    prefix: "/app/super-admin/audit",
+    title: "Audit log",
+    subtitle: "Review platform activity across workspaces.",
+    crumbs: ["Platform", "Audit log"],
+  },
+  {
+    prefix: "/app/super-admin/team",
+    title: "Team",
+    subtitle: "Manage platform team access.",
+    crumbs: ["Platform", "Team"],
+  },
+  {
+    prefix: "/app/super-admin",
+    title: "Tenants",
+    subtitle: "Manage platform workspaces.",
+    crumbs: ["Platform", "Tenants"],
+  },
   {
     prefix: "/app/settings/profile",
     title: "Profile",
@@ -243,7 +297,12 @@ const ROUTES: RouteDefinition[] = [
 ];
 
 export function getRouteMeta(pathname: string | null | undefined): AppRouteMeta {
-  return ROUTES.find((candidate) => pathname?.startsWith(candidate.prefix)) ?? ROUTES[ROUTES.length - 1];
+  return ROUTES.filter((candidate) => matchesRoutePrefix(pathname, candidate.prefix))
+    .sort((a, b) => b.prefix.length - a.prefix.length)[0] ?? ROUTES[ROUTES.length - 1];
+}
+
+function matchesRoutePrefix(pathname: string | null | undefined, prefix: string): boolean {
+  return Boolean(pathname && (pathname === prefix || pathname.startsWith(prefix.endsWith("/") ? prefix : `${prefix}/`)));
 }
 
 export type DynamicCrumb = { label: string; href: string };
@@ -263,9 +322,8 @@ export function getDynamicBreadcrumbs(pathname: string | null | undefined): Dyna
   const seen = new Set<string>();
   for (let i = segments.length - 1; i > 1; i--) {
     const parentPath = "/" + segments.slice(0, i).join("/");
-    const match = ROUTES.find(
-      (r) => parentPath.startsWith(r.prefix) && !r.prefix.endsWith("/"),
-    );
+    const match = ROUTES.filter((r) => matchesRoutePrefix(parentPath, r.prefix) && !r.prefix.endsWith("/"))
+      .sort((a, b) => b.prefix.length - a.prefix.length)[0];
     if (match && !seen.has(match.prefix)) {
       seen.add(match.prefix);
       crumbs.unshift({ label: match.title, href: match.prefix });

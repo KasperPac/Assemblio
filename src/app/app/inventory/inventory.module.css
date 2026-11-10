@@ -10,28 +10,13 @@
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 /* ── Export button ── */
 
 .export {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 42px;
-  padding: 0 18px;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--stroke-strong);
-  background: var(--bg-card);
-  color: var(--ink-strong);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
-  text-decoration: none;
-  transition: background var(--dur-fast) var(--ease-out);
-}
-
-.export:hover {
-  background: var(--surface-hover);
+  composes: secondary from "../_ui/buttons.module.css";
 }
 
 /* ── Metric strip ── */
@@ -149,6 +134,10 @@
 
 .primary {
   composes: primary from "../_ui/buttons.module.css";
+}
+
+.bandPrimary {
+  composes: ink from "../_ui/buttons.module.css";
 }
 
 /* ── Dialog ── */

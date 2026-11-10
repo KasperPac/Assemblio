@@ -48,7 +48,9 @@ export default async function AuditPage({
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Admin"
+        band
+        domain="audit"
+        eyebrow="Platform · Audit"
         title="Audit log"
         description={`Super-admin actions across the platform — last ${days} day${days === 1 ? "" : "s"}.`}
       />

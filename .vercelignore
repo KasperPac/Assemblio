@@ -1,0 +1,17 @@
+# Deployment source only. Keep local agent configs and credentials off Vercel.
+.git
+.claude
+.agents
+.codex
+.mcp.json
+.env*
+CLAUDE*.md
+AGENTS*.md
+/docs
+/tasks
+skills-lock.json
+bold-bands-plan.md
+node_modules
+.next
+.playwright-mcp
+/supabase

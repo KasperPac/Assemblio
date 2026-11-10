@@ -117,7 +117,8 @@ export default async function TrashPage() {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Admin"
+        band
+        eyebrow="Workspace"
         title="Trash"
         description="Review archived and inactive records before restoring them or clearing them from the workspace."
         actions={

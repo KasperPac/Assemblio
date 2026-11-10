@@ -105,7 +105,8 @@ export default async function OrdersPage({ searchParams }: Props) {
   return (
     <div className={styles.page}>
       <PageHeader
-        eyebrow="Orders"
+        band
+        eyebrow="Operations"
         title="Orders"
         description="Pipeline view: component readiness, production state, and delivery state per order."
         actions={
