@@ -5,6 +5,7 @@ import PageHeader from "../../_ui/page-header";
 import StatusBadge from "../../_ui/status-badge";
 import { getStatusVariant } from "../status-utils";
 import styles from "../purchasing.module.css";
+import { poLabel } from "@/lib/purchasing/po-label";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -76,16 +77,16 @@ export default async function PurchaseOrderDetailPage({ params }: Props) {
   const supplierName = supplier?.name ?? "Unknown supplier";
   const canReceive = po.status === "open" || po.status === "in_transit";
   const lines = (po.purchase_order_line ?? []) as POLine[];
-  const poLabel = (po.po_number as string | null) ?? `PO-${id.slice(0, 8).toUpperCase()}`;
+  const poName = poLabel({ id, po_number: po.po_number as string | null });
 
   return (
     <div className={styles.page}>
       <PageHeader
         breadcrumbs={[
           { label: "Purchase Orders", href: "/app/purchasing" },
-          { label: poLabel },
+          { label: poName },
         ]}
-        title={poLabel}
+        title={poName}
         actions={
           canReceive ? (
             <Link

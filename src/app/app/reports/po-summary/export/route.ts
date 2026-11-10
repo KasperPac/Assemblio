@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerTenantContext } from "@/lib/tenant/context";
 import { resolveDateRange } from "../../_lib/date-range";
+import { poLabel } from "@/lib/purchasing/po-label";
 
 type PORaw = {
   id: string;
@@ -34,7 +35,7 @@ export async function GET(req: NextRequest) {
     const poLines = po.lines ?? [];
     const value = poLines.reduce((s, l) => s + l.quantity * (l.unit_cost ?? 0), 0);
     const overdue = !["received", "cancelled"].includes(po.status ?? "") && !!po.expected_date && new Date(po.expected_date) < now;
-    return [po.po_number ?? po.id.slice(0, 8).toUpperCase(), po.supplier?.name ?? "", po.status ?? "", po.expected_date ? new Date(po.expected_date).toLocaleDateString("en-AU") : "", value.toFixed(2), poLines.length, overdue ? "Yes" : "No"]
+    return [poLabel(po), po.supplier?.name ?? "", po.status ?? "", po.expected_date ? new Date(po.expected_date).toLocaleDateString("en-AU") : "", value.toFixed(2), poLines.length, overdue ? "Yes" : "No"]
       .map((v) => `"${String(v).replace(/"/g, '""')}"`)
       .join(",");
   });

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { poLabel } from "@/lib/purchasing/po-label";
 import { resolveDateRange } from "../_lib/date-range";
 import { ReportShell } from "../_components/report-shell";
 import { ReportStatCards } from "../_components/report-stat-cards";
@@ -18,7 +19,7 @@ type DeliveryReceiptLineRaw = {
     supplier_id: string | null;
     supplier: { name: string } | null;
     supplier_name_override: string | null;
-    purchase_order: { id: string } | null;
+    purchase_order: { id: string; po_number: string | null } | null;
   } | null;
 };
 
@@ -60,7 +61,7 @@ export default async function POVariancePage({
         supplier_id,
         supplier_name_override,
         supplier:supplier_id(name),
-        purchase_order:purchase_order_id(id)
+        purchase_order:purchase_order_id(id,po_number)
       )
     `)
     .eq("tenant_id", tenantId)
@@ -95,7 +96,7 @@ export default async function POVariancePage({
     const componentObj = Array.isArray(l.component) ? l.component[0] : l.component;
 
     const supplier = supplierObj?.name ?? dr?.supplier_name_override ?? "—";
-    const poNumber = poObj?.id ? poObj.id.slice(0, 8).toUpperCase() : "—";
+    const poNumber = poObj?.id ? poLabel(poObj) : "—";
     const component = componentObj?.name ?? "—";
 
     return {
@@ -123,8 +124,8 @@ export default async function POVariancePage({
 
   const columns: TableColumn<VarianceRow>[] = [
     { key: "poNumber", header: "PO #", render: (r) => r.poId
-      ? <Link href={`/app/purchasing/${r.poId}`} className={styles.reportLink}>PO-{r.poNumber}</Link>
-      : <span>PO-{r.poNumber}</span>
+      ? <Link href={`/app/purchasing/${r.poId}`} className={styles.reportLink}>{r.poNumber}</Link>
+      : <span>{r.poNumber}</span>
     },
     { key: "supplier", header: "Supplier", render: (r) => r.supplierId
       ? <Link href={`/app/suppliers/${r.supplierId}`} className={styles.reportLink}>{r.supplier}</Link>

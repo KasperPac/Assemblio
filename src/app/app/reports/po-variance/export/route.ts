@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { poLabel } from "@/lib/purchasing/po-label";
 import { resolveDateRange } from "../../_lib/date-range";
 
 type DeliveryReceiptLineRaw = {
@@ -10,7 +11,7 @@ type DeliveryReceiptLineRaw = {
   delivery_receipt: {
     supplier: { name: string } | null;
     supplier_name_override: string | null;
-    purchase_order: { id: string } | null;
+    purchase_order: { id: string; po_number: string | null } | null;
   } | null;
 };
 
@@ -32,7 +33,7 @@ export async function GET(req: NextRequest) {
       delivery_receipt:delivery_receipt_id(
         supplier_name_override,
         supplier:supplier_id(name),
-        purchase_order:purchase_order_id(id)
+        purchase_order:purchase_order_id(id,po_number)
       )
     `)
     .eq("tenant_id", tenantId)
@@ -66,7 +67,7 @@ export async function GET(req: NextRequest) {
     const componentObj = Array.isArray(l.component) ? l.component[0] : l.component;
 
     const supplier = supplierObj?.name ?? dr?.supplier_name_override ?? "";
-    const poNumber = poObj?.id ? poObj.id.slice(0, 8).toUpperCase() : "";
+    const poNumber = poObj?.id ? poLabel(poObj) : "";
     const component = componentObj?.name ?? "";
 
     return { poNumber, supplier, component, ordered, received, variance, variancePct };

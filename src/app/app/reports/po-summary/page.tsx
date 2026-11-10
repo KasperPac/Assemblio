@@ -8,6 +8,7 @@ import { SortableReportTable } from "../_components/sortable-report-table";
 import { Badge } from "../_components/report-table";
 import type { TableColumn, BadgeVariant } from "../_components/report-table";
 import styles from "./po-summary.module.css";
+import { poLabel } from "@/lib/purchasing/po-label";
 
 interface Row extends Record<string, unknown> {
   id: string;
@@ -63,7 +64,7 @@ export default async function POSummaryPage({
     const overdue = !["received", "cancelled"].includes(po.status ?? "") && !!po.expected_date && new Date(po.expected_date) < now;
     return {
       id: po.id,
-      poNumber: po.po_number ?? `PO-${po.id.slice(0, 8).toUpperCase()}`,
+      poNumber: poLabel(po),
       supplier: po.supplier?.name ?? "—",
       supplierId: po.supplier_id ?? null,
       status: po.status ?? "draft",

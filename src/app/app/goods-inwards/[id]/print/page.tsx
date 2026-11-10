@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { getServerTenantContext } from "@/lib/tenant/context";
+import { poLabel } from "@/lib/purchasing/po-label";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -89,7 +90,7 @@ export default async function GrnPrintPage({ params }: Props) {
   const poRef = receipt.purchase_order_id
     ? (() => {
         const rawPo = Array.isArray(receipt.purchase_order) ? receipt.purchase_order[0] : receipt.purchase_order;
-        return (rawPo as { po_number: string | null } | null)?.po_number ?? `PO-${(receipt.purchase_order_id as string).slice(0, 8).toUpperCase()}`;
+        return poLabel({ id: receipt.purchase_order_id as string, po_number: (rawPo as { po_number: string | null } | null)?.po_number });
       })()
     : "—";
 
