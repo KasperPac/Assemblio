@@ -453,6 +453,7 @@ For each report below: sortable table, CSV export, correct date-range default, a
 - [ ] **Spend by supplier** `/reports/spend-by-supplier`: spend, % of total, avg PO value; top-10 bar chart; default 90d
 - [ ] **Lead-time accuracy** `/reports/lead-time-accuracy`: received/on-time/late/accuracy%/avg days late (worst first); no-expected-date counts as on-time; default 90d
 - [ ] **PO variance** `/reports/po-variance`: only lines where expected≠delivered & expected not null; over/under cards; default 90d
+- [ ] **PO variance** PO column: shows the PO number (falling back to `PO-` + short id when a PO has no number) on the page and in the CSV export; a line with no PO shows `—` on the page and an empty CSV cell
 - [ ] **PO summary** `/reports/po-summary`: status badge, expected date (overdue red+⚠), total value; open liability/outstanding/overdue cards; default 90d
 - [ ] **PO summary** page and CSV export name a PO without a number `PO-` plus the first 8 characters of its id in upper case
 - [ ] **Stocktake history** `/reports/stocktake-history`: status, lines counted, variance lines/qty; variance bar chart; default 365d
@@ -734,3 +735,4 @@ Format: `- YYYY-MM-DD — <added|amended> <feature name>: <one-line summary>`
 - 2026-09-26 — amended Components list (MANUVA-30): the All / Low Stock tabs are replaced by a left filter rail (stock status, groups, supplier, unit-cost range) with flight-search counts, removable filter chips and a Unit cost column. Filters live in the URL, and sort and detail links carry every active filter. The design system gains a documented "filter rail" exception to the single-column rule.
 - 2026-09-28 — amended Components list (MANUVA-31): the table is one flat list following the active sort; the collapsible group section rows are replaced by a sortable Group column. Group filtering stays in the filter rail.
 - 2026-11-10 — amended Purchase orders and Goods Inwards (MANUVA-76): the Purchasing list shows status labels (e.g. "In Transit") instead of raw values, and a PO without a number is named `PO-` plus the first 8 characters of its id in upper case everywhere it appears (Purchasing, Goods Inwards, Suppliers history, Trash, PO summary report and export).
+- 2026-11-10 — amended PO variance report (MANUVA-120): PO column shows the PO number (page and CSV export), falling back to the short id when a PO has no number
