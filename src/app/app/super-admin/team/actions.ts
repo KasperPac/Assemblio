@@ -4,6 +4,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 import { requireSuperAdmin } from "@/lib/super-admin/guard";
 import { logSuperAdminAction } from "@/lib/super-admin/audit";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 async function assertNotLastSuperAdmin(supabase: SupabaseClient, profileId: string): Promise<string | null> {
   const { data: target } = await supabase
@@ -41,7 +42,9 @@ export async function addPlatformUser(input: {
     throw new Error(`No account found for "${input.email}". Ask them to sign up first, then add them here.`);
   }
 
-  const { error: updateError } = await supabase
+  // Role changes are written with the admin client: user sessions cannot update
+  // role columns. requireSuperAdmin() above has already passed.
+  const { error: updateError } = await createSupabaseAdminClient()
     .from("profiles")
     .update({ role: input.role, super_admin_home_tenant_id: null })
     .eq("id", foundId);
@@ -67,7 +70,7 @@ export async function changePlatformUserRole(input: {
 
   const oldRole = await assertNotLastSuperAdmin(supabase, input.profileId);
 
-  const { error } = await supabase
+  const { error } = await createSupabaseAdminClient()
     .from("profiles")
     .update({ role: input.newRole })
     .eq("id", input.profileId);
@@ -108,7 +111,7 @@ export async function removePlatformUser(input: {
 
   await assertNotLastSuperAdmin(supabase, input.profileId);
 
-  const { error } = await supabase
+  const { error } = await createSupabaseAdminClient()
     .from("profiles")
     .update({ role: "member", super_admin_home_tenant_id: null })
     .eq("id", input.profileId);

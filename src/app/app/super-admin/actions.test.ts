@@ -5,11 +5,13 @@ vi.mock("@/lib/super-admin/guard", () => ({
   requirePlatformOperator: vi.fn(),
 }));
 vi.mock("@/lib/super-admin/audit", () => ({ logSuperAdminAction: vi.fn() }));
+vi.mock("@/lib/supabase/admin", () => ({ createSupabaseAdminClient: vi.fn() }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("next/navigation", () => ({ redirect: vi.fn().mockImplementation((url: string) => { throw new Error("redirect: " + url); }) }));
 
 import { requireSuperAdmin, requirePlatformOperator } from "@/lib/super-admin/guard";
 import { logSuperAdminAction } from "@/lib/super-admin/audit";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createTenant, viewAsTenant, exitViewAs } from "./actions";
 
 function makeSupabase(overrides: Record<string, any> = {}) {
@@ -123,12 +125,16 @@ describe("exitViewAs", () => {
 
   it("clears profiles.tenant_id when superAdminHomeTenantId is null", async () => {
     const sb = makeSupabase();
+    const admin = makeSupabase();
+    vi.mocked(createSupabaseAdminClient).mockReturnValue(admin);
     vi.mocked(requirePlatformOperator).mockResolvedValue({
       supabase: sb, userId: "sa-id", role: "super_admin", tenantId: "t-1", superAdminHomeTenantId: null,
     } as any);
     await expect(exitViewAs()).rejects.toThrow(); // redirect throws in test env
     expect(sb._rpc).not.toHaveBeenCalled();
-    expect(sb._profileUpdate).toHaveBeenCalledWith({ tenant_id: null });
+    // Written with the admin client: user sessions can no longer update tenant_id.
+    expect(sb._profileUpdate).not.toHaveBeenCalled();
+    expect(admin._profileUpdate).toHaveBeenCalledWith({ tenant_id: null });
     expect(logSuperAdminAction).toHaveBeenCalledWith(sb, expect.objectContaining({ action: "exit_view_as_no_home" }));
   });
 });

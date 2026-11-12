@@ -53,10 +53,7 @@ export async function getServerTenantContext(): Promise<TenantContext | null> {
       const fallbackTenantId = accessRows?.[0]?.tenant_id ?? null;
       if (!fallbackTenantId) return null;
 
-      await supabase
-        .from("profiles")
-        .update({ tenant_id: fallbackTenantId })
-        .eq("id", user.id);
+      await supabase.rpc("set_active_tenant", { p_tenant_id: fallbackTenantId });
 
       return {
         supabase,

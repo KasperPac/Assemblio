@@ -22,6 +22,7 @@ function makeSupabase({
   accessRows?: Array<{ tenant_id: string }>;
 }) {
   const fakeSupabase = {
+    rpc: vi.fn().mockResolvedValue({ error: null }),
     auth: {
       getUser: vi.fn().mockResolvedValue({
         data: { user: userId ? { id: userId } : null },
@@ -119,6 +120,18 @@ describe("getServerTenantContext", () => {
     const result = await getServerTenantContext();
     expect(result).not.toBeNull();
     expect(result!.tenantId).toBe("t-1");
+  });
+
+  it("switches a member with a stale active tenant to the first accessible tenant via set_active_tenant", async () => {
+    const supabase = makeSupabase({
+      userId: "user-m",
+      profile: { tenant_id: "t-old", role: "member", status: "active" },
+      accessRows: [{ tenant_id: "t-2" }],
+    });
+    vi.mocked(createSupabaseServerClient).mockResolvedValue(supabase as never);
+    const result = await getServerTenantContext();
+    expect(result!.tenantId).toBe("t-2");
+    expect(supabase.rpc).toHaveBeenCalledWith("set_active_tenant", { p_tenant_id: "t-2" });
   });
 
   it("returns null for member with no tenant access rows", async () => {

@@ -3,9 +3,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 vi.mock("@/lib/super-admin/guard", () => ({
   requireSuperAdmin: vi.fn(),
 }));
+vi.mock("@/lib/supabase/admin", () => ({ createSupabaseAdminClient: vi.fn() }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 
 import { requireSuperAdmin } from "@/lib/super-admin/guard";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { addPlatformUser, changePlatformUserRole, removePlatformUser } from "./actions";
 
 function makeCtx(overrides: Partial<{ role: string; userId: string; tenantId: string | null }> = {}) {
@@ -41,6 +43,15 @@ function makeCtx(overrides: Partial<{ role: string; userId: string; tenantId: st
   };
 }
 
+// Admin client stand-in: records the profiles update and the id it is scoped to.
+function makeAdmin() {
+  const eq = vi.fn().mockResolvedValue({ error: null });
+  const update = vi.fn().mockReturnValue({ eq });
+  const from = vi.fn().mockReturnValue({ update });
+  vi.mocked(createSupabaseAdminClient).mockReturnValue({ from } as unknown as ReturnType<typeof createSupabaseAdminClient>);
+  return { from, update, eq };
+}
+
 describe("addPlatformUser", () => {
   beforeEach(() => vi.clearAllMocks());
 
@@ -48,6 +59,7 @@ describe("addPlatformUser", () => {
     vi.mocked(requireSuperAdmin).mockRejectedValue(new Error("forbidden"));
     await expect(addPlatformUser({ email: "x@x.com", role: "platform_observer" }))
       .rejects.toThrow("forbidden");
+    expect(createSupabaseAdminClient).not.toHaveBeenCalled();
   });
 
   it("throws when email not found", async () => {
@@ -68,9 +80,14 @@ describe("addPlatformUser", () => {
       return {};
     });
     ctx.supabase.rpc = vi.fn().mockResolvedValue({ data: "found-id", error: null });
+    const admin = makeAdmin();
     vi.mocked(requireSuperAdmin).mockResolvedValue(ctx);
     await addPlatformUser({ email: "target@example.com", role: "platform_observer" });
-    expect(updateSpy).toHaveBeenCalledWith({ role: "platform_observer", super_admin_home_tenant_id: null });
+    // Written with the admin client, scoped to the found user, not the session.
+    expect(updateSpy).not.toHaveBeenCalled();
+    expect(admin.from).toHaveBeenCalledWith("profiles");
+    expect(admin.update).toHaveBeenCalledWith({ role: "platform_observer", super_admin_home_tenant_id: null });
+    expect(admin.eq).toHaveBeenCalledWith("id", "found-id");
     expect(ctx._auditInsert).toHaveBeenCalled();
   });
 });
@@ -123,8 +140,12 @@ describe("changePlatformUserRole", () => {
       if (table === "super_admin_audit_log") return { insert: ctx._auditInsert };
       return {};
     });
+    const admin = makeAdmin();
     vi.mocked(requireSuperAdmin).mockResolvedValue(ctx);
     await changePlatformUserRole({ profileId: "target-id", newRole: "platform_observer" });
+    expect(updateSpy).not.toHaveBeenCalled();
+    expect(admin.update).toHaveBeenCalledWith({ role: "platform_observer" });
+    expect(admin.eq).toHaveBeenCalledWith("id", "target-id");
     expect(ctx._auditInsert).toHaveBeenCalled();
   });
 
@@ -148,9 +169,12 @@ describe("changePlatformUserRole", () => {
       if (table === "super_admin_audit_log") return { insert: ctx._auditInsert };
       return {};
     });
+    const admin = makeAdmin();
     vi.mocked(requireSuperAdmin).mockResolvedValue(ctx);
     await changePlatformUserRole({ profileId: "observer-id", newRole: "super_admin" });
-    expect(updateSpy).toHaveBeenCalledWith({ role: "super_admin" });
+    expect(updateSpy).not.toHaveBeenCalled();
+    expect(admin.update).toHaveBeenCalledWith({ role: "super_admin" });
+    expect(admin.eq).toHaveBeenCalledWith("id", "observer-id");
     expect(ctx._auditInsert).toHaveBeenCalled();
   });
 });
@@ -228,9 +252,12 @@ describe("removePlatformUser", () => {
       if (table === "super_admin_audit_log") return { insert: ctx._auditInsert };
       return {};
     });
+    const admin = makeAdmin();
     vi.mocked(requireSuperAdmin).mockResolvedValue(ctx);
     await removePlatformUser({ profileId: "target-id" });
-    expect(updateSpy).toHaveBeenCalledWith({ role: "member", super_admin_home_tenant_id: null });
+    expect(updateSpy).not.toHaveBeenCalled();
+    expect(admin.update).toHaveBeenCalledWith({ role: "member", super_admin_home_tenant_id: null });
+    expect(admin.eq).toHaveBeenCalledWith("id", "target-id");
     expect(ctx._auditInsert).toHaveBeenCalled();
   });
 });
