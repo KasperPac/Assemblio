@@ -4,6 +4,8 @@
 -- Supabase default) and the profiles_insert_self policy. Idempotent.
 -- ---------------------------------------------------------------------
 
+revoke update (full_name, avatar_url) on table public.profiles from authenticated;
+
 grant insert, update on table public.profiles to anon, authenticated;
 
 drop policy if exists profiles_insert_self on public.profiles;

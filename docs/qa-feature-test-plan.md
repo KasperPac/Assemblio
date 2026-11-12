@@ -747,6 +747,7 @@ This branch has the existing in-app help tree; public manual work remains on its
 
 ## Changelog
 
+- 2026-11-12 — amended Super admin Team: adding, changing and removing platform users now write the profile role with the server-side admin client after the super-admin check.
 - 2026-11-12 — amended Profile settings: signed-in users can update only their own name and avatar on their profile row (database column grants); stale active-store fallback now uses set_active_tenant.
 - 2026-10-13 ? amended app index styling: approved balanced D applied to shared headers, navigation and table accents; Reports uses a compact header and corrected page wrapper.
 

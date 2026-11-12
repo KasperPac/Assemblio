@@ -1,10 +1,9 @@
 -- ---------------------------------------------------------------------
--- KAS-35 — restrict profile self-updates to name and avatar.
+-- KAS-35 — Limit profile self-updates to name and avatar; role, store and
+-- status change only through server-side paths.
 --
--- profiles_update_self limits a signed-in user to their own row, but until now
--- no column limit applied, so a user could change any column on that row,
--- including role, tenant_id and status, which other policies and helper
--- functions trust. This patch limits the columns instead:
+-- profiles_update_self keeps a signed-in user to their own row. This patch
+-- limits the columns:
 --
 --   * table-level INSERT and UPDATE are revoked from anon and authenticated;
 --   * authenticated gets UPDATE on full_name and avatar_url only
