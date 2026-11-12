@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { requireSuperAdmin, requirePlatformOperator } from "@/lib/super-admin/guard";
 import { logSuperAdminAction } from "@/lib/super-admin/audit";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export interface CreateTenantInput {
   name: string;
@@ -91,7 +92,9 @@ export async function exitViewAs(): Promise<void> {
     if (error) throw new Error(error.message);
   } else {
     // No home tenant — clear active tenant so next /app visit redirects to platform module.
-    const { error } = await supabase
+    // Users can no longer update tenant_id with their own session; the caller is
+    // already verified as a platform operator by requirePlatformOperator().
+    const { error } = await createSupabaseAdminClient()
       .from("profiles")
       .update({ tenant_id: null })
       .eq("id", userId);

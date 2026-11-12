@@ -113,13 +113,15 @@ alter table public.profiles enable row level security;
 create policy profiles_is_self on public.profiles
   for select
   using (id = auth.uid() or public.is_super_admin());
-create policy profiles_insert_self on public.profiles
-  for insert
-  with check (id = auth.uid());
 create policy profiles_update_self on public.profiles
   for update
   using (id = auth.uid())
   with check (id = auth.uid());
+
+-- Users may update only their own name and avatar; no self-insert policy
+-- (see patches/2026-11-12-profiles-self-update-guard.sql).
+revoke insert, update on table public.profiles from anon, authenticated;
+grant update (full_name, avatar_url) on table public.profiles to authenticated;
 
 alter table public.profile_tenant_access enable row level security;
 create policy profile_tenant_access_select on public.profile_tenant_access

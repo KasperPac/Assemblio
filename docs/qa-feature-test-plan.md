@@ -568,6 +568,7 @@ per order lifecycle.
 
 ### Profile — `/app/settings/profile`
 - [ ] Update name (empty rejected); avatar upload (PNG/JPEG/WebP ≤2MB, versioned URL); email read-only; role read-only; password-reset email sends
+- [ ] Name and avatar save as before; a signed-in user cannot change their own role, status or active store by writing to their profile directly (database column grants); role/status changes still work from Team (admin) and the store switcher still works
 
 ### Company — `/app/settings/company` **(admin)**
 - [ ] Non-admin → redirect to profile; name/timezone/currency required; logo upload (PNG/JPEG/WebP/SVG ≤2MB, versioned); created_at shown
@@ -746,6 +747,7 @@ This branch has the existing in-app help tree; public manual work remains on its
 
 ## Changelog
 
+- 2026-11-12 — amended Profile settings: signed-in users can update only their own name and avatar on their profile row (database column grants); stale active-store fallback now uses set_active_tenant.
 - 2026-10-13 ? amended app index styling: approved balanced D applied to shared headers, navigation and table accents; Reports uses a compact header and corrected page wrapper.
 
 - 2026-10-13 — amended catalogue design review: added Products and Components examples of balanced D using real UI and isolated sample data; production unchanged.
