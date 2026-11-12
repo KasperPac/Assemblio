@@ -1,0 +1,12 @@
+-- ---------------------------------------------------------------------
+-- MANUVA-41 - tenant.currency defaulted to NZD (settings_redesign_schema.sql)
+-- although Manuva is an Australian product and the UI assumes AUD. New
+-- workspaces now default to AUD. Idempotent.
+--
+-- One-off data fix, run once on 2026-10-02 when there were no customers
+-- (ACME Industries, Example Company, Pac Technologies, Shopify Review were
+-- all test tenants on the NZD default). Deliberately NOT repeatable here:
+-- re-running it later would flip genuine NZ workspaces.
+--   update public.tenant set currency = 'AUD' where currency = 'NZD';
+-- ---------------------------------------------------------------------
+alter table public.tenant alter column currency set default 'AUD';

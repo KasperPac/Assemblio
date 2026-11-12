@@ -21,8 +21,8 @@ const TIMEZONES = [
 ];
 
 const CURRENCIES = [
-  { code: "NZD", label: "NZD — New Zealand Dollar" },
   { code: "AUD", label: "AUD — Australian Dollar" },
+  { code: "NZD", label: "NZD — New Zealand Dollar" },
   { code: "USD", label: "USD — US Dollar" },
   { code: "GBP", label: "GBP — British Pound" },
   { code: "EUR", label: "EUR — Euro" },
