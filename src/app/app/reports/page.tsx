@@ -12,7 +12,7 @@ import { fetchAllRows } from "@/lib/supabase/paginate";
 
 export default async function ReportsHubPage() {
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/auth/login");
+  if (!ctx) redirect("/login");
   const { supabase, tenantId: _tenantId } = ctx;
   const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 

@@ -12,7 +12,7 @@ export default async function ActivityLogPage({
   searchParams: Promise<SearchParams>;
 }) {
   const context = await getServerTenantContext();
-  if (!context) redirect("/auth/login");
+  if (!context) redirect("/login");
   const { supabase, tenantId } = context;
 
   const filters = parseActivityFilters(await searchParams);

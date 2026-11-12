@@ -9,7 +9,7 @@ export default async function SettingsLayout({
   children: React.ReactNode;
 }) {
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/app/auth/login");
+  if (!ctx) redirect("/login");
   const isAdmin = ctx.role === "admin" || ctx.role === "super_admin";
 
   return (

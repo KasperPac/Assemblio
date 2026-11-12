@@ -40,7 +40,7 @@ export default async function MovementsPage({
 }) {
   const sp = await searchParams;
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/auth/login");
+  if (!ctx) redirect("/login");
   const { supabase, tenantId } = ctx;
 
   const range = resolveDateRange(sp, 30);

@@ -55,7 +55,7 @@ function deltaClass(
 
 export default async function InventoryPage() {
   const context = await getServerTenantContext();
-  if (!context) redirect("/auth/login");
+  if (!context) redirect("/login");
   const { supabase, tenantId } = context;
 
   const { data, error } = await supabase

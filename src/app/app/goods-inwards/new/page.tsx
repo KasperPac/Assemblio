@@ -8,7 +8,7 @@ type Props = {
 
 export default async function NewReceiptPage({ searchParams }: Props) {
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/auth/login");
+  if (!ctx) redirect("/login");
   const { supabase, tenantId } = ctx;
 
   const { po: initialPoId, component_id: initialComponentId } = await searchParams;

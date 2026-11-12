@@ -7,7 +7,7 @@ type SlaRow = { source: string; lead_time_days: number };
 
 export default async function OrdersSettingsPage() {
   const context = await getServerTenantContext();
-  if (!context) redirect("/auth/login");
+  if (!context) redirect("/login");
   const { supabase, tenantId } = context;
 
   const { data } = await supabase

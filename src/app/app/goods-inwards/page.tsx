@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default async function GoodsInwardsPage() {
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/auth/login");
+  if (!ctx) redirect("/login");
   const { supabase, tenantId } = ctx;
 
   const { data: receipts } = await supabase

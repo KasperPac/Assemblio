@@ -19,7 +19,7 @@ type Props = {
 
 export default async function IntegrationsPage({ searchParams }: Props) {
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/app/auth/login");
+  if (!ctx) redirect("/login");
   if (ctx.role !== "admin" && ctx.role !== "super_admin") {
     redirect("/app/settings/profile");
   }

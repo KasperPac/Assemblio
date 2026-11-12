@@ -77,7 +77,7 @@ function firstRelation<T>(value: T | T[] | null | undefined): T | null {
 
 export default async function CostingPage({ searchParams }: Props) {
   const context = await getServerTenantContext();
-  if (!context) redirect("/auth/login");
+  if (!context) redirect("/login");
   const { supabase, tenantId } = context;
   const params = (await searchParams) ?? {};
   const [

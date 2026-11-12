@@ -9,7 +9,7 @@ type CookieToSet = {
   options?: CookieOptions;
 };
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const response = NextResponse.next();
   response.headers.set("x-pathname", request.nextUrl.pathname);
 

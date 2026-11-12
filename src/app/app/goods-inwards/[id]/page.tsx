@@ -10,7 +10,7 @@ export default async function ReceiptDetailPage({ params }: Props) {
   const { id } = await params;
 
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/auth/login");
+  if (!ctx) redirect("/login");
   const { supabase, tenantId } = ctx;
 
   const [{ data: receipt }, { data: suppliers }, { data: locations }, { data: rawPos }] =

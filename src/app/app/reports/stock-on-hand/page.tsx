@@ -38,7 +38,7 @@ export default async function StockOnHandPage({
 }) {
   const sp = await searchParams;
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/auth/login");
+  if (!ctx) redirect("/login");
   const { supabase, tenantId } = ctx;
 
   const { data: raw } = await supabase

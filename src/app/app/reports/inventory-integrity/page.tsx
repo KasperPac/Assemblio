@@ -23,7 +23,7 @@ export default async function InventoryIntegrityPage({
 }) {
   const sp = await searchParams;
   const ctx = await getServerTenantContext();
-  if (!ctx) redirect("/auth/login");
+  if (!ctx) redirect("/login");
   const { supabase, tenantId: _tenantId } = ctx;
   const tenantId = _tenantId!; // non-null: layout.tsx redirects tenant-less operators to /app/super-admin
 

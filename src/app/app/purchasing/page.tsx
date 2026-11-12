@@ -44,7 +44,7 @@ type PurchaseOrderLineRow = {
 
 export default async function PurchasingPage() {
   const context = await getServerTenantContext();
-  if (!context) redirect("/auth/login");
+  if (!context) redirect("/login");
   const { supabase, tenantId } = context;
 
   const { data: tenant, error: timezoneError } = await supabase
